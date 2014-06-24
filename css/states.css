@@ -3,7 +3,6 @@ body.is-welcome {
 	background-size: 100% 100%;
 }
 
-.l-wrapper.is-welcome {
-	background: rgba(255, 255, 255, 0.6);
-	border: 0;
+.is-hidden {
+	display: none;
 }
