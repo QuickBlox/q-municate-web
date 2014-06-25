@@ -1,4 +1,4 @@
-qmunicate-web
+Q-municate Web
 =============
 
-Qmunicate Web chat application
+Q-municate Web chat application

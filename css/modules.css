@@ -1,0 +1,132 @@
+/* download */
+.download {
+  position: absolute;
+  top: 30px;
+  right: 25px;
+  width: 145px;
+  height: 110px;
+}
+  .download-app {
+    display: block;
+  }
+  .download-app:first-child {
+    margin-bottom: 7px; 
+  }
+    .download-app img {
+      width: 145px;
+    }
+
+/* form elements */
+.form-input {
+  width: 100%;
+  height: 5.1vh;
+  margin-bottom: 1vh;
+  padding: 1.4vh;
+  font-size: 1.6vh;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+}
+.form-label {
+  display: block;
+  margin: 1.5vh 0 4.5vh;
+  font-size: 2vh;
+  color: #666;
+}
+  .form-checkbox {
+    margin-left: 0.5vh;
+    vertical-align: bottom;
+  }
+.form-button {
+  width: 100%;
+  font-size: 2.8vh;
+  color: #fff;
+  border-radius: 5px;
+}
+.form-button_fb {
+  background: #35518e;
+}
+.form-button_qb {
+  background: #00bf28;
+}
+  .form-button-icon {
+    width: 3.4vh;
+    margin-right: 2vh;
+    vertical-align: text-bottom;
+  }
+.form-text {
+  display: block;
+  color: #999;
+}
+.form-text_error {
+  color: #c03d3d;
+}
+.form-text_forgot {
+  margin-top: 3vh;
+  color: #999;
+}
+
+/* footer-links */
+.footer-links-item {
+  display: inline-block;
+  margin-right: 3vh;
+}
+.footer-links-item:last-child {
+  margin-right: 0;
+}
+  .footer-links-item a {
+    font-size: 1.8vh;
+    color: #999;
+  }
+
+/* header */
+/*.header-logo-img {
+  float: left;
+  margin: 0 20px; 
+}
+.header-logo-text {
+  float: left;
+  overflow: hidden;
+  font-size: 20px;
+  line-height: 48px;
+  color: #666;
+  text-transform: uppercase;
+}
+  
+.invite {
+  padding: 0 25px;
+  line-height: 40px;
+  text-align: center;
+  background: #ff4945;
+  border-radius: 25px;
+}
+  .invite-icon {
+    padding-left: 25px;
+    font-size: 20px;
+    color: #fff;
+    background: url(../images/icon-invite.png) no-repeat left 0;
+  }
+
+.user {
+  margin-left: 50px;
+  margin-right: 20px;
+}
+  .user-avatar {
+    float: left;
+    width: 42px;
+    border-radius: 50%;
+    margin-right: 12px;
+  }
+  .user-name {
+    overflow: hidden;
+    font-size: 16px;
+    line-height: 42px;
+    color: #666;
+  }
+
+.footer-logo {
+  padding-left: 3px;
+}
+
+.footer-apps-ios {
+  margin-right: 25px;
+}*/
