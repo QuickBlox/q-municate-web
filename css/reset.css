@@ -1,4 +1,4 @@
-/* Reset CSS from Eric Meyer
+/* Custom Reset CSS based on Eric Meyer's style
 ----------------------------------------------------------------*/
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -19,10 +19,6 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline;
 }
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-  display: block;
-}
 body {
   line-height: 1;
 }
@@ -41,12 +37,12 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
-
-/* Custom additions */
-a {
-  outline: 0;
-}
 button, input, select, textarea {
   margin: 0;
+  padding: 0;
+  outline: 0;
   font-size: 100%;
+}
+a {
+  outline: 0;
 }
