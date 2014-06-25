@@ -1,0 +1,84 @@
+/* Common cases
+--------------------------------------------------*/
+.l-flexbox {
+  display: -webkit-flex; /* For Safari 6.1+ */
+  display: -ms-flexbox; /* For IE10 */
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.l-flexbox_row {
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+/* Layouts
+--------------------------------------------------*/
+.l-wrapper {
+  width: 1000px;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.l-page {
+  height: 100%;
+}
+
+.l-welcome-header {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+}
+  .l-welcome-header-logo {
+    height: 36vh;
+  }
+  .l-welcome-header-text {
+    position: relative;
+    top: -1vh;
+    height: 5.2vh;
+  }
+
+.l-form {
+  width: 48vh;
+  max-width: 480px;
+}
+
+.l-welcome-footer {
+  height: 18vh;
+  margin-bottom: 2vh;
+}
+  .l-welcome-footer-logo {
+    display: block;
+    margin-bottom: 4vh;
+  }
+   .l-welcome-footer-logo img {
+      height: 8.5vh;
+    }
+
+/*.l-login {
+  height: calc(100% - 58px);
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-top: 0;
+}
+
+.l-header {
+  height: 80px;
+  border-bottom: 2px solid #00bf28;
+}
+
+.l-content {
+  height: 49.5vh;
+}
+
+.l-footer {
+  height: 58px;
+}*/
