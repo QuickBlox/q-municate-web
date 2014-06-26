@@ -4,10 +4,13 @@
   display: none;
 }
 
-/*.is-error:focus {
-  border-color: #843534;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
-}*/
+.is-error {
+  border-color: #cd575c;
+}
+.is-error:focus {
+  border-color: #cd575c;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(205, 87, 92, .6);
+}
 
 /* Custom cases
 --------------------------------------------------*/
@@ -16,12 +19,7 @@ body.is-welcome {
   background-size: 100% 100%;
 }
 .l-wrapper.is-welcome {
-  background: rgba(255, 255, 255, 0.6);
-}
-.form-button.is-welcome {
-  margin-bottom: 3vh;
-  line-height: 8vh;
-}
-.form-text.is-welcome {
-  font-size: 2.2vh;
+  border-left: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+  background: rgba(255, 255, 255, .6);
 }

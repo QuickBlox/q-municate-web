@@ -56,21 +56,25 @@
   margin-bottom: 2vh;
 }
   .l-welcome-footer-logo {
-    display: block;
     margin-bottom: 4vh;
   }
    .l-welcome-footer-logo img {
       height: 8.5vh;
     }
 
-/*.l-login {
-  height: calc(100% - 58px);
+.l-container {
+  height: calc(100% - 60px);
   background: #fff;
   border: 1px solid #f0f0f0;
   border-top: 0;
 }
 
-.l-header {
+.l-footer {
+  height: 60px;
+  padding: 0 5px;
+}
+
+/*.l-header {
   height: 80px;
   border-bottom: 2px solid #00bf28;
 }
@@ -78,7 +82,4 @@
 .l-content {
   height: 49.5vh;
 }
-
-.l-footer {
-  height: 58px;
-}*/
+*/
