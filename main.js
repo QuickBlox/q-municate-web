@@ -1,7 +1,8 @@
-(function($) {
+(function($, ChromaHash) {
   var APP = {
     init: function() {
       this.userActions();
+      this.chromaHash();
     },
     
     userActions: function() {
@@ -23,8 +24,14 @@
     
     removeWelcome: function() {
       $('body').removeClass('is-welcome');
+    },
+
+    chromaHash: function() {
+      new ChromaHash({
+        visualization: 'bars'
+      });
     }
   };
   
   APP.init();
-})(jQuery);
+})(jQuery, ChromaHash);
