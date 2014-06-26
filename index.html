@@ -5,9 +5,9 @@
   <title>Q-municate</title>
   <link rel="stylesheet" href="main.css">
 </head>
-<body class="">
-  <div class="l-wrapper">
-    <section id="welcomePage" class="l-page l-flexbox is-hidden">
+<body class="is-welcome">
+  <div class="l-wrapper is-welcome">
+    <section id="welcomePage" class="l-page l-flexbox">
       <header class="l-welcome-header l-flexbox">
         <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
         <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
@@ -17,9 +17,9 @@
         </div>
       </header>
       <div class="l-form l-flexbox">
-        <button class="form-button form-button_welcome form-button_fb"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
-        <button class="form-button form-button_welcome form-button_qb">Sign Up with Email</button>
-        <a class="form-text form-text_welcome" href="#">Already have an account?</a>
+        <button id="" class="form-button form-button_welcome form-button_fb"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
+        <button id="signup" class="form-button form-button_welcome form-button_qb">Sign Up with Email</button>
+        <a id="login" class="form-text form-text_welcome" href="#">Already have an account?</a>
       </div>
       <footer class="l-welcome-footer l-flexbox">
         <div class="l-welcome-footer-logo">
@@ -35,7 +35,7 @@
       </footer>
     </section>
     
-    <section id="loginPage" class="l-page">
+    <section id="loginPage" class="l-page is-hidden">
       <div class="l-container l-flexbox">
         <header class="l-welcome-header l-flexbox">
           <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
@@ -73,7 +73,52 @@
         </nav>
       </footer>
     </section>
-    
+
+    <section id="signUpPage" class="l-page is-hidden">
+      <div class="l-container l-flexbox">
+        <header class="l-welcome-header l-flexbox">
+          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
+          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
+          <div class="download">
+            <a class="download-app" href="#"><img src="images/app-android.png" alt="download Q-municate Android"></a>
+            <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
+          </div>
+        </header>
+        <form class="l-form l-flexbox" action="#">
+          <span class="form-text form-text_error is-invisible">To log in you must enter a valid email address.</span>
+          <input class="form-input" type="text" placeholder="Name" required>
+          <input class="form-input" type="email" placeholder="Email" required>
+          <div class="chroma-hash">
+            <input class="form-input" type="password" placeholder="Password" required>
+          </div>
+          <div class="form-file">
+            <div class="form-file-custom user">
+              <img class="user-avatar" src="images/ava-single.png" alt="user">
+              <span class="user-name">Choose user picture</span>
+            </div>
+            <input class="form-file-default" type="file">
+          </div>
+          <button class="form-button form-button_signup form-button_qb">Sign Up</button>
+          <span class="form-text form-text_signup">
+            By clicking Sign Up, you agree to Q-MUNICATE <b>User Agreement</b>,<br>
+            <b>Privacy Policy</b> and <b>Cookie Policy</b>.
+          </span>
+        </form>
+      </div>
+      <footer class="l-footer l-flexbox l-flexbox_row">
+        <div class="footer-logo">
+          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
+        </div>
+        <nav class="footer-links">
+          <ul>
+            <li class="footer-links-item"><a href="#">Support</a></li>
+            <li class="footer-links-item"><a href="#">FAQ</a></li>
+            <li class="footer-links-item"><a href="#">Help</a></li>
+          </ul>
+        </nav>
+      </footer>
+    </section>
+
     <section id="mainPage" class="l-page is-hidden">
       <div class="l-login">
         <header class="l-header l-flexbox l-flexbox_row">
