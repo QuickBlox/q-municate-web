@@ -4,6 +4,10 @@
   display: none;
 }
 
+.is-invisible {
+  opacity: 0;
+}
+
 .is-error {
   border-color: #cd575c;
 }
