@@ -8,7 +8,7 @@
       $.ajaxSetup({ cache: true });
       $.getScript('https://connect.facebook.net/en_EN/all.js', function() {
         FB.init({
-          appId: '558730200890993',
+          appId: '848540871842455',
           status: false
         });
         QB.init(QBAPP.appId, QBAPP.authKey, QBAPP.authSecret, true);
@@ -23,7 +23,7 @@
       var self = this;
       FB.Event.subscribe('auth.statusChange', function(response) {
         if (response.status == 'connected') {
-          QB.createSession({provider: 'facebook', keys: {token: response.authResponse.accessToken}}, function(err, result) {
+          QB.createSession({provider: 'facebook', scope: 'friends_status,read_mailbox,photo_upload', keys: {token: response.authResponse.accessToken}}, function(err, result) {
                 if (err) {
                   console.log(err.detail);
                 } else {
