@@ -17,12 +17,14 @@
         </div>
       </header>
       <div class="l-form l-flexbox">
-        <button class="form-button form-button_fb is-welcome"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
-        <button class="form-button form-button_qb is-welcome">Sign Up with Email</button>
-        <a href="#" class="form-text is-welcome">Already have an account?</a>
+        <button id="" class="form-button form-button_welcome form-button_fb"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
+        <button id="signup" class="form-button form-button_welcome form-button_qb">Sign Up with Email</button>
+        <a id="login" class="form-text form-text_welcome" href="#">Already have an account?</a>
       </div>
       <footer class="l-welcome-footer l-flexbox">
-        <a class="l-welcome-footer-logo" href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox.png" alt="QuickBlox"></a>
+        <div class="l-welcome-footer-logo">
+          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox.png" alt="QuickBlox"></a>
+        </div>
         <nav class="footer-links">
           <ul>
             <li class="footer-links-item"><a href="#">Support</a></li>
@@ -34,37 +36,33 @@
     </section>
     
     <section id="loginPage" class="l-page is-hidden">
-      <div class="l-login l-flexbox">
-        <header class="header_starter">
-          <img class="header_starter-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
-          <img class="header_starter-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
-          <div class="l-download">
-            <a class="download-item" href="#"><img src="images/app-android.png" alt="download Q-municate Android"></a>
-            <a class="download-item" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
+      <div class="l-container l-flexbox">
+        <header class="l-welcome-header l-flexbox">
+          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
+          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
+          <div class="download">
+            <a class="download-app" href="#"><img src="images/app-android.png" alt="download Q-municate Android"></a>
+            <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
           </div>
         </header>
-        <div class="l-content">
-          <form class="form" action="#">
-            <span class="form-text form-text_error">To log in you must enter a valid email address.</span>
-            <input class="form-input" type="email" placeholder="Email">
-            <input class="form-input" type="password" placeholder="Password">
-            <label class="form-label" for="remember">
-              Remember me
-              <input class="form-checkbox" id="remember" type="checkbox" checked>
-            </label>
-            <button class="form-button form-button_qb">Log In</button>
-            <button class="form-button form-button_fb"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
-            <a class="form-text form-text_forgot" href="#">Forgot password?</a>
-          </form>
-        </div>
+        <form class="l-form l-flexbox" action="#">
+          <span class="form-text form-text_error">To log in you must enter a valid email address.</span>
+          <input class="form-input is-error" type="email" placeholder="Email" required>
+          <div class="chroma-hash">
+            <input class="form-input" type="password" placeholder="Password" required>
+          </div>
+          <label class="form-label" for="remember">
+            Remember me
+            <input class="form-checkbox" id="remember" type="checkbox" checked>
+          </label>
+          <button class="form-button form-button_qb">Log In</button>
+          <button class="form-button form-button_fb"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
+          <a class="form-text form-text_forgot" href="#">Forgot password?</a>
+        </form>
       </div>
       <footer class="l-footer l-flexbox l-flexbox_row">
         <div class="footer-logo">
           <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
-        </div>
-        <div class="footer-apps is-hidden">
-          <a href="#"><img class="footer-apps-ios" src="images/icon-ios.png" alt="download Q-municate iOS"></a>
-          <a href="#"><img src="images/icon-android.png" alt="download Q-municate Android"></a>
         </div>
         <nav class="footer-links">
           <ul>
@@ -75,7 +73,52 @@
         </nav>
       </footer>
     </section>
-    
+
+    <section id="signUpPage" class="l-page is-hidden">
+      <div class="l-container l-flexbox">
+        <header class="l-welcome-header l-flexbox">
+          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
+          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
+          <div class="download">
+            <a class="download-app" href="#"><img src="images/app-android.png" alt="download Q-municate Android"></a>
+            <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
+          </div>
+        </header>
+        <form class="l-form l-flexbox" action="#">
+          <span class="form-text form-text_error is-invisible">To log in you must enter a valid email address.</span>
+          <input class="form-input" type="text" placeholder="Name" required>
+          <input class="form-input" type="email" placeholder="Email" required>
+          <div class="chroma-hash">
+            <input class="form-input" type="password" placeholder="Password" required>
+          </div>
+          <div class="form-file">
+            <div class="form-file-custom user">
+              <img class="user-avatar" src="images/ava-single.png" alt="user">
+              <span class="user-name">Choose user picture</span>
+            </div>
+            <input class="form-file-default" type="file">
+          </div>
+          <button class="form-button form-button_signup form-button_qb">Sign Up</button>
+          <span class="form-text form-text_signup">
+            By clicking Sign Up, you agree to Q-MUNICATE <b>User Agreement</b>,<br>
+            <b>Privacy Policy</b> and <b>Cookie Policy</b>.
+          </span>
+        </form>
+      </div>
+      <footer class="l-footer l-flexbox l-flexbox_row">
+        <div class="footer-logo">
+          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
+        </div>
+        <nav class="footer-links">
+          <ul>
+            <li class="footer-links-item"><a href="#">Support</a></li>
+            <li class="footer-links-item"><a href="#">FAQ</a></li>
+            <li class="footer-links-item"><a href="#">Help</a></li>
+          </ul>
+        </nav>
+      </footer>
+    </section>
+
     <section id="mainPage" class="l-page is-hidden">
       <div class="l-login">
         <header class="l-header l-flexbox l-flexbox_row">
@@ -96,7 +139,7 @@
         <div class="footer-logo">
           <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
         </div>
-        <div class="footer-apps is-hidden">
+        <div class="footer-apps">
           <a href="#"><img class="footer-apps-ios" src="images/icon-ios.png" alt="download Q-municate iOS"></a>
           <a href="#"><img src="images/icon-android.png" alt="download Q-municate Android"></a>
         </div>
@@ -112,6 +155,7 @@
   </div>
   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="lib/chroma-hash.js"></script>
   <script src="main.js"></script>
 </body>
 </html>
