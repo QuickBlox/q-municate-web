@@ -5,7 +5,12 @@
  * User Actions
  *
  */
+
+var authModule = require('./auth');
+
 module.exports = function() {
+  var Auth;
+
   function switchPage(page) {
     $('body, .l-wrapper').removeClass('is-welcome');
     page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
@@ -25,16 +30,56 @@ module.exports = function() {
     event.preventDefault();
     switchPage($('#loginPage'));
   });
+
+  $('#signupForm').on('click', function(event) {
+    console.log('User Sign Up');
+    event.preventDefault();
+    Auth = new authModule();
+    console.log(Auth);
+    //Auth.signup();
+  });
+
+  $('input:file').on('change', function() {
+    var URL = window.webkitURL || window.URL,
+        file = $(this)[0].files[0],
+        src = file ? URL.createObjectURL(file) : 'images/ava-single.png',
+        fileName = file ? file.name : 'Choose user picture';
+    
+    $(this).prev().find('img').attr('src', src).siblings('span').text(fileName);
+    if (typeof file !== undefined) URL.revokeObjectURL(src);
+  });
 };
 
-},{}],2:[function(require,module,exports){
+},{"./auth":2}],2:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * Authorization Module
+ *
+ */
+module.exports = function() {
+  var Auth = {
+    fullName: $('#signupName').val().trim(),
+    email: $('#signupEmail').val().trim(),
+    password: $('#signupPass').val().trim(),
+    avatar: $('#signupAvatar')[0].files[0] || null,
+
+    signup: function() {
+
+    }
+  };
+
+  return Auth;
+};
+
+},{}],3:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
  * Main Application Module
  *
  */
-(function($, ChromaHash, QB, QBAPP) {
+(function(window, $, ChromaHash, QB, QBAPP) {
   var userActions = require('./actions');
 
   var APP = {
@@ -51,6 +96,6 @@ module.exports = function() {
   };
 
   APP.init();
-})(jQuery, ChromaHash, QB, QBAPP);
+})(window, jQuery, ChromaHash, QB, QBAPP);
 
-},{"./actions":1}]},{},[2])
+},{"./actions":1}]},{},[3])

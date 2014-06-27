@@ -4,7 +4,7 @@
  * Main Application Module
  *
  */
-(function($, ChromaHash, QB, QBAPP) {
+(function(window, $, ChromaHash, QB, QBAPP) {
   var userActions = require('./actions');
 
   var APP = {
@@ -21,4 +21,4 @@
   };
 
   APP.init();
-})(jQuery, ChromaHash, QB, QBAPP);
+})(window, jQuery, ChromaHash, QB, QBAPP);
