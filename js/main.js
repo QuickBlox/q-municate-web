@@ -1,16 +1,18 @@
 /*
  * Q-municate chat application
  *
- * Main Application Module
+ * Main Module
  *
  */
+
 (function(window, $, ChromaHash, QB, QBAPP) {
-  var userActions = require('./actions');
+  var actionsModule = require('./actions'),
+      UserActions = new actionsModule();
 
   var APP = {
     init: function() {
-      userActions();
       this.chromaHash();
+      UserActions.init();
     },
 
     chromaHash: function() {
