@@ -46,3 +46,6 @@ button, input, select, textarea {
 a {
   outline: 0;
 }
+* {
+  box-sizing: border-box;
+}
