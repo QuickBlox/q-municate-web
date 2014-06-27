@@ -58,14 +58,11 @@
 
 .l-welcome-footer {
   height: 18vh;
-  margin-bottom: 2.2vh;
+  padding-bottom: 2.5vh;
 }
-  .l-welcome-footer-logo {
-    margin-bottom: 4vh;
+  .l-welcome-footer-logo img {
+    height: 8.5vh;
   }
-   .l-welcome-footer-logo img {
-      height: 8.5vh;
-    }
 
 .l-container {
   height: calc(100% - 60px);

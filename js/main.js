@@ -10,6 +10,13 @@
   var APP = {
     init: function() {
       userActions();
+      this.chromaHash();
+    },
+
+    chromaHash: function() {
+      new ChromaHash({
+        visualization: 'bars'
+      });
     }
   };
 
