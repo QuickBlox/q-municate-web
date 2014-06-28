@@ -19,23 +19,23 @@ UserActions.prototype.init = function() {
   });
 
   $('#signupFB, #loginFB').on('click', function() {
-    console.log('connect with FB');
+    if (CONFIG.debug) console.log('connect with FB');
     self.connectFB();
   });
 
   $('#signupQB').on('click', function() {
-    console.log('signup with QB');
+    if (CONFIG.debug) console.log('signup with QB');
     self.signupQB();
   });
 
   $('#loginQB').on('click', function(event) {
-    console.log('login wih QB');
+    if (CONFIG.debug) console.log('login wih QB');
     event.preventDefault();
     self.loginQB();
   });
 
   $('#signupForm').on('click', function(event) {
-    console.log('create user');
+    if (CONFIG.debug) console.log('create user');
     event.preventDefault();
     self.signupForm($(this));
   });
@@ -44,8 +44,8 @@ UserActions.prototype.init = function() {
 UserActions.prototype.changeInputFile = function(objDom) {
   var URL = window.webkitURL || window.URL,
       file = objDom[0].files[0],
-      src = file ? URL.createObjectURL(file) : 'images/ava-single.png',
-      fileName = file ? file.name : 'Choose user picture';
+      src = file ? URL.createObjectURL(file) : CONFIG.defaultAvatar.url,
+      fileName = file ? file.name : CONFIG.defaultAvatar.text;
   
   objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
   if (typeof file !== undefined) URL.revokeObjectURL(src);
@@ -65,8 +65,8 @@ UserActions.prototype.loginQB = function() {
 
 UserActions.prototype.signupForm = function(objDom) {
   var Auth = new authModule();
-  console.log('Auth object', Auth);
-  //Auth.signup();
+  if (CONFIG.debug) console.log('Auth', Auth);
+  Auth.signup(objDom);
 };
 
 // Private methods
@@ -83,7 +83,11 @@ function switchPage(page) {
  *
  */
 
+var sessionModule = require('./session');
+
 module.exports = function() {
+  var Session = new sessionModule();
+
   var Auth = {
     signupParams: {
       fullName: $('#signupName').val().trim(),
@@ -93,14 +97,33 @@ module.exports = function() {
     },
 
     signup: function(objDom) {
-      
+      QB.createSession(function(err, res) {
+        if (err) {
+          if (CONFIG.debug) console.log(err.detail);
+
+          var errMsg = JSON.parse(err.detail).errors.base[0];
+          errMsg += '. ' + CONFIG.errors.session;
+
+          fail(objDom, errMsg);
+        } else {
+          if (CONFIG.debug) console.log('Session', res);
+
+          Session.token = res.token;
+          Session.expirationTime = Session.setExpirationTime(res.updated_at);
+          console.log(Session);
+        }
+      });
     }
   };
 
   return Auth;
 };
 
-},{}],3:[function(require,module,exports){
+function fail(objDom, errMsg) {
+  objDom.parents('form').find('.form-text_error').removeClass('is-invisible').text(errMsg);
+}
+
+},{"./session":4}],3:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -108,7 +131,7 @@ module.exports = function() {
  *
  */
 
-(function(window, $, ChromaHash, QB, QBAPP) {
+(function(window, $, ChromaHash, QB, CONFIG) {
   var actionsModule = require('./actions'),
       UserActions = new actionsModule();
 
@@ -116,6 +139,9 @@ module.exports = function() {
     init: function() {
       this.chromaHash();
       UserActions.init();
+      QB.init(CONFIG.qbAccount.appId, CONFIG.qbAccount.authKey, CONFIG.qbAccount.authSecret);
+
+      if (CONFIG.debug) console.log('App init', this);
     },
 
     chromaHash: function() {
@@ -126,6 +152,34 @@ module.exports = function() {
   };
 
   APP.init();
-})(window, jQuery, ChromaHash, QB, QBAPP);
+})(window, jQuery, ChromaHash, QB, CONFIG);
 
-},{"./actions":1}]},{},[3])
+},{"./actions":1}],4:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * Session module
+ *
+ */
+
+module.exports = function() {
+  var Session = {
+    token: null,
+    user: null,
+    expirationTime: null,
+
+    setExpirationTime: function(date) {
+      var d = new Date(date);
+      d.setHours(d.getHours() + 2);
+      return d.toISOString();
+    },
+
+    recovery: function() {
+
+    }
+  };
+
+  return Session;
+};
+
+},{}]},{},[3])

@@ -5,7 +5,7 @@
  *
  */
 
-(function(window, $, ChromaHash, QB, QBAPP) {
+(function(window, $, ChromaHash, QB, CONFIG) {
   var actionsModule = require('./actions'),
       UserActions = new actionsModule();
 
@@ -13,6 +13,8 @@
     init: function() {
       this.chromaHash();
       UserActions.init();
+
+      if (CONFIG.debug) console.log('App init', this);
     },
 
     chromaHash: function() {
@@ -23,4 +25,4 @@
   };
 
   APP.init();
-})(window, jQuery, ChromaHash, QB, QBAPP);
+})(window, jQuery, ChromaHash, QB, CONFIG);

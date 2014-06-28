@@ -18,23 +18,23 @@ UserActions.prototype.init = function() {
   });
 
   $('#signupFB, #loginFB').on('click', function() {
-    console.log('connect with FB');
+    if (CONFIG.debug) console.log('connect with FB');
     self.connectFB();
   });
 
   $('#signupQB').on('click', function() {
-    console.log('signup with QB');
+    if (CONFIG.debug) console.log('signup with QB');
     self.signupQB();
   });
 
   $('#loginQB').on('click', function(event) {
-    console.log('login wih QB');
+    if (CONFIG.debug) console.log('login wih QB');
     event.preventDefault();
     self.loginQB();
   });
 
   $('#signupForm').on('click', function(event) {
-    console.log('create user');
+    if (CONFIG.debug) console.log('create user');
     event.preventDefault();
     self.signupForm($(this));
   });
@@ -43,8 +43,8 @@ UserActions.prototype.init = function() {
 UserActions.prototype.changeInputFile = function(objDom) {
   var URL = window.webkitURL || window.URL,
       file = objDom[0].files[0],
-      src = file ? URL.createObjectURL(file) : 'images/ava-single.png',
-      fileName = file ? file.name : 'Choose user picture';
+      src = file ? URL.createObjectURL(file) : CONFIG.defaultAvatar.url,
+      fileName = file ? file.name : CONFIG.defaultAvatar.text;
   
   objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
   if (typeof file !== undefined) URL.revokeObjectURL(src);
@@ -64,8 +64,8 @@ UserActions.prototype.loginQB = function() {
 
 UserActions.prototype.signupForm = function(objDom) {
   var Auth = new authModule();
-  console.log('Auth object', Auth);
-  //Auth.signup();
+  if (CONFIG.debug) console.log('Auth', Auth);
+  Auth.signup(objDom);
 };
 
 // Private methods
