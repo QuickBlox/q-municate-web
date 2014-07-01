@@ -1,5 +1,5 @@
 /* Configuration your application */
-var CONFIG = {
+var QMCONFIG = {
   
   // Local account
   qbAccount: {
@@ -10,12 +10,13 @@ var CONFIG = {
 
   debug: true,
 
-  defaultAvatar: {
+  defAvatar: {
     url: 'images/ava-single.png',
-    text: 'Choose user picture'
+    caption: 'Choose user picture'
   },
 
   errors: {
     session: 'Please check QB application credentials'
   }
+
 };

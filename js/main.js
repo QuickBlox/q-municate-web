@@ -5,24 +5,25 @@
  *
  */
 
-(function(window, $, ChromaHash, QB, CONFIG) {
-  var actionsModule = require('./actions'),
-      UserActions = new actionsModule();
+var UserActions = require('./actions'),
+    QBApiCalls = require('./qbApi');
 
-  var APP = {
-    init: function() {
-      this.chromaHash();
-      UserActions.init();
+var APP = {
+  init: function() {
+    this.chromaHash();
+    UserActions.init();
+    QBApiCalls.init();
 
-      if (CONFIG.debug) console.log('App init', this);
-    },
+    if (QMCONFIG.debug) console.log('App init', this);
+  },
 
-    chromaHash: function() {
-      new ChromaHash({
-        visualization: 'bars'
-      });
-    }
-  };
+  chromaHash: function() {
+    new ChromaHash({
+      visualization: 'bars'
+    });
+  }
+};
 
+$(document).ready(function() {
   APP.init();
-})(window, jQuery, ChromaHash, QB, CONFIG);
+});

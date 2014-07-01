@@ -1,75 +1,84 @@
 /*
  * Q-municate chat application
  *
- * User Actions
+ * User Actions Module
  *
  */
 
-module.exports = UserActions;
-var authModule = require('./auth');
+var Auth = require('./auth');
 
-function UserActions() {}
+module.exports = (function() {
 
-UserActions.prototype.init = function() {
-  var self = this;
+  var setAvatar = function(objDom, url, caption) {
+    objDom.find('img').attr('src', url).siblings('span').text(caption);
+  };
 
-  $('input:file').on('change', function() {
-    self.changeInputFile($(this));
-  });
+  var switchPage = function(page) {
+    $('body, .l-wrapper').removeClass('is-welcome');
+    page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
+  };
 
-  $('#signupFB, #loginFB').on('click', function() {
-    if (CONFIG.debug) console.log('connect with FB');
-    self.connectFB();
-  });
+  return {
 
-  $('#signupQB').on('click', function() {
-    if (CONFIG.debug) console.log('signup with QB');
-    self.signupQB();
-  });
+    init: function() {
+      var self = this;
 
-  $('#loginQB').on('click', function(event) {
-    if (CONFIG.debug) console.log('login wih QB');
-    event.preventDefault();
-    self.loginQB();
-  });
+      setAvatar($('#defAvatar'), QMCONFIG.defAvatar.url, QMCONFIG.defAvatar.caption);
 
-  $('#signupForm').on('click', function(event) {
-    if (CONFIG.debug) console.log('create user');
-    event.preventDefault();
-    self.signupForm($(this));
-  });
-};
+      $('input:file').on('change', function() {
+        self.changeInputFile($(this));
+      });
 
-UserActions.prototype.changeInputFile = function(objDom) {
-  var URL = window.webkitURL || window.URL,
-      file = objDom[0].files[0],
-      src = file ? URL.createObjectURL(file) : CONFIG.defaultAvatar.url,
-      fileName = file ? file.name : CONFIG.defaultAvatar.text;
-  
-  objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
-  if (typeof file !== undefined) URL.revokeObjectURL(src);
-};
+      $('#signupFB, #loginFB').on('click', function() {
+        if (QMCONFIG.debug) console.log('connect with FB');
+        self.connectFB();
+      });
 
-UserActions.prototype.connectFB = function() {
+      $('#signupQB').on('click', function() {
+        if (QMCONFIG.debug) console.log('signup with QB');
+        self.signupQB();
+      });
 
-};
+      $('#loginQB').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('login wih QB');
+        event.preventDefault();
+        self.loginQB();
+      });
 
-UserActions.prototype.signupQB = function() {
-  switchPage($('#signUpPage'));
-};
+      $('#signupForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('create user');
+        event.preventDefault();
+        self.signupForm($(this));
+      });
+    },
 
-UserActions.prototype.loginQB = function() {
-  switchPage($('#loginPage'));
-};
+    changeInputFile: function(objDom) {
+      var URL = window.webkitURL || window.URL,
+          file = objDom[0].files[0],
+          src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
+          fileName = file ? file.name : QMCONFIG.defAvatar.caption;
+      
+      this.setAvatar(objDom.prev(), src, fileName);
+      if (typeof file !== undefined) URL.revokeObjectURL(src);
+    },
 
-UserActions.prototype.signupForm = function(objDom) {
-  var Auth = new authModule();
-  if (CONFIG.debug) console.log('Auth', Auth);
-  Auth.signup(objDom);
-};
+    connectFB: function() {
 
-// Private methods
-function switchPage(page) {
-  $('body, .l-wrapper').removeClass('is-welcome');
-  page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
-}
+    },
+
+    signupQB: function() {
+      switchPage($('#signUpPage'));
+    },
+
+    loginQB: function() {
+      switchPage($('#loginPage'));
+    },
+
+    signupForm: function(objDom) {
+      var auth = new Auth();
+      if (QMCONFIG.debug) console.log('Auth', auth);
+      auth.signup(objDom);
+    }
+
+  };
+})();
