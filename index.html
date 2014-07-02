@@ -47,17 +47,17 @@
         </header>
         <form class="l-form l-flexbox" action="#">
           <span class="form-text form-text_error is-invisible">Error</span>
-          <input id="signupName" class="form-input" type="text" placeholder="Name">
-          <input id="signupEmail" class="form-input" type="email" placeholder="Email">
+          <input id="signupName" class="form-input regexp-name" type="text" placeholder="Name" required>
+          <input id="signupEmail" class="form-input regexp-email" type="email" placeholder="Email" required>
           <div class="chroma-hash">
-            <input id="signupPass" class="form-input" type="password" placeholder="Password">
+            <input id="signupPass" class="form-input regexp-pass" type="password" placeholder="Password" required>
           </div>
           <div class="form-file">
             <div id="defAvatar" class="form-file-custom user">
               <img class="user-avatar" src="" alt="user">
               <span class="user-name"></span>
             </div>
-            <input id="signupAvatar" class="form-file-default" type="file">
+            <input id="signupAvatar" class="form-file-default" type="file" accept="image/*">
           </div>
           <button id="signupForm" class="form-button form-button_signup form-button_qb">Sign Up</button>
           <span class="form-text form-text_signup">

@@ -7,11 +7,7 @@
 
 var Auth = require('./auth');
 
-module.exports = (function() {
-
-  var setAvatar = function(objDom, url, caption) {
-    objDom.find('img').attr('src', url).siblings('span').text(caption);
-  };
+module.exports = (function(Auth) {
 
   var switchPage = function(page) {
     $('body, .l-wrapper').removeClass('is-welcome');
@@ -22,8 +18,6 @@ module.exports = (function() {
 
     init: function() {
       var self = this;
-
-      setAvatar($('#defAvatar'), QMCONFIG.defAvatar.url, QMCONFIG.defAvatar.caption);
 
       $('input:file').on('change', function() {
         self.changeInputFile($(this));
@@ -58,7 +52,7 @@ module.exports = (function() {
           src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
           fileName = file ? file.name : QMCONFIG.defAvatar.caption;
       
-      this.setAvatar(objDom.prev(), src, fileName);
+      objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
       if (typeof file !== undefined) URL.revokeObjectURL(src);
     },
 
@@ -75,10 +69,10 @@ module.exports = (function() {
     },
 
     signupForm: function(objDom) {
-      var auth = new Auth();
+      var auth = new Auth;
       if (QMCONFIG.debug) console.log('Auth', auth);
       auth.signup(objDom);
     }
 
   };
-})();
+})(Auth);

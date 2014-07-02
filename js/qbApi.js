@@ -5,7 +5,10 @@
  *
  */
 
-module.exports = (function() {
+var Session = require('./qbSession');
+
+module.exports = (function(Session) {
+  var session = new Session;
 
   return {
 
@@ -13,7 +16,7 @@ module.exports = (function() {
       QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
     },
 
-    createSession: function(params, callback) {
+    createSession: function(params, successCallback, errorCallback) {
       QB.createSession(params, function(err, res) {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
@@ -21,42 +24,26 @@ module.exports = (function() {
           var errMsg = JSON.parse(err.detail).errors.base[0];
           errMsg += '. ' + QMCONFIG.errors.session;
 
-          fail(objDom, errMsg);
+          errorCallback(errMsg);
         } else {
           if (QMCONFIG.debug) console.log('Session', res);
 
-          Session.token = res.token;
-          Session.expirationTime = Session.setExpirationTime(res.updated_at);
-          console.log(Session);
-
-          callback();
+          session.setSession(res);
+          console.log(session);
+          successCallback();
         }
       });
     },
 
-    createUser: function() {
-      
+    createUser: function(params, successCallback, errorCallback) {
+      QB.users.create(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+        } else {
+          if (QMCONFIG.debug) console.log('User', res);
+        }
+      });
     }
-    
+
   };
-})();
-
-/*module.exports = function() {
-  var Session = {
-    token: null,
-    user: null,
-    expirationTime: null,
-
-    setExpirationTime: function(date) {
-      var d = new Date(date);
-      d.setHours(d.getHours() + 2);
-      return d.toISOString();
-    },
-
-    recovery: function() {
-
-    }
-  };
-
-  return Session;
-};*/
+})(Session);

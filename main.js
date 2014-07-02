@@ -8,11 +8,7 @@
 
 var Auth = require('./auth');
 
-module.exports = (function() {
-
-  var setAvatar = function(objDom, url, caption) {
-    objDom.find('img').attr('src', url).siblings('span').text(caption);
-  };
+module.exports = (function(Auth) {
 
   var switchPage = function(page) {
     $('body, .l-wrapper').removeClass('is-welcome');
@@ -23,8 +19,6 @@ module.exports = (function() {
 
     init: function() {
       var self = this;
-
-      setAvatar($('#defAvatar'), QMCONFIG.defAvatar.url, QMCONFIG.defAvatar.caption);
 
       $('input:file').on('change', function() {
         self.changeInputFile($(this));
@@ -59,7 +53,7 @@ module.exports = (function() {
           src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
           fileName = file ? file.name : QMCONFIG.defAvatar.caption;
       
-      this.setAvatar(objDom.prev(), src, fileName);
+      objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
       if (typeof file !== undefined) URL.revokeObjectURL(src);
     },
 
@@ -76,13 +70,13 @@ module.exports = (function() {
     },
 
     signupForm: function(objDom) {
-      var auth = new Auth();
+      var auth = new Auth;
       if (QMCONFIG.debug) console.log('Auth', auth);
       auth.signup(objDom);
     }
 
   };
-})();
+})(Auth);
 
 },{"./auth":2}],2:[function(require,module,exports){
 /*
@@ -105,10 +99,78 @@ function Auth() {
 };
 
 Auth.prototype.signup = function(objDom) {
+  var self = this;
 
+  validate(objDom);
+
+  /*QBApiCalls.createSession({},
+    function() {
+      QBApiCalls.createUser({
+        full_name: self.signupParams.fullName,
+        email: self.signupParams.email,
+        password: self.signupParams.password
+      });
+    },
+    function(errMsg) {
+      fail(objDom, errMsg);
+    }
+  );*/
 };
 
 // Private methods
+function validate(objDom) {
+  var form = objDom.parents('form');
+
+  form.find('input').each(function() {
+    this.value = this.value.trim();
+
+    if (!this.checkValidity()) {
+      console.log(this.checkValidity());
+      if (this.validity.valueMissing) {
+        fail(objDom, 'Name is required');
+      } else if (this.validity.typeMismatch) {
+        fail(objDom, '');
+      } else if (this.validity.patternMismatch) {
+        if (this.value.length < 3 || this.value.length > 50)
+          fail(objDom, 'Minimum length is 3 symbols, maximum is 50');
+        else
+          fail(objDom, 'Bad format');
+      }
+
+      $(this).addClass('is-error');
+
+      return false;
+    }
+  });
+
+// // console.log(form.elements.length);
+//   for (i = 0, len = form.elements.length; i < len; i++) {
+//     elem = form.elements[i];
+//     console.log(elem);
+//     //if (elem.localName !== 'input') continue;
+
+    
+//   }
+  /*form.find('input').each(function(i) {
+    this.value = this.value.trim();
+    if (i === 2) {
+      console.log(this);
+      console.log(this.value);
+      console.log(this.checkValidity());
+      console.log(this.validity);
+      console.log(this.validationMessage);
+    }
+  });*/
+  /*form.noValidate = true;
+  form.onsubmit = function(){
+    for (var f = 0; f < form.elements.length; f++) {
+      var field = form.elements[f];
+      console.log(field.validity);
+    }
+    return false;
+  };*/
+}
+
 function fail(objDom, errMsg) {
   objDom.parents('form').find('.form-text_error').removeClass('is-invisible').text(errMsg);
 }
@@ -127,6 +189,8 @@ var UserActions = require('./actions'),
 var APP = {
   init: function() {
     this.chromaHash();
+    this.setDefAvatar();
+    this.setHtml5Patterns();
     UserActions.init();
     QBApiCalls.init();
 
@@ -137,6 +201,19 @@ var APP = {
     new ChromaHash({
       visualization: 'bars'
     });
+  },
+
+  setDefAvatar: function() {
+    $('#defAvatar').find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
+  },
+
+  setHtml5Patterns: function() {
+    var FULL_NAME = "[^><;]{3,50}";
+    var ALLNUM_ALLPUNCT = "[A-Za-z0-9`~!@#%&=_<>;:,'" + '\\"' + "\\.\\$\\^\\*\\-\\+\\\\\/\\|\\(\\)\\[\\]\\{\\}\\?]{8,40}";
+
+    $('.regexp-name').attr({pattern: FULL_NAME, title: 'Minimum length is 3 symbols, maximum is 50'});
+    $('.regexp-email').attr('title', 'Should look like an email address');
+    $('.regexp-pass').attr({pattern: ALLNUM_ALLPUNCT, title: 'Should contain alphanumeric and punctuation characters only. Minimum length is 8 symbols, maximum is 40'});
   }
 };
 
@@ -152,7 +229,10 @@ $(document).ready(function() {
  *
  */
 
-module.exports = (function() {
+var Session = require('./qbSession');
+
+module.exports = (function(Session) {
+  var session = new Session;
 
   return {
 
@@ -160,7 +240,7 @@ module.exports = (function() {
       QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
     },
 
-    createSession: function(params, callback) {
+    createSession: function(params, successCallback, errorCallback) {
       QB.createSession(params, function(err, res) {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
@@ -168,44 +248,56 @@ module.exports = (function() {
           var errMsg = JSON.parse(err.detail).errors.base[0];
           errMsg += '. ' + QMCONFIG.errors.session;
 
-          fail(objDom, errMsg);
+          errorCallback(errMsg);
         } else {
           if (QMCONFIG.debug) console.log('Session', res);
 
-          Session.token = res.token;
-          Session.expirationTime = Session.setExpirationTime(res.updated_at);
-          console.log(Session);
-
-          callback();
+          session.setSession(res);
+          console.log(session);
+          successCallback();
         }
       });
     },
 
-    createUser: function() {
-      
+    createUser: function(params, successCallback, errorCallback) {
+      QB.users.create(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+        } else {
+          if (QMCONFIG.debug) console.log('User', res);
+        }
+      });
     }
-    
+
   };
-})();
+})(Session);
 
-/*module.exports = function() {
-  var Session = {
-    token: null,
-    user: null,
-    expirationTime: null,
+},{"./qbSession":5}],5:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * QuickBlox Session Module
+ *
+ */
 
-    setExpirationTime: function(date) {
-      var d = new Date(date);
-      d.setHours(d.getHours() + 2);
-      return d.toISOString();
-    },
+module.exports = Session;
 
-    recovery: function() {
+function Session() {
+  this.token = null;
+  this.expirationTime = null;
+  this.isUserLevel = null;
+}
 
-    }
-  };
+Session.prototype.setSession = function(res) {
+  this.token = res.token;
+  this.expirationTime = this.setExpirationTime(res.updated_at);
+  this.isUserLevel = !!res.user_id;
+};
 
-  return Session;
-};*/
+Session.prototype.setExpirationTime = function(date) {
+  var d = new Date(date);
+  d.setHours(d.getHours() + 2);
+  return d.toISOString();
+};
 
 },{}]},{},[3])
