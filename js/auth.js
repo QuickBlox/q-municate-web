@@ -20,7 +20,8 @@ function Auth() {
 Auth.prototype.signup = function(objDom) {
   var self = this;
 
-  validate(objDom);
+  QBApiCalls.createSession({}, function(){});
+  //validate(objDom);
 
   /*QBApiCalls.createSession({},
     function() {

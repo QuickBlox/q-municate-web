@@ -101,7 +101,8 @@ function Auth() {
 Auth.prototype.signup = function(objDom) {
   var self = this;
 
-  validate(objDom);
+  QBApiCalls.createSession({}, function(){});
+  //validate(objDom);
 
   /*QBApiCalls.createSession({},
     function() {
@@ -225,79 +226,154 @@ $(document).ready(function() {
 /*
  * Q-municate chat application
  *
- * QuickBlox API Calls Module
+ * QuickBlox JS SDK Wrapper
  *
  */
 
-var Session = require('./qbSession');
+var Session = require('./session');
 
-module.exports = (function(Session) {
-  var session = new Session;
+module.exports = (function() {
+  var session;
+
+  var fail = function(errMsg) {
+    $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
+  };
 
   return {
 
-    init: function() {
-      QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
+    init: function(token) {
+      if (typeof token === 'undefined') {
+        QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
+      } else {
+        QB.init(token);
+        session = new Session;
+        session.storage = JSON.parse(localStorage.getItem('QM.session'));
+      }
     },
 
-    createSession: function(params, successCallback, errorCallback) {
+    checkSession: function(callback) {
+      if (new Date > session.storage.expirationTime) {
+        this.init();
+        this.createSession(session.storage.authParams, callback);
+      } else {
+        callback();
+      }
+    },
+
+    createSession: function(params, callback) {
       QB.createSession(params, function(err, res) {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
 
-          var errMsg = JSON.parse(err.detail).errors.base[0];
-          errMsg += '. ' + QMCONFIG.errors.session;
+          var errMsg,
+              parseErr = JSON.parse(err.detail);
 
-          errorCallback(errMsg);
+          if (err.code === 401) {
+            errMsg = parseErr.errors[0];
+          } else {
+            errMsg = parseErr.errors.base[0];
+            errMsg += '. ' + QMCONFIG.errors.session;
+          }
+
+          fail(errMsg);
         } else {
           if (QMCONFIG.debug) console.log('Session', res);
 
-          session.setSession(res);
-          console.log(session);
-          successCallback();
+          session = new Session(res.token, params);
+          session.setExpirationTime();
+
+          callback(res);
         }
       });
     },
 
-    createUser: function(params, successCallback, errorCallback) {
-      QB.users.create(params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-        } else {
-          if (QMCONFIG.debug) console.log('User', res);
-        }
+    login: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.login(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+            
+          } else {
+            if (QMCONFIG.debug) console.log('User', res);
+
+            session.setAuthParams(params);
+            session.setExpirationTime();
+
+            callback(res);
+          }
+        });
       });
-    }
+    },
+
+    // createUser: function(params, callback) {
+    //   QB.users.create(params, function(err, res) {
+    //     if (err) {
+    //       if (QMCONFIG.debug) console.log(err.detail);
+    //     } else {
+    //       if (QMCONFIG.debug) console.log('User', res);
+    //     }
+    //   });
+    // },
+
+    // updateUser: function(params, callback) {
+    //   QB.users.update(params, function(err, res) {
+    //     if (err) {
+    //       if (QMCONFIG.debug) console.log(err.detail);
+    //     } else {
+    //       if (QMCONFIG.debug) console.log('User', res);
+    //     }
+    //   });
+    // },
+
+    // getUser: function(params, callback) {
+    //   QB.users.get(params, function(err, res) {
+    //     if (err) {
+    //       if (QMCONFIG.debug) console.log(err.detail);
+    //     } else {
+    //       if (QMCONFIG.debug) console.log('User', res);
+    //     }
+    //   });
+    // }
 
   };
-})(Session);
+})();
 
-},{"./qbSession":5}],5:[function(require,module,exports){
+},{"./session":5}],5:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
- * QuickBlox Session Module
+ * Session Module
  *
  */
 
 module.exports = Session;
 
-function Session() {
-  this.token = null;
-  this.expirationTime = null;
-  this.isUserLevel = null;
+function Session(token, params) {
+  this.storage = {
+    token: token,
+    expirationTime: null,
+    authParams: params
+  };
 }
 
-Session.prototype.setSession = function(res) {
-  this.token = res.token;
-  this.expirationTime = this.setExpirationTime(res.updated_at);
-  this.isUserLevel = !!res.user_id;
+Session.prototype.setExpirationTime = function() {
+  var limitHours = 2,
+      d = new Date;
+
+  d.setHours(d.getHours() + limitHours);
+  this.storage.expirationTime = d.toISOString();
+
+  localStorage.setItem('QM.session', JSON.stringify(this.storage));
 };
 
-Session.prototype.setExpirationTime = function(date) {
-  var d = new Date(date);
-  d.setHours(d.getHours() + 2);
-  return d.toISOString();
+Session.prototype.setAuthParams = function(params) {
+  this.storage.authParams = params;
+  localStorage.setItem('QM.session', JSON.stringify(this.storage));
+};
+
+Session.prototype.destroy = function() {
+  this.storage = {};
+  localStorage.removeItem('QM.session');
 };
 
 },{}]},{},[3])
