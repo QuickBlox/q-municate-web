@@ -22,7 +22,7 @@ module.exports = (function() {
       } else {
         QB.init(token);
         session = new Session;
-        session.storage = JSON.parse(localStorage.getItem('QM.session'));
+        session.getStorage();
       }
     },
 
@@ -52,7 +52,7 @@ module.exports = (function() {
 
           fail(errMsg);
         } else {
-          if (QMCONFIG.debug) console.log('Session', res);
+          if (QMCONFIG.debug) console.log('QB SDK: Session is created', res);
 
           session = new Session(res.token, params);
           session.setExpirationTime();
@@ -62,14 +62,14 @@ module.exports = (function() {
       });
     },
 
-    login: function(params, callback) {
+    loginUser: function(params, callback) {
       this.checkSession(function(res) {
         QB.login(params, function(err, res) {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
-            
+
           } else {
-            if (QMCONFIG.debug) console.log('User', res);
+            if (QMCONFIG.debug) console.log('QB SDK: User has logged', res);
 
             session.setAuthParams(params);
             session.setExpirationTime();
@@ -80,35 +80,101 @@ module.exports = (function() {
       });
     },
 
-    // createUser: function(params, callback) {
-    //   QB.users.create(params, function(err, res) {
-    //     if (err) {
-    //       if (QMCONFIG.debug) console.log(err.detail);
-    //     } else {
-    //       if (QMCONFIG.debug) console.log('User', res);
-    //     }
-    //   });
-    // },
+    forgotPassword: function(email, callback) {
+      this.checkSession(function(res) {
+        QB.users.resetPassword(email, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
 
-    // updateUser: function(params, callback) {
-    //   QB.users.update(params, function(err, res) {
-    //     if (err) {
-    //       if (QMCONFIG.debug) console.log(err.detail);
-    //     } else {
-    //       if (QMCONFIG.debug) console.log('User', res);
-    //     }
-    //   });
-    // },
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent', res);
 
-    // getUser: function(params, callback) {
-    //   QB.users.get(params, function(err, res) {
-    //     if (err) {
-    //       if (QMCONFIG.debug) console.log(err.detail);
-    //     } else {
-    //       if (QMCONFIG.debug) console.log('User', res);
-    //     }
-    //   });
-    // }
+            session.setExpirationTime();
+            callback(res);
+          }
+        });
+      });
+    },
+
+    getUser: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.users.get(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: User is found', res);
+
+            session.setExpirationTime();
+            callback(res);
+          }
+        });
+      });
+    },
+
+    createUser: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.users.create(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
+
+            session.setExpirationTime();
+            callback(res);
+          }
+        });
+      });
+    },
+
+    updateUser: function(id, params, callback) {
+      this.checkSession(function(res) {
+        QB.users.update(id, params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
+
+            session.setExpirationTime();
+            callback(res);
+          }
+        });
+      });
+    },
+
+    createBlob: function(params, callbacck) {
+      this.checkSession(function(res) {
+        QB.content.createAndUpload(params, function(err, result) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+            
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
+
+            session.setExpirationTime();
+            callback(res);
+          }
+        });
+      });
+    },
+
+    getBlobUrl: function(id, callbacck) {
+      this.checkSession(function(res) {
+        QB.content.getFileUrl(id, function(err, result) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Blob url is found', res);
+
+            session.setExpirationTime();
+            callback(res);
+          }
+        });
+      });
+    }
 
   };
 })();

@@ -30,6 +30,10 @@ Session.prototype.setAuthParams = function(params) {
   localStorage.setItem('QM.session', JSON.stringify(this.storage));
 };
 
+Session.prototype.getStorage = function() {
+  this.storage = JSON.parse(localStorage.getItem('QM.session'));
+};
+
 Session.prototype.destroy = function() {
   this.storage = {};
   localStorage.removeItem('QM.session');
