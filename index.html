@@ -47,17 +47,17 @@
         </header>
         <form class="l-form l-flexbox" action="#">
           <span class="form-text form-text_error is-invisible">Error</span>
-          <input id="signupName" class="form-input regexp-name" type="text" placeholder="Name" required>
-          <input id="signupEmail" class="form-input regexp-email" type="email" placeholder="Email" required>
+          <input id="signup-full_name" class="form-input pattern-name" type="text" placeholder="Name" required>
+          <input id="signup-email" class="form-input" type="email" placeholder="Email" required>
           <div class="chroma-hash">
-            <input id="signupPass" class="form-input regexp-pass" type="password" placeholder="Password" required>
+            <input id="signup-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
           </div>
           <div class="form-file">
             <div id="defAvatar" class="form-file-custom user">
               <img class="user-avatar" src="" alt="user">
               <span class="user-name"></span>
             </div>
-            <input id="signupAvatar" class="form-file-default" type="file" accept="image/*">
+            <input id="signup-avatar" class="form-file-default" type="file" accept="image/*">
           </div>
           <button id="signupForm" class="form-button form-button_signup form-button_qb">Sign Up</button>
           <span class="form-text form-text_signup">
@@ -92,15 +92,15 @@
         </header>
         <form class="l-form l-flexbox" action="#">
           <span class="form-text form-text_error is-invisible">Error</span>
-          <input id="emailField" class="form-input" type="email" placeholder="Email" required>
+          <input id="login-email" class="form-input" type="email" placeholder="Email" required>
           <div class="chroma-hash">
-            <input id="passField" class="form-input" type="password" placeholder="Password" required>
+            <input id="login-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
           </div>
-          <label class="form-label" for="remember">
+          <label class="form-label" for="login-remember">
             Remember me
-            <input class="form-checkbox" id="remember" type="checkbox" checked>
+            <input id="login-remember" class="form-checkbox" type="checkbox" checked>
           </label>
-          <button id="dataLogin" class="form-button form-button_qb">Log In</button>
+          <button id="loginForm" class="form-button form-button_qb">Log In</button>
           <button id="loginFB" class="form-button form-button_fb"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
           <a id="forgot" class="form-text form-text_forgot" href="#">Forgot password?</a>
         </form>

@@ -6,7 +6,7 @@
  */
 
 var UserActions = require('./actions'),
-    QBApiCalls = require('./qbApi');
+    QBApiCalls = require('./qbApiCalls');
 
 var APP = {
   init: function() {
@@ -33,9 +33,8 @@ var APP = {
     var FULL_NAME = "[^><;]{3,50}";
     var ALLNUM_ALLPUNCT = "[A-Za-z0-9`~!@#%&=_<>;:,'" + '\\"' + "\\.\\$\\^\\*\\-\\+\\\\\/\\|\\(\\)\\[\\]\\{\\}\\?]{8,40}";
 
-    $('.regexp-name').attr({pattern: FULL_NAME, title: 'Minimum length is 3 symbols, maximum is 50'});
-    $('.regexp-email').attr('title', 'Should look like an email address');
-    $('.regexp-pass').attr({pattern: ALLNUM_ALLPUNCT, title: 'Should contain alphanumeric and punctuation characters only. Minimum length is 8 symbols, maximum is 40'});
+    $('.pattern-name').attr('pattern', FULL_NAME);
+    $('.pattern-pass').attr('pattern', ALLNUM_ALLPUNCT);
   }
 };
 

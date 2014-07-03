@@ -45,6 +45,7 @@ module.exports = (function() {
 
           if (err.code === 401) {
             errMsg = parseErr.errors[0];
+            $('section:visible input:not(:checkbox)').addClass('is-error');
           } else {
             errMsg = parseErr.errors.base[0];
             errMsg += '. ' + QMCONFIG.errors.session;
@@ -118,6 +119,11 @@ module.exports = (function() {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
+            var errMsg = 'This email ';
+            errMsg += JSON.parse(err.detail).errors.email[0];
+            $('section:visible input[type="email"]').addClass('is-error').focus();
+            
+            fail(errMsg);
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
 
@@ -149,7 +155,7 @@ module.exports = (function() {
         QB.content.createAndUpload(params, function(err, result) {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
-            
+
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
 

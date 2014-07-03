@@ -5,9 +5,9 @@
  *
  */
 
-var Auth = require('./auth');
+var User = require('./user');
 
-module.exports = (function(Auth) {
+module.exports = (function() {
 
   var switchPage = function(page) {
     $('body, .l-wrapper').removeClass('is-welcome');
@@ -42,7 +42,13 @@ module.exports = (function(Auth) {
       $('#signupForm').on('click', function(event) {
         if (QMCONFIG.debug) console.log('create user');
         event.preventDefault();
-        self.signupForm($(this));
+        self.signupForm();
+      });
+
+      $('#loginForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('authorize user');
+        event.preventDefault();
+        self.loginForm();
       });
     },
 
@@ -61,18 +67,34 @@ module.exports = (function(Auth) {
     },
 
     signupQB: function() {
-      switchPage($('#signUpPage'));
+      var obj = $('#signUpPage');
+      switchPage(obj);
+      obj.find('input:first').focus();
     },
 
     loginQB: function() {
-      switchPage($('#loginPage'));
+      var obj = $('#loginPage');
+      switchPage(obj);
+      obj.find('input:first').focus();
     },
 
-    signupForm: function(objDom) {
-      var auth = new Auth;
-      if (QMCONFIG.debug) console.log('Auth', auth);
-      auth.signup(objDom);
+    signupForm: function() {
+      var user = new User;
+      if (QMCONFIG.debug) console.log('User', user);
+
+      $('.form-text_error').addClass('is-invisible');
+      $('.is-error').removeClass('is-error');
+      user.signup();
+    },
+
+    loginForm: function() {
+      var user = new User;
+      if (QMCONFIG.debug) console.log('User', user);
+
+      $('.form-text_error').addClass('is-invisible');
+      $('.is-error').removeClass('is-error');
+      user.login();
     }
 
   };
-})(Auth);
+})();

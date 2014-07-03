@@ -6,9 +6,9 @@
  *
  */
 
-var Auth = require('./auth');
+var User = require('./user');
 
-module.exports = (function(Auth) {
+module.exports = (function() {
 
   var switchPage = function(page) {
     $('body, .l-wrapper').removeClass('is-welcome');
@@ -43,7 +43,13 @@ module.exports = (function(Auth) {
       $('#signupForm').on('click', function(event) {
         if (QMCONFIG.debug) console.log('create user');
         event.preventDefault();
-        self.signupForm($(this));
+        self.signupForm();
+      });
+
+      $('#loginForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('authorize user');
+        event.preventDefault();
+        self.loginForm();
       });
     },
 
@@ -62,121 +68,39 @@ module.exports = (function(Auth) {
     },
 
     signupQB: function() {
-      switchPage($('#signUpPage'));
+      var obj = $('#signUpPage');
+      switchPage(obj);
+      obj.find('input:first').focus();
     },
 
     loginQB: function() {
-      switchPage($('#loginPage'));
+      var obj = $('#loginPage');
+      switchPage(obj);
+      obj.find('input:first').focus();
     },
 
-    signupForm: function(objDom) {
-      var auth = new Auth;
-      if (QMCONFIG.debug) console.log('Auth', auth);
-      auth.signup(objDom);
+    signupForm: function() {
+      var user = new User;
+      if (QMCONFIG.debug) console.log('User', user);
+
+      $('.form-text_error').addClass('is-invisible');
+      $('.is-error').removeClass('is-error');
+      user.signup();
+    },
+
+    loginForm: function() {
+      var user = new User;
+      if (QMCONFIG.debug) console.log('User', user);
+
+      $('.form-text_error').addClass('is-invisible');
+      $('.is-error').removeClass('is-error');
+      user.login();
     }
 
   };
-})(Auth);
+})();
 
-},{"./auth":2}],2:[function(require,module,exports){
-/*
- * Q-municate chat application
- *
- * Authorization Module
- *
- */
-
-module.exports = Auth;
-var QBApiCalls = require('./qbApi');
-
-function Auth() {
-  this.signupParams = {
-    fullName: $('#signupName').val().trim(),
-    email: $('#signupEmail').val().trim(),
-    password: $('#signupPass').val().trim(),
-    avatar: $('#signupAvatar')[0].files[0] || null
-  };
-};
-
-Auth.prototype.signup = function(objDom) {
-  var self = this;
-
-  QBApiCalls.createSession({}, function(){});
-  //validate(objDom);
-
-  /*QBApiCalls.createSession({},
-    function() {
-      QBApiCalls.createUser({
-        full_name: self.signupParams.fullName,
-        email: self.signupParams.email,
-        password: self.signupParams.password
-      });
-    },
-    function(errMsg) {
-      fail(objDom, errMsg);
-    }
-  );*/
-};
-
-// Private methods
-function validate(objDom) {
-  var form = objDom.parents('form');
-
-  form.find('input').each(function() {
-    this.value = this.value.trim();
-
-    if (!this.checkValidity()) {
-      console.log(this.checkValidity());
-      if (this.validity.valueMissing) {
-        fail(objDom, 'Name is required');
-      } else if (this.validity.typeMismatch) {
-        fail(objDom, '');
-      } else if (this.validity.patternMismatch) {
-        if (this.value.length < 3 || this.value.length > 50)
-          fail(objDom, 'Minimum length is 3 symbols, maximum is 50');
-        else
-          fail(objDom, 'Bad format');
-      }
-
-      $(this).addClass('is-error');
-
-      return false;
-    }
-  });
-
-// // console.log(form.elements.length);
-//   for (i = 0, len = form.elements.length; i < len; i++) {
-//     elem = form.elements[i];
-//     console.log(elem);
-//     //if (elem.localName !== 'input') continue;
-
-    
-//   }
-  /*form.find('input').each(function(i) {
-    this.value = this.value.trim();
-    if (i === 2) {
-      console.log(this);
-      console.log(this.value);
-      console.log(this.checkValidity());
-      console.log(this.validity);
-      console.log(this.validationMessage);
-    }
-  });*/
-  /*form.noValidate = true;
-  form.onsubmit = function(){
-    for (var f = 0; f < form.elements.length; f++) {
-      var field = form.elements[f];
-      console.log(field.validity);
-    }
-    return false;
-  };*/
-}
-
-function fail(objDom, errMsg) {
-  objDom.parents('form').find('.form-text_error').removeClass('is-invisible').text(errMsg);
-}
-
-},{"./qbApi":4}],3:[function(require,module,exports){
+},{"./user":5}],2:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -185,7 +109,7 @@ function fail(objDom, errMsg) {
  */
 
 var UserActions = require('./actions'),
-    QBApiCalls = require('./qbApi');
+    QBApiCalls = require('./qbApiCalls');
 
 var APP = {
   init: function() {
@@ -212,9 +136,8 @@ var APP = {
     var FULL_NAME = "[^><;]{3,50}";
     var ALLNUM_ALLPUNCT = "[A-Za-z0-9`~!@#%&=_<>;:,'" + '\\"' + "\\.\\$\\^\\*\\-\\+\\\\\/\\|\\(\\)\\[\\]\\{\\}\\?]{8,40}";
 
-    $('.regexp-name').attr({pattern: FULL_NAME, title: 'Minimum length is 3 symbols, maximum is 50'});
-    $('.regexp-email').attr('title', 'Should look like an email address');
-    $('.regexp-pass').attr({pattern: ALLNUM_ALLPUNCT, title: 'Should contain alphanumeric and punctuation characters only. Minimum length is 8 symbols, maximum is 40'});
+    $('.pattern-name').attr('pattern', FULL_NAME);
+    $('.pattern-pass').attr('pattern', ALLNUM_ALLPUNCT);
   }
 };
 
@@ -222,7 +145,7 @@ $(document).ready(function() {
   APP.init();
 });
 
-},{"./actions":1,"./qbApi":4}],4:[function(require,module,exports){
+},{"./actions":1,"./qbApiCalls":3}],3:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -270,6 +193,7 @@ module.exports = (function() {
 
           if (err.code === 401) {
             errMsg = parseErr.errors[0];
+            $('section:visible input:not(:checkbox)').addClass('is-error');
           } else {
             errMsg = parseErr.errors.base[0];
             errMsg += '. ' + QMCONFIG.errors.session;
@@ -343,6 +267,11 @@ module.exports = (function() {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
+            var errMsg = 'This email ';
+            errMsg += JSON.parse(err.detail).errors.email[0];
+            $('section:visible input[type="email"]').addClass('is-error').focus();
+            
+            fail(errMsg);
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
 
@@ -374,7 +303,7 @@ module.exports = (function() {
         QB.content.createAndUpload(params, function(err, result) {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
-            
+
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
 
@@ -404,7 +333,7 @@ module.exports = (function() {
   };
 })();
 
-},{"./session":5}],5:[function(require,module,exports){
+},{"./session":4}],4:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -446,4 +375,121 @@ Session.prototype.destroy = function() {
   localStorage.removeItem('QM.session');
 };
 
-},{}]},{},[3])
+},{}],5:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * User Module
+ *
+ */
+
+var QBApiCalls = require('./qbApiCalls');
+module.exports = User;
+
+function User() {
+  this.valid = true;
+};
+
+User.prototype.signup = function() {
+  var form = $('section:visible form'),
+      self = this,
+      params;
+
+  if (validate(form, this)) {
+    params = {
+      full_name: self.full_name,
+      email: self.email,
+      password: self.password
+    };
+
+    QBApiCalls.createSession({}, function() {
+      QBApiCalls.createUser(params, function() {
+
+      });
+    });
+  }
+};
+
+User.prototype.login = function() {
+  var form = $('section:visible form'),
+      self = this,
+      params;
+
+  if (validate(form, this)) {
+    params = {
+      email: self.email,
+      password: self.password
+    };
+
+    QBApiCalls.createSession(params, function() {
+
+    });
+  }
+};
+
+// Private methods
+function validate(form, user) {
+  var maxSize = QMCONFIG.maxLimitFile * 1024 * 1024,
+      remember = form.find('input:checkbox')[0],
+      file = form.find('input:file')[0],
+      fieldName, errName,
+      value, errMsg;
+
+  form.find('input:not(:file, :checkbox)').each(function() {
+    fieldName = this.id.split('-')[1];
+    errName = this.placeholder;
+    value = this.value.trim();
+
+    if (this.checkValidity()) {
+
+      user[fieldName] = value;
+
+    } else {
+
+      if (this.validity.valueMissing) {
+        errMsg = errName + ' is required';
+      } else if (this.validity.typeMismatch) {
+        errMsg = QMCONFIG.errors.invalidEmail;
+      } else if (this.validity.patternMismatch && errName === 'Name') {
+        errMsg = QMCONFIG.errors.invalidName;
+      } else if (this.validity.patternMismatch && errName === 'Password') {
+        errMsg = QMCONFIG.errors.invalidPass;
+      }
+
+      fail(user, errMsg);
+      $(this).addClass('is-error').focus();
+
+      return false;
+    }
+  });
+
+  if (user.valid && file && file.files[0]) {
+    file = file.files[0];
+
+    if (file.type.indexOf('image/') === -1) {
+      errMsg = QMCONFIG.errors.avatarType;
+      fail(user, errMsg);
+    } else if (file.name.length > 100) {
+      errMsg = QMCONFIG.errors.fileName;
+      fail(user, errMsg);
+    } else if (file.size > maxSize) {
+      errMsg = QMCONFIG.errors.fileSize;
+      fail(user, errMsg);
+    } else {
+      user.tempBlob = file;
+    }
+  }
+
+  if (user.valid && remember) {
+    user.remember = remember.checked;
+  }
+
+  return user.valid;
+}
+
+function fail(user, errMsg) {
+  user.valid = false;
+  $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
+}
+
+},{"./qbApiCalls":3}]},{},[2])
