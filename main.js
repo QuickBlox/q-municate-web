@@ -298,30 +298,14 @@ module.exports = (function() {
       });
     },
 
-    createBlob: function(params, callbacck) {
+    createBlob: function(params, callback) {
       this.checkSession(function(res) {
-        QB.content.createAndUpload(params, function(err, result) {
+        QB.content.createAndUpload(params, function(err, res) {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
-
-            session.setExpirationTime();
-            callback(res);
-          }
-        });
-      });
-    },
-
-    getBlobUrl: function(id, callbacck) {
-      this.checkSession(function(res) {
-        QB.content.getFileUrl(id, function(err, result) {
-          if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
-
-          } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Blob url is found', res);
 
             session.setExpirationTime();
             callback(res);
@@ -388,7 +372,7 @@ module.exports = User;
 
 function User() {
   this.valid = true;
-};
+}
 
 User.prototype.signup = function() {
   var form = $('section:visible form'),
@@ -404,7 +388,15 @@ User.prototype.signup = function() {
 
     QBApiCalls.createSession({}, function() {
       QBApiCalls.createUser(params, function() {
+        delete params.full_name;
+        
+        QBApiCalls.loginUser(params, function(user) {
+          self.id = user.id;
+          self.blob_id = null;
+          self.avatar = null;
 
+          if (self.tempBlob) self.uploadAvatar();
+        });
       });
     });
   }
@@ -421,13 +413,37 @@ User.prototype.login = function() {
       password: self.password
     };
 
-    QBApiCalls.createSession(params, function() {
+    QBApiCalls.createSession(params, function(session) {
+      QBApiCalls.getUser(session.user_id, function(user) {
+        self.id = user.id;
+        self.full_name = user.full_name;
+        self.blob_id = user.blob_id;
+        self.avatar = user.custom_data;
 
+        if (self.remember) self.rememberMe();
+      });
     });
   }
 };
 
-// Private methods
+User.prototype.uploadAvatar = function() {
+  var self = this;
+
+  QBApiCalls.createBlob({file: this.tempBlob, 'public': true}, function(blob) {
+    QBApiCalls.updateUser(self.id, {blob_id: blob.id, custom_data: blob.path}, function(user) {
+      self.blob_id = user.blob_id;
+      self.avatar = user.custom_data;
+      delete self.tempBlob;
+    });
+  });
+};
+
+User.prototype.rememberMe = function() {
+
+};
+
+/* Private
+---------------------------------------------------------------------- */
 function validate(form, user) {
   var maxSize = QMCONFIG.maxLimitFile * 1024 * 1024,
       remember = form.find('input:checkbox')[0],

@@ -150,30 +150,14 @@ module.exports = (function() {
       });
     },
 
-    createBlob: function(params, callbacck) {
+    createBlob: function(params, callback) {
       this.checkSession(function(res) {
-        QB.content.createAndUpload(params, function(err, result) {
+        QB.content.createAndUpload(params, function(err, res) {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
-
-            session.setExpirationTime();
-            callback(res);
-          }
-        });
-      });
-    },
-
-    getBlobUrl: function(id, callbacck) {
-      this.checkSession(function(res) {
-        QB.content.getFileUrl(id, function(err, result) {
-          if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
-
-          } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Blob url is found', res);
 
             session.setExpirationTime();
             callback(res);
