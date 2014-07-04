@@ -51,9 +51,14 @@
     height: 5.2vh;
   }
 
-.l-form {
+.l-form,
+.l-spinner {
   width: 48vh;
   max-width: 480px;
+}
+
+.l-spinner {
+  height: calc(100% - 40vh);
 }
 
 .l-welcome-footer {

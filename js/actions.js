@@ -9,6 +9,11 @@ var User = require('./user');
 
 module.exports = (function() {
 
+  var switchPage = function(page) {
+    $('body, .l-wrapper').removeClass('is-welcome');
+    page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
+  };
+
   var clearErrors = function() {
     $('.form-text_error').addClass('is-invisible');
     $('.is-error').removeClass('is-error');
@@ -27,8 +32,9 @@ module.exports = (function() {
         self.changeInputFile($(this));
       });
 
-      $('#signupFB, #loginFB').on('click', function() {
+      $('#signupFB, #loginFB').on('click', function(event) {
         if (QMCONFIG.debug) console.log('connect with FB');
+        event.preventDefault();
         self.connectFB();
       });
 
@@ -56,9 +62,16 @@ module.exports = (function() {
       });
     },
 
-    switchPage: function(page) {
-      $('body, .l-wrapper').removeClass('is-welcome');
-      page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
+    createSpinner: function() {
+      var spinnerBlock = '<div class="l-spinner"><div class="spinner">';
+      spinnerBlock += '<div class="spinner-dot1"></div><div class="spinner-dot2"></div>';
+      spinnerBlock += '</div></div>';
+
+      $('section:visible form').addClass('is-hidden').after(spinnerBlock);
+    },
+
+    removeSpinner: function() {
+      $('section:visible form').removeClass('is-hidden').next('.l-spinner').remove();
     },
 
     changeInputFile: function(objDom) {
@@ -76,12 +89,12 @@ module.exports = (function() {
     },
 
     signupQB: function() {
-      this.switchPage($('#signUpPage'));
+      switchPage($('#signUpPage'));
       inputFocus();
     },
 
     loginQB: function() {
-      this.switchPage($('#loginPage'));
+      switchPage($('#loginPage'));
       inputFocus();
     },
 

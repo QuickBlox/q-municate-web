@@ -6,9 +6,11 @@
  */
 
 var QBApiCalls = require('./qbApiCalls');
+
 module.exports = User;
 
 function User() {
+  this._actions = require('./actions');
   this.valid = true;
 }
 
@@ -18,6 +20,9 @@ User.prototype.signup = function() {
       params;
 
   if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    self._actions.createSpinner();
+
     params = {
       full_name: self.full_name,
       email: self.email,
@@ -31,8 +36,6 @@ User.prototype.signup = function() {
         delete params.tag_list;
 
         QBApiCalls.loginUser(params, function(user) {
-          if (QMCONFIG.debug) console.log('User', self);
-
           self.id = user.id;
           self.tag = user.user_tags;
           self.blob_id = null;
@@ -51,6 +54,9 @@ User.prototype.login = function() {
       params;
 
   if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    self._actions.createSpinner();
+
     params = {
       email: self.email,
       password: self.password
@@ -58,8 +64,6 @@ User.prototype.login = function() {
 
     QBApiCalls.createSession(params, function(session) {
       QBApiCalls.getUser(session.user_id, function(user) {
-        if (QMCONFIG.debug) console.log('User', self);
-        
         self.id = user.id;
         self.full_name = user.full_name;
         self.tag = user.user_tags;

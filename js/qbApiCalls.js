@@ -11,6 +11,8 @@ module.exports = (function() {
   var session;
 
   var fail = function(errMsg) {
+    var UserActions = require('./actions');
+    UserActions.removeSpinner();
     $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
   };
 

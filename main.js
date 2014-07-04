@@ -10,6 +10,11 @@ var User = require('./user');
 
 module.exports = (function() {
 
+  var switchPage = function(page) {
+    $('body, .l-wrapper').removeClass('is-welcome');
+    page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
+  };
+
   var clearErrors = function() {
     $('.form-text_error').addClass('is-invisible');
     $('.is-error').removeClass('is-error');
@@ -28,8 +33,9 @@ module.exports = (function() {
         self.changeInputFile($(this));
       });
 
-      $('#signupFB, #loginFB').on('click', function() {
+      $('#signupFB, #loginFB').on('click', function(event) {
         if (QMCONFIG.debug) console.log('connect with FB');
+        event.preventDefault();
         self.connectFB();
       });
 
@@ -57,9 +63,16 @@ module.exports = (function() {
       });
     },
 
-    switchPage: function(page) {
-      $('body, .l-wrapper').removeClass('is-welcome');
-      page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
+    createSpinner: function() {
+      var spinnerBlock = '<div class="l-spinner"><div class="spinner">';
+      spinnerBlock += '<div class="spinner-dot1"></div><div class="spinner-dot2"></div>';
+      spinnerBlock += '</div></div>';
+
+      $('section:visible form').addClass('is-hidden').after(spinnerBlock);
+    },
+
+    removeSpinner: function() {
+      $('section:visible form').removeClass('is-hidden').next('.l-spinner').remove();
     },
 
     changeInputFile: function(objDom) {
@@ -77,12 +90,12 @@ module.exports = (function() {
     },
 
     signupQB: function() {
-      this.switchPage($('#signUpPage'));
+      switchPage($('#signUpPage'));
       inputFocus();
     },
 
     loginQB: function() {
-      this.switchPage($('#loginPage'));
+      switchPage($('#loginPage'));
       inputFocus();
     },
 
@@ -160,6 +173,8 @@ module.exports = (function() {
   var session;
 
   var fail = function(errMsg) {
+    var UserActions = require('./actions');
+    UserActions.removeSpinner();
     $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
   };
 
@@ -322,7 +337,7 @@ module.exports = (function() {
   };
 })();
 
-},{"./session":4}],4:[function(require,module,exports){
+},{"./actions":1,"./session":4}],4:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -373,9 +388,11 @@ Session.prototype.destroy = function() {
  */
 
 var QBApiCalls = require('./qbApiCalls');
+
 module.exports = User;
 
 function User() {
+  this._actions = require('./actions');
   this.valid = true;
 }
 
@@ -385,6 +402,9 @@ User.prototype.signup = function() {
       params;
 
   if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    self._actions.createSpinner();
+
     params = {
       full_name: self.full_name,
       email: self.email,
@@ -398,8 +418,6 @@ User.prototype.signup = function() {
         delete params.tag_list;
 
         QBApiCalls.loginUser(params, function(user) {
-          if (QMCONFIG.debug) console.log('User', self);
-
           self.id = user.id;
           self.tag = user.user_tags;
           self.blob_id = null;
@@ -418,6 +436,9 @@ User.prototype.login = function() {
       params;
 
   if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    self._actions.createSpinner();
+
     params = {
       email: self.email,
       password: self.password
@@ -425,8 +446,6 @@ User.prototype.login = function() {
 
     QBApiCalls.createSession(params, function(session) {
       QBApiCalls.getUser(session.user_id, function(user) {
-        if (QMCONFIG.debug) console.log('User', self);
-        
         self.id = user.id;
         self.full_name = user.full_name;
         self.tag = user.user_tags;
@@ -521,4 +540,4 @@ function fail(user, errMsg) {
   $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
 }
 
-},{"./qbApiCalls":3}]},{},[2])
+},{"./actions":1,"./qbApiCalls":3}]},{},[2])
