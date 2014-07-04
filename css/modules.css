@@ -1,3 +1,5 @@
+@import url(spinner.css);
+
 /* download */
 .download {
   position: absolute;
@@ -125,8 +127,9 @@
     line-height: 1.8vh;
   }
   .form-text_error {
+    margin-bottom: 1.5vh;
     font-size: 1.6vh;
-    line-height: 1.6vh;
+    line-height: 2vh;
     color: #c03d3d;
   }
   .form-text_success {
@@ -134,17 +137,25 @@
   }
 
 /* footer-links */
-.footer-links-item {
-  display: inline-block;
-  margin-right: 3vh;
+.footer-links {
+  font-size: 12px;
 }
-.footer-links-item:last-child {
-  margin-right: 0;
+.footer-links_welcome {
+  font-size: 1.8vh;
 }
-  .footer-links-item a {
-    font-size: 1.8vh;
-    color: #999;
+  .footer-links-item {
+    display: inline-block;
+    margin-right: 30px;
   }
+  .footer-links_welcome .footer-links-item {
+    margin-right: 3vh;
+  }
+  .footer-links-item:last-child {
+    margin-right: 0;
+  }
+    .footer-links-item a {
+      color: #999;
+    }
 
 /* Chroma-Hash */
 .chroma-hash {
@@ -158,7 +169,7 @@
     left: auto !important;
     right: 1px;
     width: 1vh !important;
-    height: 4.3vh !important;
+    height: 4.2vh !important;
   }
   .chroma-hash label:nth-child(1) {
     margin: 1px 0 0 0 !important;
@@ -186,9 +197,14 @@
   border-radius: 50%;
 }
 .user-name {
+  display: inline-block;
+  max-width: 65%;
+  overflow: hidden;
   font-size: 2vh;
-  line-height: 6vh;
+  line-height: 2.4vh;
   color: #999;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* header */

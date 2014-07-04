@@ -51,21 +51,23 @@
     height: 5.2vh;
   }
 
-.l-form {
+.l-form,
+.l-spinner {
   width: 48vh;
   max-width: 480px;
 }
 
+.l-spinner {
+  height: calc(100% - 40vh);
+}
+
 .l-welcome-footer {
   height: 18vh;
-  margin-bottom: 2vh;
+  padding-bottom: 2.5vh;
 }
-  .l-welcome-footer-logo {
-    margin-bottom: 4vh;
+  .l-welcome-footer-logo img {
+    height: 8.5vh;
   }
-   .l-welcome-footer-logo img {
-      height: 8.5vh;
-    }
 
 .l-container {
   height: calc(100% - 60px);

@@ -17,54 +17,15 @@
         </div>
       </header>
       <div class="l-form l-flexbox">
-        <button id="facebook" class="form-button form-button_welcome form-button_fb"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
-        <button id="signup" class="form-button form-button_welcome form-button_qb">Sign Up with Email</button>
-        <a id="login" class="form-text form-text_welcome" href="#">Already have an account?</a>
+        <button id="signupFB" class="form-button form-button_welcome form-button_fb"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
+        <button id="signupQB" class="form-button form-button_welcome form-button_qb">Sign Up with Email</button>
+        <a id="loginQB" class="form-text form-text_welcome" href="#">Already have an account?</a>
       </div>
       <footer class="l-welcome-footer l-flexbox">
         <div class="l-welcome-footer-logo">
           <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox.png" alt="QuickBlox"></a>
         </div>
-        <nav class="footer-links">
-          <ul>
-            <li class="footer-links-item"><a href="#">Support</a></li>
-            <li class="footer-links-item"><a href="#">FAQ</a></li>
-            <li class="footer-links-item"><a href="#">Help</a></li>
-          </ul>
-        </nav>
-      </footer>
-    </section>
-    
-    <section id="loginPage" class="l-page is-hidden">
-      <div class="l-container l-flexbox">
-        <header class="l-welcome-header l-flexbox">
-          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
-          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
-          <div class="download">
-            <a class="download-app" href="#"><img src="images/app-android.png" alt="download Q-municate Android"></a>
-            <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
-          </div>
-        </header>
-        <form class="l-form l-flexbox" action="#">
-          <span class="form-text form-text_error is-invisible">Test</span>
-          <input id="emailField" class="form-input" type="email" placeholder="Email" required>
-          <div class="chroma-hash">
-            <input id="passField" class="form-input" type="password" placeholder="Password" required>
-          </div>
-          <label class="form-label" for="remember">
-            Remember me
-            <input class="form-checkbox" id="remember" type="checkbox" checked>
-          </label>
-          <button id="dataLogin" class="form-button form-button_qb">Log In</button>
-          <button id="facebook2" class="form-button form-button_fb"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
-          <a id="forgot" class="form-text form-text_forgot" href="#">Forgot password?</a>
-        </form>
-      </div>
-      <footer class="l-footer l-flexbox l-flexbox_row">
-        <div class="footer-logo">
-          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
-        </div>
-        <nav class="footer-links">
+        <nav class="footer-links footer-links_welcome">
           <ul>
             <li class="footer-links-item"><a href="#">Support</a></li>
             <li class="footer-links-item"><a href="#">FAQ</a></li>
@@ -85,24 +46,63 @@
           </div>
         </header>
         <form class="l-form l-flexbox" action="#">
-          <span class="form-text form-text_error is-invisible">Test</span>
-          <input id="name" class="form-input" type="text" placeholder="Name" required>
-          <input id="email" class="form-input" type="email" placeholder="Email" required>
+          <span class="form-text form-text_error is-invisible">Error</span>
+          <input id="signup-full_name" class="form-input pattern-name" type="text" placeholder="Name" required>
+          <input id="signup-email" class="form-input" type="email" placeholder="Email" required>
           <div class="chroma-hash">
-            <input id="pass" class="form-input" type="password" placeholder="Password" required>
+            <input id="signup-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
           </div>
           <div class="form-file">
-            <div class="form-file-custom user">
-              <img class="user-avatar" src="images/ava-single.png" alt="user">
-              <span class="user-name">Choose user picture</span>
+            <div id="defAvatar" class="form-file-custom user">
+              <img class="user-avatar" src="" alt="user">
+              <span class="user-name"></span>
             </div>
-            <input class="form-file-default" type="file">
+            <input id="signup-avatar" class="form-file-default" type="file" accept="image/*">
           </div>
-          <button id="dataSignup" class="form-button form-button_signup form-button_qb">Sign Up</button>
+          <button id="signupForm" class="form-button form-button_signup form-button_qb">Sign Up</button>
           <span class="form-text form-text_signup">
             By clicking Sign Up, you agree to Q-MUNICATE <b>User Agreement</b>,<br>
             <b>Privacy Policy</b> and <b>Cookie Policy</b>.
           </span>
+        </form>
+      </div>
+      <footer class="l-footer l-flexbox l-flexbox_row">
+        <div class="footer-logo">
+          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
+        </div>
+        <nav class="footer-links">
+          <ul>
+            <li class="footer-links-item"><a href="#">Support</a></li>
+            <li class="footer-links-item"><a href="#">FAQ</a></li>
+            <li class="footer-links-item"><a href="#">Help</a></li>
+          </ul>
+        </nav>
+      </footer>
+    </section>
+
+    <section id="loginPage" class="l-page is-hidden">
+      <div class="l-container l-flexbox">
+        <header class="l-welcome-header l-flexbox">
+          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
+          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
+          <div class="download">
+            <a class="download-app" href="#"><img src="images/app-android.png" alt="download Q-municate Android"></a>
+            <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
+          </div>
+        </header>
+        <form class="l-form l-flexbox" action="#">
+          <span class="form-text form-text_error is-invisible">Error</span>
+          <input id="login-email" class="form-input" type="email" placeholder="Email" required>
+          <div class="chroma-hash">
+            <input id="login-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
+          </div>
+          <label class="form-label" for="login-remember">
+            Remember me
+            <input id="login-remember" class="form-checkbox" type="checkbox" checked>
+          </label>
+          <button id="loginForm" class="form-button form-button_qb">Log In</button>
+          <button id="loginFB" class="form-button form-button_fb"><img class="form-button-icon" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
+          <a id="forgot" class="form-text form-text_forgot" href="#">Forgot password?</a>
         </form>
       </div>
       <footer class="l-footer l-flexbox l-flexbox_row">
@@ -138,42 +138,9 @@
             Please enter your email address below<br>
             and we will send you a link to reset your password.
           </span>
-          <span class="form-text form-text_error is-invisible">Test</span>
+          <span class="form-text form-text_error is-invisible">Error</span>
           <input class="form-input" type="email" placeholder="Email" required>
           <button class="form-button form-button_reset form-button_qb">Send Verification Email</button>
-        </form>
-      </div>
-      <footer class="l-footer l-flexbox l-flexbox_row">
-        <div class="footer-logo">
-          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
-        </div>
-        <nav class="footer-links">
-          <ul>
-            <li class="footer-links-item"><a href="#">Support</a></li>
-            <li class="footer-links-item"><a href="#">FAQ</a></li>
-            <li class="footer-links-item"><a href="#">Help</a></li>
-          </ul>
-        </nav>
-      </footer>
-    </section>
-
-    <section id="resetPage" class="l-page is-hidden">
-      <div class="l-container l-flexbox l-flexbox_flexstart">
-        <header class="l-welcome-header l-flexbox">
-          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
-          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
-          <div class="download">
-            <a class="download-app" href="#"><img src="images/app-android.png" alt="download Q-municate Android"></a>
-            <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
-          </div>
-        </header>
-        <form class="l-form l-flexbox" action="#">
-          <h3 class="form-header">Reset your password</h3>
-          <span class="form-text form-text_error is-invisible">Test</span>
-          <div class="chroma-hash">
-            <input class="form-input" type="password" placeholder="New password" required>
-          </div>
-          <button class="form-button form-button_reset form-button_qb">Reset password</button>
         </form>
       </div>
       <footer class="l-footer l-flexbox l-flexbox_row">
@@ -224,10 +191,10 @@
       </footer>
     </section>
   </div>
-  
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="lib/chroma-hash.js"></script>
-  <script src="lib/quickblox.js"></script>
+  <script src="lib/quickblox.min.js"></script>
 
   <script src="config.js"></script>
   <script src="main.js"></script>
