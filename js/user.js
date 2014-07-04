@@ -21,15 +21,18 @@ User.prototype.signup = function() {
     params = {
       full_name: self.full_name,
       email: self.email,
-      password: self.password
+      password: self.password,
+      tag_list: 'web'
     };
 
     QBApiCalls.createSession({}, function() {
       QBApiCalls.createUser(params, function() {
         delete params.full_name;
-        
+        delete params.tag_list;
+
         QBApiCalls.loginUser(params, function(user) {
           self.id = user.id;
+          self.tag = user.user_tags;
           self.blob_id = null;
           self.avatar = null;
 
@@ -55,6 +58,7 @@ User.prototype.login = function() {
       QBApiCalls.getUser(session.user_id, function(user) {
         self.id = user.id;
         self.full_name = user.full_name;
+        self.tag = user.user_tags;
         self.blob_id = user.blob_id;
         self.avatar = user.custom_data;
 

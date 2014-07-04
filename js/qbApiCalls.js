@@ -140,6 +140,11 @@ module.exports = (function() {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
+            var errMsg = 'This email ';
+            errMsg += JSON.parse(err.detail).errors.email[0];
+            $('section:visible input[type="email"]').addClass('is-error').focus();
+            
+            fail(errMsg);
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
 
