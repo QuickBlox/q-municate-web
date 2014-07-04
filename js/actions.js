@@ -74,6 +74,13 @@ module.exports = (function() {
       $('section:visible form').removeClass('is-hidden').next('.l-spinner').remove();
     },
 
+    processingForm: function(user) {
+      clearErrors();
+      this.removeSpinner();
+      $('#profile').find('img').attr('src', user.avatar).siblings('span').text(user.full_name);
+      switchPage($('#mainPage'));
+    },
+
     changeInputFile: function(objDom) {
       var URL = window.webkitURL || window.URL,
           file = objDom[0].files[0],

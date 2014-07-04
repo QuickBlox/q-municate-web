@@ -24,6 +24,11 @@
   -ms-flex-pack: start;
   justify-content: flex-start;
 }
+.l-flexbox_flexend {
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+}
 
 /* Layouts
 --------------------------------------------------*/
@@ -76,17 +81,17 @@
   border-top: 0;
 }
 
-.l-footer {
-  height: 60px;
-  padding: 0 5px;
-}
-
-/*.l-header {
+.l-header {
   height: 80px;
+  padding: 0 20px;
   border-bottom: 2px solid #00bf28;
 }
 
 .l-content {
-  height: 49.5vh;
+  height: calc(100% - 80px);
 }
-*/
+
+.l-footer {
+  height: 60px;
+  padding: 0 5px;
+}

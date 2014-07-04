@@ -52,6 +52,7 @@
   width: 100%;
   height: 6vh;
   margin: 2vh 0 4vh;
+  text-align: center;
 }
   .form-file:hover .form-file-custom {
     opacity: .6;
@@ -132,13 +133,16 @@
     line-height: 2vh;
     color: #c03d3d;
   }
-  .form-text_success {
-    color: #3c763d;
-  }
 
 /* footer-links */
+.footer-apps a {
+  display: block;
+}
+.footer-apps-ios {
+  margin-right: 25px;
+}
 .footer-links {
-  font-size: 12px;
+  font-size: 14px;
 }
 .footer-links_welcome {
   font-size: 1.8vh;
@@ -188,40 +192,17 @@
     margin: 1px 4vh 0 0 !important;
   }
 
-/* user */
-.user-avatar {
-  width: 6vh;
-  height: 6vh;
-  margin-right: 5px;
-  vertical-align: middle;
-  border-radius: 50%;
+/* header */
+.header-logo {
+  width: 249px;
 }
-.user-name {
-  display: inline-block;
-  max-width: 65%;
-  overflow: hidden;
-  font-size: 2vh;
-  line-height: 2.4vh;
-  color: #999;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.header-profile {
+  width: 70%;
 }
 
-/* header */
-/*.header-logo-img {
-  float: left;
-  margin: 0 20px; 
-}
-.header-logo-text {
-  float: left;
-  overflow: hidden;
-  font-size: 20px;
-  line-height: 48px;
-  color: #666;
-  text-transform: uppercase;
-}
-  
+/* invite */
 .invite {
+  margin-right: 50px;
   padding: 0 25px;
   line-height: 40px;
   text-align: center;
@@ -235,6 +216,41 @@
     background: url(../images/icon-invite.png) no-repeat left 0;
   }
 
-.footer-apps-ios {
-  margin-right: 25px;
-}*/
+/* user */
+.user {
+  display: -webkit-inline-flex; /* For Safari 6.1+ */
+  display: -ms-inline-flexbox; /* For IE10 */
+  display: inline-flex;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  max-width: 64%;
+}
+.user_signup {
+  max-width: 87%;
+}
+  .user-avatar {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 50%;
+  }
+  .user_signup .user-avatar {
+    width: 6vh;
+    min-width: 6vh;
+    height: 6vh;
+    margin-right: 1vh;
+  }
+  .user-name {
+    font-size: 16px;
+    color: #666;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .user_signup .user-name {
+    font-size: 2vh;
+    line-height: 2.4vh;
+    color: #999;
+  }
