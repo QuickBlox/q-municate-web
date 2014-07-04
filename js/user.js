@@ -31,6 +31,8 @@ User.prototype.signup = function() {
         delete params.tag_list;
 
         QBApiCalls.loginUser(params, function(user) {
+          if (QMCONFIG.debug) console.log('User', self);
+
           self.id = user.id;
           self.tag = user.user_tags;
           self.blob_id = null;
@@ -56,6 +58,8 @@ User.prototype.login = function() {
 
     QBApiCalls.createSession(params, function(session) {
       QBApiCalls.getUser(session.user_id, function(user) {
+        if (QMCONFIG.debug) console.log('User', self);
+        
         self.id = user.id;
         self.full_name = user.full_name;
         self.tag = user.user_tags;

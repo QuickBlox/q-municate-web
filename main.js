@@ -10,9 +10,13 @@ var User = require('./user');
 
 module.exports = (function() {
 
-  var switchPage = function(page) {
-    $('body, .l-wrapper').removeClass('is-welcome');
-    page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
+  var clearErrors = function() {
+    $('.form-text_error').addClass('is-invisible');
+    $('.is-error').removeClass('is-error');
+  };
+
+  var inputFocus = function() {
+    $('section:visible input:first').focus();
   };
 
   return {
@@ -53,6 +57,11 @@ module.exports = (function() {
       });
     },
 
+    switchPage: function(page) {
+      $('body, .l-wrapper').removeClass('is-welcome');
+      page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
+    },
+
     changeInputFile: function(objDom) {
       var URL = window.webkitURL || window.URL,
           file = objDom[0].files[0],
@@ -68,32 +77,24 @@ module.exports = (function() {
     },
 
     signupQB: function() {
-      var obj = $('#signUpPage');
-      switchPage(obj);
-      obj.find('input:first').focus();
+      this.switchPage($('#signUpPage'));
+      inputFocus();
     },
 
     loginQB: function() {
-      var obj = $('#loginPage');
-      switchPage(obj);
-      obj.find('input:first').focus();
+      this.switchPage($('#loginPage'));
+      inputFocus();
     },
 
     signupForm: function() {
       var user = new User;
-      if (QMCONFIG.debug) console.log('User', user);
-
-      $('.form-text_error').addClass('is-invisible');
-      $('.is-error').removeClass('is-error');
+      clearErrors();
       user.signup();
     },
 
     loginForm: function() {
       var user = new User;
-      if (QMCONFIG.debug) console.log('User', user);
-
-      $('.form-text_error').addClass('is-invisible');
-      $('.is-error').removeClass('is-error');
+      clearErrors();
       user.login();
     }
 
@@ -160,6 +161,13 @@ module.exports = (function() {
 
   var fail = function(errMsg) {
     $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
+  };
+
+  var failUser = function(detail) {
+    var errMsg = 'This email ';
+    errMsg += JSON.parse(detail).errors.email[0];
+    $('section:visible input[type="email"]').addClass('is-error').focus();
+    fail(errMsg);
   };
 
   return {
@@ -267,11 +275,7 @@ module.exports = (function() {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
-            var errMsg = 'This email ';
-            errMsg += JSON.parse(err.detail).errors.email[0];
-            $('section:visible input[type="email"]').addClass('is-error').focus();
-            
-            fail(errMsg);
+            failUser(err.detail);
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
 
@@ -288,11 +292,7 @@ module.exports = (function() {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
-            var errMsg = 'This email ';
-            errMsg += JSON.parse(err.detail).errors.email[0];
-            $('section:visible input[type="email"]').addClass('is-error').focus();
-            
-            fail(errMsg);
+            failUser(err.detail);
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
 
@@ -398,6 +398,8 @@ User.prototype.signup = function() {
         delete params.tag_list;
 
         QBApiCalls.loginUser(params, function(user) {
+          if (QMCONFIG.debug) console.log('User', self);
+
           self.id = user.id;
           self.tag = user.user_tags;
           self.blob_id = null;
@@ -423,6 +425,8 @@ User.prototype.login = function() {
 
     QBApiCalls.createSession(params, function(session) {
       QBApiCalls.getUser(session.user_id, function(user) {
+        if (QMCONFIG.debug) console.log('User', self);
+        
         self.id = user.id;
         self.full_name = user.full_name;
         self.tag = user.user_tags;

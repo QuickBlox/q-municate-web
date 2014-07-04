@@ -14,6 +14,13 @@ module.exports = (function() {
     $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
   };
 
+  var failUser = function(detail) {
+    var errMsg = 'This email ';
+    errMsg += JSON.parse(detail).errors.email[0];
+    $('section:visible input[type="email"]').addClass('is-error').focus();
+    fail(errMsg);
+  };
+
   return {
 
     init: function(token) {
@@ -119,11 +126,7 @@ module.exports = (function() {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
-            var errMsg = 'This email ';
-            errMsg += JSON.parse(err.detail).errors.email[0];
-            $('section:visible input[type="email"]').addClass('is-error').focus();
-            
-            fail(errMsg);
+            failUser(err.detail);
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
 
@@ -140,11 +143,7 @@ module.exports = (function() {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
-            var errMsg = 'This email ';
-            errMsg += JSON.parse(err.detail).errors.email[0];
-            $('section:visible input[type="email"]').addClass('is-error').focus();
-            
-            fail(errMsg);
+            failUser(err.detail);
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
 
