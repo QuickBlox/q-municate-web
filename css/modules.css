@@ -1,3 +1,5 @@
+@import url(spinner.css);
+
 /* download */
 .download {
   position: absolute;
@@ -17,12 +19,19 @@
     }
 
 /* form elements */
+.form-header {
+  margin: 5.5vh 0 4vh;
+  font-size: 3.6vh;
+  font-weight: normal;
+}
+
 .form-input {
   width: 100%;
   height: 4.5vh;
   margin-bottom: 1vh;
-  padding: 1.5vh;
+  padding: 1.3vh;
   font-size: 2vh;
+  line-height: 2vh;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -75,6 +84,9 @@
   .form-button_signup {
     margin-bottom: 4vh;
   }
+  .form-button_reset {
+    margin-top: 4.5vh;
+  }
   .form-button_fb {
     background: #35518e;
   }
@@ -89,40 +101,61 @@
 
 .form-text {
   display: block;
+  margin-bottom: 2.5vh;
   color: #999;
   text-align: center;
 }
   .form-text_welcome {
+    margin-bottom: 0;
     font-size: 2.2vh;
   }
   .form-text_forgot {
     margin: 1.5vh 0 3.5vh;
     font-size: 1.6vh;
   }
+  .form-text_sendemail {
+    margin-bottom: 2vh;
+    font-size: 1.8vh;
+    line-height: 2.2vh;
+  }
+    .form-text_sendemail_black {
+      margin-top: 4vh;
+      color: #333;
+    }
   .form-text_signup {
-    margin-bottom: 2.5vh;
     font-size: 1.4vh;
     line-height: 1.8vh;
   }
   .form-text_error {
-    margin-bottom: 2.5vh;
+    margin-bottom: 1.5vh;
     font-size: 1.6vh;
-    line-height: 1.6vh;
+    line-height: 2vh;
     color: #c03d3d;
+  }
+  .form-text_success {
+    color: #3c763d;
   }
 
 /* footer-links */
-.footer-links-item {
-  display: inline-block;
-  margin-right: 3vh;
+.footer-links {
+  font-size: 12px;
 }
-.footer-links-item:last-child {
-  margin-right: 0;
+.footer-links_welcome {
+  font-size: 1.8vh;
 }
-  .footer-links-item a {
-    font-size: 1.8vh;
-    color: #999;
+  .footer-links-item {
+    display: inline-block;
+    margin-right: 30px;
   }
+  .footer-links_welcome .footer-links-item {
+    margin-right: 3vh;
+  }
+  .footer-links-item:last-child {
+    margin-right: 0;
+  }
+    .footer-links-item a {
+      color: #999;
+    }
 
 /* Chroma-Hash */
 .chroma-hash {
@@ -136,7 +169,7 @@
     left: auto !important;
     right: 1px;
     width: 1vh !important;
-    height: 96% !important;
+    height: 4.2vh !important;
   }
   .chroma-hash label:nth-child(1) {
     margin: 1px 0 0 0 !important;
@@ -164,9 +197,14 @@
   border-radius: 50%;
 }
 .user-name {
+  display: inline-block;
+  max-width: 65%;
+  overflow: hidden;
   font-size: 2vh;
-  line-height: 6vh;
+  line-height: 2.4vh;
   color: #999;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* header */
