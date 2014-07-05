@@ -27,6 +27,12 @@ textarea:focus {
 }
 
 button,
+input,
+textarea {
+  font-family: Arial, sans-serif;
+}
+
+button,
 input[type="file"] {
   border: 0;
   cursor: pointer;
