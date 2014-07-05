@@ -48,10 +48,10 @@
         </header>
         <form class="l-form l-flexbox" action="#">
           <span class="form-text form-text_error is-invisible">Error</span>
-          <input id="signup-full_name" class="form-input pattern-name" type="text" placeholder="Name" required>
-          <input id="signup-email" class="form-input" type="email" placeholder="Email" required>
+          <input id="signup-full_name" class="form-input pattern-name" type="text" placeholder="Name" required autocomplete="off">
+          <input id="signup-email" class="form-input" type="email" placeholder="Email" required autocomplete="off">
           <div class="chroma-hash">
-            <input id="signup-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
+            <input id="signup-password" class="form-input pattern-pass" type="password" placeholder="Password" required autocomplete="off">
           </div>
           <div class="form-file">
             <div id="defAvatar" class="form-file-custom l-flexbox_inline l-flexbox_flexcenter">
@@ -93,9 +93,9 @@
         </header>
         <form class="l-form l-flexbox" action="#">
           <span class="form-text form-text_error is-invisible">Error</span>
-          <input id="login-email" class="form-input" type="email" placeholder="Email" required>
+          <input id="login-email" class="form-input" type="email" placeholder="Email" required autocomplete="off">
           <div class="chroma-hash">
-            <input id="login-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
+            <input id="login-password" class="form-input pattern-pass" type="password" placeholder="Password" required autocomplete="off">
           </div>
           <label class="form-label" for="login-remember">
             Remember me
@@ -140,7 +140,7 @@
             and we will send you a link to reset your password.
           </span>
           <span class="form-text form-text_error is-invisible">Error</span>
-          <input class="form-input" type="email" placeholder="Email" required>
+          <input class="form-input" type="email" placeholder="Email" required autocomplete="off">
           <button class="form-button form-button_reset form-button_qb">Send Verification Email</button>
         </form>
       </div>
