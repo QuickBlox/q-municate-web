@@ -219,6 +219,8 @@
 }
 .invite_cap {
   min-width: inherit;
+  max-width: 355px;
+  max-height: 78px;
   padding: 0 4vh;
   line-height: 7.5vh;
   border-radius: 6vh;
