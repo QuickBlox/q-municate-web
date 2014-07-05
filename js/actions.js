@@ -60,6 +60,15 @@ module.exports = (function() {
         event.preventDefault();
         self.loginForm();
       });
+
+      $('#searchContacts').on('submit', function(event) {
+        if (QMCONFIG.debug) console.log('search contacts');
+        event.preventDefault();
+      });
+
+      $('.contact, #profile').on('click', function(event) {
+        event.preventDefault();
+      });
     },
 
     createSpinner: function() {
@@ -72,6 +81,13 @@ module.exports = (function() {
 
     removeSpinner: function() {
       $('section:visible form').removeClass('is-hidden').next('.l-spinner').remove();
+    },
+
+    processingForm: function(user) {
+      clearErrors();
+      this.removeSpinner();
+      $('#profile').find('img').attr('src', user.avatar).siblings('span').text(user.full_name);
+      switchPage($('#mainPage'));
     },
 
     changeInputFile: function(objDom) {

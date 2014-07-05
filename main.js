@@ -61,6 +61,15 @@ module.exports = (function() {
         event.preventDefault();
         self.loginForm();
       });
+
+      $('#searchContacts').on('submit', function(event) {
+        if (QMCONFIG.debug) console.log('search contacts');
+        event.preventDefault();
+      });
+
+      $('.contact, #profile').on('click', function(event) {
+        event.preventDefault();
+      });
     },
 
     createSpinner: function() {
@@ -73,6 +82,13 @@ module.exports = (function() {
 
     removeSpinner: function() {
       $('section:visible form').removeClass('is-hidden').next('.l-spinner').remove();
+    },
+
+    processingForm: function(user) {
+      clearErrors();
+      this.removeSpinner();
+      $('#profile').find('img').attr('src', user.avatar).siblings('span').text(user.full_name);
+      switchPage($('#mainPage'));
     },
 
     changeInputFile: function(objDom) {
@@ -127,6 +143,7 @@ var UserActions = require('./actions'),
 
 var APP = {
   init: function() {
+    this.scrollbar();
     this.chromaHash();
     this.setDefAvatar();
     this.setHtml5Patterns();
@@ -134,6 +151,13 @@ var APP = {
     QBApiCalls.init();
 
     if (QMCONFIG.debug) console.log('App init', this);
+  },
+
+  scrollbar: function() {
+    $('.scrollbar').mCustomScrollbar({
+      theme: 'minimal-dark',
+      scrollInertia: 150
+    });
   },
 
   chromaHash: function() {
@@ -181,7 +205,7 @@ module.exports = (function() {
   var failUser = function(detail) {
     var errMsg = 'This email ';
     errMsg += JSON.parse(detail).errors.email[0];
-    $('section:visible input[type="email"]').addClass('is-error').focus();
+    $('section:visible input[type="email"]').addClass('is-error');
     fail(errMsg);
   };
 
@@ -388,22 +412,21 @@ Session.prototype.destroy = function() {
  */
 
 var QBApiCalls = require('./qbApiCalls');
-
 module.exports = User;
 
 function User() {
-  this._actions = require('./actions');
   this.valid = true;
 }
 
 User.prototype.signup = function() {
-  var form = $('section:visible form'),
+  var UserActions = require('./actions'),
+      form = $('section:visible form'),
       self = this,
       params;
 
   if (validate(form, this)) {
     if (QMCONFIG.debug) console.log('User', self);
-    self._actions.createSpinner();
+    UserActions.createSpinner();
 
     params = {
       full_name: self.full_name,
@@ -421,9 +444,13 @@ User.prototype.signup = function() {
           self.id = user.id;
           self.tag = user.user_tags;
           self.blob_id = null;
-          self.avatar = null;
+          self.avatar = null || QMCONFIG.defAvatar.url;
 
-          if (self.tempBlob) self.uploadAvatar();
+          if (self.tempBlob) {
+            self.uploadAvatar();
+          } else {
+            UserActions.processingForm(self);
+          }
         });
       });
     });
@@ -431,13 +458,14 @@ User.prototype.signup = function() {
 };
 
 User.prototype.login = function() {
-  var form = $('section:visible form'),
+  var UserActions = require('./actions'),
+      form = $('section:visible form'),
       self = this,
       params;
 
   if (validate(form, this)) {
     if (QMCONFIG.debug) console.log('User', self);
-    self._actions.createSpinner();
+    UserActions.createSpinner();
 
     params = {
       email: self.email,
@@ -450,22 +478,26 @@ User.prototype.login = function() {
         self.full_name = user.full_name;
         self.tag = user.user_tags;
         self.blob_id = user.blob_id;
-        self.avatar = user.custom_data;
+        self.avatar = user.custom_data || QMCONFIG.defAvatar.url;
 
         if (self.remember) self.rememberMe();
+        UserActions.processingForm(self);
       });
     });
   }
 };
 
 User.prototype.uploadAvatar = function() {
-  var self = this;
+  var UserActions = require('./actions'),
+      self = this;
 
   QBApiCalls.createBlob({file: this.tempBlob, 'public': true}, function(blob) {
     QBApiCalls.updateUser(self.id, {blob_id: blob.id, custom_data: blob.path}, function(user) {
       self.blob_id = user.blob_id;
       self.avatar = user.custom_data;
       delete self.tempBlob;
+
+      UserActions.processingForm(self);
     });
   });
 };
