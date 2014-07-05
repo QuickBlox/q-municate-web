@@ -6,22 +6,21 @@
  */
 
 var QBApiCalls = require('./qbApiCalls');
-
 module.exports = User;
 
 function User() {
-  this._actions = require('./actions');
   this.valid = true;
 }
 
 User.prototype.signup = function() {
-  var form = $('section:visible form'),
+  var UserActions = require('./actions'),
+      form = $('section:visible form'),
       self = this,
       params;
 
   if (validate(form, this)) {
     if (QMCONFIG.debug) console.log('User', self);
-    self._actions.createSpinner();
+    UserActions.createSpinner();
 
     params = {
       full_name: self.full_name,
@@ -39,9 +38,13 @@ User.prototype.signup = function() {
           self.id = user.id;
           self.tag = user.user_tags;
           self.blob_id = null;
-          self.avatar = null;
+          self.avatar = null || QMCONFIG.defAvatar.url;
 
-          if (self.tempBlob) self.uploadAvatar();
+          if (self.tempBlob) {
+            self.uploadAvatar();
+          } else {
+            UserActions.processingForm(self);
+          }
         });
       });
     });
@@ -49,13 +52,14 @@ User.prototype.signup = function() {
 };
 
 User.prototype.login = function() {
-  var form = $('section:visible form'),
+  var UserActions = require('./actions'),
+      form = $('section:visible form'),
       self = this,
       params;
 
   if (validate(form, this)) {
     if (QMCONFIG.debug) console.log('User', self);
-    self._actions.createSpinner();
+    UserActions.createSpinner();
 
     params = {
       email: self.email,
@@ -68,22 +72,26 @@ User.prototype.login = function() {
         self.full_name = user.full_name;
         self.tag = user.user_tags;
         self.blob_id = user.blob_id;
-        self.avatar = user.custom_data;
+        self.avatar = user.custom_data || QMCONFIG.defAvatar.url;
 
         if (self.remember) self.rememberMe();
+        UserActions.processingForm(self);
       });
     });
   }
 };
 
 User.prototype.uploadAvatar = function() {
-  var self = this;
+  var UserActions = require('./actions'),
+      self = this;
 
   QBApiCalls.createBlob({file: this.tempBlob, 'public': true}, function(blob) {
     QBApiCalls.updateUser(self.id, {blob_id: blob.id, custom_data: blob.path}, function(user) {
       self.blob_id = user.blob_id;
       self.avatar = user.custom_data;
       delete self.tempBlob;
+
+      UserActions.processingForm(self);
     });
   });
 };

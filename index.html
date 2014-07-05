@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8">
   <title>Q-municate</title>
+  <link rel="stylesheet" href="lib/scrollbar/jquery.mCustomScrollbar.css">
   <link rel="stylesheet" href="main.css">
 </head>
 <body class="is-welcome">
-  <div class="l-wrapper is-welcome">
+  <div class="l-wrapper">
     <section id="welcomePage" class="l-page l-flexbox">
       <header class="l-welcome-header l-flexbox">
         <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
@@ -53,9 +54,9 @@
             <input id="signup-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
           </div>
           <div class="form-file">
-            <div id="defAvatar" class="form-file-custom user">
-              <img class="user-avatar" src="" alt="user">
-              <span class="user-name"></span>
+            <div id="defAvatar" class="form-file-custom l-flexbox_inline l-flexbox_flexcenter">
+              <img class="contact-avatar_signup avatar avatar_signup" src="" alt="user">
+              <span class="name name_signup"></span>
             </div>
             <input id="signup-avatar" class="form-file-default" type="file" accept="image/*">
           </div>
@@ -158,27 +159,79 @@
     </section>
 
     <section id="mainPage" class="l-page is-hidden">
-      <div class="l-login">
+      <div class="l-container">
         <header class="l-header l-flexbox l-flexbox_row">
           <div class="header-logo">
-            <img class="header-logo-img" src="images/logo-qmunicate.png" alt="Q-municate">
-            <h2 class="header-logo-text">Q-municate</h2>
+            <img src="images/logo-qmunicate.png" alt="Q-municate">
           </div>
-          <div class="header-profile l-flexbox l-flexbox_row">
-            <button class="invite"><span class="invite-icon">Invite friends</span></button>
-            <div class="user">
-              <img class="user-avatar" src="images/ava-single.png" alt="user">
-              <span class="user-name">Michael</span>
-            </div>
+          <div class="header-profile l-flexbox l-flexbox_row l-flexbox_flexend">
+            <button class="header-profile-invite invite is-hidden"><span class="invite-icon">Invite friends</span></button>
+            <a id="profile" href="#">
+              <div class="l-flexbox_inline">
+                <img class="contact-avatar avatar" src="" alt="user">
+                <span class="name name_profile"></span>
+              </div>
+            </a>
           </div>
         </header>
+        <div class="l-content l-flexbox l-flexbox_row l-flexbox_flexstart">
+
+          <aside class="l-list-wrap">
+            <form id="searchContacts" class="l-search" action="#">
+              <input class="form-input-search" type="search" placeholder="Search">
+            </form>
+            <section id="contacts" class="l-list">
+              <header class="l-list-header">
+                <h3 class="l-list-header-text">Contacts</h3>
+                <button class="l-list-header-icon"><img src="images/icon-create-groupchat.png" alt="create groupchat"></button>
+              </header>
+              <ul class="list scrollbar">
+                <li class="list-item">
+                  <a class="contact" href="#">
+                    <div class="l-flexbox_inline">
+                      <img class="contact-avatar avatar" src="images/ava-single.png" alt="user">
+                      <span class="name">Rosemary</span>
+                    </div>
+                  </a>
+                </li>
+                <li class="list-item is-active">
+                  <a class="contact" href="#">
+                    <div class="l-flexbox_inline">
+                      <img class="contact-avatar avatar" src="images/ava-single.png" alt="user">
+                      <span class="name">Joe Super</span>
+                    </div>
+                  </a>
+                </li>
+                <li class="list-item">
+                  <a class="contact" href="#">
+                    <div class="l-flexbox_inline">
+                      <img class="contact-avatar avatar" src="images/ava-single.png" alt="user">
+                      <span class="name">Shawn Doo</span>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </section>
+          </aside>
+
+          <div class="l-workspace-wrap">
+            <section id="capBox" class="l-workspace l-flexbox">
+              <div class="l-cap cap l-flexbox">
+                <span class="cap-text">Is anybody here?</span>
+                <img class="cap-anybody" src="images/anybody.png" alt="QuickBlox anybody">
+                <button class="invite invite_cap"><span class="invite-icon">Invite friends</span></button>
+              </div>
+            </section>
+          </div>
+
+        </div>
       </div>
       <footer class="l-footer l-flexbox l-flexbox_row">
         <div class="footer-logo">
           <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
         </div>
-        <div class="footer-apps">
-          <a href="#"><img class="footer-apps-ios" src="images/icon-ios.png" alt="download Q-municate iOS"></a>
+        <div class="footer-apps l-flexbox l-flexbox_row">
+          <a class="footer-apps-ios" href="#"><img src="images/icon-ios.png" alt="download Q-municate iOS"></a>
           <a href="#"><img src="images/icon-android.png" alt="download Q-municate Android"></a>
         </div>
         <nav class="footer-links">
@@ -193,6 +246,7 @@
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="lib/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
   <script src="lib/chroma-hash.js"></script>
   <script src="lib/quickblox.min.js"></script>
 

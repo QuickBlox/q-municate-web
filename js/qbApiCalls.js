@@ -19,7 +19,7 @@ module.exports = (function() {
   var failUser = function(detail) {
     var errMsg = 'This email ';
     errMsg += JSON.parse(detail).errors.email[0];
-    $('section:visible input[type="email"]').addClass('is-error').focus();
+    $('section:visible input[type="email"]').addClass('is-error');
     fail(errMsg);
   };
 
