@@ -22,8 +22,19 @@ body.is-welcome {
   background: url(../images/bg.jpg) no-repeat;
   background-size: 100% 100%;
 }
-.l-wrapper.is-welcome {
+body.is-welcome .l-wrapper {
   border-left: 1px solid #f0f0f0;
   border-right: 1px solid #f0f0f0;
   background: rgba(255, 255, 255, .6);
+}
+
+.list-item.is-active {
+  background: #1cba48;
+  border-bottom: 1px solid #1cba48;
+}
+.list-item.is-active .contact:hover {
+  background: #1cba48;
+}
+.list-item.is-active .name {
+  color: #fff;
 }

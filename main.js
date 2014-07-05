@@ -61,6 +61,15 @@ module.exports = (function() {
         event.preventDefault();
         self.loginForm();
       });
+
+      $('#searchContacts').on('submit', function(event) {
+        if (QMCONFIG.debug) console.log('search contacts');
+        event.preventDefault();
+      });
+
+      $('.contact, #profile').on('click', function(event) {
+        event.preventDefault();
+      });
     },
 
     createSpinner: function() {
@@ -134,6 +143,7 @@ var UserActions = require('./actions'),
 
 var APP = {
   init: function() {
+    this.scrollbar();
     this.chromaHash();
     this.setDefAvatar();
     this.setHtml5Patterns();
@@ -141,6 +151,13 @@ var APP = {
     QBApiCalls.init();
 
     if (QMCONFIG.debug) console.log('App init', this);
+  },
+
+  scrollbar: function() {
+    $('.scrollbar').mCustomScrollbar({
+      theme: 'minimal-dark',
+      scrollInertia: 150
+    });
   },
 
   chromaHash: function() {

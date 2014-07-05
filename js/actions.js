@@ -60,6 +60,15 @@ module.exports = (function() {
         event.preventDefault();
         self.loginForm();
       });
+
+      $('#searchContacts').on('submit', function(event) {
+        if (QMCONFIG.debug) console.log('search contacts');
+        event.preventDefault();
+      });
+
+      $('.contact, #profile').on('click', function(event) {
+        event.preventDefault();
+      });
     },
 
     createSpinner: function() {

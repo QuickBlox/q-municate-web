@@ -1,4 +1,4 @@
-/* Common cases
+/* Flexbox
 --------------------------------------------------*/
 .l-flexbox {
   display: -webkit-flex; /* For Safari 6.1+ */
@@ -28,6 +28,20 @@
   -webkit-justify-content: flex-end;
   -ms-flex-pack: end;
   justify-content: flex-end;
+}
+.l-flexbox_flexcenter {
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.l-flexbox_inline {
+  display: -webkit-inline-flex; /* For Safari 6.1+ */
+  display: -ms-inline-flexbox; /* For IE10 */
+  display: inline-flex;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 100%;
 }
 
 /* Layouts
@@ -71,7 +85,7 @@
   padding-bottom: 2.5vh;
 }
   .l-welcome-footer-logo img {
-    height: 8.5vh;
+    height: 8.3vh;
   }
 
 .l-container {
@@ -89,6 +103,51 @@
 
 .l-content {
   height: calc(100% - 80px);
+}
+
+.l-list-wrap {
+  width: 330px;
+  height: 100%;
+  border-right: 2px solid #f0f0f0;
+}
+  .l-search {
+    height: 60px;
+    padding: 15px;
+  }
+
+.l-list {
+  height: calc(100% - 60px);
+}
+.l-list-header {
+  position: relative;
+  padding: 0 40px 0 20px;
+  background: #f0f0f0;
+}
+  .l-list-header-text {
+    font-size: 15px;
+    line-height: 30px;
+    color: #999;
+    text-transform: uppercase;
+  }
+  .l-list-header-icon {
+    position: absolute;
+    top: 6px;
+    right: 15px;
+    background: none;
+  }
+
+.l-workspace-wrap {
+  width: calc(100% - 330px);
+  height: 100%;
+}
+  .l-workspace {
+    height: 100%;
+  }
+
+.l-cap {
+  width: 39vh;
+  height: 56vh;
+  margin: auto;
 }
 
 .l-footer {
