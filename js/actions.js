@@ -123,6 +123,12 @@ module.exports = (function() {
         self.forgotForm();
       });
 
+      $('#resetForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('reset password');
+        event.preventDefault();
+        self.resetForm();
+      });
+
       $('#profile').on('click', function(event) {
         event.preventDefault();
         removePopover();
@@ -238,6 +244,12 @@ module.exports = (function() {
       user.forgot(function() {
         user = null;
       });
+    },
+
+    resetForm: function() {
+      user = new User;
+      clearErrors();
+      user.resetPass();
     },
 
     profilePopover: function(objDom) {

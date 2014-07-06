@@ -124,6 +124,12 @@ module.exports = (function() {
         self.forgotForm();
       });
 
+      $('#resetForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('reset password');
+        event.preventDefault();
+        self.resetForm();
+      });
+
       $('#profile').on('click', function(event) {
         event.preventDefault();
         removePopover();
@@ -239,6 +245,12 @@ module.exports = (function() {
       user.forgot(function() {
         user = null;
       });
+    },
+
+    resetForm: function() {
+      user = new User;
+      clearErrors();
+      user.resetPass();
     },
 
     profilePopover: function(objDom) {
@@ -658,6 +670,17 @@ User.prototype.forgot = function(callback) {
   }
 };
 
+User.prototype.resetPass = function() {
+  var UserActions = require('./actions'),
+      form = $('section:visible form'),
+      self = this;
+
+  if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    
+  }
+};
+
 User.prototype.logout = function(callback) {
   QBApiCalls.logoutUser(function() {
     callback();
@@ -690,7 +713,7 @@ function validate(form, user) {
         errMsg = QMCONFIG.errors.invalidEmail;
       } else if (this.validity.patternMismatch && errName === 'Name') {
         errMsg = QMCONFIG.errors.invalidName;
-      } else if (this.validity.patternMismatch && errName === 'Password') {
+      } else if (this.validity.patternMismatch && (errName === 'Password' || errName === 'New password')) {
         errMsg = QMCONFIG.errors.invalidPass;
       }
 

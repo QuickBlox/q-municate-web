@@ -99,6 +99,17 @@ User.prototype.forgot = function(callback) {
   }
 };
 
+User.prototype.resetPass = function() {
+  var UserActions = require('./actions'),
+      form = $('section:visible form'),
+      self = this;
+
+  if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    
+  }
+};
+
 User.prototype.logout = function(callback) {
   QBApiCalls.logoutUser(function() {
     callback();
@@ -131,7 +142,7 @@ function validate(form, user) {
         errMsg = QMCONFIG.errors.invalidEmail;
       } else if (this.validity.patternMismatch && errName === 'Name') {
         errMsg = QMCONFIG.errors.invalidName;
-      } else if (this.validity.patternMismatch && errName === 'Password') {
+      } else if (this.validity.patternMismatch && (errName === 'Password' || errName === 'New password')) {
         errMsg = QMCONFIG.errors.invalidPass;
       }
 
