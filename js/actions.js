@@ -29,6 +29,10 @@ module.exports = (function() {
     $('.is-error').removeClass('is-error');
   };
 
+  var resetForgotForm = function() {
+    $('section:visible form').removeClass('is-hidden').next('.l-form').remove();
+  };
+
   var inputFocus = function() {
     var obj = $('section:visible');
     setDefAvatar();
@@ -95,6 +99,12 @@ module.exports = (function() {
         self.loginQB();
       });
 
+      $('#forgot').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('forgot password');
+        event.preventDefault();
+        self.forgot();
+      });
+
       $('#signupForm').on('click', function(event) {
         if (QMCONFIG.debug) console.log('create user');
         event.preventDefault();
@@ -105,6 +115,12 @@ module.exports = (function() {
         if (QMCONFIG.debug) console.log('authorize user');
         event.preventDefault();
         self.loginForm();
+      });
+
+      $('#forgotForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('send letter');
+        event.preventDefault();
+        self.forgotForm();
       });
 
       $('#profile').on('click', function(event) {
@@ -163,6 +179,17 @@ module.exports = (function() {
       switchPage($('#mainPage'));
     },
 
+    successSendEmailCallback: function() {
+      var success = '<div class="l-form l-flexbox"><div class="no-contacts l-flexbox">';
+      success += '<span class="no-contacts-oops">Success!</span>';
+      success += '<span class="no-contacts-description">Please check your email and click on the link in letter in order to reset your password</span>';
+      success += '</div></div>';
+
+      clearErrors();
+      this.removeSpinner();
+      $('section:visible form').addClass('is-hidden').after(success);
+    },
+
     changeInputFile: function(objDom) {
       var URL = window.webkitURL || window.URL,
           file = objDom[0].files[0],
@@ -187,6 +214,12 @@ module.exports = (function() {
       inputFocus();
     },
 
+    forgot: function() {
+      switchPage($('#forgotPage'));
+      resetForgotForm();
+      inputFocus();
+    },
+
     signupForm: function() {
       user = new User;
       clearErrors();
@@ -197,6 +230,14 @@ module.exports = (function() {
       user = new User;
       clearErrors();
       user.login();
+    },
+
+    forgotForm: function() {
+      user = new User;
+      clearErrors();
+      user.forgot(function() {
+        user = null;
+      });
     },
 
     profilePopover: function(objDom) {

@@ -23,6 +23,12 @@ module.exports = (function() {
     fail(errMsg);
   };
 
+  var failForgot = function() {
+    var errMsg = QMCONFIG.errors.notFoundEmail;
+    $('section:visible input[type="email"]').addClass('is-error');
+    fail(errMsg);
+  };
+
   return {
 
     init: function(token) {
@@ -99,15 +105,17 @@ module.exports = (function() {
 
     forgotPassword: function(email, callback) {
       this.checkSession(function(res) {
-        QB.users.resetPassword(email, function(err, res) {
-          if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+        QB.users.resetPassword(email, function(response) {
+          if (response.code === 404) {
+            if (QMCONFIG.debug) console.log(response.message);
 
+            failForgot();
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent', res);
+            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent');
 
-            session.setExpirationTime();
-            callback(res);
+            session.destroy();
+            session = null;
+            callback();
           }
         });
       });

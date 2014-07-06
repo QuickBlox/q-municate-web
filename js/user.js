@@ -81,6 +81,24 @@ User.prototype.login = function() {
   }
 };
 
+User.prototype.forgot = function(callback) {
+  var UserActions = require('./actions'),
+      form = $('section:visible form'),
+      self = this;
+
+  if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    UserActions.createSpinner();
+
+    QBApiCalls.createSession({}, function() {
+      QBApiCalls.forgotPassword(self.email, function() {
+        UserActions.successSendEmailCallback();
+        callback();
+      });
+    });
+  }
+};
+
 User.prototype.logout = function(callback) {
   QBApiCalls.logoutUser(function() {
     callback();

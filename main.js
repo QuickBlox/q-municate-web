@@ -30,6 +30,10 @@ module.exports = (function() {
     $('.is-error').removeClass('is-error');
   };
 
+  var resetForgotForm = function() {
+    $('section:visible form').removeClass('is-hidden').next('.l-form').remove();
+  };
+
   var inputFocus = function() {
     var obj = $('section:visible');
     setDefAvatar();
@@ -96,6 +100,12 @@ module.exports = (function() {
         self.loginQB();
       });
 
+      $('#forgot').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('forgot password');
+        event.preventDefault();
+        self.forgot();
+      });
+
       $('#signupForm').on('click', function(event) {
         if (QMCONFIG.debug) console.log('create user');
         event.preventDefault();
@@ -106,6 +116,12 @@ module.exports = (function() {
         if (QMCONFIG.debug) console.log('authorize user');
         event.preventDefault();
         self.loginForm();
+      });
+
+      $('#forgotForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('send letter');
+        event.preventDefault();
+        self.forgotForm();
       });
 
       $('#profile').on('click', function(event) {
@@ -164,6 +180,17 @@ module.exports = (function() {
       switchPage($('#mainPage'));
     },
 
+    successSendEmailCallback: function() {
+      var success = '<div class="l-form l-flexbox"><div class="no-contacts l-flexbox">';
+      success += '<span class="no-contacts-oops">Success!</span>';
+      success += '<span class="no-contacts-description">Please check your email and click on the link in letter in order to reset your password</span>';
+      success += '</div></div>';
+
+      clearErrors();
+      this.removeSpinner();
+      $('section:visible form').addClass('is-hidden').after(success);
+    },
+
     changeInputFile: function(objDom) {
       var URL = window.webkitURL || window.URL,
           file = objDom[0].files[0],
@@ -188,6 +215,12 @@ module.exports = (function() {
       inputFocus();
     },
 
+    forgot: function() {
+      switchPage($('#forgotPage'));
+      resetForgotForm();
+      inputFocus();
+    },
+
     signupForm: function() {
       user = new User;
       clearErrors();
@@ -198,6 +231,14 @@ module.exports = (function() {
       user = new User;
       clearErrors();
       user.login();
+    },
+
+    forgotForm: function() {
+      user = new User;
+      clearErrors();
+      user.forgot(function() {
+        user = null;
+      });
     },
 
     profilePopover: function(objDom) {
@@ -306,6 +347,12 @@ module.exports = (function() {
     fail(errMsg);
   };
 
+  var failForgot = function() {
+    var errMsg = QMCONFIG.errors.notFoundEmail;
+    $('section:visible input[type="email"]').addClass('is-error');
+    fail(errMsg);
+  };
+
   return {
 
     init: function(token) {
@@ -382,15 +429,17 @@ module.exports = (function() {
 
     forgotPassword: function(email, callback) {
       this.checkSession(function(res) {
-        QB.users.resetPassword(email, function(err, res) {
-          if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+        QB.users.resetPassword(email, function(response) {
+          if (response.code === 404) {
+            if (QMCONFIG.debug) console.log(response.message);
 
+            failForgot();
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent', res);
+            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent');
 
-            session.setExpirationTime();
-            callback(res);
+            session.destroy();
+            session = null;
+            callback();
           }
         });
       });
@@ -586,6 +635,24 @@ User.prototype.login = function() {
 
         if (self.remember) rememberMe();
         UserActions.processingForm(self);
+      });
+    });
+  }
+};
+
+User.prototype.forgot = function(callback) {
+  var UserActions = require('./actions'),
+      form = $('section:visible form'),
+      self = this;
+
+  if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    UserActions.createSpinner();
+
+    QBApiCalls.createSession({}, function() {
+      QBApiCalls.forgotPassword(self.email, function() {
+        UserActions.successSendEmailCallback();
+        callback();
       });
     });
   }
