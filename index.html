@@ -185,11 +185,13 @@
                 <h3 class="l-list-header-text">Contacts</h3>
                 <button class="l-list-header-icon"><img src="images/icon-create-groupchat.png" alt="create groupchat"></button>
               </header>
+
               <div class="no-contacts l-flexbox l-flexbox_flexstart">
                 <span class="no-contacts-oops">Oops...</span>
                 <span class="no-contacts-description">You don't have any contacts,<br>you can invite your Facebook friends</span>
                 <button class="invite invite_contacts"><span class="invite-icon">Invite friends</span></button>
               </div>
+
               <ul class="list scrollbar is-hidden">
                 <li class="list-item">
                   <a class="contact" href="#">
@@ -231,6 +233,37 @@
           </ul>
         </nav>
       </footer>
+    </section>
+  </div>
+
+  <div class="popups l-flexbox">
+    <section id="popupLogout" class="popup popup_logout">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <span class="alert alert_logout">Are you sure<br>you want to log out?</span>
+      </div>
+      <div class="popup-controls">
+        <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
+        <a id="logoutConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
+      </div>
+    </section>
+
+    <section id="popupImport" class="popup popup_import">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <span class="alert alert_import">Your Facebook friends who have<br>a Qmunicate account were successfully<br>added to your contacts</span>
+      </div>
+      <div class="popup-controls">
+        <a class="popup-control-button popup-control-button_ok" href="#">Got it</a>
+      </div>
+    </section>
+
+    <section id="popupDelete" class="popup popup_delete">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <span class="alert alert_delete">Delete contact?</span>
+      </div>
+      <div class="popup-controls">
+        <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
+        <a id="deleteConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
+      </div>
     </section>
   </div>
 

@@ -12,7 +12,6 @@ var APP = {
   init: function() {
     this.scrollbar();
     this.chromaHash();
-    this.setDefAvatar();
     this.setHtml5Patterns();
     UserActions.init();
     QBApiCalls.init();
@@ -31,10 +30,6 @@ var APP = {
     new ChromaHash({
       visualization: 'bars'
     });
-  },
-
-  setDefAvatar: function() {
-    $('#defAvatar').find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
   },
 
   setHtml5Patterns: function() {

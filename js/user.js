@@ -41,7 +41,7 @@ User.prototype.signup = function() {
           self.avatar = null || QMCONFIG.defAvatar.url;
 
           if (self.tempBlob) {
-            self.uploadAvatar();
+            uploadAvatar(self);
           } else {
             UserActions.processingForm(self);
           }
@@ -74,30 +74,17 @@ User.prototype.login = function() {
         self.blob_id = user.blob_id;
         self.avatar = user.custom_data || QMCONFIG.defAvatar.url;
 
-        if (self.remember) self.rememberMe();
+        if (self.remember) rememberMe();
         UserActions.processingForm(self);
       });
     });
   }
 };
 
-User.prototype.uploadAvatar = function() {
-  var UserActions = require('./actions'),
-      self = this;
-
-  QBApiCalls.createBlob({file: this.tempBlob, 'public': true}, function(blob) {
-    QBApiCalls.updateUser(self.id, {blob_id: blob.id, custom_data: blob.path}, function(user) {
-      self.blob_id = user.blob_id;
-      self.avatar = user.custom_data;
-      delete self.tempBlob;
-
-      UserActions.processingForm(self);
-    });
+User.prototype.logout = function(callback) {
+  QBApiCalls.logoutUser(function() {
+    callback();
   });
-};
-
-User.prototype.rememberMe = function() {
-
 };
 
 /* Private
@@ -164,4 +151,22 @@ function validate(form, user) {
 function fail(user, errMsg) {
   user.valid = false;
   $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
+}
+
+function uploadAvatar(user) {
+  var UserActions = require('./actions');
+
+  QBApiCalls.createBlob({file: user.tempBlob, 'public': true}, function(blob) {
+    QBApiCalls.updateUser(user.id, {blob_id: blob.id, custom_data: blob.path}, function(res) {
+      user.blob_id = res.blob_id;
+      user.avatar = res.custom_data;
+      delete user.tempBlob;
+
+      UserActions.processingForm(user);
+    });
+  });
+}
+
+function rememberMe() {
+
 }

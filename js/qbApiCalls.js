@@ -72,6 +72,13 @@ module.exports = (function() {
       });
     },
 
+    logoutUser: function(callback) {
+      if (QMCONFIG.debug) console.log('QB SDK: User has exited');
+      session.destroy();
+      session = null;
+      callback();
+    },
+
     loginUser: function(params, callback) {
       this.checkSession(function(res) {
         QB.login(params, function(err, res) {

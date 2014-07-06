@@ -8,10 +8,20 @@
 var User = require('./user');
 
 module.exports = (function() {
+  var user;
+
+  var setDefAvatar = function() {
+    $('#defAvatar').find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
+  };
 
   var switchPage = function(page) {
-    $('body, .l-wrapper').removeClass('is-welcome');
+    $('body').removeClass('is-welcome');
     page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
+  };
+
+  var backToWelcomePage = function() {
+    $('body').addClass('is-welcome');
+    $('#welcomePage').removeClass('is-hidden').siblings('section').addClass('is-hidden');
   };
 
   var clearErrors = function() {
@@ -20,7 +30,11 @@ module.exports = (function() {
   };
 
   var inputFocus = function() {
-    $('section:visible input:first').focus();
+    var obj = $('section:visible');
+    setDefAvatar();
+    obj.find('input').val('');
+    obj.find('input:checkbox').prop('checked', true);
+    obj.find('input:first').focus();
   };
 
   var appearAnimations = function() {
@@ -41,10 +55,20 @@ module.exports = (function() {
     removePopover();
   };
 
+  var openPopup = function(objDom) {
+    objDom.add('.popups').addClass('is-overlay');
+  };
+
+  var closePopup = function() {
+    $('.is-overlay').removeClass('is-overlay');
+  };
+
   return {
 
     init: function() {
       var self = this;
+
+      setDefAvatar();
 
       $(document).click(function(event) {
         clickBehaviour(event);
@@ -95,13 +119,27 @@ module.exports = (function() {
         self.contactsPopover($(this));
       });
 
+      $('.header-profile').on('click', '#logout', function(event) {
+        event.preventDefault();
+        openPopup($('#popupLogout'));
+      });
+
+      $('.popup-control-button').on('click', function(event) {
+        event.preventDefault();
+        closePopup();
+      });
+
+      $('#logoutConfirm').on('click', function(event) {
+        self.logout();
+      });
+
       /* temp actions */
       $('#searchContacts').on('submit', function(event) {
         if (QMCONFIG.debug) console.log('search contacts');
         event.preventDefault();
       });
 
-      $('.list, .header-profile').on('click', '.contact, .list-actions-action', function(event) {
+      $('.list').on('click', '.contact', function(event) {
         event.preventDefault();
       });
     },
@@ -150,21 +188,21 @@ module.exports = (function() {
     },
 
     signupForm: function() {
-      var user = new User;
+      user = new User;
       clearErrors();
       user.signup();
     },
 
     loginForm: function() {
-      var user = new User;
+      user = new User;
       clearErrors();
       user.login();
     },
 
     profilePopover: function(objDom) {
       var html = '<ul class="list-actions list-actions_profile popover">';
-      html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
-      html += '<li class="list-item"><a class="list-actions-action" href="#">Logout</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+      html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Logout</a></li>';
       html += '</ul>';
       objDom.after(html);
       appearAnimations();
@@ -172,14 +210,22 @@ module.exports = (function() {
 
     contactsPopover: function(objDom) {
       var html = '<ul class="list-actions list-actions_contacts popover">';
-      html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
-      html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
       html += '<li class="list-item"><a class="list-actions-action" href="#">Add people</a></li>';
-      html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
       html += '<li class="list-item"><a class="list-actions-action" href="#">Delete contact</a></li>';
       html += '</ul>';
       objDom.addClass('is-contextmenu').after(html);
       appearAnimations();
+    },
+
+    logout: function() {
+      user.logout(function() {
+        user = null;
+        backToWelcomePage();
+        if (QMCONFIG.debug) console.log('current User and Session were destroyed');
+      });
     }
 
   };

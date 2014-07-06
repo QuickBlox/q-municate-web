@@ -42,3 +42,13 @@ body.is-welcome .l-wrapper {
 .list-item.is-active .name {
   color: #fff;
 }
+
+.popups.is-overlay {
+  visibility: visible;
+  opacity: 1;
+}
+  .popup.is-overlay {
+    top: 50%;
+    visibility: visible;
+    opacity: 1;
+  }
