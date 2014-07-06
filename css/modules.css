@@ -203,6 +203,7 @@
   width: 249px;
 }
 .header-profile {
+  position: relative;
   max-width: calc(100% - 249px - 50px);
 }
   .header-profile-invite {
@@ -212,10 +213,15 @@
 /* invite */
 .invite {
   min-width: 190px;
-  padding: 0 25px;
   line-height: 38px;
+  text-align: center;
   background: #ff4945;
   border-radius: 25px;
+}
+.invite_contacts {
+  width: 245px;
+  line-height: 45px;
+  border-radius: 30px;
 }
 .invite_cap {
   min-width: inherit;
@@ -232,8 +238,13 @@
     background: url(../images/icon-invite.png) no-repeat left 0;
     background-size: 16px 19px;
   }
+  .invite_contacts .invite-icon {
+    padding-left: 35px;
+    font-size: 24px;
+    background-size: 21px 25px;
+  }
   .invite_cap .invite-icon {
-    padding-left: 5.5vh;
+    padding-left: 5.4vh;
     font-size: 3.8vh;
     background-position: left .5vh;
     background-size: 3.1vh 3.6vh;
@@ -249,23 +260,73 @@
   height: 31vh;
 }
 
+/* popover */
+.popover {
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 0 10px 3px rgba(240, 240, 240, .7);
+}
+
 /* list */
 .list {
   height: calc(100% - 30px);
+}
+.list-actions {
+  width: 160px;
+}
+.list-actions_contacts {
+  margin: -15px auto 0;
+}
+.list-actions_profile {
+  position: absolute;
+  top: 55px;
+  right: 5px;
 }
   .list-item {
     height: 60px;
     border-bottom: 1px solid #f0f0f0;
   }
+  .list-actions .list-item {
+    height: auto;
+    background: #fff;
+  }
+  .list-actions .list-item:last-child {
+    border-bottom: 0;
+  }
+  .list-item:hover {
+    background: #f8f8f8;
+  }
+    .list-actions-action {
+      display: block;
+      padding: 0 10px;
+      font-size: 16px;
+      line-height: 40px;
+      color: #333;
+    }
+    .list-actions-action:hover {
+      opacity: 1;
+    }
 
 /* contact */
+.no-contacts {
+  padding-top: 36px;
+  color: #999;
+  text-align: center;
+}
+  .no-contacts-oops {
+    margin-bottom: 20px;
+    font-size: 32px;
+  }
+  .no-contacts-description {
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 22px;
+  }
 .contact {
   display: block;
   height: 100%;
   padding: 10px 20px;
 }
 .contact:hover {
-  background: #f8f8f8;
   opacity: 1;
 }
   .contact-avatar {
@@ -308,4 +369,7 @@
 /* scrollbar */
 .mCS-autoHide > .mCustomScrollBox ~ .mCSB_scrollTools {
   opacity: 1;
+}
+.mCSB_container {
+  overflow: visible;
 }

@@ -24,10 +24,32 @@ module.exports = (function() {
     $('section:visible input:first').focus();
   };
 
+  var appearAnimations = function() {
+    $('.popover').hide().show(150);
+  };
+
+  var removePopover = function() {
+    $('.is-contextmenu').removeClass('is-contextmenu');
+    $('.popover').remove();
+  };
+
+  var clickBehaviour = function(e) {
+    var obj = $(e.target);
+
+    if (obj.is('#profile, #profile *') || e.which === 3)
+      return false;
+
+    removePopover();
+  };
+
   return {
 
     init: function() {
       var self = this;
+
+      $(document).click(function(event) {
+        clickBehaviour(event);
+      });
 
       $('input:file').on('change', function() {
         self.changeInputFile($(this));
@@ -62,12 +84,25 @@ module.exports = (function() {
         self.loginForm();
       });
 
+      $('#profile').on('click', function(event) {
+        event.preventDefault();
+        removePopover();
+        self.profilePopover($(this));
+      });
+
+      $('.list').on('contextmenu', '.contact', function(event) {
+        event.preventDefault();
+        removePopover();
+        self.contactsPopover($(this));
+      });
+
+      /* temp actions */
       $('#searchContacts').on('submit', function(event) {
         if (QMCONFIG.debug) console.log('search contacts');
         event.preventDefault();
       });
 
-      $('.contact, #profile').on('click', function(event) {
+      $('.list, .header-profile').on('click', '.contact, .list-actions-action', function(event) {
         event.preventDefault();
       });
     },
@@ -125,6 +160,27 @@ module.exports = (function() {
       var user = new User;
       clearErrors();
       user.login();
+    },
+
+    profilePopover: function(objDom) {
+      var html = '<ul class="list-actions list-actions_profile popover">';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Logout</a></li>';
+      html += '</ul>';
+      objDom.after(html);
+      appearAnimations();
+    },
+
+    contactsPopover: function(objDom) {
+      var html = '<ul class="list-actions list-actions_contacts popover">';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Add people</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Delete contact</a></li>';
+      html += '</ul>';
+      objDom.addClass('is-contextmenu').after(html);
+      appearAnimations();
     }
 
   };
