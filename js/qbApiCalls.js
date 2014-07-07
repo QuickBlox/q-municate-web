@@ -13,12 +13,18 @@ module.exports = (function() {
   var fail = function(errMsg) {
     var UserActions = require('./actions');
     UserActions.removeSpinner();
-    $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
+    $('section:visible').find('.form-text_error').addClass('is-error').text(errMsg);
   };
 
   var failUser = function(detail) {
     var errMsg = 'This email ';
     errMsg += JSON.parse(detail).errors.email[0];
+    $('section:visible input[type="email"]').addClass('is-error');
+    fail(errMsg);
+  };
+
+  var failForgot = function() {
+    var errMsg = QMCONFIG.errors.notFoundEmail;
     $('section:visible input[type="email"]').addClass('is-error');
     fail(errMsg);
   };
@@ -90,17 +96,26 @@ module.exports = (function() {
       });
     },
 
+    logoutUser: function(callback) {
+      if (QMCONFIG.debug) console.log('QB SDK: User has exited');
+      session.destroy();
+      session = null;
+      callback();
+    },
+
     forgotPassword: function(email, callback) {
       this.checkSession(function(res) {
-        QB.users.resetPassword(email, function(err, res) {
-          if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+        QB.users.resetPassword(email, function(response) {
+          if (response.code === 404) {
+            if (QMCONFIG.debug) console.log(response.message);
 
+            failForgot();
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent', res);
+            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent');
 
-            session.setExpirationTime();
-            callback(res);
+            session.destroy();
+            session = null;
+            callback();
           }
         });
       });

@@ -41,9 +41,9 @@ User.prototype.signup = function() {
           self.avatar = null || QMCONFIG.defAvatar.url;
 
           if (self.tempBlob) {
-            self.uploadAvatar();
+            uploadAvatar(self);
           } else {
-            UserActions.processingForm(self);
+            UserActions.successFormCallback(self);
           }
         });
       });
@@ -74,30 +74,46 @@ User.prototype.login = function() {
         self.blob_id = user.blob_id;
         self.avatar = user.custom_data || QMCONFIG.defAvatar.url;
 
-        if (self.remember) self.rememberMe();
-        UserActions.processingForm(self);
+        if (self.remember) rememberMe();
+        UserActions.successFormCallback(self);
       });
     });
   }
 };
 
-User.prototype.uploadAvatar = function() {
+User.prototype.forgot = function(callback) {
   var UserActions = require('./actions'),
+      form = $('section:visible form'),
       self = this;
 
-  QBApiCalls.createBlob({file: this.tempBlob, 'public': true}, function(blob) {
-    QBApiCalls.updateUser(self.id, {blob_id: blob.id, custom_data: blob.path}, function(user) {
-      self.blob_id = user.blob_id;
-      self.avatar = user.custom_data;
-      delete self.tempBlob;
+  if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    UserActions.createSpinner();
 
-      UserActions.processingForm(self);
+    QBApiCalls.createSession({}, function() {
+      QBApiCalls.forgotPassword(self.email, function() {
+        UserActions.successSendEmailCallback();
+        callback();
+      });
     });
-  });
+  }
 };
 
-User.prototype.rememberMe = function() {
+User.prototype.resetPass = function() {
+  var UserActions = require('./actions'),
+      form = $('section:visible form'),
+      self = this;
 
+  if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    
+  }
+};
+
+User.prototype.logout = function(callback) {
+  QBApiCalls.logoutUser(function() {
+    callback();
+  });
 };
 
 /* Private
@@ -126,7 +142,7 @@ function validate(form, user) {
         errMsg = QMCONFIG.errors.invalidEmail;
       } else if (this.validity.patternMismatch && errName === 'Name') {
         errMsg = QMCONFIG.errors.invalidName;
-      } else if (this.validity.patternMismatch && errName === 'Password') {
+      } else if (this.validity.patternMismatch && (errName === 'Password' || errName === 'New password')) {
         errMsg = QMCONFIG.errors.invalidPass;
       }
 
@@ -163,5 +179,23 @@ function validate(form, user) {
 
 function fail(user, errMsg) {
   user.valid = false;
-  $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
+  $('section:visible').find('.form-text_error').addClass('is-error').text(errMsg);
+}
+
+function uploadAvatar(user) {
+  var UserActions = require('./actions');
+
+  QBApiCalls.createBlob({file: user.tempBlob, 'public': true}, function(blob) {
+    QBApiCalls.updateUser(user.id, {blob_id: blob.id, custom_data: blob.path}, function(res) {
+      user.blob_id = res.blob_id;
+      user.avatar = res.custom_data;
+      delete user.tempBlob;
+
+      UserActions.successFormCallback(user);
+    });
+  });
+}
+
+function rememberMe() {
+
 }
