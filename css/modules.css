@@ -142,6 +142,7 @@
     font-size: 1.6vh;
     line-height: 2vh;
     color: #c03d3d;
+    opacity: 0;
   }
 
 /* footer-links */
@@ -203,6 +204,7 @@
   width: 249px;
 }
 .header-profile {
+  position: relative;
   max-width: calc(100% - 249px - 50px);
 }
   .header-profile-invite {
@@ -212,10 +214,15 @@
 /* invite */
 .invite {
   min-width: 190px;
-  padding: 0 25px;
   line-height: 38px;
+  text-align: center;
   background: #ff4945;
   border-radius: 25px;
+}
+.invite_contacts {
+  width: 245px;
+  line-height: 45px;
+  border-radius: 30px;
 }
 .invite_cap {
   min-width: inherit;
@@ -232,8 +239,13 @@
     background: url(../images/icon-invite.png) no-repeat left 0;
     background-size: 16px 19px;
   }
+  .invite_contacts .invite-icon {
+    padding-left: 35px;
+    font-size: 24px;
+    background-size: 21px 25px;
+  }
   .invite_cap .invite-icon {
-    padding-left: 5.5vh;
+    padding-left: 5.4vh;
     font-size: 3.8vh;
     background-position: left .5vh;
     background-size: 3.1vh 3.6vh;
@@ -249,23 +261,74 @@
   height: 31vh;
 }
 
+/* popover */
+.popover {
+  display: none;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 0 10px 3px rgba(240, 240, 240, .7);
+}
+
 /* list */
 .list {
   height: calc(100% - 30px);
+}
+.list-actions {
+  width: 160px;
+}
+.list-actions_contacts {
+  margin: -15px auto 0;
+}
+.list-actions_profile {
+  position: absolute;
+  top: 55px;
+  right: 5px;
 }
   .list-item {
     height: 60px;
     border-bottom: 1px solid #f0f0f0;
   }
+  .list-actions .list-item {
+    height: auto;
+    background: #fff;
+  }
+  .list-actions .list-item:last-child {
+    border-bottom: 0;
+  }
+  .list-item:hover {
+    background: #f8f8f8;
+  }
+    .list-actions-action {
+      display: block;
+      padding: 0 10px;
+      font-size: 16px;
+      line-height: 40px;
+      color: #333;
+    }
+    .list-actions-action:hover {
+      opacity: 1;
+    }
 
 /* contact */
+.no-contacts {
+  padding-top: 36px;
+  color: #999;
+  text-align: center;
+}
+  .no-contacts-oops {
+    margin-bottom: 20px;
+    font-size: 32px;
+  }
+  .no-contacts-description {
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 22px;
+  }
 .contact {
   display: block;
   height: 100%;
   padding: 10px 20px;
 }
 .contact:hover {
-  background: #f8f8f8;
   opacity: 1;
 }
   .contact-avatar {
@@ -308,4 +371,79 @@
 /* scrollbar */
 .mCS-autoHide > .mCustomScrollBox ~ .mCSB_scrollTools {
   opacity: 1;
+}
+.mCSB_container {
+  overflow: visible;
+}
+
+/* popups */
+.popups {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, .47);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .5s;
+}
+  .popup {
+    position: fixed;
+    top: 25%;
+    left: 50%;
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .5s, top .5s;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+  .popup_logout,
+  .popup_import,
+  .popup_delete {
+    width: 400px;
+    height: 195px;
+  }
+    .popup-alert {
+      height: calc(100% - 45px);
+      text-align: center;
+    }
+    .popup-controls {
+      padding-bottom: 25px;
+      text-align: center;
+    }
+      .popup-control-button {
+        font-size: 20px;
+        line-height: 20px;
+        text-transform: uppercase;
+      }
+      .popup-control-button_cancel {
+        margin-right: 35px;
+        color: #999;
+      }
+      .popup-control-button_ok {
+        margin-right: 15px;
+        color: #0d70b3;
+      }
+      .popup_import .popup-control-button_ok {
+        margin-right: 0;
+      }
+
+/* alerts */
+.alert {
+  color: #333;
+}
+.alert_logout {
+  font-size: 20px;
+  line-height: 26px;
+}
+.alert_import {
+  font-size: 18px;
+  line-height: 24px;
+}
+.alert_delete {
+  font-size: 26px;
+  line-height: 32px;
 }

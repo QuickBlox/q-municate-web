@@ -8,68 +8,37 @@
 var User = require('./user');
 
 module.exports = (function() {
-
-  var switchPage = function(page) {
-    $('body, .l-wrapper').removeClass('is-welcome');
-    page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
-  };
+  var user;
 
   var clearErrors = function() {
-    $('.form-text_error').addClass('is-invisible');
     $('.is-error').removeClass('is-error');
   };
 
-  var inputFocus = function() {
-    $('section:visible input:first').focus();
+  var switchPage = function(page) {
+    $('body').removeClass('is-welcome');
+    page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
+
+    // reset form
+    clearErrors();
+    page.find('input').val('');
+    if (!page.is('#mainPage')) {
+      page.find('form').removeClass('is-hidden').next('.l-form').remove(); // reset Forgot form after success sending of letter
+      page.find('input:file').prev().find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
+      page.find('input:checkbox').prop('checked', true);
+      page.find('input:first').focus();
+    }
+  };
+
+  var switchOnWelcomePage = function() {
+    $('body').addClass('is-welcome');
+    $('#welcomePage').removeClass('is-hidden').siblings('section').addClass('is-hidden');
+  };
+
+  var appearAnimation = function() {
+    $('.popover').show(150);
   };
 
   return {
-
-    init: function() {
-      var self = this;
-
-      $('input:file').on('change', function() {
-        self.changeInputFile($(this));
-      });
-
-      $('#signupFB, #loginFB').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('connect with FB');
-        event.preventDefault();
-        self.connectFB();
-      });
-
-      $('#signupQB').on('click', function() {
-        if (QMCONFIG.debug) console.log('signup with QB');
-        self.signupQB();
-      });
-
-      $('#loginQB').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('login wih QB');
-        event.preventDefault();
-        self.loginQB();
-      });
-
-      $('#signupForm').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('create user');
-        event.preventDefault();
-        self.signupForm();
-      });
-
-      $('#loginForm').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('authorize user');
-        event.preventDefault();
-        self.loginForm();
-      });
-
-      $('#searchContacts').on('submit', function(event) {
-        if (QMCONFIG.debug) console.log('search contacts');
-        event.preventDefault();
-      });
-
-      $('.contact, #profile').on('click', function(event) {
-        event.preventDefault();
-      });
-    },
 
     createSpinner: function() {
       var spinnerBlock = '<div class="l-spinner"><div class="spinner">';
@@ -83,21 +52,20 @@ module.exports = (function() {
       $('section:visible form').removeClass('is-hidden').next('.l-spinner').remove();
     },
 
-    processingForm: function(user) {
-      clearErrors();
+    successFormCallback: function(user) {
       this.removeSpinner();
       $('#profile').find('img').attr('src', user.avatar).siblings('span').text(user.full_name);
       switchPage($('#mainPage'));
     },
 
-    changeInputFile: function(objDom) {
-      var URL = window.webkitURL || window.URL,
-          file = objDom[0].files[0],
-          src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
-          fileName = file ? file.name : QMCONFIG.defAvatar.caption;
-      
-      objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
-      if (typeof file !== undefined) URL.revokeObjectURL(src);
+    successSendEmailCallback: function() {
+      var alert = '<div class="l-form l-flexbox"><div class="no-contacts l-flexbox">';
+      alert += '<span class="no-contacts-oops">Success!</span>';
+      alert += '<span class="no-contacts-description">Please check your email and click on the link in letter in order to reset your password</span>';
+      alert += '</div></div>';
+
+      this.removeSpinner();
+      $('section:visible form').addClass('is-hidden').after(alert);
     },
 
     connectFB: function() {
@@ -106,24 +74,71 @@ module.exports = (function() {
 
     signupQB: function() {
       switchPage($('#signUpPage'));
-      inputFocus();
     },
 
     loginQB: function() {
       switchPage($('#loginPage'));
-      inputFocus();
+    },
+
+    forgot: function() {
+      switchPage($('#forgotPage'));
     },
 
     signupForm: function() {
-      var user = new User;
+      user = new User;
       clearErrors();
       user.signup();
     },
 
     loginForm: function() {
-      var user = new User;
+      user = new User;
       clearErrors();
       user.login();
+    },
+
+    forgotForm: function() {
+      user = new User;
+      clearErrors();
+      user.forgot(function() {
+        user = null;
+      });
+    },
+
+    resetForm: function() {
+      user = new User;
+      clearErrors();
+      user.resetPass();
+    },
+
+    profilePopover: function(objDom) {
+      var html = '<ul class="list-actions list-actions_profile popover">';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+      html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Logout</a></li>';
+      html += '</ul>';
+
+      objDom.after(html);
+      appearAnimation();
+    },
+
+    contactPopover: function(objDom) {
+      var html = '<ul class="list-actions list-actions_contacts popover">';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Add people</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Delete contact</a></li>';
+      html += '</ul>';
+
+      objDom.after(html).parent().addClass('is-contextmenu');
+      appearAnimation();
+    },
+
+    logout: function() {
+      user.logout(function() {
+        user = null;
+        switchOnWelcomePage();
+        if (QMCONFIG.debug) console.log('current User and Session were destroyed');
+      });
     }
 
   };

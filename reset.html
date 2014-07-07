@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Q-municate Reset Password</title>
+  <link rel="stylesheet" href="lib/scrollbar/jquery.mCustomScrollbar.css">
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
@@ -19,11 +20,11 @@
         </header>
         <form class="l-form l-flexbox" action="#" autocomplete="off">
           <h3 class="form-header">Reset your password</h3>
-          <span class="form-text form-text_error is-invisible">Error</span>
+          <span class="form-text form-text_error">Error</span>
           <div class="chroma-hash">
-            <input class="form-input pattern-pass" type="password" placeholder="New password" required>
+            <input id="reset-password" class="form-input pattern-pass" type="password" placeholder="New password" required>
           </div>
-          <button class="form-button form-button_reset form-button_qb">Reset password</button>
+          <button id="resetForm" class="form-button form-button_reset form-button_qb">Reset password</button>
         </form>
       </div>
       <footer class="l-footer l-flexbox l-flexbox_row">
@@ -42,6 +43,7 @@
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="lib/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
   <script src="lib/chroma-hash.js"></script>
   <script src="lib/quickblox.min.js"></script>
 

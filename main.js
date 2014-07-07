@@ -9,68 +9,37 @@
 var User = require('./user');
 
 module.exports = (function() {
-
-  var switchPage = function(page) {
-    $('body, .l-wrapper').removeClass('is-welcome');
-    page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
-  };
+  var user;
 
   var clearErrors = function() {
-    $('.form-text_error').addClass('is-invisible');
     $('.is-error').removeClass('is-error');
   };
 
-  var inputFocus = function() {
-    $('section:visible input:first').focus();
+  var switchPage = function(page) {
+    $('body').removeClass('is-welcome');
+    page.removeClass('is-hidden').siblings('section').addClass('is-hidden');
+
+    // reset form
+    clearErrors();
+    page.find('input').val('');
+    if (!page.is('#mainPage')) {
+      page.find('form').removeClass('is-hidden').next('.l-form').remove(); // reset Forgot form after success sending of letter
+      page.find('input:file').prev().find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
+      page.find('input:checkbox').prop('checked', true);
+      page.find('input:first').focus();
+    }
+  };
+
+  var switchOnWelcomePage = function() {
+    $('body').addClass('is-welcome');
+    $('#welcomePage').removeClass('is-hidden').siblings('section').addClass('is-hidden');
+  };
+
+  var appearAnimation = function() {
+    $('.popover').show(150);
   };
 
   return {
-
-    init: function() {
-      var self = this;
-
-      $('input:file').on('change', function() {
-        self.changeInputFile($(this));
-      });
-
-      $('#signupFB, #loginFB').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('connect with FB');
-        event.preventDefault();
-        self.connectFB();
-      });
-
-      $('#signupQB').on('click', function() {
-        if (QMCONFIG.debug) console.log('signup with QB');
-        self.signupQB();
-      });
-
-      $('#loginQB').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('login wih QB');
-        event.preventDefault();
-        self.loginQB();
-      });
-
-      $('#signupForm').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('create user');
-        event.preventDefault();
-        self.signupForm();
-      });
-
-      $('#loginForm').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('authorize user');
-        event.preventDefault();
-        self.loginForm();
-      });
-
-      $('#searchContacts').on('submit', function(event) {
-        if (QMCONFIG.debug) console.log('search contacts');
-        event.preventDefault();
-      });
-
-      $('.contact, #profile').on('click', function(event) {
-        event.preventDefault();
-      });
-    },
 
     createSpinner: function() {
       var spinnerBlock = '<div class="l-spinner"><div class="spinner">';
@@ -84,21 +53,20 @@ module.exports = (function() {
       $('section:visible form').removeClass('is-hidden').next('.l-spinner').remove();
     },
 
-    processingForm: function(user) {
-      clearErrors();
+    successFormCallback: function(user) {
       this.removeSpinner();
       $('#profile').find('img').attr('src', user.avatar).siblings('span').text(user.full_name);
       switchPage($('#mainPage'));
     },
 
-    changeInputFile: function(objDom) {
-      var URL = window.webkitURL || window.URL,
-          file = objDom[0].files[0],
-          src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
-          fileName = file ? file.name : QMCONFIG.defAvatar.caption;
-      
-      objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
-      if (typeof file !== undefined) URL.revokeObjectURL(src);
+    successSendEmailCallback: function() {
+      var alert = '<div class="l-form l-flexbox"><div class="no-contacts l-flexbox">';
+      alert += '<span class="no-contacts-oops">Success!</span>';
+      alert += '<span class="no-contacts-description">Please check your email and click on the link in letter in order to reset your password</span>';
+      alert += '</div></div>';
+
+      this.removeSpinner();
+      $('section:visible form').addClass('is-hidden').after(alert);
     },
 
     connectFB: function() {
@@ -107,30 +75,77 @@ module.exports = (function() {
 
     signupQB: function() {
       switchPage($('#signUpPage'));
-      inputFocus();
     },
 
     loginQB: function() {
       switchPage($('#loginPage'));
-      inputFocus();
+    },
+
+    forgot: function() {
+      switchPage($('#forgotPage'));
     },
 
     signupForm: function() {
-      var user = new User;
+      user = new User;
       clearErrors();
       user.signup();
     },
 
     loginForm: function() {
-      var user = new User;
+      user = new User;
       clearErrors();
       user.login();
+    },
+
+    forgotForm: function() {
+      user = new User;
+      clearErrors();
+      user.forgot(function() {
+        user = null;
+      });
+    },
+
+    resetForm: function() {
+      user = new User;
+      clearErrors();
+      user.resetPass();
+    },
+
+    profilePopover: function(objDom) {
+      var html = '<ul class="list-actions list-actions_profile popover">';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+      html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Logout</a></li>';
+      html += '</ul>';
+
+      objDom.after(html);
+      appearAnimation();
+    },
+
+    contactPopover: function(objDom) {
+      var html = '<ul class="list-actions list-actions_contacts popover">';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Add people</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action" href="#">Delete contact</a></li>';
+      html += '</ul>';
+
+      objDom.after(html).parent().addClass('is-contextmenu');
+      appearAnimation();
+    },
+
+    logout: function() {
+      user.logout(function() {
+        user = null;
+        switchOnWelcomePage();
+        if (QMCONFIG.debug) console.log('current User and Session were destroyed');
+      });
     }
 
   };
 })();
 
-},{"./user":5}],2:[function(require,module,exports){
+},{"./user":6}],2:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -138,16 +153,15 @@ module.exports = (function() {
  *
  */
 
-var UserActions = require('./actions'),
+var Routes = require('./routes'),
     QBApiCalls = require('./qbApiCalls');
 
 var APP = {
   init: function() {
     this.scrollbar();
     this.chromaHash();
-    this.setDefAvatar();
     this.setHtml5Patterns();
-    UserActions.init();
+    Routes.init();
     QBApiCalls.init();
 
     if (QMCONFIG.debug) console.log('App init', this);
@@ -166,16 +180,9 @@ var APP = {
     });
   },
 
-  setDefAvatar: function() {
-    $('#defAvatar').find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
-  },
-
   setHtml5Patterns: function() {
-    var FULL_NAME = "[^><;]{3,50}";
-    var ALLNUM_ALLPUNCT = "[A-Za-z0-9`~!@#%&=_<>;:,'" + '\\"' + "\\.\\$\\^\\*\\-\\+\\\\\/\\|\\(\\)\\[\\]\\{\\}\\?]{8,40}";
-
-    $('.pattern-name').attr('pattern', FULL_NAME);
-    $('.pattern-pass').attr('pattern', ALLNUM_ALLPUNCT);
+    $('.pattern-name').attr('pattern', QMCONFIG.patterns.name);
+    $('.pattern-pass').attr('pattern', QMCONFIG.patterns.password);
   }
 };
 
@@ -183,7 +190,7 @@ $(document).ready(function() {
   APP.init();
 });
 
-},{"./actions":1,"./qbApiCalls":3}],3:[function(require,module,exports){
+},{"./qbApiCalls":3,"./routes":4}],3:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -199,12 +206,18 @@ module.exports = (function() {
   var fail = function(errMsg) {
     var UserActions = require('./actions');
     UserActions.removeSpinner();
-    $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
+    $('section:visible').find('.form-text_error').addClass('is-error').text(errMsg);
   };
 
   var failUser = function(detail) {
     var errMsg = 'This email ';
     errMsg += JSON.parse(detail).errors.email[0];
+    $('section:visible input[type="email"]').addClass('is-error');
+    fail(errMsg);
+  };
+
+  var failForgot = function() {
+    var errMsg = QMCONFIG.errors.notFoundEmail;
     $('section:visible input[type="email"]').addClass('is-error');
     fail(errMsg);
   };
@@ -276,17 +289,26 @@ module.exports = (function() {
       });
     },
 
+    logoutUser: function(callback) {
+      if (QMCONFIG.debug) console.log('QB SDK: User has exited');
+      session.destroy();
+      session = null;
+      callback();
+    },
+
     forgotPassword: function(email, callback) {
       this.checkSession(function(res) {
-        QB.users.resetPassword(email, function(err, res) {
-          if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+        QB.users.resetPassword(email, function(response) {
+          if (response.code === 404) {
+            if (QMCONFIG.debug) console.log(response.message);
 
+            failForgot();
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent', res);
+            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent');
 
-            session.setExpirationTime();
-            callback(res);
+            session.destroy();
+            session = null;
+            callback();
           }
         });
       });
@@ -361,7 +383,152 @@ module.exports = (function() {
   };
 })();
 
-},{"./actions":1,"./session":4}],4:[function(require,module,exports){
+},{"./actions":1,"./session":5}],4:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * Routes
+ *
+ */
+
+module.exports = (function() {
+
+  return {
+    init: function() {
+      var UserActions = require('./actions');
+
+      $(document).on('click', function(event) {
+        clickBehaviour(event);
+      });
+
+      $('input:file').on('change', function() {
+        changeInputFile($(this));
+      });
+
+      $('#signupFB, #loginFB').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('connect with FB');
+        event.preventDefault();
+        UserActions.connectFB();
+      });
+
+      $('#signupQB').on('click', function() {
+        if (QMCONFIG.debug) console.log('signup with QB');
+        UserActions.signupQB();
+      });
+
+      $('#loginQB').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('login wih QB');
+        event.preventDefault();
+        UserActions.loginQB();
+      });
+
+      $('#forgot').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('forgot password');
+        event.preventDefault();
+        UserActions.forgot();
+      });
+
+      $('#signupForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('create user');
+        event.preventDefault();
+        UserActions.signupForm();
+      });
+
+      $('#loginForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('authorize user');
+        event.preventDefault();
+        UserActions.loginForm();
+      });
+
+      $('#forgotForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('send letter');
+        event.preventDefault();
+        UserActions.forgotForm();
+      });
+
+      $('#resetForm').on('click', function(event) {
+        if (QMCONFIG.debug) console.log('reset password');
+        event.preventDefault();
+        UserActions.resetForm();
+      });
+
+      $('#profile').on('click', function(event) {
+        event.preventDefault();
+        removePopover();
+        UserActions.profilePopover($(this));
+      });
+
+      $('.list').on('contextmenu', '.contact', function(event) {
+        event.preventDefault();
+        removePopover();
+        UserActions.contactPopover($(this));
+      });
+
+      $('.header-profile').on('click', '#logout', function(event) {
+        event.preventDefault();
+        openPopup($('#popupLogout'));
+      });
+
+      $('.popup-control-button').on('click', function(event) {
+        event.preventDefault();
+        closePopup();
+      });
+
+      $('#logoutConfirm').on('click', function() {
+        UserActions.logout();
+      });
+
+      /* temp routes */
+      $('#searchContacts').on('submit', function(event) {
+        if (QMCONFIG.debug) console.log('search contacts');
+        event.preventDefault();
+      });
+
+      $('.list').on('click', '.contact', function(event) {
+        event.preventDefault();
+      });
+
+    }
+  };
+})();
+
+/* Private
+---------------------------------------------------------------------- */
+// Checking if the target is not an object run popover
+function clickBehaviour(e) {
+  var objDom = $(e.target);
+
+  if (objDom.is('#profile, #profile *') || e.which === 3) {
+    return false;
+  } else {
+    removePopover();
+  }
+}
+
+function changeInputFile(objDom) {
+  var URL = window.webkitURL || window.URL,
+      file = objDom[0].files[0],
+      src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
+      fileName = file ? file.name : QMCONFIG.defAvatar.caption;
+  
+  objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
+  if (typeof file !== 'undefined') URL.revokeObjectURL(src);
+}
+
+function removePopover() {
+  $('.is-contextmenu').removeClass('is-contextmenu');
+  $('.popover').remove();
+}
+
+var openPopup = function(objDom) {
+  objDom.add('.popups').addClass('is-overlay');
+};
+
+var closePopup = function() {
+  $('.is-overlay').removeClass('is-overlay');
+};
+
+},{"./actions":1}],5:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -403,7 +570,7 @@ Session.prototype.destroy = function() {
   localStorage.removeItem('QM.session');
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -447,9 +614,9 @@ User.prototype.signup = function() {
           self.avatar = null || QMCONFIG.defAvatar.url;
 
           if (self.tempBlob) {
-            self.uploadAvatar();
+            uploadAvatar(self);
           } else {
-            UserActions.processingForm(self);
+            UserActions.successFormCallback(self);
           }
         });
       });
@@ -480,30 +647,46 @@ User.prototype.login = function() {
         self.blob_id = user.blob_id;
         self.avatar = user.custom_data || QMCONFIG.defAvatar.url;
 
-        if (self.remember) self.rememberMe();
-        UserActions.processingForm(self);
+        if (self.remember) rememberMe();
+        UserActions.successFormCallback(self);
       });
     });
   }
 };
 
-User.prototype.uploadAvatar = function() {
+User.prototype.forgot = function(callback) {
   var UserActions = require('./actions'),
+      form = $('section:visible form'),
       self = this;
 
-  QBApiCalls.createBlob({file: this.tempBlob, 'public': true}, function(blob) {
-    QBApiCalls.updateUser(self.id, {blob_id: blob.id, custom_data: blob.path}, function(user) {
-      self.blob_id = user.blob_id;
-      self.avatar = user.custom_data;
-      delete self.tempBlob;
+  if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    UserActions.createSpinner();
 
-      UserActions.processingForm(self);
+    QBApiCalls.createSession({}, function() {
+      QBApiCalls.forgotPassword(self.email, function() {
+        UserActions.successSendEmailCallback();
+        callback();
+      });
     });
-  });
+  }
 };
 
-User.prototype.rememberMe = function() {
+User.prototype.resetPass = function() {
+  var UserActions = require('./actions'),
+      form = $('section:visible form'),
+      self = this;
 
+  if (validate(form, this)) {
+    if (QMCONFIG.debug) console.log('User', self);
+    
+  }
+};
+
+User.prototype.logout = function(callback) {
+  QBApiCalls.logoutUser(function() {
+    callback();
+  });
 };
 
 /* Private
@@ -532,7 +715,7 @@ function validate(form, user) {
         errMsg = QMCONFIG.errors.invalidEmail;
       } else if (this.validity.patternMismatch && errName === 'Name') {
         errMsg = QMCONFIG.errors.invalidName;
-      } else if (this.validity.patternMismatch && errName === 'Password') {
+      } else if (this.validity.patternMismatch && (errName === 'Password' || errName === 'New password')) {
         errMsg = QMCONFIG.errors.invalidPass;
       }
 
@@ -569,7 +752,25 @@ function validate(form, user) {
 
 function fail(user, errMsg) {
   user.valid = false;
-  $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
+  $('section:visible').find('.form-text_error').addClass('is-error').text(errMsg);
+}
+
+function uploadAvatar(user) {
+  var UserActions = require('./actions');
+
+  QBApiCalls.createBlob({file: user.tempBlob, 'public': true}, function(blob) {
+    QBApiCalls.updateUser(user.id, {blob_id: blob.id, custom_data: blob.path}, function(res) {
+      user.blob_id = res.blob_id;
+      user.avatar = res.custom_data;
+      delete user.tempBlob;
+
+      UserActions.successFormCallback(user);
+    });
+  });
+}
+
+function rememberMe() {
+
 }
 
 },{"./actions":1,"./qbApiCalls":3}]},{},[2])
