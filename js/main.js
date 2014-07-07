@@ -33,11 +33,8 @@ var APP = {
   },
 
   setHtml5Patterns: function() {
-    var FULL_NAME = "[^><;]{3,50}";
-    var ALLNUM_ALLPUNCT = "[A-Za-z0-9`~!@#%&=_<>;:,'" + '\\"' + "\\.\\$\\^\\*\\-\\+\\\\\/\\|\\(\\)\\[\\]\\{\\}\\?]{8,40}";
-
-    $('.pattern-name').attr('pattern', FULL_NAME);
-    $('.pattern-pass').attr('pattern', ALLNUM_ALLPUNCT);
+    $('.pattern-name').attr('pattern', QMCONFIG.patterns.name);
+    $('.pattern-pass').attr('pattern', QMCONFIG.patterns.password);
   }
 };
 

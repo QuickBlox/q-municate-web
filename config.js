@@ -17,6 +17,11 @@ var QMCONFIG = {
 
   maxLimitFile: 10,
 
+  patterns: {
+    name: "[^><;]{3,50}",
+    password: "[A-Za-z0-9`~!@#%&=_<>;:,'" + '\\"' + "\\.\\$\\^\\*\\-\\+\\\\\/\\|\\(\\)\\[\\]\\{\\}\\?]{8,40}"
+  },
+
   errors: {
     session: 'Please check QB application credentials',
     invalidName: 'Name has a bad format. Length must be in the diapason [3-50]',
