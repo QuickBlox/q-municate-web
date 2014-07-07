@@ -10,13 +10,22 @@ var Routes = require('./routes'),
 
 var APP = {
   init: function() {
+    var token;
+
     this.scrollbar();
     this.chromaHash();
     this.setHtml5Patterns();
     Routes.init();
-    QBApiCalls.init();
 
     if (QMCONFIG.debug) console.log('App init', this);
+
+    // Checking if autologin was chosen
+    if (localStorage.getItem('QM.session')) {
+      token = JSON.parse(localStorage.getItem('QM.session')).token;
+      QBApiCalls.init(token);
+    } else {
+      QBApiCalls.init();
+    }
   },
 
   scrollbar: function() {

@@ -110,6 +110,11 @@ module.exports = (function() {
       user.resetPass();
     },
 
+    autologin: function() {
+      user = new User;
+      user.autologin();
+    },
+
     profilePopover: function(objDom) {
       var html = '<ul class="list-actions list-actions_profile popover">';
       // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
