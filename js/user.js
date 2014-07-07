@@ -38,7 +38,7 @@ User.prototype.signup = function() {
           self.id = user.id;
           self.tag = user.user_tags;
           self.blob_id = null;
-          self.avatar = null || QMCONFIG.defAvatar.url;
+          self.avatar = QMCONFIG.defAvatar.url;
 
           if (self.tempBlob) {
             uploadAvatar(self);
@@ -47,7 +47,7 @@ User.prototype.signup = function() {
           }
         });
       });
-    });
+    }, false);
   }
 };
 
@@ -74,10 +74,15 @@ User.prototype.login = function() {
         self.blob_id = user.blob_id;
         self.avatar = user.custom_data || QMCONFIG.defAvatar.url;
 
-        if (self.remember) rememberMe();
+        if (self.remember) {
+          delete self.remember;
+          rememberMe(self);
+        }
+        delete self.remember;
+
         UserActions.successFormCallback(self);
       });
-    });
+    }, self.remember);
   }
 };
 
@@ -95,7 +100,7 @@ User.prototype.forgot = function(callback) {
         UserActions.successSendEmailCallback();
         callback();
       });
-    });
+    }, false);
   }
 };
 
@@ -108,6 +113,19 @@ User.prototype.resetPass = function() {
     if (QMCONFIG.debug) console.log('User', self);
     
   }
+};
+
+User.prototype.autologin = function() {
+  var UserActions = require('./actions'),
+      storage = JSON.parse(localStorage.getItem('QM.user')),
+      self = this;
+
+  Object.keys(storage).forEach(function(prop) {
+    self[prop] = storage[prop];
+  });
+  
+  UserActions.successFormCallback(self);
+  if (QMCONFIG.debug) console.log('User', self);
 };
 
 User.prototype.logout = function(callback) {
@@ -196,6 +214,13 @@ function uploadAvatar(user) {
   });
 }
 
-function rememberMe() {
+function rememberMe(user) {
+  var storage = {};
 
+  delete user.valid;
+  Object.getOwnPropertyNames(user).forEach(function(prop) {
+    storage[prop] = user[prop];
+  });
+  
+  localStorage.setItem('QM.user', JSON.stringify(storage));
 }
