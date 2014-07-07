@@ -142,6 +142,7 @@
     font-size: 1.6vh;
     line-height: 2vh;
     color: #c03d3d;
+    opacity: 0;
   }
 
 /* footer-links */
@@ -262,6 +263,7 @@
 
 /* popover */
 .popover {
+  display: none;
   border: 1px solid #f0f0f0;
   box-shadow: 0 0 10px 3px rgba(240, 240, 240, .7);
 }

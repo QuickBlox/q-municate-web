@@ -5,7 +5,7 @@
  *
  */
 
-var UserActions = require('./actions'),
+var Routes = require('./routes'),
     QBApiCalls = require('./qbApiCalls');
 
 var APP = {
@@ -13,7 +13,7 @@ var APP = {
     this.scrollbar();
     this.chromaHash();
     this.setHtml5Patterns();
-    UserActions.init();
+    Routes.init();
     QBApiCalls.init();
 
     if (QMCONFIG.debug) console.log('App init', this);

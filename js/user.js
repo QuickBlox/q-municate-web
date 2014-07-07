@@ -43,7 +43,7 @@ User.prototype.signup = function() {
           if (self.tempBlob) {
             uploadAvatar(self);
           } else {
-            UserActions.processingForm(self);
+            UserActions.successFormCallback(self);
           }
         });
       });
@@ -75,7 +75,7 @@ User.prototype.login = function() {
         self.avatar = user.custom_data || QMCONFIG.defAvatar.url;
 
         if (self.remember) rememberMe();
-        UserActions.processingForm(self);
+        UserActions.successFormCallback(self);
       });
     });
   }
@@ -179,7 +179,7 @@ function validate(form, user) {
 
 function fail(user, errMsg) {
   user.valid = false;
-  $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
+  $('section:visible').find('.form-text_error').addClass('is-error').text(errMsg);
 }
 
 function uploadAvatar(user) {
@@ -191,7 +191,7 @@ function uploadAvatar(user) {
       user.avatar = res.custom_data;
       delete user.tempBlob;
 
-      UserActions.processingForm(user);
+      UserActions.successFormCallback(user);
     });
   });
 }

@@ -13,7 +13,7 @@ module.exports = (function() {
   var fail = function(errMsg) {
     var UserActions = require('./actions');
     UserActions.removeSpinner();
-    $('section:visible').find('.form-text_error').text(errMsg).removeClass('is-invisible');
+    $('section:visible').find('.form-text_error').addClass('is-error').text(errMsg);
   };
 
   var failUser = function(detail) {
@@ -78,13 +78,6 @@ module.exports = (function() {
       });
     },
 
-    logoutUser: function(callback) {
-      if (QMCONFIG.debug) console.log('QB SDK: User has exited');
-      session.destroy();
-      session = null;
-      callback();
-    },
-
     loginUser: function(params, callback) {
       this.checkSession(function(res) {
         QB.login(params, function(err, res) {
@@ -101,6 +94,13 @@ module.exports = (function() {
           }
         });
       });
+    },
+
+    logoutUser: function(callback) {
+      if (QMCONFIG.debug) console.log('QB SDK: User has exited');
+      session.destroy();
+      session = null;
+      callback();
     },
 
     forgotPassword: function(email, callback) {

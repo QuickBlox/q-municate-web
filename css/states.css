@@ -1,27 +1,7 @@
-/* Common cases
---------------------------------------------------*/
 .is-hidden {
   display: none;
 }
 
-.is-invisible {
-  opacity: 0 !important;
-}
-
-.is-error {
-  border-color: #cd575c;
-}
-.is-error:focus {
-  border-color: #cd575c;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(205, 87, 92, .6);
-}
-
-.is-contextmenu {
-  background: #f8f8f8;
-}
-
-/* Custom cases
---------------------------------------------------*/
 body.is-welcome {
   background: url(../images/bg.jpg) no-repeat;
   background-size: 100% 100%;
@@ -32,6 +12,20 @@ body.is-welcome .l-wrapper {
   background: rgba(255, 255, 255, .6);
 }
 
+span.is-error {
+  opacity: 1;
+}
+input.is-error {
+  border-color: #cd575c;
+}
+input.is-error:focus {
+  border-color: #cd575c;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(205, 87, 92, .6);
+}
+
+.list-item.is-contextmenu {
+  background: #f8f8f8;
+}
 .list-item.is-active {
   background: #1cba48;
   border-bottom: 1px solid #1cba48;
