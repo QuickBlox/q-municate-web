@@ -7,11 +7,12 @@
 
 module.exports = Session;
 
-function Session(token, params) {
+function Session(token, params, isRemember) {
   this.storage = {
-    token: token,
+    token: token || null,
     expirationTime: null,
-    authParams: params
+    remember: isRemember || null,
+    authParams: params || null
   };
 }
 
@@ -22,12 +23,14 @@ Session.prototype.setExpirationTime = function() {
   d.setHours(d.getHours() + limitHours);
   this.storage.expirationTime = d.toISOString();
 
-  localStorage.setItem('QM.session', JSON.stringify(this.storage));
+  if (this.storage.remember)
+    localStorage.setItem('QM.session', JSON.stringify(this.storage));
 };
 
 Session.prototype.setAuthParams = function(params) {
   this.storage.authParams = params;
-  localStorage.setItem('QM.session', JSON.stringify(this.storage));
+  if (this.storage.remember)
+    localStorage.setItem('QM.session', JSON.stringify(this.storage));
 };
 
 Session.prototype.getStorage = function() {
@@ -37,4 +40,5 @@ Session.prototype.getStorage = function() {
 Session.prototype.destroy = function() {
   this.storage = {};
   localStorage.removeItem('QM.session');
+  localStorage.removeItem('QM.user');
 };

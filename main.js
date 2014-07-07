@@ -111,6 +111,11 @@ module.exports = (function() {
       user.resetPass();
     },
 
+    autologin: function() {
+      user = new User;
+      user.autologin();
+    },
+
     profilePopover: function(objDom) {
       var html = '<ul class="list-actions list-actions_profile popover">';
       // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
@@ -158,13 +163,22 @@ var Routes = require('./routes'),
 
 var APP = {
   init: function() {
+    var token;
+
     this.scrollbar();
     this.chromaHash();
     this.setHtml5Patterns();
     Routes.init();
-    QBApiCalls.init();
 
     if (QMCONFIG.debug) console.log('App init', this);
+
+    // Checking if autologin was chosen
+    if (localStorage.getItem('QM.session')) {
+      token = JSON.parse(localStorage.getItem('QM.session')).token;
+      QBApiCalls.init(token);
+    } else {
+      QBApiCalls.init();
+    }
   },
 
   scrollbar: function() {
@@ -225,25 +239,30 @@ module.exports = (function() {
   return {
 
     init: function(token) {
+      var UserActions = require('./actions');
+
       if (typeof token === 'undefined') {
         QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
       } else {
         QB.init(token);
+        UserActions.createSpinner();
+
         session = new Session;
         session.getStorage();
+        UserActions.autologin();
       }
     },
 
     checkSession: function(callback) {
       if (new Date > session.storage.expirationTime) {
-        this.init();
-        this.createSession(session.storage.authParams, callback);
+        this.init(); // reset QuickBlox JS SDK after autologin via an existing token
+        this.createSession(session.storage.authParams, callback, session.storage.remember);
       } else {
         callback();
       }
     },
 
-    createSession: function(params, callback) {
+    createSession: function(params, callback, isRemember) {
       QB.createSession(params, function(err, res) {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
@@ -263,7 +282,7 @@ module.exports = (function() {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Session is created', res);
 
-          session = new Session(res.token, params);
+          session = new Session(res.token, params, isRemember);
           session.setExpirationTime();
 
           callback(res);
@@ -293,6 +312,7 @@ module.exports = (function() {
       if (QMCONFIG.debug) console.log('QB SDK: User has exited');
       session.destroy();
       session = null;
+      this.init(); // reset QuickBlox JS SDK after autologin via an existing token
       callback();
     },
 
@@ -538,11 +558,12 @@ var closePopup = function() {
 
 module.exports = Session;
 
-function Session(token, params) {
+function Session(token, params, isRemember) {
   this.storage = {
-    token: token,
+    token: token || null,
     expirationTime: null,
-    authParams: params
+    remember: isRemember || null,
+    authParams: params || null
   };
 }
 
@@ -553,12 +574,14 @@ Session.prototype.setExpirationTime = function() {
   d.setHours(d.getHours() + limitHours);
   this.storage.expirationTime = d.toISOString();
 
-  localStorage.setItem('QM.session', JSON.stringify(this.storage));
+  if (this.storage.remember)
+    localStorage.setItem('QM.session', JSON.stringify(this.storage));
 };
 
 Session.prototype.setAuthParams = function(params) {
   this.storage.authParams = params;
-  localStorage.setItem('QM.session', JSON.stringify(this.storage));
+  if (this.storage.remember)
+    localStorage.setItem('QM.session', JSON.stringify(this.storage));
 };
 
 Session.prototype.getStorage = function() {
@@ -568,6 +591,7 @@ Session.prototype.getStorage = function() {
 Session.prototype.destroy = function() {
   this.storage = {};
   localStorage.removeItem('QM.session');
+  localStorage.removeItem('QM.user');
 };
 
 },{}],6:[function(require,module,exports){
@@ -611,7 +635,7 @@ User.prototype.signup = function() {
           self.id = user.id;
           self.tag = user.user_tags;
           self.blob_id = null;
-          self.avatar = null || QMCONFIG.defAvatar.url;
+          self.avatar = QMCONFIG.defAvatar.url;
 
           if (self.tempBlob) {
             uploadAvatar(self);
@@ -620,7 +644,7 @@ User.prototype.signup = function() {
           }
         });
       });
-    });
+    }, false);
   }
 };
 
@@ -647,10 +671,15 @@ User.prototype.login = function() {
         self.blob_id = user.blob_id;
         self.avatar = user.custom_data || QMCONFIG.defAvatar.url;
 
-        if (self.remember) rememberMe();
+        if (self.remember) {
+          delete self.remember;
+          rememberMe(self);
+        }
+        delete self.remember;
+
         UserActions.successFormCallback(self);
       });
-    });
+    }, self.remember);
   }
 };
 
@@ -668,7 +697,7 @@ User.prototype.forgot = function(callback) {
         UserActions.successSendEmailCallback();
         callback();
       });
-    });
+    }, false);
   }
 };
 
@@ -681,6 +710,19 @@ User.prototype.resetPass = function() {
     if (QMCONFIG.debug) console.log('User', self);
     
   }
+};
+
+User.prototype.autologin = function() {
+  var UserActions = require('./actions'),
+      storage = JSON.parse(localStorage.getItem('QM.user')),
+      self = this;
+
+  Object.keys(storage).forEach(function(prop) {
+    self[prop] = storage[prop];
+  });
+  
+  UserActions.successFormCallback(self);
+  if (QMCONFIG.debug) console.log('User', self);
 };
 
 User.prototype.logout = function(callback) {
@@ -769,8 +811,15 @@ function uploadAvatar(user) {
   });
 }
 
-function rememberMe() {
+function rememberMe(user) {
+  var storage = {};
 
+  delete user.valid;
+  Object.getOwnPropertyNames(user).forEach(function(prop) {
+    storage[prop] = user[prop];
+  });
+  
+  localStorage.setItem('QM.user', JSON.stringify(storage));
 }
 
 },{"./actions":1,"./qbApiCalls":3}]},{},[2])

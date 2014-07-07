@@ -32,25 +32,30 @@ module.exports = (function() {
   return {
 
     init: function(token) {
+      var UserActions = require('./actions');
+
       if (typeof token === 'undefined') {
         QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
       } else {
         QB.init(token);
+        UserActions.createSpinner();
+
         session = new Session;
         session.getStorage();
+        UserActions.autologin();
       }
     },
 
     checkSession: function(callback) {
       if (new Date > session.storage.expirationTime) {
-        this.init();
-        this.createSession(session.storage.authParams, callback);
+        this.init(); // reset QuickBlox JS SDK after autologin via an existing token
+        this.createSession(session.storage.authParams, callback, session.storage.remember);
       } else {
         callback();
       }
     },
 
-    createSession: function(params, callback) {
+    createSession: function(params, callback, isRemember) {
       QB.createSession(params, function(err, res) {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
@@ -70,7 +75,7 @@ module.exports = (function() {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Session is created', res);
 
-          session = new Session(res.token, params);
+          session = new Session(res.token, params, isRemember);
           session.setExpirationTime();
 
           callback(res);
@@ -100,6 +105,7 @@ module.exports = (function() {
       if (QMCONFIG.debug) console.log('QB SDK: User has exited');
       session.destroy();
       session = null;
+      this.init(); // reset QuickBlox JS SDK after autologin via an existing token
       callback();
     },
 
