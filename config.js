@@ -8,6 +8,11 @@ var QMCONFIG = {
     authSecret: 'fyMjkBgMDrOUUPB'
   },
 
+  fbAccount: {
+    appId: '1445555125707161',
+    scope: 'email,user_friends'
+  },
+
   debug: true,
 
   defAvatar: {

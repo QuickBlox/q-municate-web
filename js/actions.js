@@ -68,8 +68,9 @@ module.exports = (function() {
       $('section:visible form').addClass('is-hidden').after(alert);
     },
 
-    connectFB: function() {
-
+    connectFB: function(token) {
+      user = new User;
+      user.connectFB(token);
     },
 
     signupQB: function() {

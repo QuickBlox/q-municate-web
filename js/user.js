@@ -12,6 +12,36 @@ function User() {
   this.valid = true;
 }
 
+User.prototype.connectFB = function(token) {
+  var UserActions = require('./actions'),
+      self = this,
+      params;
+
+  UserActions.loginQB();
+  UserActions.createSpinner();
+
+  params = {
+    provider: 'facebook',
+    keys: {token: token}
+  };
+
+  QBApiCalls.createSession(params, function(session) {
+    QBApiCalls.getUser(session.user_id, function(user) {
+      if (QMCONFIG.debug) console.log('User', self);
+
+      self.id = user.id;
+      self.facebook_id = user.facebook_id;
+      self.full_name = user.full_name;
+      self.email = user.email;
+      self.password = session.token;
+      self.tag = 'facebook';
+      self.blob_id = null;
+      
+      getFBPicture(self);
+    });
+  }, true);
+};
+
 User.prototype.signup = function() {
   var UserActions = require('./actions'),
       form = $('section:visible form'),
@@ -36,6 +66,7 @@ User.prototype.signup = function() {
 
         QBApiCalls.loginUser(params, function(user) {
           self.id = user.id;
+          self.facebook_id = null;
           self.tag = user.user_tags;
           self.blob_id = null;
           self.avatar = QMCONFIG.defAvatar.url;
@@ -69,18 +100,19 @@ User.prototype.login = function() {
     QBApiCalls.createSession(params, function(session) {
       QBApiCalls.getUser(session.user_id, function(user) {
         self.id = user.id;
+        self.facebook_id = user.facebook_id;
         self.full_name = user.full_name;
         self.tag = user.user_tags;
         self.blob_id = user.blob_id;
         self.avatar = user.custom_data || QMCONFIG.defAvatar.url;
+
+        UserActions.successFormCallback(self);
 
         if (self.remember) {
           delete self.remember;
           rememberMe(self);
         }
         delete self.remember;
-
-        UserActions.successFormCallback(self);
       });
     }, self.remember);
   }
@@ -223,4 +255,18 @@ function rememberMe(user) {
   });
   
   localStorage.setItem('QM.user', JSON.stringify(storage));
+}
+
+function getFBPicture(user) {
+  var UserActions = require('./actions');
+
+  FB.api('/me/picture', {redirect: false, width: 146, height: 146},
+          function (avatar) {
+            if (QMCONFIG.debug) console.log('FB user picture', avatar);
+            user.avatar = avatar.data.is_silhouette ? QMCONFIG.defAvatar.url : avatar.data.url;
+            
+            UserActions.successFormCallback(user);
+            rememberMe(user);
+          }
+  );
 }
