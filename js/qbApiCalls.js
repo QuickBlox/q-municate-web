@@ -67,7 +67,7 @@ module.exports = (function() {
             errMsg = parseErr.errors[0];
             $('section:visible input:not(:checkbox)').addClass('is-error');
           } else {
-            errMsg = parseErr.errors.base[0];
+            errMsg = parseErr.errors.base ? parseErr.errors.base[0] : parseErr.errors[0];
             errMsg += '. ' + QMCONFIG.errors.session;
           }
 
