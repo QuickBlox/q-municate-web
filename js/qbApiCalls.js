@@ -56,6 +56,8 @@ module.exports = (function() {
     },
 
     createSession: function(params, callback, isRemember) {
+      var UserActions = require('./actions');
+
       QB.createSession(params, function(err, res) {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
@@ -68,7 +70,16 @@ module.exports = (function() {
             $('section:visible input:not(:checkbox)').addClass('is-error');
           } else {
             errMsg = parseErr.errors.base ? parseErr.errors.base[0] : parseErr.errors[0];
-            errMsg += '. ' + QMCONFIG.errors.session;
+
+            // This checking is needed when your user has exited from Facebook
+            // and you try to relogin on a project via FB without reload the page.
+            // All you need it is to get the new FB user status and show specific error message
+            if (errMsg.indexOf('Authentication') >= 0) {
+              errMsg = QMCONFIG.errors.crashFBToken;
+              UserActions.getFBStatus();
+            } else {
+              errMsg += '. ' + QMCONFIG.errors.session;
+            }
           }
 
           fail(errMsg);
