@@ -22,7 +22,15 @@ module.exports = (function() {
       $('#signupFB, #loginFB').on('click', function(event) {
         if (QMCONFIG.debug) console.log('connect with FB');
         event.preventDefault();
-        UserActions.connectFB();
+
+        // NOTE!! You should use FB.login method instead FB.getLoginStatus
+        // and your browser won't block FB Login popup
+        FB.login(function(response) {
+          if (QMCONFIG.debug) console.log('FB authResponse', response);
+          if (response.status === 'connected') {
+            UserActions.connectFB(response.authResponse.accessToken);
+          }
+        }, {scope: QMCONFIG.fbAccount.scope});
       });
 
       $('#signupQB').on('click', function() {

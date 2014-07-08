@@ -47,6 +47,33 @@ var APP = {
   }
 };
 
+// Application initialization
 $(document).ready(function() {
   APP.init();
 });
+
+// FB SDK initialization
+window.fbAsyncInit = function() {
+  FB.init({
+    appId: QMCONFIG.fbAccount.appId,
+    version: 'v2.0'
+  });
+
+  if (QMCONFIG.debug) console.log('FB init', FB);
+
+  /* 
+   * This case is needed when your user has exited from Facebook
+   * and you try to relogin on a project via FB without reload the page
+   */
+  //checkFBStatus();
+};
+
+function checkFBStatus() {
+  setTimeout(function() {
+    FB.getLoginStatus(function(response) {
+      //if (QMCONFIG.debug) console.log('FB status response', response);
+    }, true);
+
+    checkFBStatus();
+  }, 30 * 1000);
+}
