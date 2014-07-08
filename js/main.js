@@ -60,20 +60,4 @@ window.fbAsyncInit = function() {
   });
 
   if (QMCONFIG.debug) console.log('FB init', FB);
-
-  /* 
-   * This case is needed when your user has exited from Facebook
-   * and you try to relogin on a project via FB without reload the page
-   */
-  //checkFBStatus();
 };
-
-function checkFBStatus() {
-  setTimeout(function() {
-    FB.getLoginStatus(function(response) {
-      //if (QMCONFIG.debug) console.log('FB status response', response);
-    }, true);
-
-    checkFBStatus();
-  }, 30 * 1000);
-}

@@ -8,6 +8,13 @@ var QMCONFIG = {
     authSecret: 'fyMjkBgMDrOUUPB'
   },
 
+  // Local FB app
+  // fbAccount: {
+  //   appId: '1446001418995865',
+  //   scope: 'email,user_friends'
+  // },
+
+  // Develop FB app
   fbAccount: {
     appId: '1445555125707161',
     scope: 'email,user_friends'
@@ -35,7 +42,8 @@ var QMCONFIG = {
     avatarType: 'User picture can be image only',
     fileName: 'File name should be less 100 characters',
     fileSize: 'File size should not be bigger than 10 MB',
-    notFoundEmail: 'Sorry, but this email address wasn\'t found'
+    notFoundEmail: 'Sorry, but this email address wasn\'t found',
+    crashFBToken: 'Sorry, we notice that you has actually exited from Facebook so we need to recreate your FB token now. Please just click on the button again'
   }
 
 };
