@@ -42,6 +42,18 @@
     </section>
   </div>
 
+  <div id="fb-root"></div>
+  <script>
+    // Async downloading FB SDK
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
+  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="lib/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
   <script src="lib/chroma-hash.js"></script>

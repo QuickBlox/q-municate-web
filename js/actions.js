@@ -73,6 +73,12 @@ module.exports = (function() {
       user.connectFB(token);
     },
 
+    getFBStatus: function() {
+      FB.getLoginStatus(function(response) {
+        if (QMCONFIG.debug) console.log('FB status response', response);
+      }, true);
+    },
+
     signupQB: function() {
       switchPage($('#signUpPage'));
     },
