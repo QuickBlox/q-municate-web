@@ -9,12 +9,6 @@ var QMCONFIG = {
   },
 
   // Local FB app
-  // fbAccount: {
-  //   appId: '1446001418995865',
-  //   scope: 'email,user_friends'
-  // },
-
-  // Develop FB app
   fbAccount: {
     appId: '1445555125707161',
     scope: 'email,user_friends'
