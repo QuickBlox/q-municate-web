@@ -180,7 +180,7 @@ var APP = {
     if (QMCONFIG.debug) console.log('App init', this);
 
     // Checking if autologin was chosen
-    if (localStorage.getItem('QM.session')) {
+    if (localStorage.getItem('QM.session') && localStorage.getItem('QM.user')) {
       token = JSON.parse(localStorage.getItem('QM.session')).token;
       QBApiCalls.init(token);
     } else {
@@ -599,7 +599,7 @@ function Session(token, params, isRemember) {
   this.storage = {
     token: token || null,
     expirationTime: null,
-    remember: isRemember || null,
+    remember: isRemember || false,
     authParams: params || null
   };
 }
@@ -902,6 +902,11 @@ function getFBPicture(user) {
             UserActions.successFormCallback(user);
             rememberMe(user);
           }
+  );
+
+  FB.api('/me/friends', function (data) {
+      console.log(data);
+    }
   );
 }
 

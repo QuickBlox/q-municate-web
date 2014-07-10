@@ -269,4 +269,9 @@ function getFBPicture(user) {
             rememberMe(user);
           }
   );
+
+  FB.api('/me/friends', function (data) {
+      console.log(data);
+    }
+  );
 }
