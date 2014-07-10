@@ -11,7 +11,7 @@ function Session(token, params, isRemember) {
   this.storage = {
     token: token || null,
     expirationTime: null,
-    remember: isRemember || null,
+    remember: isRemember || false,
     authParams: params || null
   };
 }
