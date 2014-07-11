@@ -114,10 +114,10 @@
     height: 60px;
     padding: 15px;
   }
+  .l-sidebar {
+    height: calc(100% - 60px);
+  }
 
-.l-list {
-  height: calc(100% - 60px);
-}
 .l-list-header {
   position: relative;
   padding: 0 40px 0 20px;
