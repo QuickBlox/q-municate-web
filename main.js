@@ -152,6 +152,17 @@ module.exports = (function() {
         switchOnWelcomePage();
         if (QMCONFIG.debug) console.log('current User and Session were destroyed');
       });
+    },
+
+    localSearch: function(form) {
+      var val = form.find('input[type="search"]').val().trim();
+      
+      if (val.length > 0) {
+        // if (QMCONFIG.debug) console.log('local search =', val);
+        $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
+      } else {
+        $('#emptyList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
+      }
     }
 
   };
@@ -535,12 +546,17 @@ module.exports = (function() {
         UserActions.logout();
       });
 
-      /* temp routes */
-      $('#searchContacts').on('submit', function(event) {
-        if (QMCONFIG.debug) console.log('search contacts');
+      $('#searchContacts').on('keyup search submit', function(event) {
         event.preventDefault();
+        var type = event.type,
+            code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+
+        if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
+          UserActions.localSearch($(this));
+        }
       });
 
+      /* temp routes */
       $('.list').on('click', '.contact', function(event) {
         event.preventDefault();
       });
