@@ -229,7 +229,7 @@ function validate(form, user) {
 
 function fail(user, errMsg) {
   user.valid = false;
-  $('section:visible').find('.form-text_error').addClass('is-error').text(errMsg);
+  $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
 }
 
 function uploadAvatar(user) {

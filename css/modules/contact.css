@@ -1,0 +1,102 @@
+/* contact */
+.contact {
+  position: relative;
+  height: 100%;
+  padding: 10px 20px;
+}
+.contact:hover {
+  opacity: 1;
+}
+  .contact-avatar {
+    margin-right: 15px;
+  }
+  .contact-avatar_signup {
+    margin-right: 1.5vh;
+  }
+
+/* avatar */
+.avatar {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.avatar_signup {
+  width: 6vh;
+  min-width: 6vh;
+  height: 6vh;
+}
+
+/* name */
+.name {
+  font-size: 16px;
+  line-height: 20px;
+  color: #333;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.name_signup {
+  font-size: 2vh;
+  color: #999;
+}
+
+/* status */
+.status {
+  width: 12px;
+  min-width: 12px;
+  height: 12px;
+  margin-left: 10px;
+  opacity: 0;
+}
+  .status_online {
+    background: #17d14b;
+    border-radius: 50%;
+    opacity: 1;
+  }
+  .status_request {
+    width: auto;
+    height: auto;
+    font-weight: bold;
+    color: #999;
+    opacity: 1;
+  }
+  .status_request:after {
+    content: '?';
+  }
+
+/* unread */
+.unread {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  padding: 0 6px;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: bold;
+  color: #fff;
+  background: #0d70b3;
+  border-radius: 4px;
+}
+
+/* request buttons */
+.request-controls {
+  min-width: 70px;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+  .request-button {
+    padding: 0 10px;
+    line-height: 32px;
+    background: none;
+  }
+    .request-button_cancel {
+      font-size: 20px;
+      color: #ddb2b2;
+      border-right: 1px solid #f0f0f0;
+    }
+    .request-button_ok {
+      font-size: 26px;
+      color: #a0cead;
+    }
