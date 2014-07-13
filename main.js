@@ -55,15 +55,15 @@ module.exports = (function() {
 
     successFormCallback: function(user) {
       this.removeSpinner();
-      $('#profile').find('img').attr('src', user.avatar).siblings('span').text(user.full_name);
+      $('#profile').find('img').attr('src', user.avatar);
       switchPage($('#mainPage'));
     },
 
     successSendEmailCallback: function() {
-      var alert = '<div class="l-form l-flexbox"><div class="no-contacts l-flexbox">';
-      alert += '<span class="no-contacts-oops">Success!</span>';
-      alert += '<span class="no-contacts-description">Please check your email and click on the link in letter in order to reset your password</span>';
-      alert += '</div></div>';
+      var alert = '<div class="note l-form l-flexbox l-flexbox_column">';
+      alert += '<span class="text text_alert">Success!</span>';
+      alert += '<span class="text">Please check your email and click on the link in letter in order to reset your password</span>';
+      alert += '</div>';
 
       this.removeSpinner();
       $('section:visible form').addClass('is-hidden').after(alert);
@@ -126,7 +126,7 @@ module.exports = (function() {
     profilePopover: function(objDom) {
       var html = '<ul class="list-actions list-actions_profile popover">';
       // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
-      html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Logout</a></li>';
+      html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Log Out</a></li>';
       html += '</ul>';
 
       objDom.after(html);
@@ -238,7 +238,7 @@ module.exports = (function() {
   var fail = function(errMsg) {
     var UserActions = require('./actions');
     UserActions.removeSpinner();
-    $('section:visible').find('.form-text_error').addClass('is-error').text(errMsg);
+    $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
   };
 
   var failUser = function(detail) {
@@ -521,7 +521,7 @@ module.exports = (function() {
         UserActions.contactPopover($(this));
       });
 
-      $('.header-profile').on('click', '#logout', function(event) {
+      $('.header-links-item').on('click', '#logout', function(event) {
         event.preventDefault();
         openPopup($('#popupLogout'));
       });
@@ -542,6 +542,10 @@ module.exports = (function() {
       });
 
       $('.list').on('click', '.contact', function(event) {
+        event.preventDefault();
+      });
+
+      $('#home, #share, #contacts').on('click', function(event) {
         event.preventDefault();
       });
 
@@ -863,7 +867,7 @@ function validate(form, user) {
 
 function fail(user, errMsg) {
   user.valid = false;
-  $('section:visible').find('.form-text_error').addClass('is-error').text(errMsg);
+  $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
 }
 
 function uploadAvatar(user) {

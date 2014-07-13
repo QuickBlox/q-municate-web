@@ -9,8 +9,8 @@
 <body>
   <div class="l-wrapper">
     <section id="resetPage" class="l-page">
-      <div class="l-container l-flexbox l-flexbox_flexstart">
-        <header class="l-welcome-header l-flexbox">
+      <div class="l-container l-flexbox l-flexbox_column">
+        <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
           <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
           <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
           <div class="download">
@@ -18,16 +18,16 @@
             <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
           </div>
         </header>
-        <form class="l-form l-flexbox" action="#" autocomplete="off">
+        <form class="l-form l-flexbox l-flexbox_column" action="#" autocomplete="off">
           <h3 class="form-header">Reset your password</h3>
-          <span class="form-text form-text_error">Error</span>
+          <span class="text text_error">Error</span>
           <div class="chroma-hash">
             <input id="reset-password" class="form-input pattern-pass" type="password" placeholder="New password" required>
           </div>
-          <button id="resetForm" class="form-button form-button_reset form-button_qb">Reset password</button>
+          <button id="resetForm" class="btn btn_form btn_reset btn_qb">Reset password</button>
         </form>
       </div>
-      <footer class="l-footer l-flexbox l-flexbox_row">
+      <footer class="l-footer l-flexbox l-flexbox_flexbetween">
         <div class="footer-logo">
           <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
         </div>
