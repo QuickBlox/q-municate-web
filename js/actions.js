@@ -54,15 +54,15 @@ module.exports = (function() {
 
     successFormCallback: function(user) {
       this.removeSpinner();
-      $('#profile').find('img').attr('src', user.avatar).siblings('span').text(user.full_name);
+      $('#profile').find('img').attr('src', user.avatar);
       switchPage($('#mainPage'));
     },
 
     successSendEmailCallback: function() {
-      var alert = '<div class="l-form l-flexbox"><div class="no-contacts l-flexbox">';
-      alert += '<span class="no-contacts-oops">Success!</span>';
-      alert += '<span class="no-contacts-description">Please check your email and click on the link in letter in order to reset your password</span>';
-      alert += '</div></div>';
+      var alert = '<div class="note l-form l-flexbox l-flexbox_column">';
+      alert += '<span class="text text_alert">Success!</span>';
+      alert += '<span class="text">Please check your email and click on the link in letter in order to reset your password</span>';
+      alert += '</div>';
 
       this.removeSpinner();
       $('section:visible form').addClass('is-hidden').after(alert);
@@ -125,7 +125,7 @@ module.exports = (function() {
     profilePopover: function(objDom) {
       var html = '<ul class="list-actions list-actions_profile popover">';
       // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
-      html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Logout</a></li>';
+      html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Log Out</a></li>';
       html += '</ul>';
 
       objDom.after(html);

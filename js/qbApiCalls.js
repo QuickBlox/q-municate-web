@@ -13,7 +13,7 @@ module.exports = (function() {
   var fail = function(errMsg) {
     var UserActions = require('./actions');
     UserActions.removeSpinner();
-    $('section:visible').find('.form-text_error').addClass('is-error').text(errMsg);
+    $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
   };
 
   var failUser = function(detail) {

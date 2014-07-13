@@ -6,11 +6,11 @@ body.is-welcome {
   background: url(../images/bg.jpg) no-repeat;
   background-size: 100% 100%;
 }
-body.is-welcome .l-wrapper {
-  border-left: 1px solid #f0f0f0;
-  border-right: 1px solid #f0f0f0;
-  background: rgba(255, 255, 255, .6);
-}
+  body.is-welcome .l-wrapper {
+    border-left: 1px solid #f0f0f0;
+    border-right: 1px solid #f0f0f0;
+    background: rgba(255, 255, 255, .6);
+  }
 
 span.is-error {
   opacity: 1;
@@ -33,16 +33,14 @@ input.is-error:focus {
 .list-item.is-active:hover {
   background: #1cba48;
 }
-.list-item.is-active .name {
-  color: #fff;
-}
+  .list-item.is-active .name {
+    color: #fff;
+  }
 
-.popups.is-overlay {
+.is-overlay {
   visibility: visible;
   opacity: 1;
 }
-  .popup.is-overlay {
-    top: 50%;
-    visibility: visible;
-    opacity: 1;
-  }
+.popup.is-overlay {
+  top: 50%;
+}

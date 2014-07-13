@@ -86,7 +86,7 @@ module.exports = (function() {
         UserActions.contactPopover($(this));
       });
 
-      $('.header-profile').on('click', '#logout', function(event) {
+      $('.header-links-item').on('click', '#logout', function(event) {
         event.preventDefault();
         openPopup($('#popupLogout'));
       });
@@ -107,6 +107,10 @@ module.exports = (function() {
       });
 
       $('.list').on('click', '.contact', function(event) {
+        event.preventDefault();
+      });
+
+      $('#home, #share, #contacts').on('click', function(event) {
         event.preventDefault();
       });
 
