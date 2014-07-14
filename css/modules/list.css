@@ -37,3 +37,10 @@
       .list-actions-action:hover {
         opacity: 1;
       }
+
+.list_contacts {
+  height: calc(100% - 60px - 60px);
+}
+.popup-content .list_contacts {
+  height: 100%;
+}

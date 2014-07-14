@@ -56,6 +56,12 @@
     background: #0d70b3;
     border-radius: 7px;
   }
+  .btn_popup {
+    width: 100%;
+    font-size: 24px;
+    line-height: 60px;
+    background: #0d70b3;
+  }
 
 /* button icons */
 .btn-icon {

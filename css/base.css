@@ -25,6 +25,7 @@ button,
 input,
 textarea {
   font-family: Arial, sans-serif; /* for Firefox */
+  background: none;
 }
 
 button,

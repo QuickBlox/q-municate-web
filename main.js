@@ -526,7 +526,7 @@ module.exports = (function() {
         UserActions.profilePopover($(this));
       });
 
-      $('.list').on('contextmenu', '.contact', function(event) {
+      $('.list:not(.list_contacts)').on('contextmenu', '.contact', function(event) {
         event.preventDefault();
         removePopover();
         UserActions.contactPopover($(this));
@@ -535,6 +535,11 @@ module.exports = (function() {
       $('.header-links-item').on('click', '#logout', function(event) {
         event.preventDefault();
         openPopup($('#popupLogout'));
+      });
+
+      $('.search').on('click', function() {
+        if (QMCONFIG.debug) console.log('global search');
+        openPopup($('#popupSearch'));
       });
 
       $('.popup-control-button').on('click', function(event) {
@@ -579,6 +584,12 @@ function clickBehaviour(e) {
     return false;
   } else {
     removePopover();
+
+    if (objDom.is('.popup, .popup *, .search') || $('.popup.is-overlay').is('.is-open')) {
+      return false;
+    } else {
+      closePopup();
+    }
   }
 }
 

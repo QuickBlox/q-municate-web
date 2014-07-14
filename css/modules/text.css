@@ -6,7 +6,8 @@
   color: #999;
   text-align: center;
 }
-.l-sidebar .text {
+.l-sidebar .text,
+.popup .text {
   font-size: 16px;
   line-height: 22px;
 }

@@ -304,7 +304,7 @@
                   <span class="text text_alert">Sorry..</span>
                   <span class="text">No results found</span>
                 </div>
-                <button class="btn btn_search">Global Search</button>
+                <button class="search btn btn_search">Global Search</button>
               </section>
 
               <section id="emptyList" class="l-list note l-flexbox l-flexbox_column">
@@ -319,7 +319,7 @@
               <div class="l-cap l-flexbox l-flexbox_column">
                 <span class="cap-text">Is anybody here?</span>
                 <img class="cap-anybody" src="images/anybody.png" alt="QuickBlox anybody">
-                <button class="btn btn_add btn_invite"><img class="btn-icon btn-icon_invite" src="images/icon-invite.png" alt="invite">Search Friends</button>
+                <button class="search btn btn_add btn_invite"><img class="btn-icon btn-icon_invite" src="images/icon-invite.png" alt="invite">Search Friends</button>
                 <button class="btn btn_add btn_share"><img class="btn-icon btn-icon_share" src="images/icon-fb.png" alt="fb">Share on Facebook</button>
               </div>
             </section>
@@ -347,7 +347,7 @@
   </div>
 
   <div class="popups l-flexbox">
-    <section id="popupLogout" class="popup popup_logout">
+    <section id="popupLogout" class="popup popup_logout is-open">
       <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
         <span class="alert alert_logout">Are you sure<br>you want to log out?</span>
       </div>
@@ -357,7 +357,7 @@
       </div>
     </section>
 
-    <section id="popupImport" class="popup popup_import">
+    <section id="popupImport" class="popup popup_import is-open">
       <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
         <span class="alert alert_import">Your Facebook friends who have<br>a Qmunicate account were successfully<br>added to your contacts</span>
       </div>
@@ -366,7 +366,7 @@
       </div>
     </section>
 
-    <section id="popupDelete" class="popup popup_delete">
+    <section id="popupDelete" class="popup popup_delete is-open">
       <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
         <span class="alert alert_delete">Delete contact?</span>
       </div>
@@ -374,6 +374,77 @@
         <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
         <a id="deleteConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
       </div>
+    </section>
+
+    <section id="popupSearch" class="popup popup_search">
+      <header class="popup-header">
+        <h3>Global Search</h3>
+      </header>
+      <form class="popup-form" action="#">
+        <input class="form-input-search" type="search" placeholder="Search">
+      </form>
+      <ul class="list list_contacts scrollbar">
+        <li class="list-item">
+          <a class="contact l-flexbox" href="#">
+            <div class="l-flexbox_inline">
+              <img class="contact-avatar avatar" src="images/ava-group.png" alt="user">
+              <span class="name">Andrey</span>
+            </div>
+            <button class="sent-request"><img src="images/icon-request.png" alt="request"></button>
+          </a>
+        </li>
+        <li class="list-item">
+          <a class="contact l-flexbox" href="#">
+            <div class="l-flexbox_inline">
+              <img class="contact-avatar avatar" src="images/ava-group.png" alt="user">
+              <span class="name">Andrey</span>
+            </div>
+            <span class="sent-request l-flexbox">Request Sent</span>
+          </a>
+        </li>
+      </ul>
+      <div class="note l-flexbox l-flexbox_column is-hidden">
+        <span class="text text_alert">Sorry..</span>
+        <span class="text">No results found</span>
+      </div>
+    </section>
+
+    <section id="popupContacts" class="popup popup_contacts">
+      <header class="popup-header">
+        <h3>Contacts</h3>
+      </header>
+      <form class="popup-form" action="#">
+        <input class="form-input-search" type="search" placeholder="Search">
+      </form>
+      <div class="popup-content">
+        <ul class="list list_contacts scrollbar">
+          <li class="list-item">
+            <a class="contact l-flexbox" href="#">
+              <div class="l-flexbox_inline">
+                <img class="contact-avatar avatar" src="images/ava-group.png" alt="user">
+                <span class="name">Andrey</span>
+              </div>
+              <input class="form-checkbox" type="checkbox">
+            </a>
+          </li>
+          <li class="list-item">
+            <a class="contact l-flexbox" href="#">
+              <div class="l-flexbox_inline">
+                <img class="contact-avatar avatar" src="images/ava-group.png" alt="user">
+                <span class="name">Andrey</span>
+              </div>
+              <input class="form-checkbox" type="checkbox">
+            </a>
+          </li>
+        </ul>
+        <div class="note l-flexbox l-flexbox_column is-hidden">
+          <span class="text text_alert">Sorry..</span>
+          <span class="text">No results found</span>
+        </div>
+      </div>
+      <footer class="popup-footer">
+        <button class="btn btn_popup">Create group chat</button>
+      </footer>
     </section>
   </div>
 

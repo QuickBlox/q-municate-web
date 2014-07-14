@@ -100,3 +100,15 @@
       font-size: 26px;
       color: #a0cead;
     }
+
+/* add people */
+.sent-request {
+  min-width: 95px;
+  height: 100%;
+  margin-left: 10px;
+  font-size: 15px;
+  color: #bebebe;
+}
+  .sent-request img {
+    float: right;
+  }
