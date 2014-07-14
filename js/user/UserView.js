@@ -1,11 +1,11 @@
 /*
  * Q-municate chat application
  *
- * User Actions Module
+ * User View
  *
  */
 
-var User = require('./user');
+var User = require('./UserModel');
 
 module.exports = (function() {
   var user;
@@ -54,7 +54,7 @@ module.exports = (function() {
 
     successFormCallback: function(user) {
       this.removeSpinner();
-      $('#profile').find('img').attr('src', user.avatar);
+      $('#profile').find('img').attr('src', user.contact.avatar_url);
       switchPage($('#mainPage'));
     },
 
@@ -117,9 +117,9 @@ module.exports = (function() {
       user.resetPass();
     },
 
-    autologin: function() {
+    autologin: function(session) {
       user = new User;
-      user.autologin();
+      user.autologin(session);
     },
 
     profilePopover: function(objDom) {
