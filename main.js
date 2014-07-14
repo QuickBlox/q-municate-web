@@ -152,6 +152,17 @@ module.exports = (function() {
         switchOnWelcomePage();
         if (QMCONFIG.debug) console.log('current User and Session were destroyed');
       });
+    },
+
+    localSearch: function(form) {
+      var val = form.find('input[type="search"]').val().trim();
+      
+      if (val.length > 0) {
+        // if (QMCONFIG.debug) console.log('local search =', val);
+        $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
+      } else {
+        $('#emptyList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
+      }
     }
 
   };
@@ -294,13 +305,20 @@ module.exports = (function() {
             errMsg = parseErr.errors[0];
             $('section:visible input:not(:checkbox)').addClass('is-error');
           } else {
-            errMsg = parseErr.errors.base ? parseErr.errors.base[0] : parseErr.errors[0];
+            errMsg = parseErr.errors.email ? parseErr.errors.email[0] :
+                     parseErr.errors.base ? parseErr.errors.base[0] : parseErr.errors[0];
 
             // This checking is needed when your user has exited from Facebook
             // and you try to relogin on a project via FB without reload the page.
             // All you need it is to get the new FB user status and show specific error message
             if (errMsg.indexOf('Authentication') >= 0) {
               errMsg = QMCONFIG.errors.crashFBToken;
+              UserActions.getFBStatus();
+            
+            // This checking is needed when you trying to connect via FB
+            // and your primary email has already been taken on the project 
+            } else if (errMsg.indexOf('already') >= 0) {
+              errMsg = 'Email ' + errMsg;
               UserActions.getFBStatus();
             } else {
               errMsg += '. ' + QMCONFIG.errors.session;
@@ -515,7 +533,7 @@ module.exports = (function() {
         UserActions.profilePopover($(this));
       });
 
-      $('.list').on('contextmenu', '.contact', function(event) {
+      $('.list:not(.list_contacts)').on('contextmenu', '.contact', function(event) {
         event.preventDefault();
         removePopover();
         UserActions.contactPopover($(this));
@@ -524,6 +542,11 @@ module.exports = (function() {
       $('.header-links-item').on('click', '#logout', function(event) {
         event.preventDefault();
         openPopup($('#popupLogout'));
+      });
+
+      $('.search').on('click', function() {
+        if (QMCONFIG.debug) console.log('global search');
+        openPopup($('#popupSearch'));
       });
 
       $('.popup-control-button').on('click', function(event) {
@@ -535,12 +558,17 @@ module.exports = (function() {
         UserActions.logout();
       });
 
-      /* temp routes */
-      $('#searchContacts').on('submit', function(event) {
-        if (QMCONFIG.debug) console.log('search contacts');
+      $('#searchContacts').on('keyup search submit', function(event) {
         event.preventDefault();
+        var type = event.type,
+            code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+
+        if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
+          UserActions.localSearch($(this));
+        }
       });
 
+      /* temp routes */
       $('.list').on('click', '.contact', function(event) {
         event.preventDefault();
       });
@@ -563,6 +591,12 @@ function clickBehaviour(e) {
     return false;
   } else {
     removePopover();
+
+    if (objDom.is('.popup, .popup *, .search') || $('.popup.is-overlay').is('.is-open')) {
+      return false;
+    } else {
+      closePopup();
+    }
   }
 }
 

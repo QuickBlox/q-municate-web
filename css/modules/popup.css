@@ -15,7 +15,6 @@
     top: 25%;
     left: 50%;
     background: #fff;
-    border: 1px solid #f0f0f0;
     visibility: hidden;
     opacity: 0;
     transition: opacity .5s, top .5s;
@@ -27,7 +26,32 @@
   .popup_delete {
     width: 400px;
     height: 195px;
+    border: 1px solid #f0f0f0;
   }
+  .popup_search,
+  .popup_contacts {
+    width: 460px;
+    height: 585px;
+  }
+    .popup-header {
+      margin-top: -1px;
+      padding: 0 20px;
+      background: #f8f8f8;
+      border-bottom: 1px solid #f0f0f0;
+    }
+      .popup-header h3 {
+        font-size: 18px;
+        line-height: 60px;
+        color: #333;
+      }
+    .popup-form {
+      height: 60px;
+      padding: 15px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .popup-content {
+      height: calc(100% - 60px - 60px - 60px);
+    }
     .popup-alert {
       height: calc(100% - 45px);
       text-align: center;

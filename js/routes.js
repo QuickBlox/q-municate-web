@@ -80,7 +80,7 @@ module.exports = (function() {
         UserActions.profilePopover($(this));
       });
 
-      $('.list').on('contextmenu', '.contact', function(event) {
+      $('.list:not(.list_contacts)').on('contextmenu', '.contact', function(event) {
         event.preventDefault();
         removePopover();
         UserActions.contactPopover($(this));
@@ -89,6 +89,11 @@ module.exports = (function() {
       $('.header-links-item').on('click', '#logout', function(event) {
         event.preventDefault();
         openPopup($('#popupLogout'));
+      });
+
+      $('.search').on('click', function() {
+        if (QMCONFIG.debug) console.log('global search');
+        openPopup($('#popupSearch'));
       });
 
       $('.popup-control-button').on('click', function(event) {
@@ -100,12 +105,17 @@ module.exports = (function() {
         UserActions.logout();
       });
 
-      /* temp routes */
-      $('#searchContacts').on('submit', function(event) {
-        if (QMCONFIG.debug) console.log('search contacts');
+      $('#searchContacts').on('keyup search submit', function(event) {
         event.preventDefault();
+        var type = event.type,
+            code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+
+        if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
+          UserActions.localSearch($(this));
+        }
       });
 
+      /* temp routes */
       $('.list').on('click', '.contact', function(event) {
         event.preventDefault();
       });
@@ -128,6 +138,12 @@ function clickBehaviour(e) {
     return false;
   } else {
     removePopover();
+
+    if (objDom.is('.popup, .popup *, .search') || $('.popup.is-overlay').is('.is-open')) {
+      return false;
+    } else {
+      closePopup();
+    }
   }
 }
 
