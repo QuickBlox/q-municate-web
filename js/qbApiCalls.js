@@ -5,14 +5,14 @@
  *
  */
 
-var Session = require('./session');
+var Session = require('./session/SessionModel');
 
 module.exports = (function() {
   var session;
 
   var fail = function(errMsg) {
-    var UserActions = require('./actions');
-    UserActions.removeSpinner();
+    var UserView = require('./user/UserView');
+    UserView.removeSpinner();
     $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
   };
 
@@ -32,31 +32,35 @@ module.exports = (function() {
   return {
 
     init: function(token) {
-      var UserActions = require('./actions');
+      var UserView = require('./user/UserView');
 
       if (typeof token === 'undefined') {
         QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
       } else {
         QB.init(token);
-        UserActions.createSpinner();
+        UserView.createSpinner();
 
         session = new Session;
         session.getStorage();
-        UserActions.autologin();
+        UserView.autologin(session);
       }
     },
 
     checkSession: function(callback) {
+      var params;
+
       if (new Date > session.storage.expirationTime) {
+        params = session.decrypt(session.storage.authParams);
+        
         this.init(); // reset QuickBlox JS SDK after autologin via an existing token
-        this.createSession(session.storage.authParams, callback, session.storage.remember);
+        this.createSession(params, callback, session._remember);
       } else {
         callback();
       }
     },
 
     createSession: function(params, callback, isRemember) {
-      var UserActions = require('./actions');
+      var UserView = require('./user/UserView');
 
       QB.createSession(params, function(err, res) {
         if (err) {
@@ -77,13 +81,13 @@ module.exports = (function() {
             // All you need it is to get the new FB user status and show specific error message
             if (errMsg.indexOf('Authentication') >= 0) {
               errMsg = QMCONFIG.errors.crashFBToken;
-              UserActions.getFBStatus();
+              UserView.getFBStatus();
             
             // This checking is needed when you trying to connect via FB
             // and your primary email has already been taken on the project 
             } else if (errMsg.indexOf('already') >= 0) {
               errMsg = 'Email ' + errMsg;
-              UserActions.getFBStatus();
+              UserView.getFBStatus();
             } else {
               errMsg += '. ' + QMCONFIG.errors.session;
             }
@@ -93,10 +97,14 @@ module.exports = (function() {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Session is created', res);
 
-          session = new Session(res.token, params, isRemember);
+          if (session)
+            session.update(res.token);
+          else
+            session = new Session(res.token, params, isRemember);
+
           session.setExpirationTime();
 
-          callback(res);
+          callback(res, session);
         }
       });
     },

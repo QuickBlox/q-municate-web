@@ -20,9 +20,13 @@ var APP = {
     if (QMCONFIG.debug) console.log('App init', this);
 
     // Checking if autologin was chosen
-    if (localStorage.getItem('QM.session') && localStorage.getItem('QM.user')) {
+    if (localStorage.getItem('QM.session') && localStorage.getItem('QM.user') &&
+        // new format of storage data (14.07.2014)
+        JSON.parse(localStorage.getItem('QM.user')).contact) {
+
       token = JSON.parse(localStorage.getItem('QM.session')).token;
       QBApiCalls.init(token);
+
     } else {
       QBApiCalls.init();
     }

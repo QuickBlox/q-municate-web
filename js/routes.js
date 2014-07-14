@@ -9,7 +9,7 @@ module.exports = (function() {
 
   return {
     init: function() {
-      var UserActions = require('./actions');
+      var UserView = require('./user/UserView');
 
       $(document).on('click', function(event) {
         clickBehaviour(event);
@@ -28,62 +28,62 @@ module.exports = (function() {
         FB.login(function(response) {
           if (QMCONFIG.debug) console.log('FB authResponse', response);
           if (response.status === 'connected') {
-            UserActions.connectFB(response.authResponse.accessToken);
+            UserView.connectFB(response.authResponse.accessToken);
           }
         }, {scope: QMCONFIG.fbAccount.scope});
       });
 
       $('#signupQB').on('click', function() {
         if (QMCONFIG.debug) console.log('signup with QB');
-        UserActions.signupQB();
+        UserView.signupQB();
       });
 
       $('#loginQB').on('click', function(event) {
         if (QMCONFIG.debug) console.log('login wih QB');
         event.preventDefault();
-        UserActions.loginQB();
+        UserView.loginQB();
       });
 
       $('#forgot').on('click', function(event) {
         if (QMCONFIG.debug) console.log('forgot password');
         event.preventDefault();
-        UserActions.forgot();
+        UserView.forgot();
       });
 
       $('#signupForm').on('click', function(event) {
         if (QMCONFIG.debug) console.log('create user');
         event.preventDefault();
-        UserActions.signupForm();
+        UserView.signupForm();
       });
 
       $('#loginForm').on('click', function(event) {
         if (QMCONFIG.debug) console.log('authorize user');
         event.preventDefault();
-        UserActions.loginForm();
+        UserView.loginForm();
       });
 
       $('#forgotForm').on('click', function(event) {
         if (QMCONFIG.debug) console.log('send letter');
         event.preventDefault();
-        UserActions.forgotForm();
+        UserView.forgotForm();
       });
 
       $('#resetForm').on('click', function(event) {
         if (QMCONFIG.debug) console.log('reset password');
         event.preventDefault();
-        UserActions.resetForm();
+        UserView.resetForm();
       });
 
       $('#profile').on('click', function(event) {
         event.preventDefault();
         removePopover();
-        UserActions.profilePopover($(this));
+        UserView.profilePopover($(this));
       });
 
       $('.list:not(.list_contacts)').on('contextmenu', '.contact', function(event) {
         event.preventDefault();
         removePopover();
-        UserActions.contactPopover($(this));
+        UserView.contactPopover($(this));
       });
 
       $('.header-links-item').on('click', '#logout', function(event) {
@@ -102,7 +102,7 @@ module.exports = (function() {
       });
 
       $('#logoutConfirm').on('click', function() {
-        UserActions.logout();
+        UserView.logout();
       });
 
       $('#searchContacts').on('keyup search submit', function(event) {
@@ -111,7 +111,7 @@ module.exports = (function() {
             code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
         if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
-          UserActions.localSearch($(this));
+          UserView.localSearch($(this));
         }
       });
 
