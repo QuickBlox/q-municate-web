@@ -5,13 +5,13 @@
  *
  */
 
-var Session = require('./session');
+var Session = require('./session/SessionModel');
 
 module.exports = (function() {
   var session;
 
   var fail = function(errMsg) {
-    var UserActions = require('./actions');
+    var UserActions = require('./user/UserView');
     UserActions.removeSpinner();
     $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
   };
@@ -32,7 +32,7 @@ module.exports = (function() {
   return {
 
     init: function(token) {
-      var UserActions = require('./actions');
+      var UserActions = require('./user/UserView');
 
       if (typeof token === 'undefined') {
         QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
@@ -56,7 +56,7 @@ module.exports = (function() {
     },
 
     createSession: function(params, callback, isRemember) {
-      var UserActions = require('./actions');
+      var UserActions = require('./user/UserView');
 
       QB.createSession(params, function(err, res) {
         if (err) {

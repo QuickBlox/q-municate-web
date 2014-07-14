@@ -1,19 +1,21 @@
 /*
  * Q-municate chat application
  *
- * User Module
+ * User Model
  *
  */
 
-var QBApiCalls = require('./qbApiCalls');
+var QBApiCalls = require('../qbApiCalls');
+var Contact = require('../contacts/ContactModel');
 module.exports = User;
 
 function User() {
+  this.contact = new Contact;
   this.valid = true;
 }
 
 User.prototype.connectFB = function(token) {
-  var UserActions = require('./actions'),
+  var UserActions = require('./UserView'),
       self = this,
       params;
 
@@ -43,7 +45,7 @@ User.prototype.connectFB = function(token) {
 };
 
 User.prototype.signup = function() {
-  var UserActions = require('./actions'),
+  var UserActions = require('./UserView'),
       form = $('section:visible form'),
       self = this,
       params;
@@ -83,7 +85,7 @@ User.prototype.signup = function() {
 };
 
 User.prototype.login = function() {
-  var UserActions = require('./actions'),
+  var UserActions = require('./UserView'),
       form = $('section:visible form'),
       self = this,
       params;
@@ -119,7 +121,7 @@ User.prototype.login = function() {
 };
 
 User.prototype.forgot = function(callback) {
-  var UserActions = require('./actions'),
+  var UserActions = require('./UserView'),
       form = $('section:visible form'),
       self = this;
 
@@ -137,7 +139,7 @@ User.prototype.forgot = function(callback) {
 };
 
 User.prototype.resetPass = function() {
-  var UserActions = require('./actions'),
+  var UserActions = require('./UserView'),
       form = $('section:visible form'),
       self = this;
 
@@ -148,7 +150,7 @@ User.prototype.resetPass = function() {
 };
 
 User.prototype.autologin = function() {
-  var UserActions = require('./actions'),
+  var UserActions = require('./UserView'),
       storage = JSON.parse(localStorage.getItem('QM.user')),
       self = this;
 
@@ -233,7 +235,7 @@ function fail(user, errMsg) {
 }
 
 function uploadAvatar(user) {
-  var UserActions = require('./actions');
+  var UserActions = require('./UserView');
 
   QBApiCalls.createBlob({file: user.tempBlob, 'public': true}, function(blob) {
     QBApiCalls.updateUser(user.id, {blob_id: blob.id, custom_data: blob.path}, function(res) {
@@ -258,7 +260,7 @@ function rememberMe(user) {
 }
 
 function getFBPicture(user) {
-  var UserActions = require('./actions');
+  var UserActions = require('./UserView');
 
   FB.api('/me/picture', {redirect: false, width: 146, height: 146},
           function (avatar) {

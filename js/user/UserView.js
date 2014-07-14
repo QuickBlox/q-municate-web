@@ -1,11 +1,11 @@
 /*
  * Q-municate chat application
  *
- * User Actions Module
+ * User View
  *
  */
 
-var User = require('./user');
+var User = require('./UserModel');
 
 module.exports = (function() {
   var user;

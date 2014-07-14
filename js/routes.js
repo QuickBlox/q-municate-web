@@ -9,7 +9,7 @@ module.exports = (function() {
 
   return {
     init: function() {
-      var UserActions = require('./actions');
+      var UserActions = require('./user/UserView');
 
       $(document).on('click', function(event) {
         clickBehaviour(event);
