@@ -47,9 +47,13 @@ module.exports = (function() {
     },
 
     checkSession: function(callback) {
+      var params;
+
       if (new Date > session.storage.expirationTime) {
+        params = session.decrypt(session.storage.authParams);
+        
         this.init(); // reset QuickBlox JS SDK after autologin via an existing token
-        this.createSession(session.storage.authParams, callback, session._remember);
+        this.createSession(params, callback, session._remember);
       } else {
         callback();
       }
