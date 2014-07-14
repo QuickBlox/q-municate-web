@@ -151,6 +151,17 @@ module.exports = (function() {
         switchOnWelcomePage();
         if (QMCONFIG.debug) console.log('current User and Session were destroyed');
       });
+    },
+
+    localSearch: function(form) {
+      var val = form.find('input[type="search"]').val().trim();
+      
+      if (val.length > 0) {
+        // if (QMCONFIG.debug) console.log('local search =', val);
+        $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
+      } else {
+        $('#emptyList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
+      }
     }
 
   };

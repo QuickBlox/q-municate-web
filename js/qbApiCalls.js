@@ -69,13 +69,20 @@ module.exports = (function() {
             errMsg = parseErr.errors[0];
             $('section:visible input:not(:checkbox)').addClass('is-error');
           } else {
-            errMsg = parseErr.errors.base ? parseErr.errors.base[0] : parseErr.errors[0];
+            errMsg = parseErr.errors.email ? parseErr.errors.email[0] :
+                     parseErr.errors.base ? parseErr.errors.base[0] : parseErr.errors[0];
 
             // This checking is needed when your user has exited from Facebook
             // and you try to relogin on a project via FB without reload the page.
             // All you need it is to get the new FB user status and show specific error message
             if (errMsg.indexOf('Authentication') >= 0) {
               errMsg = QMCONFIG.errors.crashFBToken;
+              UserActions.getFBStatus();
+            
+            // This checking is needed when you trying to connect via FB
+            // and your primary email has already been taken on the project 
+            } else if (errMsg.indexOf('already') >= 0) {
+              errMsg = 'Email ' + errMsg;
               UserActions.getFBStatus();
             } else {
               errMsg += '. ' + QMCONFIG.errors.session;
