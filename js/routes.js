@@ -95,6 +95,8 @@ module.exports = (function() {
       $('.search').on('click', function() {
         if (QMCONFIG.debug) console.log('global search');
         openPopup($('#popupSearch'));
+        $('.popup:visible .list, .spinner_bounce').addClass('is-hidden').siblings('form').find('input').val('');
+        $('.popup:visible .mCSB_container').empty();
       });
 
       $('.popup-control-button').on('click', function(event) {

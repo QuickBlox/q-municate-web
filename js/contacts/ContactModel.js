@@ -19,7 +19,7 @@ function Contact(qbUser) {
       this.avatar_url = JSON.parse(qbUser.custom_data).avatar_url;
     } catch(err) {
       // qbUser.website - temporary storage of avatar url for mobile apps (14.07.2014)
-      this.avatar_url = qbUser.website || qbUser.avatar_url;
+      this.avatar_url = qbUser.website || qbUser.avatar_url || QMCONFIG.defAvatar.url;
     }
   } else {
     facebookAvatar(this);
@@ -29,10 +29,10 @@ function Contact(qbUser) {
     this.status = JSON.parse(qbUser.custom_data).status || null;
   } catch(err) {
     // qbUser.custom_data - temporary storage of status message for mobile apps (14.07.2014)
-    this.status = qbUser.custom_data || qbUser.status;
+    this.status = qbUser.custom_data || qbUser.status || null;
   }
 
-  this.tag = qbUser.user_tags || qbUser.tag;
+  this.tag = qbUser.user_tags || qbUser.tag || null;
 }
 
 /* Private

@@ -29,6 +29,12 @@ module.exports = (function() {
     fail(errMsg);
   };
 
+  var failSearch = function() {
+    var FriendlistView = require('./friendlist/FriendlistView');
+    FriendlistView.removeDataSpinner();
+    $('.popup:visible .note').removeClass('is-hidden').siblings('.list').addClass('is-hidden');
+  };
+
   return {
 
     init: function(token) {
@@ -47,13 +53,23 @@ module.exports = (function() {
     },
 
     checkSession: function(callback) {
-      if ((new Date).toISOString() > session.storage.expirationTime) {
-        session.decrypt(session.storage.authParams);
-        
-        this.init(); // reset QuickBlox JS SDK after autologin via an existing token
-        this.createSession(session.storage.authParams, callback, session._remember);
+      var UserView = require('./user/UserView'),
+          self = this;
 
-        session.encrypt(session.storage.authParams);
+      if ((new Date).toISOString() > session.storage.expirationTime) {
+        self.init(); // reset QuickBlox JS SDK after autologin via an existing token
+
+        if (session.storage.authParams.provider) {
+          UserView.getFBStatus(function(token) {
+            session.storage.authParams.keys.token = token;
+            self.createSession(session.storage.authParams, callback, session._remember);
+          });
+        } else {
+          session.decrypt(session.storage.authParams);
+          self.createSession(session.storage.authParams, callback, session._remember);
+          session.encrypt(session.storage.authParams);
+        }
+        
       } else {
         callback();
       }
@@ -172,9 +188,10 @@ module.exports = (function() {
     getUser: function(params, callback) {
       this.checkSession(function(res) {
         QB.users.get(params, function(err, res) {
-          if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+          if (err && err.code === 404) {
+            if (QMCONFIG.debug) console.log(err.message);
 
+            failSearch();
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
 
