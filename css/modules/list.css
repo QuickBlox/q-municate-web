@@ -18,7 +18,7 @@
   }
   .list-actions_profile {
     position: absolute;
-    top: 55px;
+    top: 74px;
     right: 0;
   }
     .list-actions .list-item {
@@ -43,4 +43,18 @@
 }
 .popup-content .list_contacts {
   height: 100%;
+}
+
+/* hover icons */
+.list-item .icon-active,
+.header-links-item .icon-active {
+  display: none;
+}
+.list-item:hover .icon-normal,
+.header-links-item:hover .icon-normal {
+  display: none;
+}
+.list-item:hover .icon-active,
+.header-links-item:hover .icon-active {
+  display: inline-block;
 }

@@ -29,7 +29,7 @@ var QMCONFIG = {
   },
 
   errors: {
-    session: 'Please check QB application credentials',
+    session: 'The QB application credentials you entered are incorrect',
     invalidName: 'Name has a bad format. Length must be in the diapason [3-50]',
     invalidEmail: 'Email should look like an email address',
     invalidPass: 'Password should contain alphanumeric and punctuation characters only. Length must be in the diapason [8-40]',

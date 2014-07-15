@@ -123,6 +123,11 @@ module.exports = (function() {
         FriendlistView.globalSearch($(this));
       });
 
+      $('.list').on('click', 'button.sent-request', function() {
+        $(this).after('<span class="sent-request l-flexbox">Request Sent</span>');
+        $(this).remove();
+      });
+
       /* temp routes */
       $('.list').on('click', '.contact', function(event) {
         event.preventDefault();
@@ -147,10 +152,10 @@ function clickBehaviour(e) {
   } else {
     removePopover();
 
-    if (objDom.is('.popup, .popup *, .search') || $('.popup.is-overlay').is('.is-open')) {
-      return false;
-    } else {
+    if (objDom.is('.popups') && !$('.popup.is-overlay').is('.is-open')) {
       closePopup();
+    } else {
+      return false;
     }
   }
 }
