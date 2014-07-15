@@ -367,7 +367,7 @@ module.exports = (function() {
               errMsg = 'Email ' + errMsg;
               UserView.getFBStatus();
             } else {
-              errMsg += '. ' + QMCONFIG.errors.session;
+              errMsg = QMCONFIG.errors.session;
             }
           }
 
