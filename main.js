@@ -60,6 +60,57 @@ function facebookAvatar(contact) {
 /*
  * Q-municate chat application
  *
+ * Friendlist Model
+ *
+ */
+
+module.exports = Friendlist;
+
+function Friendlist() {
+  this.contacts = [];
+}
+
+Friendlist.prototype.localSearch = function() {
+
+};
+
+Friendlist.prototype.globalSearch = function() {
+
+};
+
+},{}],3:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * Friendlist View
+ *
+ */
+
+var Friendlist = require('./FriendlistModel'),
+    QBApiCalls = require('../qbApiCalls');
+
+module.exports = (function() {
+  var friendlist;
+
+  return {
+
+    globalSearch: function(form) {
+      var val = form.find('input[type="search"]').val().trim();
+
+      if (val.length > 0) {
+        QBApiCalls.getUser({full_name: val}, function(data) {
+          // if (QMCONFIG.debug) console.log('local search =', val);
+        });
+      }
+    }
+
+  };
+})();
+
+},{"../qbApiCalls":5,"./FriendlistModel":2}],4:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
  * Main Module
  *
  */
@@ -125,7 +176,7 @@ window.fbAsyncInit = function() {
   if (QMCONFIG.debug) console.log('FB init', FB);
 };
 
-},{"./qbApiCalls":3,"./routes":4}],3:[function(require,module,exports){
+},{"./qbApiCalls":5,"./routes":6}],5:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -175,13 +226,13 @@ module.exports = (function() {
     },
 
     checkSession: function(callback) {
-      var params;
-
-      if (new Date > session.storage.expirationTime) {
-        params = session.decrypt(session.storage.authParams);
+      if ((new Date).toISOString() > session.storage.expirationTime) {
+        session.decrypt(session.storage.authParams);
         
         this.init(); // reset QuickBlox JS SDK after autologin via an existing token
-        this.createSession(params, callback, session._remember);
+        this.createSession(session.storage.authParams, callback, session._remember);
+
+        session.encrypt(session.storage.authParams);
       } else {
         callback();
       }
@@ -281,6 +332,22 @@ module.exports = (function() {
       });
     },
 
+    listUsers: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.users.listUsers(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
+
+            session.setExpirationTime();
+            callback(res);
+          }
+        });
+      });
+    },
+
     getUser: function(params, callback) {
       this.checkSession(function(res) {
         QB.users.get(params, function(err, res) {
@@ -288,7 +355,7 @@ module.exports = (function() {
             if (QMCONFIG.debug) console.log(err.detail);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: User is found', res);
+            if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
 
             session.setExpirationTime();
             callback(res);
@@ -350,7 +417,7 @@ module.exports = (function() {
   };
 })();
 
-},{"./session/SessionModel":5,"./user/UserView":7}],4:[function(require,module,exports){
+},{"./session/SessionModel":7,"./user/UserView":9}],6:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -362,7 +429,8 @@ module.exports = (function() {
 
   return {
     init: function() {
-      var UserView = require('./user/UserView');
+      var UserView = require('./user/UserView'),
+          FriendlistView = require('./friendlist/FriendlistView');
 
       $(document).on('click', function(event) {
         clickBehaviour(event);
@@ -468,6 +536,11 @@ module.exports = (function() {
         }
       });
 
+      $('#globalSearch').on('submit', function(event) {
+        event.preventDefault();
+        FriendlistView.globalSearch($(this));
+      });
+
       /* temp routes */
       $('.list').on('click', '.contact', function(event) {
         event.preventDefault();
@@ -523,7 +596,7 @@ var closePopup = function() {
   $('.is-overlay').removeClass('is-overlay');
 };
 
-},{"./user/UserView":7}],5:[function(require,module,exports){
+},{"./friendlist/FriendlistView":3,"./user/UserView":9}],7:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -593,7 +666,7 @@ Session.prototype.decrypt = function(params) {
   return params;
 };
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -865,7 +938,7 @@ function rememberMe(user) {
   localStorage.setItem('QM.user', JSON.stringify(storage));
 }
 
-},{"../contacts/ContactModel":1,"../qbApiCalls":3,"./UserView":7}],7:[function(require,module,exports){
+},{"../contacts/ContactModel":1,"../qbApiCalls":5,"./UserView":9}],9:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1035,4 +1108,4 @@ module.exports = (function() {
   };
 })();
 
-},{"./UserModel":6}]},{},[2])
+},{"./UserModel":8}]},{},[4])

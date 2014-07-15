@@ -9,7 +9,8 @@ module.exports = (function() {
 
   return {
     init: function() {
-      var UserView = require('./user/UserView');
+      var UserView = require('./user/UserView'),
+          FriendlistView = require('./friendlist/FriendlistView');
 
       $(document).on('click', function(event) {
         clickBehaviour(event);
@@ -113,6 +114,11 @@ module.exports = (function() {
         if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
           UserView.localSearch($(this));
         }
+      });
+
+      $('#globalSearch').on('submit', function(event) {
+        event.preventDefault();
+        FriendlistView.globalSearch($(this));
       });
 
       /* temp routes */

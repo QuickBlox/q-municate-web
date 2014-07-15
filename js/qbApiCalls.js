@@ -47,13 +47,13 @@ module.exports = (function() {
     },
 
     checkSession: function(callback) {
-      var params;
-
-      if (new Date > session.storage.expirationTime) {
-        params = session.decrypt(session.storage.authParams);
+      if ((new Date).toISOString() > session.storage.expirationTime) {
+        session.decrypt(session.storage.authParams);
         
         this.init(); // reset QuickBlox JS SDK after autologin via an existing token
-        this.createSession(params, callback, session._remember);
+        this.createSession(session.storage.authParams, callback, session._remember);
+
+        session.encrypt(session.storage.authParams);
       } else {
         callback();
       }
@@ -153,6 +153,22 @@ module.exports = (function() {
       });
     },
 
+    listUsers: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.users.listUsers(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
+
+            session.setExpirationTime();
+            callback(res);
+          }
+        });
+      });
+    },
+
     getUser: function(params, callback) {
       this.checkSession(function(res) {
         QB.users.get(params, function(err, res) {
@@ -160,7 +176,7 @@ module.exports = (function() {
             if (QMCONFIG.debug) console.log(err.detail);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: User is found', res);
+            if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
 
             session.setExpirationTime();
             callback(res);
