@@ -70,9 +70,9 @@ function createListResults(listObj, friendlist, self) {
     item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
     item += '<span class="name">' + contact.full_name + '</span>';
     item += '</div>';
-    item += '<button class="sent-request"><img src="images/icon-request.png" alt="request"></button>';
+    item += '<button class="sent-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
+    item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     item += '</a></li>';
-    // <span class="sent-request l-flexbox">Request Sent</span>
 
     listObj.find('.mCSB_container').append(item);
   });
