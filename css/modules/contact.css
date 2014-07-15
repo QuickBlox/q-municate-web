@@ -103,11 +103,13 @@
 
 /* add people */
 .sent-request {
-  min-width: 95px;
   height: 100%;
   margin-left: 10px;
   font-size: 15px;
   color: #bebebe;
+}
+span.sent-request {
+  min-width: 95px;
 }
   .sent-request img {
     float: right;

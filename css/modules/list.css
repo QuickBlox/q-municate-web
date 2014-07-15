@@ -39,7 +39,7 @@
       }
 
 .list_contacts {
-  height: calc(100% - 60px - 60px);
+  height: calc(100% - 60px - 60px - 37px); /* 37px - spinner_bounce height */
 }
 .popup-content .list_contacts {
   height: 100%;
