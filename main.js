@@ -156,9 +156,9 @@ function createListResults(listObj, friendlist, self) {
     item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
     item += '<span class="name">' + contact.full_name + '</span>';
     item += '</div>';
-    item += '<button class="sent-request"><img src="images/icon-request.png" alt="request"></button>';
+    item += '<button class="sent-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
+    item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     item += '</a></li>';
-    // <span class="sent-request l-flexbox">Request Sent</span>
 
     listObj.find('.mCSB_container').append(item);
   });
@@ -367,7 +367,7 @@ module.exports = (function() {
               errMsg = 'Email ' + errMsg;
               UserView.getFBStatus();
             } else {
-              errMsg += '. ' + QMCONFIG.errors.session;
+              errMsg = QMCONFIG.errors.session;
             }
           }
 
@@ -643,6 +643,11 @@ module.exports = (function() {
         FriendlistView.globalSearch($(this));
       });
 
+      $('.list').on('click', 'button.sent-request', function() {
+        $(this).after('<span class="sent-request l-flexbox">Request Sent</span>');
+        $(this).remove();
+      });
+
       /* temp routes */
       $('.list').on('click', '.contact', function(event) {
         event.preventDefault();
@@ -667,10 +672,10 @@ function clickBehaviour(e) {
   } else {
     removePopover();
 
-    if (objDom.is('.popup, .popup *, .search') || $('.popup.is-overlay').is('.is-open')) {
-      return false;
-    } else {
+    if (objDom.is('.popups') && !$('.popup.is-overlay').is('.is-open')) {
       closePopup();
+    } else {
+      return false;
     }
   }
 }
