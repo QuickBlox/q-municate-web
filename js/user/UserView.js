@@ -60,7 +60,7 @@ module.exports = (function() {
 
     successSendEmailCallback: function() {
       var alert = '<div class="note l-form l-flexbox l-flexbox_column">';
-      alert += '<span class="text text_alert">Success!</span>';
+      alert += '<span class="text text_alert text_alert_success">Success!</span>';
       alert += '<span class="text">Please check your email and click on the link in letter in order to reset your password</span>';
       alert += '</div>';
 
@@ -73,9 +73,22 @@ module.exports = (function() {
       user.connectFB(token);
     },
 
-    getFBStatus: function() {
+    getFBStatus: function(callback) {
       FB.getLoginStatus(function(response) {
         if (QMCONFIG.debug) console.log('FB status response', response);
+        if (callback) {
+          // situation when you are recovering QB session via FB
+          // and FB accessToken has expired
+          if (response.status === 'connected') {
+            callback(response.authResponse.accessToken);
+          } else {
+            FB.login(function(response) {
+              if (QMCONFIG.debug) console.log('FB authResponse', response);
+              if (response.status === 'connected')
+                callback(response.authResponse.accessToken);
+            });
+          }
+        }
       }, true);
     },
 

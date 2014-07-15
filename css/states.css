@@ -44,3 +44,7 @@ input.is-error:focus {
 .popup.is-overlay {
   top: 50%;
 }
+
+.spinner_bounce.is-empty {
+  margin: 10% auto;
+}

@@ -20,7 +20,7 @@ function Contact(qbUser) {
       this.avatar_url = JSON.parse(qbUser.custom_data).avatar_url;
     } catch(err) {
       // qbUser.website - temporary storage of avatar url for mobile apps (14.07.2014)
-      this.avatar_url = qbUser.website || qbUser.avatar_url;
+      this.avatar_url = qbUser.website || qbUser.avatar_url || QMCONFIG.defAvatar.url;
     }
   } else {
     facebookAvatar(this);
@@ -30,10 +30,10 @@ function Contact(qbUser) {
     this.status = JSON.parse(qbUser.custom_data).status || null;
   } catch(err) {
     // qbUser.custom_data - temporary storage of status message for mobile apps (14.07.2014)
-    this.status = qbUser.custom_data || qbUser.status;
+    this.status = qbUser.custom_data || qbUser.status || null;
   }
 
-  this.tag = qbUser.user_tags || qbUser.tag;
+  this.tag = qbUser.user_tags || qbUser.tag || null;
 }
 
 /* Private
@@ -64,21 +64,26 @@ function facebookAvatar(contact) {
  *
  */
 
+var Contact = require('../contacts/ContactModel');
+
 module.exports = Friendlist;
 
 function Friendlist() {
   this.contacts = [];
 }
 
-Friendlist.prototype.localSearch = function() {
-
+Friendlist.prototype.getContacts = function(items) {
+  var contact,
+      self = this;
+  
+  self.contacts = [];
+  items.forEach(function(user) {
+    contact = new Contact(user.user);
+    self.contacts.push(contact);
+  });
 };
 
-Friendlist.prototype.globalSearch = function() {
-
-};
-
-},{}],3:[function(require,module,exports){
+},{"../contacts/ContactModel":1}],3:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -94,18 +99,96 @@ module.exports = (function() {
 
   return {
 
+    createDataSpinner: function() {
+      var spinnerBlock = '<div class="spinner_bounce">';
+      spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
+      spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
+      spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
+      spinnerBlock += '</div>';
+
+      $('.popup:visible ul').after(spinnerBlock).siblings('.note').addClass('is-hidden');
+    },
+
+    removeDataSpinner: function() {
+      $('.spinner_bounce').remove();
+    },
+
     globalSearch: function(form) {
-      var val = form.find('input[type="search"]').val().trim();
+      var val = form.find('input[type="search"]').val().trim(),
+          listObj = $('.popup:visible ul'),
+          self = this;
 
       if (val.length > 0) {
+        self.createDataSpinner();
+        listObj.addClass('is-hidden').find('.mCSB_container').empty();
+        $('.spinner_bounce').addClass('is-empty');
+
         QBApiCalls.getUser({full_name: val}, function(data) {
-          // if (QMCONFIG.debug) console.log('local search =', val);
+          sessionStorage.setItem('QM.search.pages', Math.ceil(data.total_entries / data.per_page));
+          sessionStorage.setItem('QM.search.value', val); 
+
+          friendlist = new Friendlist;
+          friendlist.getContacts(data.items);
+
+          // ajax downloading of data through scroll
+          scrollbar(listObj, friendlist, self);
+
+          createListResults(listObj, friendlist, self);
+          listObj.removeClass('is-hidden').siblings('.list').addClass('is-hidden');
+
+          if (QMCONFIG.debug) console.log('Search results', friendlist);
         });
       }
     }
 
   };
 })();
+
+/* Private
+---------------------------------------------------------------------- */
+function createListResults(listObj, friendlist, self) {
+  var item;
+
+  friendlist.contacts.forEach(function(contact) {
+    item = '<li class="list-item">';
+    item += '<a class="contact l-flexbox" href="#">';
+    item += '<div class="l-flexbox_inline">';
+    item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
+    item += '<span class="name">' + contact.full_name + '</span>';
+    item += '</div>';
+    item += '<button class="sent-request"><img src="images/icon-request.png" alt="request"></button>';
+    item += '</a></li>';
+    // <span class="sent-request l-flexbox">Request Sent</span>
+
+    listObj.find('.mCSB_container').append(item);
+  });
+
+  self.removeDataSpinner();
+}
+
+function scrollbar(listObj, friendlist, self) {
+  listObj.mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 150,
+    callbacks: {
+      onTotalScroll: function() { ajaxDownloading(listObj, friendlist, self); },
+      alwaysTriggerOffsets: false
+    }
+  });
+}
+
+function ajaxDownloading(listObj, friendlist, self) {
+  var page = listObj.find('li').length / 2 / 10;
+
+  if (++page <= sessionStorage['QM.search.pages']) {
+    self.createDataSpinner();
+    QBApiCalls.getUser({full_name: sessionStorage['QM.search.value'], page: page}, function(data) {
+      friendlist.getContacts(data.items);
+      createListResults(listObj, friendlist, self);
+      if (QMCONFIG.debug) console.log('Search results', friendlist);
+    });
+  }
+}
 
 },{"../qbApiCalls":5,"./FriendlistModel":2}],4:[function(require,module,exports){
 /*
@@ -208,6 +291,12 @@ module.exports = (function() {
     fail(errMsg);
   };
 
+  var failSearch = function() {
+    var FriendlistView = require('./friendlist/FriendlistView');
+    FriendlistView.removeDataSpinner();
+    $('.popup:visible .note').removeClass('is-hidden').siblings('.list').addClass('is-hidden');
+  };
+
   return {
 
     init: function(token) {
@@ -226,13 +315,23 @@ module.exports = (function() {
     },
 
     checkSession: function(callback) {
-      if ((new Date).toISOString() > session.storage.expirationTime) {
-        session.decrypt(session.storage.authParams);
-        
-        this.init(); // reset QuickBlox JS SDK after autologin via an existing token
-        this.createSession(session.storage.authParams, callback, session._remember);
+      var UserView = require('./user/UserView'),
+          self = this;
 
-        session.encrypt(session.storage.authParams);
+      if ((new Date).toISOString() > session.storage.expirationTime) {
+        self.init(); // reset QuickBlox JS SDK after autologin via an existing token
+
+        if (session.storage.authParams.provider) {
+          UserView.getFBStatus(function(token) {
+            session.storage.authParams.keys.token = token;
+            self.createSession(session.storage.authParams, callback, session._remember);
+          });
+        } else {
+          session.decrypt(session.storage.authParams);
+          self.createSession(session.storage.authParams, callback, session._remember);
+          session.encrypt(session.storage.authParams);
+        }
+        
       } else {
         callback();
       }
@@ -351,9 +450,10 @@ module.exports = (function() {
     getUser: function(params, callback) {
       this.checkSession(function(res) {
         QB.users.get(params, function(err, res) {
-          if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+          if (err && err.code === 404) {
+            if (QMCONFIG.debug) console.log(err.message);
 
+            failSearch();
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
 
@@ -417,7 +517,7 @@ module.exports = (function() {
   };
 })();
 
-},{"./session/SessionModel":7,"./user/UserView":9}],6:[function(require,module,exports){
+},{"./friendlist/FriendlistView":3,"./session/SessionModel":7,"./user/UserView":9}],6:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -515,6 +615,8 @@ module.exports = (function() {
       $('.search').on('click', function() {
         if (QMCONFIG.debug) console.log('global search');
         openPopup($('#popupSearch'));
+        $('.popup:visible .list, .spinner_bounce').addClass('is-hidden').siblings('form').find('input').val('');
+        $('.popup:visible .mCSB_container').empty();
       });
 
       $('.popup-control-button').on('click', function(event) {
@@ -1001,7 +1103,7 @@ module.exports = (function() {
 
     successSendEmailCallback: function() {
       var alert = '<div class="note l-form l-flexbox l-flexbox_column">';
-      alert += '<span class="text text_alert">Success!</span>';
+      alert += '<span class="text text_alert text_alert_success">Success!</span>';
       alert += '<span class="text">Please check your email and click on the link in letter in order to reset your password</span>';
       alert += '</div>';
 
@@ -1014,9 +1116,22 @@ module.exports = (function() {
       user.connectFB(token);
     },
 
-    getFBStatus: function() {
+    getFBStatus: function(callback) {
       FB.getLoginStatus(function(response) {
         if (QMCONFIG.debug) console.log('FB status response', response);
+        if (callback) {
+          // situation when you are recovering QB session via FB
+          // and FB accessToken has expired
+          if (response.status === 'connected') {
+            callback(response.authResponse.accessToken);
+          } else {
+            FB.login(function(response) {
+              if (QMCONFIG.debug) console.log('FB authResponse', response);
+              if (response.status === 'connected')
+                callback(response.authResponse.accessToken);
+            });
+          }
+        }
       }, true);
     },
 

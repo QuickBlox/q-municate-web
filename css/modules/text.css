@@ -45,5 +45,9 @@
 }
   .text_alert {
     margin-bottom: 20px;
+    padding-left: 20px;
     font-size: 32px !important;
+  }
+  .text_alert_success {
+    padding-left: 0;
   }
