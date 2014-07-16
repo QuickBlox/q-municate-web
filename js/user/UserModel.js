@@ -112,8 +112,18 @@ User.prototype.login = function() {
         delete self._remember;
 
         self.session = session;
+        self.jid = QB.chat.getUserJid(self.contact.id);
 
-        UserView.successFormCallback(self);
+        session.decrypt(self.session.storage.authParams);
+        QB.chat.connect({jid: self.jid, password: self.session.storage.authParams.password}, function(err, res) {
+          if (err) {
+            console.log(err);
+          } else {
+            UserView.successFormCallback(self);
+          }
+        });
+
+        session.encrypt(self.session.storage.authParams);
         if (QMCONFIG.debug) console.log('User', self);
       });
     }, self._remember);
