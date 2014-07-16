@@ -31,8 +31,8 @@ module.exports = (function() {
 
   var failSearch = function() {
     var FriendlistView = require('./friendlist/FriendlistView');
+    $('.popup:visible .note').removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
     FriendlistView.removeDataSpinner();
-    $('.popup:visible .note').removeClass('is-hidden').siblings('.list').addClass('is-hidden');
   };
 
   return {
