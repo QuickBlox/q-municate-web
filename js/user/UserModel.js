@@ -113,6 +113,7 @@ User.prototype.login = function() {
 
         self.session = session;
         self.jid = QB.chat.getUserJid(self.contact.id);
+        if (QMCONFIG.debug) console.log('User', self);
 
         session.decrypt(self.session.storage.authParams);
         QB.chat.connect({jid: self.jid, password: self.session.storage.authParams.password}, function(err, res) {
@@ -122,9 +123,8 @@ User.prototype.login = function() {
             UserView.successFormCallback(self);
           }
         });
-
         session.encrypt(self.session.storage.authParams);
-        if (QMCONFIG.debug) console.log('User', self);
+
       });
     }, self._remember);
   }
