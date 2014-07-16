@@ -6,51 +6,55 @@
  */
 
 var Friendlist = require('./FriendlistModel'),
-    QBApiCalls = require('../qbApiCalls');
+    friendlist;
 
 module.exports = (function() {
-  var friendlist;
 
   return {
 
-    createDataSpinner: function() {
-      var spinnerBlock = '<div class="spinner_bounce">';
+    createDataSpinner: function(list) {
+      var spinnerBlock = '<div class="popup-elem spinner_bounce">';
       spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
       spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
       spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
       spinnerBlock += '</div>';
 
-      $('.popup:visible ul').after(spinnerBlock).siblings('.note').addClass('is-hidden');
+      list.after(spinnerBlock);
     },
 
     removeDataSpinner: function() {
       $('.spinner_bounce').remove();
     },
 
+    globalPopup: function() {
+      var popup = $('#popupSearch');
+
+      openPopup(popup);
+      popup.find('.popup-elem').addClass('is-hidden').siblings('form').find('input').val('');
+      popup.find('.mCSB_container').empty();
+    },
+
     globalSearch: function(form) {
-      var val = form.find('input[type="search"]').val().trim(),
-          listObj = $('.popup:visible ul'),
-          self = this;
+      var self = this,
+          popup = form.parent(),
+          list = popup.find('ul:first'),
+          val = form.find('input[type="search"]').val().trim();
 
       if (val.length > 0) {
-        self.createDataSpinner();
-        listObj.addClass('is-hidden').find('.mCSB_container').empty();
-        $('.spinner_bounce').addClass('is-empty');
+        friendlist = new Friendlist;
 
-        QBApiCalls.getUser({full_name: val}, function(data) {
-          sessionStorage.setItem('QM.search.pages', Math.ceil(data.total_entries / data.per_page));
-          sessionStorage.setItem('QM.search.value', val); 
+        popup.find('.popup-elem').addClass('is-hidden');
+        popup.find('.mCSB_container').empty();
 
-          friendlist = new Friendlist;
-          friendlist.getContacts(data.items);
+        scrollbar(list, self);
+        self.createDataSpinner(list);
+        $('.spinner_bounce').removeClass('is-hidden').addClass('is-empty');
 
-          // ajax downloading of data through scroll
-          scrollbar(listObj, friendlist, self);
+        sessionStorage.setItem('QM.search.value', val);
+        sessionStorage.setItem('QM.search.page', 1);
 
-          createListResults(listObj, friendlist, self);
-          listObj.removeClass('is-hidden').siblings('.list').addClass('is-hidden');
-
-          if (QMCONFIG.debug) console.log('Search results', friendlist);
+        friendlist.globalSearch(function() {
+          createListResults(list, friendlist, self);
         });
       }
     }
@@ -60,7 +64,24 @@ module.exports = (function() {
 
 /* Private
 ---------------------------------------------------------------------- */
-function createListResults(listObj, friendlist, self) {
+var openPopup = function(objDom) {
+  objDom.add('.popups').addClass('is-overlay');
+};
+
+function scrollbar(list, self) {
+  list.mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 150,
+    callbacks: {
+      onTotalScroll: function() {
+        ajaxDownloading(list, self);
+      },
+      alwaysTriggerOffsets: false
+    }
+  });
+}
+
+function createListResults(list, friendlist, self) {
   var item;
 
   friendlist.contacts.forEach(function(contact) {
@@ -74,32 +95,22 @@ function createListResults(listObj, friendlist, self) {
     item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     item += '</a></li>';
 
-    listObj.find('.mCSB_container').append(item);
+    list.find('.mCSB_container').append(item);
+    list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
   });
 
   self.removeDataSpinner();
 }
 
-function scrollbar(listObj, friendlist, self) {
-  listObj.mCustomScrollbar({
-    theme: 'minimal-dark',
-    scrollInertia: 150,
-    callbacks: {
-      onTotalScroll: function() { ajaxDownloading(listObj, friendlist, self); },
-      alwaysTriggerOffsets: false
-    }
-  });
-}
+// ajax downloading of data through scroll
+function ajaxDownloading(list, self) {
+  var page = parseInt(sessionStorage['QM.search.page']),
+      allPages = parseInt(sessionStorage['QM.search.allPages']);
 
-function ajaxDownloading(listObj, friendlist, self) {
-  var page = listObj.find('li').length / 2 / 10;
-
-  if (++page <= sessionStorage['QM.search.pages']) {
-    self.createDataSpinner();
-    QBApiCalls.getUser({full_name: sessionStorage['QM.search.value'], page: page}, function(data) {
-      friendlist.getContacts(data.items);
-      createListResults(listObj, friendlist, self);
-      if (QMCONFIG.debug) console.log('Search results', friendlist);
+  if (page <= allPages) {
+    self.createDataSpinner(list);
+    friendlist.globalSearch(function() {
+      createListResults(list, friendlist, self);
     });
   }
 }

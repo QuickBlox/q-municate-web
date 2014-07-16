@@ -20,6 +20,8 @@ module.exports = (function() {
         changeInputFile($(this));
       });
 
+      /* welcome buttons
+      ----------------------------------------------------- */
       $('#signupFB, #loginFB').on('click', function(event) {
         if (QMCONFIG.debug) console.log('connect with FB');
         event.preventDefault();
@@ -51,6 +53,8 @@ module.exports = (function() {
         UserView.forgot();
       });
 
+      /* forms
+      ----------------------------------------------------- */
       $('#signupForm').on('click', function(event) {
         if (QMCONFIG.debug) console.log('create user');
         event.preventDefault();
@@ -75,6 +79,8 @@ module.exports = (function() {
         UserView.resetForm();
       });
 
+      /* popovers
+      ----------------------------------------------------- */
       $('#profile').on('click', function(event) {
         event.preventDefault();
         removePopover();
@@ -87,16 +93,15 @@ module.exports = (function() {
         UserView.contactPopover($(this));
       });
 
+      /* popups
+      ----------------------------------------------------- */
       $('.header-links-item').on('click', '#logout', function(event) {
         event.preventDefault();
         openPopup($('#popupLogout'));
       });
 
-      $('.search').on('click', function() {
-        if (QMCONFIG.debug) console.log('global search');
-        openPopup($('#popupSearch'));
-        $('.popup:visible .list, .spinner_bounce').addClass('is-hidden').siblings('form').find('input').val('');
-        $('.popup:visible .mCSB_container').empty();
+      $('#logoutConfirm').on('click', function() {
+        UserView.logout();
       });
 
       $('.popup-control-button').on('click', function(event) {
@@ -104,8 +109,21 @@ module.exports = (function() {
         closePopup();
       });
 
-      $('#logoutConfirm').on('click', function() {
-        UserView.logout();
+      $('.search').on('click', function() {
+        if (QMCONFIG.debug) console.log('global search');
+        FriendlistView.globalPopup();
+      });
+
+      /* search
+      ----------------------------------------------------- */
+      $('#globalSearch').on('submit', function(event) {
+        event.preventDefault();
+        FriendlistView.globalSearch($(this));
+      });
+
+      $('.list_contacts').on('click', 'button.sent-request', function() {
+        $(this).after('<span class="sent-request l-flexbox">Request Sent</span>');
+        $(this).remove();
       });
 
       $('#searchContacts').on('keyup search submit', function(event) {
@@ -118,17 +136,8 @@ module.exports = (function() {
         }
       });
 
-      $('#globalSearch').on('submit', function(event) {
-        event.preventDefault();
-        FriendlistView.globalSearch($(this));
-      });
-
-      $('.list').on('click', 'button.sent-request', function() {
-        $(this).after('<span class="sent-request l-flexbox">Request Sent</span>');
-        $(this).remove();
-      });
-
-      /* temp routes */
+      /* temporary routes
+      ----------------------------------------------------- */
       $('.list').on('click', '.contact', function(event) {
         event.preventDefault();
       });
