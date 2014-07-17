@@ -29,15 +29,21 @@ var QMCONFIG = {
   },
 
   errors: {
-    session: 'The QB application credentials you entered are incorrect',
-    invalidName: 'Name has a bad format. Length must be in the diapason [3-50]',
-    invalidEmail: 'Email should look like an email address',
-    invalidPass: 'Password should contain alphanumeric and punctuation characters only. Length must be in the diapason [8-40]',
-    avatarType: 'User picture can be image only',
-    fileName: 'File name should be less 100 characters',
-    fileSize: 'File size should not be bigger than 10 MB',
-    notFoundEmail: 'Sorry, but this email address wasn\'t found',
-    crashFBToken: 'Sorry, we notice that you has actually exited from Facebook so we need to recreate your FB token now. Please just click on the button again'
+    session: "The QB application credentials you entered are incorrect",
+    invalidName: "Name shouldn't contain '<', '>' and ';' characters",
+    shortName: "Name shouldn't be less than 3 characters",
+    bigName: "Name shouldn't be more than 50 characters",
+    invalidEmail: "E-mail should look like an email address",
+    invalidPass: "Password shouldn't contain non-Latin characters and spaces",
+    shortPass: "Password shouldn't be less than 8 characters",
+    bigPass: "Password shouldn't be more than 40 characters",
+    avatarType: "Avatar should be image",
+    fileName: "File name shouldn't be more than 100 characters",
+    fileSize: "File should be less than 10 MB",
+    emailExists: "The email has already been taken",
+    unauthorized: "The email and password you entered are incorrect",
+    notFoundEmail: "The email you entered wasn't found",
+    crashFBToken: "Sorry, we noticed that you had logged out from Facebook so we need to recreate your FB token now. Please click the Connect with FB button again"
   }
 
 };
