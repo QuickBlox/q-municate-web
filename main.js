@@ -321,9 +321,8 @@ module.exports = (function() {
     $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
   };
 
-  var failUser = function(detail) {
-    var errMsg = 'This email ';
-    errMsg += JSON.parse(detail).errors.email[0];
+  var failUser = function() {
+    var errMsg = QMCONFIG.errors.emailExists;
     $('section:visible input[type="email"]').addClass('is-error');
     fail(errMsg);
   };
@@ -390,7 +389,7 @@ module.exports = (function() {
               parseErr = JSON.parse(err.detail);
 
           if (err.code === 401) {
-            errMsg = parseErr.errors[0];
+            errMsg = QMCONFIG.errors.unauthorized;
             $('section:visible input:not(:checkbox)').addClass('is-error');
           } else {
             errMsg = parseErr.errors.email ? parseErr.errors.email[0] :
@@ -406,7 +405,7 @@ module.exports = (function() {
             // This checking is needed when you trying to connect via FB
             // and your primary email has already been taken on the project 
             } else if (errMsg.indexOf('already') >= 0) {
-              errMsg = 'Email ' + errMsg;
+              errMsg = QMCONFIG.errors.emailExists;
               UserView.getFBStatus();
             } else {
               errMsg = QMCONFIG.errors.session;
@@ -512,7 +511,7 @@ module.exports = (function() {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
-            failUser(err.detail);
+            failUser();
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
 
@@ -529,7 +528,7 @@ module.exports = (function() {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
-            failUser(err.detail);
+            failUser();
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
 
@@ -1061,9 +1060,19 @@ function validate(form, user) {
       } else if (this.validity.typeMismatch) {
         errMsg = QMCONFIG.errors.invalidEmail;
       } else if (this.validity.patternMismatch && errName === 'Name') {
-        errMsg = QMCONFIG.errors.invalidName;
+        if (value.length < 3)
+          errMsg = QMCONFIG.errors.shortName;
+        else if (value.length > 50)
+          errMsg = QMCONFIG.errors.bigName;
+        else
+          errMsg = QMCONFIG.errors.invalidName;
       } else if (this.validity.patternMismatch && (errName === 'Password' || errName === 'New password')) {
-        errMsg = QMCONFIG.errors.invalidPass;
+        if (value.length < 8)
+          errMsg = QMCONFIG.errors.shortPass;
+        else if (value.length > 40)
+          errMsg = QMCONFIG.errors.bigPass;
+        else
+          errMsg = QMCONFIG.errors.invalidPass;
       }
 
       fail(user, errMsg);
