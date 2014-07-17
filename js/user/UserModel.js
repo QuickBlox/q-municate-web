@@ -211,9 +211,19 @@ function validate(form, user) {
       } else if (this.validity.typeMismatch) {
         errMsg = QMCONFIG.errors.invalidEmail;
       } else if (this.validity.patternMismatch && errName === 'Name') {
-        errMsg = QMCONFIG.errors.invalidName;
+        if (value.length < 3)
+          errMsg = QMCONFIG.errors.shortName;
+        else if (value.length > 50)
+          errMsg = QMCONFIG.errors.bigName;
+        else
+          errMsg = QMCONFIG.errors.invalidName;
       } else if (this.validity.patternMismatch && (errName === 'Password' || errName === 'New password')) {
-        errMsg = QMCONFIG.errors.invalidPass;
+        if (value.length < 8)
+          errMsg = QMCONFIG.errors.shortPass;
+        else if (value.length > 40)
+          errMsg = QMCONFIG.errors.bigPass;
+        else
+          errMsg = QMCONFIG.errors.invalidPass;
       }
 
       fail(user, errMsg);
