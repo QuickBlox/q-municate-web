@@ -9,8 +9,6 @@
 module.exports = Contact;
 
 function Contact(qbUser) {
-  var jid = QB.chat.getUserJid(qbUser.id);
-
   this.id = qbUser.id;
   this.facebook_id = qbUser.facebook_id;
   this.full_name = qbUser.full_name;
@@ -36,9 +34,7 @@ function Contact(qbUser) {
   }
 
   this.tag = qbUser.user_tags || qbUser.tag || null;
-
-  this.xmpp_jid = jid.indexOf('undefined') === -1 ? jid : // if you don't have appId in your jid
-                  localStorage['QM.user'] && JSON.parse(localStorage['QM.user']).contact.xmpp_jid;
+  this.xmpp_jid = QB.chat.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId);
 }
 
 /* Private
@@ -105,6 +101,10 @@ Friendlist.prototype.getContacts = function(data) {
   });
 };
 
+Friendlist.prototype.sendSubscribe = function(jid) {
+  QBApiCalls.subscriptionPresence({jid: jid, type: 'subscribe'});
+};
+
 },{"../contacts/ContactModel":1,"../qbApiCalls":5}],3:[function(require,module,exports){
 /*
  * Q-municate chat application
@@ -165,6 +165,13 @@ module.exports = (function() {
           createListResults(list, friendlist, self);
         });
       }
+    },
+
+    sendSubscribeRequest: function(objDom) {
+      var jid = objDom.data('jid');
+      objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
+      objDom.remove();
+      friendlist.sendSubscribe(jid);
     }
 
   };
@@ -199,7 +206,7 @@ function createListResults(list, friendlist, self) {
     item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
     item += '<span class="name">' + contact.full_name + '</span>';
     item += '</div>';
-    item += '<button class="sent-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
+    item += '<button class="sent-request" data-jid='+contact.xmpp_jid+'><img class="icon-normal" src="images/icon-request.png" alt="request">';
     item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     item += '</a></li>';
 
@@ -448,9 +455,9 @@ module.exports = (function() {
 
     logoutUser: function(callback) {
       if (QMCONFIG.debug) console.log('QB SDK: User has exited');
+      this.init(); // reset QuickBlox JS SDK after autologin via an existing token
       session.destroy();
       session = null;
-      this.init(); // reset QuickBlox JS SDK after autologin via an existing token
       callback();
     },
 
@@ -576,6 +583,10 @@ module.exports = (function() {
 
     chatDisconnect: function() {
       QB.chat.disconnect();
+    },
+
+    subscriptionPresence: function(params) {
+      QB.chat.sendSubscriptionPresence(params);
     }
 
   };
@@ -706,8 +717,7 @@ module.exports = (function() {
       });
 
       $('.list_contacts').on('click', 'button.sent-request', function() {
-        $(this).after('<span class="sent-request l-flexbox">Request Sent</span>');
-        $(this).remove();
+        FriendlistView.sendSubscribeRequest($(this));
       });
 
       $('#searchContacts').on('keyup search submit', function(event) {

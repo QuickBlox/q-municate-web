@@ -143,9 +143,9 @@ module.exports = (function() {
 
     logoutUser: function(callback) {
       if (QMCONFIG.debug) console.log('QB SDK: User has exited');
+      this.init(); // reset QuickBlox JS SDK after autologin via an existing token
       session.destroy();
       session = null;
-      this.init(); // reset QuickBlox JS SDK after autologin via an existing token
       callback();
     },
 
@@ -271,6 +271,10 @@ module.exports = (function() {
 
     chatDisconnect: function() {
       QB.chat.disconnect();
+    },
+
+    subscriptionPresence: function(params) {
+      QB.chat.sendSubscriptionPresence(params);
     }
 
   };

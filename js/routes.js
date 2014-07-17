@@ -122,8 +122,7 @@ module.exports = (function() {
       });
 
       $('.list_contacts').on('click', 'button.sent-request', function() {
-        $(this).after('<span class="sent-request l-flexbox">Request Sent</span>');
-        $(this).remove();
+        FriendlistView.sendSubscribeRequest($(this));
       });
 
       $('#searchContacts').on('keyup search submit', function(event) {

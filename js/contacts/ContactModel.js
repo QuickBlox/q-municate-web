@@ -8,8 +8,6 @@
 module.exports = Contact;
 
 function Contact(qbUser) {
-  var jid = QB.chat.getUserJid(qbUser.id);
-
   this.id = qbUser.id;
   this.facebook_id = qbUser.facebook_id;
   this.full_name = qbUser.full_name;
@@ -35,9 +33,7 @@ function Contact(qbUser) {
   }
 
   this.tag = qbUser.user_tags || qbUser.tag || null;
-
-  this.xmpp_jid = jid.indexOf('undefined') === -1 ? jid : // if you don't have appId in your jid
-                  localStorage['QM.user'] && JSON.parse(localStorage['QM.user']).contact.xmpp_jid;
+  this.xmpp_jid = QB.chat.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId);
 }
 
 /* Private

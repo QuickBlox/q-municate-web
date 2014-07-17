@@ -40,3 +40,7 @@ Friendlist.prototype.getContacts = function(data) {
     self.contacts.push(contact);
   });
 };
+
+Friendlist.prototype.sendSubscribe = function(jid) {
+  QBApiCalls.subscriptionPresence({jid: jid, type: 'subscribe'});
+};

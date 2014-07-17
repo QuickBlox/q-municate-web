@@ -57,6 +57,13 @@ module.exports = (function() {
           createListResults(list, friendlist, self);
         });
       }
+    },
+
+    sendSubscribeRequest: function(objDom) {
+      var jid = objDom.data('jid');
+      objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
+      objDom.remove();
+      friendlist.sendSubscribe(jid);
     }
 
   };
@@ -91,7 +98,7 @@ function createListResults(list, friendlist, self) {
     item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
     item += '<span class="name">' + contact.full_name + '</span>';
     item += '</div>';
-    item += '<button class="sent-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
+    item += '<button class="sent-request" data-jid='+contact.xmpp_jid+'><img class="icon-normal" src="images/icon-request.png" alt="request">';
     item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     item += '</a></li>';
 
