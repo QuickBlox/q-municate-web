@@ -9,6 +9,8 @@
 module.exports = Contact;
 
 function Contact(qbUser) {
+  var jid = QB.chat.getUserJid(qbUser.id);
+
   this.id = qbUser.id;
   this.facebook_id = qbUser.facebook_id;
   this.full_name = qbUser.full_name;
@@ -34,6 +36,9 @@ function Contact(qbUser) {
   }
 
   this.tag = qbUser.user_tags || qbUser.tag || null;
+
+  this.xmpp_jid = jid.indexOf('undefined') === -1 ? jid : // if you don't have appId in your jid
+                  localStorage['QM.user'] && JSON.parse(localStorage['QM.user']).contact.xmpp_jid;
 }
 
 /* Private
@@ -243,7 +248,9 @@ var APP = {
     // Checking if autologin was chosen
     if (localStorage.getItem('QM.session') && localStorage.getItem('QM.user') &&
         // new format of storage data (14.07.2014)
-        JSON.parse(localStorage.getItem('QM.user')).contact) {
+        JSON.parse(localStorage.getItem('QM.user')).contact &&
+        // new format of storage data (17.07.2014)
+        JSON.parse(localStorage.getItem('QM.user')).contact.xmpp_jid) {
 
       token = JSON.parse(localStorage.getItem('QM.session')).token;
       QBApiCalls.init(token);
@@ -279,15 +286,23 @@ $(document).ready(function() {
 
 // FB SDK initialization
 window.fbAsyncInit = function() {
+  var UserView = require('./user/UserView');
+
   FB.init({
     appId: QMCONFIG.fbAccount.appId,
     version: 'v2.0'
   });
-
   if (QMCONFIG.debug) console.log('FB init', FB);
+
+  // If you called the getFBStatus function before FB.init
+  // Continue it again
+  if (sessionStorage.getItem('QM.is_getFBStatus')) {
+    sessionStorage.removeItem('QM.is_getFBStatus');
+    UserView.getFBStatus();
+  }
 };
 
-},{"./qbApiCalls":5,"./routes":6}],5:[function(require,module,exports){
+},{"./qbApiCalls":5,"./routes":6,"./user/UserView":9}],5:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -334,7 +349,6 @@ module.exports = (function() {
         QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
       } else {
         QB.init(token);
-        UserView.createSpinner();
 
         session = new Session;
         session.getStorage();
@@ -540,6 +554,29 @@ module.exports = (function() {
           }
         });
       });
+    },
+
+    chatConnect: function(jid, callback) {
+      this.checkSession(function(res) {
+        var password;
+        
+        session.decrypt(session.storage.authParams);
+        password = session.storage.authParams.provider ? session.storage.token : session.storage.authParams.password;
+        session.encrypt(session.storage.authParams);
+
+        QB.chat.connect({jid: jid, password: password}, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            callback();
+          }
+        });
+      });
+    },
+
+    chatDisconnect: function() {
+      QB.chat.disconnect();
     }
 
   };
@@ -847,15 +884,18 @@ User.prototype.connectFB = function(token) {
       rememberMe(self);
 
       self.session = session;
-
-      // import FB friends
-      FB.api('/me/friends', function (data) {
-          console.log(data);
-        }
-      );
-
-      UserView.successFormCallback(self);
       if (QMCONFIG.debug) console.log('User', self);
+
+      QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+        UserView.successFormCallback(self);
+
+        // import FB friends
+        FB.api('/me/friends', function (data) {
+            console.log(data);
+          }
+        );
+      });
+      
     });
   }, true);
 };
@@ -885,14 +925,15 @@ User.prototype.signup = function() {
         QBApiCalls.loginUser(params, function(user) {
           self.contact = new Contact(user);
           self.session = session;
-
-          if (tempParams._blob) {
-            uploadAvatar(self);
-          } else {
-            UserView.successFormCallback(self);
-          }
-
           if (QMCONFIG.debug) console.log('User', self);
+
+          QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+            if (tempParams._blob) {
+              uploadAvatar(self);
+            } else {
+              UserView.successFormCallback(self);
+            }
+          });
         });
       });
     }, false);
@@ -917,17 +958,20 @@ User.prototype.login = function() {
     QBApiCalls.createSession(params, function(qbSession, session) {
       QBApiCalls.getUser(qbSession.user_id, function(user) {
         self.contact = new Contact(user);
-
-        if (self._remember) {
-          delete self._remember;
-          rememberMe(self);
-        }
-        delete self._remember;
-
-        self.session = session;
-
-        UserView.successFormCallback(self);
         if (QMCONFIG.debug) console.log('User', self);
+
+        QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+          if (self._remember) {
+            delete self._remember;
+            rememberMe(self);
+          }
+          delete self._remember;
+
+          self.session = session;
+
+          UserView.successFormCallback(self);
+        });
+
       });
     }, self._remember);
   }
@@ -975,12 +1019,15 @@ User.prototype.autologin = function(session) {
   });  
 
   self.session = session;
-
-  UserView.successFormCallback(self);
   if (QMCONFIG.debug) console.log('User', self);
+
+  QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+    UserView.successFormCallback(self);
+  });
 };
 
 User.prototype.logout = function(callback) {
+  QBApiCalls.chatDisconnect();
   QBApiCalls.logoutUser(function() {
     callback();
   });
@@ -1093,7 +1140,7 @@ function rememberMe(user) {
 var User = require('./UserModel');
 
 module.exports = (function() {
-  var user;
+  var user, FBCallback = null;
 
   var clearErrors = function() {
     $('.is-error').removeClass('is-error');
@@ -1159,22 +1206,32 @@ module.exports = (function() {
     },
 
     getFBStatus: function(callback) {
-      FB.getLoginStatus(function(response) {
-        if (QMCONFIG.debug) console.log('FB status response', response);
-        if (callback) {
-          // situation when you are recovering QB session via FB
-          // and FB accessToken has expired
-          if (response.status === 'connected') {
-            callback(response.authResponse.accessToken);
-          } else {
-            FB.login(function(response) {
-              if (QMCONFIG.debug) console.log('FB authResponse', response);
-              if (response.status === 'connected')
-                callback(response.authResponse.accessToken);
-            });
+      if (typeof FB === 'undefined') {
+        // Wait until FB SDK will be downloaded and then calling this function again
+        FBCallback = callback;
+        sessionStorage.setItem('QM.is_getFBStatus', true);
+        return false;
+      } else {
+        callback = callback || FBCallback;
+        FBCallback = null;
+
+        FB.getLoginStatus(function(response) {
+          if (QMCONFIG.debug) console.log('FB status response', response);
+          if (callback) {
+            // situation when you are recovering QB session via FB
+            // and FB accessToken has expired
+            if (response.status === 'connected') {
+              callback(response.authResponse.accessToken);
+            } else {
+              FB.login(function(response) {
+                if (QMCONFIG.debug) console.log('FB authResponse', response);
+                if (response.status === 'connected')
+                  callback(response.authResponse.accessToken);
+              });
+            }
           }
-        }
-      }, true);
+        }, true);
+      }
     },
 
     signupQB: function() {
@@ -1216,6 +1273,8 @@ module.exports = (function() {
     },
 
     autologin: function(session) {
+      switchPage($('#loginPage'));
+      this.createSpinner();
       user = new User;
       user.autologin(session);
     },

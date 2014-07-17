@@ -8,7 +8,7 @@
 var User = require('./UserModel');
 
 module.exports = (function() {
-  var user;
+  var user, FBCallback = null;
 
   var clearErrors = function() {
     $('.is-error').removeClass('is-error');
@@ -74,22 +74,32 @@ module.exports = (function() {
     },
 
     getFBStatus: function(callback) {
-      FB.getLoginStatus(function(response) {
-        if (QMCONFIG.debug) console.log('FB status response', response);
-        if (callback) {
-          // situation when you are recovering QB session via FB
-          // and FB accessToken has expired
-          if (response.status === 'connected') {
-            callback(response.authResponse.accessToken);
-          } else {
-            FB.login(function(response) {
-              if (QMCONFIG.debug) console.log('FB authResponse', response);
-              if (response.status === 'connected')
-                callback(response.authResponse.accessToken);
-            });
+      if (typeof FB === 'undefined') {
+        // Wait until FB SDK will be downloaded and then calling this function again
+        FBCallback = callback;
+        sessionStorage.setItem('QM.is_getFBStatus', true);
+        return false;
+      } else {
+        callback = callback || FBCallback;
+        FBCallback = null;
+
+        FB.getLoginStatus(function(response) {
+          if (QMCONFIG.debug) console.log('FB status response', response);
+          if (callback) {
+            // situation when you are recovering QB session via FB
+            // and FB accessToken has expired
+            if (response.status === 'connected') {
+              callback(response.authResponse.accessToken);
+            } else {
+              FB.login(function(response) {
+                if (QMCONFIG.debug) console.log('FB authResponse', response);
+                if (response.status === 'connected')
+                  callback(response.authResponse.accessToken);
+              });
+            }
           }
-        }
-      }, true);
+        }, true);
+      }
     },
 
     signupQB: function() {
@@ -131,6 +141,8 @@ module.exports = (function() {
     },
 
     autologin: function(session) {
+      switchPage($('#loginPage'));
+      this.createSpinner();
       user = new User;
       user.autologin(session);
     },

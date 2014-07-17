@@ -44,7 +44,6 @@ module.exports = (function() {
         QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
       } else {
         QB.init(token);
-        UserView.createSpinner();
 
         session = new Session;
         session.getStorage();
@@ -250,6 +249,29 @@ module.exports = (function() {
           }
         });
       });
+    },
+
+    chatConnect: function(jid, callback) {
+      this.checkSession(function(res) {
+        var password;
+        
+        session.decrypt(session.storage.authParams);
+        password = session.storage.authParams.provider ? session.storage.token : session.storage.authParams.password;
+        session.encrypt(session.storage.authParams);
+
+        QB.chat.connect({jid: jid, password: password}, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            callback();
+          }
+        });
+      });
+    },
+
+    chatDisconnect: function() {
+      QB.chat.disconnect();
     }
 
   };
