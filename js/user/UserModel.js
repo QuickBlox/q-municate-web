@@ -34,15 +34,18 @@ User.prototype.connectFB = function(token) {
       rememberMe(self);
 
       self.session = session;
-
-      // import FB friends
-      FB.api('/me/friends', function (data) {
-          console.log(data);
-        }
-      );
-
-      UserView.successFormCallback(self);
       if (QMCONFIG.debug) console.log('User', self);
+
+      QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+        UserView.successFormCallback(self);
+
+        // import FB friends
+        FB.api('/me/friends', function (data) {
+            console.log(data);
+          }
+        );
+      });
+      
     });
   }, true);
 };
@@ -72,14 +75,15 @@ User.prototype.signup = function() {
         QBApiCalls.loginUser(params, function(user) {
           self.contact = new Contact(user);
           self.session = session;
-
-          if (tempParams._blob) {
-            uploadAvatar(self);
-          } else {
-            UserView.successFormCallback(self);
-          }
-
           if (QMCONFIG.debug) console.log('User', self);
+
+          QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+            if (tempParams._blob) {
+              uploadAvatar(self);
+            } else {
+              UserView.successFormCallback(self);
+            }
+          });
         });
       });
     }, false);
@@ -104,26 +108,19 @@ User.prototype.login = function() {
     QBApiCalls.createSession(params, function(qbSession, session) {
       QBApiCalls.getUser(qbSession.user_id, function(user) {
         self.contact = new Contact(user);
-
-        if (self._remember) {
-          delete self._remember;
-          rememberMe(self);
-        }
-        delete self._remember;
-
-        self.session = session;
-        self.jid = QB.chat.getUserJid(self.contact.id);
         if (QMCONFIG.debug) console.log('User', self);
 
-        session.decrypt(self.session.storage.authParams);
-        QB.chat.connect({jid: self.jid, password: self.session.storage.authParams.password}, function(err, res) {
-          if (err) {
-            console.log(err);
-          } else {
-            UserView.successFormCallback(self);
+        QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+          if (self._remember) {
+            delete self._remember;
+            rememberMe(self);
           }
+          delete self._remember;
+
+          self.session = session;
+
+          UserView.successFormCallback(self);
         });
-        session.encrypt(self.session.storage.authParams);
 
       });
     }, self._remember);
@@ -172,12 +169,15 @@ User.prototype.autologin = function(session) {
   });  
 
   self.session = session;
-
-  UserView.successFormCallback(self);
   if (QMCONFIG.debug) console.log('User', self);
+
+  QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+    UserView.successFormCallback(self);
+  });
 };
 
 User.prototype.logout = function(callback) {
+  QBApiCalls.chatDisconnect();
   QBApiCalls.logoutUser(function() {
     callback();
   });
