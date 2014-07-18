@@ -33,7 +33,7 @@ function Contact(qbUser) {
   }
 
   this.tag = qbUser.user_tags || qbUser.tag || null;
-  this.xmpp_jid = QB.chat.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId);
+  this.xmpp_jid = QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId);
 }
 
 /* Private

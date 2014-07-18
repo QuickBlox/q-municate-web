@@ -135,6 +135,10 @@ module.exports = (function() {
         }
       });
 
+      /* QBChat handlers
+      ----------------------------------------------------- */
+      QB.chat.onSubscribeListener = FriendlistView.onSubscribe;
+
       /* temporary routes
       ----------------------------------------------------- */
       $('.list').on('click', '.contact', function(event) {

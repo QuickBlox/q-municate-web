@@ -64,6 +64,21 @@ module.exports = (function() {
       objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
       objDom.remove();
       friendlist.sendSubscribe(jid);
+    },
+
+    onSubscribe: function(userId) {
+      if (QMCONFIG.debug) console.log('Subscribe request from', userId);
+      var html = '<li class="list-item">';
+      html += '<a class="contact l-flexbox" href="#">';
+      html += '<div class="l-flexbox_inline">';
+      html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
+      html += '<span class="name">Test user</span>';
+      html += '</div><div class="request-controls l-flexbox">';
+      html += '<button class="request-button request-button_cancel">&#10005;</button>';
+      html += '<button class="request-button request-button_ok">&#10003;</button>';
+      html += '</div></a></li>';
+
+      $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
     }
 
   };

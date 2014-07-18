@@ -15,8 +15,6 @@ var APP = {
     this.scrollbar();
     this.chromaHash();
     this.setHtml5Patterns();
-    Routes.init();
-
     if (QMCONFIG.debug) console.log('App init', this);
 
     // Checking if autologin was chosen
@@ -32,6 +30,8 @@ var APP = {
     } else {
       QBApiCalls.init();
     }
+
+    Routes.init();
   },
 
   scrollbar: function() {
