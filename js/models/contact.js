@@ -7,34 +7,42 @@
 
 module.exports = Contact;
 
-function Contact(qbUser) {
-  this.id = qbUser.id;
-  this.facebook_id = qbUser.facebook_id;
-  this.full_name = qbUser.full_name;
-  this.email = qbUser.email;
-  this.blob_id = qbUser.blob_id;
-  
-  if (qbUser.blob_id) {
-    try {
-      this.avatar_url = JSON.parse(qbUser.custom_data).avatar_url;
-    } catch(err) {
-      // qbUser.website - temporary storage of avatar url for mobile apps (14.07.2014)
-      this.avatar_url = qbUser.website || qbUser.avatar_url || QMCONFIG.defAvatar.url;
-    }
-  } else {
-    facebookAvatar(this);
-  }
-
-  try {
-    this.status = JSON.parse(qbUser.custom_data).status || null;
-  } catch(err) {
-    // qbUser.custom_data - temporary storage of status message for mobile apps (14.07.2014)
-    this.status = qbUser.custom_data || qbUser.status || null;
-  }
-
-  this.tag = qbUser.user_tags || qbUser.tag || null;
-  this.xmpp_jid = QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId);
+function Contact(app) {
+  this.app = app;
 }
+
+Contact.prototype = {
+
+  create: function(qbUser) {
+    this.id = qbUser.id;
+    this.facebook_id = qbUser.facebook_id;
+    this.full_name = qbUser.full_name;
+    this.email = qbUser.email;
+    this.blob_id = qbUser.blob_id;
+    
+    if (qbUser.blob_id) {
+      try {
+        this.avatar_url = JSON.parse(qbUser.custom_data).avatar_url;
+      } catch(err) {
+        // qbUser.website - temporary storage of avatar url for mobile apps (14.07.2014)
+        this.avatar_url = qbUser.website || qbUser.avatar_url || QMCONFIG.defAvatar.url;
+      }
+    } else {
+      facebookAvatar(this);
+    }
+
+    try {
+      this.status = JSON.parse(qbUser.custom_data).status || null;
+    } catch(err) {
+      // qbUser.custom_data - temporary storage of status message for mobile apps (14.07.2014)
+      this.status = qbUser.custom_data || qbUser.status || null;
+    }
+
+    this.tag = qbUser.user_tags || qbUser.tag || null;
+    this.xmpp_jid = QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId);
+  }
+
+};
 
 /* Private
 ---------------------------------------------------------------------- */
