@@ -1,7 +1,7 @@
 /*
  * Q-municate chat application
  *
- * Contact Model
+ * Contact Module
  *
  */
 

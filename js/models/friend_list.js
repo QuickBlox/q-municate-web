@@ -1,7 +1,7 @@
 /*
  * Q-municate chat application
  *
- * Friendlist Model
+ * Friend List Module
  *
  */
 

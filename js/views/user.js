@@ -1,7 +1,7 @@
 /*
  * Q-municate chat application
  *
- * User View
+ * User View Module
  *
  */
 

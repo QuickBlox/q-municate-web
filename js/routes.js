@@ -1,7 +1,7 @@
 /*
  * Q-municate chat application
  *
- * Routes
+ * Routes Module
  *
  */
 
