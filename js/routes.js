@@ -14,8 +14,8 @@ function Routes(app) {
 Routes.prototype = {
 
   init: function() {
-    var UserView = require('./user/UserView'),
-        FriendlistView = require('./friendlist/FriendlistView');
+    var UserView = this.app.views.User,
+        FriendListView = this.app.views.FriendList;
 
     $(document).on('click', function(event) {
       clickBehaviour(event);
@@ -25,7 +25,7 @@ Routes.prototype = {
       changeInputFile($(this));
     });
 
-    /* welcome buttons
+    /* welcome page
     ----------------------------------------------------- */
     $('#signupFB, #loginFB').on('click', function(event) {
       if (QMCONFIG.debug) console.log('connect with FB');
@@ -52,18 +52,20 @@ Routes.prototype = {
       UserView.loginQB();
     });
 
-    $('#forgot').on('click', function(event) {
-      if (QMCONFIG.debug) console.log('forgot password');
-      event.preventDefault();
-      UserView.forgot();
-    });
-
-    /* forms
+    /* signup page
     ----------------------------------------------------- */
     $('#signupForm').on('click', function(event) {
       if (QMCONFIG.debug) console.log('create user');
       event.preventDefault();
       UserView.signupForm();
+    });
+
+    /* login page
+    ----------------------------------------------------- */
+    $('#forgot').on('click', function(event) {
+      if (QMCONFIG.debug) console.log('forgot password');
+      event.preventDefault();
+      UserView.forgot();
     });
 
     $('#loginForm').on('click', function(event) {
@@ -72,6 +74,8 @@ Routes.prototype = {
       UserView.loginForm();
     });
 
+    /* forgot and reset page
+    ----------------------------------------------------- */
     $('#forgotForm').on('click', function(event) {
       if (QMCONFIG.debug) console.log('send letter');
       event.preventDefault();
@@ -116,14 +120,14 @@ Routes.prototype = {
 
     $('.search').on('click', function() {
       if (QMCONFIG.debug) console.log('global search');
-      FriendlistView.globalPopup();
+      FriendListView.globalPopup();
     });
 
     /* search
     ----------------------------------------------------- */
     $('#globalSearch').on('submit', function(event) {
       event.preventDefault();
-      FriendlistView.globalSearch($(this));
+      FriendListView.globalSearch($(this));
     });
 
     $('#searchContacts').on('keyup search submit', function(event) {
@@ -139,16 +143,16 @@ Routes.prototype = {
     /* subscriptions
     ----------------------------------------------------- */
     $('.list_contacts').on('click', 'button.sent-request', function() {
-      FriendlistView.sendSubscribeRequest($(this));
+      FriendListView.sendSubscribeRequest($(this));
     });
 
     $('.list').on('click', '.request-button_cancel', function() {
-      FriendlistView.sendSubscribeReject($(this));
+      FriendListView.sendSubscribeReject($(this));
     });
 
     /* QBChat handlers
     ----------------------------------------------------- */
-    QB.chat.onSubscribeListener = FriendlistView.onSubscribe;
+    QB.chat.onSubscribeListener = FriendListView.onSubscribe;
 
     /* temporary routes
     ----------------------------------------------------- */
