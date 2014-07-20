@@ -38,9 +38,9 @@ Session.prototype = {
       }
       if (this._remember) {
         storage = {
-          token: this.token;
-          expirationTime: this.expirationTime;
-          authParams: this.authParams;
+          token: this.token,
+          expirationTime: this.expirationTime,
+          authParams: this.authParams
         };
         localStorage.setItem('QM.session', JSON.stringify(storage));
       }
