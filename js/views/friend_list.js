@@ -5,95 +5,95 @@
  *
  */
 
-var Friendlist = require('./FriendlistModel'),
-    friendlist;
+module.exports = FriendListView;
 
-module.exports = (function() {
+function FriendListView(app) {
+  this.app = app;
+}
 
-  return {
+FriendListView.prototype = {
 
-    createDataSpinner: function(list) {
-      var spinnerBlock = '<div class="popup-elem spinner_bounce">';
-      spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
-      spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
-      spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
-      spinnerBlock += '</div>';
+  createDataSpinner: function(list) {
+    var spinnerBlock = '<div class="popup-elem spinner_bounce">';
+    spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
+    spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
+    spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
+    spinnerBlock += '</div>';
 
-      list.after(spinnerBlock);
-    },
+    list.after(spinnerBlock);
+  },
 
-    removeDataSpinner: function() {
-      $('.spinner_bounce').remove();
-    },
+  removeDataSpinner: function() {
+    $('.spinner_bounce').remove();
+  },
 
-    globalPopup: function() {
-      var popup = $('#popupSearch');
+  globalPopup: function() {
+    var popup = $('#popupSearch');
 
-      openPopup(popup);
-      popup.find('.popup-elem').addClass('is-hidden').siblings('form').find('input').val('');
-      popup.find('.mCSB_container').empty();
-    },
+    openPopup(popup);
+    popup.find('.popup-elem').addClass('is-hidden').siblings('form').find('input').val('');
+    popup.find('.mCSB_container').empty();
+  },
 
-    globalSearch: function(form) {
-      var self = this,
-          popup = form.parent(),
-          list = popup.find('ul:first'),
-          val = form.find('input[type="search"]').val().trim();
+  globalSearch: function(form) {
+    var self = this,
+        popup = form.parent(),
+        list = popup.find('ul:first'),
+        val = form.find('input[type="search"]').val().trim();
 
-      if (val.length > 0) {
-        friendlist = new Friendlist;
-
-        popup.find('.popup-elem').addClass('is-hidden');
-        popup.find('.mCSB_container').empty();
-
-        scrollbar(list, self);
-        self.createDataSpinner(list);
-        $('.spinner_bounce').removeClass('is-hidden').addClass('is-empty');
-
-        sessionStorage.setItem('QM.search.value', val);
-        sessionStorage.setItem('QM.search.page', 1);
-
-        friendlist.globalSearch(function() {
-          createListResults(list, friendlist, self);
-        });
-      }
-    },
-
-    sendSubscribeRequest: function(objDom) {
-      var jid = objDom.data('jid');
-
-      objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
-      objDom.remove();
-      friendlist.sendSubscribe(jid);
-    },
-
-    sendSubscribeReject: function(objDom) {
-      var jid = objDom.parents('.contact').data('jid'),
-          list = objDom.parents('ul');
-
-      objDom.parents('li').remove();
-      isSectionEmpty(list);
+    if (val.length > 0) {
       friendlist = new Friendlist;
-      friendlist.sendReject(jid);
-    },
 
-    onSubscribe: function(jid) {
-      if (QMCONFIG.debug) console.log('Subscribe request from', jid);
-      var html = '<li class="list-item">';
-      html += '<a class="contact l-flexbox" href="#" data-jid="'+jid+'">';
-      html += '<div class="l-flexbox_inline">';
-      html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
-      html += '<span class="name">Test user</span>';
-      html += '</div><div class="request-controls l-flexbox">';
-      html += '<button class="request-button request-button_cancel">&#10005;</button>';
-      html += '<button class="request-button request-button_ok">&#10003;</button>';
-      html += '</div></a></li>';
+      popup.find('.popup-elem').addClass('is-hidden');
+      popup.find('.mCSB_container').empty();
 
-      $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
+      scrollbar(list, self);
+      self.createDataSpinner(list);
+      $('.spinner_bounce').removeClass('is-hidden').addClass('is-empty');
+
+      sessionStorage.setItem('QM.search.value', val);
+      sessionStorage.setItem('QM.search.page', 1);
+
+      friendlist.globalSearch(function() {
+        createListResults(list, friendlist, self);
+      });
     }
+  },
 
-  };
-})();
+  sendSubscribeRequest: function(objDom) {
+    var jid = objDom.data('jid');
+
+    objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
+    objDom.remove();
+    friendlist.sendSubscribe(jid);
+  },
+
+  sendSubscribeReject: function(objDom) {
+    var jid = objDom.parents('.contact').data('jid'),
+        list = objDom.parents('ul');
+
+    objDom.parents('li').remove();
+    isSectionEmpty(list);
+    friendlist = new Friendlist;
+    friendlist.sendReject(jid);
+  },
+
+  onSubscribe: function(jid) {
+    if (QMCONFIG.debug) console.log('Subscribe request from', jid);
+    var html = '<li class="list-item">';
+    html += '<a class="contact l-flexbox" href="#" data-jid="'+jid+'">';
+    html += '<div class="l-flexbox_inline">';
+    html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
+    html += '<span class="name">Test user</span>';
+    html += '</div><div class="request-controls l-flexbox">';
+    html += '<button class="request-button request-button_cancel">&#10005;</button>';
+    html += '<button class="request-button request-button_ok">&#10003;</button>';
+    html += '</div></a></li>';
+
+    $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
+  }
+
+};
 
 /* Private
 ---------------------------------------------------------------------- */
