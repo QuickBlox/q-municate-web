@@ -87,7 +87,7 @@ module.exports = (function() {
         UserView.profilePopover($(this));
       });
 
-      $('.list:not(.list_contacts)').on('contextmenu', '.contact', function(event) {
+      $('.list_contextmenu').on('contextmenu', '.contact', function(event) {
         event.preventDefault();
         removePopover();
         UserView.contactPopover($(this));
@@ -121,10 +121,6 @@ module.exports = (function() {
         FriendlistView.globalSearch($(this));
       });
 
-      $('.list_contacts').on('click', 'button.sent-request', function() {
-        FriendlistView.sendSubscribeRequest($(this));
-      });
-
       $('#searchContacts').on('keyup search submit', function(event) {
         event.preventDefault();
         var type = event.type,
@@ -133,6 +129,16 @@ module.exports = (function() {
         if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
           UserView.localSearch($(this));
         }
+      });
+
+      /* subscriptions
+      ----------------------------------------------------- */
+      $('.list_contacts').on('click', 'button.sent-request', function() {
+        FriendlistView.sendSubscribeRequest($(this));
+      });
+
+      $('.list').on('click', '.request-button_cancel', function() {
+        FriendlistView.sendSubscribeReject($(this));
       });
 
       /* QBChat handlers

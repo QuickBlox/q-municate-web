@@ -102,7 +102,16 @@ Friendlist.prototype.getContacts = function(data) {
 };
 
 Friendlist.prototype.sendSubscribe = function(jid) {
-  QBApiCalls.subscriptionPresence({jid: jid, type: 'subscribe'});
+  var user = JSON.parse(localStorage['QM.user']).contact;
+  var extension = {
+    full_name: user.full_name,
+    avatar_url: user.avatar_url
+  };
+  QBApiCalls.subscriptionPresence({jid: jid, type: 'subscribe', extension: extension});
+};
+
+Friendlist.prototype.sendReject = function(jid) {
+  QBApiCalls.subscriptionPresence({jid: jid, type: 'unsubscribed'});
 };
 
 },{"../contacts/ContactModel":1,"../qbApiCalls":5}],3:[function(require,module,exports){
@@ -169,15 +178,26 @@ module.exports = (function() {
 
     sendSubscribeRequest: function(objDom) {
       var jid = objDom.data('jid');
+
       objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
       objDom.remove();
       friendlist.sendSubscribe(jid);
     },
 
-    onSubscribe: function(userId) {
-      if (QMCONFIG.debug) console.log('Subscribe request from', userId);
+    sendSubscribeReject: function(objDom) {
+      var jid = objDom.parents('.contact').data('jid'),
+          list = objDom.parents('ul');
+
+      objDom.parents('li').remove();
+      isSectionEmpty(list);
+      friendlist = new Friendlist;
+      friendlist.sendReject(jid);
+    },
+
+    onSubscribe: function(jid) {
+      if (QMCONFIG.debug) console.log('Subscribe request from', jid);
       var html = '<li class="list-item">';
-      html += '<a class="contact l-flexbox" href="#">';
+      html += '<a class="contact l-flexbox" href="#" data-jid="'+jid+'">';
       html += '<div class="l-flexbox_inline">';
       html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
       html += '<span class="name">Test user</span>';
@@ -243,6 +263,11 @@ function ajaxDownloading(list, self) {
       createListResults(list, friendlist, self);
     });
   }
+}
+
+function isSectionEmpty(list) {
+  if (list.contents().length === 0)
+    list.parent().addClass('is-hidden');
 }
 
 },{"./FriendlistModel":2}],4:[function(require,module,exports){
@@ -697,7 +722,7 @@ module.exports = (function() {
         UserView.profilePopover($(this));
       });
 
-      $('.list:not(.list_contacts)').on('contextmenu', '.contact', function(event) {
+      $('.list_contextmenu').on('contextmenu', '.contact', function(event) {
         event.preventDefault();
         removePopover();
         UserView.contactPopover($(this));
@@ -731,10 +756,6 @@ module.exports = (function() {
         FriendlistView.globalSearch($(this));
       });
 
-      $('.list_contacts').on('click', 'button.sent-request', function() {
-        FriendlistView.sendSubscribeRequest($(this));
-      });
-
       $('#searchContacts').on('keyup search submit', function(event) {
         event.preventDefault();
         var type = event.type,
@@ -743,6 +764,16 @@ module.exports = (function() {
         if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
           UserView.localSearch($(this));
         }
+      });
+
+      /* subscriptions
+      ----------------------------------------------------- */
+      $('.list_contacts').on('click', 'button.sent-request', function() {
+        FriendlistView.sendSubscribeRequest($(this));
+      });
+
+      $('.list').on('click', '.request-button_cancel', function() {
+        FriendlistView.sendSubscribeReject($(this));
       });
 
       /* QBChat handlers

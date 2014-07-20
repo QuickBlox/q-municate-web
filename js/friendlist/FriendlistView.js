@@ -61,15 +61,26 @@ module.exports = (function() {
 
     sendSubscribeRequest: function(objDom) {
       var jid = objDom.data('jid');
+
       objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
       objDom.remove();
       friendlist.sendSubscribe(jid);
     },
 
-    onSubscribe: function(userId) {
-      if (QMCONFIG.debug) console.log('Subscribe request from', userId);
+    sendSubscribeReject: function(objDom) {
+      var jid = objDom.parents('.contact').data('jid'),
+          list = objDom.parents('ul');
+
+      objDom.parents('li').remove();
+      isSectionEmpty(list);
+      friendlist = new Friendlist;
+      friendlist.sendReject(jid);
+    },
+
+    onSubscribe: function(jid) {
+      if (QMCONFIG.debug) console.log('Subscribe request from', jid);
       var html = '<li class="list-item">';
-      html += '<a class="contact l-flexbox" href="#">';
+      html += '<a class="contact l-flexbox" href="#" data-jid="'+jid+'">';
       html += '<div class="l-flexbox_inline">';
       html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
       html += '<span class="name">Test user</span>';
@@ -135,4 +146,9 @@ function ajaxDownloading(list, self) {
       createListResults(list, friendlist, self);
     });
   }
+}
+
+function isSectionEmpty(list) {
+  if (list.contents().length === 0)
+    list.parent().addClass('is-hidden');
 }

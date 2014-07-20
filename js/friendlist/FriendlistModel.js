@@ -42,5 +42,14 @@ Friendlist.prototype.getContacts = function(data) {
 };
 
 Friendlist.prototype.sendSubscribe = function(jid) {
-  QBApiCalls.subscriptionPresence({jid: jid, type: 'subscribe'});
+  var user = JSON.parse(localStorage['QM.user']).contact;
+  var extension = {
+    full_name: user.full_name,
+    avatar_url: user.avatar_url
+  };
+  QBApiCalls.subscriptionPresence({jid: jid, type: 'subscribe', extension: extension});
+};
+
+Friendlist.prototype.sendReject = function(jid) {
+  QBApiCalls.subscriptionPresence({jid: jid, type: 'unsubscribed'});
 };
