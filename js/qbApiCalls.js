@@ -24,8 +24,7 @@ QBApiCalls.prototype = {
     } else {
       QB.init(token);
 
-      session.create();
-      session.getStorage();
+      session.create(JSON.parse(localStorage['QM.session']), true);
       UserView.autologin(session);
     }
   },
@@ -34,18 +33,17 @@ QBApiCalls.prototype = {
     var UserView = this.app.views.User,
         self = this;
 
-    if ((new Date).toISOString() > session.storage.expirationTime) {
+    if ((new Date).toISOString() > session.expirationTime) {
       self.init(); // reset QuickBlox JS SDK after autologin via an existing token
 
-      if (session.storage.authParams.provider) {
+      // recovery session
+      if (session.authParams.provider) {
         UserView.getFBStatus(function(token) {
-          session.storage.authParams.keys.token = token;
-          self.createSession(session.storage.authParams, callback, session._remember);
+          session.authParams.keys.token = token;
+          self.createSession(session.authParams, callback, session._remember);
         });
       } else {
-        session.decrypt(session.storage.authParams);
-        self.createSession(session.storage.authParams, callback, session._remember);
-        session.encrypt(session.storage.authParams);
+        self.createSession(session.decrypt(session.authParams), callback, session._remember);
       }
       
     } else {
@@ -91,12 +89,13 @@ QBApiCalls.prototype = {
       } else {
         if (QMCONFIG.debug) console.log('QB SDK: Session is created', res);
 
-        if (session)
-          session.update(res.token);
-        else
-          session.create(res.token, params, isRemember);
+        if (session.token) {
+          session.update({ token: res.token });
+        } else {
+          session.create({ token: res.token, authParams: session.encrypt(params) }, isRemember);
+        }
 
-        session.setExpirationTime();
+        session.update({ date: new Date });
 
         callback(res, session);
       }
@@ -112,8 +111,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User has logged', res);
 
-          session.setAuthParams(params);
-          session.setExpirationTime();
+          session.update({ date: new Date, authParams: session.encrypt(params) });
 
           callback(res);
         }
@@ -154,7 +152,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
 
-          session.setExpirationTime();
+          session.update({ date: new Date });
           callback(res);
         }
       });
@@ -171,7 +169,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
 
-          session.setExpirationTime();
+          session.update({ date: new Date });
           callback(res);
         }
       });
@@ -188,7 +186,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
 
-          session.setExpirationTime();
+          session.update({ date: new Date });
           callback(res);
         }
       });
@@ -205,7 +203,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
 
-          session.setExpirationTime();
+          session.update({ date: new Date });
           callback(res);
         }
       });
@@ -221,7 +219,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
 
-          session.setExpirationTime();
+          session.update({ date: new Date });
           callback(res);
         }
       });
@@ -230,11 +228,8 @@ QBApiCalls.prototype = {
 
   chatConnect: function(jid, callback) {
     this.checkSession(function(res) {
-      var password;
-      
-      session.decrypt(session.storage.authParams);
-      password = session.storage.authParams.provider ? session.storage.token : session.storage.authParams.password;
-      session.encrypt(session.storage.authParams);
+      var password = session.authParams.provider ? session.token :
+                     session.decrypt(session.authParams).password;
 
       QB.chat.connect({jid: jid, password: password}, function(err, res) {
         if (err) {

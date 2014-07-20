@@ -13,47 +13,46 @@ function Session(app) {
 
 Session.prototype = {
 
-  create: function(token, params, isRemember) {
-    this.storage = {
-      token: token || null,
-      expirationTime: null,
-      authParams: this.encrypt(params) || null
-    };
-
+  create: function(params, isRemember) {
+    this.token = params.token;
+    this.expirationTime = params.expirationTime || null;
+    this.authParams = params.authParams;
     this._remember = isRemember || false;
   },
 
-  setExpirationTime: function() {
-    var limitHours = 2,
-        d = new Date;
+  update: function(params) {
+    var storage, date;
 
-    d.setHours(d.getHours() + limitHours);
-    this.storage.expirationTime = d.toISOString();
+    if (params.token) {
+      this.token = params.token;
+    } else {
+      
+      if (params.authParams) {
+        this.authParams = params.authParams;
+      }
+      if (params.date) {
+        // set QB session expiration through 2 hours
+        date = params.date;
+        this.expirationTime = date.setHours(date.getHours() + 2).toISOString();
+      }
+      if (this._remember) {
+        storage = {
+          token: this.token;
+          expirationTime: this.expirationTime;
+          authParams: this.authParams;
+        };
+        localStorage.setItem('QM.session', JSON.stringify(storage));
+      }
 
-    if (this._remember)
-      localStorage.setItem('QM.session', JSON.stringify(this.storage));
-  },
-
-  setAuthParams: function(params) {
-    this.storage.authParams = this.encrypt(params);
-
-    if (this._remember)
-      localStorage.setItem('QM.session', JSON.stringify(this.storage));
-  },
-
-  getStorage: function() {
-    this.storage = JSON.parse(localStorage.getItem('QM.session'));
-    this._remember = true;
-  },
-
-  update: function(token) {
-    this.storage.token = token;
-    this.storage.expirationTime = null;
+    }
   },
 
   destroy: function() {
-    this.storage = {};
+    this.token = null;
+    this.expirationTime = null;
+    this.authParams = null;
     this._remember = false;
+
     localStorage.removeItem('QM.session');
     localStorage.removeItem('QM.user');
   },
