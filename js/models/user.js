@@ -199,6 +199,7 @@ User.prototype = {
         storage = JSON.parse(localStorage['QM.user']),
         self = this;
 
+    UserView.createSpinner();
     this.contact = Contact.create(storage);
 
     if (QMCONFIG.debug) console.log('User', self);

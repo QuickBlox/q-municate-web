@@ -17,6 +17,47 @@ function UserView(app) {
 
 UserView.prototype = {
 
+  signupQB: function() {
+    switchPage($('#signUpPage'));
+  },
+
+  loginQB: function() {
+    switchPage($('#loginPage'));
+  },
+
+  forgot: function() {
+    switchPage($('#forgotPage'));
+  },
+
+  connectFB: function(token) {
+    User.connectFB(token);
+  },
+
+  signupForm: function() {
+    clearErrors();
+    User.signup();
+  },
+
+  loginForm: function() {
+    clearErrors();
+    User.login();
+  },
+
+  forgotForm: function() {
+    clearErrors();
+    User.forgot();
+  },
+
+  resetForm: function() {
+    clearErrors();
+    User.resetPass();
+  },
+
+  autologin: function() {
+    switchPage($('#loginPage'));
+    User.autologin();
+  },
+
   createSpinner: function() {
     var spinnerBlock = '<div class="l-spinner"><div class="spinner">';
     spinnerBlock += '<div class="spinner-dot1"></div><div class="spinner-dot2"></div>';
@@ -43,10 +84,6 @@ UserView.prototype = {
 
     this.removeSpinner();
     $('section:visible form').addClass('is-hidden').after(alert);
-  },
-
-  connectFB: function(token) {
-    User.connectFB(token);
   },
 
   getFBStatus: function(callback) {
@@ -76,44 +113,6 @@ UserView.prototype = {
         }
       }, true);
     }
-  },
-
-  signupQB: function() {
-    switchPage($('#signUpPage'));
-  },
-
-  loginQB: function() {
-    switchPage($('#loginPage'));
-  },
-
-  forgot: function() {
-    switchPage($('#forgotPage'));
-  },
-
-  signupForm: function() {
-    clearErrors();
-    User.signup();
-  },
-
-  loginForm: function() {
-    clearErrors();
-    User.login();
-  },
-
-  forgotForm: function() {
-    clearErrors();
-    User.forgot();
-  },
-
-  resetForm: function() {
-    clearErrors();
-    User.resetPass();
-  },
-
-  autologin: function() {
-    switchPage($('#loginPage'));
-    this.createSpinner();
-    User.autologin();
   },
 
   profilePopover: function(objDom) {
