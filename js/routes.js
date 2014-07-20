@@ -7,15 +7,18 @@
 
 module.exports = Routes;
 
+var UserView, FriendListView;
+
 function Routes(app) {
   this.app = app;
+  
+  UserView = this.app.views.User,
+  FriendListView = this.app.views.FriendList;
 }
 
 Routes.prototype = {
 
   init: function() {
-    var UserView = this.app.views.User,
-        FriendListView = this.app.views.FriendList;
 
     $(document).on('click', function(event) {
       clickBehaviour(event);

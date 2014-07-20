@@ -140,11 +140,11 @@ module.exports = (function() {
       user.resetPass();
     },
 
-    autologin: function(session) {
+    autologin: function() {
       switchPage($('#loginPage'));
       this.createSpinner();
       user = new User;
-      user.autologin(session);
+      user.autologin();
     },
 
     profilePopover: function(objDom) {

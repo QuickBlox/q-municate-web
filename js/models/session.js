@@ -9,6 +9,7 @@ module.exports = Session;
 
 function Session(app) {
   this.app = app;
+  this._remember = false;
 }
 
 Session.prototype = {
@@ -48,13 +49,11 @@ Session.prototype = {
   },
 
   destroy: function() {
+    localStorage.removeItem('QM.session');
     this.token = null;
     this.expirationTime = null;
     this.authParams = null;
     this._remember = false;
-
-    localStorage.removeItem('QM.session');
-    localStorage.removeItem('QM.user');
   },
 
   // crypto methods for password

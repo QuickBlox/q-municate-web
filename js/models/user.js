@@ -5,18 +5,20 @@
  *
  */
 
-var Contact = require('../contacts/ContactModel'),
-    QBApiCalls = require('../qbApiCalls'),
-    tempParams;
-
 module.exports = User;
 
-function User() {
-  tempParams = {};
+var tempParams;
+
+function User(app) {
+  this.app = app;
+  this._remember = false;
+  this._valid = false;
 }
 
 User.prototype.connectFB = function(token) {
-  var UserView = require('./UserView'),
+  var QBApiCalls = this.app.service,
+      UserView = this.app.views.User,
+      Contact = this.app.models.Contact,
       self = this,
       params;
 
@@ -28,36 +30,36 @@ User.prototype.connectFB = function(token) {
     keys: {token: token}
   };
 
-  QBApiCalls.createSession(params, function(qbSession, session) {
-    QBApiCalls.getUser(qbSession.user_id, function(user) {
-      self.contact = new Contact(user);
-      rememberMe(self);
+  QBApiCalls.createSession(params, function(session) {
+    QBApiCalls.getUser(session.user_id, function(user) {
+      self.contact = Contact.create(user);
 
-      self.session = session;
       if (QMCONFIG.debug) console.log('User', self);
 
-      QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
-        UserView.successFormCallback(self);
+      // QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+      //   self.rememberMe();
+      //   UserView.successFormCallback(self);
 
-        // import FB friends
-        FB.api('/me/friends', function (data) {
-            console.log(data);
-          }
-        );
-      });
-      
+      //   // import FB friends
+      //   FB.api('/me/friends', function (data) {
+      //       console.log(data);
+      //     }
+      //   );
+      // });
     });
   }, true);
 };
 
 User.prototype.signup = function() {
-  var UserView = require('./UserView'),
+  var QBApiCalls = this.app.service,
+      UserView = this.app.views.User,
+      Contact = this.app.models.Contact,
       form = $('section:visible form'),
+      tempParams = {},
       self = this,
       params;
 
   if (validate(form, this)) {
-    delete self._valid;
     UserView.createSpinner();
 
     params = {
@@ -67,37 +69,58 @@ User.prototype.signup = function() {
       tag_list: 'web'
     };
 
-    QBApiCalls.createSession({}, function(qbSession, session) {
+    QBApiCalls.createSession({}, function() {
       QBApiCalls.createUser(params, function() {
         delete params.full_name;
         delete params.tag_list;
 
         QBApiCalls.loginUser(params, function(user) {
-          self.contact = new Contact(user);
-          self.session = session;
+          self.contact = Contact.create(user);
+
           if (QMCONFIG.debug) console.log('User', self);
 
-          QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
-            if (tempParams._blob) {
-              uploadAvatar(self);
-            } else {
-              UserView.successFormCallback(self);
-            }
-          });
+          // QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+          //   if (tempParams._blob) {
+          //     self.uploadAvatar();
+          //   } else {
+          //     UserView.successFormCallback(self);
+          //   }
+          // });
         });
       });
     }, false);
   }
 };
 
+User.prototype.uploadAvatar = function() {
+  var QBApiCalls = this.app.service,
+      UserView = this.app.views.User,
+      custom_data,
+      self = this;
+
+  QBApiCalls.createBlob({file: tempParams._blob, 'public': true}, function(blob) {
+    self.contact.blob_id = blob.id;
+    self.contact.avatar_url = blob.path;
+
+    UserView.successFormCallback(self);
+    
+    custom_data = JSON.stringify({avatar_url: blob.path});
+    QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
+      //if (QMCONFIG.debug) console.log('update of user', res);
+    });
+  });
+};
+
 User.prototype.login = function() {
-  var UserView = require('./UserView'),
+  var QBApiCalls = this.app.service,
+      UserView = this.app.views.User,
+      Contact = this.app.models.Contact,
       form = $('section:visible form'),
+      tempParams = {},
       self = this,
       params;
 
   if (validate(form, this)) {
-    delete self._valid;
     UserView.createSpinner();
 
     params = {
@@ -105,35 +128,44 @@ User.prototype.login = function() {
       password: tempParams.password
     };
 
-    QBApiCalls.createSession(params, function(qbSession, session) {
-      QBApiCalls.getUser(qbSession.user_id, function(user) {
-        self.contact = new Contact(user);
+    QBApiCalls.createSession(params, function(session) {
+      QBApiCalls.getUser(session.user_id, function(user) {
+        self.contact = Contact.create(user);
+
         if (QMCONFIG.debug) console.log('User', self);
 
-        QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
-          if (self._remember) {
-            delete self._remember;
-            rememberMe(self);
-          }
-          delete self._remember;
+        // QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+        //   if (self._remember) {
+        //     self.rememberMe();
+        //   }
 
-          self.session = session;
-
-          UserView.successFormCallback(self);
-        });
+        //   UserView.successFormCallback(self);
+        // });
 
       });
     }, self._remember);
   }
 };
 
+User.prototype.rememberMe = function() {
+  var storage = {},
+      self = this;
+
+  Object.keys(self.contact).forEach(function(prop) {
+    storage[prop] = self.contact[prop];
+  });
+  
+  localStorage.setItem('QM.user', JSON.stringify(storage));
+};
+
 User.prototype.forgot = function(callback) {
-  var UserView = require('./UserView'),
+  var QBApiCalls = this.app.service,
+      UserView = this.app.views.User,
       form = $('section:visible form'),
+      tempParams = {},
       self = this;
 
   if (validate(form, this)) {
-    delete self._valid;
     UserView.createSpinner();
 
     QBApiCalls.createSession({}, function() {
@@ -146,39 +178,43 @@ User.prototype.forgot = function(callback) {
 };
 
 User.prototype.resetPass = function() {
-  var UserView = require('./UserView'),
+  var QBApiCalls = this.app.service,
+      UserView = this.app.views.User,
       form = $('section:visible form'),
+      tempParams = {},
       self = this;
 
   if (validate(form, this)) {
-    delete self._valid;
+    // UserView.createSpinner();
   }
 };
 
-User.prototype.autologin = function(session) {
-  var UserView = require('./UserView'),
-      storage = JSON.parse(localStorage.getItem('QM.user')),
+User.prototype.autologin = function() {
+  var QBApiCalls = this.app.service,
+      UserView = this.app.views.User,
+      Contact = this.app.models.Contact,
+      storage = JSON.parse(localStorage['QM.user']),
       self = this;
 
-  Object.keys(storage).forEach(function(prop) {
-    if (prop === 'contact') {
-      self[prop] = new Contact(storage[prop]);
-    } else {
-      self[prop] = storage[prop];  
-    }
-  });  
+  this.contact = Contact.create(storage);
 
-  self.session = session;
   if (QMCONFIG.debug) console.log('User', self);
 
-  QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
-    UserView.successFormCallback(self);
-  });
+  // QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
+  //   UserView.successFormCallback(self);
+  // });
 };
 
 User.prototype.logout = function(callback) {
-  QBApiCalls.chatDisconnect();
+  var QBApiCalls = this.app.service,
+      self = this;
+
+  // QBApiCalls.chatDisconnect();
   QBApiCalls.logoutUser(function() {
+    localStorage.removeItem('QM.user');
+    self.contact = null;
+    self._remember = false;
+    self._valid = false;
     callback();
   });
 };
@@ -191,8 +227,6 @@ function validate(form, user) {
       file = form.find('input:file')[0],
       fieldName, errName,
       value, errMsg;
-
-  user._valid = false;
 
   form.find('input:not(:file, :checkbox)').each(function() {
     fieldName = this.id.split('-')[1];
@@ -260,31 +294,4 @@ function validate(form, user) {
 function fail(user, errMsg) {
   user._valid = false;
   $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
-}
-
-function uploadAvatar(user) {
-  var UserView = require('./UserView'),
-      custom_data;
-
-  QBApiCalls.createBlob({file: tempParams._blob, 'public': true}, function(blob) {
-    user.contact.blob_id = blob.id;
-    user.contact.avatar_url = blob.path;
-
-    UserView.successFormCallback(user);
-    
-    custom_data = JSON.stringify({avatar_url: blob.path});
-    QBApiCalls.updateUser(user.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
-      //if (QMCONFIG.debug) console.log('update of user', res);
-    });
-  });
-}
-
-function rememberMe(user) {
-  var storage = {};
-
-  Object.getOwnPropertyNames(user).forEach(function(prop) {
-    storage[prop] = user[prop];
-  });
-  
-  localStorage.setItem('QM.user', JSON.stringify(storage));
 }
