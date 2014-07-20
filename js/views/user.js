@@ -29,9 +29,9 @@ UserView.prototype = {
     $('section:visible form').removeClass('is-hidden').next('.l-spinner').remove();
   },
 
-  successFormCallback: function(user) {
+  successFormCallback: function() {
     this.removeSpinner();
-    $('#profile').find('img').attr('src', user.contact.avatar_url);
+    $('#profile').find('img').attr('src', User.contact.avatar_url);
     switchPage($('#mainPage'));
   },
 
@@ -46,8 +46,7 @@ UserView.prototype = {
   },
 
   connectFB: function(token) {
-    user = new User;
-    user.connectFB(token);
+    User.connectFB(token);
   },
 
   getFBStatus: function(callback) {
@@ -92,36 +91,29 @@ UserView.prototype = {
   },
 
   signupForm: function() {
-    user = new User;
     clearErrors();
-    user.signup();
+    User.signup();
   },
 
   loginForm: function() {
-    user = new User;
     clearErrors();
-    user.login();
+    User.login();
   },
 
   forgotForm: function() {
-    user = new User;
     clearErrors();
-    user.forgot(function() {
-      user = null;
-    });
+    User.forgot();
   },
 
   resetForm: function() {
-    user = new User;
     clearErrors();
-    user.resetPass();
+    User.resetPass();
   },
 
   autologin: function() {
     switchPage($('#loginPage'));
     this.createSpinner();
-    user = new User;
-    user.autologin();
+    User.autologin();
   },
 
   profilePopover: function(objDom) {
@@ -148,8 +140,7 @@ UserView.prototype = {
   },
 
   logout: function() {
-    user.logout(function() {
-      user = null;
+    User.logout(function() {
       switchOnWelcomePage();
       if (QMCONFIG.debug) console.log('current User and Session were destroyed');
     });

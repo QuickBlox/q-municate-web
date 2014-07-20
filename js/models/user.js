@@ -40,7 +40,7 @@ User.prototype = {
 
         // QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
         //   self.rememberMe();
-        //   UserView.successFormCallback(self);
+        //   UserView.successFormCallback();
 
         //   // import FB friends
         //   FB.api('/me/friends', function (data) {
@@ -85,7 +85,7 @@ User.prototype = {
             //   if (tempParams._blob) {
             //     self.uploadAvatar();
             //   } else {
-            //     UserView.successFormCallback(self);
+            //     UserView.successFormCallback();
             //   }
             // });
           });
@@ -104,7 +104,7 @@ User.prototype = {
       self.contact.blob_id = blob.id;
       self.contact.avatar_url = blob.path;
 
-      UserView.successFormCallback(self);
+      UserView.successFormCallback();
       
       custom_data = JSON.stringify({avatar_url: blob.path});
       QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
@@ -141,7 +141,7 @@ User.prototype = {
           //     self.rememberMe();
           //   }
 
-          //   UserView.successFormCallback(self);
+          //   UserView.successFormCallback();
           // });
 
         });
@@ -161,7 +161,7 @@ User.prototype = {
     localStorage.setItem('QM.user', JSON.stringify(storage));
   },
 
-  forgot: function(callback) {
+  forgot: function() {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
         form = $('section:visible form'),
@@ -174,7 +174,7 @@ User.prototype = {
       QBApiCalls.createSession({}, function() {
         QBApiCalls.forgotPassword(tempParams.email, function() {
           UserView.successSendEmailCallback();
-          callback();
+          self._valid = false;
         });
       }, false);
     }
@@ -204,7 +204,7 @@ User.prototype = {
     if (QMCONFIG.debug) console.log('User', self);
 
     // QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
-    //   UserView.successFormCallback(self);
+    //   UserView.successFormCallback();
     // });
   },
 
