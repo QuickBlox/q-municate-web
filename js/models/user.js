@@ -154,7 +154,8 @@ User.prototype = {
         self = this;
 
     Object.keys(self.contact).forEach(function(prop) {
-      storage[prop] = self.contact[prop];
+      if (prop !== 'app')
+        storage[prop] = self.contact[prop];
     });
     
     localStorage.setItem('QM.user', JSON.stringify(storage));
@@ -220,7 +221,7 @@ User.prototype = {
       callback();
     });
   }
-  
+
 };
 
 /* Private
