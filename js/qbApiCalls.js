@@ -7,31 +7,31 @@
 
 module.exports = QBApiCalls;
 
-var Session = require('./session/SessionModel');
 var session;
 
 function QBApiCalls(app) {
   this.app = app;
+  session = this.app.models.Session;
 }
 
 QBApiCalls.prototype = {
 
   init: function(token) {
-    var UserView = require('./user/UserView');
+    var UserView = this.app.views.User;
 
     if (typeof token === 'undefined') {
       QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
     } else {
       QB.init(token);
 
-      session = new Session;
+      session.create();
       session.getStorage();
       UserView.autologin(session);
     }
   },
 
   checkSession: function(callback) {
-    var UserView = require('./user/UserView'),
+    var UserView = this.app.views.User,
         self = this;
 
     if ((new Date).toISOString() > session.storage.expirationTime) {
@@ -54,7 +54,7 @@ QBApiCalls.prototype = {
   },
 
   createSession: function(params, callback, isRemember) {
-    var UserView = require('./user/UserView');
+    var UserView = this.app.views.User;
 
     QB.createSession(params, function(err, res) {
       if (err) {
@@ -94,7 +94,7 @@ QBApiCalls.prototype = {
         if (session)
           session.update(res.token);
         else
-          session = new Session(res.token, params, isRemember);
+          session.create(res.token, params, isRemember);
 
         session.setExpirationTime();
 
@@ -125,7 +125,6 @@ QBApiCalls.prototype = {
     if (QMCONFIG.debug) console.log('QB SDK: User has exited');
     this.init(); // reset QuickBlox JS SDK after autologin via an existing token
     session.destroy();
-    session = null;
     callback();
   },
 
@@ -140,7 +139,6 @@ QBApiCalls.prototype = {
           if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent');
 
           session.destroy();
-          session = null;
           callback();
         }
       });
@@ -262,7 +260,7 @@ QBApiCalls.prototype = {
 /* Private
 ---------------------------------------------------------------------- */
 var fail = function(errMsg) {
-  var UserView = require('./user/UserView');
+  var UserView = QBApiCalls.app.views.User;
   UserView.removeSpinner();
   $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
 };
@@ -280,7 +278,7 @@ var failForgot = function() {
 };
 
 var failSearch = function() {
-  var FriendlistView = require('./friendlist/FriendlistView');
+  var FriendListView = QBApiCalls.app.views.FriendList;
   $('.popup:visible .note').removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
-  FriendlistView.removeDataSpinner();
+  FriendListView.removeDataSpinner();
 };
