@@ -6,6 +6,8 @@
  *
  */
 
+var APP;
+
 // includes
 var User = require('./models/user'),
     Session = require('./models/session'),
@@ -72,7 +74,7 @@ QM.prototype = {
 
 // Application initialization
 $(document).ready(function() {
-  var APP = new QM;
+  APP = new QM;
   APP.init();
 });
 
