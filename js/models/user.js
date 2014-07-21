@@ -57,7 +57,6 @@ User.prototype = {
         UserView = this.app.views.User,
         Contact = this.app.models.Contact,
         form = $('section:visible form'),
-        tempParams = {},
         self = this,
         params;
 
@@ -118,7 +117,6 @@ User.prototype = {
         UserView = this.app.views.User,
         Contact = this.app.models.Contact,
         form = $('section:visible form'),
-        tempParams = {},
         self = this,
         params;
 
@@ -165,7 +163,6 @@ User.prototype = {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
         form = $('section:visible form'),
-        tempParams = {},
         self = this;
 
     if (validate(form, this)) {
@@ -184,7 +181,6 @@ User.prototype = {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
         form = $('section:visible form'),
-        tempParams = {},
         self = this;
 
     if (validate(form, this)) {
@@ -234,6 +230,7 @@ function validate(form, user) {
       fieldName, errName,
       value, errMsg;
 
+  tempParams = {};
   form.find('input:not(:file, :checkbox)').each(function() {
     fieldName = this.id.split('-')[1];
     errName = this.placeholder;

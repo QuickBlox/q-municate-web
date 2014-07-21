@@ -180,7 +180,8 @@ QBApiCalls.prototype = {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
 
-          failUser();
+          var parseErr = JSON.parse(err.detail).errors.email[0];
+          failUser(parseErr);
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
 
@@ -197,7 +198,8 @@ QBApiCalls.prototype = {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
 
-          failUser();
+          var parseErr = JSON.parse(err.detail).errors.email[0];
+          failUser(parseErr);
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
 
@@ -257,8 +259,14 @@ var fail = function(errMsg) {
   $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
 };
 
-var failUser = function() {
-  var errMsg = QMCONFIG.errors.emailExists;
+var failUser = function(err) {
+  var errMsg;
+
+  if (err.indexOf('already') >= 0)
+    errMsg = QMCONFIG.errors.emailExists;
+  else if (err.indexOf('look like') >= 0)
+    errMsg = QMCONFIG.errors.invalidEmail;
+
   $('section:visible input[type="email"]').addClass('is-error');
   fail(errMsg);
 };

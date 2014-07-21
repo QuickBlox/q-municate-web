@@ -34,7 +34,8 @@ Session.prototype = {
       if (params.date) {
         // set QB session expiration through 2 hours
         date = params.date;
-        this.expirationTime = date.setHours(date.getHours() + 2).toISOString();
+        date.setHours(date.getHours() + 2);
+        this.expirationTime = date.toISOString();
       }
       if (this._remember) {
         storage = {
