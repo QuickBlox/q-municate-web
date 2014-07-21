@@ -3,9 +3,9 @@ var QMCONFIG = {
   
   // Local account
   qbAccount: {
-    appId: 11629,
-    authKey: 'uzVTTDQWQ8Deapf',
-    authSecret: 'fyMjkBgMDrOUUPB'
+    appId: 12496,
+    authKey: 'DxGShn2UtN5TUfd',
+    authSecret: 'gypfTzd3VbqYxsK'
   },
 
   // Local FB app
@@ -30,16 +30,16 @@ var QMCONFIG = {
 
   errors: {
     session: "The QB application credentials you entered are incorrect",
-    invalidName: "Name shouldn't contain '<', '>' and ';' characters",
-    shortName: "Name shouldn't be less than 3 characters",
-    bigName: "Name shouldn't be more than 50 characters",
-    invalidEmail: "E-mail should look like an email address",
-    invalidPass: "Password shouldn't contain non-Latin characters and spaces",
-    shortPass: "Password shouldn't be less than 8 characters",
-    bigPass: "Password shouldn't be more than 40 characters",
-    avatarType: "Avatar should be image",
-    fileName: "File name shouldn't be more than 100 characters",
-    fileSize: "File should be less than 10 MB",
+    invalidName: "Name mustn't contain '<', '>' and ';' characters",
+    shortName: "Name must be more than 2 characters",
+    bigName: "Name mustn't be more than 50 characters",
+    invalidEmail: "E-mail must look like an email address",
+    invalidPass: "Password mustn't contain non-Latin characters and spaces",
+    shortPass: "Password must be more than 7 characters",
+    bigPass: "Password mustn't be more than 40 characters",
+    avatarType: "Avatar must be image",
+    fileName: "File name mustn't be more than 100 characters",
+    fileSize: "File mustn't be more than 10 MB",
     emailExists: "The email has already been taken",
     unauthorized: "The email and password you entered are incorrect",
     notFoundEmail: "The email you entered wasn't found",
