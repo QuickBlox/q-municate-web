@@ -1,154 +1,174 @@
 /*
  * Q-municate chat application
  *
- * Routes
+ * Routes Module
  *
  */
 
-module.exports = (function() {
+module.exports = Routes;
 
-  return {
-    init: function() {
-      var UserView = require('./user/UserView'),
-          FriendlistView = require('./friendlist/FriendlistView');
+var UserView, FriendListView;
 
-      $(document).on('click', function(event) {
-        clickBehaviour(event);
-      });
+function Routes(app) {
+  this.app = app;
+  
+  UserView = this.app.views.User,
+  FriendListView = this.app.views.FriendList;
+}
 
-      $('input:file').on('change', function() {
-        changeInputFile($(this));
-      });
+Routes.prototype = {
 
-      /* welcome buttons
-      ----------------------------------------------------- */
-      $('#signupFB, #loginFB').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('connect with FB');
-        event.preventDefault();
+  init: function() {
 
-        // NOTE!! You should use FB.login method instead FB.getLoginStatus
-        // and your browser won't block FB Login popup
-        FB.login(function(response) {
-          if (QMCONFIG.debug) console.log('FB authResponse', response);
-          if (response.status === 'connected') {
-            UserView.connectFB(response.authResponse.accessToken);
-          }
-        }, {scope: QMCONFIG.fbAccount.scope});
-      });
+    $(document).on('click', function(event) {
+      clickBehaviour(event);
+    });
 
-      $('#signupQB').on('click', function() {
-        if (QMCONFIG.debug) console.log('signup with QB');
-        UserView.signupQB();
-      });
+    $('input:file').on('change', function() {
+      changeInputFile($(this));
+    });
 
-      $('#loginQB').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('login wih QB');
-        event.preventDefault();
-        UserView.loginQB();
-      });
+    /* welcome page
+    ----------------------------------------------------- */
+    $('#signupFB, #loginFB').on('click', function(event) {
+      if (QMCONFIG.debug) console.log('connect with FB');
+      event.preventDefault();
 
-      $('#forgot').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('forgot password');
-        event.preventDefault();
-        UserView.forgot();
-      });
-
-      /* forms
-      ----------------------------------------------------- */
-      $('#signupForm').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('create user');
-        event.preventDefault();
-        UserView.signupForm();
-      });
-
-      $('#loginForm').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('authorize user');
-        event.preventDefault();
-        UserView.loginForm();
-      });
-
-      $('#forgotForm').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('send letter');
-        event.preventDefault();
-        UserView.forgotForm();
-      });
-
-      $('#resetForm').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('reset password');
-        event.preventDefault();
-        UserView.resetForm();
-      });
-
-      /* popovers
-      ----------------------------------------------------- */
-      $('#profile').on('click', function(event) {
-        event.preventDefault();
-        removePopover();
-        UserView.profilePopover($(this));
-      });
-
-      $('.list:not(.list_contacts)').on('contextmenu', '.contact', function(event) {
-        event.preventDefault();
-        removePopover();
-        UserView.contactPopover($(this));
-      });
-
-      /* popups
-      ----------------------------------------------------- */
-      $('.header-links-item').on('click', '#logout', function(event) {
-        event.preventDefault();
-        openPopup($('#popupLogout'));
-      });
-
-      $('#logoutConfirm').on('click', function() {
-        UserView.logout();
-      });
-
-      $('.popup-control-button').on('click', function(event) {
-        event.preventDefault();
-        closePopup();
-      });
-
-      $('.search').on('click', function() {
-        if (QMCONFIG.debug) console.log('global search');
-        FriendlistView.globalPopup();
-      });
-
-      /* search
-      ----------------------------------------------------- */
-      $('#globalSearch').on('submit', function(event) {
-        event.preventDefault();
-        FriendlistView.globalSearch($(this));
-      });
-
-      $('.list_contacts').on('click', 'button.sent-request', function() {
-        $(this).after('<span class="sent-request l-flexbox">Request Sent</span>');
-        $(this).remove();
-      });
-
-      $('#searchContacts').on('keyup search submit', function(event) {
-        event.preventDefault();
-        var type = event.type,
-            code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
-
-        if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
-          UserView.localSearch($(this));
+      // NOTE!! You should use FB.login method instead FB.getLoginStatus
+      // and your browser won't block FB Login popup
+      FB.login(function(response) {
+        if (QMCONFIG.debug) console.log('FB authResponse', response);
+        if (response.status === 'connected') {
+          UserView.connectFB(response.authResponse.accessToken);
         }
-      });
+      }, {scope: QMCONFIG.fbAccount.scope});
+    });
 
-      /* temporary routes
-      ----------------------------------------------------- */
-      $('.list').on('click', '.contact', function(event) {
-        event.preventDefault();
-      });
+    $('#signupQB').on('click', function() {
+      if (QMCONFIG.debug) console.log('signup with QB');
+      UserView.signupQB();
+    });
 
-      $('#home, #share, #contacts').on('click', function(event) {
-        event.preventDefault();
-      });
+    $('#loginQB').on('click', function(event) {
+      if (QMCONFIG.debug) console.log('login wih QB');
+      event.preventDefault();
+      UserView.loginQB();
+    });
 
-    }
-  };
-})();
+    /* signup page
+    ----------------------------------------------------- */
+    $('#signupForm').on('click', function(event) {
+      if (QMCONFIG.debug) console.log('create user');
+      event.preventDefault();
+      UserView.signupForm();
+    });
+
+    /* login page
+    ----------------------------------------------------- */
+    $('#forgot').on('click', function(event) {
+      if (QMCONFIG.debug) console.log('forgot password');
+      event.preventDefault();
+      UserView.forgot();
+    });
+
+    $('#loginForm').on('click', function(event) {
+      if (QMCONFIG.debug) console.log('authorize user');
+      event.preventDefault();
+      UserView.loginForm();
+    });
+
+    /* forgot and reset page
+    ----------------------------------------------------- */
+    $('#forgotForm').on('click', function(event) {
+      if (QMCONFIG.debug) console.log('send letter');
+      event.preventDefault();
+      UserView.forgotForm();
+    });
+
+    $('#resetForm').on('click', function(event) {
+      if (QMCONFIG.debug) console.log('reset password');
+      event.preventDefault();
+      UserView.resetForm();
+    });
+
+    /* popovers
+    ----------------------------------------------------- */
+    $('#profile').on('click', function(event) {
+      event.preventDefault();
+      removePopover();
+      UserView.profilePopover($(this));
+    });
+
+    $('.list_contextmenu').on('contextmenu', '.contact', function(event) {
+      event.preventDefault();
+      removePopover();
+      UserView.contactPopover($(this));
+    });
+
+    /* popups
+    ----------------------------------------------------- */
+    $('.header-links-item').on('click', '#logout', function(event) {
+      event.preventDefault();
+      openPopup($('#popupLogout'));
+    });
+
+    $('#logoutConfirm').on('click', function() {
+      UserView.logout();
+    });
+
+    $('.popup-control-button').on('click', function(event) {
+      event.preventDefault();
+      closePopup();
+    });
+
+    $('.search').on('click', function() {
+      if (QMCONFIG.debug) console.log('global search');
+      FriendListView.globalPopup();
+    });
+
+    /* search
+    ----------------------------------------------------- */
+    $('#globalSearch').on('submit', function(event) {
+      event.preventDefault();
+      FriendListView.globalSearch($(this));
+    });
+
+    $('#searchContacts').on('keyup search submit', function(event) {
+      event.preventDefault();
+      var type = event.type,
+          code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+
+      if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
+        UserView.localSearch($(this));
+      }
+    });
+
+    /* subscriptions
+    ----------------------------------------------------- */
+    $('.list_contacts').on('click', 'button.sent-request', function() {
+      FriendListView.sendSubscribeRequest($(this));
+    });
+
+    $('.list').on('click', '.request-button_cancel', function() {
+      FriendListView.sendSubscribeReject($(this));
+    });
+
+    /* QBChat handlers
+    ----------------------------------------------------- */
+    QB.chat.onSubscribeListener = FriendListView.onSubscribe;
+
+    /* temporary routes
+    ----------------------------------------------------- */
+    $('.list').on('click', '.contact', function(event) {
+      event.preventDefault();
+    });
+
+    $('#home, #share, #contacts').on('click', function(event) {
+      event.preventDefault();
+    });
+
+  }
+};
 
 /* Private
 ---------------------------------------------------------------------- */
