@@ -38,16 +38,17 @@ User.prototype = {
 
         if (QMCONFIG.debug) console.log('User', self);
 
-        // QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
-        //   self.rememberMe();
-        //   UserView.successFormCallback();
+        QBApiCalls.chatConnect(self.contact.user_jid, function() {
+          self.rememberMe();
+          UserView.successFormCallback();
 
-        //   // import FB friends
-        //   FB.api('/me/friends', function (data) {
-        //       console.log(data);
-        //     }
-        //   );
-        // });
+          // import FB friends
+          FB.api('/me/friends', function (data) {
+              console.log(data);
+            }
+          );
+        });
+
       });
     }, true);
   },
@@ -80,14 +81,15 @@ User.prototype = {
 
             if (QMCONFIG.debug) console.log('User', self);
 
-            // QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
-            //   if (tempParams._blob) {
-            //     self.uploadAvatar();
-            //   } else {
-            //     UserView.successFormCallback();
-            //   }
-            // });
+            QBApiCalls.chatConnect(self.contact.user_jid, function() {
+              if (tempParams.blob) {
+                self.uploadAvatar();
+              } else {
+                UserView.successFormCallback();
+              }
+            });
           });
+
         });
       }, false);
     }
@@ -99,7 +101,7 @@ User.prototype = {
         custom_data,
         self = this;
 
-    QBApiCalls.createBlob({file: tempParams._blob, 'public': true}, function(blob) {
+    QBApiCalls.createBlob({file: tempParams.blob, 'public': true}, function(blob) {
       self.contact.blob_id = blob.id;
       self.contact.avatar_url = blob.path;
 
@@ -134,13 +136,13 @@ User.prototype = {
 
           if (QMCONFIG.debug) console.log('User', self);
 
-          // QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
-          //   if (self._remember) {
-          //     self.rememberMe();
-          //   }
+          QBApiCalls.chatConnect(self.contact.user_jid, function() {
+            if (self._remember) {
+              self.rememberMe();
+            }
 
-          //   UserView.successFormCallback();
-          // });
+            UserView.successFormCallback();
+          });
 
         });
       }, self._remember);
@@ -200,16 +202,16 @@ User.prototype = {
 
     if (QMCONFIG.debug) console.log('User', self);
 
-    // QBApiCalls.chatConnect(self.contact.xmpp_jid, function() {
-    //   UserView.successFormCallback();
-    // });
+    QBApiCalls.chatConnect(self.contact.user_jid, function() {
+      UserView.successFormCallback();
+    });
   },
 
   logout: function(callback) {
     var QBApiCalls = this.app.service,
         self = this;
 
-    // QBApiCalls.chatDisconnect();
+    QBApiCalls.chatDisconnect();
     QBApiCalls.logoutUser(function() {
       localStorage.removeItem('QM.user');
       self.contact = null;
@@ -232,9 +234,12 @@ function validate(form, user) {
 
   tempParams = {};
   form.find('input:not(:file, :checkbox)').each(function() {
+    // fix requeired pattern
+    this.value = this.value.trim();
+
     fieldName = this.id.split('-')[1];
     errName = this.placeholder;
-    value = this.value.trim();
+    value = this.value;
 
     if (this.checkValidity()) {
 
@@ -287,7 +292,7 @@ function validate(form, user) {
       errMsg = QMCONFIG.errors.fileSize;
       fail(user, errMsg);
     } else {
-      tempParams._blob = file;
+      tempParams.blob = file;
     }
   }
 

@@ -45,6 +45,7 @@ QBApiCalls.prototype = {
         });
       } else {
         self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
+        Session.encrypt(Session.authParams);
       }
       
     } else {
@@ -231,6 +232,7 @@ QBApiCalls.prototype = {
       var password = Session.authParams.provider ? Session.token :
                      Session.decrypt(Session.authParams).password;
 
+      Session.encrypt(Session.authParams);
       QB.chat.connect({jid: jid, password: password}, function(err, res) {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
