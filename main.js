@@ -12,8 +12,10 @@ var APP;
 var User = require('./models/user'),
     Session = require('./models/session'),
     Contact = require('./models/contact'),
+    Dialog = require('./models/dialog'),
     FriendList = require('./models/friend_list'),
     UserView = require('./views/user'),
+    DialogView = require('./views/dialog'),
     FriendListView = require('./views/friend_list'),
     Routes = require('./routes'),
     QBApiCalls = require('./qbApiCalls');
@@ -22,12 +24,14 @@ function QM() {
   this.models = {
     User: new User(this),
     Session: new Session(this),
+    Dialog: new Dialog(this),
     Contact: new Contact(this),
     FriendList: new FriendList(this)
   };
 
   this.views = {
     User: new UserView(this),
+    Dialog: new DialogView(this),
     FriendList: new FriendListView(this)
   };
 
@@ -96,7 +100,7 @@ window.fbAsyncInit = function() {
   }
 };
 
-},{"./models/contact":2,"./models/friend_list":3,"./models/session":4,"./models/user":5,"./qbApiCalls":6,"./routes":7,"./views/friend_list":8,"./views/user":9}],2:[function(require,module,exports){
+},{"./models/contact":2,"./models/dialog":3,"./models/friend_list":4,"./models/session":5,"./models/user":6,"./qbApiCalls":7,"./routes":8,"./views/dialog":9,"./views/friend_list":10,"./views/user":11}],2:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -168,6 +172,28 @@ function getStatus(contact) {
 /*
  * Q-municate chat application
  *
+ * Dialog Module
+ *
+ */
+
+module.exports = Dialog;
+
+function Dialog(app) {
+  this.app = app;
+}
+
+Dialog.prototype = {
+
+  create: function(params) {
+
+  }
+
+};
+
+},{}],4:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
  * Friend List Module
  *
  */
@@ -222,7 +248,7 @@ FriendList.prototype = {
 
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -299,7 +325,7 @@ Session.prototype = {
 
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -322,6 +348,7 @@ User.prototype = {
   connectFB: function(token) {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
+        DialogView = this.app.views.Dialog,
         Contact = this.app.models.Contact,
         self = this,
         params;
@@ -340,9 +367,10 @@ User.prototype = {
 
         if (QMCONFIG.debug) console.log('User', self);
 
-        QBApiCalls.chatConnect(self.contact.user_jid, function() {
+        QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
           self.rememberMe();
           UserView.successFormCallback();
+          DialogView.downloadDialogs(contacts);
 
           // import FB friends
           FB.api('/me/friends', function (data) {
@@ -358,6 +386,7 @@ User.prototype = {
   signup: function() {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
+        DialogView = this.app.views.Dialog,
         Contact = this.app.models.Contact,
         form = $('section:visible form'),
         self = this,
@@ -383,11 +412,12 @@ User.prototype = {
 
             if (QMCONFIG.debug) console.log('User', self);
 
-            QBApiCalls.chatConnect(self.contact.user_jid, function() {
+            QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
               if (tempParams.blob) {
-                self.uploadAvatar();
+                self.uploadAvatar(contacts);
               } else {
                 UserView.successFormCallback();
+                DialogView.downloadDialogs(contacts);
               }
             });
           });
@@ -397,9 +427,10 @@ User.prototype = {
     }
   },
 
-  uploadAvatar: function() {
+  uploadAvatar: function(contacts) {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
+        DialogView = this.app.views.Dialog,
         custom_data,
         self = this;
 
@@ -408,6 +439,7 @@ User.prototype = {
       self.contact.avatar_url = blob.path;
 
       UserView.successFormCallback();
+      DialogView.downloadDialogs(contacts);
       
       custom_data = JSON.stringify({avatar_url: blob.path});
       QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
@@ -419,6 +451,7 @@ User.prototype = {
   login: function() {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
+        DialogView = this.app.views.Dialog,
         Contact = this.app.models.Contact,
         form = $('section:visible form'),
         self = this,
@@ -438,12 +471,13 @@ User.prototype = {
 
           if (QMCONFIG.debug) console.log('User', self);
 
-          QBApiCalls.chatConnect(self.contact.user_jid, function() {
+          QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
             if (self._remember) {
               self.rememberMe();
             }
 
             UserView.successFormCallback();
+            DialogView.downloadDialogs(contacts);
           });
 
         });
@@ -495,6 +529,7 @@ User.prototype = {
   autologin: function() {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
+        DialogView = this.app.views.Dialog,
         Contact = this.app.models.Contact,
         storage = JSON.parse(localStorage['QM.user']),
         self = this;
@@ -504,16 +539,19 @@ User.prototype = {
 
     if (QMCONFIG.debug) console.log('User', self);
 
-    QBApiCalls.chatConnect(self.contact.user_jid, function() {
+    QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
       UserView.successFormCallback();
+      DialogView.downloadDialogs(contacts);
     });
   },
 
   logout: function(callback) {
     var QBApiCalls = this.app.service,
+        DialogView = this.app.views.Dialog,
         self = this;
 
-    QBApiCalls.chatDisconnect();
+    QB.chat.disconnect();
+    DialogView.hideDialogs();
     QBApiCalls.logoutUser(function() {
       localStorage.removeItem('QM.user');
       self.contact = null;
@@ -606,7 +644,7 @@ function fail(user, errMsg) {
   $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
 }
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -836,7 +874,7 @@ QBApiCalls.prototype = {
     });
   },
 
-  chatConnect: function(jid, callback) {
+  connectChat: function(jid, callback) {
     this.checkSession(function(res) {
       var password = Session.authParams.provider ? Session.token :
                      Session.decrypt(Session.authParams).password;
@@ -847,18 +885,107 @@ QBApiCalls.prototype = {
           if (QMCONFIG.debug) console.log(err.detail);
 
         } else {
-          callback();
+          Session.update({ date: new Date });
+          callback(res);
         }
       });
     });
   },
 
-  chatDisconnect: function() {
-    QB.chat.disconnect();
+  listDialogs: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.dialog.list(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Dialogs is found', res);
+
+          Session.update({ date: new Date });
+          callback(res.items);
+        }
+      });
+    });
   },
 
-  subscriptionPresence: function(params) {
-    QB.chat.sendSubscriptionPresence(params);
+  createDialog: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.dialog.create(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Dialog is created', res);
+
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  updateDialog: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.dialog.update(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Dialog is updated', res);
+
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  listMessages: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.message.list(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Messages is found', res);
+
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  updateMessage: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.message.update(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Message is updated', res);
+
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  deleteMessage: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.message.delete(params, function(response) {
+        if (response.code === 404) {
+          if (QMCONFIG.debug) console.log(response.message);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Message is deleted');
+
+          Session.update({ date: new Date });
+          callback();
+        }
+      });
+    });
   }
 
 };
@@ -893,7 +1020,7 @@ var failSearch = function() {
   FriendListView.removeDataSpinner();
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1051,7 +1178,17 @@ Routes.prototype = {
 
     /* QBChat handlers
     ----------------------------------------------------- */
-    QB.chat.onSubscribeListener = FriendListView.onSubscribe;
+    // QB.chat.onMessageListener
+    // QB.chat.onContactListListener
+    // QB.chat.onSubscribeListener
+    // QB.chat.onConfirmSubscribeListener
+    // QB.chat.onRejectSubscribeListener
+    // QB.chat.onDisconnectingListener
+
+    // QB.chat.roster.add(jid);
+    // QB.chat.roster.confirm(jid);
+    // QB.chat.roster.reject(jid);
+    // QB.chat.roster.remove(jid);
 
     /* temporary routes
     ----------------------------------------------------- */
@@ -1108,7 +1245,80 @@ var closePopup = function() {
   $('.is-overlay').removeClass('is-overlay');
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * Dialog View Module
+ *
+ */
+
+module.exports = DialogView;
+
+function DialogView(app) {
+  this.app = app;
+}
+
+DialogView.prototype = {
+
+  createDataSpinner: function() {
+    var spinnerBlock = '<div class="popup-elem spinner_bounce">';
+    spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
+    spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
+    spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
+    spinnerBlock += '</div>';
+
+    $('#emptyList').after(spinnerBlock);
+  },
+
+  removeDataSpinner: function() {
+    $('.l-list-wrap .spinner_bounce').remove();
+  },
+
+  downloadDialogs: function(contacts) {
+    var QBApiCalls = this.app.service,
+        User = this.app.models.User,
+        self = this;
+
+    // QB.chat.send(QB.chat.helpers.getUserJid(1316834, QMCONFIG.qbAccount.appId), {type: 'chat', body: 'test message', extension: {
+    //   save_to_history: 1,
+    //   date_sent: Math.floor(Date.now() / 1000),
+    //   full_name: User.contact.full_name,
+    //   blob_id: User.contact.blob_id,
+    //   avatar_url: User.contact.avatar_url
+    // }});
+
+    console.log(Object.keys(contacts).length);
+    console.log(contacts);
+    
+    self.createDataSpinner();
+    QBApiCalls.listDialogs({sort_desc: 'last_message_date_sent'}, function(dialogs) {
+      self.removeDataSpinner();
+
+      if (dialogs.length > 0) {
+        for (var i = 0, len = dialogs.length; i < len; i++) {
+          self.addDialogItem(dialogs[i]);
+        }        
+      } else {
+        $('#emptyList').removeClass('is-hidden');
+      }
+    });
+  },
+
+  hideDialogs: function() {
+    $('.l-list').addClass('is-hidden');
+  },
+
+  addDialogItem: function(params) {
+    var Dialog = this.app.models.Dialog,
+        dialog;
+
+    dialog = Dialog.create(params);
+  }
+
+};
+
+},{}],10:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1264,7 +1474,7 @@ function isSectionEmpty(list) {
     list.parent().addClass('is-hidden');
 }
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*
  * Q-municate chat application
  *

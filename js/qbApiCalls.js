@@ -227,7 +227,7 @@ QBApiCalls.prototype = {
     });
   },
 
-  chatConnect: function(jid, callback) {
+  connectChat: function(jid, callback) {
     this.checkSession(function(res) {
       var password = Session.authParams.provider ? Session.token :
                      Session.decrypt(Session.authParams).password;
@@ -238,18 +238,107 @@ QBApiCalls.prototype = {
           if (QMCONFIG.debug) console.log(err.detail);
 
         } else {
-          callback();
+          Session.update({ date: new Date });
+          callback(res);
         }
       });
     });
   },
 
-  chatDisconnect: function() {
-    QB.chat.disconnect();
+  listDialogs: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.dialog.list(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Dialogs is found', res);
+
+          Session.update({ date: new Date });
+          callback(res.items);
+        }
+      });
+    });
   },
 
-  subscriptionPresence: function(params) {
-    QB.chat.sendSubscriptionPresence(params);
+  createDialog: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.dialog.create(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Dialog is created', res);
+
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  updateDialog: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.dialog.update(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Dialog is updated', res);
+
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  listMessages: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.message.list(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Messages is found', res);
+
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  updateMessage: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.message.update(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Message is updated', res);
+
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  deleteMessage: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.message.delete(params, function(response) {
+        if (response.code === 404) {
+          if (QMCONFIG.debug) console.log(response.message);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Message is deleted');
+
+          Session.update({ date: new Date });
+          callback();
+        }
+      });
+    });
   }
 
 };

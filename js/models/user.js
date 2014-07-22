@@ -20,6 +20,7 @@ User.prototype = {
   connectFB: function(token) {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
+        DialogView = this.app.views.Dialog,
         Contact = this.app.models.Contact,
         self = this,
         params;
@@ -38,9 +39,10 @@ User.prototype = {
 
         if (QMCONFIG.debug) console.log('User', self);
 
-        QBApiCalls.chatConnect(self.contact.user_jid, function() {
+        QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
           self.rememberMe();
           UserView.successFormCallback();
+          DialogView.downloadDialogs(contacts);
 
           // import FB friends
           FB.api('/me/friends', function (data) {
@@ -56,6 +58,7 @@ User.prototype = {
   signup: function() {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
+        DialogView = this.app.views.Dialog,
         Contact = this.app.models.Contact,
         form = $('section:visible form'),
         self = this,
@@ -81,11 +84,12 @@ User.prototype = {
 
             if (QMCONFIG.debug) console.log('User', self);
 
-            QBApiCalls.chatConnect(self.contact.user_jid, function() {
+            QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
               if (tempParams.blob) {
-                self.uploadAvatar();
+                self.uploadAvatar(contacts);
               } else {
                 UserView.successFormCallback();
+                DialogView.downloadDialogs(contacts);
               }
             });
           });
@@ -95,9 +99,10 @@ User.prototype = {
     }
   },
 
-  uploadAvatar: function() {
+  uploadAvatar: function(contacts) {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
+        DialogView = this.app.views.Dialog,
         custom_data,
         self = this;
 
@@ -106,6 +111,7 @@ User.prototype = {
       self.contact.avatar_url = blob.path;
 
       UserView.successFormCallback();
+      DialogView.downloadDialogs(contacts);
       
       custom_data = JSON.stringify({avatar_url: blob.path});
       QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
@@ -117,6 +123,7 @@ User.prototype = {
   login: function() {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
+        DialogView = this.app.views.Dialog,
         Contact = this.app.models.Contact,
         form = $('section:visible form'),
         self = this,
@@ -136,12 +143,13 @@ User.prototype = {
 
           if (QMCONFIG.debug) console.log('User', self);
 
-          QBApiCalls.chatConnect(self.contact.user_jid, function() {
+          QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
             if (self._remember) {
               self.rememberMe();
             }
 
             UserView.successFormCallback();
+            DialogView.downloadDialogs(contacts);
           });
 
         });
@@ -193,6 +201,7 @@ User.prototype = {
   autologin: function() {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
+        DialogView = this.app.views.Dialog,
         Contact = this.app.models.Contact,
         storage = JSON.parse(localStorage['QM.user']),
         self = this;
@@ -202,16 +211,19 @@ User.prototype = {
 
     if (QMCONFIG.debug) console.log('User', self);
 
-    QBApiCalls.chatConnect(self.contact.user_jid, function() {
+    QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
       UserView.successFormCallback();
+      DialogView.downloadDialogs(contacts);
     });
   },
 
   logout: function(callback) {
     var QBApiCalls = this.app.service,
+        DialogView = this.app.views.Dialog,
         self = this;
 
-    QBApiCalls.chatDisconnect();
+    QB.chat.disconnect();
+    DialogView.hideDialogs();
     QBApiCalls.logoutUser(function() {
       localStorage.removeItem('QM.user');
       self.contact = null;

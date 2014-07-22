@@ -155,7 +155,17 @@ Routes.prototype = {
 
     /* QBChat handlers
     ----------------------------------------------------- */
-    QB.chat.onSubscribeListener = FriendListView.onSubscribe;
+    // QB.chat.onMessageListener
+    // QB.chat.onContactListListener
+    // QB.chat.onSubscribeListener
+    // QB.chat.onConfirmSubscribeListener
+    // QB.chat.onRejectSubscribeListener
+    // QB.chat.onDisconnectingListener
+
+    // QB.chat.roster.add(jid);
+    // QB.chat.roster.confirm(jid);
+    // QB.chat.roster.reject(jid);
+    // QB.chat.roster.remove(jid);
 
     /* temporary routes
     ----------------------------------------------------- */
