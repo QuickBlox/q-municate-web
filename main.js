@@ -1622,10 +1622,12 @@ DialogView.prototype = {
     startOfCurrentDay.setHours(0,0,0,0);
 
     // checking if this dialog is recent OR no
-    if (new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay)
+    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay)
       $('#recentList').removeClass('is-hidden').find('ul').append(html);
     else
       $('#historyList').removeClass('is-hidden').find('ul').append(html);
+
+    $('#emptyList').addClass('is-hidden');
   }
 
 };
