@@ -1392,39 +1392,39 @@ ContactListView.prototype = {
   },
 
   sendSubscribeRequest: function(objDom) {
-    var jid = objDom.data('jid');
+    // var jid = objDom.data('jid');
 
-    objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
-    objDom.remove();
-    QB.chat.roster.add(jid);
-    Dialog.createPrivateChat(jid);
+    // objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
+    // objDom.remove();
+    // QB.chat.roster.add(jid);
+    // Dialog.createPrivateChat(jid);
   },
 
   sendSubscribeReject: function(objDom) {
-    var id = objDom.parents('li').data('id'),
-        list = objDom.parents('ul');
+    // var id = objDom.parents('li').data('id'),
+    //     list = objDom.parents('ul');
 
-    objDom.parents('li').remove();
-    isSectionEmpty(list);
+    // objDom.parents('li').remove();
+    // isSectionEmpty(list);
 
-    QB.chat.roster.reject(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId));
+    // QB.chat.roster.reject(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId));
   },
 
   onSubscribe: function(id) {
-    if (QMCONFIG.debug) console.log('Subscribe request from', id);
-    var html;
+    // if (QMCONFIG.debug) console.log('Subscribe request from', id);
+    // var html;
 
-    html = '<li class="list-item" data-id="'+id+'">';
-    html += '<a class="contact l-flexbox" href="#">';
-    html += '<div class="l-flexbox_inline">';
-    html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
-    html += '<span class="name">Test user</span>';
-    html += '</div><div class="request-controls l-flexbox">';
-    html += '<button class="request-button request-button_cancel">&#10005;</button>';
-    html += '<button class="request-button request-button_ok">&#10003;</button>';
-    html += '</div></a></li>';
+    // html = '<li class="list-item" data-id="'+id+'">';
+    // html += '<a class="contact l-flexbox" href="#">';
+    // html += '<div class="l-flexbox_inline">';
+    // html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
+    // html += '<span class="name">Test user</span>';
+    // html += '</div><div class="request-controls l-flexbox">';
+    // html += '<button class="request-button request-button_cancel">&#10005;</button>';
+    // html += '<button class="request-button request-button_ok">&#10003;</button>';
+    // html += '</div></a></li>';
 
-    $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
+    // $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
   }
 
 };
@@ -1689,7 +1689,7 @@ UserView.prototype = {
   successSendEmailCallback: function() {
     var alert = '<div class="note l-form l-flexbox l-flexbox_column">';
     alert += '<span class="text text_alert text_alert_success">Success!</span>';
-    alert += '<span class="text">Please check your email and click on the link in letter in order to reset your password</span>';
+    alert += '<span class="text">Please check your email and click a link in the letter in order to reset your password</span>';
     alert += '</div>';
 
     this.removeSpinner();
