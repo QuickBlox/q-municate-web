@@ -39,10 +39,10 @@ User.prototype = {
 
         if (QMCONFIG.debug) console.log('User', self);
 
-        QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
+        QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
           self.rememberMe();
           UserView.successFormCallback();
-          DialogView.downloadDialogs(contacts);
+          DialogView.downloadDialogs(roster);
 
           // import FB friends
           FB.api('/me/friends', function (data) {
@@ -84,12 +84,12 @@ User.prototype = {
 
             if (QMCONFIG.debug) console.log('User', self);
 
-            QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
+            QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
               if (tempParams.blob) {
-                self.uploadAvatar(contacts);
+                self.uploadAvatar(roster);
               } else {
                 UserView.successFormCallback();
-                DialogView.downloadDialogs(contacts);
+                DialogView.downloadDialogs(roster);
               }
             });
           });
@@ -99,7 +99,7 @@ User.prototype = {
     }
   },
 
-  uploadAvatar: function(contacts) {
+  uploadAvatar: function(roster) {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
         DialogView = this.app.views.Dialog,
@@ -111,7 +111,7 @@ User.prototype = {
       self.contact.avatar_url = blob.path;
 
       UserView.successFormCallback();
-      DialogView.downloadDialogs(contacts);
+      DialogView.downloadDialogs(roster);
       
       custom_data = JSON.stringify({avatar_url: blob.path});
       QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
@@ -143,13 +143,13 @@ User.prototype = {
 
           if (QMCONFIG.debug) console.log('User', self);
 
-          QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
+          QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
             if (self._remember) {
               self.rememberMe();
             }
 
             UserView.successFormCallback();
-            DialogView.downloadDialogs(contacts);
+            DialogView.downloadDialogs(roster);
           });
 
         });
@@ -211,9 +211,9 @@ User.prototype = {
 
     if (QMCONFIG.debug) console.log('User', self);
 
-    QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
+    QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
       UserView.successFormCallback();
-      DialogView.downloadDialogs(contacts);
+      DialogView.downloadDialogs(roster);
     });
   },
 

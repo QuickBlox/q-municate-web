@@ -31,7 +31,8 @@ DialogView.prototype = {
     $('.l-sidebar .spinner_bounce').remove();
   },
 
-  downloadDialogs: function(rosterItems) {
+  downloadDialogs: function(roster) {
+    if (QMCONFIG.debug) console.log('Roster has been got', roster);
     var self = this,
         dialog;
 
@@ -46,11 +47,10 @@ DialogView.prototype = {
         for (var i = 0, len = dialogs.length; i < len; i++) {
           dialog = Dialog.create(dialogs[i]);
 
-          // creation of the Contact List whereto are included all people 
+          // updating of the Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
-          ContactList.create(dialog.occupants_ids, rosterItems, function() {
+          ContactList.add(dialog.occupants_ids, roster, function() {
             self.addDialogItem(dialog);
-            if (QMCONFIG.debug) console.log('Contact list is created', ContactList);
           });
         }
 

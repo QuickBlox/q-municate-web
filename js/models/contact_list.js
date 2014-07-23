@@ -14,7 +14,7 @@ function ContactList(app) {
 
 ContactList.prototype = {
 
-  create: function(callback) {
+  add: function(callback) {
     var Contact = this.app.models.Contact;
 
     contact_ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
@@ -30,6 +30,8 @@ ContactList.prototype = {
           localStorage.setItem('QM.contact-' + user.id, JSON.stringify(ContactList[user.id]));
         });
       });
+
+      if (QMCONFIG.debug) console.log('Contact List is updated', this);
       callback();
     } else {
       callback();

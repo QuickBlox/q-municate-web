@@ -185,7 +185,7 @@ function ContactList(app) {
 
 ContactList.prototype = {
 
-  create: function(callback) {
+  add: function(callback) {
     var Contact = this.app.models.Contact;
 
     contact_ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
@@ -201,6 +201,8 @@ ContactList.prototype = {
           localStorage.setItem('QM.contact-' + user.id, JSON.stringify(ContactList[user.id]));
         });
       });
+
+      if (QMCONFIG.debug) console.log('Contact List is updated', this);
       callback();
     } else {
       callback();
@@ -440,10 +442,10 @@ User.prototype = {
 
         if (QMCONFIG.debug) console.log('User', self);
 
-        QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
+        QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
           self.rememberMe();
           UserView.successFormCallback();
-          DialogView.downloadDialogs(contacts);
+          DialogView.downloadDialogs(roster);
 
           // import FB friends
           FB.api('/me/friends', function (data) {
@@ -485,12 +487,12 @@ User.prototype = {
 
             if (QMCONFIG.debug) console.log('User', self);
 
-            QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
+            QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
               if (tempParams.blob) {
-                self.uploadAvatar(contacts);
+                self.uploadAvatar(roster);
               } else {
                 UserView.successFormCallback();
-                DialogView.downloadDialogs(contacts);
+                DialogView.downloadDialogs(roster);
               }
             });
           });
@@ -500,7 +502,7 @@ User.prototype = {
     }
   },
 
-  uploadAvatar: function(contacts) {
+  uploadAvatar: function(roster) {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
         DialogView = this.app.views.Dialog,
@@ -512,7 +514,7 @@ User.prototype = {
       self.contact.avatar_url = blob.path;
 
       UserView.successFormCallback();
-      DialogView.downloadDialogs(contacts);
+      DialogView.downloadDialogs(roster);
       
       custom_data = JSON.stringify({avatar_url: blob.path});
       QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
@@ -544,13 +546,13 @@ User.prototype = {
 
           if (QMCONFIG.debug) console.log('User', self);
 
-          QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
+          QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
             if (self._remember) {
               self.rememberMe();
             }
 
             UserView.successFormCallback();
-            DialogView.downloadDialogs(contacts);
+            DialogView.downloadDialogs(roster);
           });
 
         });
@@ -612,9 +614,9 @@ User.prototype = {
 
     if (QMCONFIG.debug) console.log('User', self);
 
-    QBApiCalls.connectChat(self.contact.user_jid, function(contacts) {
+    QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
       UserView.successFormCallback();
-      DialogView.downloadDialogs(contacts);
+      DialogView.downloadDialogs(roster);
     });
   },
 
@@ -1502,7 +1504,8 @@ DialogView.prototype = {
     $('.l-sidebar .spinner_bounce').remove();
   },
 
-  downloadDialogs: function(rosterItems) {
+  downloadDialogs: function(roster) {
+    if (QMCONFIG.debug) console.log('Roster has been got', roster);
     var self = this,
         dialog;
 
@@ -1517,11 +1520,10 @@ DialogView.prototype = {
         for (var i = 0, len = dialogs.length; i < len; i++) {
           dialog = Dialog.create(dialogs[i]);
 
-          // creation of the Contact List whereto are included all people 
+          // updating of the Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
-          ContactList.create(dialog.occupants_ids, rosterItems, function() {
+          ContactList.add(dialog.occupants_ids, roster, function() {
             self.addDialogItem(dialog);
-            if (QMCONFIG.debug) console.log('Contact list is created', ContactList);
           });
         }
 
