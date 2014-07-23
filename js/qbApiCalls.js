@@ -7,14 +7,14 @@
 
 module.exports = QBApiCalls;
 
-var Session, UserView, FriendListView;
+var Session, UserView, ContactListView;
 
 function QBApiCalls(app) {
   this.app = app;
 
   Session = this.app.models.Session;
   UserView = this.app.views.User;
-  FriendListView = this.app.views.FriendList;
+  ContactListView = this.app.views.ContactList;
 }
 
 QBApiCalls.prototype = {
@@ -227,7 +227,7 @@ QBApiCalls.prototype = {
     });
   },
 
-  chatConnect: function(jid, callback) {
+  connectChat: function(jid, callback) {
     this.checkSession(function(res) {
       var password = Session.authParams.provider ? Session.token :
                      Session.decrypt(Session.authParams).password;
@@ -238,18 +238,107 @@ QBApiCalls.prototype = {
           if (QMCONFIG.debug) console.log(err.detail);
 
         } else {
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  listDialogs: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.dialog.list(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Dialogs is found', res);
+
+          Session.update({ date: new Date });
+          callback(res.items);
+        }
+      });
+    });
+  },
+
+  createDialog: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.dialog.create(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Dialog is created', res);
+
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  updateDialog: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.dialog.update(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Dialog is updated', res);
+
+          Session.update({ date: new Date });
+          callback(res);
+        }
+      });
+    });
+  },
+
+  listMessages: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.message.list(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Messages is found', res);
+
+          Session.update({ date: new Date });
+          callback(res.items);
+        }
+      });
+    });
+  },
+
+  updateMessage: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.message.update(params, function(response) {
+        if (response.code === 404) {
+          if (QMCONFIG.debug) console.log(response.message);
+
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Message is updated');
+
+          Session.update({ date: new Date });
           callback();
         }
       });
     });
   },
 
-  chatDisconnect: function() {
-    QB.chat.disconnect();
-  },
+  deleteMessage: function(params, callback) {
+    this.checkSession(function(res) {
+      QB.chat.message.delete(params, function(response) {
+        if (response.code === 404) {
+          if (QMCONFIG.debug) console.log(response.message);
 
-  subscriptionPresence: function(params) {
-    QB.chat.sendSubscriptionPresence(params);
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Message is deleted');
+
+          Session.update({ date: new Date });
+          callback();
+        }
+      });
+    });
   }
 
 };
@@ -281,5 +370,5 @@ var failForgot = function() {
 
 var failSearch = function() {
   $('.popup:visible .note').removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
-  FriendListView.removeDataSpinner();
+  ContactListView.removeDataSpinner();
 };

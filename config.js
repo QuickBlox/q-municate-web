@@ -18,6 +18,7 @@ var QMCONFIG = {
 
   defAvatar: {
     url: 'images/ava-single.png',
+    group_url: 'images/ava-group.png',
     caption: 'Choose user picture'
   },
 
