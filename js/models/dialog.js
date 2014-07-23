@@ -43,7 +43,7 @@ Dialog.prototype = {
         ContactList = this.app.models.ContactList,
         User = this.app.models.User,
         roster = JSON.parse(sessionStorage['QM.roster']),
-        id = QB.chat.helpers.geiIdFromNode(jid),
+        id = QB.chat.helpers.getIdFromNode(jid),
         self = this,
         dialog;
 
