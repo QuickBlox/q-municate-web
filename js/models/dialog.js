@@ -23,24 +23,24 @@ Dialog.prototype = {
 
   create: function(params) {
     var User = this.app.models.User,
-        ids = _.without(params.occupants_ids.split(','), User.id);
+        // exclude current user from dialog occupants that he doesn't hit to yourself in Contact List
+        occupants_ids = _.without(params.occupants_ids.split(','), User.contact.id);
 
     return {
       id: params._id,
       type: params.type,
       room_jid: params.xmpp_room_jid,
       room_name: params.name,
-      occupants_ids: ids,
+      occupants_ids: occupants_ids,
       last_message_date_sent: params.last_message_date_sent,
-      unread_count: params.unread_messages_count,
-      contact_id: params.type === 3 ? ids : null
+      unread_count: params.unread_messages_count
     };
   },
 
   createPrivateChat: function(jid) {
     var QBApiCalls = this.app.service,
         DialogView = this.app.views.Dialog,
-        FriendList = this.app.models.FriendList.contacts,
+        ContactList = this.app.models.ContactList.contacts,
         User = this.app.models.User,
         id = QB.chat.helpers.getIdFromNode(jid);
 
@@ -53,8 +53,8 @@ Dialog.prototype = {
         avatar_url: User.contact.avatar_url
       }});
 
-      FriendList[id] = JSON.parse(sessionStorage['QM.contac-' + id]);
-      localStorage.setItem('QM.contact-' + id, JSON.stringify(FriendList[id]));
+      ContactList[id] = JSON.parse(sessionStorage['QM.contac-' + id]);
+      localStorage.setItem('QM.contact-' + id, JSON.stringify(ContactList[id]));
       DialogView.addDialogItem(dialog);
     });
   }

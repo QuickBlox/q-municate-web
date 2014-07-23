@@ -1,17 +1,17 @@
 /*
  * Q-municate chat application
  *
- * Friend List View Module
+ * Contact List View Module
  *
  */
 
-module.exports = FriendListView;
+module.exports = ContactListView;
 
-function FriendListView(app) {
+function ContactListView(app) {
   this.app = app;
 }
 
-FriendListView.prototype = {
+ContactListView.prototype = {
 
   createDataSpinner: function(list) {
     var spinnerBlock = '<div class="popup-elem spinner_bounce">';
@@ -36,7 +36,7 @@ FriendListView.prototype = {
   },
 
   globalSearch: function(form) {
-    var FriendList = this.app.models.FriendList,
+    var ContactList = this.app.models.ContactList,
         self = this,
         popup = form.parent(),
         list = popup.find('ul:first'),
@@ -53,7 +53,7 @@ FriendListView.prototype = {
       sessionStorage.setItem('QM.search.value', val);
       sessionStorage.setItem('QM.search.page', 1);
 
-      FriendList.globalSearch(function(results) {
+      ContactList.globalSearch(function(results) {
         createListResults(list, results, self);
       });
     }
@@ -140,13 +140,13 @@ function createListResults(list, results, self) {
 
 // ajax downloading of data through scroll
 function ajaxDownloading(list, self) {
-  var FriendList = this.app.models.FriendList,
+  var ContactList = this.app.models.ContactList,
       page = parseInt(sessionStorage['QM.search.page']),
       allPages = parseInt(sessionStorage['QM.search.allPages']);
 
   if (page <= allPages) {
     self.createDataSpinner(list);
-    FriendList.globalSearch(function(results) {
+    ContactList.globalSearch(function(results) {
       createListResults(list, results, self);
     });
   }

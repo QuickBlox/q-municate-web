@@ -1,18 +1,18 @@
 /*
  * Q-municate chat application
  *
- * Friend List Module
+ * Contact List Module
  *
  */
 
-module.exports = FriendList;
+module.exports = ContactList;
 
-function FriendList(app) {
+function ContactList(app) {
   this.app = app;
   this.contacts = getContacts();
 }
 
-FriendList.prototype = {
+ContactList.prototype = {
 
   create: function(callback) {
     var Contact = this.app.models.Contact;
@@ -25,9 +25,9 @@ FriendList.prototype = {
       params = { filter: { field: 'id', param: 'in', value: ids } };
       QBApiCalls.listUsers(params, function(users) {
         users.items.forEach(function(user) {
-          FriendList[user.id] = Contact.create(user);
-          FriendList[user.id].subscription = contacts[user.id] || 'none';
-          localStorage.setItem('QM.contact-' + user.id, JSON.stringify(FriendList[user.id]));
+          ContactList[user.id] = Contact.create(user);
+          ContactList[user.id].subscription = contacts[user.id] || 'none';
+          localStorage.setItem('QM.contact-' + user.id, JSON.stringify(ContactList[user.id]));
         });
       });
       callback();

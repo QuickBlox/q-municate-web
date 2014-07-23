@@ -7,14 +7,14 @@
 
 module.exports = QBApiCalls;
 
-var Session, UserView, FriendListView;
+var Session, UserView, ContactListView;
 
 function QBApiCalls(app) {
   this.app = app;
 
   Session = this.app.models.Session;
   UserView = this.app.views.User;
-  FriendListView = this.app.views.FriendList;
+  ContactListView = this.app.views.ContactList;
 }
 
 QBApiCalls.prototype = {
@@ -370,5 +370,5 @@ var failForgot = function() {
 
 var failSearch = function() {
   $('.popup:visible .note').removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
-  FriendListView.removeDataSpinner();
+  ContactListView.removeDataSpinner();
 };

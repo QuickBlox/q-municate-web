@@ -7,12 +7,12 @@
 
 module.exports = DialogView;
 
-var Dialog, FriendList;
+var Dialog, ContactList;
 
 function DialogView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
-  FriendList = this.app.models.FriendList;
+  ContactList = this.app.models.ContactList;
 }
 
 DialogView.prototype = {
@@ -46,10 +46,11 @@ DialogView.prototype = {
         for (var i = 0, len = dialogs.length; i < len; i++) {
           dialog = Dialog.create(dialogs[i]);
 
-          // updating the Contact List whereto are included all users with which maybe you will be to chat
-          FriendList.create(dialog.occupants_ids, rosterItems, function() {
+          // creation of the Contact List whereto are included all people 
+          // with which maybe user will be to chat (there aren't only his friends)
+          ContactList.create(dialog.occupants_ids, rosterItems, function() {
             self.addDialogItem(dialog);
-            if (QMCONFIG.debug) console.log('Contact list is created', FriendList);
+            if (QMCONFIG.debug) console.log('Contact list is created', ContactList);
           });
         }
 
@@ -65,10 +66,10 @@ DialogView.prototype = {
   },
 
   addDialogItem: function(dialog) {
-    var FriendList = this.app.models.FriendList.contacts,
-        icon = dialog.type === 3 ? FriendList[dialog.contact_id].avatar_url : QMCONFIG.defAvatar.group_url,
-        name = dialog.type === 3 ? FriendList[dialog.contact_id].full_name : dialog.name,
-        status = dialog.type === 3 ? FriendList[dialog.contact_id].subscription : 'none',
+    var ContactList = this.app.models.ContactList.contacts,
+        icon = dialog.type === 3 ? ContactList[dialog.contact_id].avatar_url : QMCONFIG.defAvatar.group_url,
+        name = dialog.type === 3 ? ContactList[dialog.contact_id].full_name : dialog.name,
+        status = dialog.type === 3 ? ContactList[dialog.contact_id].subscription : 'none',
         html,
         startOfCurrentDay;
 

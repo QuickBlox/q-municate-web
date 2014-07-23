@@ -7,13 +7,13 @@
 
 module.exports = Routes;
 
-var UserView, FriendListView;
+var UserView, ContactListView;
 
 function Routes(app) {
   this.app = app;
   
   UserView = this.app.views.User,
-  FriendListView = this.app.views.FriendList;
+  ContactListView = this.app.views.ContactList;
 }
 
 Routes.prototype = {
@@ -30,7 +30,7 @@ Routes.prototype = {
 
     /* QBChat handlers
     ----------------------------------------------------- */
-    QB.chat.onSubscribeListener = FriendListView.onSubscribe;
+    QB.chat.onSubscribeListener = ContactListView.onSubscribe;
 
     /* welcome page
     ----------------------------------------------------- */
@@ -127,14 +127,14 @@ Routes.prototype = {
 
     $('.search').on('click', function() {
       if (QMCONFIG.debug) console.log('global search');
-      FriendListView.globalPopup();
+      ContactListView.globalPopup();
     });
 
     /* search
     ----------------------------------------------------- */
     $('#globalSearch').on('submit', function(event) {
       event.preventDefault();
-      FriendListView.globalSearch($(this));
+      ContactListView.globalSearch($(this));
     });
 
     $('#searchContacts').on('keyup search submit', function(event) {
@@ -150,11 +150,11 @@ Routes.prototype = {
     /* subscriptions
     ----------------------------------------------------- */
     $('.list_contacts').on('click', 'button.sent-request', function() {
-      FriendListView.sendSubscribeRequest($(this));
+      ContactListView.sendSubscribeRequest($(this));
     });
 
     $('.list').on('click', '.request-button_cancel', function() {
-      FriendListView.sendSubscribeReject($(this));
+      ContactListView.sendSubscribeReject($(this));
     });
 
     /* temporary routes
