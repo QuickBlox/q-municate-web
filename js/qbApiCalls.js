@@ -303,7 +303,7 @@ QBApiCalls.prototype = {
           if (QMCONFIG.debug) console.log('QB SDK: Messages is found', res);
 
           Session.update({ date: new Date });
-          callback(res);
+          callback(res.items);
         }
       });
     });
@@ -311,15 +311,15 @@ QBApiCalls.prototype = {
 
   updateMessage: function(params, callback) {
     this.checkSession(function(res) {
-      QB.chat.message.update(params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
+      QB.chat.message.update(params, function(response) {
+        if (response.code === 404) {
+          if (QMCONFIG.debug) console.log(response.message);
 
         } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Message is updated', res);
+          if (QMCONFIG.debug) console.log('QB SDK: Message is updated');
 
           Session.update({ date: new Date });
-          callback(res);
+          callback();
         }
       });
     });

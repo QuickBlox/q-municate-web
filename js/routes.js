@@ -28,6 +28,10 @@ Routes.prototype = {
       changeInputFile($(this));
     });
 
+    /* QBChat handlers
+    ----------------------------------------------------- */
+    QB.chat.onSubscribeListener = FriendListView.onSubscribe;
+
     /* welcome page
     ----------------------------------------------------- */
     $('#signupFB, #loginFB').on('click', function(event) {
@@ -152,19 +156,6 @@ Routes.prototype = {
     $('.list').on('click', '.request-button_cancel', function() {
       FriendListView.sendSubscribeReject($(this));
     });
-
-    /* QBChat handlers
-    ----------------------------------------------------- */
-    QB.chat.onSubscribeListener = FriendListView.onSubscribe;
-    // QB.chat.onMessageListener
-    // QB.chat.onContactListListener    
-    // QB.chat.onConfirmSubscribeListener
-    // QB.chat.onRejectSubscribeListener
-    // QB.chat.onDisconnectingListener
-
-    // QB.chat.roster.confirm(jid);
-    // QB.chat.roster.remove(jid);
-    
 
     /* temporary routes
     ----------------------------------------------------- */

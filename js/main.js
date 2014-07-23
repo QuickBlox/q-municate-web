@@ -23,8 +23,8 @@ function QM() {
   this.models = {
     User: new User(this),
     Session: new Session(this),
-    Dialog: new Dialog(this),
     Contact: new Contact(this),
+    Dialog: new Dialog(this),
     FriendList: new FriendList(this)
   };
 
