@@ -178,6 +178,8 @@ function getStatus(contact) {
 
 module.exports = Dialog;
 
+var User, ids;
+
 function Dialog(app) {
   this.app = app;
 }
@@ -185,10 +187,50 @@ function Dialog(app) {
 Dialog.prototype = {
 
   create: function(params) {
+    User = this.app.models.User;
+    ids = _.without(params.occupants_ids.split(','), User.id);
 
+    return {
+      id: params._id,
+      type: params.type,
+      room_jid: params.xmpp_room_jid,
+      room_name: params.name,
+      occupants_ids: ids,
+      last_message_date_sent: params.last_message_date_sent,
+      unread_count: params.unread_messages_count,
+      contact_id: getContact(params)
+    };
+  },
+
+  createPrivateChat: function(jid) {
+    var QBApiCalls = this.app.service,
+        DialogView = this.app.views.Dialog,
+        FriendList = this.app.models.FriendList.contacts,
+        User = this.app.models.User,
+        id = QB.chat.helpers.getIdFromNode(jid);
+
+    QBApiCalls.createDialog({type: '3', occupants_ids: id}, function(dialog) {
+      QB.chat.send(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId), {type: 'chat', body: 'test message', extension: {
+        save_to_history: 1,
+        date_sent: Math.floor(Date.now() / 1000),
+        full_name: User.contact.full_name,
+        blob_id: User.contact.blob_id,
+        avatar_url: User.contact.avatar_url
+      }});
+
+      FriendList[id] = JSON.parse(sessionStorage['QM.contac-' + id]);
+      localStorage.setItem('QM.contact-' + id, JSON.stringify(FriendList[id]));
+      DialogView.addDialogItem(dialog);
+    });
   }
 
 };
+
+/* Private
+---------------------------------------------------------------------- */
+function getContact(dialog) {
+  return dialog.type === 3 ? ids : null;
+}
 
 },{}],4:[function(require,module,exports){
 /*
@@ -202,51 +244,60 @@ module.exports = FriendList;
 
 function FriendList(app) {
   this.app = app;
+  this.contacts = getContacts();
 }
 
 FriendList.prototype = {
-  
+
   globalSearch: function(callback) {
-    var val = sessionStorage['QM.search.value'],
+    var QBApiCalls = this.app.service,
+        val = sessionStorage['QM.search.value'],
         page = sessionStorage['QM.search.page'],
-        self = this;
+        self = this,
+        contacts;
     
     QBApiCalls.getUser({full_name: val, page: page}, function(data) {
       sessionStorage.setItem('QM.search.allPages', Math.ceil(data.total_entries / data.per_page));
       sessionStorage.setItem('QM.search.page', ++page);
       
-      self.getContacts(data.items);
-      if (QMCONFIG.debug) console.log('Search results', self);
+      contacts = self.getResults(data.items);
+      if (QMCONFIG.debug) console.log('Search results', contacts);
 
-      callback();
+      callback(contacts);
     });
   },
 
-  getContacts: function(data) {
-    var self = this,
+  getResults: function(data) {
+    var Contact = this.app.models.Contact,
+        self = this,
+        contacts = [],
         contact;
     
-    self.contacts = [];
     data.forEach(function(item) {
-      contact = new Contact(item.user);
-      self.contacts.push(contact);
+      contact = Contact.create(item.user);
+      contact.subscription = 'none';
+      sessionStorage.setItem('QM.contact-' + contact.id, JSON.stringify(contact));
+      contacts.push(contact);
     });
-  },
-
-  sendSubscribe: function(jid) {
-    var user = JSON.parse(localStorage['QM.user']).contact;
-    var extension = {
-      full_name: user.full_name,
-      avatar_url: user.avatar_url
-    };
-    QBApiCalls.subscriptionPresence({jid: jid, type: 'subscribe', extension: extension});
-  },
-
-  sendReject: function(jid) {
-    QBApiCalls.subscriptionPresence({jid: jid, type: 'unsubscribed'});
+    return contacts;
   }
 
 };
+
+/* Private
+---------------------------------------------------------------------- */
+function getContacts() {
+  var contacts = {},
+      ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
+
+  if (ids.length > 0) {
+    for (var i = 0, len = ids.length; i < len; i++) {
+      contacts[ids[i]] = JSON.parse(localStorage['QM.contact-' + ids[i]]);
+    }
+  }
+
+  return contacts;
+}
 
 },{}],5:[function(require,module,exports){
 /*
@@ -1178,17 +1229,16 @@ Routes.prototype = {
 
     /* QBChat handlers
     ----------------------------------------------------- */
+    QB.chat.onSubscribeListener = FriendListView.onSubscribe;
     // QB.chat.onMessageListener
-    // QB.chat.onContactListListener
-    // QB.chat.onSubscribeListener
+    // QB.chat.onContactListListener    
     // QB.chat.onConfirmSubscribeListener
     // QB.chat.onRejectSubscribeListener
     // QB.chat.onDisconnectingListener
 
-    // QB.chat.roster.add(jid);
     // QB.chat.roster.confirm(jid);
-    // QB.chat.roster.reject(jid);
     // QB.chat.roster.remove(jid);
+    
 
     /* temporary routes
     ----------------------------------------------------- */
@@ -1255,6 +1305,9 @@ var closePopup = function() {
 
 module.exports = DialogView;
 
+var startOfCurrentDay = new Date;
+startOfCurrentDay.setHours(0,0,0,0);
+
 function DialogView(app) {
   this.app = app;
 }
@@ -1276,29 +1329,45 @@ DialogView.prototype = {
   },
 
   downloadDialogs: function(contacts) {
-    var QBApiCalls = this.app.service,
-        User = this.app.models.User,
-        self = this;
+    var QBApiCalls = this.app.service;
+    console.log(0);
+    var FriendList = this.app.models.FriendList.contacts,
+        Contact = this.app.models.Contact,
+        Dialog = this.app.models.Dialog,
+        contact_ids, ids = [],
+        self = this,
+        dialog,
+        params;
 
-    // QB.chat.send(QB.chat.helpers.getUserJid(1316834, QMCONFIG.qbAccount.appId), {type: 'chat', body: 'test message', extension: {
-    //   save_to_history: 1,
-    //   date_sent: Math.floor(Date.now() / 1000),
-    //   full_name: User.contact.full_name,
-    //   blob_id: User.contact.blob_id,
-    //   avatar_url: User.contact.avatar_url
-    // }});
-
-    console.log(Object.keys(contacts).length);
-    console.log(contacts);
-    
+    scrollbar();
+    console.log(1);
+    contact_ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
+    console.log(2);
     self.createDataSpinner();
     QBApiCalls.listDialogs({sort_desc: 'last_message_date_sent'}, function(dialogs) {
       self.removeDataSpinner();
 
       if (dialogs.length > 0) {
         for (var i = 0, len = dialogs.length; i < len; i++) {
-          self.addDialogItem(dialogs[i]);
-        }        
+          dialog = Dialog.create(dialogs[i]);
+
+          ids.concat(_.difference(dialog.occupants_ids, contact_ids));
+          localStorage.setItem('QM.contacts', contact_ids.concat(ids).join());
+
+          if (ids.length > 0) {
+            params = { filter: { field: 'id', param: 'in', value: ids } };
+            QBApiCalls.listUsers(params, function(users) {
+              users.items.forEach(function(user) {
+                FriendList[user.id] = Contact.create(user);
+                FriendList[user.id].subscription = contacts[user.id] || 'none';
+                localStorage.setItem('QM.contact-' + user.id, JSON.stringify(FriendList[user.id]));
+              });
+            });
+            self.addDialogItem(dialog);
+          } else {
+            self.addDialogItem(dialog);
+          }
+        }
       } else {
         $('#emptyList').removeClass('is-hidden');
       }
@@ -1307,16 +1376,44 @@ DialogView.prototype = {
 
   hideDialogs: function() {
     $('.l-list').addClass('is-hidden');
+    $('.l-list ul').html('');
   },
 
-  addDialogItem: function(params) {
-    var Dialog = this.app.models.Dialog,
-        dialog;
+  addDialogItem: function(dialog) {
+    var FriendList = this.app.models.FriendList.contacts,
+        icon = dialog.type === 3 ? FriendList[dialog.contact_id].avatar_url : QMCONFIG.defAvatar.group_url,
+        name = dialog.type === 3 ? FriendList[dialog.contact_id].full_name : dialog.name,
+        status = dialog.type === 3 ? FriendList[dialog.contact_id].subscription : 'none',
+        html;
 
-    dialog = Dialog.create(params);
+    html = '<li class="list-item" data-dialog="'+dialog.id+'" data-contact="'+dialog.contact_id+'">';
+    html += '<a class="contact l-flexbox" href="#">';
+    html += '<div class="l-flexbox_inline">';
+    html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
+    html += '<span class="name">' + name + '</span>';
+    html += '</div>';
+    if (status === 'none')
+      html += '<span class="status status_request"></span>';
+    else
+      html += '<span class="status"></span>';
+    html += '</a></li>';
+
+    if (new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay)
+      $('#recentList').removeClass('is-hidden').find('ul').append(html);
+    else
+      $('#historyList').removeClass('is-hidden').find('ul').append(html);
   }
 
 };
+
+/* Private
+---------------------------------------------------------------------- */
+function scrollbar() {
+  $('aside .scrollbar').mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 150
+  });
+}
 
 },{}],10:[function(require,module,exports){
 /*
@@ -1357,14 +1454,13 @@ FriendListView.prototype = {
   },
 
   globalSearch: function(form) {
-    var self = this,
+    var FriendList = this.app.models.FriendList,
+        self = this,
         popup = form.parent(),
         list = popup.find('ul:first'),
         val = form.find('input[type="search"]').val().trim();
 
     if (val.length > 0) {
-      friendlist = new Friendlist;
-
       popup.find('.popup-elem').addClass('is-hidden');
       popup.find('.mCSB_container').empty();
 
@@ -1375,34 +1471,38 @@ FriendListView.prototype = {
       sessionStorage.setItem('QM.search.value', val);
       sessionStorage.setItem('QM.search.page', 1);
 
-      friendlist.globalSearch(function() {
-        createListResults(list, friendlist, self);
+      FriendList.globalSearch(function(results) {
+        createListResults(list, results, self);
       });
     }
   },
 
   sendSubscribeRequest: function(objDom) {
-    var jid = objDom.data('jid');
+    var Dialog = this.app.models.Dialog,
+        jid = objDom.data('jid');
 
     objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
     objDom.remove();
-    friendlist.sendSubscribe(jid);
+    QB.chat.roster.add(jid);
+    Dialog.createPrivateChat(jid);
   },
 
   sendSubscribeReject: function(objDom) {
-    var jid = objDom.parents('.contact').data('jid'),
+    var id = objDom.parents('li').data('id'),
         list = objDom.parents('ul');
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
-    friendlist = new Friendlist;
-    friendlist.sendReject(jid);
+
+    QB.chat.roster.reject(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId));
   },
 
-  onSubscribe: function(jid) {
-    if (QMCONFIG.debug) console.log('Subscribe request from', jid);
-    var html = '<li class="list-item">';
-    html += '<a class="contact l-flexbox" href="#" data-jid="'+jid+'">';
+  onSubscribe: function(id) {
+    if (QMCONFIG.debug) console.log('Subscribe request from', id);
+    var html;
+
+    html = '<li class="list-item" data-id="'+id+'">';
+    html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
     html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
     html += '<span class="name">Test user</span>';
@@ -1435,17 +1535,17 @@ function scrollbar(list, self) {
   });
 }
 
-function createListResults(list, friendlist, self) {
+function createListResults(list, results, self) {
   var item;
 
-  friendlist.contacts.forEach(function(contact) {
+  results.forEach(function(contact) {
     item = '<li class="list-item">';
     item += '<a class="contact l-flexbox" href="#">';
     item += '<div class="l-flexbox_inline">';
     item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
     item += '<span class="name">' + contact.full_name + '</span>';
     item += '</div>';
-    item += '<button class="sent-request" data-jid='+contact.xmpp_jid+'><img class="icon-normal" src="images/icon-request.png" alt="request">';
+    item += '<button class="sent-request" data-jid='+contact.user_jid+'><img class="icon-normal" src="images/icon-request.png" alt="request">';
     item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     item += '</a></li>';
 
@@ -1458,13 +1558,14 @@ function createListResults(list, friendlist, self) {
 
 // ajax downloading of data through scroll
 function ajaxDownloading(list, self) {
-  var page = parseInt(sessionStorage['QM.search.page']),
+  var FriendList = this.app.models.FriendList,
+      page = parseInt(sessionStorage['QM.search.page']),
       allPages = parseInt(sessionStorage['QM.search.allPages']);
 
   if (page <= allPages) {
     self.createDataSpinner(list);
-    friendlist.globalSearch(function() {
-      createListResults(list, friendlist, self);
+    FriendList.globalSearch(function(results) {
+      createListResults(list, results, self);
     });
   }
 }

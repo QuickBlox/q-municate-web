@@ -36,14 +36,13 @@ FriendListView.prototype = {
   },
 
   globalSearch: function(form) {
-    var self = this,
+    var FriendList = this.app.models.FriendList,
+        self = this,
         popup = form.parent(),
         list = popup.find('ul:first'),
         val = form.find('input[type="search"]').val().trim();
 
     if (val.length > 0) {
-      friendlist = new Friendlist;
-
       popup.find('.popup-elem').addClass('is-hidden');
       popup.find('.mCSB_container').empty();
 
@@ -54,34 +53,38 @@ FriendListView.prototype = {
       sessionStorage.setItem('QM.search.value', val);
       sessionStorage.setItem('QM.search.page', 1);
 
-      friendlist.globalSearch(function() {
-        createListResults(list, friendlist, self);
+      FriendList.globalSearch(function(results) {
+        createListResults(list, results, self);
       });
     }
   },
 
   sendSubscribeRequest: function(objDom) {
-    var jid = objDom.data('jid');
+    var Dialog = this.app.models.Dialog,
+        jid = objDom.data('jid');
 
     objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
     objDom.remove();
-    friendlist.sendSubscribe(jid);
+    QB.chat.roster.add(jid);
+    Dialog.createPrivateChat(jid);
   },
 
   sendSubscribeReject: function(objDom) {
-    var jid = objDom.parents('.contact').data('jid'),
+    var id = objDom.parents('li').data('id'),
         list = objDom.parents('ul');
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
-    friendlist = new Friendlist;
-    friendlist.sendReject(jid);
+
+    QB.chat.roster.reject(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId));
   },
 
-  onSubscribe: function(jid) {
-    if (QMCONFIG.debug) console.log('Subscribe request from', jid);
-    var html = '<li class="list-item">';
-    html += '<a class="contact l-flexbox" href="#" data-jid="'+jid+'">';
+  onSubscribe: function(id) {
+    if (QMCONFIG.debug) console.log('Subscribe request from', id);
+    var html;
+
+    html = '<li class="list-item" data-id="'+id+'">';
+    html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
     html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
     html += '<span class="name">Test user</span>';
@@ -114,17 +117,17 @@ function scrollbar(list, self) {
   });
 }
 
-function createListResults(list, friendlist, self) {
+function createListResults(list, results, self) {
   var item;
 
-  friendlist.contacts.forEach(function(contact) {
+  results.forEach(function(contact) {
     item = '<li class="list-item">';
     item += '<a class="contact l-flexbox" href="#">';
     item += '<div class="l-flexbox_inline">';
     item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
     item += '<span class="name">' + contact.full_name + '</span>';
     item += '</div>';
-    item += '<button class="sent-request" data-jid='+contact.xmpp_jid+'><img class="icon-normal" src="images/icon-request.png" alt="request">';
+    item += '<button class="sent-request" data-jid='+contact.user_jid+'><img class="icon-normal" src="images/icon-request.png" alt="request">';
     item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     item += '</a></li>';
 
@@ -137,13 +140,14 @@ function createListResults(list, friendlist, self) {
 
 // ajax downloading of data through scroll
 function ajaxDownloading(list, self) {
-  var page = parseInt(sessionStorage['QM.search.page']),
+  var FriendList = this.app.models.FriendList,
+      page = parseInt(sessionStorage['QM.search.page']),
       allPages = parseInt(sessionStorage['QM.search.allPages']);
 
   if (page <= allPages) {
     self.createDataSpinner(list);
-    friendlist.globalSearch(function() {
-      createListResults(list, friendlist, self);
+    FriendList.globalSearch(function(results) {
+      createListResults(list, results, self);
     });
   }
 }
