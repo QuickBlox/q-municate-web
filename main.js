@@ -196,9 +196,6 @@ ContactList.prototype = {
         self = this,
         params;
 
-
-    console.log(11111111);
-    console.log(contact_ids);
     // TODO: need to make optimization here
     // (for new device the user will be waiting very long time if he has a lot of private dialogs)
     new_ids = [].concat(_.difference(occupants_ids, contact_ids));
