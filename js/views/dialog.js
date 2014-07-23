@@ -73,7 +73,7 @@ DialogView.prototype = {
 
   addDialogItem: function(dialog) {
     var contacts = ContactList.contacts,
-        roster = JSON.parse(sessionStorage['QM.roster']);
+        roster = JSON.parse(sessionStorage['QM.roster']),
         private_id, icon, name, status,
         html, startOfCurrentDay;
 
