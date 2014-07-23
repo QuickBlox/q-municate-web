@@ -15,7 +15,6 @@ function ContactList(app) {
 ContactList.prototype = {
 
   saveRoster: function(roster) {
-    if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
     sessionStorage.setItem('QM.roster', JSON.stringify(roster));
   },
 

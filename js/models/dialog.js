@@ -37,25 +37,37 @@ Dialog.prototype = {
     };
   },
 
-  createPrivateChat: function(jid) {
+  createPrivate: function(jid) {
     var QBApiCalls = this.app.service,
-        DialogView = this.app.views.Dialog,
-        ContactList = this.app.models.ContactList.contacts,
+        DialogView = this.app.views.Dialog,        
+        ContactList = this.app.models.ContactList,
         User = this.app.models.User,
-        id = QB.chat.helpers.getIdFromNode(jid);
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        id = QB.chat.helpers.geiIdFromNode(jid),
+        self = this,
+        dialog;
 
-    QBApiCalls.createDialog({type: '3', occupants_ids: id}, function(dialog) {
-      QB.chat.send(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId), {type: 'chat', body: 'test message', extension: {
+    // update roster
+    roster[id] = 'none';
+    ContactList.saveRoster(roster);
+
+    QBApiCalls.createDialog({type: 3, occupants_ids: id}, function(res) {
+      dialog = self.create(res);
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+      // send notification about subscribe
+      QB.chat.send(jid, {type: 'chat', extension: {
         save_to_history: 1,
+        dialog_id: dialog.id,
         date_sent: Math.floor(Date.now() / 1000),
+
+        notification_type: 3,
         full_name: User.contact.full_name,
-        blob_id: User.contact.blob_id,
-        avatar_url: User.contact.avatar_url
       }});
 
-      ContactList[id] = JSON.parse(sessionStorage['QM.contac-' + id]);
-      localStorage.setItem('QM.contact-' + id, JSON.stringify(ContactList[id]));
-      DialogView.addDialogItem(dialog);
+      ContactList.add(dialog.occupants_ids, function() {
+        DialogView.addDialogItem(dialog);
+      });
     });
   }
 

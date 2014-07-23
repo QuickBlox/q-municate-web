@@ -186,7 +186,6 @@ function ContactList(app) {
 ContactList.prototype = {
 
   saveRoster: function(roster) {
-    if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
     sessionStorage.setItem('QM.roster', JSON.stringify(roster));
   },
 
@@ -310,25 +309,37 @@ Dialog.prototype = {
     };
   },
 
-  createPrivateChat: function(jid) {
+  createPrivate: function(jid) {
     var QBApiCalls = this.app.service,
-        DialogView = this.app.views.Dialog,
-        ContactList = this.app.models.ContactList.contacts,
+        DialogView = this.app.views.Dialog,        
+        ContactList = this.app.models.ContactList,
         User = this.app.models.User,
-        id = QB.chat.helpers.getIdFromNode(jid);
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        id = QB.chat.helpers.geiIdFromNode(jid),
+        self = this,
+        dialog;
 
-    QBApiCalls.createDialog({type: '3', occupants_ids: id}, function(dialog) {
-      QB.chat.send(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId), {type: 'chat', body: 'test message', extension: {
+    // update roster
+    roster[id] = 'none';
+    ContactList.saveRoster(roster);
+
+    QBApiCalls.createDialog({type: 3, occupants_ids: id}, function(res) {
+      dialog = self.create(res);
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+      // send notification about subscribe
+      QB.chat.send(jid, {type: 'chat', extension: {
         save_to_history: 1,
+        dialog_id: dialog.id,
         date_sent: Math.floor(Date.now() / 1000),
+
+        notification_type: 3,
         full_name: User.contact.full_name,
-        blob_id: User.contact.blob_id,
-        avatar_url: User.contact.avatar_url
       }});
 
-      ContactList[id] = JSON.parse(sessionStorage['QM.contac-' + id]);
-      localStorage.setItem('QM.contact-' + id, JSON.stringify(ContactList[id]));
-      DialogView.addDialogItem(dialog);
+      ContactList.add(dialog.occupants_ids, function() {
+        DialogView.addDialogItem(dialog);
+      });
     });
   }
 
@@ -1261,12 +1272,19 @@ Routes.prototype = {
 
     /* subscriptions
     ----------------------------------------------------- */
-    $('.list_contacts').on('click', 'button.sent-request', function() {
-      ContactListView.sendSubscribeRequest($(this));
+    $('.list_contacts').on('click', 'button.send-request', function() {
+      if (QMCONFIG.debug) console.log('send subscribe');
+      ContactListView.sendSubscribe($(this));
+    });
+
+    $('.list').on('click', '.request-button_ok', function() {
+      if (QMCONFIG.debug) console.log('send confirm');
+      ContactListView.sendConfirm($(this));
     });
 
     $('.list').on('click', '.request-button_cancel', function() {
-      ContactListView.sendSubscribeReject($(this));
+      if (QMCONFIG.debug) console.log('send reject');
+      ContactListView.sendReject($(this));
     });
 
     /* temporary routes
@@ -1391,16 +1409,28 @@ ContactListView.prototype = {
     }
   },
 
-  sendSubscribeRequest: function(objDom) {
-    // var jid = objDom.data('jid');
+  // subscriptions
 
-    // objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
-    // objDom.remove();
-    // QB.chat.roster.add(jid);
-    // Dialog.createPrivateChat(jid);
+  sendSubscribe: function(objDom) {
+    var jid = objDom.parents('li').data('jid');
+
+    objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
+    objDom.remove();
+    QB.chat.roster.add(jid);
+    Dialog.createPrivate(jid);
   },
 
-  sendSubscribeReject: function(objDom) {
+  sendConfirm: function(objDom) {
+    // var id = objDom.parents('li').data('id'),
+    //     list = objDom.parents('ul');
+
+    // objDom.parents('li').remove();
+    // isSectionEmpty(list);
+
+    // QB.chat.roster.reject(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId));
+  },
+
+  sendReject: function(objDom) {
     // var id = objDom.parents('li').data('id'),
     //     list = objDom.parents('ul');
 
@@ -1466,14 +1496,14 @@ function createListResults(list, results, self) {
       item;
 
   results.forEach(function(contact) {
-    item = '<li class="list-item">';
+    item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
     item += '<a class="contact l-flexbox" href="#">';
     item += '<div class="l-flexbox_inline">';
-    item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
-    item += '<span class="name">' + contact.full_name + '</span>';
+    item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
+    item += '<span class="name">'+contact.full_name+'</span>';
     item += '</div>';
     if (!roster[contact.id]) {
-      item += '<button class="sent-request" data-jid='+contact.user_jid+'><img class="icon-normal" src="images/icon-request.png" alt="request">';
+      item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
       item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     }
     item += '</a></li>';
@@ -1525,6 +1555,7 @@ DialogView.prototype = {
   },
 
   downloadDialogs: function(roster) {
+    if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
     var self = this,
         dialog,
         private_id;

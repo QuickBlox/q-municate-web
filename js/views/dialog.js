@@ -32,6 +32,7 @@ DialogView.prototype = {
   },
 
   downloadDialogs: function(roster) {
+    if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
     var self = this,
         dialog,
         private_id;

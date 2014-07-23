@@ -64,16 +64,28 @@ ContactListView.prototype = {
     }
   },
 
-  sendSubscribeRequest: function(objDom) {
-    // var jid = objDom.data('jid');
+  // subscriptions
 
-    // objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
-    // objDom.remove();
-    // QB.chat.roster.add(jid);
-    // Dialog.createPrivateChat(jid);
+  sendSubscribe: function(objDom) {
+    var jid = objDom.parents('li').data('jid');
+
+    objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
+    objDom.remove();
+    QB.chat.roster.add(jid);
+    Dialog.createPrivate(jid);
   },
 
-  sendSubscribeReject: function(objDom) {
+  sendConfirm: function(objDom) {
+    // var id = objDom.parents('li').data('id'),
+    //     list = objDom.parents('ul');
+
+    // objDom.parents('li').remove();
+    // isSectionEmpty(list);
+
+    // QB.chat.roster.reject(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId));
+  },
+
+  sendReject: function(objDom) {
     // var id = objDom.parents('li').data('id'),
     //     list = objDom.parents('ul');
 
@@ -139,14 +151,14 @@ function createListResults(list, results, self) {
       item;
 
   results.forEach(function(contact) {
-    item = '<li class="list-item">';
+    item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
     item += '<a class="contact l-flexbox" href="#">';
     item += '<div class="l-flexbox_inline">';
-    item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
-    item += '<span class="name">' + contact.full_name + '</span>';
+    item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
+    item += '<span class="name">'+contact.full_name+'</span>';
     item += '</div>';
     if (!roster[contact.id]) {
-      item += '<button class="sent-request" data-jid='+contact.user_jid+'><img class="icon-normal" src="images/icon-request.png" alt="request">';
+      item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
       item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     }
     item += '</a></li>';

@@ -152,12 +152,19 @@ Routes.prototype = {
 
     /* subscriptions
     ----------------------------------------------------- */
-    $('.list_contacts').on('click', 'button.sent-request', function() {
-      ContactListView.sendSubscribeRequest($(this));
+    $('.list_contacts').on('click', 'button.send-request', function() {
+      if (QMCONFIG.debug) console.log('send subscribe');
+      ContactListView.sendSubscribe($(this));
+    });
+
+    $('.list').on('click', '.request-button_ok', function() {
+      if (QMCONFIG.debug) console.log('send confirm');
+      ContactListView.sendConfirm($(this));
     });
 
     $('.list').on('click', '.request-button_cancel', function() {
-      ContactListView.sendSubscribeReject($(this));
+      if (QMCONFIG.debug) console.log('send reject');
+      ContactListView.sendReject($(this));
     });
 
     /* temporary routes
