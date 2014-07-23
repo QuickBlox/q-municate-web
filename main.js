@@ -24,8 +24,8 @@ function QM() {
   this.models = {
     User: new User(this),
     Session: new Session(this),
-    Dialog: new Dialog(this),
     Contact: new Contact(this),
+    Dialog: new Dialog(this),
     FriendList: new FriendList(this)
   };
 
@@ -1001,7 +1001,7 @@ QBApiCalls.prototype = {
           if (QMCONFIG.debug) console.log('QB SDK: Messages is found', res);
 
           Session.update({ date: new Date });
-          callback(res);
+          callback(res.items);
         }
       });
     });
@@ -1009,15 +1009,15 @@ QBApiCalls.prototype = {
 
   updateMessage: function(params, callback) {
     this.checkSession(function(res) {
-      QB.chat.message.update(params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
+      QB.chat.message.update(params, function(response) {
+        if (response.code === 404) {
+          if (QMCONFIG.debug) console.log(response.message);
 
         } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Message is updated', res);
+          if (QMCONFIG.debug) console.log('QB SDK: Message is updated');
 
           Session.update({ date: new Date });
-          callback(res);
+          callback();
         }
       });
     });
@@ -1101,6 +1101,10 @@ Routes.prototype = {
     $('input:file').on('change', function() {
       changeInputFile($(this));
     });
+
+    /* QBChat handlers
+    ----------------------------------------------------- */
+    QB.chat.onSubscribeListener = FriendListView.onSubscribe;
 
     /* welcome page
     ----------------------------------------------------- */
@@ -1227,19 +1231,6 @@ Routes.prototype = {
       FriendListView.sendSubscribeReject($(this));
     });
 
-    /* QBChat handlers
-    ----------------------------------------------------- */
-    QB.chat.onSubscribeListener = FriendListView.onSubscribe;
-    // QB.chat.onMessageListener
-    // QB.chat.onContactListListener    
-    // QB.chat.onConfirmSubscribeListener
-    // QB.chat.onRejectSubscribeListener
-    // QB.chat.onDisconnectingListener
-
-    // QB.chat.roster.confirm(jid);
-    // QB.chat.roster.remove(jid);
-    
-
     /* temporary routes
     ----------------------------------------------------- */
     $('.list').on('click', '.contact', function(event) {
@@ -1329,54 +1320,54 @@ DialogView.prototype = {
   },
 
   downloadDialogs: function(contacts) {
-    var QBApiCalls = this.app.service;
-    console.log(0);
-    var FriendList = this.app.models.FriendList.contacts,
-        Contact = this.app.models.Contact,
-        Dialog = this.app.models.Dialog,
-        contact_ids, ids = [],
-        self = this,
-        dialog,
-        params;
+    // var QBApiCalls = this.app.service;
+    // console.log(0);
+    // var FriendList = this.app.models.FriendList.contacts,
+    //     Contact = this.app.models.Contact,
+    //     Dialog = this.app.models.Dialog,
+    //     contact_ids, ids = [],
+    //     self = this,
+    //     dialog,
+    //     params;
 
-    scrollbar();
-    console.log(1);
-    contact_ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
-    console.log(2);
-    self.createDataSpinner();
-    QBApiCalls.listDialogs({sort_desc: 'last_message_date_sent'}, function(dialogs) {
-      self.removeDataSpinner();
+    // scrollbar();
+    // console.log(1);
+    // contact_ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
+    // console.log(2);
+    // self.createDataSpinner();
+    // QBApiCalls.listDialogs({sort_desc: 'last_message_date_sent'}, function(dialogs) {
+    //   self.removeDataSpinner();
 
-      if (dialogs.length > 0) {
-        for (var i = 0, len = dialogs.length; i < len; i++) {
-          dialog = Dialog.create(dialogs[i]);
+    //   if (dialogs.length > 0) {
+    //     for (var i = 0, len = dialogs.length; i < len; i++) {
+    //       dialog = Dialog.create(dialogs[i]);
 
-          ids.concat(_.difference(dialog.occupants_ids, contact_ids));
-          localStorage.setItem('QM.contacts', contact_ids.concat(ids).join());
+    //       ids.concat(_.difference(dialog.occupants_ids, contact_ids));
+    //       localStorage.setItem('QM.contacts', contact_ids.concat(ids).join());
 
-          if (ids.length > 0) {
-            params = { filter: { field: 'id', param: 'in', value: ids } };
-            QBApiCalls.listUsers(params, function(users) {
-              users.items.forEach(function(user) {
-                FriendList[user.id] = Contact.create(user);
-                FriendList[user.id].subscription = contacts[user.id] || 'none';
-                localStorage.setItem('QM.contact-' + user.id, JSON.stringify(FriendList[user.id]));
-              });
-            });
-            self.addDialogItem(dialog);
-          } else {
-            self.addDialogItem(dialog);
-          }
-        }
-      } else {
-        $('#emptyList').removeClass('is-hidden');
-      }
-    });
+    //       if (ids.length > 0) {
+    //         params = { filter: { field: 'id', param: 'in', value: ids } };
+    //         QBApiCalls.listUsers(params, function(users) {
+    //           users.items.forEach(function(user) {
+    //             FriendList[user.id] = Contact.create(user);
+    //             FriendList[user.id].subscription = contacts[user.id] || 'none';
+    //             localStorage.setItem('QM.contact-' + user.id, JSON.stringify(FriendList[user.id]));
+    //           });
+    //         });
+    //         self.addDialogItem(dialog);
+    //       } else {
+    //         self.addDialogItem(dialog);
+    //       }
+    //     }
+    //   } else {
+    //     $('#emptyList').removeClass('is-hidden');
+    //   }
+    // });
   },
 
   hideDialogs: function() {
-    $('.l-list').addClass('is-hidden');
-    $('.l-list ul').html('');
+    // $('.l-list').addClass('is-hidden');
+    // $('.l-list ul').html('');
   },
 
   addDialogItem: function(dialog) {
