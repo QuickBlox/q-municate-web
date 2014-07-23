@@ -34,8 +34,9 @@ ContactList.prototype = {
       params = { filter: { field: 'id', param: 'in', value: new_ids } };
 
       QBApiCalls.listUsers(params, function(users) {
-        users.items.forEach(function(user) {
-          var contact = Contact.create(user.user);
+        users.items.forEach(function(qbUser) {
+          var user = qbUser.user;
+          var contact = Contact.create(user);
           self.contacts[user.id] = contact;
           localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
         });
