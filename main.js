@@ -192,10 +192,13 @@ ContactList.prototype = {
   add: function(occupants_ids, callback) {
     var QBApiCalls = this.app.service,
         Contact = this.app.models.Contact,
-        contact_ids = Object.keys(this.contacts),
+        contact_ids = Object.keys(this.contacts).map(Number),
         self = this,
         params;
 
+
+    console.log(11111111);
+    console.log(contact_ids);
     // TODO: need to make optimization here
     // (for new device the user will be waiting very long time if he has a lot of private dialogs)
     new_ids = [].concat(_.difference(occupants_ids, contact_ids));
