@@ -14,6 +14,28 @@ function FriendList(app) {
 
 FriendList.prototype = {
 
+  create: function(callback) {
+    var Contact = this.app.models.Contact;
+
+    contact_ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
+    ids.concat(_.difference(dialog.occupants_ids, contact_ids));
+    localStorage.setItem('QM.contacts', contact_ids.concat(ids).join());
+
+    if (ids.length > 0) {
+      params = { filter: { field: 'id', param: 'in', value: ids } };
+      QBApiCalls.listUsers(params, function(users) {
+        users.items.forEach(function(user) {
+          FriendList[user.id] = Contact.create(user);
+          FriendList[user.id].subscription = contacts[user.id] || 'none';
+          localStorage.setItem('QM.contact-' + user.id, JSON.stringify(FriendList[user.id]));
+        });
+      });
+      callback();
+    } else {
+      callback();
+    }
+  },
+
   globalSearch: function(callback) {
     var QBApiCalls = this.app.service,
         val = sessionStorage['QM.search.value'],

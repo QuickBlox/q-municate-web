@@ -7,11 +7,12 @@
 
 module.exports = DialogView;
 
-var startOfCurrentDay = new Date;
-startOfCurrentDay.setHours(0,0,0,0);
+var Dialog, FriendList;
 
 function DialogView(app) {
   this.app = app;
+  Dialog = this.app.models.Dialog;
+  FriendList = this.app.models.FriendList;
 }
 
 DialogView.prototype = {
@@ -27,53 +28,35 @@ DialogView.prototype = {
   },
 
   removeDataSpinner: function() {
-    $('.l-list-wrap .spinner_bounce').remove();
+    $('.l-sidebar .spinner_bounce').remove();
   },
 
-  downloadDialogs: function(contacts) {
-    // var QBApiCalls = this.app.service;
-    // console.log(0);
-    // var FriendList = this.app.models.FriendList.contacts,
-    //     Contact = this.app.models.Contact,
-    //     Dialog = this.app.models.Dialog,
-    //     contact_ids, ids = [],
-    //     self = this,
-    //     dialog,
-    //     params;
+  downloadDialogs: function(rosterItems) {
+    var self = this,
+        dialog;
 
-    // scrollbar();
-    // console.log(1);
-    // contact_ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
-    // console.log(2);
-    // self.createDataSpinner();
-    // QBApiCalls.listDialogs({sort_desc: 'last_message_date_sent'}, function(dialogs) {
-    //   self.removeDataSpinner();
+    scrollbar();
+    self.createDataSpinner();
 
-    //   if (dialogs.length > 0) {
-    //     for (var i = 0, len = dialogs.length; i < len; i++) {
-    //       dialog = Dialog.create(dialogs[i]);
+    Dialog.download(function(dialogs) {
+      self.removeDataSpinner();
 
-    //       ids.concat(_.difference(dialog.occupants_ids, contact_ids));
-    //       localStorage.setItem('QM.contacts', contact_ids.concat(ids).join());
+      if (dialogs.length > 0) {
 
-    //       if (ids.length > 0) {
-    //         params = { filter: { field: 'id', param: 'in', value: ids } };
-    //         QBApiCalls.listUsers(params, function(users) {
-    //           users.items.forEach(function(user) {
-    //             FriendList[user.id] = Contact.create(user);
-    //             FriendList[user.id].subscription = contacts[user.id] || 'none';
-    //             localStorage.setItem('QM.contact-' + user.id, JSON.stringify(FriendList[user.id]));
-    //           });
-    //         });
-    //         self.addDialogItem(dialog);
-    //       } else {
-    //         self.addDialogItem(dialog);
-    //       }
-    //     }
-    //   } else {
-    //     $('#emptyList').removeClass('is-hidden');
-    //   }
-    // });
+        for (var i = 0, len = dialogs.length; i < len; i++) {
+          dialog = Dialog.create(dialogs[i]);
+
+          // updating the Contact List whereto are included all users with which maybe you will be to chat
+          FriendList.create(dialog.occupants_ids, rosterItems, function() {
+            self.addDialogItem(dialog);
+            if (QMCONFIG.debug) console.log('Contact list is created', FriendList);
+          });
+        }
+
+      } else {
+        $('#emptyList').removeClass('is-hidden');
+      }
+    });
   },
 
   hideDialogs: function() {
@@ -86,7 +69,8 @@ DialogView.prototype = {
         icon = dialog.type === 3 ? FriendList[dialog.contact_id].avatar_url : QMCONFIG.defAvatar.group_url,
         name = dialog.type === 3 ? FriendList[dialog.contact_id].full_name : dialog.name,
         status = dialog.type === 3 ? FriendList[dialog.contact_id].subscription : 'none',
-        html;
+        html,
+        startOfCurrentDay;
 
     html = '<li class="list-item" data-dialog="'+dialog.id+'" data-contact="'+dialog.contact_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
@@ -100,6 +84,9 @@ DialogView.prototype = {
       html += '<span class="status"></span>';
     html += '</a></li>';
 
+    startOfCurrentDay = new Date;
+    startOfCurrentDay.setHours(0,0,0,0);
+
     if (new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay)
       $('#recentList').removeClass('is-hidden').find('ul').append(html);
     else
@@ -111,7 +98,7 @@ DialogView.prototype = {
 /* Private
 ---------------------------------------------------------------------- */
 function scrollbar() {
-  $('aside .scrollbar').mCustomScrollbar({
+  $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
     scrollInertia: 150
   });

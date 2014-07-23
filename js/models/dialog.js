@@ -7,17 +7,23 @@
 
 module.exports = Dialog;
 
-var User, ids;
-
 function Dialog(app) {
   this.app = app;
 }
 
 Dialog.prototype = {
 
+  download: function(callback) {
+    var QBApiCalls = this.app.service;
+
+    QBApiCalls.listDialogs({sort_desc: 'last_message_date_sent'}, function(dialogs) {
+      callback(dialogs);
+    });
+  },
+
   create: function(params) {
-    User = this.app.models.User;
-    ids = _.without(params.occupants_ids.split(','), User.id);
+    var User = this.app.models.User,
+        ids = _.without(params.occupants_ids.split(','), User.id);
 
     return {
       id: params._id,
@@ -27,7 +33,7 @@ Dialog.prototype = {
       occupants_ids: ids,
       last_message_date_sent: params.last_message_date_sent,
       unread_count: params.unread_messages_count,
-      contact_id: getContact(params)
+      contact_id: params.type === 3 ? ids : null
     };
   },
 
@@ -54,9 +60,3 @@ Dialog.prototype = {
   }
 
 };
-
-/* Private
----------------------------------------------------------------------- */
-function getContact(dialog) {
-  return dialog.type === 3 ? ids : null;
-}
