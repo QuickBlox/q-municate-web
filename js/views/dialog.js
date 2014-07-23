@@ -33,7 +33,8 @@ DialogView.prototype = {
 
   downloadDialogs: function(roster) {
     var self = this,
-        dialog;
+        dialog,
+        private_id;
 
     scrollbar();
     self.createDataSpinner();
@@ -47,10 +48,14 @@ DialogView.prototype = {
           dialog = Dialog.create(dialogs[i]);
           if (QMCONFIG.debug) console.log('Dialog', dialog);
 
+          private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;          
+
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
           ContactList.add(dialog.occupants_ids, function() {
-            self.addDialogItem(dialog);
+            // not show dialog if user has not approved this contact
+            if (private_id && roster[private_id] === undefined) return false;
+              self.addDialogItem(dialog);
           });
         }
 
@@ -74,7 +79,7 @@ DialogView.prototype = {
     private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
     icon = private_id ? contacts[private_id].avatar_url : QMCONFIG.defAvatar.group_url;
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
-    status = roster[private_id] ? roster[private_id] : null;
+    status = roster[private_id] || null;
 
     html = '<li class="list-item" data-dialog="'+dialog.id+'" data-contact="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
