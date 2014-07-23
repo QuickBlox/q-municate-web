@@ -211,7 +211,7 @@ ContactList.prototype = {
           self.contacts[user.id] = contact;
           localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
         });
-        
+
         if (QMCONFIG.debug) console.log('Contact List is updated', self);
         callback();
       });
@@ -247,8 +247,6 @@ ContactList.prototype = {
     
     data.forEach(function(item) {
       contact = Contact.create(item.user);
-      contact.subscription = 'none';
-      sessionStorage.setItem('QM.contact-' + contact.id, JSON.stringify(contact));
       contacts.push(contact);
     });
     return contacts;
@@ -1336,8 +1334,12 @@ var closePopup = function() {
 
 module.exports = ContactListView;
 
+var Dialog, ContactList;
+
 function ContactListView(app) {
   this.app = app;
+  Dialog = this.app.models.Dialog;
+  ContactList = this.app.models.ContactList;
 }
 
 ContactListView.prototype = {
@@ -1353,7 +1355,8 @@ ContactListView.prototype = {
   },
 
   removeDataSpinner: function() {
-    $('.spinner_bounce').remove();
+    $('.popup:visible .spinner_bounce').remove();
+    $('.popup:visible input').prop('disabled', false);
   },
 
   globalPopup: function() {
@@ -1365,19 +1368,19 @@ ContactListView.prototype = {
   },
 
   globalSearch: function(form) {
-    var ContactList = this.app.models.ContactList,
-        self = this,
+    var self = this,
         popup = form.parent(),
         list = popup.find('ul:first'),
         val = form.find('input[type="search"]').val().trim();
 
     if (val.length > 0) {
+      form.find('input').prop('disabled', true).val(val);
       popup.find('.popup-elem').addClass('is-hidden');
       popup.find('.mCSB_container').empty();
 
       scrollbar(list, self);
       self.createDataSpinner(list);
-      $('.spinner_bounce').removeClass('is-hidden').addClass('is-empty');
+      $('.popup:visible .spinner_bounce').removeClass('is-hidden').addClass('is-empty');
 
       sessionStorage.setItem('QM.search.value', val);
       sessionStorage.setItem('QM.search.page', 1);
@@ -1389,8 +1392,7 @@ ContactListView.prototype = {
   },
 
   sendSubscribeRequest: function(objDom) {
-    var Dialog = this.app.models.Dialog,
-        jid = objDom.data('jid');
+    var jid = objDom.data('jid');
 
     objDom.after('<span class="sent-request l-flexbox">Request Sent</span>');
     objDom.remove();
@@ -1446,31 +1448,9 @@ function scrollbar(list, self) {
   });
 }
 
-function createListResults(list, results, self) {
-  var item;
-
-  results.forEach(function(contact) {
-    item = '<li class="list-item">';
-    item += '<a class="contact l-flexbox" href="#">';
-    item += '<div class="l-flexbox_inline">';
-    item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
-    item += '<span class="name">' + contact.full_name + '</span>';
-    item += '</div>';
-    item += '<button class="sent-request" data-jid='+contact.user_jid+'><img class="icon-normal" src="images/icon-request.png" alt="request">';
-    item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
-    item += '</a></li>';
-
-    list.find('.mCSB_container').append(item);
-    list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
-  });
-
-  self.removeDataSpinner();
-}
-
 // ajax downloading of data through scroll
 function ajaxDownloading(list, self) {
-  var ContactList = this.app.models.ContactList,
-      page = parseInt(sessionStorage['QM.search.page']),
+  var page = parseInt(sessionStorage['QM.search.page']),
       allPages = parseInt(sessionStorage['QM.search.allPages']);
 
   if (page <= allPages) {
@@ -1479,6 +1459,30 @@ function ajaxDownloading(list, self) {
       createListResults(list, results, self);
     });
   }
+}
+
+function createListResults(list, results, self) {
+  var roster = JSON.parse(sessionStorage['QM.roster']),
+      item;
+
+  results.forEach(function(contact) {
+    item = '<li class="list-item">';
+    item += '<a class="contact l-flexbox" href="#">';
+    item += '<div class="l-flexbox_inline">';
+    item += '<img class="contact-avatar avatar" src="' + contact.avatar_url + '" alt="user">';
+    item += '<span class="name">' + contact.full_name + '</span>';
+    item += '</div>';
+    if (!roster[contact.id]) {
+      item += '<button class="sent-request" data-jid='+contact.user_jid+'><img class="icon-normal" src="images/icon-request.png" alt="request">';
+      item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
+    }
+    item += '</a></li>';
+
+    list.find('.mCSB_container').append(item);
+    list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
+  });
+
+  self.removeDataSpinner();
 }
 
 function isSectionEmpty(list) {
@@ -1522,7 +1526,8 @@ DialogView.prototype = {
 
   downloadDialogs: function(roster) {
     var self = this,
-        dialog;
+        dialog,
+        private_id;
 
     scrollbar();
     self.createDataSpinner();
@@ -1536,10 +1541,14 @@ DialogView.prototype = {
           dialog = Dialog.create(dialogs[i]);
           if (QMCONFIG.debug) console.log('Dialog', dialog);
 
+          private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;          
+
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
           ContactList.add(dialog.occupants_ids, function() {
-            self.addDialogItem(dialog);
+            // not show dialog if user has not approved this contact
+            if (private_id && roster[private_id] === undefined) return false;
+              self.addDialogItem(dialog);
           });
         }
 
@@ -1563,7 +1572,7 @@ DialogView.prototype = {
     private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
     icon = private_id ? contacts[private_id].avatar_url : QMCONFIG.defAvatar.group_url;
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
-    status = roster[private_id] ? roster[private_id] : null;
+    status = roster[private_id] || null;
 
     html = '<li class="list-item" data-dialog="'+dialog.id+'" data-contact="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';

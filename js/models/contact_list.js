@@ -40,7 +40,7 @@ ContactList.prototype = {
           self.contacts[user.id] = contact;
           localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
         });
-        
+
         if (QMCONFIG.debug) console.log('Contact List is updated', self);
         callback();
       });
@@ -76,8 +76,6 @@ ContactList.prototype = {
     
     data.forEach(function(item) {
       contact = Contact.create(item.user);
-      contact.subscription = 'none';
-      sessionStorage.setItem('QM.contact-' + contact.id, JSON.stringify(contact));
       contacts.push(contact);
     });
     return contacts;
