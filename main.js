@@ -296,7 +296,7 @@ Dialog.prototype = {
   create: function(params) {
     var User = this.app.models.User,
         // exclude current user from dialog occupants that he doesn't hit to yourself in Contact List
-        occupants_ids = _.without(params.occupants_ids.split(','), User.contact.id);
+        occupants_ids = _.without(params.occupants_ids, User.contact.id);
 
     return {
       id: params._id,
