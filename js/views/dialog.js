@@ -32,24 +32,24 @@ DialogView.prototype = {
   },
 
   downloadDialogs: function(roster) {
-    if (QMCONFIG.debug) console.log('Roster has been got', roster);
     var self = this,
         dialog;
 
     scrollbar();
     self.createDataSpinner();
+    ContactList.saveRoster(roster);
 
     Dialog.download(function(dialogs) {
       self.removeDataSpinner();
-
       if (dialogs.length > 0) {
 
         for (var i = 0, len = dialogs.length; i < len; i++) {
           dialog = Dialog.create(dialogs[i]);
+          if (QMCONFIG.debug) console.log('Dialog', dialog);
 
-          // updating of the Contact List whereto are included all people 
+          // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
-          ContactList.add(dialog.occupants_ids, roster, function() {
+          ContactList.add(dialog.occupants_ids, function() {
             self.addDialogItem(dialog);
           });
         }
@@ -61,19 +61,22 @@ DialogView.prototype = {
   },
 
   hideDialogs: function() {
-    // $('.l-list').addClass('is-hidden');
-    // $('.l-list ul').html('');
+    $('.l-list').addClass('is-hidden');
+    $('.l-list ul').html('');
   },
 
   addDialogItem: function(dialog) {
-    var ContactList = this.app.models.ContactList.contacts,
-        icon = dialog.type === 3 ? ContactList[dialog.contact_id].avatar_url : QMCONFIG.defAvatar.group_url,
-        name = dialog.type === 3 ? ContactList[dialog.contact_id].full_name : dialog.name,
-        status = dialog.type === 3 ? ContactList[dialog.contact_id].subscription : 'none',
-        html,
-        startOfCurrentDay;
+    var contacts = ContactList.contacts,
+        roster = JSON.parse(sessionStorage['QM.roster']);
+        private_id, icon, name, status,
+        html, startOfCurrentDay;
 
-    html = '<li class="list-item" data-dialog="'+dialog.id+'" data-contact="'+dialog.contact_id+'">';
+    private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
+    icon = private_id ? contacts[private_id].avatar_url : QMCONFIG.defAvatar.group_url;
+    name = private_id ? contacts[private_id].full_name : dialog.room_name;
+    status = roster[private_id] ? roster[private_id] : null;
+
+    html = '<li class="list-item" data-dialog="'+dialog.id+'" data-contact="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
     html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
@@ -88,6 +91,7 @@ DialogView.prototype = {
     startOfCurrentDay = new Date;
     startOfCurrentDay.setHours(0,0,0,0);
 
+    // checking if this dialog is recent OR no
     if (new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay)
       $('#recentList').removeClass('is-hidden').find('ul').append(html);
     else

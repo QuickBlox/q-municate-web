@@ -185,25 +185,37 @@ function ContactList(app) {
 
 ContactList.prototype = {
 
-  add: function(callback) {
-    var Contact = this.app.models.Contact;
+  saveRoster: function(roster) {
+    if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
+    sessionStorage.setItem('QM.roster', JSON.stringify(roster));
+  },
 
-    contact_ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
-    ids.concat(_.difference(dialog.occupants_ids, contact_ids));
-    localStorage.setItem('QM.contacts', contact_ids.concat(ids).join());
+  add: function(occupants_ids, callback) {
+    var QBApiCalls = this.app.service,
+        Contact = this.app.models.Contact,
+        contact_ids = Object.keys(this.contacts),
+        self = this,
+        params;
 
-    if (ids.length > 0) {
-      params = { filter: { field: 'id', param: 'in', value: ids } };
+    // TODO: need to make optimization here
+    // (for new device the user will be waiting very long time if he has a lot of private dialogs)
+    new_ids = [].concat(_.difference(occupants_ids, contact_ids));
+    localStorage.setItem('QM.contacts', contact_ids.concat(new_ids).join());
+
+    if (new_ids.length > 0) {
+      params = { filter: { field: 'id', param: 'in', value: new_ids } };
+
       QBApiCalls.listUsers(params, function(users) {
         users.items.forEach(function(user) {
-          ContactList[user.id] = Contact.create(user);
-          ContactList[user.id].subscription = contacts[user.id] || 'none';
-          localStorage.setItem('QM.contact-' + user.id, JSON.stringify(ContactList[user.id]));
+          var contact = Contact.create(user);
+          self.contacts[user.id] = contact;
+          localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
         });
+        
+        if (QMCONFIG.debug) console.log('Contact List is updated', self);
+        callback();
       });
-
-      if (QMCONFIG.debug) console.log('Contact List is updated', this);
-      callback();
+      
     } else {
       callback();
     }
@@ -246,9 +258,10 @@ ContactList.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
+// Creation of Contact List from cache
 function getContacts() {
   var contacts = {},
-      ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
+      ids = localStorage['QM.contacts'] ? localStorage['QM.contacts'].split(',') : [];
 
   if (ids.length > 0) {
     for (var i = 0, len = ids.length; i < len; i++) {
@@ -1129,6 +1142,9 @@ Routes.prototype = {
     /* QBChat handlers
     ----------------------------------------------------- */
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
+    // <span class="status status_online"></span>
+    // <span class="status status_request"></span>
+    // <span class="unread">4</span>
 
     /* welcome page
     ----------------------------------------------------- */
@@ -1505,24 +1521,24 @@ DialogView.prototype = {
   },
 
   downloadDialogs: function(roster) {
-    if (QMCONFIG.debug) console.log('Roster has been got', roster);
     var self = this,
         dialog;
 
     scrollbar();
     self.createDataSpinner();
+    ContactList.saveRoster(roster);
 
     Dialog.download(function(dialogs) {
       self.removeDataSpinner();
-
       if (dialogs.length > 0) {
 
         for (var i = 0, len = dialogs.length; i < len; i++) {
           dialog = Dialog.create(dialogs[i]);
+          if (QMCONFIG.debug) console.log('Dialog', dialog);
 
-          // updating of the Contact List whereto are included all people 
+          // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
-          ContactList.add(dialog.occupants_ids, roster, function() {
+          ContactList.add(dialog.occupants_ids, function() {
             self.addDialogItem(dialog);
           });
         }
@@ -1534,19 +1550,22 @@ DialogView.prototype = {
   },
 
   hideDialogs: function() {
-    // $('.l-list').addClass('is-hidden');
-    // $('.l-list ul').html('');
+    $('.l-list').addClass('is-hidden');
+    $('.l-list ul').html('');
   },
 
   addDialogItem: function(dialog) {
-    var ContactList = this.app.models.ContactList.contacts,
-        icon = dialog.type === 3 ? ContactList[dialog.contact_id].avatar_url : QMCONFIG.defAvatar.group_url,
-        name = dialog.type === 3 ? ContactList[dialog.contact_id].full_name : dialog.name,
-        status = dialog.type === 3 ? ContactList[dialog.contact_id].subscription : 'none',
-        html,
-        startOfCurrentDay;
+    var contacts = ContactList.contacts,
+        roster = JSON.parse(sessionStorage['QM.roster']);
+        private_id, icon, name, status,
+        html, startOfCurrentDay;
 
-    html = '<li class="list-item" data-dialog="'+dialog.id+'" data-contact="'+dialog.contact_id+'">';
+    private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
+    icon = private_id ? contacts[private_id].avatar_url : QMCONFIG.defAvatar.group_url;
+    name = private_id ? contacts[private_id].full_name : dialog.room_name;
+    status = roster[private_id] ? roster[private_id] : null;
+
+    html = '<li class="list-item" data-dialog="'+dialog.id+'" data-contact="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
     html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
@@ -1561,6 +1580,7 @@ DialogView.prototype = {
     startOfCurrentDay = new Date;
     startOfCurrentDay.setHours(0,0,0,0);
 
+    // checking if this dialog is recent OR no
     if (new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay)
       $('#recentList').removeClass('is-hidden').find('ul').append(html);
     else

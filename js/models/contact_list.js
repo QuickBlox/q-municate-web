@@ -14,25 +14,37 @@ function ContactList(app) {
 
 ContactList.prototype = {
 
-  add: function(callback) {
-    var Contact = this.app.models.Contact;
+  saveRoster: function(roster) {
+    if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
+    sessionStorage.setItem('QM.roster', JSON.stringify(roster));
+  },
 
-    contact_ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
-    ids.concat(_.difference(dialog.occupants_ids, contact_ids));
-    localStorage.setItem('QM.contacts', contact_ids.concat(ids).join());
+  add: function(occupants_ids, callback) {
+    var QBApiCalls = this.app.service,
+        Contact = this.app.models.Contact,
+        contact_ids = Object.keys(this.contacts),
+        self = this,
+        params;
 
-    if (ids.length > 0) {
-      params = { filter: { field: 'id', param: 'in', value: ids } };
+    // TODO: need to make optimization here
+    // (for new device the user will be waiting very long time if he has a lot of private dialogs)
+    new_ids = [].concat(_.difference(occupants_ids, contact_ids));
+    localStorage.setItem('QM.contacts', contact_ids.concat(new_ids).join());
+
+    if (new_ids.length > 0) {
+      params = { filter: { field: 'id', param: 'in', value: new_ids } };
+
       QBApiCalls.listUsers(params, function(users) {
         users.items.forEach(function(user) {
-          ContactList[user.id] = Contact.create(user);
-          ContactList[user.id].subscription = contacts[user.id] || 'none';
-          localStorage.setItem('QM.contact-' + user.id, JSON.stringify(ContactList[user.id]));
+          var contact = Contact.create(user);
+          self.contacts[user.id] = contact;
+          localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
         });
+        
+        if (QMCONFIG.debug) console.log('Contact List is updated', self);
+        callback();
       });
-
-      if (QMCONFIG.debug) console.log('Contact List is updated', this);
-      callback();
+      
     } else {
       callback();
     }
@@ -75,9 +87,10 @@ ContactList.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
+// Creation of Contact List from cache
 function getContacts() {
   var contacts = {},
-      ids = localStorage['QM.contacts'] && localStorage['QM.contacts'].split(',') || [];
+      ids = localStorage['QM.contacts'] ? localStorage['QM.contacts'].split(',') : [];
 
   if (ids.length > 0) {
     for (var i = 0, len = ids.length; i < len; i++) {
