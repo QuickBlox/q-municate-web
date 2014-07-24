@@ -27,16 +27,7 @@ Routes.prototype = {
 
     $('input:file').on('change', function() {
       changeInputFile($(this));
-    });
-
-    /* QBChat handlers
-    ----------------------------------------------------- */
-    QB.chat.onMessageListener = DialogView.onMessage;
-    QB.chat.onSubscribeListener = ContactListView.onSubscribe;
-    QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
-    QB.chat.onRejectSubscribeListener = ContactListView.onReject;
-    // <span class="status status_online"></span>
-    // <span class="unread">4</span>
+    });    
 
     /* welcome page
     ----------------------------------------------------- */

@@ -100,6 +100,10 @@ window.fbAsyncInit = function() {
   }
 };
 
+window.onbeforeunload = function() {
+  QB.chat.sendPres('unavailable');
+};
+
 },{"./models/contact":2,"./models/contact_list":3,"./models/dialog":4,"./models/session":5,"./models/user":6,"./qbApiCalls":7,"./routes":8,"./views/contact_list":9,"./views/dialog":10,"./views/user":11}],2:[function(require,module,exports){
 /*
  * Q-municate chat application
@@ -1151,16 +1155,7 @@ Routes.prototype = {
 
     $('input:file').on('change', function() {
       changeInputFile($(this));
-    });
-
-    /* QBChat handlers
-    ----------------------------------------------------- */
-    QB.chat.onMessageListener = DialogView.onMessage;
-    QB.chat.onSubscribeListener = ContactListView.onSubscribe;
-    QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
-    QB.chat.onRejectSubscribeListener = ContactListView.onReject;
-    // <span class="status status_online"></span>
-    // <span class="unread">4</span>
+    });    
 
     /* welcome page
     ----------------------------------------------------- */
@@ -1575,6 +1570,20 @@ ContactListView.prototype = {
       ask: null
     };
     ContactList.saveRoster(roster);
+  },
+
+  onPresence: function(id, type) {
+    var dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        roster = JSON.parse(sessionStorage['QM.roster']);
+    
+    // update roster
+    roster[id].status = type ? false : true;
+    ContactList.saveRoster(roster);
+
+    if (type)
+      dialogItem.find('.status').removeClass('status_online');
+    else
+      dialogItem.find('.status').addClass('status_online');
   }
 
 };
@@ -1664,6 +1673,18 @@ function DialogView(app) {
 
 DialogView.prototype = {
 
+  // QBChat handlers
+  chatCallbacksInit: function() {
+    var ContactListView = this.app.views.ContactList;
+
+    QB.chat.onMessageListener = this.onMessage;
+    QB.chat.onContactListListener = ContactListView.onPresence;
+    QB.chat.onSubscribeListener = ContactListView.onSubscribe;
+    QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
+    QB.chat.onRejectSubscribeListener = ContactListView.onReject;
+    // <span class="unread">4</span>
+  },
+
   createDataSpinner: function() {
     var spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
@@ -1680,10 +1701,13 @@ DialogView.prototype = {
 
   downloadDialogs: function(roster) {
     if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
+    this.chatCallbacksInit();
+
     var self = this,
         hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-        dialog,
-        private_id;
+        notConfirmed,
+        private_id,
+        dialog;
 
     scrollbar();
     self.createDataSpinner();
@@ -1711,7 +1735,7 @@ DialogView.prototype = {
           ContactList.add(dialog.occupants_ids, function() {
 
             // not show dialog if user has not confirmed this contact
-            var notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
+            notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
             if (private_id && (!roster[private_id] || notConfirmed[private_id])) return false;
             
             self.addDialogItem(dialog, true);
@@ -1745,7 +1769,7 @@ DialogView.prototype = {
     private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
     icon = private_id ? contacts[private_id].avatar_url : QMCONFIG.defAvatar.group_url;
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
-    status = roster[private_id] ? roster[private_id].subscription : null;
+    status = roster[private_id] ? roster[private_id] : null;
 
     html = '<li class="list-item dialog-item" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
@@ -1753,10 +1777,14 @@ DialogView.prototype = {
     html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
     html += '<span class="name">' + name + '</span>';
     html += '</div>';
-    if (status === 'none')
+    
+    if (status.subscription === 'none')
       html += '<span class="status status_request"></span>';
+    else if (status.status)
+      html += '<span class="status status_online"></span>';
     else
       html += '<span class="status"></span>';
+
     html += '</a></li>';
 
     startOfCurrentDay = new Date;

@@ -223,6 +223,20 @@ ContactListView.prototype = {
       ask: null
     };
     ContactList.saveRoster(roster);
+  },
+
+  onPresence: function(id, type) {
+    var dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        roster = JSON.parse(sessionStorage['QM.roster']);
+    
+    // update roster
+    roster[id].status = type ? false : true;
+    ContactList.saveRoster(roster);
+
+    if (type)
+      dialogItem.find('.status').removeClass('status_online');
+    else
+      dialogItem.find('.status').addClass('status_online');
   }
 
 };
