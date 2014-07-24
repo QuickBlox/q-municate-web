@@ -7,13 +7,14 @@
 
 module.exports = Routes;
 
-var UserView, ContactListView;
+var UserView, ContactListView, DialogView;
 
 function Routes(app) {
   this.app = app;
   
   UserView = this.app.views.User,
-  ContactListView = this.app.views.ContactList;
+  ContactListView = this.app.views.ContactList,
+  DialogView = this.app.views.Dialog;
 }
 
 Routes.prototype = {
@@ -26,14 +27,7 @@ Routes.prototype = {
 
     $('input:file').on('change', function() {
       changeInputFile($(this));
-    });
-
-    /* QBChat handlers
-    ----------------------------------------------------- */
-    QB.chat.onSubscribeListener = ContactListView.onSubscribe;
-    // <span class="status status_online"></span>
-    // <span class="status status_request"></span>
-    // <span class="unread">4</span>
+    });    
 
     /* welcome page
     ----------------------------------------------------- */
@@ -119,8 +113,19 @@ Routes.prototype = {
       openPopup($('#popupLogout'));
     });
 
+    $('.list').on('click', '#deleteContact', function(event) {
+      event.preventDefault();
+      var id = $(this).parents('.dialog-item').data('id');
+      openPopup($('#popupDelete'), id);
+    });
+
     $('#logoutConfirm').on('click', function() {
       UserView.logout();
+    });
+
+    $('#deleteConfirm').on('click', function() {
+      if (QMCONFIG.debug) console.log('delete contact');
+      ContactListView.sendDelete($(this));
     });
 
     $('.popup-control-button').on('click', function(event) {
@@ -152,12 +157,19 @@ Routes.prototype = {
 
     /* subscriptions
     ----------------------------------------------------- */
-    $('.list_contacts').on('click', 'button.sent-request', function() {
-      ContactListView.sendSubscribeRequest($(this));
+    $('.list_contacts').on('click', 'button.send-request', function() {
+      if (QMCONFIG.debug) console.log('send subscribe');
+      ContactListView.sendSubscribe($(this));
+    });
+
+    $('.list').on('click', '.request-button_ok', function() {
+      if (QMCONFIG.debug) console.log('send confirm');
+      ContactListView.sendConfirm($(this));
     });
 
     $('.list').on('click', '.request-button_cancel', function() {
-      ContactListView.sendSubscribeReject($(this));
+      if (QMCONFIG.debug) console.log('send reject');
+      ContactListView.sendReject($(this));
     });
 
     /* temporary routes
@@ -207,7 +219,11 @@ function removePopover() {
   $('.popover').remove();
 }
 
-var openPopup = function(objDom) {
+var openPopup = function(objDom, id) {
+  // if it was the delete action
+  if (id) {
+    objDom.find('#deleteConfirm').data('id', id);
+  }
   objDom.add('.popups').addClass('is-overlay');
 };
 
