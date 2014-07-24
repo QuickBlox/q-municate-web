@@ -193,6 +193,10 @@ ContactList.prototype = {
     localStorage.setItem('QM.notConfirmed', JSON.stringify(notConfirmed));
   },
 
+  saveHiddenDialogs: function(hiddenDialogs) {
+    sessionStorage.setItem('QM.hiddenDialogs', JSON.stringify(hiddenDialogs));
+  },
+
   add: function(occupants_ids, callback) {
     var QBApiCalls = this.app.service,
         Contact = this.app.models.Contact,
@@ -330,7 +334,7 @@ Dialog.prototype = {
       // send notification about subscribe
       QB.chat.send(jid, {type: 'chat', extension: {
         save_to_history: 1,
-        // dialog_id: dialog.id,
+        dialog_id: dialog.id,
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: 3,
@@ -1127,13 +1131,14 @@ var failSearch = function() {
 
 module.exports = Routes;
 
-var UserView, ContactListView;
+var UserView, ContactListView, DialogView;
 
 function Routes(app) {
   this.app = app;
   
   UserView = this.app.views.User,
-  ContactListView = this.app.views.ContactList;
+  ContactListView = this.app.views.ContactList,
+  DialogView = this.app.views.Dialog;
 }
 
 Routes.prototype = {
@@ -1150,10 +1155,11 @@ Routes.prototype = {
 
     /* QBChat handlers
     ----------------------------------------------------- */
+    QB.chat.onMessageListener = DialogView.onMessage;
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
+    QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
     // <span class="status status_online"></span>
-    // <span class="status status_request"></span>
     // <span class="unread">4</span>
 
     /* welcome page
@@ -1434,6 +1440,7 @@ ContactListView.prototype = {
       // send notification about subscribe
       QB.chat.send(jid, {type: 'chat', extension: {
         save_to_history: 1,
+        dialog_id: dialogItem.getAttribute('data-dialog'),
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: 3,
@@ -1445,20 +1452,51 @@ ContactListView.prototype = {
   },
 
   sendConfirm: function(objDom) {
-    // var id = objDom.parents('li').data('id'),
-    //     list = objDom.parents('ul');
+    var jid = objDom.parents('li').data('jid'),
+        id = QB.chat.helpers.getIdFromNode(jid),
+        list = objDom.parents('ul'),
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+        hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']);
 
-    // objDom.parents('li').remove();
-    // isSectionEmpty(list);
+    objDom.parents('li').remove();
+    isSectionEmpty(list);
 
-    // QB.chat.roster.reject(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId));
+    // update roster
+    roster[id] = {
+      subscription: 'both',
+      ask: 'subscribe'
+    };
+    ContactList.saveRoster(roster);
+
+    // update notConfirmed people list
+    delete notConfirmed[id];
+    ContactList.saveNotConfirmed(notConfirmed);
+
+    QB.chat.roster.confirm(jid);
+    // send notification about confirm
+    QB.chat.send(jid, {type: 'chat', extension: {
+      save_to_history: 1,
+      dialog_id: hiddenDialogs[id],
+      date_sent: Math.floor(Date.now() / 1000),
+
+      notification_type: 5,
+      full_name: User.contact.full_name,
+    }});
+
+    Dialog.addDialogItem({
+      id: hiddenDialogs[id],
+      type: 3,
+      occupants_ids: [id],
+    });
   },
 
   sendReject: function(objDom) {
     var jid = objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
-        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+        hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']);
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
@@ -1471,6 +1509,7 @@ ContactListView.prototype = {
     // send notification about reject
     QB.chat.send(jid, {type: 'chat', extension: {
       save_to_history: 1,
+      dialog_id: hiddenDialogs[id],
       date_sent: Math.floor(Date.now() / 1000),
 
       notification_type: 4,
@@ -1513,6 +1552,20 @@ ContactListView.prototype = {
     });
   },
 
+  onConfirm: function(id) {
+    var roster = JSON.parse(sessionStorage['QM.roster']),
+        dialogItem = $('.dialog-item[data-id="'+id+'"]');
+
+    // update roster
+    roster[id] = {
+      subscription: 'both',
+      ask: null
+    };
+    ContactList.saveRoster(roster);
+
+    dialogItem.find('.status').removeClass('status_request');
+  },
+
   onReject: function(id) {
     var roster = JSON.parse(sessionStorage['QM.roster']);
 
@@ -1522,7 +1575,7 @@ ContactListView.prototype = {
       ask: null
     };
     ContactList.saveRoster(roster);
-  },
+  }
 
 };
 
@@ -1628,6 +1681,7 @@ DialogView.prototype = {
   downloadDialogs: function(roster) {
     if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
     var self = this,
+        hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         dialog,
         private_id;
 
@@ -1643,7 +1697,14 @@ DialogView.prototype = {
           dialog = Dialog.create(dialogs[i]);
           if (QMCONFIG.debug) console.log('Dialog', dialog);
 
-          private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;          
+          private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
+          if (!localStorage['QM.dialog-' + dialog.id]) {
+            localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+          }
+
+          // update hidden dialogs
+          hiddenDialogs[private_id] = dialog.id;
+          ContactList.saveHiddenDialogs(hiddenDialogs);
 
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
@@ -1652,8 +1713,8 @@ DialogView.prototype = {
             // not show dialog if user has not confirmed this contact
             var notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
             if (private_id && (!roster[private_id] || notConfirmed[private_id])) return false;
-              self.addDialogItem(dialog, true);
-
+            
+            self.addDialogItem(dialog, true);
           });
         }
 
@@ -1712,6 +1773,19 @@ DialogView.prototype = {
     }
 
     $('#emptyList').addClass('is-hidden');
+  },
+
+  onMessage: function(id, message) {
+    var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+        notification_type = message.extension && message.extension.notification_type,
+        dialog_id = message.extension && message.extension.dialog_id;
+
+    // subscribe message
+    if (notification_type === '3') {
+      // update hidden dialogs
+      hiddenDialogs[id] = dialog_id;
+      ContactList.saveHiddenDialogs(hiddenDialogs);
+    }
   }
 
 };

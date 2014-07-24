@@ -34,6 +34,7 @@ DialogView.prototype = {
   downloadDialogs: function(roster) {
     if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
     var self = this,
+        hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         dialog,
         private_id;
 
@@ -49,7 +50,14 @@ DialogView.prototype = {
           dialog = Dialog.create(dialogs[i]);
           if (QMCONFIG.debug) console.log('Dialog', dialog);
 
-          private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;          
+          private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
+          if (!localStorage['QM.dialog-' + dialog.id]) {
+            localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+          }
+
+          // update hidden dialogs
+          hiddenDialogs[private_id] = dialog.id;
+          ContactList.saveHiddenDialogs(hiddenDialogs);
 
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
@@ -58,8 +66,8 @@ DialogView.prototype = {
             // not show dialog if user has not confirmed this contact
             var notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
             if (private_id && (!roster[private_id] || notConfirmed[private_id])) return false;
-              self.addDialogItem(dialog, true);
-
+            
+            self.addDialogItem(dialog, true);
           });
         }
 
@@ -118,6 +126,19 @@ DialogView.prototype = {
     }
 
     $('#emptyList').addClass('is-hidden');
+  },
+
+  onMessage: function(id, message) {
+    var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+        notification_type = message.extension && message.extension.notification_type,
+        dialog_id = message.extension && message.extension.dialog_id;
+
+    // subscribe message
+    if (notification_type === '3') {
+      // update hidden dialogs
+      hiddenDialogs[id] = dialog_id;
+      ContactList.saveHiddenDialogs(hiddenDialogs);
+    }
   }
 
 };

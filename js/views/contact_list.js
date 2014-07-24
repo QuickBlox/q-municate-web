@@ -88,6 +88,7 @@ ContactListView.prototype = {
       // send notification about subscribe
       QB.chat.send(jid, {type: 'chat', extension: {
         save_to_history: 1,
+        dialog_id: dialogItem.getAttribute('data-dialog'),
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: 3,
@@ -99,20 +100,51 @@ ContactListView.prototype = {
   },
 
   sendConfirm: function(objDom) {
-    // var id = objDom.parents('li').data('id'),
-    //     list = objDom.parents('ul');
+    var jid = objDom.parents('li').data('jid'),
+        id = QB.chat.helpers.getIdFromNode(jid),
+        list = objDom.parents('ul'),
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+        hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']);
 
-    // objDom.parents('li').remove();
-    // isSectionEmpty(list);
+    objDom.parents('li').remove();
+    isSectionEmpty(list);
 
-    // QB.chat.roster.reject(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId));
+    // update roster
+    roster[id] = {
+      subscription: 'both',
+      ask: 'subscribe'
+    };
+    ContactList.saveRoster(roster);
+
+    // update notConfirmed people list
+    delete notConfirmed[id];
+    ContactList.saveNotConfirmed(notConfirmed);
+
+    QB.chat.roster.confirm(jid);
+    // send notification about confirm
+    QB.chat.send(jid, {type: 'chat', extension: {
+      save_to_history: 1,
+      dialog_id: hiddenDialogs[id],
+      date_sent: Math.floor(Date.now() / 1000),
+
+      notification_type: 5,
+      full_name: User.contact.full_name,
+    }});
+
+    Dialog.addDialogItem({
+      id: hiddenDialogs[id],
+      type: 3,
+      occupants_ids: [id],
+    });
   },
 
   sendReject: function(objDom) {
     var jid = objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
-        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+        hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']);
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
@@ -125,6 +157,7 @@ ContactListView.prototype = {
     // send notification about reject
     QB.chat.send(jid, {type: 'chat', extension: {
       save_to_history: 1,
+      dialog_id: hiddenDialogs[id],
       date_sent: Math.floor(Date.now() / 1000),
 
       notification_type: 4,
@@ -167,6 +200,20 @@ ContactListView.prototype = {
     });
   },
 
+  onConfirm: function(id) {
+    var roster = JSON.parse(sessionStorage['QM.roster']),
+        dialogItem = $('.dialog-item[data-id="'+id+'"]');
+
+    // update roster
+    roster[id] = {
+      subscription: 'both',
+      ask: null
+    };
+    ContactList.saveRoster(roster);
+
+    dialogItem.find('.status').removeClass('status_request');
+  },
+
   onReject: function(id) {
     var roster = JSON.parse(sessionStorage['QM.roster']);
 
@@ -176,7 +223,7 @@ ContactListView.prototype = {
       ask: null
     };
     ContactList.saveRoster(roster);
-  },
+  }
 
 };
 

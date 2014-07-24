@@ -53,7 +53,7 @@ Dialog.prototype = {
       // send notification about subscribe
       QB.chat.send(jid, {type: 'chat', extension: {
         save_to_history: 1,
-        // dialog_id: dialog.id,
+        dialog_id: dialog.id,
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: 3,

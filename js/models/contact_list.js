@@ -22,6 +22,10 @@ ContactList.prototype = {
     localStorage.setItem('QM.notConfirmed', JSON.stringify(notConfirmed));
   },
 
+  saveHiddenDialogs: function(hiddenDialogs) {
+    sessionStorage.setItem('QM.hiddenDialogs', JSON.stringify(hiddenDialogs));
+  },
+
   add: function(occupants_ids, callback) {
     var QBApiCalls = this.app.service,
         Contact = this.app.models.Contact,

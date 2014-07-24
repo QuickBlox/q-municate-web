@@ -7,13 +7,14 @@
 
 module.exports = Routes;
 
-var UserView, ContactListView;
+var UserView, ContactListView, DialogView;
 
 function Routes(app) {
   this.app = app;
   
   UserView = this.app.views.User,
-  ContactListView = this.app.views.ContactList;
+  ContactListView = this.app.views.ContactList,
+  DialogView = this.app.views.Dialog;
 }
 
 Routes.prototype = {
@@ -30,10 +31,11 @@ Routes.prototype = {
 
     /* QBChat handlers
     ----------------------------------------------------- */
+    QB.chat.onMessageListener = DialogView.onMessage;
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
+    QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
     // <span class="status status_online"></span>
-    // <span class="status status_request"></span>
     // <span class="unread">4</span>
 
     /* welcome page
