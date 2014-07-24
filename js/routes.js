@@ -113,8 +113,19 @@ Routes.prototype = {
       openPopup($('#popupLogout'));
     });
 
+    $('.list').on('click', '#deleteContact', function(event) {
+      event.preventDefault();
+      var id = $(this).parents('.dialog-item').data('id');
+      openPopup($('#popupDelete'), id);
+    });
+
     $('#logoutConfirm').on('click', function() {
       UserView.logout();
+    });
+
+    $('#deleteConfirm').on('click', function() {
+      if (QMCONFIG.debug) console.log('delete contact');
+      ContactListView.sendDelete($(this));
     });
 
     $('.popup-control-button').on('click', function(event) {
@@ -208,7 +219,11 @@ function removePopover() {
   $('.popover').remove();
 }
 
-var openPopup = function(objDom) {
+var openPopup = function(objDom, id) {
+  // if it was the delete action
+  if (id) {
+    objDom.find('#deleteConfirm').data('id', id);
+  }
   objDom.add('.popups').addClass('is-overlay');
 };
 

@@ -122,7 +122,7 @@ DialogView.prototype = {
     html += '<span class="name">' + name + '</span>';
     html += '</div>';
     
-    if (status.subscription === 'none')
+    if (!status || status.subscription === 'none')
       html += '<span class="status status_request"></span>';
     else if (status.status)
       html += '<span class="status status_online"></span>';

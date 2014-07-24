@@ -1241,8 +1241,19 @@ Routes.prototype = {
       openPopup($('#popupLogout'));
     });
 
+    $('.list').on('click', '#deleteContact', function(event) {
+      event.preventDefault();
+      var id = $(this).parents('.dialog-item').data('id');
+      openPopup($('#popupDelete'), id);
+    });
+
     $('#logoutConfirm').on('click', function() {
       UserView.logout();
+    });
+
+    $('#deleteConfirm').on('click', function() {
+      if (QMCONFIG.debug) console.log('delete contact');
+      ContactListView.sendDelete($(this));
     });
 
     $('.popup-control-button').on('click', function(event) {
@@ -1336,7 +1347,11 @@ function removePopover() {
   $('.popover').remove();
 }
 
-var openPopup = function(objDom) {
+var openPopup = function(objDom, id) {
+  // if it was the delete action
+  if (id) {
+    objDom.find('#deleteConfirm').data('id', id);
+  }
   objDom.add('.popups').addClass('is-overlay');
 };
 
@@ -1512,6 +1527,39 @@ ContactListView.prototype = {
     }});
   },
 
+  sendDelete: function(objDom) {
+    var id = objDom.data('id'),
+        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+        li = $('.dialog-item[data-id="'+id+'"]'),
+        list = li.parents('ul'),
+        dialog_id = li.data('dialog'),
+        roster = JSON.parse(sessionStorage['QM.roster']);
+
+    li.remove();
+    isSectionEmpty(list);
+
+    // update roster
+    roster[id] = {
+      subscription: 'none',
+      ask: null
+    };
+    ContactList.saveRoster(roster);
+
+    // delete dialog messages
+    localStorage.removeItem('QM.dialog-' + dialog_id);
+
+    QB.chat.roster.remove(jid);
+    // send notification about reject
+    QB.chat.send(jid, {type: 'chat', extension: {
+      save_to_history: 1,
+      dialog_id: dialog_id,
+      date_sent: Math.floor(Date.now() / 1000),
+
+      notification_type: 4,
+      full_name: User.contact.full_name,
+    }});
+  },
+
   // callbacks
 
   onSubscribe: function(id) {
@@ -1562,7 +1610,8 @@ ContactListView.prototype = {
   },
 
   onReject: function(id) {
-    var roster = JSON.parse(sessionStorage['QM.roster']);
+    var dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        roster = JSON.parse(sessionStorage['QM.roster']);
 
     // update roster
     roster[id] = {
@@ -1570,6 +1619,8 @@ ContactListView.prototype = {
       ask: null
     };
     ContactList.saveRoster(roster);
+
+    dialogItem.find('.status').removeClass('status_online').addClass('status_request');
   },
 
   onPresence: function(id, type) {
@@ -1648,8 +1699,13 @@ function createListResults(list, results, self) {
 function isSectionEmpty(list) {
   if (list.contents().length === 0) {
     list.parent().addClass('is-hidden');
-    if ($('#recentList').is('.is-hidden') && $('#historyList').is('.is-hidden'))
+
+    if ($('#requestsList').is('.is-hidden') &&
+        $('#recentList').is('.is-hidden') &&
+        $('#historyList').is('.is-hidden')) {
+      
       $('#emptyList').removeClass('is-hidden');
+    }
   }
 }
 
@@ -1778,7 +1834,7 @@ DialogView.prototype = {
     html += '<span class="name">' + name + '</span>';
     html += '</div>';
     
-    if (status.subscription === 'none')
+    if (!status || status.subscription === 'none')
       html += '<span class="status status_request"></span>';
     else if (status.status)
       html += '<span class="status status_online"></span>';
@@ -1961,7 +2017,7 @@ UserView.prototype = {
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
     html += '<li class="list-item"><a class="list-actions-action" href="#">Add people</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
-    html += '<li class="list-item"><a class="list-actions-action" href="#">Delete contact</a></li>';
+    html += '<li class="list-item"><a id="deleteContact" class="list-actions-action" href="#">Delete contact</a></li>';
     html += '</ul>';
 
     objDom.after(html).parent().addClass('is-contextmenu');

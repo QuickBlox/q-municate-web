@@ -165,6 +165,39 @@ ContactListView.prototype = {
     }});
   },
 
+  sendDelete: function(objDom) {
+    var id = objDom.data('id'),
+        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+        li = $('.dialog-item[data-id="'+id+'"]'),
+        list = li.parents('ul'),
+        dialog_id = li.data('dialog'),
+        roster = JSON.parse(sessionStorage['QM.roster']);
+
+    li.remove();
+    isSectionEmpty(list);
+
+    // update roster
+    roster[id] = {
+      subscription: 'none',
+      ask: null
+    };
+    ContactList.saveRoster(roster);
+
+    // delete dialog messages
+    localStorage.removeItem('QM.dialog-' + dialog_id);
+
+    QB.chat.roster.remove(jid);
+    // send notification about reject
+    QB.chat.send(jid, {type: 'chat', extension: {
+      save_to_history: 1,
+      dialog_id: dialog_id,
+      date_sent: Math.floor(Date.now() / 1000),
+
+      notification_type: 4,
+      full_name: User.contact.full_name,
+    }});
+  },
+
   // callbacks
 
   onSubscribe: function(id) {
@@ -215,7 +248,8 @@ ContactListView.prototype = {
   },
 
   onReject: function(id) {
-    var roster = JSON.parse(sessionStorage['QM.roster']);
+    var dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        roster = JSON.parse(sessionStorage['QM.roster']);
 
     // update roster
     roster[id] = {
@@ -223,6 +257,8 @@ ContactListView.prototype = {
       ask: null
     };
     ContactList.saveRoster(roster);
+
+    dialogItem.find('.status').removeClass('status_online').addClass('status_request');
   },
 
   onPresence: function(id, type) {
@@ -301,7 +337,12 @@ function createListResults(list, results, self) {
 function isSectionEmpty(list) {
   if (list.contents().length === 0) {
     list.parent().addClass('is-hidden');
-    if ($('#recentList').is('.is-hidden') && $('#historyList').is('.is-hidden'))
+
+    if ($('#requestsList').is('.is-hidden') &&
+        $('#recentList').is('.is-hidden') &&
+        $('#historyList').is('.is-hidden')) {
+      
       $('#emptyList').removeClass('is-hidden');
+    }
   }
 }
