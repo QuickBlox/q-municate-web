@@ -42,14 +42,9 @@ Dialog.prototype = {
         DialogView = this.app.views.Dialog,        
         ContactList = this.app.models.ContactList,
         User = this.app.models.User,
-        roster = JSON.parse(sessionStorage['QM.roster']),
         id = QB.chat.helpers.getIdFromNode(jid),
         self = this,
         dialog;
-
-    // update roster
-    roster[id] = 'none';
-    ContactList.saveRoster(roster);
 
     QBApiCalls.createDialog({type: 3, occupants_ids: id}, function(res) {
       dialog = self.create(res);
@@ -58,7 +53,7 @@ Dialog.prototype = {
       // send notification about subscribe
       QB.chat.send(jid, {type: 'chat', extension: {
         save_to_history: 1,
-        dialog_id: dialog.id,
+        // dialog_id: dialog.id,
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: 3,

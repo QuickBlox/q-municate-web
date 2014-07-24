@@ -57,10 +57,17 @@ DialogView.prototype = {
 
             // not show dialog if user has not confirmed this contact
             var notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
-            if (private_id && notConfirmed[private_id]) return false;
+            if (private_id && (!roster[private_id] || notConfirmed[private_id])) return false;
               self.addDialogItem(dialog, true);
 
           });
+        }
+
+        if ($('#requestsList').is('.is-hidden') &&
+            $('#recentList').is('.is-hidden') &&
+            $('#historyList').is('.is-hidden')) {
+          
+          $('#emptyList').removeClass('is-hidden');
         }
 
       } else {
@@ -83,9 +90,9 @@ DialogView.prototype = {
     private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
     icon = private_id ? contacts[private_id].avatar_url : QMCONFIG.defAvatar.group_url;
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
-    status = roster[private_id] || null;
+    status = roster[private_id] ? roster[private_id].subscription : null;
 
-    html = '<li class="list-item" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
+    html = '<li class="list-item dialog-item" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
     html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';

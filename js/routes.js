@@ -31,6 +31,7 @@ Routes.prototype = {
     /* QBChat handlers
     ----------------------------------------------------- */
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
+    QB.chat.onRejectSubscribeListener = ContactListView.onReject;
     // <span class="status status_online"></span>
     // <span class="status status_request"></span>
     // <span class="unread">4</span>
