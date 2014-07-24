@@ -18,7 +18,7 @@ function DialogView(app) {
 DialogView.prototype = {
 
   createDataSpinner: function() {
-    var spinnerBlock = '<div class="popup-elem spinner_bounce">';
+    var spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
@@ -54,9 +54,12 @@ DialogView.prototype = {
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
           ContactList.add(dialog.occupants_ids, function() {
-            // not show dialog if user has not approved this contact
-            if (private_id && roster[private_id] === undefined) return false;
-              self.addDialogItem(dialog);
+
+            // not show dialog if user has not confirmed this contact
+            var notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
+            if (private_id && notConfirmed[private_id]) return false;
+              self.addDialogItem(dialog, true);
+
           });
         }
 
@@ -71,7 +74,7 @@ DialogView.prototype = {
     $('.l-list ul').html('');
   },
 
-  addDialogItem: function(dialog) {
+  addDialogItem: function(dialog, isDownload) {
     var contacts = ContactList.contacts,
         roster = JSON.parse(sessionStorage['QM.roster']),
         private_id, icon, name, status,
@@ -82,7 +85,7 @@ DialogView.prototype = {
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
     status = roster[private_id] || null;
 
-    html = '<li class="list-item" data-dialog="'+dialog.id+'" data-contact="'+private_id+'">';
+    html = '<li class="list-item" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
     html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
@@ -98,10 +101,14 @@ DialogView.prototype = {
     startOfCurrentDay.setHours(0,0,0,0);
 
     // checking if this dialog is recent OR no
-    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay)
-      $('#recentList').removeClass('is-hidden').find('ul').append(html);
-    else
+    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay) {
+      if (isDownload)
+        $('#recentList').removeClass('is-hidden').find('ul').append(html);
+      else
+        $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
+    } else {
       $('#historyList').removeClass('is-hidden').find('ul').append(html);
+    }
 
     $('#emptyList').addClass('is-hidden');
   }

@@ -7,12 +7,13 @@
 
 module.exports = ContactListView;
 
-var Dialog, ContactList;
+var Dialog, ContactList, User;
 
 function ContactListView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
   ContactList = this.app.models.ContactList;
+  User = this.app.models.User;
 }
 
 ContactListView.prototype = {
@@ -86,30 +87,53 @@ ContactListView.prototype = {
   },
 
   sendReject: function(objDom) {
-    // var id = objDom.parents('li').data('id'),
-    //     list = objDom.parents('ul');
+    var jid = objDom.parents('li').data('jid'),
+        list = objDom.parents('ul');
 
-    // objDom.parents('li').remove();
-    // isSectionEmpty(list);
+    objDom.parents('li').remove();
+    isSectionEmpty(list);
 
-    // QB.chat.roster.reject(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId));
+    QB.chat.roster.reject(jid);
+    // send notification about reject
+    QB.chat.send(jid, {type: 'chat', extension: {
+      save_to_history: 1,
+      date_sent: Math.floor(Date.now() / 1000),
+
+      notification_type: 4,
+      full_name: User.contact.full_name,
+    }});
   },
 
+  // callbacks
+
   onSubscribe: function(id) {
-    // if (QMCONFIG.debug) console.log('Subscribe request from', id);
-    // var html;
+    var html,
+        contacts = ContactList.contacts,
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
 
-    // html = '<li class="list-item" data-id="'+id+'">';
-    // html += '<a class="contact l-flexbox" href="#">';
-    // html += '<div class="l-flexbox_inline">';
-    // html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
-    // html += '<span class="name">Test user</span>';
-    // html += '</div><div class="request-controls l-flexbox">';
-    // html += '<button class="request-button request-button_cancel">&#10005;</button>';
-    // html += '<button class="request-button request-button_ok">&#10003;</button>';
-    // html += '</div></a></li>';
+    // update roster
+    roster[id] = 'none';
+    ContactList.saveRoster(roster);
 
-    // $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
+    // update notConfirmed people list
+    notConfirmed[id] = true;
+    ContactList.saveNotConfirmed(notConfirmed);
+
+    ContactList.add([id], function() {
+      html = '<li class="list-item" data-jid="'+jid+'">';
+      html += '<a class="contact l-flexbox" href="#">';
+      html += '<div class="l-flexbox_inline">';
+      html += '<img class="contact-avatar avatar" src="'+contacts[id].avatar_url+'" alt="user">';
+      html += '<span class="name">'+contacts[id].full_name+'</span>';
+      html += '</div><div class="request-controls l-flexbox">';
+      html += '<button class="request-button request-button_cancel">&#10005;</button>';
+      html += '<button class="request-button request-button_ok">&#10003;</button>';
+      html += '</div></a></li>';
+
+      $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
+    });
   }
 
 };

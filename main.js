@@ -189,6 +189,10 @@ ContactList.prototype = {
     sessionStorage.setItem('QM.roster', JSON.stringify(roster));
   },
 
+  saveNotConfirmed: function(notConfirmed) {
+    localStorage.setItem('QM.notConfirmed', JSON.stringify(notConfirmed));
+  },
+
   add: function(occupants_ids, callback) {
     var QBApiCalls = this.app.service,
         Contact = this.app.models.Contact,
@@ -1353,12 +1357,13 @@ var closePopup = function() {
 
 module.exports = ContactListView;
 
-var Dialog, ContactList;
+var Dialog, ContactList, User;
 
 function ContactListView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
   ContactList = this.app.models.ContactList;
+  User = this.app.models.User;
 }
 
 ContactListView.prototype = {
@@ -1432,30 +1437,53 @@ ContactListView.prototype = {
   },
 
   sendReject: function(objDom) {
-    // var id = objDom.parents('li').data('id'),
-    //     list = objDom.parents('ul');
+    var jid = objDom.parents('li').data('jid'),
+        list = objDom.parents('ul');
 
-    // objDom.parents('li').remove();
-    // isSectionEmpty(list);
+    objDom.parents('li').remove();
+    isSectionEmpty(list);
 
-    // QB.chat.roster.reject(QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId));
+    QB.chat.roster.reject(jid);
+    // send notification about reject
+    QB.chat.send(jid, {type: 'chat', extension: {
+      save_to_history: 1,
+      date_sent: Math.floor(Date.now() / 1000),
+
+      notification_type: 4,
+      full_name: User.contact.full_name,
+    }});
   },
 
+  // callbacks
+
   onSubscribe: function(id) {
-    // if (QMCONFIG.debug) console.log('Subscribe request from', id);
-    // var html;
+    var html,
+        contacts = ContactList.contacts,
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
 
-    // html = '<li class="list-item" data-id="'+id+'">';
-    // html += '<a class="contact l-flexbox" href="#">';
-    // html += '<div class="l-flexbox_inline">';
-    // html += '<img class="contact-avatar avatar" src="images/ava-single.png" alt="user">';
-    // html += '<span class="name">Test user</span>';
-    // html += '</div><div class="request-controls l-flexbox">';
-    // html += '<button class="request-button request-button_cancel">&#10005;</button>';
-    // html += '<button class="request-button request-button_ok">&#10003;</button>';
-    // html += '</div></a></li>';
+    // update roster
+    roster[id] = 'none';
+    ContactList.saveRoster(roster);
 
-    // $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
+    // update notConfirmed people list
+    notConfirmed[id] = true;
+    ContactList.saveNotConfirmed(notConfirmed);
+
+    ContactList.add([id], function() {
+      html = '<li class="list-item" data-jid="'+jid+'">';
+      html += '<a class="contact l-flexbox" href="#">';
+      html += '<div class="l-flexbox_inline">';
+      html += '<img class="contact-avatar avatar" src="'+contacts[id].avatar_url+'" alt="user">';
+      html += '<span class="name">'+contacts[id].full_name+'</span>';
+      html += '</div><div class="request-controls l-flexbox">';
+      html += '<button class="request-button request-button_cancel">&#10005;</button>';
+      html += '<button class="request-button request-button_ok">&#10003;</button>';
+      html += '</div></a></li>';
+
+      $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
+    });
   }
 
 };
@@ -1542,7 +1570,7 @@ function DialogView(app) {
 DialogView.prototype = {
 
   createDataSpinner: function() {
-    var spinnerBlock = '<div class="popup-elem spinner_bounce">';
+    var spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
@@ -1578,9 +1606,12 @@ DialogView.prototype = {
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
           ContactList.add(dialog.occupants_ids, function() {
-            // not show dialog if user has not approved this contact
-            if (private_id && roster[private_id] === undefined) return false;
-              self.addDialogItem(dialog);
+
+            // not show dialog if user has not confirmed this contact
+            var notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
+            if (private_id && notConfirmed[private_id]) return false;
+              self.addDialogItem(dialog, true);
+
           });
         }
 
@@ -1595,7 +1626,7 @@ DialogView.prototype = {
     $('.l-list ul').html('');
   },
 
-  addDialogItem: function(dialog) {
+  addDialogItem: function(dialog, isDownload) {
     var contacts = ContactList.contacts,
         roster = JSON.parse(sessionStorage['QM.roster']),
         private_id, icon, name, status,
@@ -1606,7 +1637,7 @@ DialogView.prototype = {
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
     status = roster[private_id] || null;
 
-    html = '<li class="list-item" data-dialog="'+dialog.id+'" data-contact="'+private_id+'">';
+    html = '<li class="list-item" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
     html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
@@ -1622,10 +1653,14 @@ DialogView.prototype = {
     startOfCurrentDay.setHours(0,0,0,0);
 
     // checking if this dialog is recent OR no
-    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay)
-      $('#recentList').removeClass('is-hidden').find('ul').append(html);
-    else
+    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay) {
+      if (isDownload)
+        $('#recentList').removeClass('is-hidden').find('ul').append(html);
+      else
+        $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
+    } else {
       $('#historyList').removeClass('is-hidden').find('ul').append(html);
+    }
 
     $('#emptyList').addClass('is-hidden');
   }

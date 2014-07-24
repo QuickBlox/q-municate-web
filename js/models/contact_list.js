@@ -18,6 +18,10 @@ ContactList.prototype = {
     sessionStorage.setItem('QM.roster', JSON.stringify(roster));
   },
 
+  saveNotConfirmed: function(notConfirmed) {
+    localStorage.setItem('QM.notConfirmed', JSON.stringify(notConfirmed));
+  },
+
   add: function(occupants_ids, callback) {
     var QBApiCalls = this.app.service,
         Contact = this.app.models.Contact,
