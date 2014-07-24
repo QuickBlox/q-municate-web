@@ -98,3 +98,7 @@ window.fbAsyncInit = function() {
     view.getFBStatus();
   }
 };
+
+window.onbeforeunload = function() {
+  QB.chat.sendPres('unavailable');
+};

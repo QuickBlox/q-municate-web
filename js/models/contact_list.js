@@ -15,14 +15,21 @@ function ContactList(app) {
 ContactList.prototype = {
 
   saveRoster: function(roster) {
-    if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
     sessionStorage.setItem('QM.roster', JSON.stringify(roster));
+  },
+
+  saveNotConfirmed: function(notConfirmed) {
+    localStorage.setItem('QM.notConfirmed', JSON.stringify(notConfirmed));
+  },
+
+  saveHiddenDialogs: function(hiddenDialogs) {
+    sessionStorage.setItem('QM.hiddenDialogs', JSON.stringify(hiddenDialogs));
   },
 
   add: function(occupants_ids, callback) {
     var QBApiCalls = this.app.service,
         Contact = this.app.models.Contact,
-        contact_ids = Object.keys(this.contacts),
+        contact_ids = Object.keys(this.contacts).map(Number),
         self = this,
         params;
 
@@ -35,7 +42,8 @@ ContactList.prototype = {
       params = { filter: { field: 'id', param: 'in', value: new_ids } };
 
       QBApiCalls.listUsers(params, function(users) {
-        users.items.forEach(function(user) {
+        users.items.forEach(function(qbUser) {
+          var user = qbUser.user;
           var contact = Contact.create(user);
           self.contacts[user.id] = contact;
           localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
@@ -70,13 +78,16 @@ ContactList.prototype = {
 
   getResults: function(data) {
     var Contact = this.app.models.Contact,
+        User = this.app.models.User,
         self = this,
         contacts = [],
         contact;
     
     data.forEach(function(item) {
-      contact = Contact.create(item.user);
-      contacts.push(contact);
+      if (item.user.id !== User.contact.id) {
+        contact = Contact.create(item.user);
+        contacts.push(contact);
+      }
     });
     return contacts;
   }
