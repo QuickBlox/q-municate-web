@@ -78,13 +78,16 @@ ContactList.prototype = {
 
   getResults: function(data) {
     var Contact = this.app.models.Contact,
+        User = this.app.models.User,
         self = this,
         contacts = [],
         contact;
     
     data.forEach(function(item) {
-      contact = Contact.create(item.user);
-      contacts.push(contact);
+      if (item.user.id !== User.contact.id) {
+        contact = Contact.create(item.user);
+        contacts.push(contact);
+      }
     });
     return contacts;
   }

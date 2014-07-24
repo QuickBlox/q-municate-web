@@ -100,7 +100,8 @@ ContactListView.prototype = {
   },
 
   sendConfirm: function(objDom) {
-    var jid = objDom.parents('li').data('jid'),
+    var DialogView = this.app.views.Dialog,
+        jid = objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
         roster = JSON.parse(sessionStorage['QM.roster']),
@@ -132,7 +133,7 @@ ContactListView.prototype = {
       full_name: User.contact.full_name,
     }});
 
-    Dialog.addDialogItem({
+    DialogView.addDialogItem({
       id: hiddenDialogs[id],
       type: 3,
       occupants_ids: [id],
@@ -315,13 +316,15 @@ function createListResults(list, results, self) {
       item;
 
   results.forEach(function(contact) {
+    var rosterItem = roster[contact.id];
+
     item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
     item += '<a class="contact l-flexbox" href="#">';
     item += '<div class="l-flexbox_inline">';
     item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
     item += '<span class="name">'+contact.full_name+'</span>';
     item += '</div>';
-    if (!roster[contact.id] || !roster[contact.id].ask && !notConfirmed[contact.id]) {
+    if (!rosterItem || (!rosterItem.ask && rosterItem.subscription === 'none' && !notConfirmed[contact.id])) {
       item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
       item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     }
