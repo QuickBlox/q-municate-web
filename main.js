@@ -50,7 +50,9 @@ QM.prototype = {
     // Checking if autologin was chosen
     if (localStorage['QM.session'] && localStorage['QM.user'] &&
         // new format of storage data (20.07.2014)
-        JSON.parse(localStorage['QM.user']).user_jid) {
+        JSON.parse(localStorage['QM.user']).user_jid &&
+        // new format of storage data (25.07.2014)
+        JSON.parse(localStorage['QM.user']).is_import) {
 
       token = JSON.parse(localStorage['QM.session']).token;
       this.service.init(token);
@@ -130,7 +132,8 @@ Contact.prototype = {
       avatar_url: qbUser.avatar_url || getAvatar(qbUser),
       status: qbUser.status || getStatus(qbUser),
       tag: qbUser.tag || qbUser.user_tags,
-      user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)
+      user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId),
+      is_import: qbUser.is_import || getImport(qbUser)
     };
   }
 
@@ -170,6 +173,19 @@ function getStatus(contact) {
   }
 
   return status;
+}
+
+
+function getImport(contact) {
+  var isImport;
+  
+  try {
+    isImport = JSON.parse(contact.custom_data).is_import || false;
+  } catch(err) {
+    isImport = false;
+  }
+
+  return isImport;
 }
 
 },{}],3:[function(require,module,exports){
@@ -269,6 +285,33 @@ ContactList.prototype = {
       }
     });
     return contacts;
+  },
+
+  getFBFriends: function(ids, callback) {
+    var QBApiCalls = this.app.service,
+        Contact = this.app.models.Contact,
+        self = this,
+        new_ids = [],
+        params;
+
+    // TODO: duplicate of add() function
+    params = { filter: { field: 'facebook_id', param: 'in', value: ids } };
+
+    QBApiCalls.listUsers(params, function(users) {
+      users.items.forEach(function(qbUser) {
+        var user = qbUser.user;
+        var contact = Contact.create(user);
+        new_ids.push(user.id);
+        self.contacts[user.id] = contact;
+        localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
+      });
+
+      contact_ids = contact_ids.concat(new_ids);
+      localStorage.setItem('QM.contacts', contact_ids.join());
+
+      if (QMCONFIG.debug) console.log('Contact List is updated', self);
+      callback(new_ids);
+    });
   }
 
 };
@@ -482,17 +525,49 @@ User.prototype = {
         QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
           self.rememberMe();
           UserView.successFormCallback();
-          DialogView.downloadDialogs(roster);
+          DialogView.prepareDownloading(roster);
 
-          // import FB friends
-          FB.api('/me/friends', function (data) {
-              console.log(data);
-            }
-          );
+          if (!self.contact.is_import) {
+            // import FB friends
+            FB.api('/me/friends', function (res) {
+                if (QMCONFIG.debug) console.log('FB friends', res);
+                var ids = [];
+
+                for (var i = 0, len = res.data.length; i < len; i++) {
+                  ids.push(res.data[i].id);
+                }
+
+                DialogView.downloadDialogs(roster, ids);
+              }
+            );
+
+            self.contact.is_import = true;
+            self.updateQBUser(user);
+          } else {
+            DialogView.downloadDialogs(roster);
+          }
+          
         });
 
       });
     }, true);
+  },
+
+  updateQBUser: function(user) {
+    var QBApiCalls = this.app.service,
+        custom_data;
+
+    try {
+      custom_data = JSON.parse(user.custom_data) || {};
+    } catch(err) {
+      custom_data = {};
+    }
+
+    custom_data.is_import = true;
+    custom_data = JSON.stringify(custom_data);
+    QBApiCalls.updateUser(user.id, {custom_data: custom_data}, function(res) {
+      //if (QMCONFIG.debug) console.log('update of user', res);
+    });
   },
 
   signup: function() {
@@ -529,6 +604,7 @@ User.prototype = {
                 self.uploadAvatar(roster);
               } else {
                 UserView.successFormCallback();
+                DialogView.prepareDownloading(roster);
                 DialogView.downloadDialogs(roster);
               }
             });
@@ -551,6 +627,7 @@ User.prototype = {
       self.contact.avatar_url = blob.path;
 
       UserView.successFormCallback();
+      DialogView.prepareDownloading(roster);
       DialogView.downloadDialogs(roster);
       
       custom_data = JSON.stringify({avatar_url: blob.path});
@@ -589,6 +666,7 @@ User.prototype = {
             }
 
             UserView.successFormCallback();
+            DialogView.prepareDownloading(roster);
             DialogView.downloadDialogs(roster);
           });
 
@@ -653,6 +731,7 @@ User.prototype = {
 
     QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
       UserView.successFormCallback();
+      DialogView.prepareDownloading(roster);
       DialogView.downloadDialogs(roster);
     });
   },
@@ -1441,6 +1520,22 @@ ContactListView.prototype = {
 
   // subscriptions
 
+  importFBFriend: function(id) {
+    var jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+        roster = JSON.parse(sessionStorage['QM.roster']);
+
+    QB.chat.roster.add(jid);
+
+    // update roster
+    roster[id] = {
+      subscription: 'none',
+      ask: 'subscribe'
+    };
+    ContactList.saveRoster(roster);
+
+    Dialog.createPrivate(jid);
+  },
+
   sendSubscribe: function(objDom) {
     var jid = objDom.parents('li').data('jid'),
         roster = JSON.parse(sessionStorage['QM.roster']),
@@ -1661,9 +1756,9 @@ ContactListView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
-var openPopup = function(objDom) {
+function openPopup(objDom) {
   objDom.add('.popups').addClass('is-overlay');
-};
+}
 
 function scrollbar(list, self) {
   list.mCustomScrollbar({
@@ -1777,19 +1872,21 @@ DialogView.prototype = {
     $('.l-sidebar .spinner_bounce').remove();
   },
 
-  downloadDialogs: function(roster) {
+  prepareDownloading: function(roster) {
     if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
     this.chatCallbacksInit();
+    this.createDataSpinner();
+    scrollbar();
+    ContactList.saveRoster(roster);
+  },
 
+  downloadDialogs: function(roster, ids) {
     var self = this,
+        ContactListView = this.app.views.ContactList,
         hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notConfirmed,
         private_id,
-        dialog;
-
-    scrollbar();
-    self.createDataSpinner();
-    ContactList.saveRoster(roster);
+        dialog;    
 
     Dialog.download(function(dialogs) {
       self.removeDataSpinner();
@@ -1801,7 +1898,7 @@ DialogView.prototype = {
 
           if (!localStorage['QM.dialog-' + dialog.id]) {
             localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-          }          
+          }
 
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
@@ -1829,6 +1926,16 @@ DialogView.prototype = {
 
       } else {
         $('#emptyList').removeClass('is-hidden');
+      }
+
+      // import FB friends
+      if (ids) {
+        ContactList.getFBFriends(ids, function(new_ids) {
+          openPopup($('#popupImport'));
+          for (var i = 0, len = new_ids.length; i < len; i++) {
+            ContactListView.importFBFriend(new_ids[i]);
+          }
+        });
       }
     });
   },
@@ -1903,6 +2010,10 @@ function scrollbar() {
     theme: 'minimal-dark',
     scrollInertia: 150
   });
+}
+
+function openPopup(objDom) {
+  objDom.add('.popups').addClass('is-overlay');
 }
 
 },{}],11:[function(require,module,exports){
