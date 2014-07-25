@@ -42,17 +42,49 @@ User.prototype = {
         QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
           self.rememberMe();
           UserView.successFormCallback();
-          DialogView.downloadDialogs(roster);
+          DialogView.prepareDownloading(roster);
 
-          // import FB friends
-          FB.api('/me/friends', function (data) {
-              console.log(data);
-            }
-          );
+          if (!self.contact.is_import) {
+            // import FB friends
+            FB.api('/me/friends', function (res) {
+                if (QMCONFIG.debug) console.log('FB friends', res);
+                var ids = [];
+
+                for (var i = 0, len = res.data.length; i < len; i++) {
+                  ids.push(res.data[i].id);
+                }
+
+                DialogView.downloadDialogs(roster, ids);
+              }
+            );
+
+            self.contact.is_import = true;
+            self.updateQBUser(user);
+          } else {
+            DialogView.downloadDialogs(roster);
+          }
+          
         });
 
       });
     }, true);
+  },
+
+  updateQBUser: function(user) {
+    var QBApiCalls = this.app.service,
+        custom_data;
+
+    try {
+      custom_data = JSON.parse(user.custom_data) || {};
+    } catch(err) {
+      custom_data = {};
+    }
+
+    custom_data.is_import = true;
+    custom_data = JSON.stringify(custom_data);
+    QBApiCalls.updateUser(user.id, {custom_data: custom_data}, function(res) {
+      //if (QMCONFIG.debug) console.log('update of user', res);
+    });
   },
 
   signup: function() {
@@ -89,6 +121,7 @@ User.prototype = {
                 self.uploadAvatar(roster);
               } else {
                 UserView.successFormCallback();
+                DialogView.prepareDownloading(roster);
                 DialogView.downloadDialogs(roster);
               }
             });
@@ -111,6 +144,7 @@ User.prototype = {
       self.contact.avatar_url = blob.path;
 
       UserView.successFormCallback();
+      DialogView.prepareDownloading(roster);
       DialogView.downloadDialogs(roster);
       
       custom_data = JSON.stringify({avatar_url: blob.path});
@@ -149,6 +183,7 @@ User.prototype = {
             }
 
             UserView.successFormCallback();
+            DialogView.prepareDownloading(roster);
             DialogView.downloadDialogs(roster);
           });
 
@@ -213,6 +248,7 @@ User.prototype = {
 
     QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
       UserView.successFormCallback();
+      DialogView.prepareDownloading(roster);
       DialogView.downloadDialogs(roster);
     });
   },
