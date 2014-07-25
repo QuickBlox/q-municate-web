@@ -996,8 +996,11 @@ QBApiCalls.prototype = {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
 
-          fail(err.detail);
-          UserView.logout();
+          if (err.detail.indexOf('Status.ERROR') >= 0 || err.detail.indexOf('Status.AUTHFAIL') >= 0) {
+            fail(err.detail);
+            UserView.logout();
+            window.location.reload();
+          }
         } else {
           Session.update({ date: new Date });
           callback(res);
