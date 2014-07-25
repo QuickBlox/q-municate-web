@@ -1480,7 +1480,8 @@ ContactListView.prototype = {
         list = objDom.parents('ul'),
         roster = JSON.parse(sessionStorage['QM.roster']),
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
-        hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']);
+        hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
+        li;
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
@@ -1506,6 +1507,12 @@ ContactListView.prototype = {
       notification_type: 5,
       full_name: User.contact.full_name,
     }});
+
+    // delete duplicate contact item
+    li = $('.dialog-item[data-id="'+id+'"]');
+    list = li.parents('ul');
+    li.remove();
+    isSectionEmpty(list);
 
     DialogView.addDialogItem({
       id: hiddenDialogs[id],
