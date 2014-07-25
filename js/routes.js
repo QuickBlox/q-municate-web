@@ -145,7 +145,7 @@ Routes.prototype = {
       ContactListView.globalSearch($(this));
     });
 
-    $('#searchContacts').on('keyup search submit', function(event) {
+    $('.localSearch').on('keyup search submit', function(event) {
       event.preventDefault();
       var type = event.type,
           code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)

@@ -66,7 +66,6 @@ function getStatus(contact) {
   return status;
 }
 
-
 function getImport(contact) {
   var isImport;
   

@@ -175,7 +175,6 @@ function getStatus(contact) {
   return status;
 }
 
-
 function getImport(contact) {
   var isImport;
   
@@ -1364,7 +1363,7 @@ Routes.prototype = {
       ContactListView.globalSearch($(this));
     });
 
-    $('#searchContacts').on('keyup search submit', function(event) {
+    $('.localSearch').on('keyup search submit', function(event) {
       event.preventDefault();
       var type = event.type,
           code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
@@ -2165,13 +2164,33 @@ UserView.prototype = {
   },
 
   localSearch: function(form) {
-    var val = form.find('input[type="search"]').val().trim();
+    var val = form.find('input[type="search"]').val().trim().toLowerCase();
     
     if (val.length > 0) {
       // if (QMCONFIG.debug) console.log('local search =', val);
       $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
+      $('#searchList ul').html('').add('#searchList .note').removeClass('is-hidden');
+
+      $('#recentList, #historyList').find('.dialog-item').each(function() {
+        var name = $(this).find('.name').text().toLowerCase(),
+            li = $(this).clone();
+
+        if (name.indexOf(val) > -1) {
+          $('#searchList ul').append(li);
+          $('#searchList .note').addClass('is-hidden');
+        }
+        
+      });
+
+      if ($('#searchList ul').find('li').length === 0)
+        $('#searchList .note').removeClass('is-hidden').siblings('ul').addClass('is-hidden');
+      
     } else {
-      $('#emptyList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
+      $('#searchList').addClass('is-hidden');
+      $('#recentList, #historyList, #requestsList').each(function() {
+        if ($(this).find('.dialog-item').length > 0)
+          $(this).removeClass('is-hidden');
+      });
     }
   }
 
