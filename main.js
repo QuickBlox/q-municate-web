@@ -997,6 +997,7 @@ QBApiCalls.prototype = {
           if (QMCONFIG.debug) console.log(err.detail);
 
           fail(err.detail);
+          UserView.logout();
         } else {
           Session.update({ date: new Date });
           callback(res);
