@@ -7,9 +7,12 @@
 
 module.exports = ContactList;
 
+var contact_ids;
+
 function ContactList(app) {
   this.app = app;
   this.contacts = getContacts();
+  contact_ids = Object.keys(this.contacts).map(Number);
 }
 
 ContactList.prototype = {
@@ -26,17 +29,18 @@ ContactList.prototype = {
     sessionStorage.setItem('QM.hiddenDialogs', JSON.stringify(hiddenDialogs));
   },
 
-  add: function(occupants_ids, callback) {
+  add: function(occupants_ids, dialog, callback) {
     var QBApiCalls = this.app.service,
         Contact = this.app.models.Contact,
-        contact_ids = Object.keys(this.contacts).map(Number),
         self = this,
+        new_ids,
         params;
 
     // TODO: need to make optimization here
     // (for new device the user will be waiting very long time if he has a lot of private dialogs)
     new_ids = [].concat(_.difference(occupants_ids, contact_ids));
-    localStorage.setItem('QM.contacts', contact_ids.concat(new_ids).join());
+    contact_ids = contact_ids.concat(new_ids);
+    localStorage.setItem('QM.contacts', contact_ids.join());
 
     if (new_ids.length > 0) {
       params = { filter: { field: 'id', param: 'in', value: new_ids } };
@@ -50,11 +54,11 @@ ContactList.prototype = {
         });
 
         if (QMCONFIG.debug) console.log('Contact List is updated', self);
-        callback();
+        callback(dialog);
       });
       
     } else {
-      callback();
+      callback(dialog);
     }
   },
 

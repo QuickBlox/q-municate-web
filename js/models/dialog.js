@@ -60,7 +60,7 @@ Dialog.prototype = {
         full_name: User.contact.full_name,
       }});
 
-      ContactList.add(dialog.occupants_ids, function() {
+      ContactList.add(dialog.occupants_ids, null, function() {
         DialogView.addDialogItem(dialog);
       });
     });
