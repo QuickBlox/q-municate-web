@@ -67,6 +67,22 @@ ContactListView.prototype = {
 
   // subscriptions
 
+  importFBFriend: function(id) {
+    var jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+        roster = JSON.parse(sessionStorage['QM.roster']);
+
+    QB.chat.roster.add(jid);
+
+    // update roster
+    roster[id] = {
+      subscription: 'none',
+      ask: 'subscribe'
+    };
+    ContactList.saveRoster(roster);
+
+    Dialog.createPrivate(jid);
+  },
+
   sendSubscribe: function(objDom) {
     var jid = objDom.parents('li').data('jid'),
         roster = JSON.parse(sessionStorage['QM.roster']),
@@ -287,9 +303,9 @@ ContactListView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
-var openPopup = function(objDom) {
+function openPopup(objDom) {
   objDom.add('.popups').addClass('is-overlay');
-};
+}
 
 function scrollbar(list, self) {
   list.mCustomScrollbar({

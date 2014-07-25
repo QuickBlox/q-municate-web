@@ -43,19 +43,21 @@ DialogView.prototype = {
     $('.l-sidebar .spinner_bounce').remove();
   },
 
-  downloadDialogs: function(roster) {
+  prepareDownloading: function(roster) {
     if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
     this.chatCallbacksInit();
+    this.createDataSpinner();
+    scrollbar();
+    ContactList.saveRoster(roster);
+  },
 
+  downloadDialogs: function(roster, ids) {
     var self = this,
+        ContactListView = this.app.views.ContactList,
         hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notConfirmed,
         private_id,
-        dialog;
-
-    scrollbar();
-    self.createDataSpinner();
-    ContactList.saveRoster(roster);
+        dialog;    
 
     Dialog.download(function(dialogs) {
       self.removeDataSpinner();
@@ -67,7 +69,7 @@ DialogView.prototype = {
 
           if (!localStorage['QM.dialog-' + dialog.id]) {
             localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-          }          
+          }
 
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
@@ -95,6 +97,16 @@ DialogView.prototype = {
 
       } else {
         $('#emptyList').removeClass('is-hidden');
+      }
+
+      // import FB friends
+      if (ids) {
+        ContactList.getFBFriends(ids, function(new_ids) {
+          openPopup($('#popupImport'));
+          for (var i = 0, len = new_ids.length; i < len; i++) {
+            ContactListView.importFBFriend(new_ids[i]);
+          }
+        });
       }
     });
   },
@@ -169,4 +181,8 @@ function scrollbar() {
     theme: 'minimal-dark',
     scrollInertia: 150
   });
+}
+
+function openPopup(objDom) {
+  objDom.add('.popups').addClass('is-overlay');
 }
