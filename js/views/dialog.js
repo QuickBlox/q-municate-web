@@ -65,24 +65,24 @@ DialogView.prototype = {
           dialog = Dialog.create(dialogs[i]);
           if (QMCONFIG.debug) console.log('Dialog', dialog);
 
-          private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
           if (!localStorage['QM.dialog-' + dialog.id]) {
             localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-          }
-
-          // update hidden dialogs
-          hiddenDialogs[private_id] = dialog.id;
-          ContactList.saveHiddenDialogs(hiddenDialogs);
+          }          
 
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
-          ContactList.add(dialog.occupants_ids, function() {
+          ContactList.add(dialog.occupants_ids, dialog, function(dialogCallback) {
+
+            // update hidden dialogs
+            private_id = dialogCallback.type === 3 ? dialogCallback.occupants_ids[0] : null;
+            hiddenDialogs[private_id] = dialogCallback.id;
+            ContactList.saveHiddenDialogs(hiddenDialogs);
 
             // not show dialog if user has not confirmed this contact
             notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
             if (private_id && (!roster[private_id] || notConfirmed[private_id])) return false;
             
-            self.addDialogItem(dialog, true);
+            self.addDialogItem(dialogCallback, true);
           });
         }
 

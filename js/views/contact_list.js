@@ -218,7 +218,7 @@ ContactListView.prototype = {
     notConfirmed[id] = true;
     ContactList.saveNotConfirmed(notConfirmed);
 
-    ContactList.add([id], function() {
+    ContactList.add([id], null, function() {
       html = '<li class="list-item" data-jid="'+jid+'">';
       html += '<a class="contact l-flexbox" href="#">';
       html += '<div class="l-flexbox_inline">';

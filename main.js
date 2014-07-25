@@ -182,9 +182,12 @@ function getStatus(contact) {
 
 module.exports = ContactList;
 
+var contact_ids;
+
 function ContactList(app) {
   this.app = app;
   this.contacts = getContacts();
+  contact_ids = Object.keys(this.contacts).map(Number);
 }
 
 ContactList.prototype = {
@@ -201,17 +204,18 @@ ContactList.prototype = {
     sessionStorage.setItem('QM.hiddenDialogs', JSON.stringify(hiddenDialogs));
   },
 
-  add: function(occupants_ids, callback) {
+  add: function(occupants_ids, dialog, callback) {
     var QBApiCalls = this.app.service,
         Contact = this.app.models.Contact,
-        contact_ids = Object.keys(this.contacts).map(Number),
         self = this,
+        new_ids,
         params;
 
     // TODO: need to make optimization here
     // (for new device the user will be waiting very long time if he has a lot of private dialogs)
     new_ids = [].concat(_.difference(occupants_ids, contact_ids));
-    localStorage.setItem('QM.contacts', contact_ids.concat(new_ids).join());
+    contact_ids = contact_ids.concat(new_ids);
+    localStorage.setItem('QM.contacts', contact_ids.join());
 
     if (new_ids.length > 0) {
       params = { filter: { field: 'id', param: 'in', value: new_ids } };
@@ -225,11 +229,11 @@ ContactList.prototype = {
         });
 
         if (QMCONFIG.debug) console.log('Contact List is updated', self);
-        callback();
+        callback(dialog);
       });
       
     } else {
-      callback();
+      callback(dialog);
     }
   },
 
@@ -348,7 +352,7 @@ Dialog.prototype = {
         full_name: User.contact.full_name,
       }});
 
-      ContactList.add(dialog.occupants_ids, function() {
+      ContactList.add(dialog.occupants_ids, null, function() {
         DialogView.addDialogItem(dialog);
       });
     });
@@ -1583,7 +1587,7 @@ ContactListView.prototype = {
     notConfirmed[id] = true;
     ContactList.saveNotConfirmed(notConfirmed);
 
-    ContactList.add([id], function() {
+    ContactList.add([id], null, function() {
       html = '<li class="list-item" data-jid="'+jid+'">';
       html += '<a class="contact l-flexbox" href="#">';
       html += '<div class="l-flexbox_inline">';
@@ -1783,24 +1787,24 @@ DialogView.prototype = {
           dialog = Dialog.create(dialogs[i]);
           if (QMCONFIG.debug) console.log('Dialog', dialog);
 
-          private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
           if (!localStorage['QM.dialog-' + dialog.id]) {
             localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-          }
-
-          // update hidden dialogs
-          hiddenDialogs[private_id] = dialog.id;
-          ContactList.saveHiddenDialogs(hiddenDialogs);
+          }          
 
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
-          ContactList.add(dialog.occupants_ids, function() {
+          ContactList.add(dialog.occupants_ids, dialog, function(dialogCallback) {
+
+            // update hidden dialogs
+            private_id = dialogCallback.type === 3 ? dialogCallback.occupants_ids[0] : null;
+            hiddenDialogs[private_id] = dialogCallback.id;
+            ContactList.saveHiddenDialogs(hiddenDialogs);
 
             // not show dialog if user has not confirmed this contact
             notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
             if (private_id && (!roster[private_id] || notConfirmed[private_id])) return false;
             
-            self.addDialogItem(dialog, true);
+            self.addDialogItem(dialogCallback, true);
           });
         }
 
