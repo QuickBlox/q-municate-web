@@ -51,8 +51,8 @@ QM.prototype = {
         // new format of storage data (20.07.2014)
         JSON.parse(localStorage['QM.user']).user_jid &&
         // new format of storage data (25.07.2014)
-        JSON.parse(localStorage['QM.user']).is_import) {
-
+        typeof JSON.parse(localStorage['QM.user']).is_import === 'boolean') {
+      
       token = JSON.parse(localStorage['QM.session']).token;
       this.service.init(token);
 
