@@ -230,7 +230,24 @@
           </aside>
 
           <div class="l-workspace-wrap">
-            <section id="capBox" class="l-workspace l-flexbox">
+            <section class="l-workspace l-chat l-chat_private">
+              <header class="l-chat-header">
+                
+              </header>
+              <section class="l-chat-content l-chat-content_min">
+                
+              </section>
+              <footer class="l-chat-footer">
+                <form class="l-message" action="#">
+                  <textarea class="form-input-message textarea" placeholder="Type a message"></textarea>
+                  <button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>
+                  <button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>
+                </form>
+              </footer>
+            </section>
+
+
+            <section id="capBox" class="l-workspace l-flexbox is-hidden">
               <div class="l-cap l-flexbox l-flexbox_column">
                 <span class="cap-text">Is anybody here?</span>
                 <img class="cap-anybody" src="images/anybody.png" alt="QuickBlox anybody">
@@ -274,7 +291,7 @@
 
     <section id="popupImport" class="popup popup_import is-open">
       <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-        <span class="alert alert_import">Your Facebook friends who have<br>a Qmunicate account were successfully<br>added to your contacts</span>
+        <span class="alert alert_import">Your Facebook friends who have<br>a Q-municate account were successfully<br>added to your contacts</span>
       </div>
       <div class="popup-controls">
         <a class="popup-control-button popup-control-button_ok" href="#">Got it</a>
@@ -359,6 +376,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
   <script src="lib/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script src="lib/scrollbar/jquery.nicescroll.min.js"></script>
   <script src="lib/underscore-min.js"></script>
   <script src="lib/chroma-hash.js"></script>
   <script src="lib/quickblox.js"></script>

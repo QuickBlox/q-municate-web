@@ -1400,11 +1400,24 @@ Routes.prototype = {
       event.preventDefault();
     });
 
+    $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
+      event.preventDefault();
+    });
+
+    textAreaScrollbar();
+
   }
 };
 
 /* Private
 ---------------------------------------------------------------------- */
+function textAreaScrollbar() {
+  $('.textarea').niceScroll({
+    cursoropacitymax: 0.5,
+    railpadding: {right: 5}
+  });
+}
+
 // Checking if the target is not an object run popover
 function clickBehaviour(e) {
   var objDom = $(e.target);

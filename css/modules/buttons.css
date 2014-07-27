@@ -63,6 +63,18 @@
     background: #0d70b3;
   }
 
+.btn_message {
+  position: absolute;
+}
+  .btn_message_smile {
+    top: 8px;
+    left: 12px;
+  }
+  .btn_message_attach {
+    top: 7px;
+    right: 15px;
+  }
+
 /* button icons */
 .btn-icon {
   margin-right: 2vh;
