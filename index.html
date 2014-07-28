@@ -230,13 +230,28 @@
           </aside>
 
           <div class="l-workspace-wrap">
-            <section class="l-workspace l-chat l-chat_private">
-              <header class="l-chat-header">
-                
+            <section class="l-workspace l-chat l-chat_private is-hidden">
+              <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
+                <div class="chat-title">
+                  <div class="l-flexbox_inline">
+                    <img class="contact-avatar avatar" src="images/ava-single.png" alt="user">
+                    <span class="name name_chat" title="Andrey Povelichenko">Andrey Povelichenko</span>
+                    <span class="status status_online"></span>
+                  </div>
+                </div>
+                <div class="chat-controls">
+                  <!-- <button class="btn_chat btn_chat_videocall"><img src="images/icon-videocall.png" alt="videocall"></button>
+                  <button class="btn_chat btn_chat_audiocall"><img src="images/icon-audiocall.png" alt="audiocall"></button> -->
+                  <button class="btn_chat btn_chat_add"><img src="images/icon-add.png" alt="add"></button>
+                  <!-- <button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button> -->
+                  <button class="btn_chat btn_chat_delete"><img src="images/icon-delete.png" alt="delete"></button>
+                </div>
               </header>
+
               <section class="l-chat-content l-chat-content_min">
                 
               </section>
+
               <footer class="l-chat-footer">
                 <form class="l-message" action="#">
                   <textarea class="form-input-message textarea" placeholder="Type a message"></textarea>
@@ -246,13 +261,122 @@
               </footer>
             </section>
 
+            <section class="l-workspace l-chat l-chat_group">
+              <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
+                <div class="chat-title">
+                  <div class="l-flexbox_inline groupTitle">
+                    <span class="name name_chat" title="Q-municate development">Q-municate development</span>
+                    <span class="triangle triangle_down"></span>
+                    <span class="triangle triangle_up is-hidden"></span>
+                  </div>
+                </div>
+                <div class="chat-controls">
+                  <button class="btn_chat btn_chat_add"><img src="images/icon-add.png" alt="add"></button>
+                  <button class="btn_chat btn_chat_delete"><img src="images/icon-delete.png" alt="delete"></button>
+                </div>
+                <div class="chat-occupants-wrap">
+                  <div class="chat-occupants">
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="status status_request"></span>
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="status status_request"></span>
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andreysdfsd</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andrey sdf sdfsdf</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="status status_online"></span>
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andreysdfsdfsdf</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="status status_online"></span>
+                      <span class="name name_occupant">Andreysdfsd</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="status status_online"></span>
+                      <span class="name name_occupant">Andrey sdf sdfsd</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andreysdfsdfsdf</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="status status_online"></span>
+                      <span class="name name_occupant">Andreysdfsd</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="status status_online"></span>
+                      <span class="name name_occupant">Andrey sdf sdfsd</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andreysdfsdfsdf</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="status status_online"></span>
+                      <span class="name name_occupant">Andreysdfsd</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="status status_online"></span>
+                      <span class="name name_occupant">Andrey sdf sdfsd</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andrey</span>
+                    </a>
+                    <a class="occupant l-flexbox_inline" href="#">
+                      <span class="name name_occupant">Andreysdfsdfsdf</span>
+                    </a>
+                  </div>                  
+                </div>
+              </header>
+
+              <section class="l-chat-content">
+                
+              </section>
+
+              <footer class="l-chat-footer">
+                <form class="l-message" action="#">
+                  <textarea class="form-input-message textarea" placeholder="Type a message"></textarea>
+                  <button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>
+                  <button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>
+                </form>
+              </footer>
+            </section>
 
             <section id="capBox" class="l-workspace l-flexbox is-hidden">
               <div class="l-cap l-flexbox l-flexbox_column">
                 <span class="cap-text">Is anybody here?</span>
                 <img class="cap-anybody" src="images/anybody.png" alt="QuickBlox anybody">
                 <button class="search btn btn_add btn_invite"><img class="btn-icon btn-icon_invite" src="images/icon-invite.png" alt="invite">Search Friends</button>
-                <button class="btn btn_add btn_share is-hidden"><img class="btn-icon btn-icon_share" src="images/icon-fb.png" alt="fb">Share on Facebook</button>
+                <!-- <button class="btn btn_add btn_share"><img class="btn-icon btn-icon_share" src="images/icon-fb.png" alt="fb">Share on Facebook</button> -->
               </div>
             </section>
           </div>

@@ -138,6 +138,24 @@ UserView.prototype = {
     appearAnimation();
   },
 
+  occupantPopover: function(objDom, e) {
+    var html,
+        position = e.currentTarget.getBoundingClientRect();
+
+    html = '<ul class="list-actions list-actions_occupants popover">';
+    // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
+    // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
+    html += '<li class="list-item"><a class="list-actions-action" href="#">Write message</a></li>';
+    // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+    html += '</ul>';
+
+    $('body').append(html);
+    appearAnimation();
+
+    objDom.addClass('is-active');
+    $('.list-actions_occupants').offset({top: position.top, left: position.left});
+  },
+
   logout: function() {
     User.logout(function() {
       switchOnWelcomePage();

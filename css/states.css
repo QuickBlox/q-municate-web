@@ -37,6 +37,17 @@ input.is-error:focus {
     color: #fff;
   }
 
+.occupant.is-active {
+  background: #1cba48;
+  border: 1px solid #1cba48;
+}
+.occupant.is-active:hover {
+  opacity: 1;
+}
+  .occupant.is-active .name {
+    color: #fff;
+  }
+
 .is-overlay {
   visibility: visible;
   opacity: 1;

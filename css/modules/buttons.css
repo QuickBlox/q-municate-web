@@ -63,6 +63,20 @@
     background: #0d70b3;
   }
 
+.btn_chat {
+  margin-right: 20px;
+}
+.l-chat_group .btn_chat {
+  margin-right: 15px;
+}
+  .btn_chat:last-child {
+    margin-right: 0;
+  }
+  .btn_chat_videocall {
+    position: relative;
+    top: -2px;
+  }
+
 .btn_message {
   position: absolute;
 }

@@ -187,6 +187,26 @@ Routes.prototype = {
     });
 
     textAreaScrollbar();
+    occupantsScrollbar();
+
+    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
+      var chat = $('.l-chat:visible');
+      if (chat.find('.triangle_up').is('.is-hidden')) {
+        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').addClass('is-overlay');
+        chat.find('.l-chat-content').addClass('l-chat-content_min');
+      } else {
+        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
+        chat.find('.l-chat-content').removeClass('l-chat-content_min');
+      }
+    });
+
+    $('.l-workspace-wrap').on('click', '.occupant', function(event) {
+      event.preventDefault();
+      removePopover();
+      UserView.occupantPopover($(this), event);
+    });
 
   }
 };
@@ -200,11 +220,18 @@ function textAreaScrollbar() {
   });
 }
 
+function occupantsScrollbar() {
+  $('.chat-occupants').mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 50
+  });
+}
+
 // Checking if the target is not an object run popover
 function clickBehaviour(e) {
   var objDom = $(e.target);
 
-  if (objDom.is('#profile, #profile *') || e.which === 3) {
+  if (objDom.is('#profile, #profile *, .occupant, .occupant *') || e.which === 3) {
     return false;
   } else {
     removePopover();
@@ -229,6 +256,7 @@ function changeInputFile(objDom) {
 
 function removePopover() {
   $('.is-contextmenu').removeClass('is-contextmenu');
+  $('.is-active').removeClass('is-active');
   $('.popover').remove();
 }
 

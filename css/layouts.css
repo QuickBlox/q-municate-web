@@ -37,6 +37,11 @@
   -ms-flex-pack: justify;
   justify-content: space-between;
 }
+.l-flexbox_flexwrap {
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
 
 /* Layouts
 --------------------------------------------------*/
@@ -143,17 +148,28 @@
 /* Chats
 --------------------------------------------------*/
 .l-chat-header {
+  position: relative;
   height: 75px;
   padding: 0 20px;
   background: #f9f9f9;
   border-bottom: 1px solid #f0f0f0;
 }
+.l-chat_group .l-chat-header {
+  height: 55px;
+}
 
 .l-chat-content {
   height: calc(100% - 75px);
 }
+.l-chat_group .l-chat-content {
+  height: calc(100% - 55px - 90px);
+}
   .l-chat-content_min {
     height: calc(100% - 75px - 90px);
+  }
+  .l-chat_group .l-chat-content_min {
+    margin-top: 83px;
+    height: calc(100% - 55px - 90px - 83px);
   }
 
 .l-chat-footer {
