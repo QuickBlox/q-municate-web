@@ -89,6 +89,17 @@
     right: 15px;
   }
 
+.btn_request_again {
+  margin-left: 20px;
+  padding: 0 15px 0 8px;
+  font-size: 14px;
+  line-height: 30px;
+  color: #333;
+  background: #f8f8f8;
+  border: 1px solid #f0f0f0;
+  border-radius: 5px;
+}
+
 /* button icons */
 .btn-icon {
   margin-right: 2vh;
@@ -108,4 +119,9 @@
   .btn-icon_share {
     width: 2.4vh;
     opacity: .5;
+  }
+  .btn-icon_request {
+    width: 19px;
+    margin-right: 8px;
+    vertical-align: text-top;
   }

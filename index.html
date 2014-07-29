@@ -230,12 +230,72 @@
           </aside>
 
           <div class="l-workspace-wrap">
+            <section class="l-workspace l-chat l-chat_private">
+              <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
+                <div class="chat-title">
+                  <div class="l-flexbox_inline">
+                    <img class="contact-avatar avatar" src="images/ava-single.png" alt="user">
+                    <h2 class="name name_chat" title="Andrey Povelichenko">Andrey Povelichenko</h2>
+                    <span class="status status_request"></span>
+                  </div>
+                </div>
+                <div class="chat-controls">
+                  <!-- <button class="btn_chat btn_chat_videocall"><img src="images/icon-videocall.png" alt="videocall"></button>
+                  <button class="btn_chat btn_chat_audiocall"><img src="images/icon-audiocall.png" alt="audiocall"></button> -->
+                  <!-- <button class="btn_chat btn_chat_add"><img src="images/icon-add.png" alt="add"></button> -->
+                  <!-- <button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button> -->
+                  <button class="btn_chat btn_chat_delete"><img src="images/icon-delete.png" alt="delete"></button>
+                </div>
+              </header>
+
+              <section class="l-chat-content scrollbar_message">
+                <article class="message message_service l-flexbox">
+                  <span class="message-avatar contact-avatar_message request-button_pending"></span>
+                  <div class="message-container-wrap">
+                    <div class="message-container l-flexbox l-flexbox_flexbetween">
+                      <div class="message-content">
+                        <h4 class="message-author">Your request has been sent</h4>
+                      </div>
+                      <time class="message-time">12:12</time>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="message message_service l-flexbox">
+                  <span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>
+                  <div class="message-container-wrap">
+                    <div class="message-container l-flexbox l-flexbox_flexbetween">
+                      <div class="message-content">
+                        <h4 class="message-author">Your request has been rejected
+                          <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button>
+                        </h4>
+                      </div>
+                      <time class="message-time">12:12</time>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="message message_service l-flexbox">
+                  <span class="message-avatar contact-avatar_message request-button_ok">&#10003;</span>
+                  <div class="message-container-wrap">
+                    <div class="message-container l-flexbox l-flexbox_flexbetween">
+                      <div class="message-content">
+                        <h4 class="message-author">Your request has been accepted</h4>
+                      </div>
+                      <time class="message-time">12:12</time>
+                    </div>
+                  </div>
+                </article>
+              </section>
+            </section>
+
+
             <section class="l-workspace l-chat l-chat_private is-hidden">
               <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
                 <div class="chat-title">
                   <div class="l-flexbox_inline">
                     <img class="contact-avatar avatar" src="images/ava-single.png" alt="user">
-                    <span class="name name_chat" title="Andrey Povelichenko">Andrey Povelichenko</span>
+                    <h2 class="name name_chat" title="Andrey Povelichenko">Andrey Povelichenko</h2>
                     <span class="status status_online"></span>
                   </div>
                 </div>
@@ -248,8 +308,109 @@
                 </div>
               </header>
 
-              <section class="l-chat-content l-chat-content_min">
-                
+              <section class="l-chat-content l-chat-content_min scrollbar_message">
+                <article class="message l-flexbox l-flexbox_alignstretch">
+                  <img class="message-avatar avatar contact-avatar_message" src="images/ava-single.png" alt="avatar">
+                  <div class="message-container-wrap">
+                    <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+                      <div class="message-content">
+                        <h4 class="message-author">Joe Super</h4>
+                        <div class="message-body">Hello Michael! How are you?</div>
+                      </div>
+                      <time class="message-time">30/05/2014</time>
+                    </div>
+                    <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+                      <div class="message-content">
+                        <div class="message-body">Hello Michael! How are you?</div>
+                      </div>
+                      <time class="message-time">30/05/2014</time>
+                    </div>
+                    <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+                      <div class="message-content">
+                        <div class="message-body">Hello Michael! How are you?</div>
+                      </div>
+                      <time class="message-time">30/05/2014</time>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="message l-flexbox l-flexbox_alignstretch">
+                  <img class="message-avatar avatar contact-avatar_message" src="images/ava-single.png" alt="avatar">
+                  <div class="message-container-wrap">
+                    <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+                      <div class="message-content">
+                        <h4 class="message-author">Joe Super</h4>
+                        <div class="message-body">Hello Michael! How are you?</div>
+                      </div>
+                      <time class="message-time">8 months ago</time>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="message l-flexbox l-flexbox_alignstretch">
+                  <img class="message-avatar avatar contact-avatar_message" src="images/ava-single.png" alt="avatar">
+                  <div class="message-container-wrap">
+                    <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+                      <div class="message-content">
+                        <h4 class="message-author">Joe Super</h4>
+                        <div class="message-body">Hello Michael! How are you?</div>
+                      </div>
+                      <time class="message-time">25 days ago</time>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="message l-flexbox l-flexbox_alignstretch is-own">
+                  <img class="message-avatar avatar contact-avatar_message" src="images/ava-single.png" alt="avatar">
+                  <div class="message-container-wrap">
+                    <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+                      <div class="message-content">
+                        <h4 class="message-author">Joe Super</h4>
+                        <div class="message-body">Hello Michael! How are you?</div>
+                      </div>
+                      <time class="message-time">12:12</time>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="message l-flexbox l-flexbox_alignstretch">
+                  <img class="message-avatar avatar contact-avatar_message" src="images/ava-single.png" alt="avatar">
+                  <div class="message-container-wrap">
+                    <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+                      <div class="message-content">
+                        <h4 class="message-author">Joe Super</h4>
+                        <div class="message-body">Hello Michael! How are you?</div>
+                      </div>
+                      <time class="message-time">12:12</time>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="message l-flexbox l-flexbox_alignstretch">
+                  <img class="message-avatar avatar contact-avatar_message" src="images/ava-single.png" alt="avatar">
+                  <div class="message-container-wrap">
+                    <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+                      <div class="message-content">
+                        <h4 class="message-author">Joe Super</h4>
+                        <div class="message-body"><a href="#">http://test.com</a></div>
+                      </div>
+                      <time class="message-time">12:12</time>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="message l-flexbox l-flexbox_alignstretch is-own">
+                  <img class="message-avatar avatar contact-avatar_message" src="images/ava-single.png" alt="avatar">
+                  <div class="message-container-wrap">
+                    <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+                      <div class="message-content">
+                        <h4 class="message-author">Joe Super</h4>
+                        <div class="message-body">Hello Michael! How are you?</div>
+                      </div>
+                      <time class="message-time">12:12</time>
+                    </div>
+                  </div>
+                </article>
               </section>
 
               <footer class="l-chat-footer">
@@ -261,11 +422,11 @@
               </footer>
             </section>
 
-            <section class="l-workspace l-chat l-chat_group">
+            <section class="l-workspace l-chat l-chat_group is-hidden">
               <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
                 <div class="chat-title">
                   <div class="l-flexbox_inline groupTitle">
-                    <span class="name name_chat" title="Q-municate development">Q-municate development</span>
+                    <h2 class="name name_chat" title="Q-municate development">Q-municate development</h2>
                     <span class="triangle triangle_down"></span>
                     <span class="triangle triangle_up is-hidden"></span>
                   </div>
@@ -501,6 +662,7 @@
   <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
   <script src="lib/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
   <script src="lib/scrollbar/jquery.nicescroll.min.js"></script>
+  <script src="lib/jquery.timeago.js"></script>
   <script src="lib/underscore-min.js"></script>
   <script src="lib/chroma-hash.js"></script>
   <script src="lib/quickblox.js"></script>

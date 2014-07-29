@@ -1,0 +1,45 @@
+.message {
+  padding: 20px 20px 25px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.message_service {
+  padding: 13px 20px;
+}
+  .message-container-wrap {
+    width: 100%;
+  }
+    .message-container {
+      width: 100%;
+      margin-top: 10px;
+      font-size: 16px;
+      line-height: 20px;
+    }
+    .message-container:first-child {
+      margin-top: 0;
+    }
+      .message-content {
+        max-width: 485px;
+        color: #333;
+        word-wrap: break-word;
+      }
+        .message-author {
+          margin-bottom: 10px;
+        }
+        .message_service .message-author {
+          margin-bottom: 0;
+          line-height: 30px;
+        }
+          .message-body p {
+            margin-bottom: 10px;
+          }
+          .message-body p:last-of-type {
+            margin-bottom: 0;
+          }
+          .message-body a {
+            color: #0d70b3;
+          }
+      .message-time {
+        font-size: 15px;
+        color: #999;
+        text-align: right;
+      }

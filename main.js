@@ -1405,7 +1405,8 @@ Routes.prototype = {
     });
 
     textAreaScrollbar();
-    occupantsScrollbar();
+    occupantScrollbar();
+    messageScrollbar();
 
     $('.l-workspace-wrap').on('click', '.groupTitle', function() {
       var chat = $('.l-chat:visible');
@@ -1438,11 +1439,22 @@ function textAreaScrollbar() {
   });
 }
 
-function occupantsScrollbar() {
+function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
     theme: 'minimal-dark',
     scrollInertia: 50
   });
+}
+
+function messageScrollbar() {
+  $('.scrollbar_message').mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 50,
+  });
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
 }
 
 // Checking if the target is not an object run popover

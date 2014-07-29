@@ -6,6 +6,7 @@
 @import url(modules/spinner.css);
 @import url(modules/text.css);
 @import url(modules/chat.css);
+@import url(modules/message.css);
 
 /* scrollbar */
 .mCS-autoHide > .mCustomScrollBox ~ .mCSB_scrollTools {

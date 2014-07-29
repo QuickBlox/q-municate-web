@@ -59,3 +59,7 @@ input.is-error:focus {
 .spinner_bounce.is-empty {
   margin: 10% auto;
 }
+
+.message.is-own {
+  background: #f8f8f8;
+}

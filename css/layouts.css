@@ -42,6 +42,11 @@
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
 }
+.l-flexbox_alignstretch {
+  -webkit-align-items: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+}
 
 /* Layouts
 --------------------------------------------------*/
@@ -151,7 +156,7 @@
   position: relative;
   height: 75px;
   padding: 0 20px;
-  background: #f9f9f9;
+  background: #f8f8f8;
   border-bottom: 1px solid #f0f0f0;
 }
 .l-chat_group .l-chat-header {
