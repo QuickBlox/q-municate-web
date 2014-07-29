@@ -5,6 +5,9 @@
 .message_service {
   padding: 13px 20px;
 }
+.message_service:last-of-type .btn_request_again {
+  display: inline-block;
+}
   .message-container-wrap {
     width: 100%;
   }

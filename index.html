@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Q-municate</title>
+  <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
   <link rel="stylesheet" href="lib/scrollbar/jquery.mCustomScrollbar.css">
   <link rel="stylesheet" href="main.css">
 </head>
@@ -230,7 +231,7 @@
           </aside>
 
           <div class="l-workspace-wrap">
-            <section class="l-workspace l-chat l-chat_private">
+            <section class="l-workspace l-chat l-chat_private is-hidden">
               <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
                 <div class="chat-title">
                   <div class="l-flexbox_inline">
@@ -240,10 +241,6 @@
                   </div>
                 </div>
                 <div class="chat-controls">
-                  <!-- <button class="btn_chat btn_chat_videocall"><img src="images/icon-videocall.png" alt="videocall"></button>
-                  <button class="btn_chat btn_chat_audiocall"><img src="images/icon-audiocall.png" alt="audiocall"></button> -->
-                  <!-- <button class="btn_chat btn_chat_add"><img src="images/icon-add.png" alt="add"></button> -->
-                  <!-- <button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button> -->
                   <button class="btn_chat btn_chat_delete"><img src="images/icon-delete.png" alt="delete"></button>
                 </div>
               </header>
@@ -289,8 +286,7 @@
               </section>
             </section>
 
-
-            <section class="l-workspace l-chat l-chat_private is-hidden">
+            <section class="l-workspace l-chat l-chat_private">
               <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
                 <div class="chat-title">
                   <div class="l-flexbox_inline">
@@ -564,6 +560,19 @@
   </div>
 
   <div class="popups l-flexbox">
+    <section id="popupAttach" class="popup popup_attach">
+      <img class="attach-photo" src="images/test2.JPG" alt="attach">
+      <video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls data-setup="{}">
+        <source src="http://html5demos.com/assets/dizzy.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+        <source src="http://html5demos.com/assets/dizzy.webm" type='video/webm; codecs="vp8, vorbis"' />
+        <source src="http://html5demos.com/assets/dizzy.ogv" type='video/ogg; codecs="theora, vorbis"' />
+      </video>
+      <div class="attach-description l-flexbox l-flexbox_flexbetween">
+        <span class="attach-name">photo.png</span>
+        <a class="attach-download" href="#">Download</a>
+      </div>
+    </section>
+
     <section id="popupLogout" class="popup popup_logout is-open">
       <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
         <span class="alert alert_logout">Are you sure<br>you want to log out?</span>
@@ -660,6 +669,7 @@
   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
+  <script src="https://vjs.zencdn.net/4.6/video.js"></script>
   <script src="lib/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
   <script src="lib/scrollbar/jquery.nicescroll.min.js"></script>
   <script src="lib/jquery.timeago.js"></script>
