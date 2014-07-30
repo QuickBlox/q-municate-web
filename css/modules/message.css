@@ -1,5 +1,6 @@
+/* message */
 .message {
-  padding: 20px 20px 25px;
+  padding: 20px;
   border-bottom: 1px solid #f0f0f0;
 }
 .message_service {
@@ -32,6 +33,9 @@
           margin-bottom: 0;
           line-height: 30px;
         }
+          .message-body {
+            position: relative;
+          }
           .message-body p {
             margin-bottom: 10px;
           }
@@ -46,3 +50,40 @@
         color: #999;
         text-align: right;
       }
+        .message-time a {
+          font-size: 14px;
+          color: #0d70b3;
+        }
+
+/* preview */
+.preview {
+  cursor: pointer;
+}
+.preview:hover {
+  opacity: 0.6;
+}
+  .preview-video {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    background: #333;
+  }
+  .preview-video:before {
+    content: "\e001";
+    position: absolute;
+    margin: auto;
+    margin-left: 48%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid #ccc;
+  }
+    .preview-photo img {
+      max-width: 200px;
+      max-height: 165px;
+    }

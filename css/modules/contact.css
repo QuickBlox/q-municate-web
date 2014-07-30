@@ -109,6 +109,12 @@
   .request-button:last-child {
     border-right: 0;
   }
+    .request-button_attach {
+      width: 20px;
+      min-width: 20px;
+      margin: 0 30px 0 10px;
+      text-align: center;
+    }
     .request-button_pending {
       width: 20px;
       min-width: 20px;
