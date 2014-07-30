@@ -185,11 +185,11 @@ DialogView.prototype = {
         dialog = dialogs[dialog_id],
         user = contacts[user_id],
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
-        html, jid, icon, name, status,
+        html, jid, icon, name, status, message,
         self = this;
 
-    // console.log(dialog);
-    // console.log(user);
+    // if (QMCONFIG.debug) console.log(dialog);
+    // if (QMCONFIG.debug) console.log(user);
 
     jid = dialog.room_jid || user.user_jid;
     icon = user_id ? user.avatar_url : QMCONFIG.defAvatar.group_url;
@@ -247,12 +247,20 @@ DialogView.prototype = {
         $('.l-chat:visible').addClass('is-request');
 
       self.createDataSpinner(true);
-      Message.download(function(messages) {
+      Message.download(dialog_id, function(messages) {
         self.removeDataSpinner();
+        for (var i = 0, len = messages.length; i < len; i++) {
+          message = Message.create(messages[i]);
+          if (QMCONFIG.debug) console.log(message);
+          MessageView.addItem(message);
+        }
+        
+        setTimeout(scrollTo, 500);
       });
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
+      scrollTo();
 
     }
 
@@ -264,6 +272,23 @@ DialogView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
+// fix for customScrollbar
+function scrollTo() {  
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 50);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 100);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 150);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 200);
+}
+
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',

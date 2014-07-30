@@ -414,8 +414,26 @@ function Message(app) {
 
 Message.prototype = {
 
-  download: function(callback) {
-    
+  download: function(dialog_id, callback) {
+    var QBApiCalls = this.app.service;
+
+    QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50}, function(messages) {
+      callback(messages);
+    });
+  },
+
+  create: function(params) {
+    var User = this.app.models.User;
+
+    return {
+      id: params._id,
+      dialog_id: params.chat_dialog_id,
+      body: params.message || null,
+      notification_type: params.notification_type || null,
+      date_sent: params.date_sent,
+      read: params.read,
+      sender_id: params.sender_id,
+    };
   }
 
 };
@@ -1511,10 +1529,6 @@ function messageScrollbar() {
     scrollInertia: 50,
     live: true
   });
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
 }
 
 // Checking if the target is not an object run popover
@@ -2160,11 +2174,11 @@ DialogView.prototype = {
         dialog = dialogs[dialog_id],
         user = contacts[user_id],
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
-        html, jid, icon, name, status,
+        html, jid, icon, name, status, message,
         self = this;
 
-    // console.log(dialog);
-    // console.log(user);
+    // if (QMCONFIG.debug) console.log(dialog);
+    // if (QMCONFIG.debug) console.log(user);
 
     jid = dialog.room_jid || user.user_jid;
     icon = user_id ? user.avatar_url : QMCONFIG.defAvatar.group_url;
@@ -2222,12 +2236,20 @@ DialogView.prototype = {
         $('.l-chat:visible').addClass('is-request');
 
       self.createDataSpinner(true);
-      Message.download(function(messages) {
+      Message.download(dialog_id, function(messages) {
         self.removeDataSpinner();
+        for (var i = 0, len = messages.length; i < len; i++) {
+          message = Message.create(messages[i]);
+          if (QMCONFIG.debug) console.log(message);
+          MessageView.addItem(message);
+        }
+        
+        setTimeout(scrollTo, 500);
       });
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
+      scrollTo();
 
     }
 
@@ -2239,6 +2261,23 @@ DialogView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
+// fix for customScrollbar
+function scrollTo() {  
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 50);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 100);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 150);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 200);
+}
+
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
@@ -2278,19 +2317,99 @@ function textAreaScrollbar() {
 
 module.exports = MessageView;
 
-var Message, ContactList;
+var User, Message, ContactList;
 
 function MessageView(app) {
   this.app = app;
+  User = this.app.models.User;
   Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
 }
 
 MessageView.prototype = {
 
+  addItem: function(message) {
+    var contacts = ContactList.contacts,
+        contact = contacts[message.sender_id],
+        type = message.notification_type || 'message',
+        chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
+        html;
 
+    switch (type) {
+    case '3':
+      html = '<article class="message message_service l-flexbox">';
+      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-content">';
+
+      if (message.sender_id === User.contact.id)
+        html += '<h4 class="message-author">Your request has been sent</h4>';
+      else
+        html += '<h4 class="message-author">'+contact.full_name+' request has been sent</h4>';
+
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case '4':
+      html = '<article class="message message_service l-flexbox">';
+      html += '<span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-content">';
+
+      if (message.sender_id === User.contact.id)
+        html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+      else
+        html += '<h4 class="message-author">'+contact.full_name+' request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case '5':
+      html = '<article class="message message_service l-flexbox">';
+      html += '<span class="message-avatar contact-avatar_message request-button_ok">&#10003;</span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-content">';
+
+      if (message.sender_id === User.contact.id)
+        html += '<h4 class="message-author">Your request has been accepted</h4>';
+      else
+        html += '<h4 class="message-author">'+contact.full_name+' request has been accepted</h4>';
+
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case 'message':
+      break;
+    }
+
+    chat.find('.l-chat-content').prepend(html);
+    
+  }
 
 };
+
+/* Private
+---------------------------------------------------------------------- */
+function getTime(time) {
+  var messageDate = new Date(time * 1000),
+      startOfCurrentDay = new Date;
+
+  startOfCurrentDay.setHours(0,0,0,0);
+
+  if (messageDate > startOfCurrentDay) {
+    return messageDate.getHours() + ':' + (messageDate.getMinutes().toString().length === 1 ? '0'+messageDate.getMinutes() : messageDate.getMinutes());
+  } else if (messageDate.getFullYear() === startOfCurrentDay.getFullYear()) {
+    return $.timeago(messageDate);
+  } else {
+    return messageDate.getDate() + '/' + (messageDate.getMonth() + 1) + '/' + messageDate.getFullYear();
+  }
+}
 
 },{}],13:[function(require,module,exports){
 /*

@@ -243,10 +243,6 @@ function messageScrollbar() {
     scrollInertia: 50,
     live: true
   });
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
 }
 
 // Checking if the target is not an object run popover
