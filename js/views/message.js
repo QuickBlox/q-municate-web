@@ -36,7 +36,7 @@ MessageView.prototype = {
       if (message.sender_id === User.contact.id)
         html += '<h4 class="message-author">Your request has been sent</h4>';
       else
-        html += '<h4 class="message-author">'+contact.full_name+' request has been sent</h4>';
+        html += '<h4 class="message-author">'+contact.full_name+' has sent a request to you</h4>';
 
       html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       html += '</div></div></article>';
@@ -52,7 +52,7 @@ MessageView.prototype = {
       if (message.sender_id === User.contact.id)
         html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
       else
-        html += '<h4 class="message-author">'+contact.full_name+' request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+        html += '<h4 class="message-author">'+contact.full_name+' has rejected a request';
 
       html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       html += '</div></div></article>';
@@ -68,7 +68,7 @@ MessageView.prototype = {
       if (message.sender_id === User.contact.id)
         html += '<h4 class="message-author">Your request has been accepted</h4>';
       else
-        html += '<h4 class="message-author">'+contact.full_name+' request has been accepted</h4>';
+        html += '<h4 class="message-author">'+contact.full_name+' has accepted a request</h4>';
 
       html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       html += '</div></div></article>';
