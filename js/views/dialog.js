@@ -254,14 +254,14 @@ DialogView.prototype = {
           if (QMCONFIG.debug) console.log(message);
           MessageView.addItem(message);
         }
-        messageScrollbar();
+        messageScrollbar(self);
       });
-      
+
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
-      messageScrollbar();
+      messageScrollbar(self);
 
     }
 
@@ -274,14 +274,20 @@ DialogView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
-function messageScrollbar() {
+function messageScrollbar(self) {
   var objDom = $('.l-chat:visible .scrollbar_message'),
       height = objDom[0].scrollHeight;
 
   objDom.mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 50,
-    setTop: height + 'px'
+    scrollInertia: 150,
+    setTop: height + 'px',
+    callbacks: {
+      onTotalScrollBack: function() {
+        ajaxDownloading(objDom, self);
+      },
+      alwaysTriggerOffsets: false
+    }
   });
 }
 
@@ -290,6 +296,22 @@ function scrollbar() {
     theme: 'minimal-dark',
     scrollInertia: 150
   });
+}
+
+// ajax downloading of data through scroll
+function ajaxDownloading(chat, self) {
+  var MessageView = self.app.views.Message,
+      dialog_id = chat.parents('.l-chat').data('dialog'),
+      count = chat.find('.message').length,
+      message;
+
+  Message.download(dialog_id, function(messages) {
+    for (var i = 0, len = messages.length; i < len; i++) {
+      message = Message.create(messages[i]);
+      if (QMCONFIG.debug) console.log(message);
+      MessageView.addItem(message, true);
+    }
+  }, count);
 }
 
 function openPopup(objDom) {

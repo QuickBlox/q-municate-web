@@ -177,6 +177,11 @@ Routes.prototype = {
       ContactListView.sendSubscribe($(this));
     });
 
+    $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
+      if (QMCONFIG.debug) console.log('send subscribe');
+      ContactListView.sendSubscribe($(this), true);
+    });
+
     $('.list').on('click', '.request-button_ok', function() {
       if (QMCONFIG.debug) console.log('send confirm');
       ContactListView.sendConfirm($(this));
