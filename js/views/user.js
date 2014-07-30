@@ -156,6 +156,16 @@ UserView.prototype = {
     $('.list-actions_occupants').offset({top: position.top, left: position.left});
   },
 
+  smilePopover: function(objDom) {
+    var html = '<div class="popover popover_smile">';
+    html += '</div>';
+
+    if (objDom.find('img').length === 1)
+      objDom.addClass('is-active').append('<img src="images/icon-smile_active.png" alt="smile">').find('*:first').addClass('is-hidden');
+    objDom.parents('form').append(html);
+    appearAnimation();
+  },
+
   logout: function() {
     User.logout(function() {
       switchOnWelcomePage();

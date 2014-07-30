@@ -64,8 +64,8 @@
 }
   .preview-video {
     position: relative;
-    width: 200px;
-    height: 100px;
+    width: 180px;
+    height: 125px;
     background: #333;
   }
   .preview-video:before {

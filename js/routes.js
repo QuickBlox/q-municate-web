@@ -106,6 +106,17 @@ Routes.prototype = {
       UserView.contactPopover($(this));
     });
 
+    $('.l-workspace-wrap').on('click', '.occupant', function(event) {
+      event.preventDefault();
+      removePopover();
+      UserView.occupantPopover($(this), event);
+    });
+
+    $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
+      removePopover();
+      UserView.smilePopover($(this));
+    });
+
     /* popups
     ----------------------------------------------------- */
     $('.header-links-item').on('click', '#logout', function(event) {
@@ -203,12 +214,6 @@ Routes.prototype = {
       }
     });
 
-    $('.l-workspace-wrap').on('click', '.occupant', function(event) {
-      event.preventDefault();
-      removePopover();
-      UserView.occupantPopover($(this), event);
-    });
-
   }
 };
 
@@ -243,7 +248,7 @@ function messageScrollbar() {
 function clickBehaviour(e) {
   var objDom = $(e.target);
 
-  if (objDom.is('#profile, #profile *, .occupant, .occupant *') || e.which === 3) {
+  if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *') || e.which === 3) {
     return false;
   } else {
     removePopover();
@@ -269,6 +274,7 @@ function changeInputFile(objDom) {
 function removePopover() {
   $('.is-contextmenu').removeClass('is-contextmenu');
   $('.is-active').removeClass('is-active');
+  $('.btn_message_smile .is-hidden').removeClass('is-hidden').siblings().remove();
   $('.popover').remove();
 }
 

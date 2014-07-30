@@ -1324,6 +1324,17 @@ Routes.prototype = {
       UserView.contactPopover($(this));
     });
 
+    $('.l-workspace-wrap').on('click', '.occupant', function(event) {
+      event.preventDefault();
+      removePopover();
+      UserView.occupantPopover($(this), event);
+    });
+
+    $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
+      removePopover();
+      UserView.smilePopover($(this));
+    });
+
     /* popups
     ----------------------------------------------------- */
     $('.header-links-item').on('click', '#logout', function(event) {
@@ -1421,12 +1432,6 @@ Routes.prototype = {
       }
     });
 
-    $('.l-workspace-wrap').on('click', '.occupant', function(event) {
-      event.preventDefault();
-      removePopover();
-      UserView.occupantPopover($(this), event);
-    });
-
   }
 };
 
@@ -1461,7 +1466,7 @@ function messageScrollbar() {
 function clickBehaviour(e) {
   var objDom = $(e.target);
 
-  if (objDom.is('#profile, #profile *, .occupant, .occupant *') || e.which === 3) {
+  if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *') || e.which === 3) {
     return false;
   } else {
     removePopover();
@@ -1487,6 +1492,7 @@ function changeInputFile(objDom) {
 function removePopover() {
   $('.is-contextmenu').removeClass('is-contextmenu');
   $('.is-active').removeClass('is-active');
+  $('.btn_message_smile .is-hidden').removeClass('is-hidden').siblings().remove();
   $('.popover').remove();
 }
 
@@ -2225,6 +2231,16 @@ UserView.prototype = {
 
     objDom.addClass('is-active');
     $('.list-actions_occupants').offset({top: position.top, left: position.left});
+  },
+
+  smilePopover: function(objDom) {
+    var html = '<div class="popover popover_smile">';
+    html += '</div>';
+
+    if (objDom.find('img').length === 1)
+      objDom.addClass('is-active').append('<img src="images/icon-smile_active.png" alt="smile">').find('*:first').addClass('is-hidden');
+    objDom.parents('form').append(html);
+    appearAnimation();
   },
 
   logout: function() {

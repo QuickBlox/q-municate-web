@@ -48,6 +48,10 @@ input.is-error:focus {
     color: #fff;
   }
 
+.btn_message_smile.is-active {
+  opacity: 1 !important;
+}
+
 .is-overlay {
   visibility: visible;
   opacity: 1;
