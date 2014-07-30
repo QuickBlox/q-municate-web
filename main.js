@@ -2360,9 +2360,10 @@ MessageView.prototype = {
       html += '<div class="message-content">';
 
       if (message.sender_id === User.contact.id)
-        html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+        html += '<h4 class="message-author">'+User.contact.full_name+' has rejected a request';
       else
-        html += '<h4 class="message-author">'+contact.full_name+' has rejected a request';
+        html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+        
 
       html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       html += '</div></div></article>';
@@ -2376,9 +2377,9 @@ MessageView.prototype = {
       html += '<div class="message-content">';
 
       if (message.sender_id === User.contact.id)
-        html += '<h4 class="message-author">Your request has been accepted</h4>';
+        html += '<h4 class="message-author">'+User.contact.full_name+' has accepted a request</h4>';
       else
-        html += '<h4 class="message-author">'+contact.full_name+' has accepted a request</h4>';
+        html += '<h4 class="message-author">Your request has been accepted</h4>';
 
       html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       html += '</div></div></article>';
