@@ -13,6 +13,9 @@
   .contact-avatar_signup {
     margin-right: 1.5vh;
   }
+  .contact-avatar_message {
+    margin-right: 20px;
+  }
 
 /* avatar */
 .avatar {
@@ -40,6 +43,14 @@
   font-size: 2vh;
   color: #999;
 }
+.name_chat {
+  font-size: 20px;
+  line-height: 24px;
+}
+.name_occupant {
+  font-size: 14px;
+  line-height: 26px;
+}
 
 /* status */
 .status {
@@ -48,6 +59,9 @@
   height: 12px;
   margin-left: 10px;
   opacity: 0;
+}
+.occupant .status {
+  margin: 0 5px 0 -5px;
 }
   .status_online {
     background: #17d14b;
@@ -90,15 +104,53 @@
     padding: 0 10px;
     line-height: 32px;
     background: none;
+    border-right: 1px solid #f0f0f0;
   }
+  .request-button:last-child {
+    border-right: 0;
+  }
+    .request-button_attach {
+      width: 20px;
+      min-width: 20px;
+      margin: 0 30px 0 10px;
+      text-align: center;
+    }
+    .request-button_pending {
+      width: 20px;
+      min-width: 20px;
+      height: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      line-height: 20px;
+      color: #fff;
+      text-align: center;
+      background: #bebebe;
+      border-radius: 50%;
+    }
+    .request-button_pending:after {
+      content: 'i';
+    }
     .request-button_cancel {
       font-size: 20px;
       color: #ddb2b2;
-      border-right: 1px solid #f0f0f0;
+    }
+    .message-avatar.request-button_cancel {
+      width: 20px;
+      min-width: 20px;
+      height: 20px;
+      color: #cc0000;
+      text-align: center;
     }
     .request-button_ok {
       font-size: 26px;
       color: #a0cead;
+    }
+    .message-avatar.request-button_ok {
+      width: 20px;
+      min-width: 20px;
+      height: 20px;
+      color: #17d14b;
+      text-align: center;
     }
 
 /* add people */
@@ -114,3 +166,13 @@ span.send-request {
   .send-request img {
     float: right;
   }
+
+/* occupant */
+.occupant {
+  width: auto;
+  margin: 0 5px 5px 0;
+  padding: 0 15px;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 20px;
+}

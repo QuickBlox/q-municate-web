@@ -50,9 +50,7 @@ QM.prototype = {
     // Checking if autologin was chosen
     if (localStorage['QM.session'] && localStorage['QM.user'] &&
         // new format of storage data (20.07.2014)
-        JSON.parse(localStorage['QM.user']).user_jid &&
-        // new format of storage data (25.07.2014)
-        typeof JSON.parse(localStorage['QM.user']).is_import === 'boolean') {
+        JSON.parse(localStorage['QM.user']).user_jid) {
       
       token = JSON.parse(localStorage['QM.session']).token;
       this.service.init(token);
@@ -102,6 +100,7 @@ window.fbAsyncInit = function() {
   }
 };
 
+// Leave a chat after closing window
 window.onbeforeunload = function() {
   QB.chat.sendPres('unavailable');
 };
@@ -131,9 +130,8 @@ Contact.prototype = {
       blob_id: qbUser.blob_id,
       avatar_url: qbUser.avatar_url || getAvatar(qbUser),
       status: qbUser.status || getStatus(qbUser),
-      tag: qbUser.tag || qbUser.user_tags,
-      user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId),
-      is_import: qbUser.is_import || getImport(qbUser)
+      tag: qbUser.tag || qbUser.user_tags || null,
+      user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)
     };
   }
 
@@ -173,18 +171,6 @@ function getStatus(contact) {
   }
 
   return status;
-}
-
-function getImport(contact) {
-  var isImport;
-  
-  try {
-    isImport = JSON.parse(contact.custom_data).is_import || false;
-  } catch(err) {
-    isImport = false;
-  }
-
-  return isImport;
 }
 
 },{}],3:[function(require,module,exports){
@@ -493,6 +479,7 @@ var tempParams;
 
 function User(app) {
   this.app = app;
+  this._is_import = false;
   this._remember = false;
   this._valid = false;
 }
@@ -518,6 +505,7 @@ User.prototype = {
     QBApiCalls.createSession(params, function(session) {
       QBApiCalls.getUser(session.user_id, function(user) {
         self.contact = Contact.create(user);
+        self._is_import = getImport(user);
 
         if (QMCONFIG.debug) console.log('User', self);
 
@@ -526,22 +514,8 @@ User.prototype = {
           UserView.successFormCallback();
           DialogView.prepareDownloading(roster);
 
-          if (!self.contact.is_import) {
-            // import FB friends
-            FB.api('/me/friends', function (res) {
-                if (QMCONFIG.debug) console.log('FB friends', res);
-                var ids = [];
-
-                for (var i = 0, len = res.data.length; i < len; i++) {
-                  ids.push(res.data[i].id);
-                }
-
-                DialogView.downloadDialogs(roster, ids);
-              }
-            );
-
-            self.contact.is_import = true;
-            self.updateQBUser(user);
+          if (!self._is_import) {
+            self.import(roster, user);
           } else {
             DialogView.downloadDialogs(roster);
           }
@@ -550,6 +524,38 @@ User.prototype = {
 
       });
     }, true);
+  },
+
+  import: function(roster, user) {
+    var DialogView = this.app.views.Dialog,
+        self = this;
+
+    FB.api('/me/permissions', function (response) {
+        if (response.data[3].permission === 'user_friends' && response.data[3].status === 'granted') {
+
+          // import FB friends
+          FB.api('/me/friends', function (res) {
+              if (QMCONFIG.debug) console.log('FB friends', res);
+              var ids = [];
+
+              for (var i = 0, len = res.data.length; i < len; i++) {
+                ids.push(res.data[i].id);
+              }
+
+              if (ids.length > 0)
+                DialogView.downloadDialogs(roster, ids);
+              else
+                DialogView.downloadDialogs(roster);
+            }
+          );
+
+        } else {
+          DialogView.downloadDialogs(roster);
+        }
+        self._is_import = true;
+        self.updateQBUser(user);
+      }
+    );
   },
 
   updateQBUser: function(user) {
@@ -832,6 +838,18 @@ function validate(form, user) {
 function fail(user, errMsg) {
   user._valid = false;
   $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
+}
+
+function getImport(user) {
+  var isImport;
+  
+  try {
+    isImport = JSON.parse(user.custom_data).is_import || false;
+  } catch(err) {
+    isImport = false;
+  }
+
+  return isImport;
 }
 
 },{}],7:[function(require,module,exports){
@@ -1324,6 +1342,17 @@ Routes.prototype = {
       UserView.contactPopover($(this));
     });
 
+    $('.l-workspace-wrap').on('click', '.occupant', function(event) {
+      event.preventDefault();
+      removePopover();
+      UserView.occupantPopover($(this), event);
+    });
+
+    $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
+      removePopover();
+      UserView.smilePopover($(this));
+    });
+
     /* popups
     ----------------------------------------------------- */
     $('.header-links-item').on('click', '#logout', function(event) {
@@ -1400,16 +1429,62 @@ Routes.prototype = {
       event.preventDefault();
     });
 
+    $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
+      event.preventDefault();
+    });
+
+    textAreaScrollbar();
+    occupantScrollbar();
+    messageScrollbar();
+
+    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
+      var chat = $('.l-chat:visible');
+      if (chat.find('.triangle_up').is('.is-hidden')) {
+        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').addClass('is-overlay');
+        chat.find('.l-chat-content').addClass('l-chat-content_min');
+      } else {
+        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
+        chat.find('.l-chat-content').removeClass('l-chat-content_min');
+      }
+    });
+
   }
 };
 
 /* Private
 ---------------------------------------------------------------------- */
+function textAreaScrollbar() {
+  $('.textarea').niceScroll({
+    cursoropacitymax: 0.5,
+    railpadding: {right: 5}
+  });
+}
+
+function occupantScrollbar() {
+  $('.chat-occupants').mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 50
+  });
+}
+
+function messageScrollbar() {
+  $('.scrollbar_message').mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 50,
+  });
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+}
+
 // Checking if the target is not an object run popover
 function clickBehaviour(e) {
   var objDom = $(e.target);
 
-  if (objDom.is('#profile, #profile *') || e.which === 3) {
+  if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *') || e.which === 3) {
     return false;
   } else {
     removePopover();
@@ -1434,6 +1509,8 @@ function changeInputFile(objDom) {
 
 function removePopover() {
   $('.is-contextmenu').removeClass('is-contextmenu');
+  $('.is-active').removeClass('is-active');
+  $('.btn_message_smile .is-hidden').removeClass('is-hidden').siblings().remove();
   $('.popover').remove();
 }
 
@@ -2153,6 +2230,34 @@ UserView.prototype = {
     html += '</ul>';
 
     objDom.after(html).parent().addClass('is-contextmenu');
+    appearAnimation();
+  },
+
+  occupantPopover: function(objDom, e) {
+    var html,
+        position = e.currentTarget.getBoundingClientRect();
+
+    html = '<ul class="list-actions list-actions_occupants popover">';
+    // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
+    // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
+    html += '<li class="list-item"><a class="list-actions-action" href="#">Write message</a></li>';
+    // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+    html += '</ul>';
+
+    $('body').append(html);
+    appearAnimation();
+
+    objDom.addClass('is-active');
+    $('.list-actions_occupants').offset({top: position.top, left: position.left});
+  },
+
+  smilePopover: function(objDom) {
+    var html = '<div class="popover popover_smile">';
+    html += '</div>';
+
+    if (objDom.find('img').length === 1)
+      objDom.addClass('is-active').append('<img src="images/icon-smile_active.png" alt="smile">').find('*:first').addClass('is-hidden');
+    objDom.parents('form').append(html);
     appearAnimation();
   },
 

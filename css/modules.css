@@ -5,6 +5,8 @@
 @import url(modules/popup.css);
 @import url(modules/spinner.css);
 @import url(modules/text.css);
+@import url(modules/chat.css);
+@import url(modules/message.css);
 
 /* scrollbar */
 .mCS-autoHide > .mCustomScrollBox ~ .mCSB_scrollTools {
@@ -138,4 +140,24 @@
   display: none;
   border: 1px solid #f0f0f0;
   box-shadow: 0 0 10px 3px rgba(240, 240, 240, .7);
+}
+  .popover_smile {
+    position: absolute;
+    top: -215px;
+    width: 220px;
+    height: 205px;
+    background: #fff;
+  }
+
+/* no connect */
+.no-connection {
+  position: absolute;
+  top: 23px;
+  left: 300px;
+  padding: 0 20px;
+  font-size: 12px;
+  line-height: 32px;
+  color: #666;
+  background: #f2f2f2;
+  border-radius: 20px;
 }

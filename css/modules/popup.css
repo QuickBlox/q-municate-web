@@ -21,6 +21,9 @@
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
   }
+  .popup_attach {
+    padding: 20px 20px 25px;
+  }
   .popup_logout,
   .popup_import,
   .popup_delete {
@@ -93,3 +96,45 @@
   font-size: 26px;
   line-height: 32px;
 }
+
+/* attach message */
+.attach-file {
+  display: inline-block;
+  padding-left: 18px;
+  line-height: 24px;
+  color: #0d70b3;
+  background: url(../../images/icon-attach.png) no-repeat 0 0;
+  background-size: 10px auto;
+  word-break: break-all;
+}
+.attach-size {
+  margin-left: 5px;
+  color: #999;
+}
+.attach-upload {
+  font-size: 14px;
+}
+  .attach-upload progress {
+    margin: 0 10px;
+  }
+
+/* attach popup */
+.attach-photo {
+  max-width: 80vw;
+  max-height: 80vh;
+  margin-bottom: 20px;
+}
+.attach-video {
+  width: 640px !important;
+  height: 480px !important;
+  margin-bottom: 20px;
+}
+.attach-description {
+  font-size: 16px;
+}
+  .attach-name {
+    color: #999;
+  }
+  .attach-download {
+    color: #0d70b3;
+  }

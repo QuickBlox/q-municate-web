@@ -106,6 +106,17 @@ Routes.prototype = {
       UserView.contactPopover($(this));
     });
 
+    $('.l-workspace-wrap').on('click', '.occupant', function(event) {
+      event.preventDefault();
+      removePopover();
+      UserView.occupantPopover($(this), event);
+    });
+
+    $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
+      removePopover();
+      UserView.smilePopover($(this));
+    });
+
     /* popups
     ----------------------------------------------------- */
     $('.header-links-item').on('click', '#logout', function(event) {
@@ -182,16 +193,62 @@ Routes.prototype = {
       event.preventDefault();
     });
 
+    $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
+      event.preventDefault();
+    });
+
+    textAreaScrollbar();
+    occupantScrollbar();
+    messageScrollbar();
+
+    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
+      var chat = $('.l-chat:visible');
+      if (chat.find('.triangle_up').is('.is-hidden')) {
+        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').addClass('is-overlay');
+        chat.find('.l-chat-content').addClass('l-chat-content_min');
+      } else {
+        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
+        chat.find('.l-chat-content').removeClass('l-chat-content_min');
+      }
+    });
+
   }
 };
 
 /* Private
 ---------------------------------------------------------------------- */
+function textAreaScrollbar() {
+  $('.textarea').niceScroll({
+    cursoropacitymax: 0.5,
+    railpadding: {right: 5}
+  });
+}
+
+function occupantScrollbar() {
+  $('.chat-occupants').mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 50
+  });
+}
+
+function messageScrollbar() {
+  $('.scrollbar_message').mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 50,
+  });
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+}
+
 // Checking if the target is not an object run popover
 function clickBehaviour(e) {
   var objDom = $(e.target);
 
-  if (objDom.is('#profile, #profile *') || e.which === 3) {
+  if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *') || e.which === 3) {
     return false;
   } else {
     removePopover();
@@ -216,6 +273,8 @@ function changeInputFile(objDom) {
 
 function removePopover() {
   $('.is-contextmenu').removeClass('is-contextmenu');
+  $('.is-active').removeClass('is-active');
+  $('.btn_message_smile .is-hidden').removeClass('is-hidden').siblings().remove();
   $('.popover').remove();
 }
 

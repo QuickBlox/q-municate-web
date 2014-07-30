@@ -63,6 +63,44 @@
     background: #0d70b3;
   }
 
+.btn_chat {
+  margin-right: 20px;
+}
+.l-chat_group .btn_chat {
+  margin-right: 15px;
+}
+  .btn_chat:last-child {
+    margin-right: 0;
+  }
+  .btn_chat_videocall {
+    position: relative;
+    top: -2px;
+  }
+
+.btn_message {
+  position: absolute;
+}
+  .btn_message_smile {
+    top: 8px;
+    left: 12px;
+  }
+  .btn_message_attach {
+    top: 7px;
+    right: 15px;
+  }
+
+.btn_request_again {
+  display: none;
+  margin-left: 20px;
+  padding: 0 15px 0 8px;
+  font-size: 14px;
+  line-height: 28px;
+  color: #333;
+  background: #f8f8f8;
+  border: 1px solid #f0f0f0;
+  border-radius: 5px;
+}
+
 /* button icons */
 .btn-icon {
   margin-right: 2vh;
@@ -82,4 +120,9 @@
   .btn-icon_share {
     width: 2.4vh;
     opacity: .5;
+  }
+  .btn-icon_request {
+    width: 19px;
+    margin-right: 8px;
+    vertical-align: text-top;
   }
