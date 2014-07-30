@@ -26,14 +26,14 @@ input.is-error:focus {
 .list-item.is-contextmenu {
   background: #f8f8f8;
 }
-.list-item.is-active {
+.list-item.is-selected {
   background: #1cba48;
   border-bottom: 1px solid #1cba48;
 }
-.list-item.is-active:hover {
+.list-item.is-selected:hover {
   background: #1cba48;
 }
-  .list-item.is-active .name {
+  .list-item.is-selected .name {
     color: #fff;
   }
 
@@ -66,4 +66,17 @@ input.is-error:focus {
 
 .message.is-own {
   background: #f8f8f8;
+}
+
+.is-request .btn_chat_videocall,
+.is-request .btn_chat_audiocall,
+.is-request .btn_chat_add,
+.is-request .btn_chat_profile,
+.is-request .l-chat-footer {
+  display: none;
+}
+.is-group .btn_chat_videocall,
+.is-group .btn_chat_audiocall,
+.is-group .btn_chat_profile {
+  display: none;
 }

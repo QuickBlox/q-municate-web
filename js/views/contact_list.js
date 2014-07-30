@@ -123,7 +123,8 @@ ContactListView.prototype = {
         roster = JSON.parse(sessionStorage['QM.roster']),
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
-        li;
+        li,
+        dialog;
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
@@ -156,11 +157,18 @@ ContactListView.prototype = {
     li.remove();
     isSectionEmpty(list);
 
-    DialogView.addDialogItem({
-      id: hiddenDialogs[id],
+    dialog = Dialog.create({
+      _id: hiddenDialogs[id],
       type: 3,
-      occupants_ids: [id],
+      occupants_ids: [id]
     });
+    ContactList.dialogs[dialog.id] = dialog;
+    if (QMCONFIG.debug) console.log('Dialog', dialog);
+    if (!localStorage['QM.dialog-' + dialog.id]) {
+      localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+    }
+
+    DialogView.addDialogItem(dialog);
   },
 
   sendReject: function(objDom) {
@@ -190,9 +198,12 @@ ContactListView.prototype = {
   },
 
   sendDelete: function(objDom) {
-    var id = objDom.data('id'),
+    var contacts = ContactList.contacts,
+        dialogs = ContactList.dialogs,
+        id = objDom.data('id'),
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
         li = $('.dialog-item[data-id="'+id+'"]'),
+        chat = $('.l-chat[data-id="'+id+'"]'),
         list = li.parents('ul'),
         dialog_id = li.data('dialog'),
         roster = JSON.parse(sessionStorage['QM.roster']);
@@ -220,6 +231,12 @@ ContactListView.prototype = {
       notification_type: 4,
       full_name: User.contact.full_name,
     }});
+
+    // delete chat section
+    if (chat.length > 0)
+      chat.remove();
+    $('#capBox').removeClass('is-hidden');
+    delete dialogs[dialog_id];
   },
 
   // callbacks
@@ -233,7 +250,8 @@ ContactListView.prototype = {
 
     // update roster
     roster[id] = {
-      subscription: 'none'
+      subscription: 'none',
+      ask: null
     };
     ContactList.saveRoster(roster);
 
@@ -259,7 +277,7 @@ ContactListView.prototype = {
 
   onConfirm: function(id) {
     var roster = JSON.parse(sessionStorage['QM.roster']),
-        dialogItem = $('.dialog-item[data-id="'+id+'"]');
+        dialogItem = $('.presence-listener[data-id="'+id+'"]');
 
     // update roster
     roster[id] = {
@@ -272,8 +290,12 @@ ContactListView.prototype = {
   },
 
   onReject: function(id) {
-    var dialogItem = $('.dialog-item[data-id="'+id+'"]'),
-        roster = JSON.parse(sessionStorage['QM.roster']);
+    var dialogItem = $('.presence-listener[data-id="'+id+'"]'),
+        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+        request = $('#requestsList .list-item[data-jid="'+jid+'"]'),
+        list = request && request.parents('ul'),
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
     // update roster
     roster[id] = {
@@ -282,11 +304,22 @@ ContactListView.prototype = {
     };
     ContactList.saveRoster(roster);
 
+    // update notConfirmed people list
+    delete notConfirmed[id];
+    ContactList.saveNotConfirmed(notConfirmed);
+
     dialogItem.find('.status').removeClass('status_online').addClass('status_request');
+    if (dialogItem.is('.l-chat'))
+      dialogItem.addClass('is-request');
+    if (request.length > 0) {
+      QB.chat.roster.remove(jid);
+      request.remove();
+      isSectionEmpty(list);
+    }      
   },
 
   onPresence: function(id, type) {
-    var dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+    var dialogItem = $('.presence-listener[data-id="'+id+'"]'),
         roster = JSON.parse(sessionStorage['QM.roster']);
     
     // update roster
