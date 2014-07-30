@@ -12,6 +12,7 @@ var contact_ids;
 function ContactList(app) {
   this.app = app;
   this.contacts = getContacts();
+  this.dialogs = {};
   contact_ids = Object.keys(this.contacts).map(Number);
 }
 

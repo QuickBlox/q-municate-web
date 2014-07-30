@@ -29,11 +29,11 @@ Dialog.prototype = {
     return {
       id: params._id,
       type: params.type,
-      room_jid: params.xmpp_room_jid,
-      room_name: params.name,
+      room_jid: params.xmpp_room_jid || null,
+      room_name: params.name || null,
       occupants_ids: occupants_ids,
-      last_message_date_sent: params.last_message_date_sent,
-      unread_count: params.unread_messages_count
+      last_message_date_sent: params.last_message_date_sent || null,
+      unread_count: params.unread_messages_count || null
     };
   },
 
@@ -48,7 +48,12 @@ Dialog.prototype = {
 
     QBApiCalls.createDialog({type: 3, occupants_ids: id}, function(res) {
       dialog = self.create(res);
+      ContactList.dialogs[dialog.id] = dialog;
       if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+      if (!localStorage['QM.dialog-' + dialog.id]) {
+        localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+      }
 
       // send notification about subscribe
       QB.chat.send(jid, {type: 'chat', extension: {

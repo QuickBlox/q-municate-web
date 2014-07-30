@@ -131,7 +131,7 @@ UserView.prototype = {
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
     html += '<li class="list-item"><a class="list-actions-action" href="#">Add people</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
-    html += '<li class="list-item"><a id="deleteContact" class="list-actions-action" href="#">Delete contact</a></li>';
+    html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
     html += '</ul>';
 
     objDom.after(html).parent().addClass('is-contextmenu');

@@ -27,7 +27,12 @@ Routes.prototype = {
 
     $('input:file').on('change', function() {
       changeInputFile($(this));
-    });    
+    });
+
+    /* scrollbars
+    ----------------------------------------------------- */
+    occupantScrollbar();
+    messageScrollbar();
 
     /* welcome page
     ----------------------------------------------------- */
@@ -124,9 +129,9 @@ Routes.prototype = {
       openPopup($('#popupLogout'));
     });
 
-    $('.list').on('click', '#deleteContact', function(event) {
+    $('.list, .l-workspace-wrap').on('click', '.deleteContact', function(event) {
       event.preventDefault();
-      var id = $(this).parents('.dialog-item').data('id');
+      var id = $(this).parents('.presence-listener').data('id');
       openPopup($('#popupDelete'), id);
     });
 
@@ -183,23 +188,28 @@ Routes.prototype = {
       ContactListView.sendReject($(this));
     });
 
-    /* temporary routes
+    /* dialogs
     ----------------------------------------------------- */
-    $('.list').on('click', '.contact', function(event) {
+    $('.l-list').on('click', '.contact', function(event) {
       event.preventDefault();
+      DialogView.htmlBuild($(this));
     });
 
-    $('#home, #share, #contacts').on('click', function(event) {
+    $('#home').on('click', function(event) {
+      event.preventDefault();
+      $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
+      $('.is-selected').removeClass('is-selected');
+    });
+
+    /* temporary routes
+    ----------------------------------------------------- */
+    $('#share, #contacts').on('click', function(event) {
       event.preventDefault();
     });
 
     $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
       event.preventDefault();
-    });
-
-    textAreaScrollbar();
-    occupantScrollbar();
-    messageScrollbar();
+    });    
 
     $('.l-workspace-wrap').on('click', '.groupTitle', function() {
       var chat = $('.l-chat:visible');
@@ -219,17 +229,11 @@ Routes.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
-function textAreaScrollbar() {
-  $('.textarea').niceScroll({
-    cursoropacitymax: 0.5,
-    railpadding: {right: 5}
-  });
-}
-
 function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 50
+    scrollInertia: 50,
+    live: true
   });
 }
 
@@ -237,11 +241,8 @@ function messageScrollbar() {
   $('.scrollbar_message').mCustomScrollbar({
     theme: 'minimal-dark',
     scrollInertia: 50,
+    live: true
   });
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
 }
 
 // Checking if the target is not an object run popover
