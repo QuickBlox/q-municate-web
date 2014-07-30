@@ -32,7 +32,6 @@ Routes.prototype = {
     /* scrollbars
     ----------------------------------------------------- */
     occupantScrollbar();
-    messageScrollbar();
 
     /* welcome page
     ----------------------------------------------------- */
@@ -178,6 +177,11 @@ Routes.prototype = {
       ContactListView.sendSubscribe($(this));
     });
 
+    $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
+      if (QMCONFIG.debug) console.log('send subscribe');
+      ContactListView.sendSubscribe($(this), true);
+    });
+
     $('.list').on('click', '.request-button_ok', function() {
       if (QMCONFIG.debug) console.log('send confirm');
       ContactListView.sendConfirm($(this));
@@ -231,14 +235,6 @@ Routes.prototype = {
 ---------------------------------------------------------------------- */
 function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
-    theme: 'minimal-dark',
-    scrollInertia: 50,
-    live: true
-  });
-}
-
-function messageScrollbar() {
-  $('.scrollbar_message').mCustomScrollbar({
     theme: 'minimal-dark',
     scrollInertia: 50,
     live: true

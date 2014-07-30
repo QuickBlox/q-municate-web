@@ -169,6 +169,8 @@ UserView.prototype = {
   logout: function() {
     User.logout(function() {
       switchOnWelcomePage();
+      $('#capBox').removeClass('is-hidden');
+      $('.l-chat').remove();
       if (QMCONFIG.debug) console.log('current User and Session were destroyed');
     });
   },

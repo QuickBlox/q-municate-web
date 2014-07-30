@@ -9,15 +9,20 @@ module.exports = Message;
 
 function Message(app) {
   this.app = app;
+  this.skip = {};
 }
 
 Message.prototype = {
 
-  download: function(dialog_id, callback) {
-    var QBApiCalls = this.app.service;
+  download: function(dialog_id, callback, count) {
+    var QBApiCalls = this.app.service,
+        self = this;
 
-    QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50}, function(messages) {
+    if (self.skip[dialog_id] && self.skip[dialog_id] === count) return false;
+
+    QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50, skip: count || 0}, function(messages) {
       callback(messages);
+      self.skip[dialog_id] = count;
     });
   },
 

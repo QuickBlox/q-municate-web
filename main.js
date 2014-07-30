@@ -410,15 +410,20 @@ module.exports = Message;
 
 function Message(app) {
   this.app = app;
+  this.skip = {};
 }
 
 Message.prototype = {
 
-  download: function(dialog_id, callback) {
-    var QBApiCalls = this.app.service;
+  download: function(dialog_id, callback, count) {
+    var QBApiCalls = this.app.service,
+        self = this;
 
-    QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50}, function(messages) {
+    if (self.skip[dialog_id] && self.skip[dialog_id] === count) return false;
+
+    QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50, skip: count || 0}, function(messages) {
       callback(messages);
+      self.skip[dialog_id] = count;
     });
   },
 
@@ -1318,7 +1323,6 @@ Routes.prototype = {
     /* scrollbars
     ----------------------------------------------------- */
     occupantScrollbar();
-    messageScrollbar();
 
     /* welcome page
     ----------------------------------------------------- */
@@ -1464,6 +1468,11 @@ Routes.prototype = {
       ContactListView.sendSubscribe($(this));
     });
 
+    $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
+      if (QMCONFIG.debug) console.log('send subscribe');
+      ContactListView.sendSubscribe($(this), true);
+    });
+
     $('.list').on('click', '.request-button_ok', function() {
       if (QMCONFIG.debug) console.log('send confirm');
       ContactListView.sendConfirm($(this));
@@ -1517,14 +1526,6 @@ Routes.prototype = {
 ---------------------------------------------------------------------- */
 function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
-    theme: 'minimal-dark',
-    scrollInertia: 50,
-    live: true
-  });
-}
-
-function messageScrollbar() {
-  $('.scrollbar_message').mCustomScrollbar({
     theme: 'minimal-dark',
     scrollInertia: 50,
     live: true
@@ -1663,14 +1664,16 @@ ContactListView.prototype = {
     Dialog.createPrivate(jid);
   },
 
-  sendSubscribe: function(objDom) {
-    var jid = objDom.parents('li').data('jid'),
+  sendSubscribe: function(objDom, isChat) {
+    var jid = isChat ? objDom.parents('.l-chat').data('jid') : objDom.parents('li').data('jid'),
         roster = JSON.parse(sessionStorage['QM.roster']),
         id = QB.chat.helpers.getIdFromNode(jid),
         dialogItem = $('.dialog-item[data-id="'+id+'"]')[0];
 
-    objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
-    objDom.remove();
+    if (!isChat) {
+      objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
+      objDom.remove();
+    }
     QB.chat.roster.add(jid);
 
     // update roster
@@ -2240,42 +2243,44 @@ DialogView.prototype = {
         self.removeDataSpinner();
         for (var i = 0, len = messages.length; i < len; i++) {
           message = Message.create(messages[i]);
-          if (QMCONFIG.debug) console.log(message);
+          // if (QMCONFIG.debug) console.log(message);
           MessageView.addItem(message);
         }
-        
-        setTimeout(scrollTo, 500);
+        messageScrollbar(self);
       });
+
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
-      scrollTo();
+      $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
+      messageScrollbar(self);
 
     }
 
     $('.is-selected').removeClass('is-selected');
     parent.addClass('is-selected');
+    
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
-// fix for customScrollbar
-function scrollTo() {  
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 50);
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 100);
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 150);
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 200);
+function messageScrollbar(self) {
+  var objDom = $('.l-chat:visible .scrollbar_message'),
+      height = objDom[0].scrollHeight;
+
+  objDom.mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 150,
+    setTop: height + 'px',
+    callbacks: {
+      onTotalScrollBack: function() {
+        ajaxDownloading(objDom, self);
+      },
+      alwaysTriggerOffsets: false
+    }
+  });
 }
 
 function scrollbar() {
@@ -2283,6 +2288,22 @@ function scrollbar() {
     theme: 'minimal-dark',
     scrollInertia: 150
   });
+}
+
+// ajax downloading of data through scroll
+function ajaxDownloading(chat, self) {
+  var MessageView = self.app.views.Message,
+      dialog_id = chat.parents('.l-chat').data('dialog'),
+      count = chat.find('.message').length,
+      message;
+
+  Message.download(dialog_id, function(messages) {
+    for (var i = 0, len = messages.length; i < len; i++) {
+      message = Message.create(messages[i]);
+      // if (QMCONFIG.debug) console.log(message);
+      MessageView.addItem(message, true);
+    }
+  }, count);
 }
 
 function openPopup(objDom) {
@@ -2328,7 +2349,7 @@ function MessageView(app) {
 
 MessageView.prototype = {
 
-  addItem: function(message) {
+  addItem: function(message, isCallback) {
     var contacts = ContactList.contacts,
         contact = contacts[message.sender_id],
         type = message.notification_type || 'message',
@@ -2389,7 +2410,10 @@ MessageView.prototype = {
       break;
     }
 
-    chat.find('.l-chat-content').prepend(html);
+    if (isCallback)
+      chat.find('.l-chat-content .mCSB_container').prepend(html);
+    else
+      chat.find('.l-chat-content').prepend(html);
     
   }
 
@@ -2584,6 +2608,8 @@ UserView.prototype = {
   logout: function() {
     User.logout(function() {
       switchOnWelcomePage();
+      $('#capBox').removeClass('is-hidden');
+      $('.l-chat').remove();
       if (QMCONFIG.debug) console.log('current User and Session were destroyed');
     });
   },
