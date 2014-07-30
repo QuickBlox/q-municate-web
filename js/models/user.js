@@ -11,6 +11,7 @@ var tempParams;
 
 function User(app) {
   this.app = app;
+  this._is_import = false;
   this._remember = false;
   this._valid = false;
 }
@@ -36,6 +37,7 @@ User.prototype = {
     QBApiCalls.createSession(params, function(session) {
       QBApiCalls.getUser(session.user_id, function(user) {
         self.contact = Contact.create(user);
+        self._is_import = getImport(user);
 
         if (QMCONFIG.debug) console.log('User', self);
 
@@ -44,7 +46,7 @@ User.prototype = {
           UserView.successFormCallback();
           DialogView.prepareDownloading(roster);
 
-          if (!self.contact.is_import) {
+          if (!self._is_import) {
             // import FB friends
             FB.api('/me/friends', function (res) {
                 if (QMCONFIG.debug) console.log('FB friends', res);
@@ -58,7 +60,7 @@ User.prototype = {
               }
             );
 
-            self.contact.is_import = true;
+            self._is_import = true;
             self.updateQBUser(user);
           } else {
             DialogView.downloadDialogs(roster);
@@ -350,4 +352,16 @@ function validate(form, user) {
 function fail(user, errMsg) {
   user._valid = false;
   $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
+}
+
+function getImport(user) {
+  var isImport;
+  
+  try {
+    isImport = JSON.parse(user.custom_data).is_import || false;
+  } catch(err) {
+    isImport = false;
+  }
+
+  return isImport;
 }

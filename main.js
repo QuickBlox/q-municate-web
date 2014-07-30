@@ -50,9 +50,7 @@ QM.prototype = {
     // Checking if autologin was chosen
     if (localStorage['QM.session'] && localStorage['QM.user'] &&
         // new format of storage data (20.07.2014)
-        JSON.parse(localStorage['QM.user']).user_jid &&
-        // new format of storage data (25.07.2014)
-        typeof JSON.parse(localStorage['QM.user']).is_import === 'boolean') {
+        JSON.parse(localStorage['QM.user']).user_jid) {
       
       token = JSON.parse(localStorage['QM.session']).token;
       this.service.init(token);
@@ -132,8 +130,7 @@ Contact.prototype = {
       avatar_url: qbUser.avatar_url || getAvatar(qbUser),
       status: qbUser.status || getStatus(qbUser),
       tag: qbUser.tag || qbUser.user_tags,
-      user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId),
-      is_import: qbUser.is_import || getImport(qbUser)
+      user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)
     };
   }
 
@@ -173,18 +170,6 @@ function getStatus(contact) {
   }
 
   return status;
-}
-
-function getImport(contact) {
-  var isImport;
-  
-  try {
-    isImport = JSON.parse(contact.custom_data).is_import || false;
-  } catch(err) {
-    isImport = false;
-  }
-
-  return isImport;
 }
 
 },{}],3:[function(require,module,exports){
@@ -493,6 +478,7 @@ var tempParams;
 
 function User(app) {
   this.app = app;
+  this._is_import = false;
   this._remember = false;
   this._valid = false;
 }
@@ -518,6 +504,7 @@ User.prototype = {
     QBApiCalls.createSession(params, function(session) {
       QBApiCalls.getUser(session.user_id, function(user) {
         self.contact = Contact.create(user);
+        self._is_import = getImport(user);
 
         if (QMCONFIG.debug) console.log('User', self);
 
@@ -526,7 +513,7 @@ User.prototype = {
           UserView.successFormCallback();
           DialogView.prepareDownloading(roster);
 
-          if (!self.contact.is_import) {
+          if (!self._is_import) {
             // import FB friends
             FB.api('/me/friends', function (res) {
                 if (QMCONFIG.debug) console.log('FB friends', res);
@@ -540,7 +527,7 @@ User.prototype = {
               }
             );
 
-            self.contact.is_import = true;
+            self._is_import = true;
             self.updateQBUser(user);
           } else {
             DialogView.downloadDialogs(roster);
@@ -832,6 +819,18 @@ function validate(form, user) {
 function fail(user, errMsg) {
   user._valid = false;
   $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
+}
+
+function getImport(user) {
+  var isImport;
+  
+  try {
+    isImport = JSON.parse(user.custom_data).is_import || false;
+  } catch(err) {
+    isImport = false;
+  }
+
+  return isImport;
 }
 
 },{}],7:[function(require,module,exports){
