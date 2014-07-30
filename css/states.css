@@ -63,6 +63,12 @@ input.is-error:focus {
 .spinner_bounce.is-empty {
   margin: 10% auto;
 }
+  .l-chat .spinner_bounce.is-empty {
+    margin: 0 auto;
+    position: absolute;
+    top: 20px;
+    left: 46%;
+  }
 
 .message.is-own {
   background: #f8f8f8;

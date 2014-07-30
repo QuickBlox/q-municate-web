@@ -165,6 +165,7 @@
 }
 
 .l-chat-content {
+  position: relative;
   height: calc(100% - 75px - 90px);
 }
 .l-chat_group .l-chat-content {

@@ -7,11 +7,12 @@
 
 module.exports = DialogView;
 
-var Dialog, ContactList;
+var Dialog, Message, ContactList;
 
 function DialogView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
+  Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
 }
 
@@ -29,18 +30,22 @@ DialogView.prototype = {
     // <span class="unread">4</span>
   },
 
-  createDataSpinner: function() {
+  createDataSpinner: function(chat) {
     var spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
     spinnerBlock += '</div>';
 
-    $('#emptyList').after(spinnerBlock);
+    if (chat) {
+      $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
+    } else {
+      $('#emptyList').after(spinnerBlock);
+    }
   },
 
   removeDataSpinner: function() {
-    $('.l-sidebar .spinner_bounce').remove();
+    $('.spinner_bounce').remove();
   },
 
   prepareDownloading: function(roster) {
@@ -170,7 +175,7 @@ DialogView.prototype = {
   },
 
   htmlBuild: function(objDom) {
-    var html,
+    var MessageView = this.app.views.Message,
         contacts = ContactList.contacts,
         dialogs = ContactList.dialogs,
         roster = JSON.parse(sessionStorage['QM.roster']),
@@ -180,7 +185,8 @@ DialogView.prototype = {
         dialog = dialogs[dialog_id],
         user = contacts[user_id],
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
-        jid, icon, name, status;
+        html, jid, icon, name, status,
+        self = this;
 
     // console.log(dialog);
     // console.log(user);
@@ -239,6 +245,11 @@ DialogView.prototype = {
 
       if (dialog.type === 3 && (!status || status.subscription === 'none'))
         $('.l-chat:visible').addClass('is-request');
+
+      self.createDataSpinner(true);
+      Message.download(function(messages) {
+        self.removeDataSpinner();
+      });
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');

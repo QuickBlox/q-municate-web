@@ -13,9 +13,11 @@ var User = require('./models/user'),
     Session = require('./models/session'),
     Contact = require('./models/contact'),
     Dialog = require('./models/dialog'),
+    Message = require('./models/message'),
     ContactList = require('./models/contact_list'),
     UserView = require('./views/user'),
     DialogView = require('./views/dialog'),
+    MessageView = require('./views/message'),
     ContactListView = require('./views/contact_list'),
     Routes = require('./routes'),
     QBApiCalls = require('./qbApiCalls');
@@ -26,12 +28,14 @@ function QM() {
     Session: new Session(this),
     Contact: new Contact(this),
     Dialog: new Dialog(this),
+    Message: new Message(this),
     ContactList: new ContactList(this)
   };
 
   this.views = {
     User: new UserView(this),
     Dialog: new DialogView(this),
+    Message: new MessageView(this),
     ContactList: new ContactListView(this)
   };
 
@@ -105,7 +109,7 @@ window.onbeforeunload = function() {
   QB.chat.sendPres('unavailable');
 };
 
-},{"./models/contact":2,"./models/contact_list":3,"./models/dialog":4,"./models/session":5,"./models/user":6,"./qbApiCalls":7,"./routes":8,"./views/contact_list":9,"./views/dialog":10,"./views/user":11}],2:[function(require,module,exports){
+},{"./models/contact":2,"./models/contact_list":3,"./models/dialog":4,"./models/message":5,"./models/session":6,"./models/user":7,"./qbApiCalls":8,"./routes":9,"./views/contact_list":10,"./views/dialog":11,"./views/message":12,"./views/user":13}],2:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -398,6 +402,28 @@ Dialog.prototype = {
 /*
  * Q-municate chat application
  *
+ * Message Module
+ *
+ */
+
+module.exports = Message;
+
+function Message(app) {
+  this.app = app;
+}
+
+Message.prototype = {
+
+  download: function(callback) {
+    
+  }
+
+};
+
+},{}],6:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
  * Session Module
  *
  */
@@ -471,7 +497,7 @@ Session.prototype = {
 
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -858,7 +884,7 @@ function getImport(user) {
   return isImport;
 }
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1239,7 +1265,7 @@ var failSearch = function() {
   ContactListView.removeDataSpinner();
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1537,7 +1563,7 @@ var closePopup = function() {
   $('.is-overlay').removeClass('is-overlay');
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1946,7 +1972,7 @@ function isSectionEmpty(list) {
   }
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1956,11 +1982,12 @@ function isSectionEmpty(list) {
 
 module.exports = DialogView;
 
-var Dialog, ContactList;
+var Dialog, Message, ContactList;
 
 function DialogView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
+  Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
 }
 
@@ -1978,18 +2005,22 @@ DialogView.prototype = {
     // <span class="unread">4</span>
   },
 
-  createDataSpinner: function() {
+  createDataSpinner: function(chat) {
     var spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
     spinnerBlock += '</div>';
 
-    $('#emptyList').after(spinnerBlock);
+    if (chat) {
+      $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
+    } else {
+      $('#emptyList').after(spinnerBlock);
+    }
   },
 
   removeDataSpinner: function() {
-    $('.l-sidebar .spinner_bounce').remove();
+    $('.spinner_bounce').remove();
   },
 
   prepareDownloading: function(roster) {
@@ -2119,7 +2150,7 @@ DialogView.prototype = {
   },
 
   htmlBuild: function(objDom) {
-    var html,
+    var MessageView = this.app.views.Message,
         contacts = ContactList.contacts,
         dialogs = ContactList.dialogs,
         roster = JSON.parse(sessionStorage['QM.roster']),
@@ -2129,7 +2160,8 @@ DialogView.prototype = {
         dialog = dialogs[dialog_id],
         user = contacts[user_id],
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
-        jid, icon, name, status;
+        html, jid, icon, name, status,
+        self = this;
 
     // console.log(dialog);
     // console.log(user);
@@ -2188,6 +2220,11 @@ DialogView.prototype = {
 
       if (dialog.type === 3 && (!status || status.subscription === 'none'))
         $('.l-chat:visible').addClass('is-request');
+
+      self.createDataSpinner(true);
+      Message.download(function(messages) {
+        self.removeDataSpinner();
+      });
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
@@ -2231,7 +2268,31 @@ function textAreaScrollbar() {
   });
 }
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * Message View Module
+ *
+ */
+
+module.exports = MessageView;
+
+var Message, ContactList;
+
+function MessageView(app) {
+  this.app = app;
+  Message = this.app.models.Message;
+  ContactList = this.app.models.ContactList;
+}
+
+MessageView.prototype = {
+
+
+
+};
+
+},{}],13:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
