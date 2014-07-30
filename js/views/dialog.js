@@ -254,39 +254,35 @@ DialogView.prototype = {
           if (QMCONFIG.debug) console.log(message);
           MessageView.addItem(message);
         }
-        
-        setTimeout(scrollTo, 500);
+        messageScrollbar();
       });
+      
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
-      scrollTo();
+      $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
+      messageScrollbar();
 
     }
 
     $('.is-selected').removeClass('is-selected');
     parent.addClass('is-selected');
+    
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
-// fix for customScrollbar
-function scrollTo() {  
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 50);
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 100);
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 150);
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 200);
+function messageScrollbar() {
+  var objDom = $('.l-chat:visible .scrollbar_message'),
+      height = objDom[0].scrollHeight;
+
+  objDom.mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 50,
+    setTop: height + 'px'
+  });
 }
 
 function scrollbar() {

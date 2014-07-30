@@ -32,7 +32,6 @@ Routes.prototype = {
     /* scrollbars
     ----------------------------------------------------- */
     occupantScrollbar();
-    messageScrollbar();
 
     /* welcome page
     ----------------------------------------------------- */
@@ -231,14 +230,6 @@ Routes.prototype = {
 ---------------------------------------------------------------------- */
 function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
-    theme: 'minimal-dark',
-    scrollInertia: 50,
-    live: true
-  });
-}
-
-function messageScrollbar() {
-  $('.scrollbar_message').mCustomScrollbar({
     theme: 'minimal-dark',
     scrollInertia: 50,
     live: true
