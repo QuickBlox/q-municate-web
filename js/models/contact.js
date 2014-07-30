@@ -22,9 +22,8 @@ Contact.prototype = {
       blob_id: qbUser.blob_id,
       avatar_url: qbUser.avatar_url || getAvatar(qbUser),
       status: qbUser.status || getStatus(qbUser),
-      tag: qbUser.tag || qbUser.user_tags,
-      user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId),
-      is_import: qbUser.is_import || getImport(qbUser)
+      tag: qbUser.tag || qbUser.user_tags || null,
+      user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)
     };
   }
 
@@ -64,16 +63,4 @@ function getStatus(contact) {
   }
 
   return status;
-}
-
-function getImport(contact) {
-  var isImport;
-  
-  try {
-    isImport = JSON.parse(contact.custom_data).is_import || false;
-  } catch(err) {
-    isImport = false;
-  }
-
-  return isImport;
 }

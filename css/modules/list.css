@@ -16,6 +16,10 @@
   .list-actions_contacts {
     margin: -15px auto 0;
   }
+  .list-actions_occupants {
+    position: absolute;
+    margin-top: 32px;
+  }
   .list-actions_profile {
     position: absolute;
     top: 74px;

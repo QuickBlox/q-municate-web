@@ -63,6 +63,14 @@ input:focus::-webkit-input-placeholder {transition: all 0.2s ease; line-height: 
 input:focus::-moz-placeholder          {transition: all 0.2s ease; line-height: 100px; background-position: 37% 100px;}
 input:focus:-ms-input-placeholder      {transition: all 0.2s ease; line-height: 100px; background-position: 37% 100px;}
 
+textarea::-webkit-input-placeholder       {transition: all 0.2s ease; top: 0;}
+textarea::-moz-placeholder                {transition: all 0.2s ease; top: 0;}
+textarea:-ms-input-placeholder            {transition: all 0.2s ease; top: 0;}
+
+textarea:focus::-webkit-input-placeholder {transition: all 0.2s ease; top: -100px;}
+textarea:focus::-moz-placeholder          {transition: all 0.2s ease; top: -100px;}
+textarea:focus:-ms-input-placeholder      {transition: all 0.2s ease; top: -100px;}
+
 /* Search cancel button */
 input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;
