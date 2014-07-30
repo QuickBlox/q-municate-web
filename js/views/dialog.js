@@ -251,42 +251,44 @@ DialogView.prototype = {
         self.removeDataSpinner();
         for (var i = 0, len = messages.length; i < len; i++) {
           message = Message.create(messages[i]);
-          if (QMCONFIG.debug) console.log(message);
+          // if (QMCONFIG.debug) console.log(message);
           MessageView.addItem(message);
         }
-        
-        setTimeout(scrollTo, 500);
+        messageScrollbar(self);
       });
+
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
-      scrollTo();
+      $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
+      messageScrollbar(self);
 
     }
 
     $('.is-selected').removeClass('is-selected');
     parent.addClass('is-selected');
+    
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
-// fix for customScrollbar
-function scrollTo() {  
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 50);
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 100);
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 150);
-  setTimeout(function() {
-    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  }, 200);
+function messageScrollbar(self) {
+  var objDom = $('.l-chat:visible .scrollbar_message'),
+      height = objDom[0].scrollHeight;
+
+  objDom.mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 150,
+    setTop: height + 'px',
+    callbacks: {
+      onTotalScrollBack: function() {
+        ajaxDownloading(objDom, self);
+      },
+      alwaysTriggerOffsets: false
+    }
+  });
 }
 
 function scrollbar() {
@@ -294,6 +296,22 @@ function scrollbar() {
     theme: 'minimal-dark',
     scrollInertia: 150
   });
+}
+
+// ajax downloading of data through scroll
+function ajaxDownloading(chat, self) {
+  var MessageView = self.app.views.Message,
+      dialog_id = chat.parents('.l-chat').data('dialog'),
+      count = chat.find('.message').length,
+      message;
+
+  Message.download(dialog_id, function(messages) {
+    for (var i = 0, len = messages.length; i < len; i++) {
+      message = Message.create(messages[i]);
+      // if (QMCONFIG.debug) console.log(message);
+      MessageView.addItem(message, true);
+    }
+  }, count);
 }
 
 function openPopup(objDom) {

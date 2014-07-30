@@ -18,7 +18,7 @@ function MessageView(app) {
 
 MessageView.prototype = {
 
-  addItem: function(message) {
+  addItem: function(message, isCallback) {
     var contacts = ContactList.contacts,
         contact = contacts[message.sender_id],
         type = message.notification_type || 'message',
@@ -79,7 +79,10 @@ MessageView.prototype = {
       break;
     }
 
-    chat.find('.l-chat-content').prepend(html);
+    if (isCallback)
+      chat.find('.l-chat-content .mCSB_container').prepend(html);
+    else
+      chat.find('.l-chat-content').prepend(html);
     
   }
 

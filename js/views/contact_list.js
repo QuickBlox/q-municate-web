@@ -83,14 +83,16 @@ ContactListView.prototype = {
     Dialog.createPrivate(jid);
   },
 
-  sendSubscribe: function(objDom) {
-    var jid = objDom.parents('li').data('jid'),
+  sendSubscribe: function(objDom, isChat) {
+    var jid = isChat ? objDom.parents('.l-chat').data('jid') : objDom.parents('li').data('jid'),
         roster = JSON.parse(sessionStorage['QM.roster']),
         id = QB.chat.helpers.getIdFromNode(jid),
         dialogItem = $('.dialog-item[data-id="'+id+'"]')[0];
 
-    objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
-    objDom.remove();
+    if (!isChat) {
+      objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
+      objDom.remove();
+    }
     QB.chat.roster.add(jid);
 
     // update roster
