@@ -7,11 +7,12 @@
 
 module.exports = DialogView;
 
-var Dialog, ContactList;
+var Dialog, Message, ContactList;
 
 function DialogView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
+  Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
 }
 
@@ -29,18 +30,22 @@ DialogView.prototype = {
     // <span class="unread">4</span>
   },
 
-  createDataSpinner: function() {
+  createDataSpinner: function(chat) {
     var spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
     spinnerBlock += '</div>';
 
-    $('#emptyList').after(spinnerBlock);
+    if (chat) {
+      $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
+    } else {
+      $('#emptyList').after(spinnerBlock);
+    }
   },
 
   removeDataSpinner: function() {
-    $('.l-sidebar .spinner_bounce').remove();
+    $('.spinner_bounce').remove();
   },
 
   prepareDownloading: function(roster) {
@@ -65,7 +70,8 @@ DialogView.prototype = {
 
         for (var i = 0, len = dialogs.length; i < len; i++) {
           dialog = Dialog.create(dialogs[i]);
-          if (QMCONFIG.debug) console.log('Dialog', dialog);
+          ContactList.dialogs[dialog.id] = dialog;
+          // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
           if (!localStorage['QM.dialog-' + dialog.id]) {
             localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
@@ -82,7 +88,8 @@ DialogView.prototype = {
 
             // not show dialog if user has not confirmed this contact
             notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
-            if (private_id && (!roster[private_id] || notConfirmed[private_id])) return false;
+            if (private_id && (!roster[private_id] || notConfirmed[private_id]))
+              return false;
             
             self.addDialogItem(dialogCallback, true);
           });
@@ -127,19 +134,14 @@ DialogView.prototype = {
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
     status = roster[private_id] ? roster[private_id] : null;
 
-    html = '<li class="list-item dialog-item" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
+    html = '<li class="list-item dialog-item presence-listener" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
     html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
     html += '<span class="name">' + name + '</span>';
     html += '</div>';
     
-    if (!status || status.subscription === 'none')
-      html += '<span class="status status_request"></span>';
-    else if (status.status)
-      html += '<span class="status status_online"></span>';
-    else
-      html += '<span class="status"></span>';
+    html = getStatus(status, html);
 
     html += '</a></li>';
 
@@ -170,12 +172,123 @@ DialogView.prototype = {
       hiddenDialogs[id] = dialog_id;
       ContactList.saveHiddenDialogs(hiddenDialogs);
     }
+  },
+
+  htmlBuild: function(objDom) {
+    var MessageView = this.app.views.Message,
+        contacts = ContactList.contacts,
+        dialogs = ContactList.dialogs,
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        parent = objDom.parent(),
+        dialog_id = parent.data('dialog'),
+        user_id = parent.data('id'),
+        dialog = dialogs[dialog_id],
+        user = contacts[user_id],
+        chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
+        html, jid, icon, name, status, message,
+        self = this;
+
+    // if (QMCONFIG.debug) console.log(dialog);
+    // if (QMCONFIG.debug) console.log(user);
+
+    jid = dialog.room_jid || user.user_jid;
+    icon = user_id ? user.avatar_url : QMCONFIG.defAvatar.group_url;
+    name = dialog.room_name || user.full_name;
+    status = roster[user_id] ? roster[user_id] : null;
+
+    if (chat.length === 0) {
+      if (dialog.type === 3)
+        html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="'+dialog_id+'" data-id="'+user_id+'" data-jid="'+jid+'">';
+      else
+        html = '<section class="l-workspace l-chat l-chat_group is-group" data-dialog="'+dialog_id+'" data-jid="'+jid+'">';
+
+      html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="chat-title">';
+      html += '<div class="l-flexbox_inline">';
+      
+      if (dialog.type === 3)
+        html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
+
+      html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
+
+      if (dialog.type === 3) {
+        html = getStatus(status, html);
+      } else {
+        html += '<span class="triangle triangle_down"></span>';
+        html += '<span class="triangle triangle_up is-hidden"></span>';
+      }
+
+      html += '</div></div>';
+      html += '<div class="chat-controls">';
+      // html += '<button class="btn_chat btn_chat_videocall"><img src="images/icon-videocall.png" alt="videocall"></button>';
+      // html += '<button class="btn_chat btn_chat_audiocall"><img src="images/icon-audiocall.png" alt="audiocall"></button>';
+      html += '<button class="btn_chat btn_chat_add"><img src="images/icon-add.png" alt="add"></button>';
+      // html += '<button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button>';
+      
+      if (dialog.type === 3)
+        html += '<button class="btn_chat btn_chat_delete deleteContact"><img src="images/icon-delete.png" alt="delete"></button>';
+      else
+        html += '<button class="btn_chat btn_chat_delete leaveRoom"><img src="images/icon-delete.png" alt="delete"></button>';
+      
+      html += '</div></header>';
+      html += '<section class="l-chat-content scrollbar_message"></section>';
+      html += '<footer class="l-chat-footer">';
+      html += '<form class="l-message" action="#">';
+      html += '<textarea class="form-input-message textarea" placeholder="Type a message"></textarea>';
+      html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>';
+      html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>';
+      html += '</form></footer>';
+      html += '</section>';
+
+      $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append(html);
+      textAreaScrollbar();
+
+      if (dialog.type === 3 && (!status || status.subscription === 'none'))
+        $('.l-chat:visible').addClass('is-request');
+
+      self.createDataSpinner(true);
+      Message.download(dialog_id, function(messages) {
+        self.removeDataSpinner();
+        for (var i = 0, len = messages.length; i < len; i++) {
+          message = Message.create(messages[i]);
+          if (QMCONFIG.debug) console.log(message);
+          MessageView.addItem(message);
+        }
+        
+        setTimeout(scrollTo, 500);
+      });
+    } else {
+
+      chat.removeClass('is-hidden').siblings().addClass('is-hidden');
+      scrollTo();
+
+    }
+
+    $('.is-selected').removeClass('is-selected');
+    parent.addClass('is-selected');
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
+// fix for customScrollbar
+function scrollTo() {  
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 50);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 100);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 150);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 200);
+}
+
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
@@ -185,4 +298,22 @@ function scrollbar() {
 
 function openPopup(objDom) {
   objDom.add('.popups').addClass('is-overlay');
+}
+
+function getStatus(status, html) {
+  if (!status || status.subscription === 'none')
+    html += '<span class="status status_request"></span>';
+  else if (status.status)
+    html += '<span class="status status_online"></span>';
+  else
+    html += '<span class="status"></span>';
+
+  return html;
+}
+
+function textAreaScrollbar() {
+  $('.l-chat:visible .textarea').niceScroll({
+    cursoropacitymax: 0.5,
+    railpadding: {right: 5}
+  });
 }

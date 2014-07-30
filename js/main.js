@@ -12,9 +12,11 @@ var User = require('./models/user'),
     Session = require('./models/session'),
     Contact = require('./models/contact'),
     Dialog = require('./models/dialog'),
+    Message = require('./models/message'),
     ContactList = require('./models/contact_list'),
     UserView = require('./views/user'),
     DialogView = require('./views/dialog'),
+    MessageView = require('./views/message'),
     ContactListView = require('./views/contact_list'),
     Routes = require('./routes'),
     QBApiCalls = require('./qbApiCalls');
@@ -25,12 +27,14 @@ function QM() {
     Session: new Session(this),
     Contact: new Contact(this),
     Dialog: new Dialog(this),
+    Message: new Message(this),
     ContactList: new ContactList(this)
   };
 
   this.views = {
     User: new UserView(this),
     Dialog: new DialogView(this),
+    Message: new MessageView(this),
     ContactList: new ContactListView(this)
   };
 

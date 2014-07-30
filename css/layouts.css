@@ -165,13 +165,15 @@
 }
 
 .l-chat-content {
-  height: calc(100% - 75px);
+  position: relative;
+  height: calc(100% - 75px - 90px);
+  overflow-y: auto;
 }
 .l-chat_group .l-chat-content {
   height: calc(100% - 55px - 90px);
 }
-  .l-chat-content_min {
-    height: calc(100% - 75px - 90px);
+  .is-request .l-chat-content {
+    height: calc(100% - 75px);
   }
   .l-chat_group .l-chat-content_min {
     margin-top: 83px;

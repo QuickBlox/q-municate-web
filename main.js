@@ -13,9 +13,11 @@ var User = require('./models/user'),
     Session = require('./models/session'),
     Contact = require('./models/contact'),
     Dialog = require('./models/dialog'),
+    Message = require('./models/message'),
     ContactList = require('./models/contact_list'),
     UserView = require('./views/user'),
     DialogView = require('./views/dialog'),
+    MessageView = require('./views/message'),
     ContactListView = require('./views/contact_list'),
     Routes = require('./routes'),
     QBApiCalls = require('./qbApiCalls');
@@ -26,12 +28,14 @@ function QM() {
     Session: new Session(this),
     Contact: new Contact(this),
     Dialog: new Dialog(this),
+    Message: new Message(this),
     ContactList: new ContactList(this)
   };
 
   this.views = {
     User: new UserView(this),
     Dialog: new DialogView(this),
+    Message: new MessageView(this),
     ContactList: new ContactListView(this)
   };
 
@@ -105,7 +109,7 @@ window.onbeforeunload = function() {
   QB.chat.sendPres('unavailable');
 };
 
-},{"./models/contact":2,"./models/contact_list":3,"./models/dialog":4,"./models/session":5,"./models/user":6,"./qbApiCalls":7,"./routes":8,"./views/contact_list":9,"./views/dialog":10,"./views/user":11}],2:[function(require,module,exports){
+},{"./models/contact":2,"./models/contact_list":3,"./models/dialog":4,"./models/message":5,"./models/session":6,"./models/user":7,"./qbApiCalls":8,"./routes":9,"./views/contact_list":10,"./views/dialog":11,"./views/message":12,"./views/user":13}],2:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -188,6 +192,7 @@ var contact_ids;
 function ContactList(app) {
   this.app = app;
   this.contacts = getContacts();
+  this.dialogs = {};
   contact_ids = Object.keys(this.contacts).map(Number);
 }
 
@@ -349,11 +354,11 @@ Dialog.prototype = {
     return {
       id: params._id,
       type: params.type,
-      room_jid: params.xmpp_room_jid,
-      room_name: params.name,
+      room_jid: params.xmpp_room_jid || null,
+      room_name: params.name || null,
       occupants_ids: occupants_ids,
-      last_message_date_sent: params.last_message_date_sent,
-      unread_count: params.unread_messages_count
+      last_message_date_sent: params.last_message_date_sent || null,
+      unread_count: params.unread_messages_count || null
     };
   },
 
@@ -368,7 +373,12 @@ Dialog.prototype = {
 
     QBApiCalls.createDialog({type: 3, occupants_ids: id}, function(res) {
       dialog = self.create(res);
+      ContactList.dialogs[dialog.id] = dialog;
       if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+      if (!localStorage['QM.dialog-' + dialog.id]) {
+        localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+      }
 
       // send notification about subscribe
       QB.chat.send(jid, {type: 'chat', extension: {
@@ -389,6 +399,46 @@ Dialog.prototype = {
 };
 
 },{}],5:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * Message Module
+ *
+ */
+
+module.exports = Message;
+
+function Message(app) {
+  this.app = app;
+}
+
+Message.prototype = {
+
+  download: function(dialog_id, callback) {
+    var QBApiCalls = this.app.service;
+
+    QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50}, function(messages) {
+      callback(messages);
+    });
+  },
+
+  create: function(params) {
+    var User = this.app.models.User;
+
+    return {
+      id: params._id,
+      dialog_id: params.chat_dialog_id,
+      body: params.message || null,
+      notification_type: params.notification_type || null,
+      date_sent: params.date_sent,
+      read: params.read,
+      sender_id: params.sender_id,
+    };
+  }
+
+};
+
+},{}],6:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -465,7 +515,7 @@ Session.prototype = {
 
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -852,7 +902,7 @@ function getImport(user) {
   return isImport;
 }
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1233,7 +1283,7 @@ var failSearch = function() {
   ContactListView.removeDataSpinner();
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1263,7 +1313,12 @@ Routes.prototype = {
 
     $('input:file').on('change', function() {
       changeInputFile($(this));
-    });    
+    });
+
+    /* scrollbars
+    ----------------------------------------------------- */
+    occupantScrollbar();
+    messageScrollbar();
 
     /* welcome page
     ----------------------------------------------------- */
@@ -1360,9 +1415,9 @@ Routes.prototype = {
       openPopup($('#popupLogout'));
     });
 
-    $('.list').on('click', '#deleteContact', function(event) {
+    $('.list, .l-workspace-wrap').on('click', '.deleteContact', function(event) {
       event.preventDefault();
-      var id = $(this).parents('.dialog-item').data('id');
+      var id = $(this).parents('.presence-listener').data('id');
       openPopup($('#popupDelete'), id);
     });
 
@@ -1419,23 +1474,28 @@ Routes.prototype = {
       ContactListView.sendReject($(this));
     });
 
-    /* temporary routes
+    /* dialogs
     ----------------------------------------------------- */
-    $('.list').on('click', '.contact', function(event) {
+    $('.l-list').on('click', '.contact', function(event) {
       event.preventDefault();
+      DialogView.htmlBuild($(this));
     });
 
-    $('#home, #share, #contacts').on('click', function(event) {
+    $('#home').on('click', function(event) {
+      event.preventDefault();
+      $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
+      $('.is-selected').removeClass('is-selected');
+    });
+
+    /* temporary routes
+    ----------------------------------------------------- */
+    $('#share, #contacts').on('click', function(event) {
       event.preventDefault();
     });
 
     $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
       event.preventDefault();
-    });
-
-    textAreaScrollbar();
-    occupantScrollbar();
-    messageScrollbar();
+    });    
 
     $('.l-workspace-wrap').on('click', '.groupTitle', function() {
       var chat = $('.l-chat:visible');
@@ -1455,17 +1515,11 @@ Routes.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
-function textAreaScrollbar() {
-  $('.textarea').niceScroll({
-    cursoropacitymax: 0.5,
-    railpadding: {right: 5}
-  });
-}
-
 function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 50
+    scrollInertia: 50,
+    live: true
   });
 }
 
@@ -1473,11 +1527,8 @@ function messageScrollbar() {
   $('.scrollbar_message').mCustomScrollbar({
     theme: 'minimal-dark',
     scrollInertia: 50,
+    live: true
   });
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
-  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
 }
 
 // Checking if the target is not an object run popover
@@ -1526,7 +1577,7 @@ var closePopup = function() {
   $('.is-overlay').removeClass('is-overlay');
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1652,7 +1703,8 @@ ContactListView.prototype = {
         roster = JSON.parse(sessionStorage['QM.roster']),
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
-        li;
+        li,
+        dialog;
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
@@ -1685,11 +1737,18 @@ ContactListView.prototype = {
     li.remove();
     isSectionEmpty(list);
 
-    DialogView.addDialogItem({
-      id: hiddenDialogs[id],
+    dialog = Dialog.create({
+      _id: hiddenDialogs[id],
       type: 3,
-      occupants_ids: [id],
+      occupants_ids: [id]
     });
+    ContactList.dialogs[dialog.id] = dialog;
+    if (QMCONFIG.debug) console.log('Dialog', dialog);
+    if (!localStorage['QM.dialog-' + dialog.id]) {
+      localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+    }
+
+    DialogView.addDialogItem(dialog);
   },
 
   sendReject: function(objDom) {
@@ -1719,9 +1778,12 @@ ContactListView.prototype = {
   },
 
   sendDelete: function(objDom) {
-    var id = objDom.data('id'),
+    var contacts = ContactList.contacts,
+        dialogs = ContactList.dialogs,
+        id = objDom.data('id'),
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
         li = $('.dialog-item[data-id="'+id+'"]'),
+        chat = $('.l-chat[data-id="'+id+'"]'),
         list = li.parents('ul'),
         dialog_id = li.data('dialog'),
         roster = JSON.parse(sessionStorage['QM.roster']);
@@ -1749,6 +1811,12 @@ ContactListView.prototype = {
       notification_type: 4,
       full_name: User.contact.full_name,
     }});
+
+    // delete chat section
+    if (chat.length > 0)
+      chat.remove();
+    $('#capBox').removeClass('is-hidden');
+    delete dialogs[dialog_id];
   },
 
   // callbacks
@@ -1762,7 +1830,8 @@ ContactListView.prototype = {
 
     // update roster
     roster[id] = {
-      subscription: 'none'
+      subscription: 'none',
+      ask: null
     };
     ContactList.saveRoster(roster);
 
@@ -1788,7 +1857,7 @@ ContactListView.prototype = {
 
   onConfirm: function(id) {
     var roster = JSON.parse(sessionStorage['QM.roster']),
-        dialogItem = $('.dialog-item[data-id="'+id+'"]');
+        dialogItem = $('.presence-listener[data-id="'+id+'"]');
 
     // update roster
     roster[id] = {
@@ -1801,8 +1870,12 @@ ContactListView.prototype = {
   },
 
   onReject: function(id) {
-    var dialogItem = $('.dialog-item[data-id="'+id+'"]'),
-        roster = JSON.parse(sessionStorage['QM.roster']);
+    var dialogItem = $('.presence-listener[data-id="'+id+'"]'),
+        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+        request = $('#requestsList .list-item[data-jid="'+jid+'"]'),
+        list = request && request.parents('ul'),
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
     // update roster
     roster[id] = {
@@ -1811,11 +1884,22 @@ ContactListView.prototype = {
     };
     ContactList.saveRoster(roster);
 
+    // update notConfirmed people list
+    delete notConfirmed[id];
+    ContactList.saveNotConfirmed(notConfirmed);
+
     dialogItem.find('.status').removeClass('status_online').addClass('status_request');
+    if (dialogItem.is('.l-chat'))
+      dialogItem.addClass('is-request');
+    if (request.length > 0) {
+      QB.chat.roster.remove(jid);
+      request.remove();
+      isSectionEmpty(list);
+    }      
   },
 
   onPresence: function(id, type) {
-    var dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+    var dialogItem = $('.presence-listener[data-id="'+id+'"]'),
         roster = JSON.parse(sessionStorage['QM.roster']);
     
     // update roster
@@ -1902,7 +1986,7 @@ function isSectionEmpty(list) {
   }
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1912,11 +1996,12 @@ function isSectionEmpty(list) {
 
 module.exports = DialogView;
 
-var Dialog, ContactList;
+var Dialog, Message, ContactList;
 
 function DialogView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
+  Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
 }
 
@@ -1934,18 +2019,22 @@ DialogView.prototype = {
     // <span class="unread">4</span>
   },
 
-  createDataSpinner: function() {
+  createDataSpinner: function(chat) {
     var spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
     spinnerBlock += '</div>';
 
-    $('#emptyList').after(spinnerBlock);
+    if (chat) {
+      $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
+    } else {
+      $('#emptyList').after(spinnerBlock);
+    }
   },
 
   removeDataSpinner: function() {
-    $('.l-sidebar .spinner_bounce').remove();
+    $('.spinner_bounce').remove();
   },
 
   prepareDownloading: function(roster) {
@@ -1970,7 +2059,8 @@ DialogView.prototype = {
 
         for (var i = 0, len = dialogs.length; i < len; i++) {
           dialog = Dialog.create(dialogs[i]);
-          if (QMCONFIG.debug) console.log('Dialog', dialog);
+          ContactList.dialogs[dialog.id] = dialog;
+          // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
           if (!localStorage['QM.dialog-' + dialog.id]) {
             localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
@@ -1987,7 +2077,8 @@ DialogView.prototype = {
 
             // not show dialog if user has not confirmed this contact
             notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
-            if (private_id && (!roster[private_id] || notConfirmed[private_id])) return false;
+            if (private_id && (!roster[private_id] || notConfirmed[private_id]))
+              return false;
             
             self.addDialogItem(dialogCallback, true);
           });
@@ -2032,19 +2123,14 @@ DialogView.prototype = {
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
     status = roster[private_id] ? roster[private_id] : null;
 
-    html = '<li class="list-item dialog-item" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
+    html = '<li class="list-item dialog-item presence-listener" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
     html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
     html += '<span class="name">' + name + '</span>';
     html += '</div>';
     
-    if (!status || status.subscription === 'none')
-      html += '<span class="status status_request"></span>';
-    else if (status.status)
-      html += '<span class="status status_online"></span>';
-    else
-      html += '<span class="status"></span>';
+    html = getStatus(status, html);
 
     html += '</a></li>';
 
@@ -2075,12 +2161,123 @@ DialogView.prototype = {
       hiddenDialogs[id] = dialog_id;
       ContactList.saveHiddenDialogs(hiddenDialogs);
     }
+  },
+
+  htmlBuild: function(objDom) {
+    var MessageView = this.app.views.Message,
+        contacts = ContactList.contacts,
+        dialogs = ContactList.dialogs,
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        parent = objDom.parent(),
+        dialog_id = parent.data('dialog'),
+        user_id = parent.data('id'),
+        dialog = dialogs[dialog_id],
+        user = contacts[user_id],
+        chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
+        html, jid, icon, name, status, message,
+        self = this;
+
+    // if (QMCONFIG.debug) console.log(dialog);
+    // if (QMCONFIG.debug) console.log(user);
+
+    jid = dialog.room_jid || user.user_jid;
+    icon = user_id ? user.avatar_url : QMCONFIG.defAvatar.group_url;
+    name = dialog.room_name || user.full_name;
+    status = roster[user_id] ? roster[user_id] : null;
+
+    if (chat.length === 0) {
+      if (dialog.type === 3)
+        html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="'+dialog_id+'" data-id="'+user_id+'" data-jid="'+jid+'">';
+      else
+        html = '<section class="l-workspace l-chat l-chat_group is-group" data-dialog="'+dialog_id+'" data-jid="'+jid+'">';
+
+      html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="chat-title">';
+      html += '<div class="l-flexbox_inline">';
+      
+      if (dialog.type === 3)
+        html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
+
+      html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
+
+      if (dialog.type === 3) {
+        html = getStatus(status, html);
+      } else {
+        html += '<span class="triangle triangle_down"></span>';
+        html += '<span class="triangle triangle_up is-hidden"></span>';
+      }
+
+      html += '</div></div>';
+      html += '<div class="chat-controls">';
+      // html += '<button class="btn_chat btn_chat_videocall"><img src="images/icon-videocall.png" alt="videocall"></button>';
+      // html += '<button class="btn_chat btn_chat_audiocall"><img src="images/icon-audiocall.png" alt="audiocall"></button>';
+      html += '<button class="btn_chat btn_chat_add"><img src="images/icon-add.png" alt="add"></button>';
+      // html += '<button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button>';
+      
+      if (dialog.type === 3)
+        html += '<button class="btn_chat btn_chat_delete deleteContact"><img src="images/icon-delete.png" alt="delete"></button>';
+      else
+        html += '<button class="btn_chat btn_chat_delete leaveRoom"><img src="images/icon-delete.png" alt="delete"></button>';
+      
+      html += '</div></header>';
+      html += '<section class="l-chat-content scrollbar_message"></section>';
+      html += '<footer class="l-chat-footer">';
+      html += '<form class="l-message" action="#">';
+      html += '<textarea class="form-input-message textarea" placeholder="Type a message"></textarea>';
+      html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>';
+      html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>';
+      html += '</form></footer>';
+      html += '</section>';
+
+      $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append(html);
+      textAreaScrollbar();
+
+      if (dialog.type === 3 && (!status || status.subscription === 'none'))
+        $('.l-chat:visible').addClass('is-request');
+
+      self.createDataSpinner(true);
+      Message.download(dialog_id, function(messages) {
+        self.removeDataSpinner();
+        for (var i = 0, len = messages.length; i < len; i++) {
+          message = Message.create(messages[i]);
+          if (QMCONFIG.debug) console.log(message);
+          MessageView.addItem(message);
+        }
+        
+        setTimeout(scrollTo, 500);
+      });
+    } else {
+
+      chat.removeClass('is-hidden').siblings().addClass('is-hidden');
+      scrollTo();
+
+    }
+
+    $('.is-selected').removeClass('is-selected');
+    parent.addClass('is-selected');
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
+// fix for customScrollbar
+function scrollTo() {  
+  $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 50);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 100);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 150);
+  setTimeout(function() {
+    $('.scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+  }, 200);
+}
+
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
@@ -2092,7 +2289,129 @@ function openPopup(objDom) {
   objDom.add('.popups').addClass('is-overlay');
 }
 
-},{}],11:[function(require,module,exports){
+function getStatus(status, html) {
+  if (!status || status.subscription === 'none')
+    html += '<span class="status status_request"></span>';
+  else if (status.status)
+    html += '<span class="status status_online"></span>';
+  else
+    html += '<span class="status"></span>';
+
+  return html;
+}
+
+function textAreaScrollbar() {
+  $('.l-chat:visible .textarea').niceScroll({
+    cursoropacitymax: 0.5,
+    railpadding: {right: 5}
+  });
+}
+
+},{}],12:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * Message View Module
+ *
+ */
+
+module.exports = MessageView;
+
+var User, Message, ContactList;
+
+function MessageView(app) {
+  this.app = app;
+  User = this.app.models.User;
+  Message = this.app.models.Message;
+  ContactList = this.app.models.ContactList;
+}
+
+MessageView.prototype = {
+
+  addItem: function(message) {
+    var contacts = ContactList.contacts,
+        contact = contacts[message.sender_id],
+        type = message.notification_type || 'message',
+        chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
+        html;
+
+    switch (type) {
+    case '3':
+      html = '<article class="message message_service l-flexbox">';
+      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-content">';
+
+      if (message.sender_id === User.contact.id)
+        html += '<h4 class="message-author">Your request has been sent</h4>';
+      else
+        html += '<h4 class="message-author">'+contact.full_name+' request has been sent</h4>';
+
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case '4':
+      html = '<article class="message message_service l-flexbox">';
+      html += '<span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-content">';
+
+      if (message.sender_id === User.contact.id)
+        html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+      else
+        html += '<h4 class="message-author">'+contact.full_name+' request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case '5':
+      html = '<article class="message message_service l-flexbox">';
+      html += '<span class="message-avatar contact-avatar_message request-button_ok">&#10003;</span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-content">';
+
+      if (message.sender_id === User.contact.id)
+        html += '<h4 class="message-author">Your request has been accepted</h4>';
+      else
+        html += '<h4 class="message-author">'+contact.full_name+' request has been accepted</h4>';
+
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case 'message':
+      break;
+    }
+
+    chat.find('.l-chat-content').prepend(html);
+    
+  }
+
+};
+
+/* Private
+---------------------------------------------------------------------- */
+function getTime(time) {
+  var messageDate = new Date(time * 1000),
+      startOfCurrentDay = new Date;
+
+  startOfCurrentDay.setHours(0,0,0,0);
+
+  if (messageDate > startOfCurrentDay) {
+    return messageDate.getHours() + ':' + (messageDate.getMinutes().toString().length === 1 ? '0'+messageDate.getMinutes() : messageDate.getMinutes());
+  } else if (messageDate.getFullYear() === startOfCurrentDay.getFullYear()) {
+    return $.timeago(messageDate);
+  } else {
+    return messageDate.getDate() + '/' + (messageDate.getMonth() + 1) + '/' + messageDate.getFullYear();
+  }
+}
+
+},{}],13:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -2226,7 +2545,7 @@ UserView.prototype = {
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
     html += '<li class="list-item"><a class="list-actions-action" href="#">Add people</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
-    html += '<li class="list-item"><a id="deleteContact" class="list-actions-action" href="#">Delete contact</a></li>';
+    html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
     html += '</ul>';
 
     objDom.after(html).parent().addClass('is-contextmenu');
