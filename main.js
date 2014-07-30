@@ -2243,7 +2243,7 @@ DialogView.prototype = {
         self.removeDataSpinner();
         for (var i = 0, len = messages.length; i < len; i++) {
           message = Message.create(messages[i]);
-          if (QMCONFIG.debug) console.log(message);
+          // if (QMCONFIG.debug) console.log(message);
           MessageView.addItem(message);
         }
         messageScrollbar(self);
@@ -2300,7 +2300,7 @@ function ajaxDownloading(chat, self) {
   Message.download(dialog_id, function(messages) {
     for (var i = 0, len = messages.length; i < len; i++) {
       message = Message.create(messages[i]);
-      if (QMCONFIG.debug) console.log(message);
+      // if (QMCONFIG.debug) console.log(message);
       MessageView.addItem(message, true);
     }
   }, count);
