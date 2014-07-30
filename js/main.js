@@ -99,6 +99,7 @@ window.fbAsyncInit = function() {
   }
 };
 
+// Leave a chat after closing window
 window.onbeforeunload = function() {
   QB.chat.sendPres('unavailable');
 };

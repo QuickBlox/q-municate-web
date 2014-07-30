@@ -22,7 +22,7 @@ Contact.prototype = {
       blob_id: qbUser.blob_id,
       avatar_url: qbUser.avatar_url || getAvatar(qbUser),
       status: qbUser.status || getStatus(qbUser),
-      tag: qbUser.tag || qbUser.user_tags,
+      tag: qbUser.tag || qbUser.user_tags || null,
       user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)
     };
   }

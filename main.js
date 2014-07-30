@@ -100,6 +100,7 @@ window.fbAsyncInit = function() {
   }
 };
 
+// Leave a chat after closing window
 window.onbeforeunload = function() {
   QB.chat.sendPres('unavailable');
 };
@@ -129,7 +130,7 @@ Contact.prototype = {
       blob_id: qbUser.blob_id,
       avatar_url: qbUser.avatar_url || getAvatar(qbUser),
       status: qbUser.status || getStatus(qbUser),
-      tag: qbUser.tag || qbUser.user_tags,
+      tag: qbUser.tag || qbUser.user_tags || null,
       user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)
     };
   }
@@ -514,21 +515,7 @@ User.prototype = {
           DialogView.prepareDownloading(roster);
 
           if (!self._is_import) {
-            // import FB friends
-            FB.api('/me/friends', function (res) {
-                if (QMCONFIG.debug) console.log('FB friends', res);
-                var ids = [];
-
-                for (var i = 0, len = res.data.length; i < len; i++) {
-                  ids.push(res.data[i].id);
-                }
-
-                DialogView.downloadDialogs(roster, ids);
-              }
-            );
-
-            self._is_import = true;
-            self.updateQBUser(user);
+            self.import(roster, user);
           } else {
             DialogView.downloadDialogs(roster);
           }
@@ -537,6 +524,38 @@ User.prototype = {
 
       });
     }, true);
+  },
+
+  import: function(roster, user) {
+    var DialogView = this.app.views.Dialog,
+        self = this;
+
+    FB.api('/me/permissions', function (response) {
+        if (response.data[3].permission === 'user_friends' && response.data[3].status === 'granted') {
+
+          // import FB friends
+          FB.api('/me/friends', function (res) {
+              if (QMCONFIG.debug) console.log('FB friends', res);
+              var ids = [];
+
+              for (var i = 0, len = res.data.length; i < len; i++) {
+                ids.push(res.data[i].id);
+              }
+
+              if (ids.length > 0)
+                DialogView.downloadDialogs(roster, ids);
+              else
+                DialogView.downloadDialogs(roster);
+            }
+          );
+
+        } else {
+          DialogView.downloadDialogs(roster);
+        }
+        self._is_import = true;
+        self.updateQBUser(user);
+      }
+    );
   },
 
   updateQBUser: function(user) {
