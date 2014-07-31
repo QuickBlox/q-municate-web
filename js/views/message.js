@@ -20,7 +20,7 @@ MessageView.prototype = {
 
   addItem: function(message, isCallback) {
     var contacts = ContactList.contacts,
-        contact = contacts[message.sender_id],
+        contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
         type = message.notification_type || 'message',
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
         html;
@@ -76,14 +76,57 @@ MessageView.prototype = {
       break;
 
     case 'message':
+      if (message.sender_id === User.contact.id)
+        html = '<article class="message is-own l-flexbox l-flexbox_alignstretch">';
+      else
+        html = '<article class="message l-flexbox l-flexbox_alignstretch">';
+
+      html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+      html += '<div class="message-content">';
+      html += '<h4 class="message-author">'+contact.full_name+'</h4>';
+      html += '<div class="message-body">'+message.body+'</div>';
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
       break;
     }
+
+    // <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+    //                   <div class="message-content">
+    //                     <div class="message-body">
+    //                       <div class="preview preview-photo"><img src="images/test.jpg" alt="attach"></div>
+    //                     </div>
+    //                   </div>
+    //                   <time class="message-time">30/05/2014</time>
+    //                 </div>
 
     if (isCallback)
       chat.find('.l-chat-content .mCSB_container').prepend(html);
     else
       chat.find('.l-chat-content').prepend(html);
     
+  },
+
+  sendMessage: function(form) {
+    var jid = form.parents('.l-chat').data('jid'),
+        dialog_id = form.parents('.l-chat').data('dialog'),
+        val = form.find('textarea').val().trim();
+
+    if (val.length > 0) {
+      form[0].reset();
+      form.find('textarea').blur();
+      
+      // send message
+      QB.chat.send(jid, {type: 'chat', body: val, extension: {
+        save_to_history: 1,
+        dialog_id: dialog_id,
+        date_sent: Math.floor(Date.now() / 1000),
+
+        full_name: User.contact.full_name,
+        avatar_url: User.contact.avatar_url
+      }});
+    }
   }
 
 };

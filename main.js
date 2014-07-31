@@ -431,13 +431,13 @@ Message.prototype = {
     var User = this.app.models.User;
 
     return {
-      id: params._id,
-      dialog_id: params.chat_dialog_id,
-      body: params.message || null,
-      notification_type: params.notification_type || null,
-      date_sent: params.date_sent,
-      read: params.read,
-      sender_id: params.sender_id,
+      id: params._id || null,
+      dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
+      body: params.body || params.message || null,
+      notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
+      date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
+      read: params.read || false,
+      sender_id: params.sender_id || null,
     };
   }
 
@@ -1298,14 +1298,15 @@ var failSearch = function() {
 
 module.exports = Routes;
 
-var UserView, ContactListView, DialogView;
+var UserView, ContactListView, DialogView, MessageView;
 
 function Routes(app) {
   this.app = app;
   
   UserView = this.app.views.User,
   ContactListView = this.app.views.ContactList,
-  DialogView = this.app.views.Dialog;
+  DialogView = this.app.views.Dialog,
+  MessageView = this.app.views.Message;
 }
 
 Routes.prototype = {
@@ -1490,21 +1491,20 @@ Routes.prototype = {
       DialogView.htmlBuild($(this));
     });
 
+    $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
+      var shiftKey = event.shiftKey,
+          code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+
+      if (code === 13 && !shiftKey) {
+        MessageView.sendMessage($(this));
+      }
+    });
+
     $('#home').on('click', function(event) {
       event.preventDefault();
       $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.is-selected').removeClass('is-selected');
     });
-
-    /* temporary routes
-    ----------------------------------------------------- */
-    $('#share, #contacts').on('click', function(event) {
-      event.preventDefault();
-    });
-
-    $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
-      event.preventDefault();
-    });    
 
     $('.l-workspace-wrap').on('click', '.groupTitle', function() {
       var chat = $('.l-chat:visible');
@@ -1517,6 +1517,12 @@ Routes.prototype = {
         chat.find('.chat-occupants-wrap').removeClass('is-overlay');
         chat.find('.l-chat-content').removeClass('l-chat-content_min');
       }
+    });
+
+    /* temporary routes
+    ----------------------------------------------------- */
+    $('#share, #contacts').on('click', function(event) {
+      event.preventDefault();
     });
 
   }
@@ -2154,9 +2160,18 @@ DialogView.prototype = {
   },
 
   onMessage: function(id, message) {
-    var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+    console.log(message);
+    var MessageView = this.app.views.Message,
+        hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notification_type = message.extension && message.extension.notification_type,
-        dialog_id = message.extension && message.extension.dialog_id;
+        dialog_id = message.extension && message.extension.dialog_id,
+        msg;
+
+    if (QMCONFIG.debug) console.log(message);
+    msg = Message.create(message);
+    msg.sender_id = id;
+    if (QMCONFIG.debug) console.log(msg);
+    MessageView.addItem(msg, true);
 
     // subscribe message
     if (notification_type === '3') {
@@ -2351,7 +2366,7 @@ MessageView.prototype = {
 
   addItem: function(message, isCallback) {
     var contacts = ContactList.contacts,
-        contact = contacts[message.sender_id],
+        contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
         type = message.notification_type || 'message',
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
         html;
@@ -2407,14 +2422,57 @@ MessageView.prototype = {
       break;
 
     case 'message':
+      if (message.sender_id === User.contact.id)
+        html = '<article class="message is-own l-flexbox l-flexbox_alignstretch">';
+      else
+        html = '<article class="message l-flexbox l-flexbox_alignstretch">';
+
+      html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+      html += '<div class="message-content">';
+      html += '<h4 class="message-author">'+contact.full_name+'</h4>';
+      html += '<div class="message-body">'+message.body+'</div>';
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
       break;
     }
+
+    // <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+    //                   <div class="message-content">
+    //                     <div class="message-body">
+    //                       <div class="preview preview-photo"><img src="images/test.jpg" alt="attach"></div>
+    //                     </div>
+    //                   </div>
+    //                   <time class="message-time">30/05/2014</time>
+    //                 </div>
 
     if (isCallback)
       chat.find('.l-chat-content .mCSB_container').prepend(html);
     else
       chat.find('.l-chat-content').prepend(html);
     
+  },
+
+  sendMessage: function(form) {
+    var jid = form.parents('.l-chat').data('jid'),
+        dialog_id = form.parents('.l-chat').data('dialog'),
+        val = form.find('textarea').val().trim();
+
+    if (val.length > 0) {
+      form[0].reset();
+      form.find('textarea').blur();
+      
+      // send message
+      QB.chat.send(jid, {type: 'chat', body: val, extension: {
+        save_to_history: 1,
+        dialog_id: dialog_id,
+        date_sent: Math.floor(Date.now() / 1000),
+
+        full_name: User.contact.full_name,
+        avatar_url: User.contact.avatar_url
+      }});
+    }
   }
 
 };

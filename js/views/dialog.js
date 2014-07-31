@@ -162,9 +162,18 @@ DialogView.prototype = {
   },
 
   onMessage: function(id, message) {
-    var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+    console.log(message);
+    var MessageView = this.app.views.Message,
+        hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notification_type = message.extension && message.extension.notification_type,
-        dialog_id = message.extension && message.extension.dialog_id;
+        dialog_id = message.extension && message.extension.dialog_id,
+        msg;
+
+    if (QMCONFIG.debug) console.log(message);
+    msg = Message.create(message);
+    msg.sender_id = id;
+    if (QMCONFIG.debug) console.log(msg);
+    MessageView.addItem(msg, true);
 
     // subscribe message
     if (notification_type === '3') {
