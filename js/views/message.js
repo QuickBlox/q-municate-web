@@ -18,8 +18,9 @@ function MessageView(app) {
 
 MessageView.prototype = {
 
-  addItem: function(message, isCallback) {
-    var contacts = ContactList.contacts,
+  addItem: function(message, isCallback, isMessageListener) {
+    var DialogView = this.app.views.Dialog,
+        contacts = ContactList.contacts,
         contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
         type = message.notification_type || 'message',
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
@@ -101,10 +102,20 @@ MessageView.prototype = {
     //                   <time class="message-time">30/05/2014</time>
     //                 </div>
 
-    if (isCallback)
-      chat.find('.l-chat-content .mCSB_container').prepend(html);
-    else
+    if (isCallback) {
+      if (isMessageListener) {
+        chat.find('.l-chat-content .mCSB_container').append(html);
+        chat.find('.l-chat-content').mCustomScrollbar("scrollTo","bottom");
+        chat.find('.l-chat-content').mCustomScrollbar("scrollTo","bottom");
+        chat.find('.l-chat-content').mCustomScrollbar("scrollTo","bottom");
+        chat.find('.l-chat-content').mCustomScrollbar("scrollTo","bottom");
+        // $('.l-chat:visible .l-chat-content').messageScrollbar();
+      } else {
+        chat.find('.l-chat-content .mCSB_container').prepend(html);
+      }
+    } else {
       chat.find('.l-chat-content').prepend(html);
+    }
     
   },
 

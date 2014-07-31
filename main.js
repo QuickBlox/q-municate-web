@@ -2006,12 +2006,14 @@ function isSectionEmpty(list) {
 module.exports = DialogView;
 
 var Dialog, Message, ContactList;
+var self
 
 function DialogView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
   Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
+  self = this;
 }
 
 DialogView.prototype = {
@@ -2160,18 +2162,16 @@ DialogView.prototype = {
   },
 
   onMessage: function(id, message) {
-    console.log(message);
-    var MessageView = this.app.views.Message,
+    var MessageView = self.app.views.Message,
         hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notification_type = message.extension && message.extension.notification_type,
         dialog_id = message.extension && message.extension.dialog_id,
         msg;
 
-    if (QMCONFIG.debug) console.log(message);
     msg = Message.create(message);
     msg.sender_id = id;
     if (QMCONFIG.debug) console.log(msg);
-    MessageView.addItem(msg, true);
+    MessageView.addItem(msg, true, true);
 
     // subscribe message
     if (notification_type === '3') {
@@ -2261,47 +2261,50 @@ DialogView.prototype = {
           // if (QMCONFIG.debug) console.log(message);
           MessageView.addItem(message);
         }
-        messageScrollbar(self);
+        self.messageScrollbar();
       });
 
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
-      messageScrollbar(self);
+      self.messageScrollbar();
 
     }
 
     $('.is-selected').removeClass('is-selected');
     parent.addClass('is-selected');
     
+  },
+
+  messageScrollbar: function() {
+    var objDom = $('.l-chat:visible .scrollbar_message'),
+        height = objDom[0].scrollHeight,
+        self = this;
+
+    objDom.mCustomScrollbar({
+      theme: 'minimal-dark',
+      scrollInertia: 50,
+      setTop: height + 'px',
+      live: true,
+      advanced:{ updateOnSelectorChange: true }, 
+      callbacks: {
+        onTotalScrollBack: function() {
+          ajaxDownloading(objDom, self);
+        },
+        alwaysTriggerOffsets: false
+      }
+    });
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
-function messageScrollbar(self) {
-  var objDom = $('.l-chat:visible .scrollbar_message'),
-      height = objDom[0].scrollHeight;
-
-  objDom.mCustomScrollbar({
-    theme: 'minimal-dark',
-    scrollInertia: 150,
-    setTop: height + 'px',
-    callbacks: {
-      onTotalScrollBack: function() {
-        ajaxDownloading(objDom, self);
-      },
-      alwaysTriggerOffsets: false
-    }
-  });
-}
-
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 150
+    scrollInertia: 50
   });
 }
 
@@ -2364,8 +2367,9 @@ function MessageView(app) {
 
 MessageView.prototype = {
 
-  addItem: function(message, isCallback) {
-    var contacts = ContactList.contacts,
+  addItem: function(message, isCallback, isMessageListener) {
+    var DialogView = this.app.views.Dialog,
+        contacts = ContactList.contacts,
         contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
         type = message.notification_type || 'message',
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
@@ -2447,10 +2451,20 @@ MessageView.prototype = {
     //                   <time class="message-time">30/05/2014</time>
     //                 </div>
 
-    if (isCallback)
-      chat.find('.l-chat-content .mCSB_container').prepend(html);
-    else
+    if (isCallback) {
+      if (isMessageListener) {
+        chat.find('.l-chat-content .mCSB_container').append(html);
+        chat.find('.l-chat-content').mCustomScrollbar("scrollTo","bottom");
+        chat.find('.l-chat-content').mCustomScrollbar("scrollTo","bottom");
+        chat.find('.l-chat-content').mCustomScrollbar("scrollTo","bottom");
+        chat.find('.l-chat-content').mCustomScrollbar("scrollTo","bottom");
+        // $('.l-chat:visible .l-chat-content').messageScrollbar();
+      } else {
+        chat.find('.l-chat-content .mCSB_container').prepend(html);
+      }
+    } else {
       chat.find('.l-chat-content').prepend(html);
+    }
     
   },
 
