@@ -154,12 +154,21 @@ MessageView.prototype = {
     var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notification_type = message.extension && message.extension.notification_type,
         dialog_id = message.extension && message.extension.dialog_id,
+        dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        unread = parseInt(dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
         msg;
 
     msg = Message.create(message);
     msg.sender_id = id;
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true);
+    
+    if (!$('.l-chat[data-id="'+id+'"]').is(':visible')) {
+      console.log(unread);
+      unread++;
+      console.log(unread);
+      dialogItem.find('.unread').text(unread);
+    }
 
     // subscribe message
     if (notification_type === '3') {

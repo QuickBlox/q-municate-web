@@ -358,7 +358,7 @@ Dialog.prototype = {
       room_name: params.name || null,
       occupants_ids: occupants_ids,
       last_message_date_sent: params.last_message_date_sent || null,
-      unread_count: params.unread_messages_count || null
+      unread_count: params.unread_messages_count || ''
     };
   },
 
@@ -1775,7 +1775,8 @@ ContactListView.prototype = {
     dialog = Dialog.create({
       _id: hiddenDialogs[id],
       type: 3,
-      occupants_ids: [id]
+      occupants_ids: [id],
+      unread_count: ''
     });
     ContactList.dialogs[dialog.id] = dialog;
     if (QMCONFIG.debug) console.log('Dialog', dialog);
@@ -2054,7 +2055,6 @@ DialogView.prototype = {
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
     QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
-    // <span class="unread">4</span>
   },
 
   createDataSpinner: function(chat) {
@@ -2169,6 +2169,7 @@ DialogView.prototype = {
     html += '</div>';
     
     html = getStatus(status, html);
+    html += '<span class="unread">'+dialog.unread_count+'</span>';
 
     html += '</a></li>';
 
@@ -2280,7 +2281,7 @@ DialogView.prototype = {
     }
 
     $('.is-selected').removeClass('is-selected');
-    parent.addClass('is-selected');
+    parent.addClass('is-selected').find('.unread').text('');
     
   },
 
@@ -2508,12 +2509,21 @@ MessageView.prototype = {
     var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notification_type = message.extension && message.extension.notification_type,
         dialog_id = message.extension && message.extension.dialog_id,
+        dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        unread = parseInt(dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
         msg;
 
     msg = Message.create(message);
     msg.sender_id = id;
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true);
+    
+    if (!$('.l-chat[data-id="'+id+'"]').is(':visible')) {
+      console.log(unread);
+      unread++;
+      console.log(unread);
+      dialogItem.find('.unread').text(unread);
+    }
 
     // subscribe message
     if (notification_type === '3') {
