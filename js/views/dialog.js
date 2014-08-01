@@ -321,6 +321,7 @@ function getStatus(status, html) {
 function textAreaScrollbar() {
   $('.l-chat:visible .textarea').niceScroll({
     cursoropacitymax: 0.5,
-    railpadding: {right: 5}
+    railpadding: {right: 5},
+    zindex: 1
   });
 }

@@ -2374,7 +2374,8 @@ function getStatus(status, html) {
 function textAreaScrollbar() {
   $('.l-chat:visible .textarea').niceScroll({
     cursoropacitymax: 0.5,
-    railpadding: {right: 5}
+    railpadding: {right: 5},
+    zindex: 1
   });
 }
 
@@ -2545,21 +2546,27 @@ MessageView.prototype = {
   onMessage: function(id, message) {
     var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notification_type = message.extension && message.extension.notification_type,
-        dialog_id = message.extension && message.extension.dialog_id,
-        dialogItem = $('.dialog-item[data-id="'+id+'"]'),
-        unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-        msg, copyDialogItem;
+        dialog_id = message.extension && message.extension.dialog_id;
+        console.log(1111);
+        var dialogItem = $('.dialog-item[data-id="'+id+'"]');
+        console.log(222);
+        var unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0);
+        console.log(2233);
+        var msg, copyDialogItem;
 
+    console.log(44444);
     msg = Message.create(message);
     Message.update(msg.id, dialog_id);
     msg.sender_id = id;
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true);
     
-    if (!$('.l-chat[data-id="'+id+'"]').is(':visible')) {
+    if (!$('.l-chat[data-id="'+id+'"]').is(':visible') && dialogItem.length > 0) {
       unread++;
       dialogItem.find('.unread').text(unread);
     }
+
+    console.log(55555);
 
     if (dialogItem.length > 0) {
       copyDialogItem = dialogItem.clone();
@@ -2567,6 +2574,11 @@ MessageView.prototype = {
       $('#recentList ul').prepend(copyDialogItem);
       isSectionEmpty($('#recentList ul'));
     }
+
+    console.log(notification_type);
+    console.log(hiddenDialogs);
+    console.log(dialog_id);
+    console.log(66666);
     
     // subscribe message
     if (notification_type === '3') {
