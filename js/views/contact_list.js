@@ -7,11 +7,12 @@
 
 module.exports = ContactListView;
 
-var Dialog, ContactList, User;
+var Dialog, Message, ContactList, User;
 
 function ContactListView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
+  Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
   User = this.app.models.User;
 }
@@ -84,10 +85,13 @@ ContactListView.prototype = {
   },
 
   sendSubscribe: function(objDom, isChat) {
-    var jid = isChat ? objDom.parents('.l-chat').data('jid') : objDom.parents('li').data('jid'),
+    var MessageView = this.app.views.Message,
+        jid = isChat ? objDom.parents('.l-chat').data('jid') : objDom.parents('li').data('jid'),
         roster = JSON.parse(sessionStorage['QM.roster']),
         id = QB.chat.helpers.getIdFromNode(jid),
-        dialogItem = $('.dialog-item[data-id="'+id+'"]')[0];
+        dialogItem = $('.dialog-item[data-id="'+id+'"]')[0],
+        time = Math.floor(Date.now() / 1000),
+        message;
 
     if (!isChat) {
       objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
@@ -107,11 +111,20 @@ ContactListView.prototype = {
       QB.chat.send(jid, {type: 'chat', extension: {
         save_to_history: 1,
         dialog_id: dialogItem.getAttribute('data-dialog'),
-        date_sent: Math.floor(Date.now() / 1000),
+        date_sent: time,
 
-        notification_type: 3,
+        notification_type: '3',
         full_name: User.contact.full_name,
       }});
+
+      message = Message.create({
+        chat_dialog_id: dialogItem.getAttribute('data-dialog'),
+        notification_type: '3',
+        date_sent: time,
+        sender_id: User.contact.id
+      });
+      console.log(message);
+      MessageView.addItem(message, true, true);
     } else {
       Dialog.createPrivate(jid);
     }
@@ -119,14 +132,15 @@ ContactListView.prototype = {
 
   sendConfirm: function(objDom) {
     var DialogView = this.app.views.Dialog,
+        MessageView = this.app.views.Message,
         jid = objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
         roster = JSON.parse(sessionStorage['QM.roster']),
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
-        li,
-        dialog;
+        li, dialog, message,
+        time = Math.floor(Date.now() / 1000);
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
@@ -147,11 +161,19 @@ ContactListView.prototype = {
     QB.chat.send(jid, {type: 'chat', extension: {
       save_to_history: 1,
       dialog_id: hiddenDialogs[id],
-      date_sent: Math.floor(Date.now() / 1000),
+      date_sent: time,
 
-      notification_type: 5,
+      notification_type: '5',
       full_name: User.contact.full_name,
     }});
+
+    message = Message.create({
+      chat_dialog_id: hiddenDialogs[id],
+      notification_type: '5',
+      date_sent: time,
+      sender_id: User.contact.id
+    });
+    MessageView.addItem(message, true, true);
 
     // delete duplicate contact item
     li = $('.dialog-item[data-id="'+id+'"]');
@@ -194,7 +216,7 @@ ContactListView.prototype = {
       dialog_id: hiddenDialogs[id],
       date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: 4,
+      notification_type: '4',
       full_name: User.contact.full_name,
     }});
   },
@@ -230,7 +252,7 @@ ContactListView.prototype = {
       dialog_id: dialog_id,
       date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: 4,
+      notification_type: '4',
       full_name: User.contact.full_name,
     }});
 
@@ -289,6 +311,7 @@ ContactListView.prototype = {
     ContactList.saveRoster(roster);
 
     dialogItem.find('.status').removeClass('status_request');
+    dialogItem.removeClass('is-request');
   },
 
   onReject: function(id) {
@@ -317,7 +340,8 @@ ContactListView.prototype = {
       QB.chat.roster.remove(jid);
       request.remove();
       isSectionEmpty(list);
-    }      
+    }
+    dialogItem.addClass('is-request');
   },
 
   onPresence: function(id, type) {

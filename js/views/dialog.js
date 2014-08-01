@@ -20,9 +20,10 @@ DialogView.prototype = {
 
   // QBChat handlers
   chatCallbacksInit: function() {
-    var ContactListView = this.app.views.ContactList;
+    var ContactListView = this.app.views.ContactList,
+        MessageView = this.app.views.Message;
 
-    QB.chat.onMessageListener = this.onMessage;
+    QB.chat.onMessageListener = MessageView.onMessage;
     QB.chat.onContactListListener = ContactListView.onPresence;
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
     QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
@@ -161,19 +162,6 @@ DialogView.prototype = {
     $('#emptyList').addClass('is-hidden');
   },
 
-  onMessage: function(id, message) {
-    var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-        notification_type = message.extension && message.extension.notification_type,
-        dialog_id = message.extension && message.extension.dialog_id;
-
-    // subscribe message
-    if (notification_type === '3') {
-      // update hidden dialogs
-      hiddenDialogs[id] = dialog_id;
-      ContactList.saveHiddenDialogs(hiddenDialogs);
-    }
-  },
-
   htmlBuild: function(objDom) {
     var MessageView = this.app.views.Message,
         contacts = ContactList.contacts,
@@ -254,43 +242,44 @@ DialogView.prototype = {
           // if (QMCONFIG.debug) console.log(message);
           MessageView.addItem(message);
         }
-        messageScrollbar(self);
+        self.messageScrollbar();
       });
 
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
-      messageScrollbar(self);
+      self.messageScrollbar();
 
     }
 
     $('.is-selected').removeClass('is-selected');
     parent.addClass('is-selected');
     
+  },
+
+  messageScrollbar: function() {
+    var objDom = $('.l-chat:visible .scrollbar_message'),
+        height = objDom[0].scrollHeight,
+        self = this;
+
+    objDom.mCustomScrollbar({
+      theme: 'minimal-dark',
+      scrollInertia: 150,
+      setTop: height + 'px',
+      callbacks: {
+        onTotalScrollBack: function() {
+          ajaxDownloading(objDom, self);
+        },
+        alwaysTriggerOffsets: false
+      }
+    });
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
-function messageScrollbar(self) {
-  var objDom = $('.l-chat:visible .scrollbar_message'),
-      height = objDom[0].scrollHeight;
-
-  objDom.mCustomScrollbar({
-    theme: 'minimal-dark',
-    scrollInertia: 150,
-    setTop: height + 'px',
-    callbacks: {
-      onTotalScrollBack: function() {
-        ajaxDownloading(objDom, self);
-      },
-      alwaysTriggerOffsets: false
-    }
-  });
-}
-
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',

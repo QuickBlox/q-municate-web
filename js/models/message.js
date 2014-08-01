@@ -30,13 +30,13 @@ Message.prototype = {
     var User = this.app.models.User;
 
     return {
-      id: params._id,
-      dialog_id: params.chat_dialog_id,
-      body: params.message || null,
-      notification_type: params.notification_type || null,
-      date_sent: params.date_sent,
-      read: params.read,
-      sender_id: params.sender_id,
+      id: params._id || null,
+      dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
+      body: params.body || params.message || null,
+      notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
+      date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
+      read: params.read || false,
+      sender_id: params.sender_id || null
     };
   }
 
