@@ -314,9 +314,9 @@ QBApiCalls.prototype = {
     });
   },
 
-  updateMessage: function(params, callback) {
+  updateMessage: function(id, params, callback) {
     this.checkSession(function(res) {
-      QB.chat.message.update(params, function(response) {
+      QB.chat.message.update(id, params, function(response) {
         if (response.code === 404) {
           if (QMCONFIG.debug) console.log(response.message);
 

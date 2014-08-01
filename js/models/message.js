@@ -30,7 +30,7 @@ Message.prototype = {
     var User = this.app.models.User;
 
     return {
-      id: params._id || null,
+      id: (params.extension && params.extension.message_id) || params._id || null,
       dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
       body: params.body || params.message || null,
       notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
@@ -38,6 +38,14 @@ Message.prototype = {
       read: params.read || false,
       sender_id: params.sender_id || null
     };
+  },
+
+  update: function(message_id, dialog_id) {
+    var QBApiCalls = this.app.service;
+
+    QBApiCalls.updateMessage(message_id, {chat_dialog_id: dialog_id, read: 1}, function() {
+      
+    });
   }
 
 };
