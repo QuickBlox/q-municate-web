@@ -36,7 +36,7 @@ Message.prototype = {
       notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
       date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
       read: params.read || false,
-      sender_id: params.sender_id || null,
+      sender_id: params.sender_id || null
     };
   }
 

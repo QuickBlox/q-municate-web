@@ -209,6 +209,10 @@ Routes.prototype = {
       }
     });
 
+    $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
+      event.preventDefault();
+    });
+
     $('#home').on('click', function(event) {
       event.preventDefault();
       $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');

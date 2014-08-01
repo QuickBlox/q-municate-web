@@ -8,23 +8,22 @@
 module.exports = DialogView;
 
 var Dialog, Message, ContactList;
-var self
 
 function DialogView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
   Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
-  self = this;
 }
 
 DialogView.prototype = {
 
   // QBChat handlers
   chatCallbacksInit: function() {
-    var ContactListView = this.app.views.ContactList;
+    var ContactListView = this.app.views.ContactList,
+        MessageView = this.app.views.Message;
 
-    QB.chat.onMessageListener = this.onMessage;
+    QB.chat.onMessageListener = MessageView.onMessage;
     QB.chat.onContactListListener = ContactListView.onPresence;
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
     QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
@@ -163,26 +162,6 @@ DialogView.prototype = {
     $('#emptyList').addClass('is-hidden');
   },
 
-  onMessage: function(id, message) {
-    var MessageView = self.app.views.Message,
-        hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-        notification_type = message.extension && message.extension.notification_type,
-        dialog_id = message.extension && message.extension.dialog_id,
-        msg;
-
-    msg = Message.create(message);
-    msg.sender_id = id;
-    if (QMCONFIG.debug) console.log(msg);
-    MessageView.addItem(msg, true, true);
-
-    // subscribe message
-    if (notification_type === '3') {
-      // update hidden dialogs
-      hiddenDialogs[id] = dialog_id;
-      ContactList.saveHiddenDialogs(hiddenDialogs);
-    }
-  },
-
   htmlBuild: function(objDom) {
     var MessageView = this.app.views.Message,
         contacts = ContactList.contacts,
@@ -286,10 +265,8 @@ DialogView.prototype = {
 
     objDom.mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 50,
+      scrollInertia: 150,
       setTop: height + 'px',
-      live: true,
-      advanced:{ updateOnSelectorChange: true }, 
       callbacks: {
         onTotalScrollBack: function() {
           ajaxDownloading(objDom, self);
@@ -306,7 +283,7 @@ DialogView.prototype = {
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 50
+    scrollInertia: 150
   });
 }
 

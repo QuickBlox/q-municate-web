@@ -61,7 +61,7 @@ Dialog.prototype = {
         dialog_id: dialog.id,
         date_sent: Math.floor(Date.now() / 1000),
 
-        notification_type: 3,
+        notification_type: '3',
         full_name: User.contact.full_name,
       }});
 
