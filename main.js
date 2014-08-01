@@ -386,7 +386,7 @@ Dialog.prototype = {
         dialog_id: dialog.id,
         date_sent: Math.floor(Date.now() / 1000),
 
-        notification_type: 3,
+        notification_type: '3',
         full_name: User.contact.full_name,
       }});
 
@@ -431,13 +431,13 @@ Message.prototype = {
     var User = this.app.models.User;
 
     return {
-      id: params._id,
-      dialog_id: params.chat_dialog_id,
-      body: params.message || null,
-      notification_type: params.notification_type || null,
-      date_sent: params.date_sent,
-      read: params.read,
-      sender_id: params.sender_id,
+      id: params._id || null,
+      dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
+      body: params.body || params.message || null,
+      notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
+      date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
+      read: params.read || false,
+      sender_id: params.sender_id || null
     };
   }
 
@@ -1298,14 +1298,15 @@ var failSearch = function() {
 
 module.exports = Routes;
 
-var UserView, ContactListView, DialogView;
+var UserView, ContactListView, DialogView, MessageView;
 
 function Routes(app) {
   this.app = app;
   
   UserView = this.app.views.User,
   ContactListView = this.app.views.ContactList,
-  DialogView = this.app.views.Dialog;
+  DialogView = this.app.views.Dialog,
+  MessageView = this.app.views.Message;
 }
 
 Routes.prototype = {
@@ -1490,21 +1491,24 @@ Routes.prototype = {
       DialogView.htmlBuild($(this));
     });
 
+    $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
+      var shiftKey = event.shiftKey,
+          code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+
+      if (code === 13 && !shiftKey) {
+        MessageView.sendMessage($(this));
+      }
+    });
+
+    $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
+      event.preventDefault();
+    });
+
     $('#home').on('click', function(event) {
       event.preventDefault();
       $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.is-selected').removeClass('is-selected');
     });
-
-    /* temporary routes
-    ----------------------------------------------------- */
-    $('#share, #contacts').on('click', function(event) {
-      event.preventDefault();
-    });
-
-    $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
-      event.preventDefault();
-    });    
 
     $('.l-workspace-wrap').on('click', '.groupTitle', function() {
       var chat = $('.l-chat:visible');
@@ -1517,6 +1521,12 @@ Routes.prototype = {
         chat.find('.chat-occupants-wrap').removeClass('is-overlay');
         chat.find('.l-chat-content').removeClass('l-chat-content_min');
       }
+    });
+
+    /* temporary routes
+    ----------------------------------------------------- */
+    $('#share, #contacts').on('click', function(event) {
+      event.preventDefault();
     });
 
   }
@@ -1588,11 +1598,12 @@ var closePopup = function() {
 
 module.exports = ContactListView;
 
-var Dialog, ContactList, User;
+var Dialog, Message, ContactList, User;
 
 function ContactListView(app) {
   this.app = app;
   Dialog = this.app.models.Dialog;
+  Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
   User = this.app.models.User;
 }
@@ -1665,10 +1676,13 @@ ContactListView.prototype = {
   },
 
   sendSubscribe: function(objDom, isChat) {
-    var jid = isChat ? objDom.parents('.l-chat').data('jid') : objDom.parents('li').data('jid'),
+    var MessageView = this.app.views.Message,
+        jid = isChat ? objDom.parents('.l-chat').data('jid') : objDom.parents('li').data('jid'),
         roster = JSON.parse(sessionStorage['QM.roster']),
         id = QB.chat.helpers.getIdFromNode(jid),
-        dialogItem = $('.dialog-item[data-id="'+id+'"]')[0];
+        dialogItem = $('.dialog-item[data-id="'+id+'"]')[0],
+        time = Math.floor(Date.now() / 1000),
+        message;
 
     if (!isChat) {
       objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
@@ -1688,11 +1702,20 @@ ContactListView.prototype = {
       QB.chat.send(jid, {type: 'chat', extension: {
         save_to_history: 1,
         dialog_id: dialogItem.getAttribute('data-dialog'),
-        date_sent: Math.floor(Date.now() / 1000),
+        date_sent: time,
 
-        notification_type: 3,
+        notification_type: '3',
         full_name: User.contact.full_name,
       }});
+
+      message = Message.create({
+        chat_dialog_id: dialogItem.getAttribute('data-dialog'),
+        notification_type: '3',
+        date_sent: time,
+        sender_id: User.contact.id
+      });
+      console.log(message);
+      MessageView.addItem(message, true, true);
     } else {
       Dialog.createPrivate(jid);
     }
@@ -1700,14 +1723,15 @@ ContactListView.prototype = {
 
   sendConfirm: function(objDom) {
     var DialogView = this.app.views.Dialog,
+        MessageView = this.app.views.Message,
         jid = objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
         roster = JSON.parse(sessionStorage['QM.roster']),
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
-        li,
-        dialog;
+        li, dialog, message,
+        time = Math.floor(Date.now() / 1000);
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
@@ -1728,11 +1752,19 @@ ContactListView.prototype = {
     QB.chat.send(jid, {type: 'chat', extension: {
       save_to_history: 1,
       dialog_id: hiddenDialogs[id],
-      date_sent: Math.floor(Date.now() / 1000),
+      date_sent: time,
 
-      notification_type: 5,
+      notification_type: '5',
       full_name: User.contact.full_name,
     }});
+
+    message = Message.create({
+      chat_dialog_id: hiddenDialogs[id],
+      notification_type: '5',
+      date_sent: time,
+      sender_id: User.contact.id
+    });
+    MessageView.addItem(message, true, true);
 
     // delete duplicate contact item
     li = $('.dialog-item[data-id="'+id+'"]');
@@ -1775,7 +1807,7 @@ ContactListView.prototype = {
       dialog_id: hiddenDialogs[id],
       date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: 4,
+      notification_type: '4',
       full_name: User.contact.full_name,
     }});
   },
@@ -1811,7 +1843,7 @@ ContactListView.prototype = {
       dialog_id: dialog_id,
       date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: 4,
+      notification_type: '4',
       full_name: User.contact.full_name,
     }});
 
@@ -1870,6 +1902,7 @@ ContactListView.prototype = {
     ContactList.saveRoster(roster);
 
     dialogItem.find('.status').removeClass('status_request');
+    dialogItem.removeClass('is-request');
   },
 
   onReject: function(id) {
@@ -1898,7 +1931,8 @@ ContactListView.prototype = {
       QB.chat.roster.remove(jid);
       request.remove();
       isSectionEmpty(list);
-    }      
+    }
+    dialogItem.addClass('is-request');
   },
 
   onPresence: function(id, type) {
@@ -2012,9 +2046,10 @@ DialogView.prototype = {
 
   // QBChat handlers
   chatCallbacksInit: function() {
-    var ContactListView = this.app.views.ContactList;
+    var ContactListView = this.app.views.ContactList,
+        MessageView = this.app.views.Message;
 
-    QB.chat.onMessageListener = this.onMessage;
+    QB.chat.onMessageListener = MessageView.onMessage;
     QB.chat.onContactListListener = ContactListView.onPresence;
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
     QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
@@ -2153,19 +2188,6 @@ DialogView.prototype = {
     $('#emptyList').addClass('is-hidden');
   },
 
-  onMessage: function(id, message) {
-    var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-        notification_type = message.extension && message.extension.notification_type,
-        dialog_id = message.extension && message.extension.dialog_id;
-
-    // subscribe message
-    if (notification_type === '3') {
-      // update hidden dialogs
-      hiddenDialogs[id] = dialog_id;
-      ContactList.saveHiddenDialogs(hiddenDialogs);
-    }
-  },
-
   htmlBuild: function(objDom) {
     var MessageView = this.app.views.Message,
         contacts = ContactList.contacts,
@@ -2246,43 +2268,44 @@ DialogView.prototype = {
           // if (QMCONFIG.debug) console.log(message);
           MessageView.addItem(message);
         }
-        messageScrollbar(self);
+        self.messageScrollbar();
       });
 
     } else {
 
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
-      messageScrollbar(self);
+      self.messageScrollbar();
 
     }
 
     $('.is-selected').removeClass('is-selected');
     parent.addClass('is-selected');
     
+  },
+
+  messageScrollbar: function() {
+    var objDom = $('.l-chat:visible .scrollbar_message'),
+        height = objDom[0].scrollHeight,
+        self = this;
+
+    objDom.mCustomScrollbar({
+      theme: 'minimal-dark',
+      scrollInertia: 150,
+      setTop: height + 'px',
+      callbacks: {
+        onTotalScrollBack: function() {
+          ajaxDownloading(objDom, self);
+        },
+        alwaysTriggerOffsets: false
+      }
+    });
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
-function messageScrollbar(self) {
-  var objDom = $('.l-chat:visible .scrollbar_message'),
-      height = objDom[0].scrollHeight;
-
-  objDom.mCustomScrollbar({
-    theme: 'minimal-dark',
-    scrollInertia: 150,
-    setTop: height + 'px',
-    callbacks: {
-      onTotalScrollBack: function() {
-        ajaxDownloading(objDom, self);
-      },
-      alwaysTriggerOffsets: false
-    }
-  });
-}
-
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
@@ -2339,26 +2362,29 @@ function textAreaScrollbar() {
 module.exports = MessageView;
 
 var User, Message, ContactList;
+var self;
 
 function MessageView(app) {
   this.app = app;
   User = this.app.models.User;
   Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
+  self = this;
 }
 
 MessageView.prototype = {
 
-  addItem: function(message, isCallback) {
-    var contacts = ContactList.contacts,
-        contact = contacts[message.sender_id],
+  addItem: function(message, isCallback, isMessageListener) {
+    var DialogView = this.app.views.Dialog,
+        contacts = ContactList.contacts,
+        contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
         type = message.notification_type || 'message',
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
         html;
 
     switch (type) {
     case '3':
-      html = '<article class="message message_service l-flexbox">';
+      html = '<article class="message message_service l-flexbox" data-id="'+message.sender_id+'" data-type="'+type+'">';
       html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
       html += '<div class="message-container-wrap">';
       html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
@@ -2374,7 +2400,7 @@ MessageView.prototype = {
       break;
 
     case '4':
-      html = '<article class="message message_service l-flexbox">';
+      html = '<article class="message message_service l-flexbox" data-id="'+message.sender_id+'" data-type="'+type+'">';
       html += '<span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>';
       html += '<div class="message-container-wrap">';
       html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
@@ -2391,7 +2417,7 @@ MessageView.prototype = {
       break;
 
     case '5':
-      html = '<article class="message message_service l-flexbox">';
+      html = '<article class="message message_service l-flexbox" data-id="'+message.sender_id+'" data-type="'+type+'">';
       html += '<span class="message-avatar contact-avatar_message request-button_ok">&#10003;</span>';
       html += '<div class="message-container-wrap">';
       html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
@@ -2407,20 +2433,110 @@ MessageView.prototype = {
       break;
 
     case 'message':
+      if (message.sender_id === User.contact.id)
+        html = '<article class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      else
+        html = '<article class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+
+      html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+      html += '<div class="message-content">';
+      html += '<h4 class="message-author">'+contact.full_name+'</h4>';
+      html += '<div class="message-body">'+parser(message.body)+'</div>';
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
       break;
     }
 
-    if (isCallback)
-      chat.find('.l-chat-content .mCSB_container').prepend(html);
-    else
+    // <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+    //                   <div class="message-content">
+    //                     <div class="message-body">
+    //                       <div class="preview preview-photo"><img src="images/test.jpg" alt="attach"></div>
+    //                     </div>
+    //                   </div>
+    //                   <time class="message-time">30/05/2014</time>
+    //                 </div>
+
+    if (isCallback) {
+      if (isMessageListener) {
+        chat.find('.l-chat-content .mCSB_container').append(html);
+        
+        // fix for custom scroll
+        fixScroll(chat);
+      } else {
+        chat.find('.l-chat-content .mCSB_container').prepend(html);
+      }
+    } else {
       chat.find('.l-chat-content').prepend(html);
+    }
     
+  },
+
+  sendMessage: function(form) {
+    var jid = form.parents('.l-chat').data('jid'),
+        dialog_id = form.parents('.l-chat').data('dialog'),
+        val = form.find('textarea').val().trim(),
+        time = Math.floor(Date.now() / 1000);
+
+    if (val.length > 0) {
+      form[0].reset();
+      form.find('textarea').blur();
+      
+      // send message
+      QB.chat.send(jid, {type: 'chat', body: val, extension: {
+        save_to_history: 1,
+        dialog_id: dialog_id,
+        date_sent: time,
+
+        full_name: User.contact.full_name,
+        avatar_url: User.contact.avatar_url
+      }});
+
+      message = Message.create({
+        chat_dialog_id: dialog_id,
+        body: val,
+        date_sent: time,
+        sender_id: User.contact.id
+      });
+      if (QMCONFIG.debug) console.log(message);
+      self.addItem(message, true, true);
+    }
+  },
+
+  onMessage: function(id, message) {
+    var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+        notification_type = message.extension && message.extension.notification_type,
+        dialog_id = message.extension && message.extension.dialog_id,
+        msg;
+
+    msg = Message.create(message);
+    msg.sender_id = id;
+    if (QMCONFIG.debug) console.log(msg);
+    self.addItem(msg, true, true);
+
+    // subscribe message
+    if (notification_type === '3') {
+      // update hidden dialogs
+      hiddenDialogs[id] = dialog_id;
+      ContactList.saveHiddenDialogs(hiddenDialogs);
+    }
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
+function fixScroll(chat) {
+  var containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
+      chatContentHeight = chat.find('.l-chat-content').height(),
+      draggerContainerHeight = chat.find('.l-chat-content .mCSB_draggerContainer').height(),
+      draggerHeight = chat.find('.l-chat-content .mCSB_dragger').height();
+
+  chat.find('.l-chat-content .mCSB_container').css({top: chatContentHeight - containerHeight + 'px'});
+  chat.find('.l-chat-content .mCSB_dragger').css({top: draggerContainerHeight - draggerHeight + 'px'});
+}
+
 function getTime(time) {
   var messageDate = new Date(time * 1000),
       startOfCurrentDay = new Date;
@@ -2433,6 +2549,29 @@ function getTime(time) {
     return $.timeago(messageDate);
   } else {
     return messageDate.getDate() + '/' + (messageDate.getMonth() + 1) + '/' + messageDate.getFullYear();
+  }
+}
+
+function parser(str) {
+  var url, url_text;
+  var URL_REGEXP = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/gi;
+  
+  str = escapeHTML(str);
+  
+  // parser of paragraphs
+  str = ('<p>' + str).replace(/\n\n/g, '<p>').replace(/\n/g, '<br>');
+  
+  // parser of links
+  str = str.replace(URL_REGEXP, function(match) {
+    url = (/^[a-z]+:/i).test(match) ? match : 'http://' + match;
+    url_text = match;
+    return '<a href="' + escapeHTML(url) + '" target="_blank">' + escapeHTML(url_text) + '</a>';
+  });
+  
+  return str;
+  
+  function escapeHTML(s) {
+    return s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 }
 

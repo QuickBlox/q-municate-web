@@ -7,14 +7,15 @@
 
 module.exports = Routes;
 
-var UserView, ContactListView, DialogView;
+var UserView, ContactListView, DialogView, MessageView;
 
 function Routes(app) {
   this.app = app;
   
   UserView = this.app.views.User,
   ContactListView = this.app.views.ContactList,
-  DialogView = this.app.views.Dialog;
+  DialogView = this.app.views.Dialog,
+  MessageView = this.app.views.Message;
 }
 
 Routes.prototype = {
@@ -199,21 +200,24 @@ Routes.prototype = {
       DialogView.htmlBuild($(this));
     });
 
+    $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
+      var shiftKey = event.shiftKey,
+          code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+
+      if (code === 13 && !shiftKey) {
+        MessageView.sendMessage($(this));
+      }
+    });
+
+    $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
+      event.preventDefault();
+    });
+
     $('#home').on('click', function(event) {
       event.preventDefault();
       $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.is-selected').removeClass('is-selected');
     });
-
-    /* temporary routes
-    ----------------------------------------------------- */
-    $('#share, #contacts').on('click', function(event) {
-      event.preventDefault();
-    });
-
-    $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
-      event.preventDefault();
-    });    
 
     $('.l-workspace-wrap').on('click', '.groupTitle', function() {
       var chat = $('.l-chat:visible');
@@ -226,6 +230,12 @@ Routes.prototype = {
         chat.find('.chat-occupants-wrap').removeClass('is-overlay');
         chat.find('.l-chat-content').removeClass('l-chat-content_min');
       }
+    });
+
+    /* temporary routes
+    ----------------------------------------------------- */
+    $('#share, #contacts').on('click', function(event) {
+      event.preventDefault();
     });
 
   }
