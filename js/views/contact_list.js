@@ -433,16 +433,16 @@ function createListResults(list, results, self) {
 }
 
 function isSectionEmpty(list) {
-  if (list.contents().length === 0) {
+  if (list.contents().length === 0)
     list.parent().addClass('is-hidden');
-    if ($('#historyList ul').contents().length === 0)
+
+  if ($('#historyList ul').contents().length === 0)
       $('#historyList ul').parent().addClass('is-hidden');
 
-    if ($('#requestsList').is('.is-hidden') &&
-        $('#recentList').is('.is-hidden') &&
-        $('#historyList').is('.is-hidden')) {
-      
-      $('#emptyList').removeClass('is-hidden');
-    }
+  if ($('#requestsList').is('.is-hidden') &&
+      $('#recentList').is('.is-hidden') &&
+      $('#historyList').is('.is-hidden')) {
+    
+    $('#emptyList').removeClass('is-hidden');
   }
 }
