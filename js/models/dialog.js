@@ -33,7 +33,7 @@ Dialog.prototype = {
       room_name: params.name || null,
       occupants_ids: occupants_ids,
       last_message_date_sent: params.last_message_date_sent || null,
-      unread_count: params.unread_messages_count || null
+      unread_count: params.unread_messages_count || ''
     };
   },
 
