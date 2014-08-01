@@ -195,7 +195,7 @@ Routes.prototype = {
 
     /* dialogs
     ----------------------------------------------------- */
-    $('.l-list').on('click', '.contact', function(event) {
+    $('.l-list:not(#requestsList)').on('click', '.contact', function(event) {
       event.preventDefault();
       DialogView.htmlBuild($(this));
     });
