@@ -200,6 +200,10 @@ Routes.prototype = {
       DialogView.htmlBuild($(this));
     });
 
+    $('#requestsList').on('click', '.contact', function(event) {
+      event.preventDefault();
+    });
+
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
       var shiftKey = event.shiftKey,
           code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
