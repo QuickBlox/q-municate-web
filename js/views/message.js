@@ -175,7 +175,7 @@ MessageView.prototype = {
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true);
     
-    if (!$('.l-chat[data-id="'+id+'"]').is(':visible')) {
+    if (!$('.l-chat[data-id="'+id+'"]').is(':visible') && dialogItem.length > 0) {
       unread++;
       dialogItem.find('.unread').text(unread);
     }

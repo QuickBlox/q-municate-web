@@ -2374,7 +2374,8 @@ function getStatus(status, html) {
 function textAreaScrollbar() {
   $('.l-chat:visible .textarea').niceScroll({
     cursoropacitymax: 0.5,
-    railpadding: {right: 5}
+    railpadding: {right: 5},
+    zindex: 1
   });
 }
 
@@ -2556,7 +2557,7 @@ MessageView.prototype = {
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true);
     
-    if (!$('.l-chat[data-id="'+id+'"]').is(':visible')) {
+    if (!$('.l-chat[data-id="'+id+'"]').is(':visible') && dialogItem.length > 0) {
       unread++;
       dialogItem.find('.unread').text(unread);
     }
