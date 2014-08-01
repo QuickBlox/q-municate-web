@@ -184,7 +184,8 @@ ContactListView.prototype = {
     dialog = Dialog.create({
       _id: hiddenDialogs[id],
       type: 3,
-      occupants_ids: [id]
+      occupants_ids: [id],
+      unread_count: ''
     });
     ContactList.dialogs[dialog.id] = dialog;
     if (QMCONFIG.debug) console.log('Dialog', dialog);

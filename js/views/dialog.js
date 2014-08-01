@@ -28,7 +28,6 @@ DialogView.prototype = {
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
     QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
-    // <span class="unread">4</span>
   },
 
   createDataSpinner: function(chat) {
@@ -143,6 +142,7 @@ DialogView.prototype = {
     html += '</div>';
     
     html = getStatus(status, html);
+    html += '<span class="unread">'+dialog.unread_count+'</span>';
 
     html += '</a></li>';
 
@@ -254,7 +254,7 @@ DialogView.prototype = {
     }
 
     $('.is-selected').removeClass('is-selected');
-    parent.addClass('is-selected');
+    parent.addClass('is-selected').find('.unread').text('');
     
   },
 
