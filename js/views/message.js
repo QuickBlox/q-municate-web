@@ -121,13 +121,16 @@ MessageView.prototype = {
 
   sendMessage: function(form) {
     var jid = form.parents('.l-chat').data('jid'),
+        id = form.parents('.l-chat').data('id'),
         dialog_id = form.parents('.l-chat').data('dialog'),
         val = form.find('textarea').val().trim(),
-        time = Math.floor(Date.now() / 1000);
+        time = Math.floor(Date.now() / 1000),
+        dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        copyDialogItem;
 
     if (val.length > 0) {
       form[0].reset();
-      form.find('textarea').blur();
+      // form.find('textarea').blur();
       
       // send message
       QB.chat.send(jid, {type: 'chat', body: val, extension: {
@@ -147,6 +150,14 @@ MessageView.prototype = {
       });
       if (QMCONFIG.debug) console.log(message);
       self.addItem(message, true, true);
+
+
+      if (dialogItem.length > 0) {
+        copyDialogItem = dialogItem.clone();
+        dialogItem.remove();
+        $('#recentList ul').prepend(copyDialogItem);
+        isSectionEmpty($('#recentList ul'));
+      }
     }
   },
 
@@ -156,18 +167,24 @@ MessageView.prototype = {
         dialog_id = message.extension && message.extension.dialog_id,
         dialogItem = $('.dialog-item[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-        msg;
+        msg, copyDialogItem;
 
     msg = Message.create(message);
+    Message.update(msg.id, dialog_id);
     msg.sender_id = id;
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true);
     
     if (!$('.l-chat[data-id="'+id+'"]').is(':visible')) {
-      console.log(unread);
       unread++;
-      console.log(unread);
       dialogItem.find('.unread').text(unread);
+    }
+
+    if (dialogItem.length > 0) {
+      copyDialogItem = dialogItem.clone();
+      dialogItem.remove();
+      $('#recentList ul').prepend(copyDialogItem);
+      isSectionEmpty($('#recentList ul'));
     }
 
     // subscribe message
@@ -227,5 +244,18 @@ function parser(str) {
   
   function escapeHTML(s) {
     return s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+}
+
+function isSectionEmpty(list) {
+  if (list.contents().length === 0) {
+    list.parent().addClass('is-hidden');
+
+    if ($('#requestsList').is('.is-hidden') &&
+        $('#recentList').is('.is-hidden') &&
+        $('#historyList').is('.is-hidden')) {
+      
+      $('#emptyList').removeClass('is-hidden');
+    }
   }
 }

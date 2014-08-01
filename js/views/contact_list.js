@@ -91,7 +91,7 @@ ContactListView.prototype = {
         id = QB.chat.helpers.getIdFromNode(jid),
         dialogItem = $('.dialog-item[data-id="'+id+'"]')[0],
         time = Math.floor(Date.now() / 1000),
-        message;
+        message, copyDialogItem;
 
     if (!isChat) {
       objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
@@ -128,6 +128,12 @@ ContactListView.prototype = {
     } else {
       Dialog.createPrivate(jid);
     }
+
+    dialogItem = $('.dialog-item[data-id="'+id+'"]');
+    copyDialogItem = dialogItem.clone();
+    dialogItem.remove();
+    $('#recentList ul').prepend(copyDialogItem);
+    isSectionEmpty($('#recentList ul'));
   },
 
   sendConfirm: function(objDom) {
@@ -139,7 +145,7 @@ ContactListView.prototype = {
         roster = JSON.parse(sessionStorage['QM.roster']),
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
-        li, dialog, message,
+        li, dialog, message, dialogItem, copyDialogItem,
         time = Math.floor(Date.now() / 1000);
 
     objDom.parents('li').remove();
@@ -194,6 +200,12 @@ ContactListView.prototype = {
     }
 
     DialogView.addDialogItem(dialog);
+
+    dialogItem = $('.dialog-item[data-id="'+id+'"]');
+    copyDialogItem = dialogItem.clone();
+    dialogItem.remove();
+    $('#recentList ul').prepend(copyDialogItem);
+    isSectionEmpty($('#recentList ul'));
   },
 
   sendReject: function(objDom) {
