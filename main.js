@@ -2036,17 +2036,17 @@ function createListResults(list, results, self) {
 }
 
 function isSectionEmpty(list) {
-  if (list.contents().length === 0) {
+  if (list.contents().length === 0)
     list.parent().addClass('is-hidden');
-    if ($('#historyList ul').contents().length === 0)
+
+  if ($('#historyList ul').contents().length === 0)
       $('#historyList ul').parent().addClass('is-hidden');
 
-    if ($('#requestsList').is('.is-hidden') &&
-        $('#recentList').is('.is-hidden') &&
-        $('#historyList').is('.is-hidden')) {
-      
-      $('#emptyList').removeClass('is-hidden');
-    }
+  if ($('#requestsList').is('.is-hidden') &&
+      $('#recentList').is('.is-hidden') &&
+      $('#historyList').is('.is-hidden')) {
+    
+    $('#emptyList').removeClass('is-hidden');
   }
 }
 
@@ -2547,7 +2547,7 @@ MessageView.prototype = {
         notification_type = message.extension && message.extension.notification_type,
         dialog_id = message.extension && message.extension.dialog_id,
         dialogItem = $('.dialog-item[data-id="'+id+'"]'),
-        unread = parseInt(dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
+        unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
         msg, copyDialogItem;
 
     msg = Message.create(message);
@@ -2567,7 +2567,7 @@ MessageView.prototype = {
       $('#recentList ul').prepend(copyDialogItem);
       isSectionEmpty($('#recentList ul'));
     }
-
+    
     // subscribe message
     if (notification_type === '3') {
       // update hidden dialogs
@@ -2629,17 +2629,17 @@ function parser(str) {
 }
 
 function isSectionEmpty(list) {
-  if (list.contents().length === 0) {
+  if (list.contents().length === 0)
     list.parent().addClass('is-hidden');
-    if ($('#historyList ul').contents().length === 0)
+
+  if ($('#historyList ul').contents().length === 0)
       $('#historyList ul').parent().addClass('is-hidden');
 
-    if ($('#requestsList').is('.is-hidden') &&
-        $('#recentList').is('.is-hidden') &&
-        $('#historyList').is('.is-hidden')) {
-      
-      $('#emptyList').removeClass('is-hidden');
-    }
+  if ($('#requestsList').is('.is-hidden') &&
+      $('#recentList').is('.is-hidden') &&
+      $('#historyList').is('.is-hidden')) {
+    
+    $('#emptyList').removeClass('is-hidden');
   }
 }
 
