@@ -250,6 +250,8 @@ function parser(str) {
 function isSectionEmpty(list) {
   if (list.contents().length === 0) {
     list.parent().addClass('is-hidden');
+    if ($('#historyList ul').contents().length === 0)
+      $('#historyList ul').parent().addClass('is-hidden');
 
     if ($('#requestsList').is('.is-hidden') &&
         $('#recentList').is('.is-hidden') &&
