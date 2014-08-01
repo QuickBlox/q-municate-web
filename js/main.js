@@ -53,9 +53,7 @@ QM.prototype = {
     // Checking if autologin was chosen
     if (localStorage['QM.session'] && localStorage['QM.user'] &&
         // new format of storage data (20.07.2014)
-        JSON.parse(localStorage['QM.user']).user_jid &&
-        // test QB account
-        JSON.parse(localStorage['QM.user']).user_jid.split('@')[1] === 'chatstage.quickblox.com') {
+        JSON.parse(localStorage['QM.user']).user_jid) {
       
       token = JSON.parse(localStorage['QM.session']).token;
       this.service.init(token);
