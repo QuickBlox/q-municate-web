@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1453,6 +1453,12 @@ Routes.prototype = {
       ContactListView.globalPopup();
     });
 
+    $('#mainPage').on('click', '.createGroupChat', function(event) {
+      event.preventDefault();
+      if (QMCONFIG.debug) console.log('add people to groupchat');
+      ContactListView.addContactsToChat();
+    });
+
     /* search
     ----------------------------------------------------- */
     $('#globalSearch').on('submit', function(event) {
@@ -1494,14 +1500,13 @@ Routes.prototype = {
 
     /* dialogs
     ----------------------------------------------------- */
-    $('.l-list:not(#requestsList)').on('click', '.contact', function(event) {
+    $('.list').on('click', '.contact', function(event) {
       event.preventDefault();
-      DialogView.htmlBuild($(this));
     });
 
-    $('#requestsList').on('click', '.contact', function(event) {
-      event.preventDefault();
-    });
+    $('.list_contextmenu').on('click', '.contact', function() {
+      DialogView.htmlBuild($(this));
+    });    
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
       var shiftKey = event.shiftKey,
@@ -1537,7 +1542,7 @@ Routes.prototype = {
 
     /* temporary routes
     ----------------------------------------------------- */
-    $('#share, #contacts').on('click', function(event) {
+    $('#share').on('click', function(event) {
       event.preventDefault();
     });
 
@@ -1667,6 +1672,10 @@ ContactListView.prototype = {
         createListResults(list, results, self);
       });
     }
+  },
+
+  addContactsToChat: function() {
+    
   },
 
   // subscriptions
@@ -2263,7 +2272,7 @@ DialogView.prototype = {
       html += '<div class="chat-controls">';
       // html += '<button class="btn_chat btn_chat_videocall"><img src="images/icon-videocall.png" alt="videocall"></button>';
       // html += '<button class="btn_chat btn_chat_audiocall"><img src="images/icon-audiocall.png" alt="audiocall"></button>';
-      html += '<button class="btn_chat btn_chat_add"><img src="images/icon-add.png" alt="add"></button>';
+      html += '<button class="btn_chat btn_chat_add createGroupChat"><img src="images/icon-add.png" alt="add"></button>';
       // html += '<button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button>';
       
       if (dialog.type === 3)
@@ -2776,7 +2785,7 @@ UserView.prototype = {
     var html = '<ul class="list-actions list-actions_contacts popover">';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
-    html += '<li class="list-item"><a class="list-actions-action" href="#">Add people</a></li>';
+    html += '<li class="list-item"><a class="list-actions-action createGroupChat" href="#">Add people</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
     html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
     html += '</ul>';
@@ -2885,4 +2894,4 @@ var appearAnimation = function() {
   $('.popover').show(150);
 };
 
-},{}]},{},[1])
+},{}]},{},[1]);

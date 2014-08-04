@@ -129,7 +129,7 @@ UserView.prototype = {
     var html = '<ul class="list-actions list-actions_contacts popover">';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
-    html += '<li class="list-item"><a class="list-actions-action" href="#">Add people</a></li>';
+    html += '<li class="list-item"><a class="list-actions-action createGroupChat" href="#">Add people</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
     html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
     html += '</ul>';

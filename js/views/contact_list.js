@@ -66,6 +66,10 @@ ContactListView.prototype = {
     }
   },
 
+  addContactsToChat: function() {
+    
+  },
+
   // subscriptions
 
   importFBFriend: function(id) {

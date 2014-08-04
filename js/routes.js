@@ -154,6 +154,12 @@ Routes.prototype = {
       ContactListView.globalPopup();
     });
 
+    $('#mainPage').on('click', '.createGroupChat', function(event) {
+      event.preventDefault();
+      if (QMCONFIG.debug) console.log('add people to groupchat');
+      ContactListView.addContactsToChat();
+    });
+
     /* search
     ----------------------------------------------------- */
     $('#globalSearch').on('submit', function(event) {
@@ -195,14 +201,13 @@ Routes.prototype = {
 
     /* dialogs
     ----------------------------------------------------- */
-    $('.l-list:not(#requestsList)').on('click', '.contact', function(event) {
+    $('.list').on('click', '.contact', function(event) {
       event.preventDefault();
-      DialogView.htmlBuild($(this));
     });
 
-    $('#requestsList').on('click', '.contact', function(event) {
-      event.preventDefault();
-    });
+    $('.list_contextmenu').on('click', '.contact', function() {
+      DialogView.htmlBuild($(this));
+    });    
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
       var shiftKey = event.shiftKey,
@@ -238,7 +243,7 @@ Routes.prototype = {
 
     /* temporary routes
     ----------------------------------------------------- */
-    $('#share, #contacts').on('click', function(event) {
+    $('#share').on('click', function(event) {
       event.preventDefault();
     });
 
