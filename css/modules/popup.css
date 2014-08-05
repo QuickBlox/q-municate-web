@@ -34,7 +34,7 @@
   .popup_search,
   .popup_contacts {
     width: 460px;
-    height: 585px;
+    height: 586px;
   }
     .popup-header {
       margin-top: -1px;
@@ -54,6 +54,12 @@
     }
     .popup-content {
       height: calc(100% - 60px - 60px - 60px);
+    }
+    .not-selected .popup-content {
+      height: calc(100% - 60px - 60px);
+    }
+    .not-selected .popup-footer {
+      display: none;
     }
     .popup-alert {
       height: calc(100% - 45px);
