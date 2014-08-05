@@ -15,6 +15,8 @@ function ContactListView(app) {
   Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
   User = this.app.models.User;
+
+  scrollbarContacts();
 }
 
 ContactListView.prototype = {
@@ -66,8 +68,47 @@ ContactListView.prototype = {
     }
   },
 
-  addContactsToChat: function() {
-    
+  addContactsToChat: function(objDom) {
+    var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
+        popup = $('#popupContacts'),
+        contacts = ContactList.contacts,
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        html, sortedContacts, friends, user_id;
+
+    openPopup(popup);
+    popup.addClass('not-selected').removeClass('is-addition');
+    popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
+    popup.find('form')[0].reset();
+    popup.find('.mCSB_container').empty();
+    popup.find('.btn').removeClass('is-hidden');
+
+    // get your friends which are sorted by alphabet
+    sortedContacts = _.pluck( _.sortBy(contacts, 'full_name') , 'id').map(String);
+    friends = _.filter(sortedContacts, function(el) {
+      return roster[el] && roster[el].subscription === 'both';
+    });
+    if (QMCONFIG.debug) console.log('Friends', friends);
+
+    // exclude users who are already present in the dialog
+    friends = _.difference(friends, ids);
+
+    for (var i = 0, len = friends.length; i < len; i++) {
+      user_id = friends[i];
+
+      html = '';
+      html += '<li class="list-item" data-id="'+user_id+'">';
+      html += '<a class="contact l-flexbox" href="#">';
+      html += '<div class="l-flexbox_inline">';
+      html += '<img class="contact-avatar avatar" src="'+contacts[user_id].avatar_url+'" alt="user">';
+      html += '<span class="name">'+contacts[user_id].full_name+'</span>';
+      html += '</div><input class="form-checkbox" type="checkbox">';
+      html += '</a></li>';
+      
+      popup.find('.mCSB_container').append(html);      
+    }
+
+    if (ids.length > 0)
+      popup.addClass('is-addition');
   },
 
   // subscriptions
@@ -381,6 +422,14 @@ ContactListView.prototype = {
 ---------------------------------------------------------------------- */
 function openPopup(objDom) {
   objDom.add('.popups').addClass('is-overlay');
+}
+
+function scrollbarContacts() {
+  $('.scrollbarContacts').mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 150,
+    live: true
+  });
 }
 
 function scrollbar(list, self) {

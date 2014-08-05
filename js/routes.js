@@ -144,7 +144,7 @@ Routes.prototype = {
       ContactListView.sendDelete($(this));
     });
 
-    $('.popup-control-button').on('click', function(event) {
+    $('.popup-control-button, .btn_popup').on('click', function(event) {
       event.preventDefault();
       closePopup();
     });
@@ -157,7 +157,7 @@ Routes.prototype = {
     $('#mainPage').on('click', '.createGroupChat', function(event) {
       event.preventDefault();
       if (QMCONFIG.debug) console.log('add people to groupchat');
-      ContactListView.addContactsToChat();
+      ContactListView.addContactsToChat($(this));
     });
 
     /* search
@@ -173,7 +173,10 @@ Routes.prototype = {
           code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
       if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
-        UserView.localSearch($(this));
+        if (this.id === 'searchContacts')
+          UserView.localSearch($(this));
+        else
+          UserView.friendsSearch($(this));
       }
     });
 
@@ -202,12 +205,42 @@ Routes.prototype = {
     /* dialogs
     ----------------------------------------------------- */
     $('.list').on('click', '.contact', function(event) {
-      event.preventDefault();
+      if (event.target.tagName !== 'INPUT')
+        event.preventDefault();
+    });
+
+    $('#popupContacts').on('click', '.contact', function() {
+      var obj = $(this).parent(),
+          popup = obj.parents('.popup'),
+          len;
+
+      if (obj.is('.is-chosen'))
+        obj.removeClass('is-chosen').find('input').prop('checked', false);
+      else
+        obj.addClass('is-chosen').find('input').prop('checked', true);
+
+      len = obj.parent().find('li.is-chosen').length;
+      if (len === 1 && !popup.is('.is-addition')) {
+        popup.removeClass('not-selected');
+        popup.find('.btn_popup_private').removeClass('is-hidden').siblings().addClass('is-hidden');
+      } else if (len >= 1) {
+        popup.removeClass('not-selected');
+        popup.find('.btn_popup_group').removeClass('is-hidden').siblings().addClass('is-hidden');
+      } else {
+        popup.addClass('not-selected');
+      }
     });
 
     $('.list_contextmenu').on('click', '.contact', function() {
       DialogView.htmlBuild($(this));
-    });    
+    });
+
+    $('#popupContacts .btn_popup_private').on('click', function() {
+      var id = $('#popupContacts .is-chosen').data('id'),
+          dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
+      
+      DialogView.htmlBuild(dialogItem);
+    });
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
       var shiftKey = event.shiftKey,

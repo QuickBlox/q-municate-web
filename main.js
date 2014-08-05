@@ -1443,7 +1443,7 @@ Routes.prototype = {
       ContactListView.sendDelete($(this));
     });
 
-    $('.popup-control-button').on('click', function(event) {
+    $('.popup-control-button, .btn_popup').on('click', function(event) {
       event.preventDefault();
       closePopup();
     });
@@ -1456,7 +1456,7 @@ Routes.prototype = {
     $('#mainPage').on('click', '.createGroupChat', function(event) {
       event.preventDefault();
       if (QMCONFIG.debug) console.log('add people to groupchat');
-      ContactListView.addContactsToChat();
+      ContactListView.addContactsToChat($(this));
     });
 
     /* search
@@ -1472,7 +1472,10 @@ Routes.prototype = {
           code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
       if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
-        UserView.localSearch($(this));
+        if (this.id === 'searchContacts')
+          UserView.localSearch($(this));
+        else
+          UserView.friendsSearch($(this));
       }
     });
 
@@ -1501,12 +1504,42 @@ Routes.prototype = {
     /* dialogs
     ----------------------------------------------------- */
     $('.list').on('click', '.contact', function(event) {
-      event.preventDefault();
+      if (event.target.tagName !== 'INPUT')
+        event.preventDefault();
+    });
+
+    $('#popupContacts').on('click', '.contact', function() {
+      var obj = $(this).parent(),
+          popup = obj.parents('.popup'),
+          len;
+
+      if (obj.is('.is-chosen'))
+        obj.removeClass('is-chosen').find('input').prop('checked', false);
+      else
+        obj.addClass('is-chosen').find('input').prop('checked', true);
+
+      len = obj.parent().find('li.is-chosen').length;
+      if (len === 1 && !popup.is('.is-addition')) {
+        popup.removeClass('not-selected');
+        popup.find('.btn_popup_private').removeClass('is-hidden').siblings().addClass('is-hidden');
+      } else if (len >= 1) {
+        popup.removeClass('not-selected');
+        popup.find('.btn_popup_group').removeClass('is-hidden').siblings().addClass('is-hidden');
+      } else {
+        popup.addClass('not-selected');
+      }
     });
 
     $('.list_contextmenu').on('click', '.contact', function() {
       DialogView.htmlBuild($(this));
-    });    
+    });
+
+    $('#popupContacts .btn_popup_private').on('click', function() {
+      var id = $('#popupContacts .is-chosen').data('id'),
+          dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
+      
+      DialogView.htmlBuild(dialogItem);
+    });
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
       var shiftKey = event.shiftKey,
@@ -1623,6 +1656,8 @@ function ContactListView(app) {
   Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
   User = this.app.models.User;
+
+  scrollbarContacts();
 }
 
 ContactListView.prototype = {
@@ -1674,8 +1709,47 @@ ContactListView.prototype = {
     }
   },
 
-  addContactsToChat: function() {
-    
+  addContactsToChat: function(objDom) {
+    var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
+        popup = $('#popupContacts'),
+        contacts = ContactList.contacts,
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        html, sortedContacts, friends, user_id;
+
+    openPopup(popup);
+    popup.addClass('not-selected').removeClass('is-addition');
+    popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
+    popup.find('form')[0].reset();
+    popup.find('.mCSB_container').empty();
+    popup.find('.btn').removeClass('is-hidden');
+
+    // get your friends which are sorted by alphabet
+    sortedContacts = _.pluck( _.sortBy(contacts, 'full_name') , 'id').map(String);
+    friends = _.filter(sortedContacts, function(el) {
+      return roster[el] && roster[el].subscription === 'both';
+    });
+    if (QMCONFIG.debug) console.log('Friends', friends);
+
+    // exclude users who are already present in the dialog
+    friends = _.difference(friends, ids);
+
+    for (var i = 0, len = friends.length; i < len; i++) {
+      user_id = friends[i];
+
+      html = '';
+      html += '<li class="list-item" data-id="'+user_id+'">';
+      html += '<a class="contact l-flexbox" href="#">';
+      html += '<div class="l-flexbox_inline">';
+      html += '<img class="contact-avatar avatar" src="'+contacts[user_id].avatar_url+'" alt="user">';
+      html += '<span class="name">'+contacts[user_id].full_name+'</span>';
+      html += '</div><input class="form-checkbox" type="checkbox">';
+      html += '</a></li>';
+      
+      popup.find('.mCSB_container').append(html);      
+    }
+
+    if (ids.length > 0)
+      popup.addClass('is-addition');
   },
 
   // subscriptions
@@ -1991,6 +2065,14 @@ function openPopup(objDom) {
   objDom.add('.popups').addClass('is-overlay');
 }
 
+function scrollbarContacts() {
+  $('.scrollbarContacts').mCustomScrollbar({
+    theme: 'minimal-dark',
+    scrollInertia: 150,
+    live: true
+  });
+}
+
 function scrollbar(list, self) {
   list.mCustomScrollbar({
     theme: 'minimal-dark',
@@ -2272,7 +2354,7 @@ DialogView.prototype = {
       html += '<div class="chat-controls">';
       // html += '<button class="btn_chat btn_chat_videocall"><img src="images/icon-videocall.png" alt="videocall"></button>';
       // html += '<button class="btn_chat btn_chat_audiocall"><img src="images/icon-audiocall.png" alt="audiocall"></button>';
-      html += '<button class="btn_chat btn_chat_add createGroupChat"><img src="images/icon-add.png" alt="add"></button>';
+      html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="'+dialog.occupants_ids.join()+'"><img src="images/icon-add.png" alt="add"></button>';
       // html += '<button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button>';
       
       if (dialog.type === 3)
@@ -2663,12 +2745,13 @@ function isSectionEmpty(list) {
 
 module.exports = UserView;
 
-var User,
+var User, ContactList,
     FBCallback = null;
 
 function UserView(app) {
   this.app = app;
   User = this.app.models.User;
+  ContactList = this.app.models.ContactList;
 }
 
 UserView.prototype = {
@@ -2782,12 +2865,29 @@ UserView.prototype = {
   },
 
   contactPopover: function(objDom) {
-    var html = '<ul class="list-actions list-actions_contacts popover">';
+    var ids = objDom.parent().data('id'),
+        dialog_id = objDom.parent().data('dialog'),
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        dialogs = ContactList.dialogs,
+        html;
+
+    html = '<ul class="list-actions list-actions_contacts popover">';
+    
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
-    html += '<li class="list-item"><a class="list-actions-action createGroupChat" href="#">Add people</a></li>';
+    
+    if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription === 'both')
+      html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" href="#">Add people</a></li>';
+    else if (dialogs[dialog_id].type !== 3)
+      html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" href="#">Add people</a></li>';
+    
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
-    html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
+    
+    if (dialogs[dialog_id].type === 3)
+      html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
+    else
+      html += '<li class="list-item"><a class="deleteContact list-actions-action" data-group="true" href="#">Leave a chat</a></li>';
+    
     html += '</ul>';
 
     objDom.after(html).parent().addClass('is-contextmenu');
@@ -2859,6 +2959,27 @@ UserView.prototype = {
         if ($(this).find('.dialog-item').length > 0)
           $(this).removeClass('is-hidden');
       });
+    }
+  },
+
+  friendsSearch: function(form) {
+    var val = form.find('input[type="search"]').val().trim().toLowerCase(),
+        result = form.next();
+    
+    result.find('ul').removeClass('is-hidden').siblings().addClass('is-hidden');
+    result.find('ul li').removeClass('is-hidden');
+
+    if (val.length > 0) {
+      result.find('ul li').each(function() {
+        var name = $(this).find('.name').text().toLowerCase(),
+            li = $(this);
+
+        if (name.indexOf(val) === -1)
+          li.addClass('is-hidden');
+      });
+
+      if (result.find('ul li:visible').length === 0)
+        result.find('.note').removeClass('is-hidden').siblings().addClass('is-hidden');
     }
   }
 

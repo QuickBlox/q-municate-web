@@ -468,41 +468,24 @@
       </div>
     </section>
 
-    <section id="popupContacts" class="popup popup_contacts">
+    <section id="popupContacts" class="popup popup_contacts not-selected">
       <header class="popup-header">
         <h3>Contacts</h3>
       </header>
-      <form class="popup-form" action="#">
+      <form id="searchFriends" class="popup-form localSearch" action="#">
         <input class="form-input-search" type="search" placeholder="Search">
       </form>
       <div class="popup-content">
-        <ul class="list list_contacts scrollbar">
-          <li class="list-item">
-            <a class="contact l-flexbox" href="#">
-              <div class="l-flexbox_inline">
-                <img class="contact-avatar avatar" src="images/ava-group.png" alt="user">
-                <span class="name">Andrey</span>
-              </div>
-              <input class="form-checkbox" type="checkbox">
-            </a>
-          </li>
-          <li class="list-item">
-            <a class="contact l-flexbox" href="#">
-              <div class="l-flexbox_inline">
-                <img class="contact-avatar avatar" src="images/ava-group.png" alt="user">
-                <span class="name">Andrey</span>
-              </div>
-              <input class="form-checkbox" type="checkbox">
-            </a>
-          </li>
-        </ul>
-        <div class="note l-flexbox l-flexbox_column is-hidden">
+        <ul class="list list_contacts scrollbarContacts"></ul>
+        <div class="note l-flexbox l-flexbox_column">
           <span class="text text_alert">Sorry...</span>
           <span class="text">No results found</span>
         </div>
       </div>
       <footer class="popup-footer">
-        <button class="btn btn_popup">Create group chat</button>
+        <button class="btn btn_popup btn_popup_private">Create a chat</button>
+        <button class="btn btn_popup btn_popup_group">Create group chat</button>
+        <button class="btn btn_popup btn_popup_add">Add to chat</button>
       </footer>
     </section>
   </div>

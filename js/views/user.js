@@ -7,12 +7,13 @@
 
 module.exports = UserView;
 
-var User,
+var User, ContactList,
     FBCallback = null;
 
 function UserView(app) {
   this.app = app;
   User = this.app.models.User;
+  ContactList = this.app.models.ContactList;
 }
 
 UserView.prototype = {
@@ -126,12 +127,29 @@ UserView.prototype = {
   },
 
   contactPopover: function(objDom) {
-    var html = '<ul class="list-actions list-actions_contacts popover">';
+    var ids = objDom.parent().data('id'),
+        dialog_id = objDom.parent().data('dialog'),
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        dialogs = ContactList.dialogs,
+        html;
+
+    html = '<ul class="list-actions list-actions_contacts popover">';
+    
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
-    html += '<li class="list-item"><a class="list-actions-action createGroupChat" href="#">Add people</a></li>';
+    
+    if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription === 'both')
+      html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" href="#">Add people</a></li>';
+    else if (dialogs[dialog_id].type !== 3)
+      html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" href="#">Add people</a></li>';
+    
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
-    html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
+    
+    if (dialogs[dialog_id].type === 3)
+      html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
+    else
+      html += '<li class="list-item"><a class="deleteContact list-actions-action" data-group="true" href="#">Leave a chat</a></li>';
+    
     html += '</ul>';
 
     objDom.after(html).parent().addClass('is-contextmenu');
@@ -203,6 +221,27 @@ UserView.prototype = {
         if ($(this).find('.dialog-item').length > 0)
           $(this).removeClass('is-hidden');
       });
+    }
+  },
+
+  friendsSearch: function(form) {
+    var val = form.find('input[type="search"]').val().trim().toLowerCase(),
+        result = form.next();
+    
+    result.find('ul').removeClass('is-hidden').siblings().addClass('is-hidden');
+    result.find('ul li').removeClass('is-hidden');
+
+    if (val.length > 0) {
+      result.find('ul li').each(function() {
+        var name = $(this).find('.name').text().toLowerCase(),
+            li = $(this);
+
+        if (name.indexOf(val) === -1)
+          li.addClass('is-hidden');
+      });
+
+      if (result.find('ul li:visible').length === 0)
+        result.find('.note').removeClass('is-hidden').siblings().addClass('is-hidden');
     }
   }
 

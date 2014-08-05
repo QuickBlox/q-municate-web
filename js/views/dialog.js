@@ -210,7 +210,7 @@ DialogView.prototype = {
       html += '<div class="chat-controls">';
       // html += '<button class="btn_chat btn_chat_videocall"><img src="images/icon-videocall.png" alt="videocall"></button>';
       // html += '<button class="btn_chat btn_chat_audiocall"><img src="images/icon-audiocall.png" alt="audiocall"></button>';
-      html += '<button class="btn_chat btn_chat_add createGroupChat"><img src="images/icon-add.png" alt="add"></button>';
+      html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="'+dialog.occupants_ids.join()+'"><img src="images/icon-add.png" alt="add"></button>';
       // html += '<button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button>';
       
       if (dialog.type === 3)
