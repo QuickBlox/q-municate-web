@@ -98,3 +98,13 @@
       max-width: 200px;
       max-height: 165px;
     }
+
+.attachment {
+  position: absolute;
+  top: 7px;
+  right: 15px;
+  width: 14px;
+  height: 38px;
+  opacity: 0;
+  visibility: hidden;
+}

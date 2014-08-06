@@ -1017,9 +1017,9 @@ QBApiCalls.prototype = {
 
   init: function(token) {
     if (typeof token === 'undefined') {
-      QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
+      QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, true);
     } else {
-      QB.init(token);
+      QB.init(token, null, null, true);
 
       Session.create(JSON.parse(localStorage['QM.session']), true);
       UserView.autologin();
@@ -1403,8 +1403,12 @@ Routes.prototype = {
       clickBehaviour(event);
     });
 
-    $('input:file').on('change', function() {
+    $('#signup-avatar:file').on('change', function() {
       changeInputFile($(this));
+    });
+
+    $('.l-workspace-wrap').on('click', '.btn_message_attach', function() {
+      $(this).next().click();
     });
 
     /* scrollbars
@@ -2522,6 +2526,7 @@ DialogView.prototype = {
       html += '<textarea class="form-input-message textarea" placeholder="Type a message"></textarea>';
       html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>';
       html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>';
+      html += '<input class="attachment" type="file">';
       html += '</form></footer>';
       html += '</section>';
 

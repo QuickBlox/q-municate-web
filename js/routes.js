@@ -26,8 +26,12 @@ Routes.prototype = {
       clickBehaviour(event);
     });
 
-    $('input:file').on('change', function() {
+    $('#signup-avatar:file').on('change', function() {
       changeInputFile($(this));
+    });
+
+    $('.l-workspace-wrap').on('click', '.btn_message_attach', function() {
+      $(this).next().click();
     });
 
     /* scrollbars

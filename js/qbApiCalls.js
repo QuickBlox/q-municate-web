@@ -21,9 +21,9 @@ QBApiCalls.prototype = {
 
   init: function(token) {
     if (typeof token === 'undefined') {
-      QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
+      QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, true);
     } else {
-      QB.init(token);
+      QB.init(token, null, null, true);
 
       Session.create(JSON.parse(localStorage['QM.session']), true);
       UserView.autologin();
