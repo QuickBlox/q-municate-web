@@ -26,13 +26,15 @@
   }
   .popup_logout,
   .popup_import,
-  .popup_delete {
+  .popup_delete,
+  .popup_leave {
     width: 400px;
     height: 195px;
     border: 1px solid #f0f0f0;
   }
   .popup_search,
-  .popup_contacts {
+  .popup_contacts,
+  .temp-box {
     width: 460px;
     height: 586px;
   }
@@ -144,3 +146,10 @@
   .attach-download {
     color: #0d70b3;
   }
+
+.temp-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: transparent;
+}

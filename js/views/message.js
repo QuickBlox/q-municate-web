@@ -7,12 +7,13 @@
 
 module.exports = MessageView;
 
-var User, Message, ContactList;
+var User, Message, ContactList, Dialog;
 var self;
 
 function MessageView(app) {
   this.app = app;
   User = this.app.models.User;
+  Dialog = this.app.models.Dialog;
   Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
   self = this;
@@ -29,11 +30,22 @@ MessageView.prototype = {
         html;
 
     switch (type) {
-    case '3':
-      html = '<article class="message message_service l-flexbox" data-id="'+message.sender_id+'" data-type="'+type+'">';
+    case '1':
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
       html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
       html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+      html += '<div class="message-content">';
+      html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+' to the group chat</h4>';
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case '3':
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
       html += '<div class="message-content">';
 
       if (message.sender_id === User.contact.id)
@@ -46,10 +58,10 @@ MessageView.prototype = {
       break;
 
     case '4':
-      html = '<article class="message message_service l-flexbox" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
       html += '<span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>';
       html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
       html += '<div class="message-content">';
 
       if (message.sender_id === User.contact.id)
@@ -63,10 +75,10 @@ MessageView.prototype = {
       break;
 
     case '5':
-      html = '<article class="message message_service l-flexbox" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
       html += '<span class="message-avatar contact-avatar_message request-button_ok">&#10003;</span>';
       html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
       html += '<div class="message-content">';
 
       if (message.sender_id === User.contact.id)
@@ -74,6 +86,17 @@ MessageView.prototype = {
       else
         html += '<h4 class="message-author">Your request has been accepted</h4>';
 
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case '6':
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+      html += '<div class="message-content">';
+      html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
       html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       html += '</div></div></article>';
       break;
@@ -125,7 +148,8 @@ MessageView.prototype = {
         dialog_id = form.parents('.l-chat').data('dialog'),
         val = form.find('textarea').val().trim(),
         time = Math.floor(Date.now() / 1000),
-        dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+        dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
         copyDialogItem;
 
     if (val.length > 0) {
@@ -133,7 +157,7 @@ MessageView.prototype = {
       // form.find('textarea').blur();
       
       // send message
-      QB.chat.send(jid, {type: 'chat', body: val, extension: {
+      QB.chat.send(jid, {type: type, body: val, extension: {
         save_to_history: 1,
         dialog_id: dialog_id,
         date_sent: time,
@@ -149,8 +173,7 @@ MessageView.prototype = {
         sender_id: User.contact.id
       });
       if (QMCONFIG.debug) console.log(message);
-      self.addItem(message, true, true);
-
+      if (type === 'chat') self.addItem(message, true, true);
 
       if (dialogItem.length > 0) {
         copyDialogItem = dialogItem.clone();
@@ -162,20 +185,25 @@ MessageView.prototype = {
   },
 
   onMessage: function(id, message) {
-    var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+    var DialogView = self.app.views.Dialog,
+        hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notification_type = message.extension && message.extension.notification_type,
         dialog_id = message.extension && message.extension.dialog_id,
-        dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        room_jid = message.extension && message.extension.room_jid,
+        room_name = message.extension && message.extension.room_name,
+        occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
+        dialogItem = message.type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-        msg, copyDialogItem;
+        msg, copyDialogItem, dialog;
 
     msg = Message.create(message);
     Message.update(msg.id, dialog_id);
     msg.sender_id = id;
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true);
-    
-    if (!$('.l-chat[data-id="'+id+'"]').is(':visible') && dialogItem.length > 0) {
+
+    if (!chat.is(':visible') && dialogItem.length > 0) {
       unread++;
       dialogItem.find('.unread').text(unread);
     }
@@ -186,12 +214,40 @@ MessageView.prototype = {
       $('#recentList ul').prepend(copyDialogItem);
       isSectionEmpty($('#recentList ul'));
     }
-    
+
+    // create new group chat
+    if (notification_type === '1' && message.type === 'chat') {
+      QB.chat.muc.join(room_jid);
+
+      dialog = Dialog.create({
+        _id: dialog_id,
+        type: 2,
+        occupants_ids: occupants_ids,
+        name: room_name,
+        xmpp_room_jid: room_jid,
+        unread_count: 1
+      });
+      ContactList.dialogs[dialog.id] = dialog;
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+      if (!localStorage['QM.dialog-' + dialog.id]) {
+        localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+      }
+
+      ContactList.add(dialog.occupants_ids, null, function() {
+        DialogView.addDialogItem(dialog);
+      });
+    }
+
     // subscribe message
     if (notification_type === '3') {
       // update hidden dialogs
       hiddenDialogs[id] = dialog_id;
       ContactList.saveHiddenDialogs(hiddenDialogs);
+    }
+
+    // delete occupant
+    if (notification_type === '6') {
+      chat.find('.occupant[data-id="'+id+'"]').remove();
     }
   }
 
