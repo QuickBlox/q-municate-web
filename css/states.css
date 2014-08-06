@@ -64,6 +64,9 @@ input.is-error:focus {
 .spinner_bounce.is-empty {
   margin: 10% auto;
 }
+.spinner_bounce.is-creating {
+  margin: 22px auto;
+}
   .l-chat .spinner_bounce.is-empty {
     margin: 0 auto;
     position: absolute;

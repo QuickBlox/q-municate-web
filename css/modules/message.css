@@ -55,6 +55,17 @@
           color: #0d70b3;
         }
 
+      .message-avatar.request-button_pending,
+      .message-time {
+        margin-top: 5px;
+      }
+      .message-avatar.request-button_cancel {
+        margin-top: 6px;
+      }
+      .message-avatar.request-button_ok {
+        margin-top: 3px;
+      }
+
 /* preview */
 .preview {
   cursor: pointer;

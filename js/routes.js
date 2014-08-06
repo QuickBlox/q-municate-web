@@ -135,6 +135,13 @@ Routes.prototype = {
       openPopup($('#popupDelete'), id);
     });
 
+    $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {
+      event.preventDefault();
+      var parent = $(this).parents('.presence-listener')[0] ? $(this).parents('.presence-listener') : $(this).parents('.is-group');
+      var dialog_id = parent.data('dialog');
+      openPopup($('#popupLeave'), null, dialog_id);
+    });
+
     $('#logoutConfirm').on('click', function() {
       UserView.logout();
     });
@@ -144,7 +151,12 @@ Routes.prototype = {
       ContactListView.sendDelete($(this));
     });
 
-    $('.popup-control-button, .btn_popup').on('click', function(event) {
+    $('#leaveConfirm').on('click', function() {
+      if (QMCONFIG.debug) console.log('leave chat');
+      DialogView.leaveGroupChat($(this));
+    });
+
+    $('.popup-control-button, .btn_popup_private').on('click', function(event) {
       event.preventDefault();
       closePopup();
     });
@@ -190,6 +202,12 @@ Routes.prototype = {
     $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
       if (QMCONFIG.debug) console.log('send subscribe');
       ContactListView.sendSubscribe($(this), true);
+    });
+
+    $('body').on('click', '.requestAction', function(event) {
+      event.preventDefault();
+      if (QMCONFIG.debug) console.log('send subscribe');
+      ContactListView.sendSubscribe($(this));
     });
 
     $('.list').on('click', '.request-button_ok', function() {
@@ -240,6 +258,19 @@ Routes.prototype = {
           dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
       
       DialogView.htmlBuild(dialogItem);
+    });
+
+    $('body').on('click', '.writeMessage', function(event) {
+      event.preventDefault();
+
+      var id = $(this).data('id'),
+          dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
+      
+      DialogView.htmlBuild(dialogItem);
+    });
+
+    $('#popupContacts .btn_popup_group').on('click', function() {
+      DialogView.createGroupChat();
     });
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
@@ -327,14 +358,20 @@ function removePopover() {
   $('.popover').remove();
 }
 
-var openPopup = function(objDom, id) {
+var openPopup = function(objDom, id, dialog_id) {
+  console.log(dialog_id);
   // if it was the delete action
   if (id) {
     objDom.find('#deleteConfirm').data('id', id);
+  }
+  // if it was the leave action
+  if (dialog_id) {
+    objDom.find('#leaveConfirm').data('dialog', dialog_id);
   }
   objDom.add('.popups').addClass('is-overlay');
 };
 
 var closePopup = function() {
-  $('.is-overlay').removeClass('is-overlay');
+  $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
+  $('.temp-box').remove();
 };
