@@ -30,8 +30,12 @@ DialogView.prototype = {
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
   },
 
-  createDataSpinner: function(chat) {
-    var spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
+  createDataSpinner: function(chat, groupchat) {
+    var spinnerBlock;
+    if (groupchat)
+      spinnerBlock = '<div class="popup-elem spinner_bounce is-creating">';
+    else
+      spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
@@ -39,13 +43,17 @@ DialogView.prototype = {
 
     if (chat) {
       $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
+    } else if (groupchat) {
+      $('#popupContacts .btn_popup').addClass('is-hidden');
+      $('#popupContacts .popup-footer').append(spinnerBlock);
+      $('#popupContacts .popup-footer').after('<div class="temp-box"></div>');
     } else {
       $('#emptyList').after(spinnerBlock);
     }
   },
 
   removeDataSpinner: function() {
-    $('.spinner_bounce').remove();
+    $('.spinner_bounce, .temp-box').remove();
   },
 
   prepareDownloading: function(roster) {
@@ -76,6 +84,8 @@ DialogView.prototype = {
           if (!localStorage['QM.dialog-' + dialog.id]) {
             localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
           }
+
+          if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);
 
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
@@ -141,7 +151,11 @@ DialogView.prototype = {
     html += '<span class="name">' + name + '</span>';
     html += '</div>';
     
-    html = getStatus(status, html);
+    if (dialog.type === 3)
+      html = getStatus(status, html);
+    else
+      html += '<span class="status"></span>';
+
     html += '<span class="unread">'+dialog.unread_count+'</span>';
 
     html += '</a></li>';
@@ -192,7 +206,11 @@ DialogView.prototype = {
 
       html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
       html += '<div class="chat-title">';
-      html += '<div class="l-flexbox_inline">';
+
+      if (dialog.type === 3)
+        html += '<div class="l-flexbox_inline">';
+      else
+        html += '<div class="l-flexbox_inline groupTitle">';
       
       if (dialog.type === 3)
         html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
@@ -216,9 +234,27 @@ DialogView.prototype = {
       if (dialog.type === 3)
         html += '<button class="btn_chat btn_chat_delete deleteContact"><img src="images/icon-delete.png" alt="delete"></button>';
       else
-        html += '<button class="btn_chat btn_chat_delete leaveRoom"><img src="images/icon-delete.png" alt="delete"></button>';
+        html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.png" alt="delete"></button>';
       
-      html += '</div></header>';
+      html += '</div>';
+
+      // build occupants of room
+      if (dialog.type === 2) {
+        html += '<div class="chat-occupants-wrap">';
+        html += '<div class="chat-occupants">';
+        for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
+          id = dialog.occupants_ids[i];
+          html += '<a class="occupant l-flexbox_inline presence-listener" data-id="'+id+'" href="#">';
+
+          html = getStatus(roster[id], html);
+
+          html += '<span class="name name_occupant">'+contacts[id].full_name+'</span>';
+          html += '</a>';
+        }
+        html += '</div></div>';
+      }
+
+      html += '</header>';
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';
@@ -274,6 +310,58 @@ DialogView.prototype = {
         alwaysTriggerOffsets: false
       }
     });
+  },
+
+  createGroupChat: function() {
+    var contacts = ContactList.contacts,
+        new_members = $('#popupContacts .is-chosen'),
+        occupants_ids = $('#popupContacts').data('existing_ids') || [],
+        groupName = occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
+        occupants_names = occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
+        self = this;
+
+    for (var i = 0, len = new_members.length, name; i < len; i++) {
+      name = $(new_members[i]).find('.name').text();
+      if (groupName.length < 3) groupName.push(name);
+      occupants_names.push(name);
+      occupants_ids.push($(new_members[i]).data('id'));
+    }
+
+    groupName = groupName.join(', ');
+    occupants_names = occupants_names.join(', ');
+    occupants_ids = occupants_ids.join();
+
+    self.createDataSpinner(null, true);
+    Dialog.createGroup(occupants_names, {name: groupName, occupants_ids: occupants_ids, type: 2}, function(dialog) {
+      self.removeDataSpinner();
+      $('.is-overlay').removeClass('is-overlay');
+      $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
+    });
+  },
+
+  leaveGroupChat: function(objDom) {
+    var dialogs = ContactList.dialogs,
+        dialog_id = objDom.data('dialog'),
+        dialog = dialogs[dialog_id],
+        li = $('.dialog-item[data-dialog="'+dialog_id+'"]'),
+        chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
+        list = li.parents('ul');
+
+    li.remove();
+    isSectionEmpty(list);
+    console.log(dialogs[dialog_id]);
+
+    // delete dialog messages
+    localStorage.removeItem('QM.dialog-' + dialog_id);
+
+    Dialog.leaveChat(dialog, function() {
+      // delete chat section
+      if (chat.length > 0)
+        chat.remove();
+      $('#capBox').removeClass('is-hidden');
+      delete dialogs[dialog_id];
+    });
+
   }
 
 };
@@ -310,7 +398,7 @@ function openPopup(objDom) {
 function getStatus(status, html) {
   if (!status || status.subscription === 'none')
     html += '<span class="status status_request"></span>';
-  else if (status.status)
+  else if (status && status.status)
     html += '<span class="status status_online"></span>';
   else
     html += '<span class="status"></span>';
@@ -324,4 +412,19 @@ function textAreaScrollbar() {
     railpadding: {right: 5},
     zindex: 1
   });
+}
+
+function isSectionEmpty(list) {
+  if (list.contents().length === 0)
+    list.parent().addClass('is-hidden');
+
+  if ($('#historyList ul').contents().length === 0)
+      $('#historyList ul').parent().addClass('is-hidden');
+
+  if ($('#requestsList').is('.is-hidden') &&
+      $('#recentList').is('.is-hidden') &&
+      $('#historyList').is('.is-hidden')) {
+    
+    $('#emptyList').removeClass('is-hidden');
+  }
 }

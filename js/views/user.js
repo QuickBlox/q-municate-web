@@ -148,7 +148,7 @@ UserView.prototype = {
     if (dialogs[dialog_id].type === 3)
       html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
     else
-      html += '<li class="list-item"><a class="deleteContact list-actions-action" data-group="true" href="#">Leave a chat</a></li>';
+      html += '<li class="list-item"><a class="leaveChat list-actions-action" data-group="true" href="#">Leave chat</a></li>';
     
     html += '</ul>';
 
@@ -158,13 +158,20 @@ UserView.prototype = {
 
   occupantPopover: function(objDom, e) {
     var html,
+        id = objDom.data('id'),
+        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+        roster = JSON.parse(sessionStorage['QM.roster']),
         position = e.currentTarget.getBoundingClientRect();
 
     html = '<ul class="list-actions list-actions_occupants popover">';
-    // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
-    // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
-    html += '<li class="list-item"><a class="list-actions-action" href="#">Write message</a></li>';
-    // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+    if (!roster[id] || roster[id].subscription === 'none') {
+      html += '<li class="list-item" data-jid="'+jid+'"><a class="list-actions-action requestAction" data-id="'+id+'" href="#">Send request</a></li>';
+    } else {
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action writeMessage" data-id="'+id+'" href="#">Write message</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+    }
     html += '</ul>';
 
     $('body').append(html);

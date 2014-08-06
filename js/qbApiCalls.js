@@ -282,9 +282,9 @@ QBApiCalls.prototype = {
     });
   },
 
-  updateDialog: function(params, callback) {
+  updateDialog: function(id, params, callback) {
     this.checkSession(function(res) {
-      QB.chat.dialog.update(params, function(err, res) {
+      QB.chat.dialog.update(id, params, function(err, res) {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
 

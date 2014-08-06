@@ -394,6 +394,84 @@ Dialog.prototype = {
         DialogView.addDialogItem(dialog);
       });
     });
+  },
+
+  createGroup: function(occupants_names, params, callback) {
+    var QBApiCalls = this.app.service,
+        DialogView = this.app.views.Dialog,        
+        ContactList = this.app.models.ContactList,
+        contacts = ContactList.contacts,
+        User = this.app.models.User,
+        self = this,
+        dialog;
+
+    QBApiCalls.createDialog(params, function(res) {
+      dialog = self.create(res);
+      ContactList.dialogs[dialog.id] = dialog;
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+      if (!localStorage['QM.dialog-' + dialog.id]) {
+        localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+      }
+
+      QB.chat.muc.join(dialog.room_jid, function() {
+        var msgId = QB.chat.helpers.getUniqueId();
+        
+        QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {
+          DialogView.addDialogItem(dialog);
+          callback(dialog);
+
+          // send notifications about adding people
+          for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
+            id = dialog.occupants_ids[i];
+            QB.chat.send(contacts[id].user_jid, {type: 'chat', extension: {
+              dialog_id: dialog.id,
+              date_sent: Math.floor(Date.now() / 1000),
+
+              notification_type: '1',
+              full_name: User.contact.full_name,
+              room_jid: dialog.room_jid,
+              room_name: dialog.room_name,
+              occupants_ids: dialog.occupants_ids.join()
+            }});
+          }
+        });
+
+        // send notification about creating room
+        QB.chat.send(dialog.room_jid, {id: msgId, type: 'groupchat', body: occupants_names, extension: {
+          save_to_history: 1,
+          dialog_id: dialog.id,
+          date_sent: Math.floor(Date.now() / 1000),
+
+          notification_type: '1',
+          full_name: User.contact.full_name
+        }});
+        
+      });
+
+    });
+  },
+
+  leaveChat: function(dialog, callback) {
+    var QBApiCalls = this.app.service,
+        User = this.app.models.User,
+        self = this;
+
+    // send notification about leave
+    QB.chat.send(dialog.room_jid, {type: 'groupchat', extension: {
+      save_to_history: 1,
+      dialog_id: dialog.id,
+      date_sent: Math.floor(Date.now() / 1000),
+
+      notification_type: '6',
+      full_name: User.contact.full_name,
+    }});
+
+    QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {
+      QB.chat.muc.leave(dialog.room_jid);
+    });
+
+    callback();
   }
 
 };
@@ -1200,9 +1278,9 @@ QBApiCalls.prototype = {
     });
   },
 
-  updateDialog: function(params, callback) {
+  updateDialog: function(id, params, callback) {
     this.checkSession(function(res) {
-      QB.chat.dialog.update(params, function(err, res) {
+      QB.chat.dialog.update(id, params, function(err, res) {
         if (err) {
           if (QMCONFIG.debug) console.log(err.detail);
 
@@ -1434,6 +1512,13 @@ Routes.prototype = {
       openPopup($('#popupDelete'), id);
     });
 
+    $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {
+      event.preventDefault();
+      var parent = $(this).parents('.presence-listener')[0] ? $(this).parents('.presence-listener') : $(this).parents('.is-group');
+      var dialog_id = parent.data('dialog');
+      openPopup($('#popupLeave'), null, dialog_id);
+    });
+
     $('#logoutConfirm').on('click', function() {
       UserView.logout();
     });
@@ -1443,7 +1528,12 @@ Routes.prototype = {
       ContactListView.sendDelete($(this));
     });
 
-    $('.popup-control-button, .btn_popup').on('click', function(event) {
+    $('#leaveConfirm').on('click', function() {
+      if (QMCONFIG.debug) console.log('leave chat');
+      DialogView.leaveGroupChat($(this));
+    });
+
+    $('.popup-control-button, .btn_popup_private').on('click', function(event) {
       event.preventDefault();
       closePopup();
     });
@@ -1489,6 +1579,12 @@ Routes.prototype = {
     $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
       if (QMCONFIG.debug) console.log('send subscribe');
       ContactListView.sendSubscribe($(this), true);
+    });
+
+    $('body').on('click', '.requestAction', function(event) {
+      event.preventDefault();
+      if (QMCONFIG.debug) console.log('send subscribe');
+      ContactListView.sendSubscribe($(this));
     });
 
     $('.list').on('click', '.request-button_ok', function() {
@@ -1539,6 +1635,19 @@ Routes.prototype = {
           dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
       
       DialogView.htmlBuild(dialogItem);
+    });
+
+    $('body').on('click', '.writeMessage', function(event) {
+      event.preventDefault();
+
+      var id = $(this).data('id'),
+          dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
+      
+      DialogView.htmlBuild(dialogItem);
+    });
+
+    $('#popupContacts .btn_popup_group').on('click', function() {
+      DialogView.createGroupChat();
     });
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
@@ -1626,16 +1735,22 @@ function removePopover() {
   $('.popover').remove();
 }
 
-var openPopup = function(objDom, id) {
+var openPopup = function(objDom, id, dialog_id) {
+  console.log(dialog_id);
   // if it was the delete action
   if (id) {
     objDom.find('#deleteConfirm').data('id', id);
+  }
+  // if it was the leave action
+  if (dialog_id) {
+    objDom.find('#leaveConfirm').data('dialog', dialog_id);
   }
   objDom.add('.popups').addClass('is-overlay');
 };
 
 var closePopup = function() {
-  $('.is-overlay').removeClass('is-overlay');
+  $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
+  $('.temp-box').remove();
 };
 
 },{}],10:[function(require,module,exports){
@@ -1749,7 +1864,9 @@ ContactListView.prototype = {
     }
 
     if (ids.length > 0)
-      popup.addClass('is-addition');
+      popup.addClass('is-addition').data('existing_ids', ids);
+    else
+      popup.data('existing_ids', null);
   },
 
   // subscriptions
@@ -1809,7 +1926,7 @@ ContactListView.prototype = {
         date_sent: time,
         sender_id: User.contact.id
       });
-      console.log(message);
+
       MessageView.addItem(message, true, true);
     } else {
       Dialog.createPrivate(jid);
@@ -2174,8 +2291,12 @@ DialogView.prototype = {
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
   },
 
-  createDataSpinner: function(chat) {
-    var spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
+  createDataSpinner: function(chat, groupchat) {
+    var spinnerBlock;
+    if (groupchat)
+      spinnerBlock = '<div class="popup-elem spinner_bounce is-creating">';
+    else
+      spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
@@ -2183,13 +2304,17 @@ DialogView.prototype = {
 
     if (chat) {
       $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
+    } else if (groupchat) {
+      $('#popupContacts .btn_popup').addClass('is-hidden');
+      $('#popupContacts .popup-footer').append(spinnerBlock);
+      $('#popupContacts .popup-footer').after('<div class="temp-box"></div>');
     } else {
       $('#emptyList').after(spinnerBlock);
     }
   },
 
   removeDataSpinner: function() {
-    $('.spinner_bounce').remove();
+    $('.spinner_bounce, .temp-box').remove();
   },
 
   prepareDownloading: function(roster) {
@@ -2220,6 +2345,8 @@ DialogView.prototype = {
           if (!localStorage['QM.dialog-' + dialog.id]) {
             localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
           }
+
+          if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);
 
           // updating of Contact List whereto are included all people 
           // with which maybe user will be to chat (there aren't only his friends)
@@ -2285,7 +2412,11 @@ DialogView.prototype = {
     html += '<span class="name">' + name + '</span>';
     html += '</div>';
     
-    html = getStatus(status, html);
+    if (dialog.type === 3)
+      html = getStatus(status, html);
+    else
+      html += '<span class="status"></span>';
+
     html += '<span class="unread">'+dialog.unread_count+'</span>';
 
     html += '</a></li>';
@@ -2336,7 +2467,11 @@ DialogView.prototype = {
 
       html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
       html += '<div class="chat-title">';
-      html += '<div class="l-flexbox_inline">';
+
+      if (dialog.type === 3)
+        html += '<div class="l-flexbox_inline">';
+      else
+        html += '<div class="l-flexbox_inline groupTitle">';
       
       if (dialog.type === 3)
         html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
@@ -2360,9 +2495,27 @@ DialogView.prototype = {
       if (dialog.type === 3)
         html += '<button class="btn_chat btn_chat_delete deleteContact"><img src="images/icon-delete.png" alt="delete"></button>';
       else
-        html += '<button class="btn_chat btn_chat_delete leaveRoom"><img src="images/icon-delete.png" alt="delete"></button>';
+        html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.png" alt="delete"></button>';
       
-      html += '</div></header>';
+      html += '</div>';
+
+      // build occupants of room
+      if (dialog.type === 2) {
+        html += '<div class="chat-occupants-wrap">';
+        html += '<div class="chat-occupants">';
+        for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
+          id = dialog.occupants_ids[i];
+          html += '<a class="occupant l-flexbox_inline presence-listener" data-id="'+id+'" href="#">';
+
+          html = getStatus(roster[id], html);
+
+          html += '<span class="name name_occupant">'+contacts[id].full_name+'</span>';
+          html += '</a>';
+        }
+        html += '</div></div>';
+      }
+
+      html += '</header>';
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';
@@ -2418,6 +2571,58 @@ DialogView.prototype = {
         alwaysTriggerOffsets: false
       }
     });
+  },
+
+  createGroupChat: function() {
+    var contacts = ContactList.contacts,
+        new_members = $('#popupContacts .is-chosen'),
+        occupants_ids = $('#popupContacts').data('existing_ids') || [],
+        groupName = occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
+        occupants_names = occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
+        self = this;
+
+    for (var i = 0, len = new_members.length, name; i < len; i++) {
+      name = $(new_members[i]).find('.name').text();
+      if (groupName.length < 3) groupName.push(name);
+      occupants_names.push(name);
+      occupants_ids.push($(new_members[i]).data('id'));
+    }
+
+    groupName = groupName.join(', ');
+    occupants_names = occupants_names.join(', ');
+    occupants_ids = occupants_ids.join();
+
+    self.createDataSpinner(null, true);
+    Dialog.createGroup(occupants_names, {name: groupName, occupants_ids: occupants_ids, type: 2}, function(dialog) {
+      self.removeDataSpinner();
+      $('.is-overlay').removeClass('is-overlay');
+      $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
+    });
+  },
+
+  leaveGroupChat: function(objDom) {
+    var dialogs = ContactList.dialogs,
+        dialog_id = objDom.data('dialog'),
+        dialog = dialogs[dialog_id],
+        li = $('.dialog-item[data-dialog="'+dialog_id+'"]'),
+        chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
+        list = li.parents('ul');
+
+    li.remove();
+    isSectionEmpty(list);
+    console.log(dialogs[dialog_id]);
+
+    // delete dialog messages
+    localStorage.removeItem('QM.dialog-' + dialog_id);
+
+    Dialog.leaveChat(dialog, function() {
+      // delete chat section
+      if (chat.length > 0)
+        chat.remove();
+      $('#capBox').removeClass('is-hidden');
+      delete dialogs[dialog_id];
+    });
+
   }
 
 };
@@ -2454,7 +2659,7 @@ function openPopup(objDom) {
 function getStatus(status, html) {
   if (!status || status.subscription === 'none')
     html += '<span class="status status_request"></span>';
-  else if (status.status)
+  else if (status && status.status)
     html += '<span class="status status_online"></span>';
   else
     html += '<span class="status"></span>';
@@ -2470,6 +2675,21 @@ function textAreaScrollbar() {
   });
 }
 
+function isSectionEmpty(list) {
+  if (list.contents().length === 0)
+    list.parent().addClass('is-hidden');
+
+  if ($('#historyList ul').contents().length === 0)
+      $('#historyList ul').parent().addClass('is-hidden');
+
+  if ($('#requestsList').is('.is-hidden') &&
+      $('#recentList').is('.is-hidden') &&
+      $('#historyList').is('.is-hidden')) {
+    
+    $('#emptyList').removeClass('is-hidden');
+  }
+}
+
 },{}],12:[function(require,module,exports){
 /*
  * Q-municate chat application
@@ -2480,12 +2700,13 @@ function textAreaScrollbar() {
 
 module.exports = MessageView;
 
-var User, Message, ContactList;
+var User, Message, ContactList, Dialog;
 var self;
 
 function MessageView(app) {
   this.app = app;
   User = this.app.models.User;
+  Dialog = this.app.models.Dialog;
   Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
   self = this;
@@ -2502,11 +2723,22 @@ MessageView.prototype = {
         html;
 
     switch (type) {
-    case '3':
-      html = '<article class="message message_service l-flexbox" data-id="'+message.sender_id+'" data-type="'+type+'">';
+    case '1':
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
       html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
       html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+      html += '<div class="message-content">';
+      html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+' to the group chat</h4>';
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case '3':
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
       html += '<div class="message-content">';
 
       if (message.sender_id === User.contact.id)
@@ -2519,10 +2751,10 @@ MessageView.prototype = {
       break;
 
     case '4':
-      html = '<article class="message message_service l-flexbox" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
       html += '<span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>';
       html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
       html += '<div class="message-content">';
 
       if (message.sender_id === User.contact.id)
@@ -2536,10 +2768,10 @@ MessageView.prototype = {
       break;
 
     case '5':
-      html = '<article class="message message_service l-flexbox" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
       html += '<span class="message-avatar contact-avatar_message request-button_ok">&#10003;</span>';
       html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
       html += '<div class="message-content">';
 
       if (message.sender_id === User.contact.id)
@@ -2547,6 +2779,17 @@ MessageView.prototype = {
       else
         html += '<h4 class="message-author">Your request has been accepted</h4>';
 
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case '6':
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+      html += '<div class="message-content">';
+      html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
       html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       html += '</div></div></article>';
       break;
@@ -2598,7 +2841,8 @@ MessageView.prototype = {
         dialog_id = form.parents('.l-chat').data('dialog'),
         val = form.find('textarea').val().trim(),
         time = Math.floor(Date.now() / 1000),
-        dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+        dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
         copyDialogItem;
 
     if (val.length > 0) {
@@ -2606,7 +2850,7 @@ MessageView.prototype = {
       // form.find('textarea').blur();
       
       // send message
-      QB.chat.send(jid, {type: 'chat', body: val, extension: {
+      QB.chat.send(jid, {type: type, body: val, extension: {
         save_to_history: 1,
         dialog_id: dialog_id,
         date_sent: time,
@@ -2622,8 +2866,7 @@ MessageView.prototype = {
         sender_id: User.contact.id
       });
       if (QMCONFIG.debug) console.log(message);
-      self.addItem(message, true, true);
-
+      if (type === 'chat') self.addItem(message, true, true);
 
       if (dialogItem.length > 0) {
         copyDialogItem = dialogItem.clone();
@@ -2635,20 +2878,25 @@ MessageView.prototype = {
   },
 
   onMessage: function(id, message) {
-    var hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+    var DialogView = self.app.views.Dialog,
+        hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notification_type = message.extension && message.extension.notification_type,
         dialog_id = message.extension && message.extension.dialog_id,
-        dialogItem = $('.dialog-item[data-id="'+id+'"]'),
+        room_jid = message.extension && message.extension.room_jid,
+        room_name = message.extension && message.extension.room_name,
+        occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
+        dialogItem = message.type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-        msg, copyDialogItem;
+        msg, copyDialogItem, dialog;
 
     msg = Message.create(message);
     Message.update(msg.id, dialog_id);
     msg.sender_id = id;
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true);
-    
-    if (!$('.l-chat[data-id="'+id+'"]').is(':visible') && dialogItem.length > 0) {
+
+    if (!chat.is(':visible') && dialogItem.length > 0) {
       unread++;
       dialogItem.find('.unread').text(unread);
     }
@@ -2659,12 +2907,40 @@ MessageView.prototype = {
       $('#recentList ul').prepend(copyDialogItem);
       isSectionEmpty($('#recentList ul'));
     }
-    
+
+    // create new group chat
+    if (notification_type === '1' && message.type === 'chat') {
+      QB.chat.muc.join(room_jid);
+
+      dialog = Dialog.create({
+        _id: dialog_id,
+        type: 2,
+        occupants_ids: occupants_ids,
+        name: room_name,
+        xmpp_room_jid: room_jid,
+        unread_count: 1
+      });
+      ContactList.dialogs[dialog.id] = dialog;
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+      if (!localStorage['QM.dialog-' + dialog.id]) {
+        localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+      }
+
+      ContactList.add(dialog.occupants_ids, null, function() {
+        DialogView.addDialogItem(dialog);
+      });
+    }
+
     // subscribe message
     if (notification_type === '3') {
       // update hidden dialogs
       hiddenDialogs[id] = dialog_id;
       ContactList.saveHiddenDialogs(hiddenDialogs);
+    }
+
+    // delete occupant
+    if (notification_type === '6') {
+      chat.find('.occupant[data-id="'+id+'"]').remove();
     }
   }
 
@@ -2886,7 +3162,7 @@ UserView.prototype = {
     if (dialogs[dialog_id].type === 3)
       html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
     else
-      html += '<li class="list-item"><a class="deleteContact list-actions-action" data-group="true" href="#">Leave a chat</a></li>';
+      html += '<li class="list-item"><a class="leaveChat list-actions-action" data-group="true" href="#">Leave chat</a></li>';
     
     html += '</ul>';
 
@@ -2896,13 +3172,20 @@ UserView.prototype = {
 
   occupantPopover: function(objDom, e) {
     var html,
+        id = objDom.data('id'),
+        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+        roster = JSON.parse(sessionStorage['QM.roster']),
         position = e.currentTarget.getBoundingClientRect();
 
     html = '<ul class="list-actions list-actions_occupants popover">';
-    // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
-    // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
-    html += '<li class="list-item"><a class="list-actions-action" href="#">Write message</a></li>';
-    // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+    if (!roster[id] || roster[id].subscription === 'none') {
+      html += '<li class="list-item" data-jid="'+jid+'"><a class="list-actions-action requestAction" data-id="'+id+'" href="#">Send request</a></li>';
+    } else {
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action writeMessage" data-id="'+id+'" href="#">Write message</a></li>';
+      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+    }
     html += '</ul>';
 
     $('body').append(html);

@@ -108,7 +108,9 @@ ContactListView.prototype = {
     }
 
     if (ids.length > 0)
-      popup.addClass('is-addition');
+      popup.addClass('is-addition').data('existing_ids', ids);
+    else
+      popup.data('existing_ids', null);
   },
 
   // subscriptions
@@ -168,7 +170,7 @@ ContactListView.prototype = {
         date_sent: time,
         sender_id: User.contact.id
       });
-      console.log(message);
+
       MessageView.addItem(message, true, true);
     } else {
       Dialog.createPrivate(jid);

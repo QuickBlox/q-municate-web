@@ -320,64 +320,6 @@
                 </article>
 
               </section>
-
-              <footer class="l-chat-footer">
-                <form class="l-message" action="#">
-                  <textarea class="form-input-message textarea" placeholder="Type a message"></textarea>
-                  <button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>
-                  <button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>
-                </form>
-              </footer>
-            </section>
-
-            <section class="l-workspace l-chat l-chat_group is-hidden">
-              <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
-                <div class="chat-title">
-                  <div class="l-flexbox_inline groupTitle">
-                    <h2 class="name name_chat" title="Q-municate development">Q-municate development</h2>
-                    <span class="triangle triangle_down"></span>
-                    <span class="triangle triangle_up is-hidden"></span>
-                  </div>
-                </div>
-                <div class="chat-controls">
-                  <button class="btn_chat btn_chat_add"><img src="images/icon-add.png" alt="add"></button>
-                  <button class="btn_chat btn_chat_delete"><img src="images/icon-delete.png" alt="delete"></button>
-                </div>
-                <div class="chat-occupants-wrap">
-                  <div class="chat-occupants">
-                    <a class="occupant l-flexbox_inline" href="#">
-                      <span class="status status_request"></span>
-                      <span class="name name_occupant">Andrey</span>
-                    </a>
-                    <a class="occupant l-flexbox_inline" href="#">
-                      <span class="status status_request"></span>
-                      <span class="name name_occupant">Andrey</span>
-                    </a>
-                    <a class="occupant l-flexbox_inline" href="#">
-                      <span class="name name_occupant">Andreysdfsd</span>
-                    </a>
-                    <a class="occupant l-flexbox_inline" href="#">
-                      <span class="name name_occupant">Andrey sdf sdfsdf</span>
-                    </a>
-                    <a class="occupant l-flexbox_inline" href="#">
-                      <span class="status status_online"></span>
-                      <span class="name name_occupant">Andrey</span>
-                    </a>
-                  </div>                  
-                </div>
-              </header>
-
-              <section class="l-chat-content">
-                
-              </section>
-
-              <footer class="l-chat-footer">
-                <form class="l-message" action="#">
-                  <textarea class="form-input-message textarea" placeholder="Type a message"></textarea>
-                  <button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>
-                  <button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>
-                </form>
-              </footer>
             </section>
 
             <section id="capBox" class="l-workspace l-flexbox">
@@ -451,6 +393,16 @@
       <div class="popup-controls">
         <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
         <a id="deleteConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
+      </div>
+    </section>
+
+    <section id="popupLeave" class="popup popup_leave is-open">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <span class="alert alert_logout">Are you sure<br>you want to leave the group chat?</span>
+      </div>
+      <div class="popup-controls">
+        <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
+        <a id="leaveConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
       </div>
     </section>
 
