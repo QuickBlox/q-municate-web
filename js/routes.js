@@ -410,6 +410,7 @@ function openAttachPopup(objDom, name, url, uid) {
 function closePopup() {
   $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
   $('.temp-box').remove();
+  $('.attach-video').paused();
 }
 
 function getFileDownloadLink(uid) {
