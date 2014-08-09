@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -14,10 +14,12 @@ var User = require('./models/user'),
     Contact = require('./models/contact'),
     Dialog = require('./models/dialog'),
     Message = require('./models/message'),
+    Attach = require('./models/attach'),
     ContactList = require('./models/contact_list'),
     UserView = require('./views/user'),
     DialogView = require('./views/dialog'),
     MessageView = require('./views/message'),
+    AttachView = require('./views/attach'),
     ContactListView = require('./views/contact_list'),
     Routes = require('./routes'),
     QBApiCalls = require('./qbApiCalls');
@@ -29,6 +31,7 @@ function QM() {
     Contact: new Contact(this),
     Dialog: new Dialog(this),
     Message: new Message(this),
+    Attach: new Attach(this),
     ContactList: new ContactList(this)
   };
 
@@ -36,6 +39,7 @@ function QM() {
     User: new UserView(this),
     Dialog: new DialogView(this),
     Message: new MessageView(this),
+    Attach: new AttachView(this),
     ContactList: new ContactListView(this)
   };
 
@@ -109,7 +113,45 @@ window.onbeforeunload = function() {
   QB.chat.sendPres('unavailable');
 };
 
-},{"./models/contact":2,"./models/contact_list":3,"./models/dialog":4,"./models/message":5,"./models/session":6,"./models/user":7,"./qbApiCalls":8,"./routes":9,"./views/contact_list":10,"./views/dialog":11,"./views/message":12,"./views/user":13}],2:[function(require,module,exports){
+},{"./models/attach":2,"./models/contact":3,"./models/contact_list":4,"./models/dialog":5,"./models/message":6,"./models/session":7,"./models/user":8,"./qbApiCalls":9,"./routes":10,"./views/attach":11,"./views/contact_list":12,"./views/dialog":13,"./views/message":14,"./views/user":15}],2:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * Attach Module
+ *
+ */
+
+module.exports = Attach;
+
+function Attach(app) {
+  this.app = app;
+}
+
+Attach.prototype = {
+
+  upload: function(file, callback) {
+    var QBApiCalls = this.app.service,
+        self = this;
+
+    QBApiCalls.createBlob({file: file, 'public': true}, function(blob) {
+      callback(blob);
+    });
+  },
+
+  create: function(blob, size) {
+    return {
+      id: blob.id,
+      type: blob.content_type,
+      name: blob.name,
+      size: size,
+      url: blob.path,
+      uid: blob.uid
+    };
+  }
+
+};
+
+},{}],3:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -177,7 +219,7 @@ function getStatus(contact) {
   return status;
 }
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -322,7 +364,7 @@ function getContacts() {
   return contacts;
 }
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -476,7 +518,7 @@ Dialog.prototype = {
 
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -506,17 +548,26 @@ Message.prototype = {
   },
 
   create: function(params) {
-    var User = this.app.models.User;
+    var User = this.app.models.User,
+        message;
 
-    return {
+    message = {
       id: (params.extension && params.extension.message_id) || params._id || null,
       dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
       body: params.body || params.message || null,
       notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
       date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
       read: params.read || false,
+      attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) || (params.attachments && params.attachments[0]) || params.attachment || null,
       sender_id: params.sender_id || null
     };
+
+    if (message.attachment) {
+      message.attachment.id = parseInt(message.attachment.id);
+      message.attachment.size = parseInt(message.attachment.size);
+    }
+
+    return message;
   },
 
   update: function(message_id, dialog_id) {
@@ -529,7 +580,7 @@ Message.prototype = {
 
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -606,7 +657,7 @@ Session.prototype = {
 
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -993,7 +1044,7 @@ function getImport(user) {
   return isImport;
 }
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1374,7 +1425,7 @@ var failSearch = function() {
   ContactListView.removeDataSpinner();
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -1384,15 +1435,17 @@ var failSearch = function() {
 
 module.exports = Routes;
 
-var UserView, ContactListView, DialogView, MessageView;
+var Session, UserView, ContactListView, DialogView, MessageView, AttachView;
 
 function Routes(app) {
   this.app = app;
   
-  UserView = this.app.views.User,
-  ContactListView = this.app.views.ContactList,
-  DialogView = this.app.views.Dialog,
+  Session = this.app.models.Session;
+  UserView = this.app.views.User;
+  ContactListView = this.app.views.ContactList;
+  DialogView = this.app.views.Dialog;
   MessageView = this.app.views.Message;
+  AttachView = this.app.views.Attach;
 }
 
 Routes.prototype = {
@@ -1403,8 +1456,36 @@ Routes.prototype = {
       clickBehaviour(event);
     });
 
-    $('input:file').on('change', function() {
+    $('#signup-avatar:file').on('change', function() {
       changeInputFile($(this));
+    });
+
+    /* attachments
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('click', '.btn_message_attach', function() {
+      $(this).next().click();
+    });
+
+    $('.l-workspace-wrap').on('change', '.attachment', function() {
+      AttachView.changeInput($(this));
+    });
+
+    $('.l-workspace-wrap').on('click', '.attach-cancel', function(event) {
+      event.preventDefault();
+      AttachView.cancel($(this));
+    });
+
+    $('.l-workspace-wrap').on('click', '.preview', function() {
+      var name = $(this).data('name'),
+          url = $(this).data('url'),
+          uid = $(this).data('uid');
+
+      if ($(this).is('.preview-photo')) {
+        $('.attach-photo').removeClass('is-hidden').siblings('.attach-video').addClass('is-hidden');
+      } else {
+        $('.attach-video').removeClass('is-hidden').siblings('.attach-photo').addClass('is-hidden');
+      }
+      openAttachPopup($('#popupAttach'), name, url, uid);
     });
 
     /* scrollbars
@@ -1735,8 +1816,7 @@ function removePopover() {
   $('.popover').remove();
 }
 
-var openPopup = function(objDom, id, dialog_id) {
-  console.log(dialog_id);
+function openPopup(objDom, id, dialog_id) {
   // if it was the delete action
   if (id) {
     objDom.find('#deleteConfirm').data('id', id);
@@ -1746,14 +1826,236 @@ var openPopup = function(objDom, id, dialog_id) {
     objDom.find('#leaveConfirm').data('dialog', dialog_id);
   }
   objDom.add('.popups').addClass('is-overlay');
-};
+}
 
-var closePopup = function() {
+function openAttachPopup(objDom, name, url, uid) {
+  objDom.find('.attach-photo, .attach-video source').attr('src', url);
+  objDom.find('.attach-name').text(name);
+  objDom.find('.attach-download').attr('href', getFileDownloadLink(uid));
+  objDom.add('.popups').addClass('is-overlay');
+}
+
+function closePopup() {
   $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
   $('.temp-box').remove();
+}
+
+function getFileDownloadLink(uid) {
+  return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
+}
+
+},{}],11:[function(require,module,exports){
+/*
+ * Q-municate chat application
+ *
+ * Attach View Module
+ *
+ */
+
+module.exports = AttachView;
+
+var User, Message, Attach;
+var self;
+
+function AttachView(app) {
+  this.app = app;
+  User = this.app.models.User;
+  Message = this.app.models.Message;
+  Attach = this.app.models.Attach;
+  self = this;
+}
+
+AttachView.prototype = {
+
+  changeInput: function(objDom) {
+    var file = objDom[0].files[0] || null,
+        chat = $('.l-chat:visible .l-chat-content .mCSB_container'),
+        id = _.uniqueId(),
+        fileSize = file.size,
+        fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
+        fileSizeUnit = fileSize > (1024 * 1024) ? 'Mb' : 'Kb',
+        html;
+
+    if (file) {
+      if (file.name.length < 18)
+        html = '<article class="message message_service message_attach message_attach_row l-flexbox l-flexbox_alignstretch">';
+      else
+        html = '<article class="message message_service message_attach l-flexbox l-flexbox_alignstretch">';
+      html += '<span class="message-avatar contact-avatar_message request-button_attach">';
+      html += '<img src="images/icon-attach.png" alt="attach"></span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+      html += '<div class="message-content">';
+      html += '<h4 class="message-author">';
+      html += file.name;
+      html += '<div class="attach-upload">';
+      html += '<div id="progress_'+id+'"></div>';
+      html += '<span class="attach-size"><span class="attach-part attach-part_'+id+'"></span> of ' + fileSizeCrop + ' ' + fileSizeUnit + '</span>';
+      html += '</div></h4></div>';
+      html += '<time class="message-time"><a class="attach-cancel" href="#">Cancel</a></time>';
+      html += '</div></div></article>';
+      
+      chat.append(html);
+      objDom.val('');
+      fixScroll();
+      self.createProgressBar(id, fileSizeCrop, fileSize, file);
+    }
+  },
+
+  createProgressBar: function(id, fileSizeCrop, fileSize, file) {
+    var progressBar = new ProgressBar('progress_'+id),
+        percent = 5,
+        isUpload = false,
+        part, time;
+
+    // TODO: Need to rewrite this part of code
+    if (fileSize < 100 * 1024)
+      time = 50;
+    else if (fileSize < 300 * 1024)
+      time = 200;
+    else if (fileSize < 400 * 1024)
+      time = 350;
+    else if (fileSize < 500 * 1024)
+      time = 400;
+    else if (fileSize < 600 * 1024)
+      time = 450;
+    else if (fileSize < 700 * 1024)
+      time = 550;
+    else if (fileSize < 800 * 1024)
+      time = 600;
+    else if (fileSize < 900 * 1024)
+      time = 650;
+    else if (fileSize < 1 * 1024 * 1024)
+      time = 1000;
+    else if (fileSize < 2 * 1024 * 1024)
+      time = 1400;
+    else if (fileSize < 3 * 1024 * 1024)
+      time = 2000;
+    else if (fileSize < 4 * 1024 * 1024)
+      time = 2700;
+    else if (fileSize < 5 * 1024 * 1024)
+      time = 3700;
+    else if (fileSize < 6 * 1024 * 1024)
+      time = 4900;
+    else if (fileSize < 7 * 1024 * 1024)
+      time = 5400;
+    else if (fileSize < 8 * 1024 * 1024)
+      time = 6600;
+    else if (fileSize < 9 * 1024 * 1024)
+      time = 7500;
+    else if (fileSize < 10 * 1024 * 1024)
+      time = 9000;
+
+    setPercent();
+
+    Attach.upload(file, function(blob) {
+      var chat;
+      isUpload = true;
+      if ($('#progress_'+id).length > 0) {
+        chat = $('#progress_'+id).parents('.l-chat');
+        setPercent();
+        self.sendMessage(chat, blob, fileSize);
+      }
+    });
+
+    function setPercent() {
+      if (isUpload) {
+        progressBar.setPercent(100);
+        part = fileSizeCrop;
+        $('.attach-part_'+id).text(part);
+
+        setTimeout(function() {
+          $('.attach-part_'+id).parents('article').remove();
+        }, 50);
+
+      } else {
+        progressBar.setPercent(percent);
+        part = (fileSizeCrop * percent / 100).toFixed(1);
+        $('.attach-part_'+id).text(part);
+        percent += 5;
+        if (percent > 90) return false;
+        setTimeout(setPercent, time);
+      }      
+    }  
+  },
+
+  cancel: function(objDom) {
+    objDom.parents('article').remove();
+  },
+
+  sendMessage: function(chat, blob, size) {
+    var MessageView = this.app.views.Message,
+        attach = Attach.create(blob, size),
+        jid = chat.data('jid'),
+        id = chat.data('id'),
+        dialog_id = chat.data('dialog'),
+        time = Math.floor(Date.now() / 1000),
+        type = chat.is('.is-group') ? 'groupchat' : 'chat',
+        dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        copyDialogItem;
+      
+    // send message
+    QB.chat.send(jid, {type: type, extension: {
+      save_to_history: 1,
+      dialog_id: dialog_id,
+      date_sent: time,
+
+      attachments: [
+        attach
+      ],
+
+      full_name: User.contact.full_name,
+      avatar_url: User.contact.avatar_url
+    }});
+
+    message = Message.create({
+      chat_dialog_id: dialog_id,
+      date_sent: time,
+      attachment: attach,
+      sender_id: User.contact.id
+    });
+    if (QMCONFIG.debug) console.log(message);
+    if (type === 'chat') MessageView.addItem(message, true, true);
+
+    if (dialogItem.length > 0) {
+      copyDialogItem = dialogItem.clone();
+      dialogItem.remove();
+      $('#recentList ul').prepend(copyDialogItem);
+      isSectionEmpty($('#recentList ul'));
+    }
+  }
+
 };
 
-},{}],10:[function(require,module,exports){
+/* Private
+---------------------------------------------------------------------- */
+function fixScroll() {
+  var chat = $('.l-chat:visible'),
+      containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
+      chatContentHeight = chat.find('.l-chat-content').height(),
+      draggerContainerHeight = chat.find('.l-chat-content .mCSB_draggerContainer').height(),
+      draggerHeight = chat.find('.l-chat-content .mCSB_dragger').height();
+
+  chat.find('.l-chat-content .mCSB_container').css({top: chatContentHeight - containerHeight + 'px'});
+  chat.find('.l-chat-content .mCSB_dragger').css({top: draggerContainerHeight - draggerHeight + 'px'});
+}
+
+function isSectionEmpty(list) {
+  if (list.contents().length === 0)
+    list.parent().addClass('is-hidden');
+
+  if ($('#historyList ul').contents().length === 0)
+      $('#historyList ul').parent().addClass('is-hidden');
+
+  if ($('#requestsList').is('.is-hidden') &&
+      $('#recentList').is('.is-hidden') &&
+      $('#historyList').is('.is-hidden')) {
+    
+    $('#emptyList').removeClass('is-hidden');
+  }
+}
+
+},{}],12:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -2258,7 +2560,7 @@ function isSectionEmpty(list) {
   }
 }
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -2522,6 +2824,7 @@ DialogView.prototype = {
       html += '<textarea class="form-input-message textarea" placeholder="Type a message"></textarea>';
       html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>';
       html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>';
+      html += '<input class="attachment" type="file">';
       html += '</form></footer>';
       html += '</section>';
 
@@ -2690,7 +2993,7 @@ function isSectionEmpty(list) {
   }
 }
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -2700,11 +3003,12 @@ function isSectionEmpty(list) {
 
 module.exports = MessageView;
 
-var User, Message, ContactList, Dialog;
+var Session, User, Message, ContactList, Dialog;
 var self;
 
 function MessageView(app) {
   this.app = app;
+  Session = this.app.models.Session;
   User = this.app.models.User;
   Dialog = this.app.models.Dialog;
   Message = this.app.models.Message;
@@ -2719,6 +3023,7 @@ MessageView.prototype = {
         contacts = ContactList.contacts,
         contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
         type = message.notification_type || 'message',
+        attachType = message.attachment && message.attachment.type,
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
         html;
 
@@ -2805,8 +3110,43 @@ MessageView.prototype = {
       html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
       html += '<div class="message-content">';
       html += '<h4 class="message-author">'+contact.full_name+'</h4>';
-      html += '<div class="message-body">'+parser(message.body)+'</div>';
-      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      if (attachType && attachType.indexOf('image') > -1) {
+
+        html += '<div class="message-body">';
+        html += '<div class="preview preview-photo" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'">';
+        html += '<img src="'+message.attachment.url+'" alt="attach">';
+        html += '</div></div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      } else if (attachType && attachType.indexOf('audio') > -1) {
+
+        html += '<div class="message-body">';
+        html += '<audio src="'+message.attachment.url+'" controls></audio>';
+        html += '</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      } else if (attachType && attachType.indexOf('video') > -1) {
+
+        html += '<div class="message-body">';
+        html += '<div class="preview preview-video" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'"></div>';
+        html += '</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      } else if (attachType) {
+
+        html += '<div class="message-body">';
+        html += '<a class="attach-file" href="'+getFileDownloadLink(message.attachment.uid)+'" download>'+message.attachment.name+'</a>';
+        html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
+        html += '</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
+        html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
+
+      } else {
+        html += '<div class="message-body">'+parser(message.body)+'</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      }
+
       html += '</div></div></article>';
       break;
     }
@@ -2948,6 +3288,14 @@ MessageView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
+function getFileSize(size) {
+  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' Mb' : (size / 1024).toFixed(1) + 'Kb';
+}
+
+function getFileDownloadLink(uid) {
+  return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
+}
+
 function fixScroll(chat) {
   var containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
       chatContentHeight = chat.find('.l-chat-content').height(),
@@ -3011,7 +3359,7 @@ function isSectionEmpty(list) {
   }
 }
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -3298,4 +3646,4 @@ var appearAnimation = function() {
   $('.popover').show(150);
 };
 
-},{}]},{},[1]);
+},{}]},{},[1])

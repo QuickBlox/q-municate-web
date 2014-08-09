@@ -27,17 +27,26 @@ Message.prototype = {
   },
 
   create: function(params) {
-    var User = this.app.models.User;
+    var User = this.app.models.User,
+        message;
 
-    return {
+    message = {
       id: (params.extension && params.extension.message_id) || params._id || null,
       dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
       body: params.body || params.message || null,
       notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
       date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
       read: params.read || false,
+      attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) || (params.attachments && params.attachments[0]) || params.attachment || null,
       sender_id: params.sender_id || null
     };
+
+    if (message.attachment) {
+      message.attachment.id = parseInt(message.attachment.id);
+      message.attachment.size = parseInt(message.attachment.size);
+    }
+
+    return message;
   },
 
   update: function(message_id, dialog_id) {
