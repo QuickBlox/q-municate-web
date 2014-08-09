@@ -7,15 +7,16 @@
 
 module.exports = Routes;
 
-var UserView, ContactListView, DialogView, MessageView;
+var UserView, ContactListView, DialogView, MessageView, AttachView;
 
 function Routes(app) {
   this.app = app;
   
-  UserView = this.app.views.User,
-  ContactListView = this.app.views.ContactList,
-  DialogView = this.app.views.Dialog,
+  UserView = this.app.views.User;
+  ContactListView = this.app.views.ContactList;
+  DialogView = this.app.views.Dialog;
   MessageView = this.app.views.Message;
+  AttachView = this.app.views.Attach;
 }
 
 Routes.prototype = {
@@ -30,8 +31,19 @@ Routes.prototype = {
       changeInputFile($(this));
     });
 
+    /* attachments
+    ----------------------------------------------------- */
     $('.l-workspace-wrap').on('click', '.btn_message_attach', function() {
       $(this).next().click();
+    });
+
+    $('.l-workspace-wrap').on('change', '.attachment', function() {
+      AttachView.changeInput($(this));
+    });
+
+    $('.l-workspace-wrap').on('click', '.attach-cancel', function(event) {
+      event.preventDefault();
+      AttachView.cancel($(this));
     });
 
     /* scrollbars

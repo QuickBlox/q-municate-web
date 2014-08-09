@@ -120,11 +120,27 @@
   color: #999;
 }
 .attach-upload {
-  font-size: 14px;
+  display: inline-block;
+  width: 60%;
+  font-size: 13px;
+  font-weight: normal;
 }
-  .attach-upload progress {
+  .attach-upload .progressbar-control {
+    float: left;
+    top: 13px;
+    width: 55% !important;
+    height: 4px !important;
     margin: 0 10px;
+    border: 0;
   }
+  .message_attach_row .progressbar-control {
+    top: 17px;
+  }
+    .attach-upload .progressbar-control .item-bar {
+      height: 4px;
+      margin: 0;
+      border: 0;
+    }
 
 /* attach popup */
 .attach-photo {

@@ -13,10 +13,12 @@ var User = require('./models/user'),
     Contact = require('./models/contact'),
     Dialog = require('./models/dialog'),
     Message = require('./models/message'),
+    Attach = require('./models/attach'),
     ContactList = require('./models/contact_list'),
     UserView = require('./views/user'),
     DialogView = require('./views/dialog'),
     MessageView = require('./views/message'),
+    AttachView = require('./views/attach'),
     ContactListView = require('./views/contact_list'),
     Routes = require('./routes'),
     QBApiCalls = require('./qbApiCalls');
@@ -28,6 +30,7 @@ function QM() {
     Contact: new Contact(this),
     Dialog: new Dialog(this),
     Message: new Message(this),
+    Attach: new Attach(this),
     ContactList: new ContactList(this)
   };
 
@@ -35,6 +38,7 @@ function QM() {
     User: new UserView(this),
     Dialog: new DialogView(this),
     Message: new MessageView(this),
+    Attach: new AttachView(this),
     ContactList: new ContactListView(this)
   };
 

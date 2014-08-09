@@ -22,9 +22,14 @@
       margin-top: 0;
     }
       .message-content {
+        width: 485px;
         max-width: 485px;
         color: #333;
         word-wrap: break-word;
+      }
+      .message_attach .message-content {
+        width: 515px;
+        max-width: 515px;
       }
         .message-author {
           margin-bottom: 10px;
@@ -32,6 +37,9 @@
         .message_service .message-author {
           margin-bottom: 0;
           line-height: 30px;
+        }
+        .message_attach_row .message-author {
+          line-height: 37px;
         }
           .message-body {
             position: relative;
@@ -54,16 +62,21 @@
           font-size: 14px;
           color: #0d70b3;
         }
-
-      .message-avatar.request-button_pending,
+        .message_attach_row .message-time {
+          line-height: 28px;
+        }
+      
       .message-time {
         margin-top: 5px;
       }
+      .message-avatar.request-button_pending {
+        margin: 5px 30px 0 10px;
+      }
       .message-avatar.request-button_cancel {
-        margin-top: 6px;
+        margin: 6px 30px 0 10px;
       }
       .message-avatar.request-button_ok {
-        margin-top: 3px;
+        margin: 3px 30px 0 10px;
       }
 
 /* preview */
