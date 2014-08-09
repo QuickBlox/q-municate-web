@@ -1829,7 +1829,7 @@ function openPopup(objDom, id, dialog_id) {
 }
 
 function openAttachPopup(objDom, name, url, uid) {
-  objDom.find('.attach-photo, .attach-video source').attr('src', url);
+  objDom.find('.attach-photo, .attach-video').attr('src', url);
   objDom.find('.attach-name').text(name);
   objDom.find('.attach-download').attr('href', getFileDownloadLink(uid));
   objDom.add('.popups').addClass('is-overlay');
