@@ -129,7 +129,25 @@ function Attach(app) {
 
 Attach.prototype = {
 
+  upload: function(file, callback) {
+    var QBApiCalls = this.app.service,
+        self = this;
 
+    QBApiCalls.createBlob({file: file, 'public': true}, function(blob) {
+      callback(blob);
+    });
+  },
+
+  create: function(blob, size) {
+    return {
+      id: blob.id,
+      type: blob.content_type,
+      name: blob.name,
+      size: size,
+      url: blob.path,
+      uid: blob.uid
+    };
+  }
 
 };
 
@@ -530,17 +548,26 @@ Message.prototype = {
   },
 
   create: function(params) {
-    var User = this.app.models.User;
+    var User = this.app.models.User,
+        message;
 
-    return {
+    message = {
       id: (params.extension && params.extension.message_id) || params._id || null,
       dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
       body: params.body || params.message || null,
       notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
       date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
       read: params.read || false,
+      attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) || (params.attachments && params.attachments[0]) || params.attachment || null,
       sender_id: params.sender_id || null
     };
+
+    if (message.attachment) {
+      message.attachment.id = parseInt(message.attachment.id);
+      message.attachment.size = parseInt(message.attachment.size);
+    }
+
+    return message;
   },
 
   update: function(message_id, dialog_id) {
@@ -1408,11 +1435,12 @@ var failSearch = function() {
 
 module.exports = Routes;
 
-var UserView, ContactListView, DialogView, MessageView, AttachView;
+var Session, UserView, ContactListView, DialogView, MessageView, AttachView;
 
 function Routes(app) {
   this.app = app;
   
+  Session = this.app.models.Session;
   UserView = this.app.views.User;
   ContactListView = this.app.views.ContactList;
   DialogView = this.app.views.Dialog;
@@ -1445,6 +1473,19 @@ Routes.prototype = {
     $('.l-workspace-wrap').on('click', '.attach-cancel', function(event) {
       event.preventDefault();
       AttachView.cancel($(this));
+    });
+
+    $('.l-workspace-wrap').on('click', '.preview', function() {
+      var name = $(this).data('name'),
+          url = $(this).data('url'),
+          uid = $(this).data('uid');
+
+      if ($(this).is('.preview-photo')) {
+        $('.attach-photo').removeClass('is-hidden').siblings('.attach-video').addClass('is-hidden');
+      } else {
+        $('.attach-video').removeClass('is-hidden').siblings('.attach-photo').addClass('is-hidden');
+      }
+      openAttachPopup($('#popupAttach'), name, url, uid);
     });
 
     /* scrollbars
@@ -1775,8 +1816,7 @@ function removePopover() {
   $('.popover').remove();
 }
 
-var openPopup = function(objDom, id, dialog_id) {
-  console.log(dialog_id);
+function openPopup(objDom, id, dialog_id) {
   // if it was the delete action
   if (id) {
     objDom.find('#deleteConfirm').data('id', id);
@@ -1786,12 +1826,23 @@ var openPopup = function(objDom, id, dialog_id) {
     objDom.find('#leaveConfirm').data('dialog', dialog_id);
   }
   objDom.add('.popups').addClass('is-overlay');
-};
+}
 
-var closePopup = function() {
+function openAttachPopup(objDom, name, url, uid) {
+  objDom.find('.attach-photo, .attach-video source').attr('src', url);
+  objDom.find('.attach-name').text(name);
+  objDom.find('.attach-download').attr('href', getFileDownloadLink(uid));
+  objDom.add('.popups').addClass('is-overlay');
+}
+
+function closePopup() {
   $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
   $('.temp-box').remove();
-};
+}
+
+function getFileDownloadLink(uid) {
+  return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
+}
 
 },{}],11:[function(require,module,exports){
 /*
@@ -1803,15 +1854,14 @@ var closePopup = function() {
 
 module.exports = AttachView;
 
-var User, Message, ContactList, Dialog;
+var User, Message, Attach;
 var self;
 
 function AttachView(app) {
   this.app = app;
   User = this.app.models.User;
-  Dialog = this.app.models.Dialog;
   Message = this.app.models.Message;
-  ContactList = this.app.models.ContactList;
+  Attach = this.app.models.Attach;
   self = this;
 }
 
@@ -1826,7 +1876,6 @@ AttachView.prototype = {
         fileSizeUnit = fileSize > (1024 * 1024) ? 'Mb' : 'Kb',
         html;
 
-    console.log(file);
     if (file) {
       if (file.name.length < 18)
         html = '<article class="message message_service message_attach message_attach_row l-flexbox l-flexbox_alignstretch">';
@@ -1847,68 +1896,139 @@ AttachView.prototype = {
       html += '</div></div></article>';
       
       chat.append(html);
+      objDom.val('');
       fixScroll();
-      createProgressBar(id, fileSizeCrop, fileSize);
+      self.createProgressBar(id, fileSizeCrop, fileSize, file);
     }
+  },
+
+  createProgressBar: function(id, fileSizeCrop, fileSize, file) {
+    var progressBar = new ProgressBar('progress_'+id),
+        percent = 5,
+        isUpload = false,
+        part, time;
+
+    // TODO: Need to rewrite this part of code
+    if (fileSize < 100 * 1024)
+      time = 50;
+    else if (fileSize < 300 * 1024)
+      time = 200;
+    else if (fileSize < 400 * 1024)
+      time = 350;
+    else if (fileSize < 500 * 1024)
+      time = 400;
+    else if (fileSize < 600 * 1024)
+      time = 450;
+    else if (fileSize < 700 * 1024)
+      time = 550;
+    else if (fileSize < 800 * 1024)
+      time = 600;
+    else if (fileSize < 900 * 1024)
+      time = 650;
+    else if (fileSize < 1 * 1024 * 1024)
+      time = 1000;
+    else if (fileSize < 2 * 1024 * 1024)
+      time = 1400;
+    else if (fileSize < 3 * 1024 * 1024)
+      time = 2000;
+    else if (fileSize < 4 * 1024 * 1024)
+      time = 2700;
+    else if (fileSize < 5 * 1024 * 1024)
+      time = 3700;
+    else if (fileSize < 6 * 1024 * 1024)
+      time = 4900;
+    else if (fileSize < 7 * 1024 * 1024)
+      time = 5400;
+    else if (fileSize < 8 * 1024 * 1024)
+      time = 6600;
+    else if (fileSize < 9 * 1024 * 1024)
+      time = 7500;
+    else if (fileSize < 10 * 1024 * 1024)
+      time = 9000;
+
+    setPercent();
+
+    Attach.upload(file, function(blob) {
+      var chat;
+      isUpload = true;
+      if ($('#progress_'+id).length > 0) {
+        chat = $('#progress_'+id).parents('.l-chat');
+        setPercent();
+        self.sendMessage(chat, blob, fileSize);
+      }
+    });
+
+    function setPercent() {
+      if (isUpload) {
+        progressBar.setPercent(100);
+        part = fileSizeCrop;
+        $('.attach-part_'+id).text(part);
+
+        setTimeout(function() {
+          $('.attach-part_'+id).parents('article').remove();
+        }, 50);
+
+      } else {
+        progressBar.setPercent(percent);
+        part = (fileSizeCrop * percent / 100).toFixed(1);
+        $('.attach-part_'+id).text(part);
+        percent += 5;
+        if (percent > 90) return false;
+        setTimeout(setPercent, time);
+      }      
+    }  
   },
 
   cancel: function(objDom) {
     objDom.parents('article').remove();
+  },
+
+  sendMessage: function(chat, blob, size) {
+    var MessageView = this.app.views.Message,
+        attach = Attach.create(blob, size),
+        jid = chat.data('jid'),
+        id = chat.data('id'),
+        dialog_id = chat.data('dialog'),
+        time = Math.floor(Date.now() / 1000),
+        type = chat.is('.is-group') ? 'groupchat' : 'chat',
+        dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        copyDialogItem;
+      
+    // send message
+    QB.chat.send(jid, {type: type, extension: {
+      save_to_history: 1,
+      dialog_id: dialog_id,
+      date_sent: time,
+
+      attachments: [
+        attach
+      ],
+
+      full_name: User.contact.full_name,
+      avatar_url: User.contact.avatar_url
+    }});
+
+    message = Message.create({
+      chat_dialog_id: dialog_id,
+      date_sent: time,
+      attachment: attach,
+      sender_id: User.contact.id
+    });
+    if (QMCONFIG.debug) console.log(message);
+    if (type === 'chat') MessageView.addItem(message, true, true);
+
+    if (dialogItem.length > 0) {
+      copyDialogItem = dialogItem.clone();
+      dialogItem.remove();
+      $('#recentList ul').prepend(copyDialogItem);
+      isSectionEmpty($('#recentList ul'));
+    }
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
-function createProgressBar(id, fileSizeCrop, fileSize) {
-  var progressBar = new ProgressBar('progress_'+id),
-      percent = 5,
-      part, time;
-
-  // TODO: Need to rewrite this part of code
-  if (fileSize < 100 * 1024)
-    time = 50;
-  else if (fileSize < 300 * 1024)
-    time = 100;
-  else if (fileSize < 400 * 1024)
-    time = 150;
-  else if (fileSize < 500 * 1024)
-    time = 200;
-  else if (fileSize < 600 * 1024)
-    time = 250;
-  else if (fileSize < 700 * 1024)
-    time = 300;
-  else if (fileSize < 800 * 1024)
-    time = 350;
-  else if (fileSize < 900 * 1024)
-    time = 400;
-  else if (fileSize < 1 * 1024 * 1024)
-    time = 500;
-  else if (fileSize < 2 * 1024 * 1024)
-    time = 750;
-  else if (fileSize < 4 * 1024 * 1024)
-    time = 1000;
-  else if (fileSize < 5 * 1024 * 1024)
-    time = 1250;
-  else if (fileSize < 7 * 1024 * 1024)
-    time = 1500;
-  else if (fileSize < 8 * 1024 * 1024)
-    time = 1750;
-  else if (fileSize < 10 * 1024 * 1024)
-    time = 2000;
-
-  setPercent();
-
-  function setPercent() {
-    progressBar.setPercent(percent);
-    part = (fileSizeCrop * percent / 100).toFixed(1);
-    $('.attach-part_'+id).text(part);
-    percent += 5;
-    if (percent > 95) return false;
-    setTimeout(setPercent, time);
-  }  
-}
-
 function fixScroll() {
   var chat = $('.l-chat:visible'),
       containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
@@ -1918,6 +2038,21 @@ function fixScroll() {
 
   chat.find('.l-chat-content .mCSB_container').css({top: chatContentHeight - containerHeight + 'px'});
   chat.find('.l-chat-content .mCSB_dragger').css({top: draggerContainerHeight - draggerHeight + 'px'});
+}
+
+function isSectionEmpty(list) {
+  if (list.contents().length === 0)
+    list.parent().addClass('is-hidden');
+
+  if ($('#historyList ul').contents().length === 0)
+      $('#historyList ul').parent().addClass('is-hidden');
+
+  if ($('#requestsList').is('.is-hidden') &&
+      $('#recentList').is('.is-hidden') &&
+      $('#historyList').is('.is-hidden')) {
+    
+    $('#emptyList').removeClass('is-hidden');
+  }
 }
 
 },{}],12:[function(require,module,exports){
@@ -2868,11 +3003,12 @@ function isSectionEmpty(list) {
 
 module.exports = MessageView;
 
-var User, Message, ContactList, Dialog;
+var Session, User, Message, ContactList, Dialog;
 var self;
 
 function MessageView(app) {
   this.app = app;
+  Session = this.app.models.Session;
   User = this.app.models.User;
   Dialog = this.app.models.Dialog;
   Message = this.app.models.Message;
@@ -2887,6 +3023,7 @@ MessageView.prototype = {
         contacts = ContactList.contacts,
         contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
         type = message.notification_type || 'message',
+        attachType = message.attachment && message.attachment.type,
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
         html;
 
@@ -2973,8 +3110,43 @@ MessageView.prototype = {
       html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
       html += '<div class="message-content">';
       html += '<h4 class="message-author">'+contact.full_name+'</h4>';
-      html += '<div class="message-body">'+parser(message.body)+'</div>';
-      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      if (attachType && attachType.indexOf('image') > -1) {
+
+        html += '<div class="message-body">';
+        html += '<div class="preview preview-photo" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'">';
+        html += '<img src="'+message.attachment.url+'" alt="attach">';
+        html += '</div></div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      } else if (attachType && attachType.indexOf('audio') > -1) {
+
+        html += '<div class="message-body">';
+        html += '<audio src="'+message.attachment.url+'" controls></audio>';
+        html += '</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      } else if (attachType && attachType.indexOf('video') > -1) {
+
+        html += '<div class="message-body">';
+        html += '<div class="preview preview-video" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'"></div>';
+        html += '</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      } else if (attachType) {
+
+        html += '<div class="message-body">';
+        html += '<a class="attach-file" href="'+getFileDownloadLink(message.attachment.uid)+'" download>'+message.attachment.name+'</a>';
+        html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
+        html += '</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
+        html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
+
+      } else {
+        html += '<div class="message-body">'+parser(message.body)+'</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      }
+
       html += '</div></div></article>';
       break;
     }
@@ -3116,6 +3288,14 @@ MessageView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
+function getFileSize(size) {
+  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' Mb' : (size / 1024).toFixed(1) + 'Kb';
+}
+
+function getFileDownloadLink(uid) {
+  return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
+}
+
 function fixScroll(chat) {
   var containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
       chatContentHeight = chat.find('.l-chat-content').height(),

@@ -7,11 +7,12 @@
 
 module.exports = MessageView;
 
-var User, Message, ContactList, Dialog;
+var Session, User, Message, ContactList, Dialog;
 var self;
 
 function MessageView(app) {
   this.app = app;
+  Session = this.app.models.Session;
   User = this.app.models.User;
   Dialog = this.app.models.Dialog;
   Message = this.app.models.Message;
@@ -26,6 +27,7 @@ MessageView.prototype = {
         contacts = ContactList.contacts,
         contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
         type = message.notification_type || 'message',
+        attachType = message.attachment && message.attachment.type,
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
         html;
 
@@ -112,8 +114,43 @@ MessageView.prototype = {
       html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
       html += '<div class="message-content">';
       html += '<h4 class="message-author">'+contact.full_name+'</h4>';
-      html += '<div class="message-body">'+parser(message.body)+'</div>';
-      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      if (attachType && attachType.indexOf('image') > -1) {
+
+        html += '<div class="message-body">';
+        html += '<div class="preview preview-photo" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'">';
+        html += '<img src="'+message.attachment.url+'" alt="attach">';
+        html += '</div></div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      } else if (attachType && attachType.indexOf('audio') > -1) {
+
+        html += '<div class="message-body">';
+        html += '<audio src="'+message.attachment.url+'" controls></audio>';
+        html += '</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      } else if (attachType && attachType.indexOf('video') > -1) {
+
+        html += '<div class="message-body">';
+        html += '<div class="preview preview-video" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'"></div>';
+        html += '</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+      } else if (attachType) {
+
+        html += '<div class="message-body">';
+        html += '<a class="attach-file" href="'+getFileDownloadLink(message.attachment.uid)+'" download>'+message.attachment.name+'</a>';
+        html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
+        html += '</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
+        html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
+
+      } else {
+        html += '<div class="message-body">'+parser(message.body)+'</div>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      }
+
       html += '</div></div></article>';
       break;
     }
@@ -255,6 +292,14 @@ MessageView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
+function getFileSize(size) {
+  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' Mb' : (size / 1024).toFixed(1) + 'Kb';
+}
+
+function getFileDownloadLink(uid) {
+  return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
+}
+
 function fixScroll(chat) {
   var containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
       chatContentHeight = chat.find('.l-chat-content').height(),
