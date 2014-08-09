@@ -7,15 +7,17 @@
 
 module.exports = Routes;
 
-var UserView, ContactListView, DialogView, MessageView;
+var Session, UserView, ContactListView, DialogView, MessageView, AttachView;
 
 function Routes(app) {
   this.app = app;
   
-  UserView = this.app.views.User,
-  ContactListView = this.app.views.ContactList,
-  DialogView = this.app.views.Dialog,
+  Session = this.app.models.Session;
+  UserView = this.app.views.User;
+  ContactListView = this.app.views.ContactList;
+  DialogView = this.app.views.Dialog;
   MessageView = this.app.views.Message;
+  AttachView = this.app.views.Attach;
 }
 
 Routes.prototype = {
@@ -26,8 +28,36 @@ Routes.prototype = {
       clickBehaviour(event);
     });
 
-    $('input:file').on('change', function() {
+    $('#signup-avatar:file').on('change', function() {
       changeInputFile($(this));
+    });
+
+    /* attachments
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('click', '.btn_message_attach', function() {
+      $(this).next().click();
+    });
+
+    $('.l-workspace-wrap').on('change', '.attachment', function() {
+      AttachView.changeInput($(this));
+    });
+
+    $('.l-workspace-wrap').on('click', '.attach-cancel', function(event) {
+      event.preventDefault();
+      AttachView.cancel($(this));
+    });
+
+    $('.l-workspace-wrap').on('click', '.preview', function() {
+      var name = $(this).data('name'),
+          url = $(this).data('url'),
+          uid = $(this).data('uid');
+
+      if ($(this).is('.preview-photo')) {
+        $('.attach-photo').removeClass('is-hidden').siblings('.attach-video').addClass('is-hidden');
+      } else {
+        $('.attach-video').removeClass('is-hidden').siblings('.attach-photo').addClass('is-hidden');
+      }
+      openAttachPopup($('#popupAttach'), name, url, uid);
     });
 
     /* scrollbars
@@ -358,8 +388,7 @@ function removePopover() {
   $('.popover').remove();
 }
 
-var openPopup = function(objDom, id, dialog_id) {
-  console.log(dialog_id);
+function openPopup(objDom, id, dialog_id) {
   // if it was the delete action
   if (id) {
     objDom.find('#deleteConfirm').data('id', id);
@@ -369,9 +398,20 @@ var openPopup = function(objDom, id, dialog_id) {
     objDom.find('#leaveConfirm').data('dialog', dialog_id);
   }
   objDom.add('.popups').addClass('is-overlay');
-};
+}
 
-var closePopup = function() {
+function openAttachPopup(objDom, name, url, uid) {
+  objDom.find('.attach-photo, .attach-video source').attr('src', url);
+  objDom.find('.attach-name').text(name);
+  objDom.find('.attach-download').attr('href', getFileDownloadLink(uid));
+  objDom.add('.popups').addClass('is-overlay');
+}
+
+function closePopup() {
   $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
   $('.temp-box').remove();
-};
+}
+
+function getFileDownloadLink(uid) {
+  return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
+}

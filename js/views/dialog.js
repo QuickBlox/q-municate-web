@@ -261,6 +261,7 @@ DialogView.prototype = {
       html += '<textarea class="form-input-message textarea" placeholder="Type a message"></textarea>';
       html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>';
       html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>';
+      html += '<input class="attachment" type="file">';
       html += '</form></footer>';
       html += '</section>';
 
