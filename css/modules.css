@@ -7,6 +7,7 @@
 @import url(modules/text.css);
 @import url(modules/chat.css);
 @import url(modules/message.css);
+@import url(modules/smiles.css);
 
 /* scrollbar */
 .mCS-autoHide > .mCustomScrollBox ~ .mCSB_scrollTools {
@@ -143,9 +144,10 @@
 }
   .popover_smile {
     position: absolute;
-    top: -215px;
-    width: 220px;
-    height: 205px;
+    left: 20px;
+    bottom: 75px;
+    width: 248px;
+    height: 240px;
     background: #fff;
   }
 

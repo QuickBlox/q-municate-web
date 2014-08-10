@@ -49,7 +49,8 @@ input.is-error:focus {
     color: #fff;
   }
 
-.btn_message_smile.is-active {
+.btn_message_smile.is-active,
+.smiles-tab.is-actived {
   opacity: 1 !important;
 }
 

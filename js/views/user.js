@@ -182,13 +182,10 @@ UserView.prototype = {
   },
 
   smilePopover: function(objDom) {
-    var html = '<div class="popover popover_smile">';
-    html += '</div>';
-
     if (objDom.find('img').length === 1)
       objDom.addClass('is-active').append('<img src="images/icon-smile_active.png" alt="smile">').find('*:first').addClass('is-hidden');
-    objDom.parents('form').append(html);
-    appearAnimation();
+    
+    $('.popover_smile').show(150);
   },
 
   logout: function() {
@@ -281,5 +278,5 @@ var switchOnWelcomePage = function() {
 };
 
 var appearAnimation = function() {
-  $('.popover').show(150);
+  $('.popover:not(.popover_smile)').show(150);
 };
