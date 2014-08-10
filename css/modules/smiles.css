@@ -47,7 +47,7 @@
       width: 30px;
       padding: 5px;
     }
-    .emoji:hover {
+    .smiles-group .emoji:hover {
       background: #cecece;
       cursor: pointer;
     }

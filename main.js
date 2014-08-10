@@ -1474,6 +1474,13 @@ Routes.prototype = {
       scrollInertia: 150
     });
 
+    $('.emoji').on('click', function() {
+      var code = $(this).attr('title'),
+          val = $('.l-chat:visible .textarea').val();
+
+      $('.l-chat:visible .textarea').val(val + ' ' + code + ' ');
+    });
+
     /* attachments
     ----------------------------------------------------- */
     $('.l-workspace-wrap').on('click', '.btn_message_attach', function() {
@@ -3190,6 +3197,8 @@ MessageView.prototype = {
     } else {
       chat.find('.l-chat-content').prepend(html);
     }
+
+    emojify.run(chat.find('.l-chat-content .message:last .message-body')[0]);
     
   },
 
