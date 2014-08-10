@@ -125,6 +125,8 @@ DialogView.prototype = {
           }
         });
       }
+
+      // emojify.run($('.smiles-wrap')[0]);
     });
   },
 
