@@ -85,6 +85,7 @@ QM.prototype = {
 
 // Application initialization
 $(document).ready(function() {
+  emojify.run($('.smiles-wrap')[0]);
   APP = new QM;
   APP.init();
 });

@@ -86,6 +86,7 @@ QM.prototype = {
 
 // Application initialization
 $(document).ready(function() {
+  emojify.run($('.smiles-wrap')[0]);
   APP = new QM;
   APP.init();
 });
@@ -1460,6 +1461,19 @@ Routes.prototype = {
       changeInputFile($(this));
     });
 
+    /* smiles
+    ----------------------------------------------------- */
+    $('.smiles-tab').on('click', function() {
+      var group = $(this).data('group');
+      $(this).addClass('is-actived').siblings().removeClass('is-actived');
+      $('.smiles-group_'+group).removeClass('is-hidden').siblings().addClass('is-hidden');
+    });
+
+    $('.smiles-group').mCustomScrollbar({
+      theme: 'minimal-dark',
+      scrollInertia: 150
+    });
+
     /* attachments
     ----------------------------------------------------- */
     $('.l-workspace-wrap').on('click', '.btn_message_attach', function() {
@@ -1786,7 +1800,7 @@ function occupantScrollbar() {
 function clickBehaviour(e) {
   var objDom = $(e.target);
 
-  if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *') || e.which === 3) {
+  if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
     return false;
   } else {
     removePopover();
@@ -1813,7 +1827,8 @@ function removePopover() {
   $('.is-contextmenu').removeClass('is-contextmenu');
   $('.is-active').removeClass('is-active');
   $('.btn_message_smile .is-hidden').removeClass('is-hidden').siblings().remove();
-  $('.popover').remove();
+  $('.popover:not(.popover_smile)').remove();
+  $('.popover_smile').hide();
 }
 
 function openPopup(objDom, id, dialog_id) {
@@ -2689,6 +2704,8 @@ DialogView.prototype = {
           }
         });
       }
+
+      // emojify.run($('.smiles-wrap')[0]);
     });
   },
 
@@ -3545,13 +3562,10 @@ UserView.prototype = {
   },
 
   smilePopover: function(objDom) {
-    var html = '<div class="popover popover_smile">';
-    html += '</div>';
-
     if (objDom.find('img').length === 1)
       objDom.addClass('is-active').append('<img src="images/icon-smile_active.png" alt="smile">').find('*:first').addClass('is-hidden');
-    objDom.parents('form').append(html);
-    appearAnimation();
+    
+    $('.popover_smile').show(150);
   },
 
   logout: function() {
@@ -3644,7 +3658,7 @@ var switchOnWelcomePage = function() {
 };
 
 var appearAnimation = function() {
-  $('.popover').show(150);
+  $('.popover:not(.popover_smile)').show(150);
 };
 
 },{}]},{},[1])

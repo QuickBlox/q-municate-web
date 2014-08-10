@@ -32,6 +32,19 @@ Routes.prototype = {
       changeInputFile($(this));
     });
 
+    /* smiles
+    ----------------------------------------------------- */
+    $('.smiles-tab').on('click', function() {
+      var group = $(this).data('group');
+      $(this).addClass('is-actived').siblings().removeClass('is-actived');
+      $('.smiles-group_'+group).removeClass('is-hidden').siblings().addClass('is-hidden');
+    });
+
+    $('.smiles-group').mCustomScrollbar({
+      theme: 'minimal-dark',
+      scrollInertia: 150
+    });
+
     /* attachments
     ----------------------------------------------------- */
     $('.l-workspace-wrap').on('click', '.btn_message_attach', function() {
@@ -358,7 +371,7 @@ function occupantScrollbar() {
 function clickBehaviour(e) {
   var objDom = $(e.target);
 
-  if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *') || e.which === 3) {
+  if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
     return false;
   } else {
     removePopover();
@@ -385,7 +398,8 @@ function removePopover() {
   $('.is-contextmenu').removeClass('is-contextmenu');
   $('.is-active').removeClass('is-active');
   $('.btn_message_smile .is-hidden').removeClass('is-hidden').siblings().remove();
-  $('.popover').remove();
+  $('.popover:not(.popover_smile)').remove();
+  $('.popover_smile').hide();
 }
 
 function openPopup(objDom, id, dialog_id) {

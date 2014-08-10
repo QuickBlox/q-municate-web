@@ -135,6 +135,7 @@
       }
 
 .l-workspace-wrap {
+  position: relative;
   width: calc(100% - 330px);
   height: 100%;
 }
