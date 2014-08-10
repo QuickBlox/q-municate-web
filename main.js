@@ -3198,7 +3198,7 @@ MessageView.prototype = {
       chat.find('.l-chat-content').prepend(html);
     }
 
-    emojify.run(chat.find('.l-chat-content .message:last .message-body')[0]);
+    emojify.run(chat.find('.l-chat-content .mCSB_container')[0]);
     
   },
 

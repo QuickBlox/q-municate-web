@@ -44,6 +44,9 @@
     height: 100%;
   }
     .emoji {
+      width: 20px;
+    }
+    .smiles-group .emoji {
       width: 30px;
       padding: 5px;
     }
