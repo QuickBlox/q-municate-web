@@ -135,6 +135,7 @@ MessageView.prototype = {
       } else if (attachType && attachType.indexOf('video') > -1) {
 
         html += '<div class="message-body">';
+        html += message.attachment.name+'<br><br>';
         html += '<div class="preview preview-video" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'"></div>';
         html += '</div>';
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
