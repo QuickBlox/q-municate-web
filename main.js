@@ -86,7 +86,9 @@ QM.prototype = {
 
 // Application initialization
 $(document).ready(function() {
+  // emoji smiles run
   emojify.run($('.smiles-wrap')[0]);
+
   APP = new QM;
   APP.init();
 });
@@ -148,6 +150,30 @@ Attach.prototype = {
       url: blob.path,
       uid: blob.uid
     };
+  },
+
+  crop: function(file, callback) {
+    loadImage(
+      file,
+      function (img) {
+        var attr = {crop: true};
+        if (img.width > img.height)
+          attr.maxWidth = 1000;
+        else
+          attr.maxHeight = 1000;
+        
+        loadImage(
+          file,
+          function (canvas) {
+            canvas.toBlob(function(blob) {
+              blob.name = file.name;
+              callback(blob);
+            }, file.type);
+          },
+          attr
+        );
+      }
+    );
   }
 
 };
@@ -1921,7 +1947,13 @@ AttachView.prototype = {
       chat.append(html);
       objDom.val('');
       fixScroll();
-      self.createProgressBar(id, fileSizeCrop, fileSize, file);
+      if (file.type.indexOf('image') > -1) {
+        Attach.crop(file, function(blob) {
+          self.createProgressBar(id, fileSizeCrop, fileSize, blob);
+        });
+      } else {
+        self.createProgressBar(id, fileSizeCrop, fileSize, file);
+      }
     }
   },
 

@@ -51,7 +51,13 @@ AttachView.prototype = {
       chat.append(html);
       objDom.val('');
       fixScroll();
-      self.createProgressBar(id, fileSizeCrop, fileSize, file);
+      if (file.type.indexOf('image') > -1) {
+        Attach.crop(file, function(blob) {
+          self.createProgressBar(id, fileSizeCrop, fileSize, blob);
+        });
+      } else {
+        self.createProgressBar(id, fileSizeCrop, fileSize, file);
+      }
     }
   },
 

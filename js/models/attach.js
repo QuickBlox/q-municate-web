@@ -31,6 +31,30 @@ Attach.prototype = {
       url: blob.path,
       uid: blob.uid
     };
+  },
+
+  crop: function(file, callback) {
+    loadImage(
+      file,
+      function (img) {
+        var attr = {crop: true};
+        if (img.width > img.height)
+          attr.maxWidth = 1000;
+        else
+          attr.maxHeight = 1000;
+        
+        loadImage(
+          file,
+          function (canvas) {
+            canvas.toBlob(function(blob) {
+              blob.name = file.name;
+              callback(blob);
+            }, file.type);
+          },
+          attr
+        );
+      }
+    );
   }
 
 };
