@@ -3179,7 +3179,7 @@ MessageView.prototype = {
       } else if (attachType && attachType.indexOf('audio') > -1) {
 
         html += '<div class="message-body">';
-        html += '<p>'+message.attachment.name+'</p>';
+        html += message.attachment.name+'<br><br>';
         html += '<audio src="'+message.attachment.url+'" controls></audio>';
         html += '</div>';
         html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
