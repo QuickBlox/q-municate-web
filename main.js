@@ -3179,9 +3179,11 @@ MessageView.prototype = {
       } else if (attachType && attachType.indexOf('audio') > -1) {
 
         html += '<div class="message-body">';
+        html += message.attachment.name+'<br>';
         html += '<audio src="'+message.attachment.url+'" controls></audio>';
         html += '</div>';
-        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
+        html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
 
       } else if (attachType && attachType.indexOf('video') > -1) {
 
