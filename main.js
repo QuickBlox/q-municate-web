@@ -1947,7 +1947,7 @@ AttachView.prototype = {
         return false;
       }
 
-      if (file.name.length < 18)
+      if (file.name.length < 17)
         html = '<article class="message message_service message_attach message_attach_row l-flexbox l-flexbox_alignstretch">';
       else
         html = '<article class="message message_service message_attach l-flexbox l-flexbox_alignstretch">';
