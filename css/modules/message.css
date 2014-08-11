@@ -41,6 +41,9 @@
         .message_attach_row .message-author {
           line-height: 37px;
         }
+        .message-error {
+          color: #c03d3d;
+        }
           .message-body {
             position: relative;
           }

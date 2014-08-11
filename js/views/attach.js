@@ -27,9 +27,30 @@ AttachView.prototype = {
         fileSize = file.size,
         fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
         fileSizeUnit = fileSize > (1024 * 1024) ? 'Mb' : 'Kb',
-        html;
+        maxSize = QMCONFIG.maxLimitFile * 1024 * 1024,
+        errMsg, html;
 
     if (file) {
+      if (file.name.length > 100)
+        errMsg = QMCONFIG.errors.fileName;
+      else if (file.size > maxSize)
+        errMsg = QMCONFIG.errors.fileSize;
+
+      if (errMsg) {
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch">';
+        html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+        html += '<h4 class="message-author message-error">'+errMsg+'</h4>';
+        html += '</div>';
+        html += '</div></div></article>';
+        chat.append(html);
+        objDom.val('');
+        fixScroll();
+        return false;
+      }
+
       if (file.name.length < 18)
         html = '<article class="message message_service message_attach message_attach_row l-flexbox l-flexbox_alignstretch">';
       else
