@@ -1,0 +1,192 @@
+/* Flexbox
+--------------------------------------------------*/
+.l-flexbox {
+  display: -webkit-flex; /* For Safari 6.1+ */
+  display: -ms-flexbox; /* For IE10 */
+  display: flex;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.l-flexbox_inline {
+  display: -webkit-inline-flex; /* For Safari 6.1+ */
+  display: -ms-inline-flexbox; /* For IE10 */
+  display: inline-flex;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 100%;
+}
+.l-flexbox_column {
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+.l-flexbox_flexcenter {
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.l-flexbox_flexend {
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+}
+.l-flexbox_flexbetween {
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+.l-flexbox_flexwrap {
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+.l-flexbox_alignstretch {
+  -webkit-align-items: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+}
+
+/* Layouts
+--------------------------------------------------*/
+.l-wrapper {
+  width: 1000px;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.l-page {
+  height: 100%;
+}
+
+.l-welcome-header {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+}
+  .l-welcome-header-logo {
+    height: 36vh;
+  }
+  .l-welcome-header-text {
+    position: relative;
+    top: -1vh;
+    height: 5.2vh;
+  }
+
+.l-form,
+.l-spinner {
+  width: 48vh;
+  max-width: 480px;
+}
+
+.l-spinner {
+  height: calc(100% - 40vh);
+}
+
+.l-welcome-footer {
+  height: 18vh;
+  padding-bottom: 2.5vh;
+}
+  .l-welcome-footer-logo img {
+    height: 8.3vh;
+  }
+
+.l-container {
+  height: calc(100% - 60px);
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-top: 0;
+}
+
+.l-header {
+  position: relative;
+  height: 80px;
+  padding-left: 20px;
+  border-bottom: 2px solid #00bf28;
+}
+
+.l-content {
+  height: calc(100% - 80px);
+}
+
+.l-sidebar {
+  width: 330px;
+  height: 100%;
+  border-right: 2px solid #f0f0f0;
+}
+  .l-search {
+    height: 60px;
+    padding: 15px;
+  }
+  .l-list-wrap {
+    height: calc(100% - 60px);
+    padding-bottom: 20px;
+  }
+    .l-list-header {
+      padding: 0 20px;
+      background: #f0f0f0;
+    }
+      .l-list-header-title {
+        font-size: 15px;
+        line-height: 30px;
+        color: #999;
+        text-transform: uppercase;
+      }
+
+.l-workspace-wrap {
+  position: relative;
+  width: calc(100% - 330px);
+  height: 100%;
+}
+  .l-workspace {
+    height: 100%;
+  }
+    .l-cap {
+      height: 63vh;
+      margin: auto;
+    }
+
+.l-footer {
+  height: 60px;
+  padding: 0 5px;
+}
+
+/* Chats
+--------------------------------------------------*/
+.l-chat-header {
+  position: relative;
+  height: 75px;
+  padding: 0 20px;
+  background: #f8f8f8;
+  border-bottom: 1px solid #f0f0f0;
+}
+.l-chat_group .l-chat-header {
+  height: 55px;
+}
+
+.l-chat-content {
+  position: relative;
+  height: calc(100% - 75px - 90px);
+  overflow-y: auto;
+}
+.l-chat_group .l-chat-content {
+  height: calc(100% - 55px - 90px);
+}
+  .is-request .l-chat-content {
+    height: calc(100% - 75px);
+  }
+  .l-chat_group .l-chat-content_min {
+    margin-top: 83px;
+    height: calc(100% - 55px - 90px - 83px);
+  }
+
+.l-chat-footer {
+  height: 90px;
+  padding: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+  .l-message {
+    position: relative;
+    height: 100%;
+  }

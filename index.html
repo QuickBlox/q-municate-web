@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Q-municate</title>
+  <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
+  <link rel="stylesheet" href="lib/scrollbar/jquery.mCustomScrollbar.css">
+  <link rel="stylesheet" href="lib/progressbar/progressbar.css"></script>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body class="is-welcome">
+  <div class="l-wrapper">
+    <section id="welcomePage" class="l-page l-flexbox l-flexbox_column l-flexbox_flexbetween">
+      <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
+        <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
+        <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
+        <div class="download">
+          <a class="download-app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/app-android.png" alt="download Q-municate Android"></a>
+          <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
+        </div>
+      </header>
+      <div class="l-form l-flexbox l-flexbox_column">
+        <button id="signupFB" class="btn btn_form btn_welcome btn_fb"><img class="btn-icon btn-icon_fb" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
+        <button id="signupQB" class="btn btn_form btn_welcome btn_qb">Sign Up with Email</button>
+        <a id="loginQB" class="text text_welcome" href="#">Already have an account?</a>
+      </div>
+      <footer class="l-welcome-footer l-flexbox l-flexbox_column l-flexbox_flexbetween">
+        <div class="l-welcome-footer-logo">
+          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox.png" alt="QuickBlox"></a>
+        </div>
+        <!-- <nav class="footer-links footer-links_welcome">
+          <ul>
+            <li class="footer-links-item"><a href="#">Support</a></li>
+            <li class="footer-links-item"><a href="#">FAQ</a></li>
+            <li class="footer-links-item"><a href="#">Help</a></li>
+          </ul>
+        </nav> -->
+      </footer>
+    </section>
+
+    <section id="signUpPage" class="l-page is-hidden">
+      <div class="l-container l-flexbox l-flexbox_column l-flexbox_flexbetween">
+        <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
+          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
+          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
+          <div class="download">
+            <a class="download-app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/app-android.png" alt="download Q-municate Android"></a>
+            <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
+          </div>
+        </header>
+        <form class="l-form l-flexbox l-flexbox_column" action="#" autocomplete="off">
+          <span class="text text_error">Error</span>
+          <input id="signup-full_name" class="form-input pattern-name" type="text" placeholder="Name" required>
+          <input id="signup-email" class="form-input" type="email" placeholder="Email" required>
+          <div class="chroma-hash">
+            <input id="signup-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
+          </div>
+          <div class="form-file">
+            <div class="form-file-custom l-flexbox_inline l-flexbox_flexcenter">
+              <img class="contact-avatar_signup avatar avatar_signup" src="" alt="user">
+              <span class="name name_signup"></span>
+            </div>
+            <input id="signup-avatar" class="form-file-default" type="file" accept="image/*">
+          </div>
+          <button id="signupForm" class="btn btn_form btn_signup btn_qb">Sign Up</button>
+          <span class="text text_signup">
+            By clicking Sign Up, you agree to<br>
+            Q-MUNICATE <a href="http://q-municate.com/agreement/" target="_blank"><b>User Agreement</b></a>, <a href="http://quickblox.com/privacy/" target="_blank"><b>Privacy Policy</b></a>.
+          </span>
+        </form>
+      </div>
+      <footer class="l-footer l-flexbox l-flexbox_flexbetween">
+        <div class="footer-logo">
+          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
+        </div>
+        <nav class="footer-links is-notVisible">
+          <ul>
+            <li class="footer-links-item"><a href="#">Support</a></li>
+            <li class="footer-links-item"><a href="#">FAQ</a></li>
+            <li class="footer-links-item"><a href="#">Help</a></li>
+          </ul>
+        </nav>
+      </footer>
+    </section>
+
+    <section id="loginPage" class="l-page is-hidden">
+      <div class="l-container l-flexbox l-flexbox_column l-flexbox_flexbetween">
+        <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
+          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
+          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
+          <div class="download">
+            <a class="download-app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/app-android.png" alt="download Q-municate Android"></a>
+            <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
+          </div>
+        </header>
+        <form class="l-form l-flexbox l-flexbox_column" action="#" autocomplete="off">
+          <span class="text text_error">Error</span>
+          <input id="login-email" class="form-input" type="email" placeholder="Email" required>
+          <div class="chroma-hash">
+            <input id="login-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
+          </div>
+          <label class="form-label" for="login-remember">
+            Remember me
+            <input id="login-remember" class="form-checkbox" type="checkbox" checked>
+          </label>
+          <button id="loginForm" class="btn btn_form btn_login btn_qb">Log In</button>
+          <button id="loginFB" class="btn btn_form btn_login btn_fb"><img class="btn-icon btn-icon_fb" src="images/icon-fb.png" alt="fb">Connect with Facebook</button>
+          <a id="forgot" class="text text_login" href="#">Forgot password?</a>
+        </form>
+      </div>
+      <footer class="l-footer l-flexbox l-flexbox_flexbetween">
+        <div class="footer-logo">
+          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
+        </div>
+        <nav class="footer-links is-notVisible">
+          <ul>
+            <li class="footer-links-item"><a href="#">Support</a></li>
+            <li class="footer-links-item"><a href="#">FAQ</a></li>
+            <li class="footer-links-item"><a href="#">Help</a></li>
+          </ul>
+        </nav>
+      </footer>
+    </section>
+
+    <section id="forgotPage" class="l-page is-hidden">
+      <div class="l-container l-flexbox l-flexbox_column">
+        <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
+          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.png" alt="Q-municate">
+          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.png" alt="Q-municate">
+          <div class="download">
+            <a class="download-app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/app-android.png" alt="download Q-municate Android"></a>
+            <a class="download-app" href="#"><img src="images/app-ios.png" alt="download Q-municate iOS"></a>
+          </div>
+        </header>
+        <form class="l-form l-flexbox l-flexbox_column" action="#" autocomplete="off">
+          <span class="text text_forgot text_forgot_black">
+            Did you forget your password?<br>
+            No worries, it happens to the best of us!
+          </span>
+          <span class="text text_forgot">
+            Please enter your email address below<br>
+            and we will send you a link to reset your password.
+          </span>
+          <span class="text text_error">Error</span>
+          <input id="forgot-email" class="form-input" type="email" placeholder="Email" required>
+          <button id="forgotForm" class="btn btn_form btn_reset btn_qb">Send Verification Email</button>
+        </form>
+      </div>
+      <footer class="l-footer l-flexbox l-flexbox_flexbetween">
+        <div class="footer-logo">
+          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
+        </div>
+        <nav class="footer-links is-notVisible">
+          <ul>
+            <li class="footer-links-item"><a href="#">Support</a></li>
+            <li class="footer-links-item"><a href="#">FAQ</a></li>
+            <li class="footer-links-item"><a href="#">Help</a></li>
+          </ul>
+        </nav>
+      </footer>
+    </section>
+
+    <section id="mainPage" class="l-page is-hidden">
+      <div class="l-container">
+        <header class="l-header l-flexbox l-flexbox_flexbetween">
+          <div class="header-logo">
+            <a id="home" href="#"><img src="images/logo-qmunicate.png" alt="Q-municate"></a>
+          </div>
+          <ul class="header-links l-flexbox">
+            <li class="header-links-item is-hidden">
+              <a id="share" href="#">
+                <img class="btn-icon btn-icon_fb_header icon-normal" src="images/icon-fb_header.png" alt="fb">
+                <img class="btn-icon btn-icon_fb_header icon-active" src="images/icon-fb_header_active.png" alt="fb">
+                Share
+              </a>
+            </li>
+            <li class="header-links-item">
+              <a id="contacts" class="createGroupChat" href="#">Contacts</a>
+            </li>
+            <li class="header-links-item">
+              <a id="profile" href="#"><img class="avatar" src="" alt="user"></a>
+            </li>
+          </ul>
+          <div class="no-connection is-hidden"><b>Not Connected.</b> Connecting...</div>
+        </header>
+        <div class="l-content l-flexbox">
+
+          <aside class="l-sidebar">
+            <form id="searchContacts" class="l-search localSearch" action="#">
+              <input class="form-input-search" type="search" placeholder="Search">
+            </form>
+
+            <div class="l-list-wrap scrollbar">
+
+              <section id="requestsList" class="l-list is-hidden">
+                <header class="l-list-header">
+                  <h3 class="l-list-header-title">Requests</h3>
+                </header>
+                <ul class="list"></ul>
+              </section>
+
+              <section id="recentList" class="l-list is-hidden">
+                <header class="l-list-header">
+                  <h3 class="l-list-header-title">Recent</h3>
+                </header>
+                <ul class="list list_contextmenu"></ul>
+              </section>
+
+              <section id="historyList" class="l-list is-hidden">
+                <header class="l-list-header">
+                  <h3 class="l-list-header-title">History</h3>
+                </header>
+                <ul class="list list_contextmenu"></ul>
+              </section>
+
+              <section id="searchList" class="l-list is-hidden">
+                <header class="l-list-header">
+                  <h3 class="l-list-header-title">Search results</h3>
+                </header>
+                <ul class="list list_contextmenu"></ul>
+                <div class="note l-flexbox l-flexbox_column">
+                  <span class="text text_alert">Sorry...</span>
+                  <span class="text">No results found</span>
+                </div>
+                <button class="search btn btn_search">Global Search</button>
+              </section>
+
+              <section id="emptyList" class="l-list note l-flexbox l-flexbox_column is-hidden">
+                <span class="text text_alert">Oops...</span>
+                <span class="text">You don't have any contacts.</span>
+              </section>
+            </div>
+          </aside>
+
+          <div class="l-workspace-wrap">
+            <section id="capBox" class="l-workspace l-flexbox">
+              <div class="l-cap l-flexbox l-flexbox_column">
+                <span class="cap-text">Is anybody here?</span>
+                <img class="cap-anybody" src="images/anybody.png" alt="QuickBlox anybody">
+                <button class="search btn btn_add btn_invite"><img class="btn-icon btn-icon_invite" src="images/icon-invite.png" alt="invite">Search Friends</button>
+                <!-- <button class="btn btn_add btn_share"><img class="btn-icon btn-icon_share" src="images/icon-fb.png" alt="fb">Share on Facebook</button> -->
+              </div>
+            </section>
+
+
+            <div class="popover popover_smile">
+              <div class="smiles-tabs">
+                <button class="smiles-tab smiles-tab_people is-actived" data-group="people"></button>
+                <button class="smiles-tab smiles-tab_nature" data-group="nature"></button>
+                <button class="smiles-tab smiles-tab_objects" data-group="objects"></button>
+                <button class="smiles-tab smiles-tab_places" data-group="places"></button>
+                <button class="smiles-tab smiles-tab_symbols" data-group="symbols"></button>
+              </div>
+              <div class="smiles-wrap">
+                <div class="smiles-group smiles-group_people">
+                  :bowtie: :smile: :laughing: :blush: :smiley: :relaxed: :smirk: :heart_eyes: :kissing_heart: :kissing_closed_eyes: :flushed: :relieved: :satisfied: :grin: :wink: :wink2: :stuck_out_tongue_winking_eye: :stuck_out_tongue_closed_eyes: :grinning: :kissing: :kissing_smiling_eyes: :stuck_out_tongue: :sleeping: :worried: :frowning: :anguished: :open_mouth: :grimacing: :confused: :hushed: :expressionless: :unamused: :sweat_smile: :sweat: :weary: :pensive: :disappointed: :confounded: :fearful: :cold_sweat: :persevere: :cry: :sob: :joy: :astonished: :scream: :neckbeard: :tired_face: :angry: :rage: :triumph: :sleepy: :yum: :mask: :sunglasses: :dizzy_face: :imp: :smiling_imp: :neutral_face: :no_mouth: :innocent: :alien: :yellow_heart: :blue_heart: :purple_heart: :heart: :green_heart: :broken_heart: :heartbeat: :heartpulse: :two_hearts: :revolving_hearts: :cupid: :sparkling_heart: :sparkles: :star: :star2: :dizzy: :boom: :collision: :anger: :exclamation: :question: :grey_exclamation: :grey_question: :zzz: :dash: :sweat_drops: :notes: :musical_note: :fire: :hankey: :+1: :-1: :ok_hand: :punch: :fist: :v: :wave: :hand: :open_hands: :point_up: :point_down: :point_left: :point_right: :raised_hands: :pray: :point_up_2: :clap: :muscle: :metal: :walking: :runner: :running: :couple: :family: :two_men_holding_hands: :two_women_holding_hands: :dancer: :dancers: :ok_woman: :no_good: :information_desk_person: :raised_hand: :bride_with_veil: :person_with_pouting_face: :person_frowning: :bow: :couplekiss: :couple_with_heart: :massage: :haircut: :nail_care: :boy: :girl: :woman: :man: :baby: :older_woman: :older_man: :person_with_blond_hair: :man_with_gua_pi_mao: :man_with_turban: :construction_worker: :cop: :angel: :princess: :smiley_cat: :smile_cat: :heart_eyes_cat: :kissing_cat: :smirk_cat: :scream_cat: :crying_cat_face: :joy_cat: :pouting_cat: :japanese_ogre: :japanese_goblin: :see_no_evil: :hear_no_evil: :speak_no_evil: :guardsman: :skull: :feet: :lips: :kiss: :droplet: :ear: :eyes: :nose: :tongue: :love_letter: :bust_in_silhouette: :busts_in_silhouette: :speech_balloon: :thought_balloon: :feelsgood: :finnadie: :goberserk: :godmode: :hurtrealbad: :rage1: :rage2: :rage3: :rage4: :suspect: :trollface:
+                </div>
+                <div class="smiles-group smiles-group_nature is-hidden">
+                  :sunny: :umbrella: :cloud: :snowflake: :snowman: :zap: :cyclone: :foggy: :ocean: :cat: :dog: :mouse: :hamster: :rabbit: :wolf: :frog: :tiger: :koala: :bear: :pig: :pig_nose: :cow: :boar: :monkey_face: :monkey: :horse: :racehorse: :camel: :sheep: :elephant: :panda_face: :snake: :bird: :baby_chick: :hatched_chick: :hatching_chick: :chicken: :penguin: :turtle: :bug: :honeybee: :ant: :beetle: :snail: :octopus: :tropical_fish: :fish: :whale: :whale2: :dolphin: :cow2: :ram: :rat: :water_buffalo: :tiger2: :rabbit2: :dragon: :goat: :rooster: :dog2: :pig2: :mouse2: :ox: :dragon_face: :blowfish: :crocodile: :dromedary_camel: :leopard: :cat2: :poodle: :paw_prints: :bouquet: :cherry_blossom: :tulip: :four_leaf_clover: :rose: :sunflower: :hibiscus: :maple_leaf: :leaves: :fallen_leaf: :herb: :mushroom: :cactus: :palm_tree: :evergreen_tree: :deciduous_tree: :chestnut: :seedling: :blossom: :ear_of_rice: :shell: :globe_with_meridians: :sun_with_face: :full_moon_with_face: :new_moon_with_face: :new_moon: :waxing_crescent_moon: :first_quarter_moon: :waxing_gibbous_moon: :full_moon: :waning_gibbous_moon: :last_quarter_moon: :waning_crescent_moon: :last_quarter_moon_with_face: :first_quarter_moon_with_face: :moon: :earth_africa: :earth_americas: :earth_asia: :volcano: :milky_way: :partly_sunny: :octocat: :squirrel:
+                </div>
+                <div class="smiles-group smiles-group_objects is-hidden">
+                  :bamboo: :gift_heart: :dolls: :school_satchel: :mortar_board: :flags: :fireworks: :sparkler: :wind_chime: :rice_scene: :jack_o_lantern: :ghost: :santa: :christmas_tree: :gift: :bell: :no_bell: :tanabata_tree: :tada: :confetti_ball: :balloon: :crystal_ball: :cd: :dvd: :floppy_disk: :camera: :video_camera: :movie_camera: :computer: :tv: :iphone: :phone: :telephone: :telephone_receiver: :pager: :fax: :minidisc: :vhs: :sound: :speaker: :mute: :loudspeaker: :mega: :hourglass: :hourglass_flowing_sand: :alarm_clock: :watch: :radio: :satellite: :loop: :mag: :mag_right: :unlock: :lock: :lock_with_ink_pen: :closed_lock_with_key: :key: :bulb: :flashlight: :high_brightness: :low_brightness: :electric_plug: :battery: :calling: :email: :mailbox: :postbox: :bath: :bathtub: :shower: :toilet: :wrench: :nut_and_bolt: :hammer: :seat: :moneybag: :yen: :dollar: :pound: :euro: :credit_card: :money_with_wings: :e-mail: :inbox_tray: :outbox_tray: :envelope: :incoming_envelope: :postal_horn: :mailbox_closed: :mailbox_with_mail: :mailbox_with_no_mail: :door: :smoking: :bomb: :gun: :hocho: :pill: :syringe: :page_facing_up: :page_with_curl: :bookmark_tabs: :bar_chart: :chart_with_upwards_trend: :chart_with_downwards_trend: :scroll: :clipboard: :calendar: :date: :card_index: :file_folder: :open_file_folder: :scissors: :pushpin: :paperclip: :black_nib: :pencil2: :straight_ruler: :triangular_ruler: :closed_book: :green_book: :blue_book: :orange_book: :notebook: :notebook_with_decorative_cover: :ledger: :books: :bookmark: :name_badge: :microscope: :telescope: :newspaper: :football: :basketball: :soccer: :baseball: :tennis: :8ball: :rugby_football: :bowling: :golf: :mountain_bicyclist: :bicyclist: :horse_racing: :snowboarder: :swimmer: :surfer: :ski: :spades: :hearts: :clubs: :diamonds: :gem: :ring: :trophy: :musical_score: :musical_keyboard: :violin: :space_invader: :video_game: :black_joker: :flower_playing_cards: :game_die: :dart: :mahjong: :clapper: :memo: :pencil: :book: :art: :microphone: :headphones: :trumpet: :saxophone: :guitar: :shoe: :sandal: :high_heel: :lipstick: :boot: :shirt: :tshirt: :necktie: :womans_clothes: :dress: :running_shirt_with_sash: :jeans: :kimono: :bikini: :ribbon: :tophat: :crown: :womans_hat: :mans_shoe: :closed_umbrella: :briefcase: :handbag: :pouch: :purse: :eyeglasses: :fishing_pole_and_fish: :coffee: :tea: :sake: :baby_bottle: :beer: :beers: :cocktail: :tropical_drink: :wine_glass: :fork_and_knife: :pizza: :hamburger: :fries: :poultry_leg: :meat_on_bone: :spaghetti: :curry: :fried_shrimp: :bento: :sushi: :fish_cake: :rice_ball: :rice_cracker: :rice: :ramen: :stew: :oden: :dango: :egg: :bread: :doughnut: :custard: :icecream: :ice_cream: :shaved_ice: :birthday: :cake: :cookie: :chocolate_bar: :candy: :lollipop: :honey_pot: :apple: :green_apple: :tangerine: :lemon: :cherries: :grapes: :watermelon: :strawberry: :peach: :melon: :banana: :pear: :pineapple: :sweet_potato: :eggplant: :tomato: :corn:
+                </div>
+                <div class="smiles-group smiles-group_places is-hidden">
+                  :109: :house: :house_with_garden: :school: :office: :post_office: :hospital: :bank: :convenience_store: :love_hotel: :hotel: :wedding: :church: :department_store: :european_post_office: :city_sunrise: :city_sunset: :japanese_castle: :european_castle: :tent: :factory: :tokyo_tower: :japan: :mount_fuji: :sunrise_over_mountains: :sunrise: :stars: :statue_of_liberty: :bridge_at_night: :carousel_horse: :rainbow: :ferris_wheel: :fountain: :roller_coaster: :ship: :speedboat: :boat: :sailboat: :rowboat: :anchor: :rocket: :airplane: :helicopter: :steam_locomotive: :tram: :mountain_railway: :bike: :aerial_tramway: :suspension_railway: :mountain_cableway: :tractor: :blue_car: :oncoming_automobile: :car: :red_car: :taxi: :oncoming_taxi: :articulated_lorry: :bus: :oncoming_bus: :rotating_light: :police_car: :oncoming_police_car: :fire_engine: :ambulance: :minibus: :truck: :train: :station: :train2: :bullettrain_front: :bullettrain_side: :light_rail: :monorail: :railway_car: :trolleybus: :ticket: :fuelpump: :vertical_traffic_light: :traffic_light: :warning: :construction: :beginner: :atm: :slot_machine: :busstop: :barber: :hotsprings: :checkered_flag: :crossed_flags: :izakaya_lantern: :moyai: :circus_tent: :performing_arts: :round_pushpin: :triangular_flag_on_post: :jp: :kr: :cn: :us: :fr: :es: :it: :ru: :gb: :uk: :de:
+                </div>
+                <div class="smiles-group smiles-group_symbols is-hidden">
+                  :one: :two: :three: :four: :five: :six: :seven: :eight: :nine: :keycap_ten: :1234: :zero: :hash: :symbols: :arrow_backward: :arrow_down: :arrow_forward: :arrow_left: :capital_abcd: :abcd: :abc: :arrow_lower_left: :arrow_lower_right: :arrow_right: :arrow_up: :arrow_upper_left: :arrow_upper_right: :arrow_double_down: :arrow_double_up: :arrow_down_small: :arrow_heading_down: :arrow_heading_up: :leftwards_arrow_with_hook: :arrow_right_hook: :left_right_arrow: :arrow_up_down: :arrow_up_small: :arrows_clockwise: :arrows_counterclockwise: :rewind: :fast_forward: :information_source: :ok: :twisted_rightwards_arrows: :repeat: :repeat_one: :new: :top: :up: :cool: :free: :ng: :cinema: :koko: :signal_strength: :u5272: :u5408: :u55b6: :u6307: :u6708: :u6709: :u6e80: :u7121: :u7533: :u7a7a: :u7981: :sa: :restroom: :mens: :womens: :baby_symbol: :no_smoking: :parking: :wheelchair: :metro: :baggage_claim: :accept: :wc: :potable_water: :put_litter_in_its_place: :secret: :congratulations: :m: :passport_control: :left_luggage: :customs: :ideograph_advantage: :cl: :sos: :id: :no_entry_sign: :underage: :no_mobile_phones: :do_not_litter: :non-potable_water: :no_bicycles: :no_pedestrians: :children_crossing: :no_entry: :eight_spoked_asterisk: :eight_pointed_black_star: :heart_decoration: :vs: :vibration_mode: :mobile_phone_off: :chart: :currency_exchange: :aries: :taurus: :gemini: :cancer: :leo: :virgo: :libra: :scorpius: :sagittarius: :capricorn: :aquarius: :pisces: :ophiuchus: :six_pointed_star: :negative_squared_cross_mark: :a: :b: :ab: :o2: :diamond_shape_with_a_dot_inside: :recycle: :end: :on: :soon: :clock1: :clock130: :clock10: :clock1030: :clock11: :clock1130: :clock12: :clock1230: :clock2: :clock230: :clock3: :clock330: :clock4: :clock430: :clock5: :clock530: :clock6: :clock630: :clock7: :clock730: :clock8: :clock830: :clock9: :clock930: :heavy_dollar_sign: :copyright: :registered: :tm: :x: :heavy_exclamation_mark: :bangbang: :interrobang: :o: :heavy_multiplication_x: :heavy_plus_sign: :heavy_minus_sign: :heavy_division_sign: :white_flower: :100: :heavy_check_mark: :ballot_box_with_check: :radio_button: :link: :curly_loop: :wavy_dash: :part_alternation_mark: :trident: :black_square: :white_square: :white_check_mark: :black_square_button: :white_square_button: :black_circle: :white_circle: :red_circle: :large_blue_circle: :large_blue_diamond: :large_orange_diamond: :small_blue_diamond: :small_orange_diamond: :small_red_triangle: :small_red_triangle_down: :shipit:
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+      <footer class="l-footer l-flexbox l-flexbox_flexbetween">
+        <div class="footer-logo">
+          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.png" alt="QuickBlox"></a>
+        </div>
+        <div class="footer-apps l-flexbox">
+          <a class="footer-apps-ios" href="#"><img src="images/icon-ios.png" alt="download Q-municate iOS"></a>
+          <a href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/icon-android.png" alt="download Q-municate Android"></a>
+        </div>
+        <nav class="footer-links is-notVisible">
+          <ul>
+            <li class="footer-links-item"><a href="#">Support</a></li>
+            <li class="footer-links-item"><a href="#">FAQ</a></li>
+            <li class="footer-links-item"><a href="#">Help</a></li>
+          </ul>
+        </nav>
+      </footer>
+    </section>
+  </div>
+
+  <div class="popups l-flexbox">
+    <section id="popupAttach" class="popup popup_attach">
+      <img class="attach-photo" src="" alt="attach">
+      <video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls autoplay preload="auto" data-setup="{}"></video>
+      <div class="attach-description l-flexbox l-flexbox_flexbetween">
+        <span class="attach-name"></span>
+        <a class="attach-download" href="" download>Download</a>
+      </div>
+    </section>
+
+    <section id="popupLogout" class="popup popup_logout is-open">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <span class="alert alert_logout">Are you sure<br>you want to log out?</span>
+      </div>
+      <div class="popup-controls">
+        <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
+        <a id="logoutConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
+      </div>
+    </section>
+
+    <section id="popupImport" class="popup popup_import is-open">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <span class="alert alert_import">Your Facebook friends who have<br>a Q-municate account were successfully<br>added to your contacts</span>
+      </div>
+      <div class="popup-controls">
+        <a class="popup-control-button popup-control-button_ok" href="#">Got it</a>
+      </div>
+    </section>
+
+    <section id="popupDelete" class="popup popup_delete is-open">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <span class="alert alert_delete">Delete contact?</span>
+      </div>
+      <div class="popup-controls">
+        <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
+        <a id="deleteConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
+      </div>
+    </section>
+
+    <section id="popupLeave" class="popup popup_leave is-open">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <span class="alert alert_logout">Are you sure<br>you want to leave the group chat?</span>
+      </div>
+      <div class="popup-controls">
+        <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
+        <a id="leaveConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
+      </div>
+    </section>
+
+    <section id="popupSearch" class="popup popup_search">
+      <header class="popup-header">
+        <h3>Global Search</h3>
+      </header>
+      <form id="globalSearch" class="popup-form" action="#">
+        <input class="form-input-search" type="search" placeholder="Search">
+      </form>
+      <ul class="popup-elem list list_contacts"></ul>
+      <div class="popup-elem note l-flexbox l-flexbox_column">
+        <span class="text text_alert">Sorry...</span>
+        <span class="text">No results found</span>
+      </div>
+    </section>
+
+    <section id="popupContacts" class="popup popup_contacts not-selected">
+      <header class="popup-header">
+        <h3>Contacts</h3>
+      </header>
+      <form id="searchFriends" class="popup-form localSearch" action="#">
+        <input class="form-input-search" type="search" placeholder="Search">
+      </form>
+      <div class="popup-content">
+        <ul class="list list_contacts scrollbarContacts"></ul>
+        <div class="note l-flexbox l-flexbox_column">
+          <span class="text text_alert">Sorry...</span>
+          <span class="text">No results found</span>
+        </div>
+      </div>
+      <footer class="popup-footer">
+        <button class="btn btn_popup btn_popup_private">Create a chat</button>
+        <button class="btn btn_popup btn_popup_group">Create group chat</button>
+        <button class="btn btn_popup btn_popup_add">Add to chat</button>
+      </footer>
+    </section>
+  </div>
+
+  <div id="fb-root"></div>
+  <script>
+    // Async downloading FB SDK
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
+  <script src="https://vjs.zencdn.net/4.6/video.js"></script>
+  <script src="lib/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script src="lib/scrollbar/jquery.nicescroll.min.js"></script>
+  <script src="lib/progressbar/progressbar.min.js"></script>
+  <script src="lib/canvas-to-blob.min.js"></script>
+  <script src="lib/load-image.min.js"></script>
+  <script src="lib/jquery.timeago.js"></script>
+  <script src="lib/underscore-min.js"></script>
+  <script src="lib/emojify.min.js"></script>
+  <script src="lib/chroma-hash.js"></script>
+  <script src="lib/quickblox.js"></script>
+
+  <script src="config.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

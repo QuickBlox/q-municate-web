@@ -1,0 +1,74 @@
+/* form elements */
+.form-header {
+  margin: 7vh 0 5vh;
+  font-size: 3.4vh;
+  font-weight: normal;
+  color: #333;
+}
+
+.form-input {
+  width: 100%;
+  height: 4.5vh;
+  margin-bottom: 1vh;
+  padding: 0 1.3vh;
+  font-size: 2vh;
+  line-height: 2.6vh;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-input-search {
+  width: 100%;
+  /*height: 100%;*/
+  height: 30px;
+  padding: 6px 5px 5px 10px;
+  font-size: 15px;
+  line-height: 20px;
+  border: 1px solid #bebebe;
+  border-radius: 8px;
+}
+
+.form-input-message {
+  width: 100%;
+  height: 100%;
+  padding: 7px 40px 7px 60px;
+  font-size: 15px;
+  line-height: 20px;
+  border: 1px solid #bebebe;
+  resize: none;
+}
+.form-input-message::-webkit-input-placeholder   {position: relative; color: #ccc; line-height: 33px;}
+.form-input-message::-moz-placeholder            {position: relative; color: #ccc; line-height: 33px;}
+.form-input-message:-ms-input-placeholder        {position: relative; color: #ccc; line-height: 33px;}
+
+.form-label {
+  display: block;
+  margin: 1vh 0 5vh;
+  font-size: 2vh;
+  color: #666;
+}
+  .form-checkbox {
+    margin-left: 1vh;
+    vertical-align: middle;
+  }
+
+.form-file {
+  position: relative;
+  width: 100%;
+  height: 6vh;
+  margin: 2vh 0 4vh;
+}
+  .form-file:hover .form-file-custom {
+    opacity: .6;
+  }
+  .form-file-custom {
+    height: 100%;
+  }
+  .form-file-default {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+  }

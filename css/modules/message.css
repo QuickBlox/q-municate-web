@@ -1,0 +1,128 @@
+/* message */
+.message {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.message_service {
+  padding: 13px 20px;
+}
+.message_service:last-of-type .btn_request_again {
+  display: inline-block;
+}
+  .message-container-wrap {
+    width: 100%;
+  }
+    .message-container {
+      width: 100%;
+      margin-top: 10px;
+      font-size: 16px;
+      line-height: 20px;
+    }
+    .message-container:first-child {
+      margin-top: 0;
+    }
+      .message-content {
+        width: 474px;
+        max-width: 474px;
+        color: #333;
+        word-wrap: break-word;
+      }
+      .message_attach .message-content {
+        width: 515px;
+        max-width: 515px;
+      }
+        .message-author {
+          margin-bottom: 10px;
+        }
+        .message_service .message-author {
+          margin-bottom: 0;
+          line-height: 30px;
+        }
+        .message_attach_row .message-author {
+          line-height: 37px;
+        }
+        .message-error {
+          color: #c03d3d;
+        }
+          .message-body {
+            position: relative;
+          }
+          .message-body p {
+            margin-bottom: 10px;
+          }
+          .message-body p:last-of-type {
+            margin-bottom: 0;
+          }
+          .message-body a {
+            color: #0d70b3;
+          }
+      .message-time {
+        font-size: 15px;
+        line-height: 26px;
+        color: #999;
+        text-align: right;
+      }
+        .message-time a {
+          font-size: 14px;
+          color: #0d70b3;
+        }
+        .message_attach_row .message-time {
+          line-height: 28px;
+        }
+      
+      .message-time {
+        margin-top: 5px;
+      }
+      .message-avatar.request-button_pending {
+        margin: 5px 30px 0 10px;
+      }
+      .message-avatar.request-button_cancel {
+        margin: 6px 30px 0 10px;
+      }
+      .message-avatar.request-button_ok {
+        margin: 3px 30px 0 10px;
+      }
+
+/* preview */
+.preview {
+  float: left;
+  cursor: pointer;
+}
+.preview:hover {
+  opacity: 0.6;
+}
+  .preview-video {
+    position: relative;
+    width: 180px;
+    height: 125px;
+    background: #333;
+  }
+  .preview-video:before {
+    content: "\e001";
+    position: absolute;
+    margin: auto;
+    margin-left: 48%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid #ccc;
+  }
+    .preview-photo img {
+      max-width: 200px;
+      max-height: 165px;
+    }
+
+.attachment {
+  position: absolute;
+  top: 7px;
+  right: 15px;
+  width: 14px;
+  height: 38px;
+  opacity: 0;
+  visibility: hidden;
+}

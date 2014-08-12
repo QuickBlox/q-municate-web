@@ -1,0 +1,128 @@
+/* buttons */
+.btn {
+  color: #fff;
+  text-align: center;
+}
+  .btn_form {
+    width: 100%;
+    font-size: 2.8vh;
+    line-height: 6.5vh;
+    border-radius: .8vh;
+  }
+    .btn_welcome {
+      margin-bottom: 3vh;
+      line-height: 8vh;
+    }
+    .btn_welcome:last-of-type {
+      margin-bottom: 3.5vh;
+    }
+    .btn_signup {
+      margin-bottom: 4vh;
+    }
+    .btn_login {
+      margin-bottom: 2vh;
+    }
+    .btn_login:last-of-type {
+      margin-bottom: 3.5vh;
+    }
+    .btn_reset {
+      margin-top: 5vh;
+    }
+      .btn_fb {
+        background: #3d5b99;
+      }
+      .btn_qb {
+        background: #00c72d;
+      }
+  .btn_add {
+    width: 33vh;
+    font-size: 2.4vh;
+    line-height: 5.8vh;
+    border-radius: 3.2vh;
+  }
+    .btn_invite {
+      margin-bottom: 2vh;
+      background: #ff4945;
+    }
+    .btn_share {
+      background: #3b5998;
+    }
+  .btn_search {
+    display: block;
+    width: 285px;
+    margin: 20px auto 0;
+    font-size: 16px;
+    line-height: 40px;
+    background: #0d70b3;
+    border-radius: 7px;
+  }
+  .btn_popup {
+    width: 100%;
+    font-size: 24px;
+    line-height: 60px;
+    background: #0d70b3;
+  }
+
+.btn_chat {
+  margin-right: 20px;
+}
+.l-chat_group .btn_chat {
+  margin-right: 15px;
+}
+  .btn_chat:last-child {
+    margin-right: 0;
+  }
+  .btn_chat_videocall {
+    position: relative;
+    top: -2px;
+  }
+
+.btn_message {
+  position: absolute;
+}
+  .btn_message_smile {
+    top: 8px;
+    left: 12px;
+  }
+  .btn_message_attach {
+    top: 7px;
+    right: 15px;
+  }
+
+.btn_request_again {
+  display: none;
+  margin-left: 20px;
+  padding: 0 15px 0 8px;
+  font-size: 14px;
+  line-height: 28px;
+  color: #333;
+  background: #f8f8f8;
+  border: 1px solid #f0f0f0;
+  border-radius: 5px;
+}
+
+/* button icons */
+.btn-icon {
+  margin-right: 2vh;
+  vertical-align: text-bottom;
+}
+  .btn-icon_fb {
+    width: 3.4vh;
+  }
+  .btn-icon_fb_header {
+    width: 19px;
+    margin-right: 10px;
+    vertical-align: text-top;
+  }
+  .btn-icon_invite {
+    width: 2.5vh;
+  }
+  .btn-icon_share {
+    width: 2.4vh;
+    opacity: .5;
+  }
+  .btn-icon_request {
+    width: 19px;
+    margin-right: 8px;
+    vertical-align: text-top;
+  }
