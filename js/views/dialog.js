@@ -7,10 +7,11 @@
 
 module.exports = DialogView;
 
-var Dialog, Message, ContactList;
+var User, Dialog, Message, ContactList;
 
 function DialogView(app) {
   this.app = app;
+  User = this.app.models.User;
   Dialog = this.app.models.Dialog;
   Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
@@ -319,7 +320,7 @@ DialogView.prototype = {
     var contacts = ContactList.contacts,
         new_members = $('#popupContacts .is-chosen'),
         occupants_ids = $('#popupContacts').data('existing_ids') || [],
-        groupName = occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
+        groupName = occupants_ids.length > 0 ? [ User.contact.full_name, contacts[occupants_ids[0]].full_name ] : [User.contact.full_name],
         occupants_names = occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
         self = this;
 
@@ -352,7 +353,7 @@ DialogView.prototype = {
 
     li.remove();
     isSectionEmpty(list);
-    console.log(dialogs[dialog_id]);
+    // console.log(dialogs[dialog_id]);
 
     // delete dialog messages
     localStorage.removeItem('QM.dialog-' + dialog_id);

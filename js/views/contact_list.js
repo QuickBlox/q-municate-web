@@ -296,10 +296,7 @@ ContactListView.prototype = {
     isSectionEmpty(list);
 
     // update roster
-    roster[id] = {
-      subscription: 'none',
-      ask: null
-    };
+    delete roster[id];
     ContactList.saveRoster(roster);
 
     // delete dialog messages

@@ -180,7 +180,7 @@ MessageView.prototype = {
       chat.find('.l-chat-content').prepend(html);
     }
 
-    emojify.run(chat.find('.l-chat-content .mCSB_container')[0]);
+    // emojify.run(chat.find('.l-chat-content .mCSB_container')[0]);
     
   },
 
@@ -240,8 +240,11 @@ MessageView.prototype = {
         msg, copyDialogItem, dialog;
 
     msg = Message.create(message);
-    Message.update(msg.id, dialog_id);
     msg.sender_id = id;
+
+    if (notification_type !== '6' || msg.sender_id !== User.contact.id)
+      Message.update(msg.id, dialog_id);
+    
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true);
 

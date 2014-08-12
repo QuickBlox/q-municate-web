@@ -87,7 +87,7 @@ QM.prototype = {
 // Application initialization
 $(document).ready(function() {
   // emoji smiles run
-  emojify.run($('.smiles-wrap')[0]);
+  // emojify.run($('.smiles-wrap')[0]);
 
   APP = new QM;
   APP.init();
@@ -536,10 +536,10 @@ Dialog.prototype = {
       full_name: User.contact.full_name,
     }});
 
-    QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {
-      QB.chat.muc.leave(dialog.room_jid);
+    QB.chat.muc.leave(dialog.room_jid, function() {
+      QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {});
     });
-
+    
     callback();
   }
 
@@ -2430,10 +2430,7 @@ ContactListView.prototype = {
     isSectionEmpty(list);
 
     // update roster
-    roster[id] = {
-      subscription: 'none',
-      ask: null
-    };
+    delete roster[id];
     ContactList.saveRoster(roster);
 
     // delete dialog messages
@@ -2646,10 +2643,11 @@ function isSectionEmpty(list) {
 
 module.exports = DialogView;
 
-var Dialog, Message, ContactList;
+var User, Dialog, Message, ContactList;
 
 function DialogView(app) {
   this.app = app;
+  User = this.app.models.User;
   Dialog = this.app.models.Dialog;
   Message = this.app.models.Message;
   ContactList = this.app.models.ContactList;
@@ -2958,7 +2956,7 @@ DialogView.prototype = {
     var contacts = ContactList.contacts,
         new_members = $('#popupContacts .is-chosen'),
         occupants_ids = $('#popupContacts').data('existing_ids') || [],
-        groupName = occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
+        groupName = occupants_ids.length > 0 ? [ User.contact.full_name, contacts[occupants_ids[0]].full_name ] : [User.contact.full_name],
         occupants_names = occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
         self = this;
 
@@ -2991,7 +2989,7 @@ DialogView.prototype = {
 
     li.remove();
     isSectionEmpty(list);
-    console.log(dialogs[dialog_id]);
+    // console.log(dialogs[dialog_id]);
 
     // delete dialog messages
     localStorage.removeItem('QM.dialog-' + dialog_id);
@@ -3254,7 +3252,7 @@ MessageView.prototype = {
       chat.find('.l-chat-content').prepend(html);
     }
 
-    emojify.run(chat.find('.l-chat-content .mCSB_container')[0]);
+    // emojify.run(chat.find('.l-chat-content .mCSB_container')[0]);
     
   },
 
@@ -3314,8 +3312,11 @@ MessageView.prototype = {
         msg, copyDialogItem, dialog;
 
     msg = Message.create(message);
-    Message.update(msg.id, dialog_id);
     msg.sender_id = id;
+
+    if (notification_type !== '6' || msg.sender_id !== User.contact.id)
+      Message.update(msg.id, dialog_id);
+    
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true);
 
