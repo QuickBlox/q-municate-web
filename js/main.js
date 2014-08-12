@@ -115,10 +115,10 @@ window.onbeforeunload = function() {
   QB.chat.sendPres('unavailable');
 };
 
-window.addEventListener("offline", function(e) {
+window.onoffline = function() {
   $('.no-connection').removeClass('is-hidden');
-});
+};
 
-window.addEventListener("online", function(e) {
+window.ononline = function() {
   $('.no-connection').addClass('is-hidden');
-});
+};

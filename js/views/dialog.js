@@ -249,12 +249,14 @@ DialogView.prototype = {
         html += '<div class="chat-occupants">';
         for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
           id = dialog.occupants_ids[i];
-          html += '<a class="occupant l-flexbox_inline presence-listener" data-id="'+id+'" href="#">';
+          if (id !== User.contact.id) {
+            html += '<a class="occupant l-flexbox_inline presence-listener" data-id="'+id+'" href="#">';
 
-          html = getStatus(roster[id], html);
+            html = getStatus(roster[id], html);
 
-          html += '<span class="name name_occupant">'+contacts[id].full_name+'</span>';
-          html += '</a>';
+            html += '<span class="name name_occupant">'+contacts[id].full_name+'</span>';
+            html += '</a>';
+          }
         }
         html += '</div></div>';
       }

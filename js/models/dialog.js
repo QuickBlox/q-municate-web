@@ -107,7 +107,7 @@ Dialog.prototype = {
               full_name: User.contact.full_name,
               room_jid: dialog.room_jid,
               room_name: dialog.room_name,
-              occupants_ids: dialog.occupants_ids.join()
+              occupants_ids: res.occupants_ids.join()
             }});
           }
         });
@@ -157,7 +157,7 @@ Dialog.prototype = {
             full_name: User.contact.full_name,
             room_jid: dialog.room_jid,
             room_name: dialog.room_name,
-            occupants_ids: dialog.occupants_ids.join()
+            occupants_ids: res.occupants_ids.join()
           }});
         }
       });

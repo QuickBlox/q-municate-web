@@ -116,13 +116,13 @@ window.onbeforeunload = function() {
   QB.chat.sendPres('unavailable');
 };
 
-window.addEventListener("offline", function(e) {
+window.onoffline = function() {
   $('.no-connection').removeClass('is-hidden');
-});
+};
 
-window.addEventListener("online", function(e) {
+window.ononline = function() {
   $('.no-connection').addClass('is-hidden');
-});
+};
 
 },{"./models/attach":2,"./models/contact":3,"./models/contact_list":4,"./models/dialog":5,"./models/message":6,"./models/session":7,"./models/user":8,"./qbApiCalls":9,"./routes":10,"./views/attach":11,"./views/contact_list":12,"./views/dialog":13,"./views/message":14,"./views/user":15}],2:[function(require,module,exports){
 /*
@@ -509,7 +509,7 @@ Dialog.prototype = {
               full_name: User.contact.full_name,
               room_jid: dialog.room_jid,
               room_name: dialog.room_name,
-              occupants_ids: dialog.occupants_ids.join()
+              occupants_ids: res.occupants_ids.join()
             }});
           }
         });
@@ -559,7 +559,7 @@ Dialog.prototype = {
             full_name: User.contact.full_name,
             room_jid: dialog.room_jid,
             room_name: dialog.room_name,
-            occupants_ids: dialog.occupants_ids.join()
+            occupants_ids: res.occupants_ids.join()
           }});
         }
       });
@@ -2959,12 +2959,14 @@ DialogView.prototype = {
         html += '<div class="chat-occupants">';
         for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
           id = dialog.occupants_ids[i];
-          html += '<a class="occupant l-flexbox_inline presence-listener" data-id="'+id+'" href="#">';
+          if (id !== User.contact.id) {
+            html += '<a class="occupant l-flexbox_inline presence-listener" data-id="'+id+'" href="#">';
 
-          html = getStatus(roster[id], html);
+            html = getStatus(roster[id], html);
 
-          html += '<span class="name name_occupant">'+contacts[id].full_name+'</span>';
-          html += '</a>';
+            html += '<span class="name name_occupant">'+contacts[id].full_name+'</span>';
+            html += '</a>';
+          }
         }
         html += '</div></div>';
       }
