@@ -68,14 +68,14 @@ ContactListView.prototype = {
     }
   },
 
-  addContactsToChat: function(objDom) {
+  addContactsToChat: function(objDom, type) {
     var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
         popup = $('#popupContacts'),
         contacts = ContactList.contacts,
         roster = JSON.parse(sessionStorage['QM.roster']),
         html, sortedContacts, friends, user_id;
 
-    openPopup(popup);
+    openPopup(popup, type);
     popup.addClass('not-selected').removeClass('is-addition');
     popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
     popup.find('form')[0].reset();
@@ -419,8 +419,10 @@ ContactListView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
-function openPopup(objDom) {
+function openPopup(objDom, type) {
   objDom.add('.popups').addClass('is-overlay');
+  if (type) objDom.addClass(type);
+  else objDom.removeClass('add');
 }
 
 function scrollbarContacts() {

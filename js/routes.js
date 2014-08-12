@@ -222,6 +222,12 @@ Routes.prototype = {
       ContactListView.addContactsToChat($(this));
     });
 
+    $('#mainPage').on('click', '.addToGroupChat', function(event) {
+      event.preventDefault();
+      if (QMCONFIG.debug) console.log('add people to groupchat');
+      ContactListView.addContactsToChat($(this), 'add');
+    });
+
     /* search
     ----------------------------------------------------- */
     $('#globalSearch').on('submit', function(event) {
@@ -293,7 +299,10 @@ Routes.prototype = {
         popup.find('.btn_popup_private').removeClass('is-hidden').siblings().addClass('is-hidden');
       } else if (len >= 1) {
         popup.removeClass('not-selected');
-        popup.find('.btn_popup_group').removeClass('is-hidden').siblings().addClass('is-hidden');
+        if (popup.is('.add'))
+          popup.find('.btn_popup_add').removeClass('is-hidden').siblings().addClass('is-hidden');
+        else
+          popup.find('.btn_popup_group').removeClass('is-hidden').siblings().addClass('is-hidden');
       } else {
         popup.addClass('not-selected');
       }

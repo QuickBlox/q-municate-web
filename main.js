@@ -87,7 +87,7 @@ QM.prototype = {
 // Application initialization
 $(document).ready(function() {
   // emoji smiles run
-  // emojify.run($('.smiles-wrap')[0]);
+  emojify.run($('.smiles-wrap')[0]);
 
   APP = new QM;
   APP.init();
@@ -1677,6 +1677,12 @@ Routes.prototype = {
       ContactListView.addContactsToChat($(this));
     });
 
+    $('#mainPage').on('click', '.addToGroupChat', function(event) {
+      event.preventDefault();
+      if (QMCONFIG.debug) console.log('add people to groupchat');
+      ContactListView.addContactsToChat($(this), 'add');
+    });
+
     /* search
     ----------------------------------------------------- */
     $('#globalSearch').on('submit', function(event) {
@@ -1748,7 +1754,10 @@ Routes.prototype = {
         popup.find('.btn_popup_private').removeClass('is-hidden').siblings().addClass('is-hidden');
       } else if (len >= 1) {
         popup.removeClass('not-selected');
-        popup.find('.btn_popup_group').removeClass('is-hidden').siblings().addClass('is-hidden');
+        if (popup.is('.add'))
+          popup.find('.btn_popup_add').removeClass('is-hidden').siblings().addClass('is-hidden');
+        else
+          popup.find('.btn_popup_group').removeClass('is-hidden').siblings().addClass('is-hidden');
       } else {
         popup.addClass('not-selected');
       }
@@ -2202,14 +2211,14 @@ ContactListView.prototype = {
     }
   },
 
-  addContactsToChat: function(objDom) {
+  addContactsToChat: function(objDom, type) {
     var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
         popup = $('#popupContacts'),
         contacts = ContactList.contacts,
         roster = JSON.parse(sessionStorage['QM.roster']),
         html, sortedContacts, friends, user_id;
 
-    openPopup(popup);
+    openPopup(popup, type);
     popup.addClass('not-selected').removeClass('is-addition');
     popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
     popup.find('form')[0].reset();
@@ -2553,8 +2562,10 @@ ContactListView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
-function openPopup(objDom) {
+function openPopup(objDom, type) {
   objDom.add('.popups').addClass('is-overlay');
+  if (type) objDom.addClass(type);
+  else objDom.removeClass('add');
 }
 
 function scrollbarContacts() {
@@ -2867,7 +2878,10 @@ DialogView.prototype = {
       html += '<div class="chat-controls">';
       // html += '<button class="btn_chat btn_chat_videocall"><img src="images/icon-videocall.png" alt="videocall"></button>';
       // html += '<button class="btn_chat btn_chat_audiocall"><img src="images/icon-audiocall.png" alt="audiocall"></button>';
-      html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="'+dialog.occupants_ids.join()+'"><img src="images/icon-add.png" alt="add"></button>';
+      if (dialog.type === 3)
+        html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="'+dialog.occupants_ids.join()+'"><img src="images/icon-add.png" alt="add"></button>';
+      else
+        html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="'+dialog.occupants_ids.join()+'"><img src="images/icon-add.png" alt="add"></button>';
       // html += '<button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button>';
       
       if (dialog.type === 3)
@@ -3252,7 +3266,7 @@ MessageView.prototype = {
       chat.find('.l-chat-content').prepend(html);
     }
 
-    // emojify.run(chat.find('.l-chat-content .mCSB_container')[0]);
+    emojify.run(chat.find('.l-chat-content .mCSB_container')[0]);
     
   },
 
@@ -3587,7 +3601,7 @@ UserView.prototype = {
     if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription === 'both')
       html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" href="#">Add people</a></li>';
     else if (dialogs[dialog_id].type !== 3)
-      html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" href="#">Add people</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" href="#">Add people</a></li>';
     
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
     
