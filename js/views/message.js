@@ -311,7 +311,7 @@ MessageView.prototype = {
       ContactList.dialogs[dialog_id] = dialog;
       
       ContactList.add(dialog.occupants_ids, null, function() {
-        var ids = chat.find('.addToGroupChat').data('ids') ? objDom.data('ids').toString().split(',') : [],
+        var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',') : [],
             new_ids = _.difference(dialog.occupants_ids, ids),
             contacts = ContactList.contacts,
             new_id;
