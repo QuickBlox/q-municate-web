@@ -43,6 +43,17 @@ MessageView.prototype = {
       html += '</div></div></article>';
       break;
 
+    case '2':
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+      html += '<div class="message-content">';
+      html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
     case '3':
       html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
       html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
@@ -237,7 +248,8 @@ MessageView.prototype = {
         dialogItem = message.type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-        msg, copyDialogItem, dialog;
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        msg, copyDialogItem, dialog, occupant;
 
     msg = Message.create(message);
     msg.sender_id = id;
@@ -294,12 +306,45 @@ MessageView.prototype = {
     if (notification_type === '6') {
       chat.find('.occupant[data-id="'+id+'"]').remove();
     }
+
+    // add new occupants
+    if (notification_type === '2') {
+      dialog = ContactList.dialogs[dialog_id];
+      ContactList.add(dialog.occupants_ids, null, function() {
+        var ids = chat.find('.addToGroupChat').data('ids') ? objDom.data('ids').toString().split(',') : [],
+            new_ids = _.difference(dialog.occupants_ids, ids),
+            contacts = ContactList.contacts,
+            new_id;
+
+        for (var i = 0, len = new_ids.length; i < len; i++) {
+          new_id = new_ids[i];
+          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+          occupant = getStatus(roster[new_id], occupant);
+          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+        }
+
+        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+      });
+      
+    }
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
+function getStatus(status, html) {
+  if (!status || status.subscription === 'none')
+    html += '<span class="status status_request"></span>';
+  else if (status && status.status)
+    html += '<span class="status status_online"></span>';
+  else
+    html += '<span class="status"></span>';
+
+  return html;
+}
+
 function getFileSize(size) {
   return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' Mb' : (size / 1024).toFixed(1) + 'Kb';
 }

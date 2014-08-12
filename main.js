@@ -521,6 +521,55 @@ Dialog.prototype = {
     });
   },
 
+  updateGroup: function(occupants_names, params, callback) {
+    var QBApiCalls = this.app.service,
+        DialogView = this.app.views.Dialog,
+        ContactList = this.app.models.ContactList,
+        contacts = ContactList.contacts,
+        User = this.app.models.User,
+        self = this,
+        dialog;
+
+    QBApiCalls.updateDialog(params.dialog_id, {push_all: {occupants_ids: [params.occupants_ids]}}, function(res) {
+      dialog = self.create(res);
+      ContactList.dialogs[params.dialog_id] = dialog;
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+      var msgId = QB.chat.helpers.getUniqueId();
+      
+      QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {
+        callback(dialog);
+
+        // send notifications about adding people
+        for (var i = 0, len = params.new_ids.length, id; i < len; i++) {
+          id = params.new_ids[i];
+          QB.chat.send(contacts[id].user_jid, {type: 'chat', extension: {
+            dialog_id: dialog.id,
+            date_sent: Math.floor(Date.now() / 1000),
+
+            notification_type: '1',
+            full_name: User.contact.full_name,
+            room_jid: dialog.room_jid,
+            room_name: dialog.room_name,
+            occupants_ids: dialog.occupants_ids.join()
+          }});
+        }
+      });
+
+      // send notification about updating room
+      QB.chat.send(dialog.room_jid, {id: msgId, type: 'groupchat', body: occupants_names, extension: {
+        save_to_history: 1,
+        dialog_id: dialog.id,
+        date_sent: Math.floor(Date.now() / 1000),
+
+        notification_type: '2',
+        full_name: User.contact.full_name,
+        occupants_ids: dialog.occupants_ids.join(),
+      }});
+
+    });
+  },
+
   leaveChat: function(dialog, callback) {
     var QBApiCalls = this.app.service,
         User = this.app.models.User,
@@ -1679,8 +1728,9 @@ Routes.prototype = {
 
     $('#mainPage').on('click', '.addToGroupChat', function(event) {
       event.preventDefault();
+      var dialog_id = $(this).data('dialog');
       if (QMCONFIG.debug) console.log('add people to groupchat');
-      ContactListView.addContactsToChat($(this), 'add');
+      ContactListView.addContactsToChat($(this), 'add', dialog_id);
     });
 
     /* search
@@ -1785,6 +1835,11 @@ Routes.prototype = {
 
     $('#popupContacts .btn_popup_group').on('click', function() {
       DialogView.createGroupChat();
+    });
+
+    $('#popupContacts .btn_popup_add').on('click', function() {
+      var dialog_id = $(this).parents('.popup').data('dialog');
+      DialogView.createGroupChat('add', dialog_id);
     });
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
@@ -2211,14 +2266,14 @@ ContactListView.prototype = {
     }
   },
 
-  addContactsToChat: function(objDom, type) {
+  addContactsToChat: function(objDom, type, dialog_id) {
     var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
         popup = $('#popupContacts'),
         contacts = ContactList.contacts,
         roster = JSON.parse(sessionStorage['QM.roster']),
         html, sortedContacts, friends, user_id;
 
-    openPopup(popup, type);
+    openPopup(popup, type, dialog_id);
     popup.addClass('not-selected').removeClass('is-addition');
     popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
     popup.find('form')[0].reset();
@@ -2562,10 +2617,10 @@ ContactListView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
-function openPopup(objDom, type) {
+function openPopup(objDom, type, dialog_id) {
   objDom.add('.popups').addClass('is-overlay');
-  if (type) objDom.addClass(type);
-  else objDom.removeClass('add');
+  if (type) objDom.addClass(type).data('dialog', dialog_id);
+  else objDom.removeClass('add').data('dialog', '');
 }
 
 function scrollbarContacts() {
@@ -2774,7 +2829,6 @@ DialogView.prototype = {
         });
       }
 
-      // emojify.run($('.smiles-wrap')[0]);
     });
   },
 
@@ -2881,7 +2935,7 @@ DialogView.prototype = {
       if (dialog.type === 3)
         html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="'+dialog.occupants_ids.join()+'"><img src="images/icon-add.png" alt="add"></button>';
       else
-        html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="'+dialog.occupants_ids.join()+'"><img src="images/icon-add.png" alt="add"></button>';
+        html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="'+dialog.occupants_ids.join()+'" data-dialog="'+dialog_id+'"><img src="images/icon-add.png" alt="add"></button>';
       // html += '<button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button>';
       
       if (dialog.type === 3)
@@ -2966,19 +3020,22 @@ DialogView.prototype = {
     });
   },
 
-  createGroupChat: function() {
+  createGroupChat: function(type, dialog_id) {
     var contacts = ContactList.contacts,
         new_members = $('#popupContacts .is-chosen'),
         occupants_ids = $('#popupContacts').data('existing_ids') || [],
         groupName = occupants_ids.length > 0 ? [ User.contact.full_name, contacts[occupants_ids[0]].full_name ] : [User.contact.full_name],
-        occupants_names = occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
-        self = this;
+        occupants_names = !type && occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
+        self = this, new_ids = [], new_id, occupant,
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        chat = $('.l-chat[data-dialog="'+dialog_id+'"]');
 
     for (var i = 0, len = new_members.length, name; i < len; i++) {
       name = $(new_members[i]).find('.name').text();
       if (groupName.length < 3) groupName.push(name);
       occupants_names.push(name);
-      occupants_ids.push($(new_members[i]).data('id'));
+      occupants_ids.push($(new_members[i]).data('id').toString());
+      new_ids.push($(new_members[i]).data('id').toString());
     }
 
     groupName = groupName.join(', ');
@@ -2986,11 +3043,39 @@ DialogView.prototype = {
     occupants_ids = occupants_ids.join();
 
     self.createDataSpinner(null, true);
-    Dialog.createGroup(occupants_names, {name: groupName, occupants_ids: occupants_ids, type: 2}, function(dialog) {
-      self.removeDataSpinner();
-      $('.is-overlay').removeClass('is-overlay');
-      $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
-    });
+    if (type) {
+      Dialog.updateGroup(occupants_names, {dialog_id: dialog_id, occupants_ids: occupants_ids, new_ids: new_ids}, function(dialog) {
+        self.removeDataSpinner();
+        var dialogItem = $('.dialog-item[data-dialog="'+dialog.id+'"]');
+        if (dialogItem.length > 0) {
+          copyDialogItem = dialogItem.clone();
+          dialogItem.remove();
+          $('#recentList ul').prepend(copyDialogItem);
+          isSectionEmpty($('#recentList ul'));
+        }
+        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        $('.is-overlay').removeClass('is-overlay');
+
+
+        for (var i = 0, len = new_ids.length; i < len; i++) {
+          new_id = new_ids[i];
+          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+          occupant = getStatus(roster[new_id], occupant);
+          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+        }
+
+        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+
+        // $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
+      });
+    } else {
+      Dialog.createGroup(occupants_names, {name: groupName, occupants_ids: occupants_ids, type: 2}, function(dialog) {
+        self.removeDataSpinner();
+        $('.is-overlay').removeClass('is-overlay');
+        $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
+      });
+    }
   },
 
   leaveGroupChat: function(objDom) {
@@ -3125,6 +3210,17 @@ MessageView.prototype = {
       html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
       html += '<div class="message-content">';
       html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+' to the group chat</h4>';
+      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+      html += '</div></div></article>';
+      break;
+
+    case '2':
+      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+      html += '<div class="message-container-wrap">';
+      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+      html += '<div class="message-content">';
+      html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
       html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       html += '</div></div></article>';
       break;
@@ -3323,7 +3419,8 @@ MessageView.prototype = {
         dialogItem = message.type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-        msg, copyDialogItem, dialog;
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        msg, copyDialogItem, dialog, occupant;
 
     msg = Message.create(message);
     msg.sender_id = id;
@@ -3380,12 +3477,45 @@ MessageView.prototype = {
     if (notification_type === '6') {
       chat.find('.occupant[data-id="'+id+'"]').remove();
     }
+
+    // add new occupants
+    if (notification_type === '2') {
+      dialog = ContactList.dialogs[dialog_id];
+      ContactList.add(dialog.occupants_ids, null, function() {
+        var ids = chat.find('.addToGroupChat').data('ids') ? objDom.data('ids').toString().split(',') : [],
+            new_ids = _.difference(dialog.occupants_ids, ids),
+            contacts = ContactList.contacts,
+            new_id;
+
+        for (var i = 0, len = new_ids.length; i < len; i++) {
+          new_id = new_ids[i];
+          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+          occupant = getStatus(roster[new_id], occupant);
+          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+        }
+
+        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+      });
+      
+    }
   }
 
 };
 
 /* Private
 ---------------------------------------------------------------------- */
+function getStatus(status, html) {
+  if (!status || status.subscription === 'none')
+    html += '<span class="status status_request"></span>';
+  else if (status && status.status)
+    html += '<span class="status status_online"></span>';
+  else
+    html += '<span class="status"></span>';
+
+  return html;
+}
+
 function getFileSize(size) {
   return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' Mb' : (size / 1024).toFixed(1) + 'Kb';
 }
@@ -3601,7 +3731,7 @@ UserView.prototype = {
     if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription === 'both')
       html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" href="#">Add people</a></li>';
     else if (dialogs[dialog_id].type !== 3)
-      html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" href="#">Add people</a></li>';
+      html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" data-dialog="'+dialog_id+'" href="#">Add people</a></li>';
     
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
     

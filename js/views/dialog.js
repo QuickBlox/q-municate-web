@@ -127,7 +127,6 @@ DialogView.prototype = {
         });
       }
 
-      // emojify.run($('.smiles-wrap')[0]);
     });
   },
 
@@ -234,7 +233,7 @@ DialogView.prototype = {
       if (dialog.type === 3)
         html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="'+dialog.occupants_ids.join()+'"><img src="images/icon-add.png" alt="add"></button>';
       else
-        html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="'+dialog.occupants_ids.join()+'"><img src="images/icon-add.png" alt="add"></button>';
+        html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="'+dialog.occupants_ids.join()+'" data-dialog="'+dialog_id+'"><img src="images/icon-add.png" alt="add"></button>';
       // html += '<button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button>';
       
       if (dialog.type === 3)
@@ -319,19 +318,22 @@ DialogView.prototype = {
     });
   },
 
-  createGroupChat: function() {
+  createGroupChat: function(type, dialog_id) {
     var contacts = ContactList.contacts,
         new_members = $('#popupContacts .is-chosen'),
         occupants_ids = $('#popupContacts').data('existing_ids') || [],
         groupName = occupants_ids.length > 0 ? [ User.contact.full_name, contacts[occupants_ids[0]].full_name ] : [User.contact.full_name],
-        occupants_names = occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
-        self = this;
+        occupants_names = !type && occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
+        self = this, new_ids = [], new_id, occupant,
+        roster = JSON.parse(sessionStorage['QM.roster']),
+        chat = $('.l-chat[data-dialog="'+dialog_id+'"]');
 
     for (var i = 0, len = new_members.length, name; i < len; i++) {
       name = $(new_members[i]).find('.name').text();
       if (groupName.length < 3) groupName.push(name);
       occupants_names.push(name);
-      occupants_ids.push($(new_members[i]).data('id'));
+      occupants_ids.push($(new_members[i]).data('id').toString());
+      new_ids.push($(new_members[i]).data('id').toString());
     }
 
     groupName = groupName.join(', ');
@@ -339,11 +341,39 @@ DialogView.prototype = {
     occupants_ids = occupants_ids.join();
 
     self.createDataSpinner(null, true);
-    Dialog.createGroup(occupants_names, {name: groupName, occupants_ids: occupants_ids, type: 2}, function(dialog) {
-      self.removeDataSpinner();
-      $('.is-overlay').removeClass('is-overlay');
-      $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
-    });
+    if (type) {
+      Dialog.updateGroup(occupants_names, {dialog_id: dialog_id, occupants_ids: occupants_ids, new_ids: new_ids}, function(dialog) {
+        self.removeDataSpinner();
+        var dialogItem = $('.dialog-item[data-dialog="'+dialog.id+'"]');
+        if (dialogItem.length > 0) {
+          copyDialogItem = dialogItem.clone();
+          dialogItem.remove();
+          $('#recentList ul').prepend(copyDialogItem);
+          isSectionEmpty($('#recentList ul'));
+        }
+        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        $('.is-overlay').removeClass('is-overlay');
+
+
+        for (var i = 0, len = new_ids.length; i < len; i++) {
+          new_id = new_ids[i];
+          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+          occupant = getStatus(roster[new_id], occupant);
+          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+        }
+
+        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+
+        // $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
+      });
+    } else {
+      Dialog.createGroup(occupants_names, {name: groupName, occupants_ids: occupants_ids, type: 2}, function(dialog) {
+        self.removeDataSpinner();
+        $('.is-overlay').removeClass('is-overlay');
+        $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
+      });
+    }
   },
 
   leaveGroupChat: function(objDom) {

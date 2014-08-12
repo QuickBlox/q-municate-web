@@ -68,14 +68,14 @@ ContactListView.prototype = {
     }
   },
 
-  addContactsToChat: function(objDom, type) {
+  addContactsToChat: function(objDom, type, dialog_id) {
     var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
         popup = $('#popupContacts'),
         contacts = ContactList.contacts,
         roster = JSON.parse(sessionStorage['QM.roster']),
         html, sortedContacts, friends, user_id;
 
-    openPopup(popup, type);
+    openPopup(popup, type, dialog_id);
     popup.addClass('not-selected').removeClass('is-addition');
     popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
     popup.find('form')[0].reset();
@@ -419,10 +419,10 @@ ContactListView.prototype = {
 
 /* Private
 ---------------------------------------------------------------------- */
-function openPopup(objDom, type) {
+function openPopup(objDom, type, dialog_id) {
   objDom.add('.popups').addClass('is-overlay');
-  if (type) objDom.addClass(type);
-  else objDom.removeClass('add');
+  if (type) objDom.addClass(type).data('dialog', dialog_id);
+  else objDom.removeClass('add').data('dialog', '');
 }
 
 function scrollbarContacts() {

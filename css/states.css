@@ -1,6 +1,10 @@
 .is-hidden {
   display: none;
 }
+.is-notVisible {
+  opacity: 0;
+  visibility: hidden;
+}
 
 body.is-welcome {
   background: url(../images/bg.jpg) no-repeat;

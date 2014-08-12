@@ -224,8 +224,9 @@ Routes.prototype = {
 
     $('#mainPage').on('click', '.addToGroupChat', function(event) {
       event.preventDefault();
+      var dialog_id = $(this).data('dialog');
       if (QMCONFIG.debug) console.log('add people to groupchat');
-      ContactListView.addContactsToChat($(this), 'add');
+      ContactListView.addContactsToChat($(this), 'add', dialog_id);
     });
 
     /* search
@@ -330,6 +331,11 @@ Routes.prototype = {
 
     $('#popupContacts .btn_popup_group').on('click', function() {
       DialogView.createGroupChat();
+    });
+
+    $('#popupContacts .btn_popup_add').on('click', function() {
+      var dialog_id = $(this).parents('.popup').data('dialog');
+      DialogView.createGroupChat('add', dialog_id);
     });
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
