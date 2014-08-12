@@ -116,6 +116,14 @@ window.onbeforeunload = function() {
   QB.chat.sendPres('unavailable');
 };
 
+window.addEventListener("offline", function(e) {
+  $('.no-connection').removeClass('is-hidden');
+});
+
+window.addEventListener("online", function(e) {
+  $('.no-connection').addClass('is-hidden');
+});
+
 },{"./models/attach":2,"./models/contact":3,"./models/contact_list":4,"./models/dialog":5,"./models/message":6,"./models/session":7,"./models/user":8,"./qbApiCalls":9,"./routes":10,"./views/attach":11,"./views/contact_list":12,"./views/dialog":13,"./views/message":14,"./views/user":15}],2:[function(require,module,exports){
 /*
  * Q-municate chat application

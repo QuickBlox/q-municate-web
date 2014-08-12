@@ -114,3 +114,11 @@ window.fbAsyncInit = function() {
 window.onbeforeunload = function() {
   QB.chat.sendPres('unavailable');
 };
+
+window.addEventListener("offline", function(e) {
+  $('.no-connection').removeClass('is-hidden');
+});
+
+window.addEventListener("online", function(e) {
+  $('.no-connection').addClass('is-hidden');
+});
