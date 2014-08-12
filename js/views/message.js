@@ -256,11 +256,8 @@ MessageView.prototype = {
 
     if (notification_type !== '6' || msg.sender_id !== User.contact.id)
       Message.update(msg.id, dialog_id);
-    
-    if (QMCONFIG.debug) console.log(msg);
-    self.addItem(msg, true, true);
 
-    if (!chat.is(':visible') && dialogItem.length > 0) {
+    if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
       unread++;
       dialogItem.find('.unread').text(unread);
     }
@@ -310,6 +307,9 @@ MessageView.prototype = {
     // add new occupants
     if (notification_type === '2') {
       dialog = ContactList.dialogs[dialog_id];
+      dialog.occupants_ids = occupants_ids;
+      ContactList.dialogs[dialog_id] = dialog;
+      
       ContactList.add(dialog.occupants_ids, null, function() {
         var ids = chat.find('.addToGroupChat').data('ids') ? objDom.data('ids').toString().split(',') : [],
             new_ids = _.difference(dialog.occupants_ids, ids),
@@ -326,8 +326,10 @@ MessageView.prototype = {
 
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
       });
-      
     }
+
+    if (QMCONFIG.debug) console.log(msg);
+    self.addItem(msg, true, true);
   }
 
 };

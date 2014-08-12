@@ -2959,7 +2959,7 @@ DialogView.prototype = {
         html += '<div class="chat-occupants">';
         for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
           id = dialog.occupants_ids[i];
-          if (id !== User.contact.id) {
+          if (id != User.contact.id) {
             html += '<a class="occupant l-flexbox_inline presence-listener" data-id="'+id+'" href="#">';
 
             html = getStatus(roster[id], html);
@@ -3437,11 +3437,8 @@ MessageView.prototype = {
 
     if (notification_type !== '6' || msg.sender_id !== User.contact.id)
       Message.update(msg.id, dialog_id);
-    
-    if (QMCONFIG.debug) console.log(msg);
-    self.addItem(msg, true, true);
 
-    if (!chat.is(':visible') && dialogItem.length > 0) {
+    if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
       unread++;
       dialogItem.find('.unread').text(unread);
     }
@@ -3491,6 +3488,9 @@ MessageView.prototype = {
     // add new occupants
     if (notification_type === '2') {
       dialog = ContactList.dialogs[dialog_id];
+      dialog.occupants_ids = occupants_ids;
+      ContactList.dialogs[dialog_id] = dialog;
+      
       ContactList.add(dialog.occupants_ids, null, function() {
         var ids = chat.find('.addToGroupChat').data('ids') ? objDom.data('ids').toString().split(',') : [],
             new_ids = _.difference(dialog.occupants_ids, ids),
@@ -3507,8 +3507,10 @@ MessageView.prototype = {
 
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
       });
-      
     }
+
+    if (QMCONFIG.debug) console.log(msg);
+    self.addItem(msg, true, true);
   }
 
 };
