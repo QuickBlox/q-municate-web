@@ -9,6 +9,9 @@
 body.is-welcome {
   background: url(../images/bg.jpg) no-repeat;
   background-size: 100% 100%;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
 }
   body.is-welcome .l-wrapper {
     border-left: 1px solid #f0f0f0;
