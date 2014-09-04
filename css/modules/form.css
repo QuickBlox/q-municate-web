@@ -25,7 +25,8 @@
   font-size: 15px;
   line-height: 20px;
   border: 1px solid #bebebe;
-  border-radius: 8px;
+  border-radius: 18px;
+  -webkit-appearance: none;
 }
 
 .form-input-message {

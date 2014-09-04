@@ -164,7 +164,7 @@
       <div class="l-container">
         <header class="l-header l-flexbox l-flexbox_flexbetween">
           <div class="header-logo">
-            <a id="home" href="#"><img src="images/logo-qmunicate.png" alt="Q-municate"></a>
+            <a id="home" href="#"><img src="images/logo-qmunicate.svg" alt="Q-municate"></a>
           </div>
           <ul class="header-links l-flexbox">
             <li class="header-links-item is-hidden">
@@ -347,7 +347,7 @@
         <h3>Global Search</h3>
       </header>
       <form id="globalSearch" class="popup-form" action="#">
-        <input class="form-input-search" type="search" placeholder="Search">
+        <input class="form-input-search" type="search" placeholder="Search" autofocus>
       </form>
       <ul class="popup-elem list list_contacts"></ul>
       <div class="popup-elem note l-flexbox l-flexbox_column">
@@ -388,6 +388,16 @@
       js.src = "https://connect.facebook.net/en_US/sdk.js";
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
+  </script>
+  
+  <script>
+    // Google Analytics
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-26728270-6', 'auto');
+    ga('send', 'pageview');
   </script>
   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
