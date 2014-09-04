@@ -396,9 +396,9 @@ function getContacts() {
         contacts[ids[i]] = JSON.parse(localStorage['QM.contact-' + ids[i]]);
       }
     } catch(e) {
-	    console.log("Error getting contacts from cache. Clearing...");
-	    localStorage.clear();
-	    contacts = {};
+      console.log("Error getting contacts from cache. Clearing...");
+      localStorage.clear();
+      contacts = {};
     }
   }
 

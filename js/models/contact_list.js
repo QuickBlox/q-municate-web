@@ -134,8 +134,14 @@ function getContacts() {
       ids = localStorage['QM.contacts'] ? localStorage['QM.contacts'].split(',') : [];
 
   if (ids.length > 0) {
-    for (var i = 0, len = ids.length; i < len; i++) {
-      contacts[ids[i]] = JSON.parse(localStorage['QM.contact-' + ids[i]]);
+    try {
+      for (var i = 0, len = ids.length; i < len; i++) {
+        contacts[ids[i]] = JSON.parse(localStorage['QM.contact-' + ids[i]]);
+      }
+    } catch(e) {
+      console.log("Error getting contacts from cache. Clearing...");
+      localStorage.clear();
+      contacts = {};
     }
   }
 
