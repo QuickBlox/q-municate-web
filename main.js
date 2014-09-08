@@ -813,7 +813,7 @@ User.prototype = {
         self = this;
 
     FB.api('/me/permissions', function (response) {
-        if (response.data[3].permission === 'user_friends' && response.data[3].status === 'granted') {
+        if (typeof response.data[3] !== 'undefined' && response.data[3].permission === 'user_friends' && response.data[3].status === 'granted') {
 
           // import FB friends
           FB.api('/me/friends', function (res) {
@@ -2556,8 +2556,8 @@ ContactListView.prototype = {
       html = '<li class="list-item" data-jid="'+jid+'">';
       html += '<a class="contact l-flexbox" href="#">';
       html += '<div class="l-flexbox_inline">';
-      html += '<img class="contact-avatar avatar" src="'+contacts[id].avatar_url+'" alt="user">';
-      html += '<span class="name">'+contacts[id].full_name+'</span>';
+      html += '<img class="contact-avatar avatar" src="'+(contacts[id] && contacts[id].avatar_url)+'" alt="user">';
+      html += '<span class="name">'+(contacts[id] && contacts[id].full_name)+'</span>';
       html += '</div><div class="request-controls l-flexbox">';
       html += '<button class="request-button request-button_cancel">&#10005;</button>';
       html += '<button class="request-button request-button_ok">&#10003;</button>';
