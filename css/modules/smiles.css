@@ -54,3 +54,17 @@
       background: #cecece;
       cursor: pointer;
     }
+
+/* emoji plugin */
+.em-wrap {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+}
+.popover_smile .em-wrap:hover {
+  background: #cecece;
+  cursor: pointer;
+}
+  .em {
+    margin: 5px;
+  }
