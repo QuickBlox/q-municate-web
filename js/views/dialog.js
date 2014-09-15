@@ -265,7 +265,8 @@ DialogView.prototype = {
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';
-      html += '<textarea class="form-input-message textarea" placeholder="Type a message"></textarea>';
+      html += '<div class="form-input-message textarea" contenteditable></div>';
+      // html += '<textarea class="text-message is-hidden"></textarea>';
       html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>';
       html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>';
       html += '<input class="attachment" type="file">';
@@ -449,7 +450,8 @@ function textAreaScrollbar() {
   $('.l-chat:visible .textarea').niceScroll({
     cursoropacitymax: 0.5,
     railpadding: {right: 5},
-    zindex: 1
+    zindex: 1,
+    enablekeyboard: false
   });
 }
 

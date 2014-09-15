@@ -46,6 +46,7 @@
         }
           .message-body {
             position: relative;
+            white-space: pre-wrap;
           }
           .message-body p {
             margin-bottom: 10px;

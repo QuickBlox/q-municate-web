@@ -161,7 +161,7 @@ MessageView.prototype = {
         html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
 
       } else {
-        html += '<div class="message-body">'+parser(message.body)+'</div>';
+        html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       }
 
@@ -190,8 +190,6 @@ MessageView.prototype = {
     } else {
       chat.find('.l-chat-content').prepend(html);
     }
-
-    emojify.run(chat.find('.l-chat-content .mCSB_container')[0]);
     
   },
 
@@ -199,15 +197,19 @@ MessageView.prototype = {
     var jid = form.parents('.l-chat').data('jid'),
         id = form.parents('.l-chat').data('id'),
         dialog_id = form.parents('.l-chat').data('dialog'),
-        val = form.find('textarea').val().trim(),
+        val = form.find('.textarea').html().trim(),
         time = Math.floor(Date.now() / 1000),
         type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
         dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
         copyDialogItem;
 
     if (val.length > 0) {
-      form[0].reset();
-      // form.find('textarea').blur();
+      if (form.find('.textarea > span').length > 0) {
+        form.find('.textarea > span').each(function() {
+          $(this).after($(this).find('span').data('unicode')).remove();
+        });
+        val = form.find('.textarea').text().trim();
+      }
       
       // send message
       QB.chat.send(jid, {type: type, body: val, extension: {
@@ -387,7 +389,7 @@ function parser(str) {
   str = escapeHTML(str);
   
   // parser of paragraphs
-  str = ('<p>' + str).replace(/\n\n/g, '<p>').replace(/\n/g, '<br>');
+  str = str.replace(/\n/g, '<br>');
   
   // parser of links
   str = str.replace(URL_REGEXP, function(match) {

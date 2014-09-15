@@ -28,8 +28,7 @@ button:hover {
 }
 
 button,
-input,
-textarea {
+input {
   font-family: 'Helvetica Neue', Arial, sans-serif; /* for Firefox */
   background: none;
 }
@@ -41,13 +40,28 @@ input[type="file"] {
 }
 
 input:focus,
-textarea:focus {
+div[contenteditable="true"]:focus {
+  outline: 0;
   border-color: #66afe9;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
 }
 
 input[type="file"]:focus {
   box-shadow: none;
+}
+
+/* Contenteditable attribute */
+div[contenteditable="true"] {
+  white-space: pre-wrap;
+}
+div[contenteditable="true"]::before {
+  content: "Type a message";
+  line-height: 32px;
+  color: #999;
+}
+div[contenteditable="true"]:focus::before {
+  content: "";
+  line-height: normal;
 }
 
 /* Placeholder */
@@ -68,14 +82,6 @@ input:-ms-input-placeholder            {transition: all 0.2s ease;}
 input:focus::-webkit-input-placeholder {transition: all 0.2s ease; line-height: 100px;}
 input:focus::-moz-placeholder          {transition: all 0.2s ease; line-height: 100px; background-position: 37% 100px;}
 input:focus:-ms-input-placeholder      {transition: all 0.2s ease; line-height: 100px; background-position: 37% 100px;}
-
-textarea::-webkit-input-placeholder       {transition: all 0.2s ease; top: 0;}
-textarea::-moz-placeholder                {transition: all 0.2s ease; top: 0;}
-textarea:-ms-input-placeholder            {transition: all 0.2s ease; top: 0;}
-
-textarea:focus::-webkit-input-placeholder {transition: all 0.2s ease; top: -100px;}
-textarea:focus::-moz-placeholder          {transition: all 0.2s ease; top: -100px;}
-textarea:focus:-ms-input-placeholder      {transition: all 0.2s ease; top: -100px;}
 
 /* Search cancel button */
 input[type="search"]::-webkit-search-cancel-button {

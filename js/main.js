@@ -86,7 +86,10 @@ QM.prototype = {
 // Application initialization
 $(document).ready(function() {
   // emoji smiles run
-  emojify.run($('.smiles-wrap')[0]);
+  $('.smiles-group').each(function() {
+    var obj = $(this);
+    obj.html(minEmoji(obj.text()));
+  });
 
   APP = new QM;
   APP.init();

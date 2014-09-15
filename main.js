@@ -87,7 +87,10 @@ QM.prototype = {
 // Application initialization
 $(document).ready(function() {
   // emoji smiles run
-  emojify.run($('.smiles-wrap')[0]);
+  $('.smiles-group').each(function() {
+    var obj = $(this);
+    obj.html(minEmoji(obj.text()));
+  });
 
   APP = new QM;
   APP.init();
@@ -1556,6 +1559,7 @@ Routes.prototype = {
       var group = $(this).data('group');
       $(this).addClass('is-actived').siblings().removeClass('is-actived');
       $('.smiles-group_'+group).removeClass('is-hidden').siblings().addClass('is-hidden');
+      setCursorToEnd($('.l-chat:visible .textarea'));
     });
 
     $('.smiles-group').mCustomScrollbar({
@@ -1563,11 +1567,12 @@ Routes.prototype = {
       scrollInertia: 150
     });
 
-    $('.emoji').on('click', function() {
-      var code = $(this).attr('title'),
-          val = $('.l-chat:visible .textarea').val();
+    $('.em-wrap').on('click', function() {
+      var code = $(this).find('.em').data('unicode'),
+          val = $('.l-chat:visible .textarea').html();
 
-      $('.l-chat:visible .textarea').val(val + ' ' + code + ' ');
+      $('.l-chat:visible .textarea').addClass('contenteditable').html(val + ' ' + minEmoji(code) + ' ');
+      setCursorToEnd($('.l-chat:visible .textarea'));
     });
 
     /* attachments
@@ -1686,8 +1691,11 @@ Routes.prototype = {
     });
 
     $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
+      var bool = $(this).is('.is-active');
       removePopover();
-      UserView.smilePopover($(this));
+      if (bool === false)
+        UserView.smilePopover($(this));
+      setCursorToEnd($('.l-chat:visible .textarea'));
     });
 
     /* popups
@@ -1858,11 +1866,22 @@ Routes.prototype = {
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
       var shiftKey = event.shiftKey,
-          code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+          code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
+          val = $('.l-chat:visible .textarea').html().trim();
 
       if (code === 13 && !shiftKey) {
         MessageView.sendMessage($(this));
+        $(this).find('.textarea').empty();
       }
+    });
+
+    $('.l-workspace-wrap').on('keyup', '.l-message', function() {
+      var val = $('.l-chat:visible .textarea').text().trim();
+
+      if (val.length > 0)
+        $('.l-chat:visible .textarea').addClass('contenteditable');
+      else
+        $('.l-chat:visible .textarea').removeClass('contenteditable').empty();
     });
 
     $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
@@ -1915,7 +1934,6 @@ function clickBehaviour(e) {
     return false;
   } else {
     removePopover();
-
     if (objDom.is('.popups') && !$('.popup.is-overlay').is('.is-open')) {
       closePopup();
     } else {
@@ -1969,6 +1987,23 @@ function closePopup() {
 
 function getFileDownloadLink(uid) {
   return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
+}
+
+function setCursorToEnd(el) {
+  el.focus();
+  if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+    var range = document.createRange();
+    range.selectNodeContents(el.get(0));
+    range.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else if (typeof document.body.createTextRange != "undefined") {
+    var textRange = document.body.createTextRange();
+    textRange.moveToElementText(el.get(0));
+    textRange.collapse(false);
+    textRange.select();
+  }
 }
 
 },{}],11:[function(require,module,exports){
@@ -2981,7 +3016,8 @@ DialogView.prototype = {
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';
-      html += '<textarea class="form-input-message textarea" placeholder="Type a message"></textarea>';
+      html += '<div class="form-input-message textarea" contenteditable></div>';
+      // html += '<textarea class="text-message is-hidden"></textarea>';
       html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>';
       html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>';
       html += '<input class="attachment" type="file">';
@@ -3165,7 +3201,8 @@ function textAreaScrollbar() {
   $('.l-chat:visible .textarea').niceScroll({
     cursoropacitymax: 0.5,
     railpadding: {right: 5},
-    zindex: 1
+    zindex: 1,
+    enablekeyboard: false
   });
 }
 
@@ -3348,7 +3385,7 @@ MessageView.prototype = {
         html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
 
       } else {
-        html += '<div class="message-body">'+parser(message.body)+'</div>';
+        html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       }
 
@@ -3377,8 +3414,6 @@ MessageView.prototype = {
     } else {
       chat.find('.l-chat-content').prepend(html);
     }
-
-    emojify.run(chat.find('.l-chat-content .mCSB_container')[0]);
     
   },
 
@@ -3386,15 +3421,19 @@ MessageView.prototype = {
     var jid = form.parents('.l-chat').data('jid'),
         id = form.parents('.l-chat').data('id'),
         dialog_id = form.parents('.l-chat').data('dialog'),
-        val = form.find('textarea').val().trim(),
+        val = form.find('.textarea').html().trim(),
         time = Math.floor(Date.now() / 1000),
         type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
         dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
         copyDialogItem;
 
     if (val.length > 0) {
-      form[0].reset();
-      // form.find('textarea').blur();
+      if (form.find('.textarea > span').length > 0) {
+        form.find('.textarea > span').each(function() {
+          $(this).after($(this).find('span').data('unicode')).remove();
+        });
+        val = form.find('.textarea').text().trim();
+      }
       
       // send message
       QB.chat.send(jid, {type: type, body: val, extension: {
@@ -3574,7 +3613,7 @@ function parser(str) {
   str = escapeHTML(str);
   
   // parser of paragraphs
-  str = ('<p>' + str).replace(/\n\n/g, '<p>').replace(/\n/g, '<br>');
+  str = str.replace(/\n/g, '<br>');
   
   // parser of links
   str = str.replace(URL_REGEXP, function(match) {

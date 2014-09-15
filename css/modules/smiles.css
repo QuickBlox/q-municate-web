@@ -68,3 +68,15 @@
   .em {
     margin: 5px;
   }
+
+.textarea .em-wrap,
+.message-body .em-wrap {
+  width: auto;
+  height: auto;
+}
+  .textarea .em-wrap .em,
+  .message-body .em-wrap .em {
+    position: relative;
+    top: 5px;
+    margin: 0;
+  }

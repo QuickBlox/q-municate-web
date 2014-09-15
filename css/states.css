@@ -95,3 +95,8 @@ input.is-error:focus {
 .is-group .btn_chat_profile {
   display: none;
 }
+
+.is-contenteditable::before {
+  content: "";
+  line-height: normal;
+}
