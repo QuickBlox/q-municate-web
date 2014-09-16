@@ -405,7 +405,11 @@ function getContacts() {
   if (ids.length > 0) {
     try {
       for (var i = 0, len = ids.length; i < len; i++) {
-        contacts[ids[i]] = JSON.parse(localStorage['QM.contact-' + ids[i]]);
+        contacts[ids[i]] = typeof localStorage['QM.contact-' + ids[i]] !== 'undefined' ?
+                           JSON.parse(localStorage['QM.contact-' + ids[i]]) :
+                           true;
+
+        if (contacts[ids[i]] === true) delete contacts[ids[i]];
       }
     } catch(e) {
       console.log("Error getting contacts from cache. Clearing...");
