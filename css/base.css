@@ -54,14 +54,13 @@ input[type="file"]:focus {
 div[contenteditable="true"] {
   white-space: pre-wrap;
 }
-div[contenteditable="true"]::before {
-  content: "Type a message";
+div[contenteditable="true"]:empty:before {
+  content: attr(placeholder);
   line-height: 32px;
-  color: #999;
+  color: #aaa;
 }
-div[contenteditable="true"]:focus::before {
+div[contenteditable="true"]:focus:empty:before {
   content: "";
-  line-height: normal;
 }
 
 /* Placeholder */

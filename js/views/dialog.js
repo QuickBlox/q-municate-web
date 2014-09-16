@@ -265,7 +265,7 @@ DialogView.prototype = {
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';
-      html += '<div class="form-input-message textarea" contenteditable></div>';
+      html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
       // html += '<textarea class="text-message is-hidden"></textarea>';
       html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>';
       html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>';
