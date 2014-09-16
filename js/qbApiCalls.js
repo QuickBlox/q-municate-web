@@ -353,6 +353,7 @@ QBApiCalls.prototype = {
 var fail = function(errMsg) {
   UserView.removeSpinner();
   $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
+  $('section:visible').find('input:password').val('');
 };
 
 var failUser = function(err) {

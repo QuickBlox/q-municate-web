@@ -1136,6 +1136,7 @@ function validate(form, user) {
 function fail(user, errMsg) {
   user._valid = false;
   $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
+  $('section:visible').find('input:password').val('');
 }
 
 function getImport(user) {
@@ -1506,6 +1507,7 @@ QBApiCalls.prototype = {
 var fail = function(errMsg) {
   UserView.removeSpinner();
   $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
+  $('section:visible').find('input:password').val('');
 };
 
 var failUser = function(err) {
