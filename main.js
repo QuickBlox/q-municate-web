@@ -3927,7 +3927,7 @@ var switchPage = function(page) {
   if (!page.is('#mainPage')) {
     page.find('form').removeClass('is-hidden').next('.l-form').remove(); // reset Forgot form after success sending of letter
     page.find('input:file').prev().find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
-    page.find('input:checkbox').prop('checked', true);
+    page.find('input:checkbox').prop('checked', false);
     page.find('input:first').focus();
   }
 };
