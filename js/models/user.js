@@ -369,8 +369,9 @@ function validate(form, user) {
 
 function fail(user, errMsg) {
   user._valid = false;
-  $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
-  $('section:visible').find('input:password').val('');
+  $('section:visible .text_error').addClass('is-error').text(errMsg);
+  $('section:visible input:password').val('');
+  $('section:visible .chroma-hash label').css('background-color', 'rgb(255, 255, 255)');
 }
 
 function getImport(user) {
