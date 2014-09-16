@@ -1,16 +1,16 @@
 /* Configuration your application */
 var QMCONFIG = {
   
-  // Local account
+  // QB account
   qbAccount: {
-    appId: 13318,
-    authKey: 'WzrAY7vrGmbgFfP',
-    authSecret: 'xS2uerEveGHmEun'
+    appId: 14303,
+    authKey: 'gj5Vps4QB-HKJgt',
+    authSecret: 'AHpJ6T4L9cVrMxc'
   },
 
-  // Local FB app
+  // FB app
   fbAccount: {
-    appId: '605405446247805',
+    appId: '623755094412840',
     scope: 'email,user_friends'
   },
 

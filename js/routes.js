@@ -38,6 +38,7 @@ Routes.prototype = {
       var group = $(this).data('group');
       $(this).addClass('is-actived').siblings().removeClass('is-actived');
       $('.smiles-group_'+group).removeClass('is-hidden').siblings().addClass('is-hidden');
+      setCursorToEnd($('.l-chat:visible .textarea'));
     });
 
     $('.smiles-group').mCustomScrollbar({
@@ -45,11 +46,12 @@ Routes.prototype = {
       scrollInertia: 150
     });
 
-    $('.emoji').on('click', function() {
-      var code = $(this).attr('title'),
-          val = $('.l-chat:visible .textarea').val();
+    $('.em-wrap').on('click', function() {
+      var code = $(this).find('.em').data('unicode'),
+          val = $('.l-chat:visible .textarea').html();
 
-      $('.l-chat:visible .textarea').val(val + ' ' + code + ' ');
+      $('.l-chat:visible .textarea').addClass('contenteditable').html(val + ' ' + minEmoji(code) + ' ');
+      setCursorToEnd($('.l-chat:visible .textarea'));
     });
 
     /* attachments
@@ -168,8 +170,11 @@ Routes.prototype = {
     });
 
     $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
+      var bool = $(this).is('.is-active');
       removePopover();
-      UserView.smilePopover($(this));
+      if (bool === false)
+        UserView.smilePopover($(this));
+      setCursorToEnd($('.l-chat:visible .textarea'));
     });
 
     /* popups
@@ -340,11 +345,22 @@ Routes.prototype = {
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
       var shiftKey = event.shiftKey,
-          code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+          code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
+          val = $('.l-chat:visible .textarea').html().trim();
 
       if (code === 13 && !shiftKey) {
         MessageView.sendMessage($(this));
+        $(this).find('.textarea').empty();
       }
+    });
+
+    $('.l-workspace-wrap').on('keyup', '.l-message', function() {
+      var val = $('.l-chat:visible .textarea').text().trim();
+
+      if (val.length > 0)
+        $('.l-chat:visible .textarea').addClass('contenteditable');
+      else
+        $('.l-chat:visible .textarea').removeClass('contenteditable').empty();
     });
 
     $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
@@ -397,7 +413,6 @@ function clickBehaviour(e) {
     return false;
   } else {
     removePopover();
-
     if (objDom.is('.popups') && !$('.popup.is-overlay').is('.is-open')) {
       closePopup();
     } else {
@@ -451,4 +466,21 @@ function closePopup() {
 
 function getFileDownloadLink(uid) {
   return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
+}
+
+function setCursorToEnd(el) {
+  el.focus();
+  if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+    var range = document.createRange();
+    range.selectNodeContents(el.get(0));
+    range.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else if (typeof document.body.createTextRange != "undefined") {
+    var textRange = document.body.createTextRange();
+    textRange.moveToElementText(el.get(0));
+    textRange.collapse(false);
+    textRange.select();
+  }
 }

@@ -85,35 +85,47 @@ QM.prototype = {
 
 // Application initialization
 $(document).ready(function() {
-  // emoji smiles run
-  emojify.run($('.smiles-wrap')[0]);
+  $.ajaxSetup({ cache: true });
+  $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
+    FB.init({
+      appId: QMCONFIG.fbAccount.appId,
+      version: 'v2.0'
+    });
+    if (QMCONFIG.debug) console.log('FB init', FB);
 
-  APP = new QM;
-  APP.init();
+    // emoji smiles run
+    $('.smiles-group').each(function() {
+      var obj = $(this);
+      obj.html(minEmoji(obj.text()));
+    });
+
+    APP = new QM;
+    APP.init();
+  });
 });
 
 // FB SDK initialization
-window.fbAsyncInit = function() {
-  var view = APP.views.User;
+// window.fbAsyncInit = function() {
+//   var view = APP.views.User;
 
-  FB.init({
-    appId: QMCONFIG.fbAccount.appId,
-    version: 'v2.0'
-  });
-  if (QMCONFIG.debug) console.log('FB init', FB);
+//   FB.init({
+//     appId: QMCONFIG.fbAccount.appId,
+//     version: 'v2.0'
+//   });
+//   if (QMCONFIG.debug) console.log('FB init', FB);
 
-  // If you called the getFBStatus function before FB.init
-  // Continue it again
-  if (sessionStorage['QM.is_getFBStatus']) {
-    sessionStorage.removeItem('QM.is_getFBStatus');
-    view.getFBStatus();
-  }
-};
+//   // If you called the getFBStatus function before FB.init
+//   // Continue it again
+//   if (sessionStorage['QM.is_getFBStatus']) {
+//     sessionStorage.removeItem('QM.is_getFBStatus');
+//     view.getFBStatus();
+//   }
+// };
 
 // Leave a chat after closing window
-window.onbeforeunload = function() {
-  QB.chat.sendPres('unavailable');
-};
+// window.onbeforeunload = function() {
+//   QB.chat.sendPres('unavailable');
+// };
 
 window.onoffline = function() {
   $('.no-connection').removeClass('is-hidden');
