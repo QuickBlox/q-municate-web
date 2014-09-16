@@ -42,7 +42,7 @@ var QMCONFIG = {
     fileName: "File name mustn't be more than 100 characters",
     fileSize: "File mustn't be more than 10 MB",
     emailExists: "The email has already been taken",
-    unauthorized: "The email and password you entered are incorrect",
+    unauthorized: "The email or password is incorrect",
     notFoundEmail: "The email you entered wasn't found",
     crashFBToken: "Sorry, we noticed that you had logged out from Facebook so we need to recreate your FB token now. Please click the Connect with FB button again"
   }
