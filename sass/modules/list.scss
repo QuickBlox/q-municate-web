@@ -1,0 +1,64 @@
+/* list */
+.list-item {
+  height: 60px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+.list-item:hover {
+  background: #f8f8f8;
+}
+
+.list-actions {
+  position: relative;
+  width: 160px;
+  z-index: 2;
+}
+  .list-actions_contacts {
+    margin: -15px auto 0;
+  }
+  .list-actions_occupants {
+    position: absolute;
+    margin-top: 32px;
+  }
+  .list-actions_profile {
+    position: absolute;
+    top: 74px;
+    right: 0;
+  }
+    .list-actions .list-item {
+      height: auto;
+    }
+    .list-actions .list-item:last-child {
+      border-bottom: 0;
+    }
+      .list-actions-action {
+        display: block;
+        padding: 0 10px;
+        font-size: 16px;
+        line-height: 40px;
+        color: #333;
+      }
+      .list-actions-action:hover {
+        opacity: 1;
+      }
+
+.list_contacts {
+  height: calc(100% - 60px - 60px - 37px); /* 37px - spinner_bounce height */
+}
+.popup-content .list_contacts {
+  height: 100%;
+}
+
+/* hover icons */
+.list-item .icon-active,
+.header-links-item .icon-active {
+  display: none;
+}
+.list-item:hover .icon-normal,
+.header-links-item:hover .icon-normal {
+  display: none;
+}
+.list-item:hover .icon-active,
+.header-links-item:hover .icon-active {
+  display: inline-block;
+}
