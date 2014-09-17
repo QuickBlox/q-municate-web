@@ -2227,6 +2227,7 @@ AttachView.prototype = {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
+      $('#recentList').removeClass('is-hidden');
       isSectionEmpty($('#recentList ul'));
     }
   }
@@ -2444,6 +2445,7 @@ ContactListView.prototype = {
     copyDialogItem = dialogItem.clone();
     dialogItem.remove();
     $('#recentList ul').prepend(copyDialogItem);
+    $('#recentList').removeClass('is-hidden');
     isSectionEmpty($('#recentList ul'));
   },
 
@@ -2516,6 +2518,7 @@ ContactListView.prototype = {
     copyDialogItem = dialogItem.clone();
     dialogItem.remove();
     $('#recentList ul').prepend(copyDialogItem);
+    $('#recentList').removeClass('is-hidden');
     isSectionEmpty($('#recentList ul'));
   },
 
@@ -3120,6 +3123,7 @@ DialogView.prototype = {
           copyDialogItem = dialogItem.clone();
           dialogItem.remove();
           $('#recentList ul').prepend(copyDialogItem);
+          $('#recentList').removeClass('is-hidden');
           isSectionEmpty($('#recentList ul'));
         }
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
@@ -3510,6 +3514,7 @@ MessageView.prototype = {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
+      $('#recentList').removeClass('is-hidden');
       isSectionEmpty($('#recentList ul'));
     }
 

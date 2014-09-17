@@ -201,6 +201,7 @@ AttachView.prototype = {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
+      $('#recentList').removeClass('is-hidden');
       isSectionEmpty($('#recentList ul'));
     }
   }

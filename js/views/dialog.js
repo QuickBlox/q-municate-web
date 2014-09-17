@@ -352,6 +352,7 @@ DialogView.prototype = {
           copyDialogItem = dialogItem.clone();
           dialogItem.remove();
           $('#recentList ul').prepend(copyDialogItem);
+          $('#recentList').removeClass('is-hidden');
           isSectionEmpty($('#recentList ul'));
         }
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
