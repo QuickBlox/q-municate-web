@@ -1,18 +1,27 @@
 /* Configuration your application */
 var QMCONFIG = {
-  
-  // Local account
-  qbAccount: {
-    appId: 12496,
-    authKey: 'DxGShn2UtN5TUfd',
-    authSecret: 'gypfTzd3VbqYxsK'
-  },
 
-  // Local FB app
+  /* Development environment */
+  qbAccount: {
+    appId: 13318,
+    authKey: 'WzrAY7vrGmbgFfP',
+    authSecret: 'xS2uerEveGHmEun'
+  },
   fbAccount: {
-    appId: '1445555125707161',
+    appId: '605405446247805',
     scope: 'email,user_friends'
   },
+
+  /* Test local environment */
+  // qbAccount: {
+  //   appId: 14303,
+  //   authKey: 'gj5Vps4QB-HKJgt',
+  //   authSecret: 'AHpJ6T4L9cVrMxc'
+  // },
+  // fbAccount: {
+  //   appId: '623755094412840',
+  //   scope: 'email,user_friends'
+  // },
 
   debug: true,
 
@@ -42,7 +51,7 @@ var QMCONFIG = {
     fileName: "File name mustn't be more than 100 characters",
     fileSize: "File mustn't be more than 10 MB",
     emailExists: "The email has already been taken",
-    unauthorized: "The email and password you entered are incorrect",
+    unauthorized: "The email or password is incorrect",
     notFoundEmail: "The email you entered wasn't found",
     crashFBToken: "Sorry, we noticed that you had logged out from Facebook so we need to recreate your FB token now. Please click the Connect with FB button again"
   }

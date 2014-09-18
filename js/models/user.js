@@ -63,7 +63,7 @@ User.prototype = {
         self = this;
 
     FB.api('/me/permissions', function (response) {
-        if (response.data[3].permission === 'user_friends' && response.data[3].status === 'granted') {
+        if (typeof response.data[3] !== 'undefined' && response.data[3].permission === 'user_friends' && response.data[3].status === 'granted') {
 
           // import FB friends
           FB.api('/me/friends', function (res) {
@@ -369,7 +369,9 @@ function validate(form, user) {
 
 function fail(user, errMsg) {
   user._valid = false;
-  $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
+  $('section:visible .text_error').addClass('is-error').text(errMsg);
+  $('section:visible input:password').val('');
+  $('section:visible .chroma-hash label').css('background-color', 'rgb(255, 255, 255)');
 }
 
 function getImport(user) {

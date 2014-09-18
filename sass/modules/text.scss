@@ -1,0 +1,53 @@
+/* text */
+.text {
+  display: block;
+  font-size: 1.6vh;
+  line-height: 2.2vh;
+  color: #999;
+  text-align: center;
+}
+.l-sidebar .text,
+.popup .text {
+  font-size: 16px;
+  line-height: 22px;
+}
+  .text_welcome {
+    font-size: 2.2vh;
+  }
+  .text_error {
+    margin-bottom: 2.2vh;
+    color: #c03d3d;
+    opacity: 0;
+  }
+  .text_signup {
+    margin-bottom: 2.5vh;
+    font-size: 1.4vh;
+    line-height: 2vh;
+  }
+    .text_signup a {
+      color: #999;
+    }
+  .text_login {
+    margin-bottom: 3.5vh;
+  }
+  .text_forgot {
+    margin-bottom: 2vh;
+    font-size: 1.8vh;
+    line-height: 2.4vh;
+  }
+    .text_forgot_black {
+      margin-top: 4.5vh;
+      color: #333;
+    }
+
+.note {
+  padding-top: 25px;
+}
+  .text_alert {
+    margin-bottom: 20px;
+    padding-left: 20px;
+    font-size: 32px !important;
+  }
+  .text_alert_success {
+    padding-left: 0;
+  }

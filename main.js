@@ -86,35 +86,47 @@ QM.prototype = {
 
 // Application initialization
 $(document).ready(function() {
-  // emoji smiles run
-  emojify.run($('.smiles-wrap')[0]);
+  $.ajaxSetup({ cache: true });
+  $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
+    FB.init({
+      appId: QMCONFIG.fbAccount.appId,
+      version: 'v2.0'
+    });
+    if (QMCONFIG.debug) console.log('FB init', FB);
 
-  APP = new QM;
-  APP.init();
+    // emoji smiles run
+    $('.smiles-group').each(function() {
+      var obj = $(this);
+      obj.html(minEmoji(obj.text()));
+    });
+
+    APP = new QM;
+    APP.init();
+  });
 });
 
 // FB SDK initialization
-window.fbAsyncInit = function() {
-  var view = APP.views.User;
+// window.fbAsyncInit = function() {
+//   var view = APP.views.User;
 
-  FB.init({
-    appId: QMCONFIG.fbAccount.appId,
-    version: 'v2.0'
-  });
-  if (QMCONFIG.debug) console.log('FB init', FB);
+//   FB.init({
+//     appId: QMCONFIG.fbAccount.appId,
+//     version: 'v2.0'
+//   });
+//   if (QMCONFIG.debug) console.log('FB init', FB);
 
-  // If you called the getFBStatus function before FB.init
-  // Continue it again
-  if (sessionStorage['QM.is_getFBStatus']) {
-    sessionStorage.removeItem('QM.is_getFBStatus');
-    view.getFBStatus();
-  }
-};
+//   // If you called the getFBStatus function before FB.init
+//   // Continue it again
+//   if (sessionStorage['QM.is_getFBStatus']) {
+//     sessionStorage.removeItem('QM.is_getFBStatus');
+//     view.getFBStatus();
+//   }
+// };
 
 // Leave a chat after closing window
-window.onbeforeunload = function() {
-  QB.chat.sendPres('unavailable');
-};
+// window.onbeforeunload = function() {
+//   QB.chat.sendPres('unavailable');
+// };
 
 window.onoffline = function() {
   $('.no-connection').removeClass('is-hidden');
@@ -393,7 +405,11 @@ function getContacts() {
   if (ids.length > 0) {
     try {
       for (var i = 0, len = ids.length; i < len; i++) {
-        contacts[ids[i]] = JSON.parse(localStorage['QM.contact-' + ids[i]]);
+        contacts[ids[i]] = typeof localStorage['QM.contact-' + ids[i]] !== 'undefined' ?
+                           JSON.parse(localStorage['QM.contact-' + ids[i]]) :
+                           true;
+
+        if (contacts[ids[i]] === true) delete contacts[ids[i]];
       }
     } catch(e) {
       console.log("Error getting contacts from cache. Clearing...");
@@ -813,7 +829,7 @@ User.prototype = {
         self = this;
 
     FB.api('/me/permissions', function (response) {
-        if (response.data[3].permission === 'user_friends' && response.data[3].status === 'granted') {
+        if (typeof response.data[3] !== 'undefined' && response.data[3].permission === 'user_friends' && response.data[3].status === 'granted') {
 
           // import FB friends
           FB.api('/me/friends', function (res) {
@@ -1119,7 +1135,9 @@ function validate(form, user) {
 
 function fail(user, errMsg) {
   user._valid = false;
-  $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
+  $('section:visible .text_error').addClass('is-error').text(errMsg);
+  $('section:visible input:password').val('');
+  $('section:visible .chroma-hash label').css('background-color', 'rgb(255, 255, 255)');
 }
 
 function getImport(user) {
@@ -1489,7 +1507,9 @@ QBApiCalls.prototype = {
 ---------------------------------------------------------------------- */
 var fail = function(errMsg) {
   UserView.removeSpinner();
-  $('section:visible').find('.text_error').addClass('is-error').text(errMsg);
+  $('section:visible .text_error').addClass('is-error').text(errMsg);
+  $('section:visible input:password').val('');
+  $('section:visible .chroma-hash label').css('background-color', 'rgb(255, 255, 255)');
 };
 
 var failUser = function(err) {
@@ -1556,6 +1576,7 @@ Routes.prototype = {
       var group = $(this).data('group');
       $(this).addClass('is-actived').siblings().removeClass('is-actived');
       $('.smiles-group_'+group).removeClass('is-hidden').siblings().addClass('is-hidden');
+      setCursorToEnd($('.l-chat:visible .textarea'));
     });
 
     $('.smiles-group').mCustomScrollbar({
@@ -1563,11 +1584,12 @@ Routes.prototype = {
       scrollInertia: 150
     });
 
-    $('.emoji').on('click', function() {
-      var code = $(this).attr('title'),
-          val = $('.l-chat:visible .textarea').val();
+    $('.em-wrap').on('click', function() {
+      var code = $(this).find('.em').data('unicode'),
+          val = $('.l-chat:visible .textarea').html();
 
-      $('.l-chat:visible .textarea').val(val + ' ' + code + ' ');
+      $('.l-chat:visible .textarea').addClass('contenteditable').html(val + ' ' + minEmoji(code) + ' ');
+      setCursorToEnd($('.l-chat:visible .textarea'));
     });
 
     /* attachments
@@ -1686,8 +1708,11 @@ Routes.prototype = {
     });
 
     $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
+      var bool = $(this).is('.is-active');
       removePopover();
-      UserView.smilePopover($(this));
+      if (bool === false)
+        UserView.smilePopover($(this));
+      setCursorToEnd($('.l-chat:visible .textarea'));
     });
 
     /* popups
@@ -1858,11 +1883,22 @@ Routes.prototype = {
 
     $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
       var shiftKey = event.shiftKey,
-          code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+          code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
+          val = $('.l-chat:visible .textarea').html().trim();
 
       if (code === 13 && !shiftKey) {
         MessageView.sendMessage($(this));
+        $(this).find('.textarea').empty();
       }
+    });
+
+    $('.l-workspace-wrap').on('keyup', '.l-message', function() {
+      var val = $('.l-chat:visible .textarea').text().trim();
+
+      if (val.length > 0)
+        $('.l-chat:visible .textarea').addClass('contenteditable');
+      else
+        $('.l-chat:visible .textarea').removeClass('contenteditable').empty();
     });
 
     $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
@@ -1915,7 +1951,6 @@ function clickBehaviour(e) {
     return false;
   } else {
     removePopover();
-
     if (objDom.is('.popups') && !$('.popup.is-overlay').is('.is-open')) {
       closePopup();
     } else {
@@ -1969,6 +2004,23 @@ function closePopup() {
 
 function getFileDownloadLink(uid) {
   return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
+}
+
+function setCursorToEnd(el) {
+  el.focus();
+  if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+    var range = document.createRange();
+    range.selectNodeContents(el.get(0));
+    range.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else if (typeof document.body.createTextRange != "undefined") {
+    var textRange = document.body.createTextRange();
+    textRange.moveToElementText(el.get(0));
+    textRange.collapse(false);
+    textRange.select();
+  }
 }
 
 },{}],11:[function(require,module,exports){
@@ -2175,6 +2227,7 @@ AttachView.prototype = {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
+      $('#recentList').removeClass('is-hidden');
       isSectionEmpty($('#recentList ul'));
     }
   }
@@ -2331,16 +2384,17 @@ ContactListView.prototype = {
     var jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
         roster = JSON.parse(sessionStorage['QM.roster']);
 
-    QB.chat.roster.add(jid);
+    QB.chat.roster.add(jid, function() {
+      // update roster
+      roster[id] = {
+        subscription: 'none',
+        ask: 'subscribe'
+      };
+      ContactList.saveRoster(roster);
 
-    // update roster
-    roster[id] = {
-      subscription: 'none',
-      ask: 'subscribe'
-    };
-    ContactList.saveRoster(roster);
+      Dialog.createPrivate(jid);
+    });
 
-    Dialog.createPrivate(jid);
   },
 
   sendSubscribe: function(objDom, isChat) {
@@ -2356,43 +2410,46 @@ ContactListView.prototype = {
       objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
       objDom.remove();
     }
-    QB.chat.roster.add(jid);
 
-    // update roster
-    roster[id] = {
-      subscription: 'none',
-      ask: 'subscribe'
-    };
-    ContactList.saveRoster(roster);
+    QB.chat.roster.add(jid, function() {
+      // update roster
+      roster[id] = {
+        subscription: 'none',
+        ask: 'subscribe'
+      };
+      ContactList.saveRoster(roster);
 
-    if (dialogItem) {
-      // send notification about subscribe
-      QB.chat.send(jid, {type: 'chat', extension: {
-        save_to_history: 1,
-        dialog_id: dialogItem.getAttribute('data-dialog'),
-        date_sent: time,
+      if (dialogItem) {
+        // send notification about subscribe
+        QB.chat.send(jid, {type: 'chat', extension: {
+          save_to_history: 1,
+          dialog_id: dialogItem.getAttribute('data-dialog'),
+          date_sent: time,
 
-        notification_type: '3',
-        full_name: User.contact.full_name,
-      }});
+          notification_type: '3',
+          full_name: User.contact.full_name,
+        }});
 
-      message = Message.create({
-        chat_dialog_id: dialogItem.getAttribute('data-dialog'),
-        notification_type: '3',
-        date_sent: time,
-        sender_id: User.contact.id
-      });
+        message = Message.create({
+          chat_dialog_id: dialogItem.getAttribute('data-dialog'),
+          notification_type: '3',
+          date_sent: time,
+          sender_id: User.contact.id
+        });
 
-      MessageView.addItem(message, true, true);
-    } else {
-      Dialog.createPrivate(jid);
-    }
+        MessageView.addItem(message, true, true);
+      } else {
+        Dialog.createPrivate(jid);
+      }
 
-    dialogItem = $('.dialog-item[data-id="'+id+'"]');
-    copyDialogItem = dialogItem.clone();
-    dialogItem.remove();
-    $('#recentList ul').prepend(copyDialogItem);
-    isSectionEmpty($('#recentList ul'));
+      dialogItem = $('.dialog-item[data-id="'+id+'"]');
+      copyDialogItem = dialogItem.clone();
+      dialogItem.remove();
+      $('#recentList ul').prepend(copyDialogItem);
+      $('#recentList').removeClass('is-hidden');
+      isSectionEmpty($('#recentList ul'));
+    });
+
   },
 
   sendConfirm: function(objDom) {
@@ -2421,50 +2478,53 @@ ContactListView.prototype = {
     delete notConfirmed[id];
     ContactList.saveNotConfirmed(notConfirmed);
 
-    QB.chat.roster.confirm(jid);
-    // send notification about confirm
-    QB.chat.send(jid, {type: 'chat', extension: {
-      save_to_history: 1,
-      dialog_id: hiddenDialogs[id],
-      date_sent: time,
+    QB.chat.roster.confirm(jid, function() {
+      // send notification about confirm
+      QB.chat.send(jid, {type: 'chat', extension: {
+        save_to_history: 1,
+        dialog_id: hiddenDialogs[id],
+        date_sent: time,
 
-      notification_type: '5',
-      full_name: User.contact.full_name,
-    }});
+        notification_type: '5',
+        full_name: User.contact.full_name,
+      }});
 
-    message = Message.create({
-      chat_dialog_id: hiddenDialogs[id],
-      notification_type: '5',
-      date_sent: time,
-      sender_id: User.contact.id
+      message = Message.create({
+        chat_dialog_id: hiddenDialogs[id],
+        notification_type: '5',
+        date_sent: time,
+        sender_id: User.contact.id
+      });
+      MessageView.addItem(message, true, true);
+
+      // delete duplicate contact item
+      li = $('.dialog-item[data-id="'+id+'"]');
+      list = li.parents('ul');
+      li.remove();
+      isSectionEmpty(list);
+
+      dialog = Dialog.create({
+        _id: hiddenDialogs[id],
+        type: 3,
+        occupants_ids: [id],
+        unread_count: ''
+      });
+      ContactList.dialogs[dialog.id] = dialog;
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+      if (!localStorage['QM.dialog-' + dialog.id]) {
+        localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+      }
+
+      DialogView.addDialogItem(dialog);
+
+      dialogItem = $('.dialog-item[data-id="'+id+'"]');
+      copyDialogItem = dialogItem.clone();
+      dialogItem.remove();
+      $('#recentList ul').prepend(copyDialogItem);
+      $('#recentList').removeClass('is-hidden');
+      isSectionEmpty($('#recentList ul'));
     });
-    MessageView.addItem(message, true, true);
-
-    // delete duplicate contact item
-    li = $('.dialog-item[data-id="'+id+'"]');
-    list = li.parents('ul');
-    li.remove();
-    isSectionEmpty(list);
-
-    dialog = Dialog.create({
-      _id: hiddenDialogs[id],
-      type: 3,
-      occupants_ids: [id],
-      unread_count: ''
-    });
-    ContactList.dialogs[dialog.id] = dialog;
-    if (QMCONFIG.debug) console.log('Dialog', dialog);
-    if (!localStorage['QM.dialog-' + dialog.id]) {
-      localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-    }
-
-    DialogView.addDialogItem(dialog);
-
-    dialogItem = $('.dialog-item[data-id="'+id+'"]');
-    copyDialogItem = dialogItem.clone();
-    dialogItem.remove();
-    $('#recentList ul').prepend(copyDialogItem);
-    isSectionEmpty($('#recentList ul'));
+    
   },
 
   sendReject: function(objDom) {
@@ -2481,16 +2541,18 @@ ContactListView.prototype = {
     delete notConfirmed[id];
     ContactList.saveNotConfirmed(notConfirmed);
 
-    QB.chat.roster.reject(jid);
-    // send notification about reject
-    QB.chat.send(jid, {type: 'chat', extension: {
-      save_to_history: 1,
-      dialog_id: hiddenDialogs[id],
-      date_sent: Math.floor(Date.now() / 1000),
+    QB.chat.roster.reject(jid, function() {
+      // send notification about reject
+      QB.chat.send(jid, {type: 'chat', extension: {
+        save_to_history: 1,
+        dialog_id: hiddenDialogs[id],
+        date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: '4',
-      full_name: User.contact.full_name,
-    }});
+        notification_type: '4',
+        full_name: User.contact.full_name,
+      }});
+    });
+
   },
 
   sendDelete: function(objDom) {
@@ -2514,22 +2576,24 @@ ContactListView.prototype = {
     // delete dialog messages
     localStorage.removeItem('QM.dialog-' + dialog_id);
 
-    QB.chat.roster.remove(jid);
-    // send notification about reject
-    QB.chat.send(jid, {type: 'chat', extension: {
-      save_to_history: 1,
-      dialog_id: dialog_id,
-      date_sent: Math.floor(Date.now() / 1000),
+    QB.chat.roster.remove(jid, function() {
+      // send notification about reject
+      QB.chat.send(jid, {type: 'chat', extension: {
+        save_to_history: 1,
+        dialog_id: dialog_id,
+        date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: '4',
-      full_name: User.contact.full_name,
-    }});
+        notification_type: '4',
+        full_name: User.contact.full_name,
+      }});
 
-    // delete chat section
-    if (chat.length > 0)
-      chat.remove();
-    $('#capBox').removeClass('is-hidden');
-    delete dialogs[dialog_id];
+      // delete chat section
+      if (chat.length > 0)
+        chat.remove();
+      $('#capBox').removeClass('is-hidden');
+      delete dialogs[dialog_id];
+    });
+    
   },
 
   // callbacks
@@ -2556,8 +2620,8 @@ ContactListView.prototype = {
       html = '<li class="list-item" data-jid="'+jid+'">';
       html += '<a class="contact l-flexbox" href="#">';
       html += '<div class="l-flexbox_inline">';
-      html += '<img class="contact-avatar avatar" src="'+contacts[id].avatar_url+'" alt="user">';
-      html += '<span class="name">'+contacts[id].full_name+'</span>';
+      html += '<img class="contact-avatar avatar" src="'+(typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '')+'" alt="user">';
+      html += '<span class="name">'+(typeof contacts[id] !== 'undefined' ? contacts[id].full_name : '')+'</span>';
       html += '</div><div class="request-controls l-flexbox">';
       html += '<button class="request-button request-button_cancel">&#10005;</button>';
       html += '<button class="request-button request-button_ok">&#10003;</button>';
@@ -2606,9 +2670,10 @@ ContactListView.prototype = {
     if (dialogItem.is('.l-chat'))
       dialogItem.addClass('is-request');
     if (request.length > 0) {
-      QB.chat.roster.remove(jid);
-      request.remove();
-      isSectionEmpty(list);
+      QB.chat.roster.remove(jid, function() {
+        request.remove();
+        isSectionEmpty(list);
+      });      
     }
     dialogItem.addClass('is-request');
   },
@@ -2981,7 +3046,8 @@ DialogView.prototype = {
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';
-      html += '<textarea class="form-input-message textarea" placeholder="Type a message"></textarea>';
+      html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
+      // html += '<textarea class="text-message is-hidden"></textarea>';
       html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>';
       html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>';
       html += '<input class="attachment" type="file">';
@@ -3067,6 +3133,7 @@ DialogView.prototype = {
           copyDialogItem = dialogItem.clone();
           dialogItem.remove();
           $('#recentList ul').prepend(copyDialogItem);
+          $('#recentList').removeClass('is-hidden');
           isSectionEmpty($('#recentList ul'));
         }
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
@@ -3165,7 +3232,8 @@ function textAreaScrollbar() {
   $('.l-chat:visible .textarea').niceScroll({
     cursoropacitymax: 0.5,
     railpadding: {right: 5},
-    zindex: 1
+    zindex: 1,
+    enablekeyboard: false
   });
 }
 
@@ -3217,6 +3285,8 @@ MessageView.prototype = {
         attachType = message.attachment && message.attachment.type,
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
         html;
+
+    if (typeof chat[0] === 'undefined') return true;
 
     switch (type) {
     case '1':
@@ -3301,7 +3371,7 @@ MessageView.prototype = {
       html += '</div></div></article>';
       break;
 
-    case 'message':
+    default:
       if (message.sender_id === User.contact.id)
         html = '<article class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
       else
@@ -3348,7 +3418,7 @@ MessageView.prototype = {
         html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
 
       } else {
-        html += '<div class="message-body">'+parser(message.body)+'</div>';
+        html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
       }
 
@@ -3377,8 +3447,6 @@ MessageView.prototype = {
     } else {
       chat.find('.l-chat-content').prepend(html);
     }
-
-    emojify.run(chat.find('.l-chat-content .mCSB_container')[0]);
     
   },
 
@@ -3386,15 +3454,19 @@ MessageView.prototype = {
     var jid = form.parents('.l-chat').data('jid'),
         id = form.parents('.l-chat').data('id'),
         dialog_id = form.parents('.l-chat').data('dialog'),
-        val = form.find('textarea').val().trim(),
+        val = form.find('.textarea').html().trim(),
         time = Math.floor(Date.now() / 1000),
         type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
         dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
         copyDialogItem;
 
     if (val.length > 0) {
-      form[0].reset();
-      // form.find('textarea').blur();
+      if (form.find('.textarea > span').length > 0) {
+        form.find('.textarea > span').each(function() {
+          $(this).after($(this).find('span').data('unicode')).remove();
+        });
+        val = form.find('.textarea').text().trim();
+      }
       
       // send message
       QB.chat.send(jid, {type: type, body: val, extension: {
@@ -3419,12 +3491,15 @@ MessageView.prototype = {
         copyDialogItem = dialogItem.clone();
         dialogItem.remove();
         $('#recentList ul').prepend(copyDialogItem);
+        $('#recentList').removeClass('is-hidden');
         isSectionEmpty($('#recentList ul'));
       }
     }
   },
 
   onMessage: function(id, message) {
+    if (message.type === 'error') return true;
+
     var DialogView = self.app.views.Dialog,
         hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notification_type = message.extension && message.extension.notification_type,
@@ -3453,6 +3528,7 @@ MessageView.prototype = {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
+      $('#recentList').removeClass('is-hidden');
       isSectionEmpty($('#recentList ul'));
     }
 
@@ -3574,7 +3650,7 @@ function parser(str) {
   str = escapeHTML(str);
   
   // parser of paragraphs
-  str = ('<p>' + str).replace(/\n\n/g, '<p>').replace(/\n/g, '<br>');
+  str = str.replace(/\n/g, '<br>');
   
   // parser of links
   str = str.replace(URL_REGEXP, function(match) {
@@ -3875,8 +3951,7 @@ var switchPage = function(page) {
   if (!page.is('#mainPage')) {
     page.find('form').removeClass('is-hidden').next('.l-form').remove(); // reset Forgot form after success sending of letter
     page.find('input:file').prev().find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
-    page.find('input:checkbox').prop('checked', true);
-    page.find('input:first').focus();
+    page.find('input:checkbox').prop('checked', false);
   }
 };
 
