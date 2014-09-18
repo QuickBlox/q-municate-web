@@ -31,6 +31,8 @@ MessageView.prototype = {
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
         html;
 
+    if (typeof chat[0] === 'undefined') return true;
+
     switch (type) {
     case '1':
       html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
@@ -114,7 +116,7 @@ MessageView.prototype = {
       html += '</div></div></article>';
       break;
 
-    case 'message':
+    default:
       if (message.sender_id === User.contact.id)
         html = '<article class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
       else
@@ -241,6 +243,8 @@ MessageView.prototype = {
   },
 
   onMessage: function(id, message) {
+    if (message.type === 'error') return true;
+
     var DialogView = self.app.views.Dialog,
         hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notification_type = message.extension && message.extension.notification_type,
