@@ -1,16 +1,27 @@
 /* Configuration your application */
 var QMCONFIG = {
 
-  /* Development environment */
+  /* Production environment */
   qbAccount: {
-    appId: 13318,
-    authKey: 'WzrAY7vrGmbgFfP',
-    authSecret: 'xS2uerEveGHmEun'
+    appId: 12496,
+    authKey: 'DxGShn2UtN5TUfd',
+    authSecret: 'gypfTzd3VbqYxsK'
   },
   fbAccount: {
-    appId: '605405446247805',
+    appId: '1445555125707161',
     scope: 'email,user_friends'
   },
+
+  /* Development environment */
+  // qbAccount: {
+  //   appId: 13318,
+  //   authKey: 'WzrAY7vrGmbgFfP',
+  //   authSecret: 'xS2uerEveGHmEun'
+  // },
+  // fbAccount: {
+  //   appId: '605405446247805',
+  //   scope: 'email,user_friends'
+  // },
 
   /* Test local environment */
   // qbAccount: {
