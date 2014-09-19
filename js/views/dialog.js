@@ -29,6 +29,9 @@ DialogView.prototype = {
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
     QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
+    QB.chat.onDisconnectingListener = function() {
+      $('.no-connection').removeClass('is-hidden');
+    };
   },
 
   createDataSpinner: function(chat, groupchat) {
