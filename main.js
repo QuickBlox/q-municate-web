@@ -3950,6 +3950,7 @@ var switchPage = function(page) {
 
   // reset form
   clearErrors();
+  $('.no-connection').addClass('is-hidden');
   page.find('input').val('');
   if (!page.is('#mainPage')) {
     page.find('form').removeClass('is-hidden').next('.l-form').remove(); // reset Forgot form after success sending of letter
