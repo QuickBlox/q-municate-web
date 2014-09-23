@@ -29,6 +29,9 @@ DialogView.prototype = {
     QB.chat.onSubscribeListener = ContactListView.onSubscribe;
     QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
+    QB.chat.onDisconnectingListener = function() {
+      $('.no-connection').removeClass('is-hidden');
+    };
   },
 
   createDataSpinner: function(chat, groupchat) {
@@ -136,7 +139,7 @@ DialogView.prototype = {
   },
 
   addDialogItem: function(dialog, isDownload) {
-    var contacts = ContactList.contacts,
+    var contacts = this.app.models.ContactList.contacts,
         roster = JSON.parse(sessionStorage['QM.roster']),
         private_id, icon, name, status,
         html, startOfCurrentDay;
@@ -180,8 +183,8 @@ DialogView.prototype = {
 
   htmlBuild: function(objDom) {
     var MessageView = this.app.views.Message,
-        contacts = ContactList.contacts,
-        dialogs = ContactList.dialogs,
+        contacts = this.app.models.ContactList.contacts,
+        dialogs = this.app.models.ContactList.dialogs,
         roster = JSON.parse(sessionStorage['QM.roster']),
         parent = objDom.parent(),
         dialog_id = parent.data('dialog'),
@@ -322,7 +325,7 @@ DialogView.prototype = {
   },
 
   createGroupChat: function(type, dialog_id) {
-    var contacts = ContactList.contacts,
+    var contacts = this.app.models.ContactList.contacts,
         new_members = $('#popupContacts .is-chosen'),
         occupants_ids = $('#popupContacts').data('existing_ids') || [],
         groupName = occupants_ids.length > 0 ? [ User.contact.full_name, contacts[occupants_ids[0]].full_name ] : [User.contact.full_name],
@@ -381,7 +384,7 @@ DialogView.prototype = {
   },
 
   leaveGroupChat: function(objDom) {
-    var dialogs = ContactList.dialogs,
+    var dialogs = this.app.models.ContactList.dialogs,
         dialog_id = objDom.data('dialog'),
         dialog = dialogs[dialog_id],
         li = $('.dialog-item[data-dialog="'+dialog_id+'"]'),
