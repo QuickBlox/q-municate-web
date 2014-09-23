@@ -130,7 +130,7 @@ UserView.prototype = {
     var ids = objDom.parent().data('id'),
         dialog_id = objDom.parent().data('dialog'),
         roster = JSON.parse(sessionStorage['QM.roster']),
-        dialogs = ContactList.dialogs,
+        dialogs = this.app.models.ContactList.dialogs,
         html;
 
     html = '<ul class="list-actions list-actions_contacts popover">';

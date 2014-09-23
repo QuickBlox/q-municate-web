@@ -72,14 +72,17 @@ Routes.prototype = {
     $('.l-workspace-wrap').on('click', '.preview', function() {
       var name = $(this).data('name'),
           url = $(this).data('url'),
-          uid = $(this).data('uid');
+          uid = $(this).data('uid'),
+          attachType;
 
       if ($(this).is('.preview-photo')) {
         $('.attach-photo').removeClass('is-hidden').siblings('.attach-video').addClass('is-hidden');
+        attachType = 'photo';
       } else {
         $('.attach-video').removeClass('is-hidden').siblings('.attach-photo').addClass('is-hidden');
+        attachType = 'video';
       }
-      openAttachPopup($('#popupAttach'), name, url, uid);
+      openAttachPopup($('#popupAttach'), name, url, uid, attachType);
     });
 
     /* scrollbars
@@ -451,8 +454,12 @@ function openPopup(objDom, id, dialog_id) {
   objDom.add('.popups').addClass('is-overlay');
 }
 
-function openAttachPopup(objDom, name, url, uid) {
-  objDom.find('.attach-photo, .attach-video video').attr('src', url);
+function openAttachPopup(objDom, name, url, uid, attachType) {
+  if (attachType === 'video')
+    objDom.find('.attach-video video').attr('src', url);
+  else
+    objDom.find('.attach-photo').attr('src', url);
+  
   objDom.find('.attach-name').text(name);
   objDom.find('.attach-download').attr('href', getFileDownloadLink(uid));
   objDom.add('.popups').addClass('is-overlay');

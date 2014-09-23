@@ -1610,14 +1610,17 @@ Routes.prototype = {
     $('.l-workspace-wrap').on('click', '.preview', function() {
       var name = $(this).data('name'),
           url = $(this).data('url'),
-          uid = $(this).data('uid');
+          uid = $(this).data('uid'),
+          attachType;
 
       if ($(this).is('.preview-photo')) {
         $('.attach-photo').removeClass('is-hidden').siblings('.attach-video').addClass('is-hidden');
+        attachType = 'photo';
       } else {
         $('.attach-video').removeClass('is-hidden').siblings('.attach-photo').addClass('is-hidden');
+        attachType = 'video';
       }
-      openAttachPopup($('#popupAttach'), name, url, uid);
+      openAttachPopup($('#popupAttach'), name, url, uid, attachType);
     });
 
     /* scrollbars
@@ -1989,8 +1992,12 @@ function openPopup(objDom, id, dialog_id) {
   objDom.add('.popups').addClass('is-overlay');
 }
 
-function openAttachPopup(objDom, name, url, uid) {
-  objDom.find('.attach-photo, .attach-video video').attr('src', url);
+function openAttachPopup(objDom, name, url, uid, attachType) {
+  if (attachType === 'video')
+    objDom.find('.attach-video video').attr('src', url);
+  else
+    objDom.find('.attach-photo').attr('src', url);
+  
   objDom.find('.attach-name').text(name);
   objDom.find('.attach-download').attr('href', getFileDownloadLink(uid));
   objDom.add('.popups').addClass('is-overlay');
@@ -2336,7 +2343,7 @@ ContactListView.prototype = {
   addContactsToChat: function(objDom, type, dialog_id) {
     var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
         popup = $('#popupContacts'),
-        contacts = ContactList.contacts,
+        contacts = this.app.models.ContactList.contacts,
         roster = JSON.parse(sessionStorage['QM.roster']),
         html, sortedContacts, friends, user_id;
 
@@ -2556,8 +2563,8 @@ ContactListView.prototype = {
   },
 
   sendDelete: function(objDom) {
-    var contacts = ContactList.contacts,
-        dialogs = ContactList.dialogs,
+    var contacts = this.app.models.ContactList.contacts,
+        dialogs = this.app.models.ContactList.dialogs,
         id = objDom.data('id'),
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
         li = $('.dialog-item[data-id="'+id+'"]'),
@@ -2920,7 +2927,7 @@ DialogView.prototype = {
   },
 
   addDialogItem: function(dialog, isDownload) {
-    var contacts = ContactList.contacts,
+    var contacts = this.app.models.ContactList.contacts,
         roster = JSON.parse(sessionStorage['QM.roster']),
         private_id, icon, name, status,
         html, startOfCurrentDay;
@@ -2964,8 +2971,8 @@ DialogView.prototype = {
 
   htmlBuild: function(objDom) {
     var MessageView = this.app.views.Message,
-        contacts = ContactList.contacts,
-        dialogs = ContactList.dialogs,
+        contacts = this.app.models.ContactList.contacts,
+        dialogs = this.app.models.ContactList.dialogs,
         roster = JSON.parse(sessionStorage['QM.roster']),
         parent = objDom.parent(),
         dialog_id = parent.data('dialog'),
@@ -3106,7 +3113,7 @@ DialogView.prototype = {
   },
 
   createGroupChat: function(type, dialog_id) {
-    var contacts = ContactList.contacts,
+    var contacts = this.app.models.ContactList.contacts,
         new_members = $('#popupContacts .is-chosen'),
         occupants_ids = $('#popupContacts').data('existing_ids') || [],
         groupName = occupants_ids.length > 0 ? [ User.contact.full_name, contacts[occupants_ids[0]].full_name ] : [User.contact.full_name],
@@ -3165,7 +3172,7 @@ DialogView.prototype = {
   },
 
   leaveGroupChat: function(objDom) {
-    var dialogs = ContactList.dialogs,
+    var dialogs = this.app.models.ContactList.dialogs,
         dialog_id = objDom.data('dialog'),
         dialog = dialogs[dialog_id],
         li = $('.dialog-item[data-dialog="'+dialog_id+'"]'),
@@ -3280,176 +3287,193 @@ function MessageView(app) {
 
 MessageView.prototype = {
 
+  // this needs only for group chats: check if user exist in group chat
+  checkSenderId: function(senderId, callback) {
+    if (senderId !== User.contact.id) {
+      ContactList.add([senderId], null, function() {
+        callback();
+      });
+    } else {
+      callback();
+    }
+  },
+
   addItem: function(message, isCallback, isMessageListener) {
     var DialogView = this.app.views.Dialog,
-        contacts = ContactList.contacts,
-        contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
-        type = message.notification_type || 'message',
-        attachType = message.attachment && message.attachment.type,
-        chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
-        html;
+        ContactListMsg = this.app.models.ContactList,
+        chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]');
 
     if (typeof chat[0] === 'undefined') return true;
 
-    switch (type) {
-    case '1':
-      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
-      html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-      html += '<div class="message-content">';
-      html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+' to the group chat</h4>';
-      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-      html += '</div></div></article>';
-      break;
+    this.checkSenderId(message.sender_id, function() {
 
-    case '2':
-      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
-      html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-      html += '<div class="message-content">';
-      html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
-      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-      html += '</div></div></article>';
-      break;
+      var contacts = ContactListMsg.contacts,
+          contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
+          type = message.notification_type || 'message',
+          attachType = message.attachment && message.attachment.type,
+          html;
 
-    case '3':
-      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
-      html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-      html += '<div class="message-content">';
-
-      if (message.sender_id === User.contact.id)
-        html += '<h4 class="message-author">Your request has been sent</h4>';
-      else
-        html += '<h4 class="message-author">'+contact.full_name+' has sent a request to you</h4>';
-
-      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-      html += '</div></div></article>';
-      break;
-
-    case '4':
-      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-      html += '<span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>';
-      html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-      html += '<div class="message-content">';
-
-      if (message.sender_id === User.contact.id)
-        html += '<h4 class="message-author">'+User.contact.full_name+' has rejected a request';
-      else
-        html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
-        
-
-      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-      html += '</div></div></article>';
-      break;
-
-    case '5':
-      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-      html += '<span class="message-avatar contact-avatar_message request-button_ok">&#10003;</span>';
-      html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-      html += '<div class="message-content">';
-
-      if (message.sender_id === User.contact.id)
-        html += '<h4 class="message-author">'+User.contact.full_name+' has accepted a request</h4>';
-      else
-        html += '<h4 class="message-author">Your request has been accepted</h4>';
-
-      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-      html += '</div></div></article>';
-      break;
-
-    case '6':
-      html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-      html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
-      html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-      html += '<div class="message-content">';
-      html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
-      html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-      html += '</div></div></article>';
-      break;
-
-    default:
-      if (message.sender_id === User.contact.id)
-        html = '<article class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-      else
-        html = '<article class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-
-      html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
-      html += '<div class="message-container-wrap">';
-      html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-      html += '<div class="message-content">';
-      html += '<h4 class="message-author">'+contact.full_name+'</h4>';
-
-      if (attachType && attachType.indexOf('image') > -1) {
-
-        html += '<div class="message-body">';
-        html += '<div class="preview preview-photo" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'">';
-        html += '<img src="'+message.attachment.url+'" alt="attach">';
-        html += '</div></div>';
+      switch (type) {
+      case '1':
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+        html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+' to the group chat</h4>';
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div></div></article>';
+        break;
 
-      } else if (attachType && attachType.indexOf('audio') > -1) {
-
-        html += '<div class="message-body">';
-        html += message.attachment.name+'<br><br>';
-        html += '<audio src="'+message.attachment.url+'" controls></audio>';
-        html += '</div>';
-        html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
-        html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
-
-      } else if (attachType && attachType.indexOf('video') > -1) {
-
-        html += '<div class="message-body">';
-        html += message.attachment.name+'<br><br>';
-        html += '<div class="preview preview-video" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'"></div>';
-        html += '</div>';
+      case '2':
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+        html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div></div></article>';
+        break;
 
-      } else if (attachType) {
+      case '3':
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
 
-        html += '<div class="message-body">';
-        html += '<a class="attach-file" href="'+getFileDownloadLink(message.attachment.uid)+'" download>'+message.attachment.name+'</a>';
-        html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
-        html += '</div>';
-        html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
-        html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
+        if (message.sender_id === User.contact.id)
+          html += '<h4 class="message-author">Your request has been sent</h4>';
+        else
+          html += '<h4 class="message-author">'+contact.full_name+' has sent a request to you</h4>';
 
-      } else {
-        html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div></div></article>';
+        break;
+
+      case '4':
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        html += '<span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+
+        if (message.sender_id === User.contact.id)
+          html += '<h4 class="message-author">'+User.contact.full_name+' has rejected a request';
+        else
+          html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+          
+
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div></div></article>';
+        break;
+
+      case '5':
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        html += '<span class="message-avatar contact-avatar_message request-button_ok">&#10003;</span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+
+        if (message.sender_id === User.contact.id)
+          html += '<h4 class="message-author">'+User.contact.full_name+' has accepted a request</h4>';
+        else
+          html += '<h4 class="message-author">Your request has been accepted</h4>';
+
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div></div></article>';
+        break;
+
+      case '6':
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+        html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div></div></article>';
+        break;
+
+      default:
+        if (message.sender_id === User.contact.id)
+          html = '<article class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        else
+          html = '<article class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+
+        html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+        html += '<h4 class="message-author">'+contact.full_name+'</h4>';
+
+        if (attachType && attachType.indexOf('image') > -1) {
+
+          html += '<div class="message-body">';
+          html += '<div class="preview preview-photo" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'">';
+          html += '<img src="'+message.attachment.url+'" alt="attach">';
+          html += '</div></div>';
+          html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+        } else if (attachType && attachType.indexOf('audio') > -1) {
+
+          html += '<div class="message-body">';
+          html += message.attachment.name+'<br><br>';
+          html += '<audio src="'+message.attachment.url+'" controls></audio>';
+          html += '</div>';
+          html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
+          html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
+
+        } else if (attachType && attachType.indexOf('video') > -1) {
+
+          html += '<div class="message-body">';
+          html += message.attachment.name+'<br><br>';
+          html += '<div class="preview preview-video" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'"></div>';
+          html += '</div>';
+          html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+
+        } else if (attachType) {
+
+          html += '<div class="message-body">';
+          html += '<a class="attach-file" href="'+getFileDownloadLink(message.attachment.uid)+'" download>'+message.attachment.name+'</a>';
+          html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
+          html += '</div>';
+          html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
+          html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
+
+        } else {
+          html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
+          html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        }
+
+        html += '</div></div></article>';
+        break;
       }
 
-      html += '</div></div></article>';
-      break;
-    }
+      // <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
+      //                   <div class="message-content">
+      //                     <div class="message-body">
+      //                       <div class="preview preview-photo"><img src="images/test.jpg" alt="attach"></div>
+      //                     </div>
+      //                   </div>
+      //                   <time class="message-time">30/05/2014</time>
+      //                 </div>
 
-    // <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
-    //                   <div class="message-content">
-    //                     <div class="message-body">
-    //                       <div class="preview preview-photo"><img src="images/test.jpg" alt="attach"></div>
-    //                     </div>
-    //                   </div>
-    //                   <time class="message-time">30/05/2014</time>
-    //                 </div>
-
-    if (isCallback) {
-      if (isMessageListener) {
-        chat.find('.l-chat-content .mCSB_container').append(html);
-        
-        // fix for custom scroll
-        fixScroll(chat);
+      if (isCallback) {
+        if (isMessageListener) {
+          chat.find('.l-chat-content .mCSB_container').append(html);
+          
+          // fix for custom scroll
+          fixScroll(chat);
+        } else {
+          chat.find('.l-chat-content .mCSB_container').prepend(html);
+        }
       } else {
-        chat.find('.l-chat-content .mCSB_container').prepend(html);
+        chat.find('.l-chat-content').prepend(html);
       }
-    } else {
-      chat.find('.l-chat-content').prepend(html);
-    }
+
+    });
     
   },
 
@@ -3817,7 +3841,7 @@ UserView.prototype = {
     var ids = objDom.parent().data('id'),
         dialog_id = objDom.parent().data('dialog'),
         roster = JSON.parse(sessionStorage['QM.roster']),
-        dialogs = ContactList.dialogs,
+        dialogs = this.app.models.ContactList.dialogs,
         html;
 
     html = '<ul class="list-actions list-actions_contacts popover">';

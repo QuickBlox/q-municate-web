@@ -71,7 +71,7 @@ ContactListView.prototype = {
   addContactsToChat: function(objDom, type, dialog_id) {
     var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
         popup = $('#popupContacts'),
-        contacts = ContactList.contacts,
+        contacts = this.app.models.ContactList.contacts,
         roster = JSON.parse(sessionStorage['QM.roster']),
         html, sortedContacts, friends, user_id;
 
@@ -291,8 +291,8 @@ ContactListView.prototype = {
   },
 
   sendDelete: function(objDom) {
-    var contacts = ContactList.contacts,
-        dialogs = ContactList.dialogs,
+    var contacts = this.app.models.ContactList.contacts,
+        dialogs = this.app.models.ContactList.dialogs,
         id = objDom.data('id'),
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
         li = $('.dialog-item[data-id="'+id+'"]'),
