@@ -74,30 +74,34 @@ DialogView.prototype = {
         hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
         notConfirmed,
         private_id,
-        dialog;    
+        dialog,
+        occupants_ids;
 
     Dialog.download(function(dialogs) {
       self.removeDataSpinner();
+
       if (dialogs.length > 0) {
 
-        for (var i = 0, len = dialogs.length; i < len; i++) {
-          dialog = Dialog.create(dialogs[i]);
-          ContactList.dialogs[dialog.id] = dialog;
-          // if (QMCONFIG.debug) console.log('Dialog', dialog);
+        occupants_ids = _.uniq(_.flatten(_.pluck(dialogs, 'occupants_ids'), true));
 
-          if (!localStorage['QM.dialog-' + dialog.id]) {
-            localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-          }
+        // updating of Contact List whereto are included all people 
+        // with which maybe user will be to chat (there aren't only his friends)
+        ContactList.add(occupants_ids, null, function() {
 
-          if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);
+          for (var i = 0, len = dialogs.length; i < len; i++) {
+            dialog = Dialog.create(dialogs[i]);
+            ContactList.dialogs[dialog.id] = dialog;
+            // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
-          // updating of Contact List whereto are included all people 
-          // with which maybe user will be to chat (there aren't only his friends)
-          ContactList.add(dialog.occupants_ids, dialog, function(dialogCallback) {
+            if (!localStorage['QM.dialog-' + dialog.id]) {
+              localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+            }
+
+            if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);
 
             // update hidden dialogs
-            private_id = dialogCallback.type === 3 ? dialogCallback.occupants_ids[0] : null;
-            hiddenDialogs[private_id] = dialogCallback.id;
+            private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
+            hiddenDialogs[private_id] = dialog.id;
             ContactList.saveHiddenDialogs(hiddenDialogs);
 
             // not show dialog if user has not confirmed this contact
@@ -105,16 +109,17 @@ DialogView.prototype = {
             if (private_id && (!roster[private_id] || notConfirmed[private_id]))
               return false;
             
-            self.addDialogItem(dialogCallback, true);
-          });
-        }
+            self.addDialogItem(dialog, true);
+          }
 
-        if ($('#requestsList').is('.is-hidden') &&
-            $('#recentList').is('.is-hidden') &&
-            $('#historyList').is('.is-hidden')) {
-          
-          $('#emptyList').removeClass('is-hidden');
-        }
+          if ($('#requestsList').is('.is-hidden') &&
+              $('#recentList').is('.is-hidden') &&
+              $('#historyList').is('.is-hidden')) {
+            
+            $('#emptyList').removeClass('is-hidden');
+          }
+
+        });
 
       } else {
         $('#emptyList').removeClass('is-hidden');
