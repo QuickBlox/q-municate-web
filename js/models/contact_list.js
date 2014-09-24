@@ -44,7 +44,7 @@ ContactList.prototype = {
     localStorage.setItem('QM.contacts', contact_ids.join());
 
     if (new_ids.length > 0) {
-      params = { filter: { field: 'id', param: 'in', value: new_ids } };
+      params = { filter: { field: 'id', param: 'in', value: new_ids }, per_page: 100 };
 
       QBApiCalls.listUsers(params, function(users) {
         users.items.forEach(function(qbUser) {
