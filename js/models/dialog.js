@@ -90,7 +90,7 @@ Dialog.prototype = {
       }
 
       QB.chat.muc.join(dialog.room_jid, function() {
-        var msgId = QB.chat.helpers.getUniqueId();
+        var msgId = QB.chat.helpers.getBsonObjectId();
         
         QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {
           DialogView.addDialogItem(dialog);
@@ -141,7 +141,7 @@ Dialog.prototype = {
       ContactList.dialogs[params.dialog_id] = dialog;
       if (QMCONFIG.debug) console.log('Dialog', dialog);
 
-      var msgId = QB.chat.helpers.getUniqueId();
+      var msgId = QB.chat.helpers.getBsonObjectId();
       
       QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {
         callback(dialog);
