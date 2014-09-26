@@ -514,7 +514,7 @@ Dialog.prototype = {
       }
 
       QB.chat.muc.join(dialog.room_jid, function() {
-        var msgId = QB.chat.helpers.getUniqueId();
+        var msgId = QB.chat.helpers.getBsonObjectId();
         
         QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {
           DialogView.addDialogItem(dialog);
@@ -565,7 +565,7 @@ Dialog.prototype = {
       ContactList.dialogs[params.dialog_id] = dialog;
       if (QMCONFIG.debug) console.log('Dialog', dialog);
 
-      var msgId = QB.chat.helpers.getUniqueId();
+      var msgId = QB.chat.helpers.getBsonObjectId();
       
       QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {
         callback(dialog);
@@ -2161,7 +2161,11 @@ AttachView.prototype = {
 
     setPercent();
 
+    console.log(1111111, file);
+
     Attach.upload(file, function(blob) {
+      console.log(2222222, blob);
+
       var chat;
       isUpload = true;
       if ($('#progress_'+id).length > 0) {
@@ -3106,7 +3110,7 @@ DialogView.prototype = {
 
     objDom.mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 150,
+      scrollInertia: 1000,
       setTop: height + 'px',
       callbacks: {
         onTotalScrollBack: function() {
@@ -3208,7 +3212,7 @@ DialogView.prototype = {
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 150
+    scrollInertia: 1000
   });
 }
 

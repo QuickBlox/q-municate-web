@@ -128,7 +128,11 @@ AttachView.prototype = {
 
     setPercent();
 
+    console.log(1111111, file);
+
     Attach.upload(file, function(blob) {
+      console.log(2222222, blob);
+
       var chat;
       isUpload = true;
       if ($('#progress_'+id).length > 0) {
