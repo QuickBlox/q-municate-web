@@ -418,6 +418,7 @@ ContactListView.prototype = {
         roster = JSON.parse(sessionStorage['QM.roster']);
     
     // update roster
+    if (typeof roster[id] === 'undefined') return true;
     roster[id].status = type ? false : true;
     ContactList.saveRoster(roster);
 
