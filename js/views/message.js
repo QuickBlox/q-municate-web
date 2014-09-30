@@ -285,7 +285,8 @@ MessageView.prototype = {
       console.log(11111111);
       console.log(self.app.models.ContactList.dialogs[dialog_id]);
       msgArr = dialogs[dialog_id].messages || [];
-      dialogs[dialog_id].messages = msgArr.push(msg.id);
+      msgArr.push(msg.id);
+      dialogs[dialog_id].messages = msgArr;
       console.log(self.app.models.ContactList.dialogs[dialog_id]);
     }
 
