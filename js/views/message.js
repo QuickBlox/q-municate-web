@@ -282,8 +282,11 @@ MessageView.prototype = {
     if ((notification_type !== '6' || msg.sender_id !== User.contact.id) && chat.is(':visible'))
       Message.update(msg.id, dialog_id);
     else if (!chat.is(':visible') && chat.length > 0) {
+      console.log(11111111);
+      console.log(self.app.models.ContactList.dialogs[dialog_id]);
       msgArr = dialogs[dialog_id].messages || [];
       dialogs[dialog_id].messages = msgArr.push(msg.id);
+      console.log(self.app.models.ContactList.dialogs[dialog_id]);
     }
 
     if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
