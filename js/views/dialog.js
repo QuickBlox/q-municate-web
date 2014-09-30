@@ -304,6 +304,11 @@ DialogView.prototype = {
       $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
       self.messageScrollbar();
 
+      if (typeof dialog.message !== 'undefined') {
+        Message.update(dialog.message.join(), dialog_id);
+        dialog.message = [];
+      }
+      
     }
 
     $('.is-selected').removeClass('is-selected');

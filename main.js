@@ -3097,6 +3097,11 @@ DialogView.prototype = {
       $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
       self.messageScrollbar();
 
+      if (typeof dialog.message !== 'undefined') {
+        Message.update(dialog.message.join(), dialog_id);
+        dialog.message = [];
+      }
+      
     }
 
     $('.is-selected').removeClass('is-selected');
@@ -3539,6 +3544,7 @@ MessageView.prototype = {
 
     var DialogView = self.app.views.Dialog,
         hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+        dialogs = ContactList.dialogs,
         notification_type = message.extension && message.extension.notification_type,
         dialog_id = message.extension && message.extension.dialog_id,
         room_jid = message.extension && message.extension.room_jid,
@@ -3548,13 +3554,17 @@ MessageView.prototype = {
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
         roster = JSON.parse(sessionStorage['QM.roster']),
-        msg, copyDialogItem, dialog, occupant;
+        msg, copyDialogItem, dialog, occupant, msgArr;
 
     msg = Message.create(message);
     msg.sender_id = id;
 
-    if (notification_type !== '6' || msg.sender_id !== User.contact.id)
+    if ((notification_type !== '6' || msg.sender_id !== User.contact.id) && chat.is(':visible'))
       Message.update(msg.id, dialog_id);
+    else if (!chat.is(':visible') && chat.length > 0) {
+      msgArr = dialogs[dialog_id].messages || [];
+      dialogs[dialog_id].messages = msgArr.push(msg.id);
+    }
 
     if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
       unread++;
