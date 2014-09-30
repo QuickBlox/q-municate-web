@@ -3099,12 +3099,10 @@ DialogView.prototype = {
 
       console.log(2222222);
       console.log(self.app.models.ContactList.dialogs[dialog_id]);
-      console.log(dialog);
-      console.log(typeof dialog.message);
 
-      if (typeof dialog.message !== 'undefined') {
-        Message.update(dialog.message.join(), dialog_id);
-        dialog.message = [];
+      if (typeof dialog.messages !== 'undefined') {
+        Message.update(dialog.messages.join(), dialog_id);
+        dialog.messages = [];
       }
       
     }
