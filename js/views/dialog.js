@@ -303,9 +303,11 @@ DialogView.prototype = {
       chat.removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
       self.messageScrollbar();
-      
+
       console.log(2222222);
       console.log(self.app.models.ContactList.dialogs[dialog_id]);
+      console.log(dialog);
+      console.log(typeof dialog.message);
 
       if (typeof dialog.message !== 'undefined') {
         Message.update(dialog.message.join(), dialog_id);
