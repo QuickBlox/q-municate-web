@@ -800,6 +800,10 @@ User.prototype = {
       keys: {token: token}
     };
 
+    FB.api('/me', function (response) {
+      console.log(1111111111, response);
+    });
+
     QBApiCalls.createSession(params, function(session) {
       QBApiCalls.getUser(session.user_id, function(user) {
         self.contact = Contact.create(user);
