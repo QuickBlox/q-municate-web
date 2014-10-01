@@ -3558,6 +3558,7 @@ MessageView.prototype = {
         room_name = message.extension && message.extension.room_name,
         occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
         dialogItem = message.type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        dialogGroupItem = $('.dialog-item[data-dialog="'+dialog_id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
         roster = JSON.parse(sessionStorage['QM.roster']),
@@ -3580,7 +3581,7 @@ MessageView.prototype = {
       dialogItem.find('.unread').text(unread);
     }
 
-    if (dialogItem.length > 0) {
+    if (notification_type !== '1' && dialogItem.length > 0) {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
@@ -3589,7 +3590,7 @@ MessageView.prototype = {
     }
 
     // create new group chat
-    if (notification_type === '1' && message.type === 'chat') {
+    if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
       QB.chat.muc.join(room_jid);
 
       dialog = Dialog.create({
