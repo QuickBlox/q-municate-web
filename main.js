@@ -2907,7 +2907,7 @@ DialogView.prototype = {
 
             // not show dialog if user has not confirmed this contact
             notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
-            if (private_id && (!roster[private_id] || (roster[private_id] && roster[private_id].subscription === 'none' && !roster[private_id].ask) || notConfirmed[private_id]))
+            if (private_id && (!roster[private_id] || (roster[private_id] && roster[private_id].subscription === 'none' && !roster[private_id].ask && notConfirmed[private_id])))
               continue;
             
             self.addDialogItem(dialog, true);
