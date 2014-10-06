@@ -177,12 +177,14 @@ ContactListView.prototype = {
         Dialog.createPrivate(jid);
       }
 
-      dialogItem = $('.dialog-item[data-id="'+id+'"]');
+      dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     });
 
   },
@@ -252,12 +254,14 @@ ContactListView.prototype = {
 
       DialogView.addDialogItem(dialog);
 
-      dialogItem = $('.dialog-item[data-id="'+id+'"]');
+      dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     });
     
   },

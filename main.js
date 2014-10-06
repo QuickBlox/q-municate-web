@@ -2214,7 +2214,7 @@ AttachView.prototype = {
         dialog_id = chat.data('dialog'),
         time = Math.floor(Date.now() / 1000),
         type = chat.is('.is-group') ? 'groupchat' : 'chat',
-        dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         copyDialogItem;
       
     // send message
@@ -2244,8 +2244,10 @@ AttachView.prototype = {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+        $('#recentList').removeClass('is-hidden');
+        isSectionEmpty($('#recentList ul'));
+      }
     }
   }
 
@@ -2459,12 +2461,14 @@ ContactListView.prototype = {
         Dialog.createPrivate(jid);
       }
 
-      dialogItem = $('.dialog-item[data-id="'+id+'"]');
+      dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     });
 
   },
@@ -2534,12 +2538,14 @@ ContactListView.prototype = {
 
       DialogView.addDialogItem(dialog);
 
-      dialogItem = $('.dialog-item[data-id="'+id+'"]');
+      dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     });
     
   },
@@ -3164,13 +3170,15 @@ DialogView.prototype = {
     if (type) {
       Dialog.updateGroup(occupants_names, {dialog_id: dialog_id, occupants_ids: occupants_ids, new_ids: new_ids}, function(dialog) {
         self.removeDataSpinner();
-        var dialogItem = $('.dialog-item[data-dialog="'+dialog.id+'"]');
+        var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
         if (dialogItem.length > 0) {
           copyDialogItem = dialogItem.clone();
           dialogItem.remove();
           $('#recentList ul').prepend(copyDialogItem);
-          $('#recentList').removeClass('is-hidden');
-          isSectionEmpty($('#recentList ul'));
+          if (!$('#searchList').is(':visible')) {
+           $('#recentList').removeClass('is-hidden');
+           isSectionEmpty($('#recentList ul')); 
+          }
         }
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
         $('.is-overlay').removeClass('is-overlay');
@@ -3563,8 +3571,8 @@ MessageView.prototype = {
         room_jid = message.extension && message.extension.room_jid,
         room_name = message.extension && message.extension.room_name,
         occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
-        dialogItem = message.type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
-        dialogGroupItem = $('.dialog-item[data-dialog="'+dialog_id+'"]'),
+        dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
+        dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
         roster = ContactList.roster,
@@ -3591,8 +3599,10 @@ MessageView.prototype = {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     }
 
     // create new group chat

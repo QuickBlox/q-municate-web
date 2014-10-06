@@ -175,7 +175,7 @@ AttachView.prototype = {
         dialog_id = chat.data('dialog'),
         time = Math.floor(Date.now() / 1000),
         type = chat.is('.is-group') ? 'groupchat' : 'chat',
-        dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         copyDialogItem;
       
     // send message
@@ -205,8 +205,10 @@ AttachView.prototype = {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+        $('#recentList').removeClass('is-hidden');
+        isSectionEmpty($('#recentList ul'));
+      }
     }
   }
 

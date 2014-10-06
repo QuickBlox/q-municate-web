@@ -363,13 +363,15 @@ DialogView.prototype = {
     if (type) {
       Dialog.updateGroup(occupants_names, {dialog_id: dialog_id, occupants_ids: occupants_ids, new_ids: new_ids}, function(dialog) {
         self.removeDataSpinner();
-        var dialogItem = $('.dialog-item[data-dialog="'+dialog.id+'"]');
+        var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
         if (dialogItem.length > 0) {
           copyDialogItem = dialogItem.clone();
           dialogItem.remove();
           $('#recentList ul').prepend(copyDialogItem);
-          $('#recentList').removeClass('is-hidden');
-          isSectionEmpty($('#recentList ul'));
+          if (!$('#searchList').is(':visible')) {
+           $('#recentList').removeClass('is-hidden');
+           isSectionEmpty($('#recentList ul')); 
+          }
         }
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
         $('.is-overlay').removeClass('is-overlay');
