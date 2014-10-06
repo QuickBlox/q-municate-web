@@ -38,7 +38,7 @@ MessageView.prototype = {
         ContactListMsg = this.app.models.ContactList,
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]');
 
-    if (typeof chat[0] === 'undefined' || !message.body) return true;
+    if (typeof chat[0] === 'undefined' || (!message.body && !message.notification_type)) return true;
 
     this.checkSenderId(message.sender_id, function() {
 
