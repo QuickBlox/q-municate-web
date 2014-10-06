@@ -129,8 +129,8 @@ UserView.prototype = {
   contactPopover: function(objDom) {
     var ids = objDom.parent().data('id'),
         dialog_id = objDom.parent().data('dialog'),
-        roster = JSON.parse(sessionStorage['QM.roster']),
-        dialogs = this.app.models.ContactList.dialogs,
+        roster = ContactList.roster,
+        dialogs = ContactList.dialogs,
         html;
 
     html = '<ul class="list-actions list-actions_contacts popover">';
@@ -160,11 +160,11 @@ UserView.prototype = {
     var html,
         id = objDom.data('id'),
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         position = e.currentTarget.getBoundingClientRect();
 
     html = '<ul class="list-actions list-actions_occupants popover">';
-    if (!roster[id] || roster[id].subscription === 'none') {
+    if (!roster[id] || (roster[id].subscription === 'none' && !roster[id].ask)) {
       html += '<li class="list-item" data-jid="'+jid+'"><a class="list-actions-action requestAction" data-id="'+id+'" href="#">Send request</a></li>';
     } else {
       // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';

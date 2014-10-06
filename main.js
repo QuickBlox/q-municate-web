@@ -280,6 +280,7 @@ var contact_ids;
 
 function ContactList(app) {
   this.app = app;
+  this.roster = {};
   this.contacts = getContacts();
   this.dialogs = {};
   contact_ids = Object.keys(this.contacts).map(Number);
@@ -288,7 +289,8 @@ function ContactList(app) {
 ContactList.prototype = {
 
   saveRoster: function(roster) {
-    sessionStorage.setItem('QM.roster', JSON.stringify(roster));
+    // sessionStorage.setItem('QM.roster', JSON.stringify(roster));
+    this.roster = roster;
   },
 
   saveNotConfirmed: function(notConfirmed) {
@@ -2351,8 +2353,8 @@ ContactListView.prototype = {
   addContactsToChat: function(objDom, type, dialog_id) {
     var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
         popup = $('#popupContacts'),
-        contacts = this.app.models.ContactList.contacts,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        contacts = ContactList.contacts,
+        roster = ContactList.roster,
         html, sortedContacts, friends, user_id;
 
     openPopup(popup, type, dialog_id);
@@ -2365,7 +2367,7 @@ ContactListView.prototype = {
     // get your friends which are sorted by alphabet
     sortedContacts = _.pluck( _.sortBy(contacts, 'full_name') , 'id').map(String);
     friends = _.filter(sortedContacts, function(el) {
-      return roster[el] && roster[el].subscription === 'both';
+      return roster[el] && roster[el].subscription !== 'none';
     });
     if (QMCONFIG.debug) console.log('Friends', friends);
 
@@ -2397,7 +2399,7 @@ ContactListView.prototype = {
 
   importFBFriend: function(id) {
     var jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-        roster = JSON.parse(sessionStorage['QM.roster']);
+        roster = ContactList.roster;
 
     QB.chat.roster.add(jid, function() {
       // update roster
@@ -2415,7 +2417,7 @@ ContactListView.prototype = {
   sendSubscribe: function(objDom, isChat) {
     var MessageView = this.app.views.Message,
         jid = isChat ? objDom.parents('.l-chat').data('jid') : objDom.parents('li').data('jid'),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         id = QB.chat.helpers.getIdFromNode(jid),
         dialogItem = $('.dialog-item[data-id="'+id+'"]')[0],
         time = Math.floor(Date.now() / 1000),
@@ -2473,7 +2475,7 @@ ContactListView.prototype = {
         jid = objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
         li, dialog, message, dialogItem, copyDialogItem,
@@ -2484,7 +2486,7 @@ ContactListView.prototype = {
 
     // update roster
     roster[id] = {
-      subscription: 'both',
+      subscription: 'from',
       ask: 'subscribe'
     };
     ContactList.saveRoster(roster);
@@ -2546,11 +2548,19 @@ ContactListView.prototype = {
     var jid = objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
+        roster = ContactList.roster,
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']);
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
+
+    // update roster
+    roster[id] = {
+      subscription: 'none',
+      ask: null
+    };
+    ContactList.saveRoster(roster);
 
     // update notConfirmed people list
     delete notConfirmed[id];
@@ -2571,15 +2581,15 @@ ContactListView.prototype = {
   },
 
   sendDelete: function(objDom) {
-    var contacts = this.app.models.ContactList.contacts,
-        dialogs = this.app.models.ContactList.dialogs,
+    var contacts = ContactList.contacts,
+        dialogs = ContactList.dialogs,
         id = objDom.data('id'),
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
         li = $('.dialog-item[data-id="'+id+'"]'),
         chat = $('.l-chat[data-id="'+id+'"]'),
         list = li.parents('ul'),
         dialog_id = li.data('dialog'),
-        roster = JSON.parse(sessionStorage['QM.roster']);
+        roster = ContactList.roster;
 
     li.remove();
     isSectionEmpty(list);
@@ -2616,16 +2626,8 @@ ContactListView.prototype = {
   onSubscribe: function(id) {
     var html,
         contacts = ContactList.contacts,
-        roster = JSON.parse(sessionStorage['QM.roster']),
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
-
-    // update roster
-    roster[id] = {
-      subscription: 'none',
-      ask: null
-    };
-    ContactList.saveRoster(roster);
 
     // update notConfirmed people list
     notConfirmed[id] = true;
@@ -2648,12 +2650,12 @@ ContactListView.prototype = {
   },
 
   onConfirm: function(id) {
-    var roster = JSON.parse(sessionStorage['QM.roster']),
+    var roster = ContactList.roster,
         dialogItem = $('.presence-listener[data-id="'+id+'"]');
 
     // update roster
     roster[id] = {
-      subscription: 'both',
+      subscription: 'to',
       ask: null
     };
     ContactList.saveRoster(roster);
@@ -2667,7 +2669,7 @@ ContactListView.prototype = {
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
         request = $('#requestsList .list-item[data-jid="'+jid+'"]'),
         list = request && request.parents('ul'),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
     // update roster
@@ -2695,7 +2697,7 @@ ContactListView.prototype = {
 
   onPresence: function(id, type) {
     var dialogItem = $('.presence-listener[data-id="'+id+'"]'),
-        roster = JSON.parse(sessionStorage['QM.roster']);
+        roster = ContactList.roster;
     
     // update roster
     if (typeof roster[id] === 'undefined') return true;
@@ -2753,7 +2755,7 @@ function ajaxDownloading(list, self) {
 }
 
 function createListResults(list, results, self) {
-  var roster = JSON.parse(sessionStorage['QM.roster']),
+  var roster = ContactList.roster,
       notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
       item;
 
@@ -2766,7 +2768,7 @@ function createListResults(list, results, self) {
     item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
     item += '<span class="name">'+contact.full_name+'</span>';
     item += '</div>';
-    if (!rosterItem || (!rosterItem.ask && rosterItem.subscription === 'none' && !notConfirmed[contact.id])) {
+    if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask) || !notConfirmed[contact.id]) {
       item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
       item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     }
@@ -2903,7 +2905,7 @@ DialogView.prototype = {
 
             // not show dialog if user has not confirmed this contact
             notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
-            if (private_id && (!roster[private_id] || notConfirmed[private_id]))
+            if (private_id && (!roster[private_id] || (roster[private_id] && roster[private_id].subscription === 'none' && !roster[private_id].ask) || notConfirmed[private_id]))
               continue;
             
             self.addDialogItem(dialog, true);
@@ -2941,8 +2943,8 @@ DialogView.prototype = {
   },
 
   addDialogItem: function(dialog, isDownload) {
-    var contacts = this.app.models.ContactList.contacts,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+    var contacts = ContactList.contacts,
+        roster = ContactList.roster,
         private_id, icon, name, status,
         html, startOfCurrentDay;
 
@@ -2985,9 +2987,9 @@ DialogView.prototype = {
 
   htmlBuild: function(objDom) {
     var MessageView = this.app.views.Message,
-        contacts = this.app.models.ContactList.contacts,
-        dialogs = this.app.models.ContactList.dialogs,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        contacts = ContactList.contacts,
+        dialogs = ContactList.dialogs,
+        roster = ContactList.roster,
         parent = objDom.parent(),
         dialog_id = parent.data('dialog'),
         user_id = parent.data('id'),
@@ -3135,13 +3137,13 @@ DialogView.prototype = {
   },
 
   createGroupChat: function(type, dialog_id) {
-    var contacts = this.app.models.ContactList.contacts,
+    var contacts = ContactList.contacts,
         new_members = $('#popupContacts .is-chosen'),
         occupants_ids = $('#popupContacts').data('existing_ids') || [],
         groupName = occupants_ids.length > 0 ? [ User.contact.full_name, contacts[occupants_ids[0]].full_name ] : [User.contact.full_name],
         occupants_names = !type && occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
         self = this, new_ids = [], new_id, occupant,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]');
 
     for (var i = 0, len = new_members.length, name; i < len; i++) {
@@ -3194,7 +3196,7 @@ DialogView.prototype = {
   },
 
   leaveGroupChat: function(objDom) {
-    var dialogs = this.app.models.ContactList.dialogs,
+    var dialogs = ContactList.dialogs,
         dialog_id = objDom.data('dialog'),
         dialog = dialogs[dialog_id],
         li = $('.dialog-item[data-dialog="'+dialog_id+'"]'),
@@ -3561,7 +3563,7 @@ MessageView.prototype = {
         dialogGroupItem = $('.dialog-item[data-dialog="'+dialog_id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         msg, copyDialogItem, dialog, occupant, msgArr;
 
     msg = Message.create(message);
@@ -3870,8 +3872,8 @@ UserView.prototype = {
   contactPopover: function(objDom) {
     var ids = objDom.parent().data('id'),
         dialog_id = objDom.parent().data('dialog'),
-        roster = JSON.parse(sessionStorage['QM.roster']),
-        dialogs = this.app.models.ContactList.dialogs,
+        roster = ContactList.roster,
+        dialogs = ContactList.dialogs,
         html;
 
     html = '<ul class="list-actions list-actions_contacts popover">';
@@ -3901,11 +3903,11 @@ UserView.prototype = {
     var html,
         id = objDom.data('id'),
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         position = e.currentTarget.getBoundingClientRect();
 
     html = '<ul class="list-actions list-actions_occupants popover">';
-    if (!roster[id] || roster[id].subscription === 'none') {
+    if (!roster[id] || (roster[id].subscription === 'none' && !roster[id].ask)) {
       html += '<li class="list-item" data-jid="'+jid+'"><a class="list-actions-action requestAction" data-id="'+id+'" href="#">Send request</a></li>';
     } else {
       // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';

@@ -274,7 +274,7 @@ MessageView.prototype = {
         dialogGroupItem = $('.dialog-item[data-dialog="'+dialog_id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         msg, copyDialogItem, dialog, occupant, msgArr;
 
     msg = Message.create(message);
