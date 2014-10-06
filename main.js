@@ -2629,6 +2629,7 @@ ContactListView.prototype = {
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
 
+    if (typeof notConfirmed[id] !== 'undefined') return true;
     // update notConfirmed people list
     notConfirmed[id] = true;
     ContactList.saveNotConfirmed(notConfirmed);
