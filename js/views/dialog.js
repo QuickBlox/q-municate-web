@@ -304,8 +304,8 @@ DialogView.prototype = {
       $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
       self.messageScrollbar();
 
-      console.log(2222222);
-      console.log(self.app.models.ContactList.dialogs[dialog_id]);
+      // console.log(2222222);
+      // console.log(self.app.models.ContactList.dialogs[dialog_id]);
 
       if (typeof dialog.messages !== 'undefined') {
         Message.update(dialog.messages.join(), dialog_id);
