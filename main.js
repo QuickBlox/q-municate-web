@@ -2984,8 +2984,10 @@ DialogView.prototype = {
     if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay) {
       if (isDownload)
         $('#recentList').removeClass('is-hidden').find('ul').append(html);
-      else
+      else if (!$('#searchList').is(':visible'))
         $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
+      else
+        $('#recentList').find('ul').prepend(html);
     } else {
       $('#historyList').removeClass('is-hidden').find('ul').append(html);
     }
