@@ -3562,7 +3562,7 @@ MessageView.prototype = {
     }
   },
 
-  onMessage: function(id, message) {
+  onMessage: function(id, message, recipientJid) {
     if (message.type === 'error') return true;
 
     var DialogView = self.app.views.Dialog,
@@ -3589,7 +3589,6 @@ MessageView.prototype = {
       msgArr = dialogs[dialog_id].messages || [];
       msgArr.push(msg.id);
       dialogs[dialog_id].messages = msgArr;
-      console.log(self.app.models.ContactList.dialogs[dialog_id]);
     }
 
     if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
