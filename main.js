@@ -2626,9 +2626,9 @@ ContactListView.prototype = {
   onSubscribe: function(id) {
     var html,
         contacts = ContactList.contacts,
-        dialogItem = $('.presence-listener[data-id="'+id+'"]'),
-        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
-        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
+        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+        dialogItem = $('#requestsList .list-item[data-jid="'+jid+'"]'),
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
     if (dialogItem.length > 0) return true;
     // update notConfirmed people list
