@@ -3969,7 +3969,7 @@ UserView.prototype = {
     } else {
       $('#searchList').addClass('is-hidden');
       $('#recentList, #historyList, #requestsList').each(function() {
-        if ($(this).find('.dialog-item').length > 0)
+        if ($(this).find('.list-item').length > 0)
           $(this).removeClass('is-hidden');
       });
     }
