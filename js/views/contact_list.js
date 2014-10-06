@@ -344,10 +344,11 @@ ContactListView.prototype = {
   onSubscribe: function(id) {
     var html,
         contacts = ContactList.contacts,
+        dialogItem = $('.presence-listener[data-id="'+id+'"]'),
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
 
-    if (typeof notConfirmed[id] !== 'undefined') return true;
+    if (dialogItem.length > 0) return true;
     // update notConfirmed people list
     notConfirmed[id] = true;
     ContactList.saveNotConfirmed(notConfirmed);
