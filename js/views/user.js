@@ -225,7 +225,7 @@ UserView.prototype = {
         if ($(this).find('.list-item').length > 0)
           $(this).removeClass('is-hidden');
       });
-      if ($('.l-list-wrap section:not(#requestsList):not(#searchList) .list-item').length === 0)
+      if ($('.l-list-wrap section:not(#searchList) .list-item').length === 0)
         $('#emptyList').removeClass('is-hidden');
     }
   },
