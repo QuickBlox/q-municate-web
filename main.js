@@ -3881,7 +3881,7 @@ UserView.prototype = {
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
     
-    if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription === 'both')
+    if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription !== 'none')
       html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" href="#">Add people</a></li>';
     else if (dialogs[dialog_id].type !== 3)
       html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" data-dialog="'+dialog_id+'" href="#">Add people</a></li>';
