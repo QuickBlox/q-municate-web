@@ -2988,7 +2988,7 @@ DialogView.prototype = {
         $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
       else
         $('#recentList').find('ul').prepend(html);
-    } else {
+    } else if (!$('#searchList').is(':visible')) {
       $('#historyList').removeClass('is-hidden').find('ul').append(html);
     }
 
