@@ -38,7 +38,7 @@ MessageView.prototype = {
         ContactListMsg = this.app.models.ContactList,
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]');
 
-    if (typeof chat[0] === 'undefined') return true;
+    if (typeof chat[0] === 'undefined' || (!message.body && !message.notification_type && !message.attachment)) return true;
 
     this.checkSenderId(message.sender_id, function() {
 
@@ -219,7 +219,7 @@ MessageView.prototype = {
         val = form.find('.textarea').html().trim(),
         time = Math.floor(Date.now() / 1000),
         type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
-        dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         copyDialogItem;
 
     if (val.length > 0) {
@@ -253,49 +253,60 @@ MessageView.prototype = {
         copyDialogItem = dialogItem.clone();
         dialogItem.remove();
         $('#recentList ul').prepend(copyDialogItem);
-        $('#recentList').removeClass('is-hidden');
-        isSectionEmpty($('#recentList ul'));
+        if (!$('#searchList').is(':visible')) {
+         $('#recentList').removeClass('is-hidden');
+         isSectionEmpty($('#recentList ul')); 
+        }
       }
     }
   },
 
-  onMessage: function(id, message) {
+  onMessage: function(id, message, recipientJid) {
     if (message.type === 'error') return true;
 
     var DialogView = self.app.views.Dialog,
         hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+        dialogs = ContactList.dialogs,
         notification_type = message.extension && message.extension.notification_type,
         dialog_id = message.extension && message.extension.dialog_id,
         room_jid = message.extension && message.extension.room_jid,
         room_name = message.extension && message.extension.room_name,
         occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
-        dialogItem = message.type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
+        dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-        roster = JSON.parse(sessionStorage['QM.roster']),
-        msg, copyDialogItem, dialog, occupant;
+        roster = ContactList.roster,
+        msg, copyDialogItem, dialog, occupant, msgArr;
 
     msg = Message.create(message);
     msg.sender_id = id;
 
-    if (notification_type !== '6' || msg.sender_id !== User.contact.id)
+    if ((notification_type !== '6' || msg.sender_id !== User.contact.id) && chat.is(':visible'))
       Message.update(msg.id, dialog_id);
+    else if (!chat.is(':visible') && chat.length > 0) {
+      msgArr = dialogs[dialog_id].messages || [];
+      msgArr.push(msg.id);
+      dialogs[dialog_id].messages = msgArr;
+    }
 
     if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
       unread++;
       dialogItem.find('.unread').text(unread);
     }
 
-    if (dialogItem.length > 0) {
+    if (notification_type !== '1' && dialogItem.length > 0) {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     }
 
     // create new group chat
-    if (notification_type === '1' && message.type === 'chat') {
+    if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
       QB.chat.muc.join(room_jid);
 
       dialog = Dialog.create({

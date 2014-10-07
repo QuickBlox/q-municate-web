@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -280,6 +280,7 @@ var contact_ids;
 
 function ContactList(app) {
   this.app = app;
+  this.roster = {};
   this.contacts = getContacts();
   this.dialogs = {};
   contact_ids = Object.keys(this.contacts).map(Number);
@@ -288,7 +289,8 @@ function ContactList(app) {
 ContactList.prototype = {
 
   saveRoster: function(roster) {
-    sessionStorage.setItem('QM.roster', JSON.stringify(roster));
+    // sessionStorage.setItem('QM.roster', JSON.stringify(roster));
+    this.roster = roster;
   },
 
   saveNotConfirmed: function(notConfirmed) {
@@ -799,6 +801,10 @@ User.prototype = {
       provider: 'facebook',
       keys: {token: token}
     };
+
+    FB.api('/me', function (response) {
+      console.log(1111111111, response);
+    });
 
     QBApiCalls.createSession(params, function(session) {
       QBApiCalls.getUser(session.user_id, function(user) {
@@ -2208,7 +2214,7 @@ AttachView.prototype = {
         dialog_id = chat.data('dialog'),
         time = Math.floor(Date.now() / 1000),
         type = chat.is('.is-group') ? 'groupchat' : 'chat',
-        dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         copyDialogItem;
       
     // send message
@@ -2238,8 +2244,10 @@ AttachView.prototype = {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+        $('#recentList').removeClass('is-hidden');
+        isSectionEmpty($('#recentList ul'));
+      }
     }
   }
 
@@ -2347,8 +2355,8 @@ ContactListView.prototype = {
   addContactsToChat: function(objDom, type, dialog_id) {
     var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
         popup = $('#popupContacts'),
-        contacts = this.app.models.ContactList.contacts,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        contacts = ContactList.contacts,
+        roster = ContactList.roster,
         html, sortedContacts, friends, user_id;
 
     openPopup(popup, type, dialog_id);
@@ -2361,7 +2369,7 @@ ContactListView.prototype = {
     // get your friends which are sorted by alphabet
     sortedContacts = _.pluck( _.sortBy(contacts, 'full_name') , 'id').map(String);
     friends = _.filter(sortedContacts, function(el) {
-      return roster[el] && roster[el].subscription === 'both';
+      return roster[el] && roster[el].subscription !== 'none';
     });
     if (QMCONFIG.debug) console.log('Friends', friends);
 
@@ -2393,7 +2401,7 @@ ContactListView.prototype = {
 
   importFBFriend: function(id) {
     var jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-        roster = JSON.parse(sessionStorage['QM.roster']);
+        roster = ContactList.roster;
 
     QB.chat.roster.add(jid, function() {
       // update roster
@@ -2411,7 +2419,7 @@ ContactListView.prototype = {
   sendSubscribe: function(objDom, isChat) {
     var MessageView = this.app.views.Message,
         jid = isChat ? objDom.parents('.l-chat').data('jid') : objDom.parents('li').data('jid'),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         id = QB.chat.helpers.getIdFromNode(jid),
         dialogItem = $('.dialog-item[data-id="'+id+'"]')[0],
         time = Math.floor(Date.now() / 1000),
@@ -2453,12 +2461,14 @@ ContactListView.prototype = {
         Dialog.createPrivate(jid);
       }
 
-      dialogItem = $('.dialog-item[data-id="'+id+'"]');
+      dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     });
 
   },
@@ -2469,7 +2479,7 @@ ContactListView.prototype = {
         jid = objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
         li, dialog, message, dialogItem, copyDialogItem,
@@ -2480,7 +2490,7 @@ ContactListView.prototype = {
 
     // update roster
     roster[id] = {
-      subscription: 'both',
+      subscription: 'from',
       ask: 'subscribe'
     };
     ContactList.saveRoster(roster);
@@ -2528,12 +2538,14 @@ ContactListView.prototype = {
 
       DialogView.addDialogItem(dialog);
 
-      dialogItem = $('.dialog-item[data-id="'+id+'"]');
+      dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     });
     
   },
@@ -2542,11 +2554,19 @@ ContactListView.prototype = {
     var jid = objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
+        roster = ContactList.roster,
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']);
 
     objDom.parents('li').remove();
     isSectionEmpty(list);
+
+    // update roster
+    roster[id] = {
+      subscription: 'none',
+      ask: null
+    };
+    ContactList.saveRoster(roster);
 
     // update notConfirmed people list
     delete notConfirmed[id];
@@ -2567,15 +2587,15 @@ ContactListView.prototype = {
   },
 
   sendDelete: function(objDom) {
-    var contacts = this.app.models.ContactList.contacts,
-        dialogs = this.app.models.ContactList.dialogs,
+    var contacts = ContactList.contacts,
+        dialogs = ContactList.dialogs,
         id = objDom.data('id'),
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
         li = $('.dialog-item[data-id="'+id+'"]'),
         chat = $('.l-chat[data-id="'+id+'"]'),
         list = li.parents('ul'),
         dialog_id = li.data('dialog'),
-        roster = JSON.parse(sessionStorage['QM.roster']);
+        roster = ContactList.roster;
 
     li.remove();
     isSectionEmpty(list);
@@ -2612,17 +2632,11 @@ ContactListView.prototype = {
   onSubscribe: function(id) {
     var html,
         contacts = ContactList.contacts,
-        roster = JSON.parse(sessionStorage['QM.roster']),
-        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
-        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
+        jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+        dialogItem = $('#requestsList .list-item[data-jid="'+jid+'"]'),
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
-    // update roster
-    roster[id] = {
-      subscription: 'none',
-      ask: null
-    };
-    ContactList.saveRoster(roster);
-
+    if (dialogItem.length > 0) return true;
     // update notConfirmed people list
     notConfirmed[id] = true;
     ContactList.saveNotConfirmed(notConfirmed);
@@ -2644,12 +2658,12 @@ ContactListView.prototype = {
   },
 
   onConfirm: function(id) {
-    var roster = JSON.parse(sessionStorage['QM.roster']),
+    var roster = ContactList.roster,
         dialogItem = $('.presence-listener[data-id="'+id+'"]');
 
     // update roster
     roster[id] = {
-      subscription: 'both',
+      subscription: 'to',
       ask: null
     };
     ContactList.saveRoster(roster);
@@ -2663,7 +2677,7 @@ ContactListView.prototype = {
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
         request = $('#requestsList .list-item[data-jid="'+jid+'"]'),
         list = request && request.parents('ul'),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
     // update roster
@@ -2691,9 +2705,10 @@ ContactListView.prototype = {
 
   onPresence: function(id, type) {
     var dialogItem = $('.presence-listener[data-id="'+id+'"]'),
-        roster = JSON.parse(sessionStorage['QM.roster']);
+        roster = ContactList.roster;
     
     // update roster
+    if (typeof roster[id] === 'undefined') return true;
     roster[id].status = type ? false : true;
     ContactList.saveRoster(roster);
 
@@ -2748,7 +2763,7 @@ function ajaxDownloading(list, self) {
 }
 
 function createListResults(list, results, self) {
-  var roster = JSON.parse(sessionStorage['QM.roster']),
+  var roster = ContactList.roster,
       notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
       item;
 
@@ -2761,7 +2776,7 @@ function createListResults(list, results, self) {
     item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
     item += '<span class="name">'+contact.full_name+'</span>';
     item += '</div>';
-    if (!rosterItem || (!rosterItem.ask && rosterItem.subscription === 'none' && !notConfirmed[contact.id])) {
+    if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
       item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
       item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     }
@@ -2898,7 +2913,7 @@ DialogView.prototype = {
 
             // not show dialog if user has not confirmed this contact
             notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
-            if (private_id && (!roster[private_id] || notConfirmed[private_id]))
+            if (private_id && (!roster[private_id] || (roster[private_id] && roster[private_id].subscription === 'none' && !roster[private_id].ask && notConfirmed[private_id])))
               continue;
             
             self.addDialogItem(dialog, true);
@@ -2936,8 +2951,8 @@ DialogView.prototype = {
   },
 
   addDialogItem: function(dialog, isDownload) {
-    var contacts = this.app.models.ContactList.contacts,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+    var contacts = ContactList.contacts,
+        roster = ContactList.roster,
         private_id, icon, name, status,
         html, startOfCurrentDay;
 
@@ -2969,9 +2984,11 @@ DialogView.prototype = {
     if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay) {
       if (isDownload)
         $('#recentList').removeClass('is-hidden').find('ul').append(html);
-      else
+      else if (!$('#searchList').is(':visible'))
         $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
-    } else {
+      else
+        $('#recentList').find('ul').prepend(html);
+    } else if (!$('#searchList').is(':visible')) {
       $('#historyList').removeClass('is-hidden').find('ul').append(html);
     }
 
@@ -2980,9 +2997,9 @@ DialogView.prototype = {
 
   htmlBuild: function(objDom) {
     var MessageView = this.app.views.Message,
-        contacts = this.app.models.ContactList.contacts,
-        dialogs = this.app.models.ContactList.dialogs,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        contacts = ContactList.contacts,
+        dialogs = ContactList.dialogs,
+        roster = ContactList.roster,
         parent = objDom.parent(),
         dialog_id = parent.data('dialog'),
         user_id = parent.data('id'),
@@ -3096,6 +3113,14 @@ DialogView.prototype = {
       $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
       self.messageScrollbar();
 
+      // console.log(2222222);
+      // console.log(self.app.models.ContactList.dialogs[dialog_id]);
+
+      if (typeof dialog.messages !== 'undefined') {
+        Message.update(dialog.messages.join(), dialog_id);
+        dialog.messages = [];
+      }
+      
     }
 
     $('.is-selected').removeClass('is-selected');
@@ -3122,13 +3147,13 @@ DialogView.prototype = {
   },
 
   createGroupChat: function(type, dialog_id) {
-    var contacts = this.app.models.ContactList.contacts,
+    var contacts = ContactList.contacts,
         new_members = $('#popupContacts .is-chosen'),
         occupants_ids = $('#popupContacts').data('existing_ids') || [],
         groupName = occupants_ids.length > 0 ? [ User.contact.full_name, contacts[occupants_ids[0]].full_name ] : [User.contact.full_name],
         occupants_names = !type && occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
         self = this, new_ids = [], new_id, occupant,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]');
 
     for (var i = 0, len = new_members.length, name; i < len; i++) {
@@ -3147,13 +3172,15 @@ DialogView.prototype = {
     if (type) {
       Dialog.updateGroup(occupants_names, {dialog_id: dialog_id, occupants_ids: occupants_ids, new_ids: new_ids}, function(dialog) {
         self.removeDataSpinner();
-        var dialogItem = $('.dialog-item[data-dialog="'+dialog.id+'"]');
+        var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
         if (dialogItem.length > 0) {
           copyDialogItem = dialogItem.clone();
           dialogItem.remove();
           $('#recentList ul').prepend(copyDialogItem);
-          $('#recentList').removeClass('is-hidden');
-          isSectionEmpty($('#recentList ul'));
+          if (!$('#searchList').is(':visible')) {
+           $('#recentList').removeClass('is-hidden');
+           isSectionEmpty($('#recentList ul')); 
+          }
         }
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
         $('.is-overlay').removeClass('is-overlay');
@@ -3181,7 +3208,7 @@ DialogView.prototype = {
   },
 
   leaveGroupChat: function(objDom) {
-    var dialogs = this.app.models.ContactList.dialogs,
+    var dialogs = ContactList.dialogs,
         dialog_id = objDom.data('dialog'),
         dialog = dialogs[dialog_id],
         li = $('.dialog-item[data-dialog="'+dialog_id+'"]'),
@@ -3312,7 +3339,7 @@ MessageView.prototype = {
         ContactListMsg = this.app.models.ContactList,
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]');
 
-    if (typeof chat[0] === 'undefined') return true;
+    if (typeof chat[0] === 'undefined' || (!message.body && !message.notification_type && !message.attachment)) return true;
 
     this.checkSenderId(message.sender_id, function() {
 
@@ -3493,7 +3520,7 @@ MessageView.prototype = {
         val = form.find('.textarea').html().trim(),
         time = Math.floor(Date.now() / 1000),
         type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
-        dialogItem = type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         copyDialogItem;
 
     if (val.length > 0) {
@@ -3527,49 +3554,60 @@ MessageView.prototype = {
         copyDialogItem = dialogItem.clone();
         dialogItem.remove();
         $('#recentList ul').prepend(copyDialogItem);
-        $('#recentList').removeClass('is-hidden');
-        isSectionEmpty($('#recentList ul'));
+        if (!$('#searchList').is(':visible')) {
+         $('#recentList').removeClass('is-hidden');
+         isSectionEmpty($('#recentList ul')); 
+        }
       }
     }
   },
 
-  onMessage: function(id, message) {
+  onMessage: function(id, message, recipientJid) {
     if (message.type === 'error') return true;
 
     var DialogView = self.app.views.Dialog,
         hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+        dialogs = ContactList.dialogs,
         notification_type = message.extension && message.extension.notification_type,
         dialog_id = message.extension && message.extension.dialog_id,
         room_jid = message.extension && message.extension.room_jid,
         room_name = message.extension && message.extension.room_name,
         occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
-        dialogItem = message.type === 'groupchat' ? $('.dialog-item[data-dialog="'+dialog_id+'"]') : $('.dialog-item[data-id="'+id+'"]'),
+        dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
+        dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-        roster = JSON.parse(sessionStorage['QM.roster']),
-        msg, copyDialogItem, dialog, occupant;
+        roster = ContactList.roster,
+        msg, copyDialogItem, dialog, occupant, msgArr;
 
     msg = Message.create(message);
     msg.sender_id = id;
 
-    if (notification_type !== '6' || msg.sender_id !== User.contact.id)
+    if ((notification_type !== '6' || msg.sender_id !== User.contact.id) && chat.is(':visible'))
       Message.update(msg.id, dialog_id);
+    else if (!chat.is(':visible') && chat.length > 0) {
+      msgArr = dialogs[dialog_id].messages || [];
+      msgArr.push(msg.id);
+      dialogs[dialog_id].messages = msgArr;
+    }
 
     if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
       unread++;
       dialogItem.find('.unread').text(unread);
     }
 
-    if (dialogItem.length > 0) {
+    if (notification_type !== '1' && dialogItem.length > 0) {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
-      $('#recentList').removeClass('is-hidden');
-      isSectionEmpty($('#recentList ul'));
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     }
 
     // create new group chat
-    if (notification_type === '1' && message.type === 'chat') {
+    if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
       QB.chat.muc.join(room_jid);
 
       dialog = Dialog.create({
@@ -3849,8 +3887,8 @@ UserView.prototype = {
   contactPopover: function(objDom) {
     var ids = objDom.parent().data('id'),
         dialog_id = objDom.parent().data('dialog'),
-        roster = JSON.parse(sessionStorage['QM.roster']),
-        dialogs = this.app.models.ContactList.dialogs,
+        roster = ContactList.roster,
+        dialogs = ContactList.dialogs,
         html;
 
     html = '<ul class="list-actions list-actions_contacts popover">';
@@ -3858,7 +3896,7 @@ UserView.prototype = {
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
     
-    if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription === 'both')
+    if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription !== 'none')
       html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" href="#">Add people</a></li>';
     else if (dialogs[dialog_id].type !== 3)
       html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" data-dialog="'+dialog_id+'" href="#">Add people</a></li>';
@@ -3880,11 +3918,11 @@ UserView.prototype = {
     var html,
         id = objDom.data('id'),
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         position = e.currentTarget.getBoundingClientRect();
 
     html = '<ul class="list-actions list-actions_occupants popover">';
-    if (!roster[id] || roster[id].subscription === 'none') {
+    if (!roster[id] || (roster[id].subscription === 'none' && !roster[id].ask)) {
       html += '<li class="list-item" data-jid="'+jid+'"><a class="list-actions-action requestAction" data-id="'+id+'" href="#">Send request</a></li>';
     } else {
       // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
@@ -3942,9 +3980,11 @@ UserView.prototype = {
     } else {
       $('#searchList').addClass('is-hidden');
       $('#recentList, #historyList, #requestsList').each(function() {
-        if ($(this).find('.dialog-item').length > 0)
+        if ($(this).find('.list-item').length > 0)
           $(this).removeClass('is-hidden');
       });
+      if ($('.l-list-wrap section:not(#searchList) .list-item').length === 0)
+        $('#emptyList').removeClass('is-hidden');
     }
   },
 
@@ -4001,4 +4041,4 @@ var appearAnimation = function() {
   $('.popover:not(.popover_smile)').show(150);
 };
 
-},{}]},{},[1]);
+},{}]},{},[1])

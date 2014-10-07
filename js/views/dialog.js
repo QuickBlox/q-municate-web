@@ -106,7 +106,7 @@ DialogView.prototype = {
 
             // not show dialog if user has not confirmed this contact
             notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
-            if (private_id && (!roster[private_id] || notConfirmed[private_id]))
+            if (private_id && (!roster[private_id] || (roster[private_id] && roster[private_id].subscription === 'none' && !roster[private_id].ask && notConfirmed[private_id])))
               continue;
             
             self.addDialogItem(dialog, true);
@@ -144,8 +144,8 @@ DialogView.prototype = {
   },
 
   addDialogItem: function(dialog, isDownload) {
-    var contacts = this.app.models.ContactList.contacts,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+    var contacts = ContactList.contacts,
+        roster = ContactList.roster,
         private_id, icon, name, status,
         html, startOfCurrentDay;
 
@@ -177,9 +177,11 @@ DialogView.prototype = {
     if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay) {
       if (isDownload)
         $('#recentList').removeClass('is-hidden').find('ul').append(html);
-      else
+      else if (!$('#searchList').is(':visible'))
         $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
-    } else {
+      else
+        $('#recentList').find('ul').prepend(html);
+    } else if (!$('#searchList').is(':visible')) {
       $('#historyList').removeClass('is-hidden').find('ul').append(html);
     }
 
@@ -188,9 +190,9 @@ DialogView.prototype = {
 
   htmlBuild: function(objDom) {
     var MessageView = this.app.views.Message,
-        contacts = this.app.models.ContactList.contacts,
-        dialogs = this.app.models.ContactList.dialogs,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        contacts = ContactList.contacts,
+        dialogs = ContactList.dialogs,
+        roster = ContactList.roster,
         parent = objDom.parent(),
         dialog_id = parent.data('dialog'),
         user_id = parent.data('id'),
@@ -304,6 +306,14 @@ DialogView.prototype = {
       $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
       self.messageScrollbar();
 
+      // console.log(2222222);
+      // console.log(self.app.models.ContactList.dialogs[dialog_id]);
+
+      if (typeof dialog.messages !== 'undefined') {
+        Message.update(dialog.messages.join(), dialog_id);
+        dialog.messages = [];
+      }
+      
     }
 
     $('.is-selected').removeClass('is-selected');
@@ -330,13 +340,13 @@ DialogView.prototype = {
   },
 
   createGroupChat: function(type, dialog_id) {
-    var contacts = this.app.models.ContactList.contacts,
+    var contacts = ContactList.contacts,
         new_members = $('#popupContacts .is-chosen'),
         occupants_ids = $('#popupContacts').data('existing_ids') || [],
         groupName = occupants_ids.length > 0 ? [ User.contact.full_name, contacts[occupants_ids[0]].full_name ] : [User.contact.full_name],
         occupants_names = !type && occupants_ids.length > 0 ? [ contacts[occupants_ids[0]].full_name ] : [],
         self = this, new_ids = [], new_id, occupant,
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]');
 
     for (var i = 0, len = new_members.length, name; i < len; i++) {
@@ -355,13 +365,15 @@ DialogView.prototype = {
     if (type) {
       Dialog.updateGroup(occupants_names, {dialog_id: dialog_id, occupants_ids: occupants_ids, new_ids: new_ids}, function(dialog) {
         self.removeDataSpinner();
-        var dialogItem = $('.dialog-item[data-dialog="'+dialog.id+'"]');
+        var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
         if (dialogItem.length > 0) {
           copyDialogItem = dialogItem.clone();
           dialogItem.remove();
           $('#recentList ul').prepend(copyDialogItem);
-          $('#recentList').removeClass('is-hidden');
-          isSectionEmpty($('#recentList ul'));
+          if (!$('#searchList').is(':visible')) {
+           $('#recentList').removeClass('is-hidden');
+           isSectionEmpty($('#recentList ul')); 
+          }
         }
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
         $('.is-overlay').removeClass('is-overlay');
@@ -389,7 +401,7 @@ DialogView.prototype = {
   },
 
   leaveGroupChat: function(objDom) {
-    var dialogs = this.app.models.ContactList.dialogs,
+    var dialogs = ContactList.dialogs,
         dialog_id = objDom.data('dialog'),
         dialog = dialogs[dialog_id],
         li = $('.dialog-item[data-dialog="'+dialog_id+'"]'),

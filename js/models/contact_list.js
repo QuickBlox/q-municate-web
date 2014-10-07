@@ -11,6 +11,7 @@ var contact_ids;
 
 function ContactList(app) {
   this.app = app;
+  this.roster = {};
   this.contacts = getContacts();
   this.dialogs = {};
   contact_ids = Object.keys(this.contacts).map(Number);
@@ -19,7 +20,8 @@ function ContactList(app) {
 ContactList.prototype = {
 
   saveRoster: function(roster) {
-    sessionStorage.setItem('QM.roster', JSON.stringify(roster));
+    // sessionStorage.setItem('QM.roster', JSON.stringify(roster));
+    this.roster = roster;
   },
 
   saveNotConfirmed: function(notConfirmed) {

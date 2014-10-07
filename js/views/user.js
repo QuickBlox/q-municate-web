@@ -129,8 +129,8 @@ UserView.prototype = {
   contactPopover: function(objDom) {
     var ids = objDom.parent().data('id'),
         dialog_id = objDom.parent().data('dialog'),
-        roster = JSON.parse(sessionStorage['QM.roster']),
-        dialogs = this.app.models.ContactList.dialogs,
+        roster = ContactList.roster,
+        dialogs = ContactList.dialogs,
         html;
 
     html = '<ul class="list-actions list-actions_contacts popover">';
@@ -138,7 +138,7 @@ UserView.prototype = {
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
     // html += '<li class="list-item"><a class="list-actions-action" href="#">Audio call</a></li>';
     
-    if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription === 'both')
+    if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription !== 'none')
       html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" href="#">Add people</a></li>';
     else if (dialogs[dialog_id].type !== 3)
       html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" data-dialog="'+dialog_id+'" href="#">Add people</a></li>';
@@ -160,11 +160,11 @@ UserView.prototype = {
     var html,
         id = objDom.data('id'),
         jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-        roster = JSON.parse(sessionStorage['QM.roster']),
+        roster = ContactList.roster,
         position = e.currentTarget.getBoundingClientRect();
 
     html = '<ul class="list-actions list-actions_occupants popover">';
-    if (!roster[id] || roster[id].subscription === 'none') {
+    if (!roster[id] || (roster[id].subscription === 'none' && !roster[id].ask)) {
       html += '<li class="list-item" data-jid="'+jid+'"><a class="list-actions-action requestAction" data-id="'+id+'" href="#">Send request</a></li>';
     } else {
       // html += '<li class="list-item"><a class="list-actions-action" href="#">Video call</a></li>';
@@ -222,9 +222,11 @@ UserView.prototype = {
     } else {
       $('#searchList').addClass('is-hidden');
       $('#recentList, #historyList, #requestsList').each(function() {
-        if ($(this).find('.dialog-item').length > 0)
+        if ($(this).find('.list-item').length > 0)
           $(this).removeClass('is-hidden');
       });
+      if ($('.l-list-wrap section:not(#searchList) .list-item').length === 0)
+        $('#emptyList').removeClass('is-hidden');
     }
   },
 
