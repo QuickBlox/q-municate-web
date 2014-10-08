@@ -1614,6 +1614,8 @@ Routes.prototype = {
     });
 
     $('.l-workspace-wrap').on('click', '.preview', function() {
+      if (checkConnection() === false) return false;
+
       var name = $(this).data('name'),
           url = $(this).data('url'),
           uid = $(this).data('uid'),
@@ -1636,6 +1638,8 @@ Routes.prototype = {
     /* welcome page
     ----------------------------------------------------- */
     $('#signupFB, #loginFB').on('click', function(event) {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('connect with FB');
       event.preventDefault();
 
@@ -1663,6 +1667,8 @@ Routes.prototype = {
     /* signup page
     ----------------------------------------------------- */
     $('#signupForm').on('click', function(event) {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('create user');
       event.preventDefault();
       UserView.signupForm();
@@ -1677,6 +1683,8 @@ Routes.prototype = {
     });
 
     $('#loginForm').on('click', function(event) {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('authorize user');
       event.preventDefault();
       UserView.loginForm();
@@ -1685,12 +1693,16 @@ Routes.prototype = {
     /* forgot and reset page
     ----------------------------------------------------- */
     $('#forgotForm').on('click', function(event) {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('send letter');
       event.preventDefault();
       UserView.forgotForm();
     });
 
     $('#resetForm').on('click', function(event) {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('reset password');
       event.preventDefault();
       UserView.resetForm();
@@ -1745,15 +1757,21 @@ Routes.prototype = {
     });
 
     $('#logoutConfirm').on('click', function() {
+      if (checkConnection() === false) return false;
+
       UserView.logout();
     });
 
     $('#deleteConfirm').on('click', function() {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('delete contact');
       ContactListView.sendDelete($(this));
     });
 
     $('#leaveConfirm').on('click', function() {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('leave chat');
       DialogView.leaveGroupChat($(this));
     });
@@ -1784,6 +1802,8 @@ Routes.prototype = {
     /* search
     ----------------------------------------------------- */
     $('#globalSearch').on('submit', function(event) {
+      if (checkConnection() === false) return false;
+
       event.preventDefault();
       ContactListView.globalSearch($(this));
     });
@@ -1804,27 +1824,37 @@ Routes.prototype = {
     /* subscriptions
     ----------------------------------------------------- */
     $('.list_contacts').on('click', 'button.send-request', function() {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('send subscribe');
       ContactListView.sendSubscribe($(this));
     });
 
     $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('send subscribe');
       ContactListView.sendSubscribe($(this), true);
     });
 
     $('body').on('click', '.requestAction', function(event) {
+      if (checkConnection() === false) return false;
+
       event.preventDefault();
       if (QMCONFIG.debug) console.log('send subscribe');
       ContactListView.sendSubscribe($(this));
     });
 
     $('.list').on('click', '.request-button_ok', function() {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('send confirm');
       ContactListView.sendConfirm($(this));
     });
 
     $('.list').on('click', '.request-button_cancel', function() {
+      if (checkConnection() === false) return false;
+
       if (QMCONFIG.debug) console.log('send reject');
       ContactListView.sendReject($(this));
     });
@@ -1882,10 +1912,14 @@ Routes.prototype = {
     });
 
     $('#popupContacts .btn_popup_group').on('click', function() {
+      if (checkConnection() === false) return false;
+
       DialogView.createGroupChat();
     });
 
     $('#popupContacts .btn_popup_add').on('click', function() {
+      if (checkConnection() === false) return false;
+
       var dialog_id = $(this).parents('.popup').data('dialog');
       DialogView.createGroupChat('add', dialog_id);
     });
@@ -1936,6 +1970,8 @@ Routes.prototype = {
     /* temporary routes
     ----------------------------------------------------- */
     $('#share').on('click', function(event) {
+      if (checkConnection() === false) return false;
+
       event.preventDefault();
     });
 
@@ -2033,6 +2069,15 @@ function setCursorToEnd(el) {
     textRange.moveToElementText(el.get(0));
     textRange.collapse(false);
     textRange.select();
+  }
+}
+
+function checkConnection() {
+  if (window.onLine === false) {
+    alert('Sorry. You need to recover your Internet connection');
+    return false;
+  } else {
+    return true;
   }
 }
 
