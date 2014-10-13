@@ -33,15 +33,15 @@ Attach.prototype = {
     };
   },
 
-  crop: function(file, callback) {
+  crop: function(file, params, callback) {
     loadImage(
       file,
       function (img) {
         var attr = {crop: true};
         if (img.width > img.height)
-          attr.maxWidth = 1000;
+          attr.maxWidth = params.w;
         else
-          attr.maxHeight = 1000;
+          attr.maxHeight = params.h;
         
         loadImage(
           file,

@@ -172,15 +172,15 @@ Attach.prototype = {
     };
   },
 
-  crop: function(file, callback) {
+  crop: function(file, params, callback) {
     loadImage(
       file,
       function (img) {
         var attr = {crop: true};
         if (img.width > img.height)
-          attr.maxWidth = 1000;
+          attr.maxWidth = params.w;
         else
-          attr.maxHeight = 1000;
+          attr.maxHeight = params.h;
         
         loadImage(
           file,
@@ -928,20 +928,23 @@ User.prototype = {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
         DialogView = this.app.views.Dialog,
+        Attach = this.app.models.Attach,
         custom_data,
         self = this;
 
-    QBApiCalls.createBlob({file: tempParams.blob, 'public': true}, function(blob) {
-      self.contact.blob_id = blob.id;
-      self.contact.avatar_url = blob.path;
+    Attach.crop(tempParams.blob, {w: 146, h: 146}, function(file) {
+      QBApiCalls.createBlob({file: file, 'public': true}, function(blob) {
+        self.contact.blob_id = blob.id;
+        self.contact.avatar_url = blob.path;
 
-      UserView.successFormCallback();
-      DialogView.prepareDownloading(roster);
-      DialogView.downloadDialogs(roster);
-      
-      custom_data = JSON.stringify({avatar_url: blob.path});
-      QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
-        //if (QMCONFIG.debug) console.log('update of user', res);
+        UserView.successFormCallback();
+        DialogView.prepareDownloading(roster);
+        DialogView.downloadDialogs(roster);
+        
+        custom_data = JSON.stringify({avatar_url: blob.path});
+        QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
+          //if (QMCONFIG.debug) console.log('update of user', res);
+        });
       });
     });
   },
@@ -2157,7 +2160,7 @@ AttachView.prototype = {
       objDom.val('');
       fixScroll();
       if (file.type.indexOf('image') > -1) {
-        Attach.crop(file, function(blob) {
+        Attach.crop(file, {w: 1000, h: 1000}, function(blob) {
           self.createProgressBar(id, fileSizeCrop, fileSize, blob);
         });
       } else {

@@ -73,7 +73,7 @@ AttachView.prototype = {
       objDom.val('');
       fixScroll();
       if (file.type.indexOf('image') > -1) {
-        Attach.crop(file, function(blob) {
+        Attach.crop(file, {w: 1000, h: 1000}, function(blob) {
           self.createProgressBar(id, fileSizeCrop, fileSize, blob);
         });
       } else {
