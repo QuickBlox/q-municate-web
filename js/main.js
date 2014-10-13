@@ -127,10 +127,10 @@ $(document).ready(function() {
 //   QB.chat.sendPres('unavailable');
 // };
 
-window.onoffline = function() {
+window.offLineHandler = function() {
   $('.no-connection').removeClass('is-hidden');
 };
 
-window.ononline = function() {
+window.onLineHandler = function() {
   $('.no-connection').addClass('is-hidden');
 };

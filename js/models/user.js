@@ -160,20 +160,23 @@ User.prototype = {
     var QBApiCalls = this.app.service,
         UserView = this.app.views.User,
         DialogView = this.app.views.Dialog,
+        Attach = this.app.models.Attach,
         custom_data,
         self = this;
 
-    QBApiCalls.createBlob({file: tempParams.blob, 'public': true}, function(blob) {
-      self.contact.blob_id = blob.id;
-      self.contact.avatar_url = blob.path;
+    Attach.crop(tempParams.blob, {w: 146, h: 146}, function(file) {
+      QBApiCalls.createBlob({file: file, 'public': true}, function(blob) {
+        self.contact.blob_id = blob.id;
+        self.contact.avatar_url = blob.path;
 
-      UserView.successFormCallback();
-      DialogView.prepareDownloading(roster);
-      DialogView.downloadDialogs(roster);
-      
-      custom_data = JSON.stringify({avatar_url: blob.path});
-      QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
-        //if (QMCONFIG.debug) console.log('update of user', res);
+        UserView.successFormCallback();
+        DialogView.prepareDownloading(roster);
+        DialogView.downloadDialogs(roster);
+        
+        custom_data = JSON.stringify({avatar_url: blob.path});
+        QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
+          //if (QMCONFIG.debug) console.log('update of user', res);
+        });
       });
     });
   },
