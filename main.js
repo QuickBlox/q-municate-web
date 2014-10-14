@@ -2890,10 +2890,12 @@ DialogView.prototype = {
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
 
     QB.chat.onDisconnectingListener = function() {
+      window.onLine = false;
       $('.no-connection').removeClass('is-hidden');
     };
 
     QB.chat.onReconnectListener = function() {
+      window.onLine = true;
       $('.no-connection').addClass('is-hidden');
     };
   },
