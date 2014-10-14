@@ -99,7 +99,8 @@ ContactListView.prototype = {
       html += '<li class="list-item" data-id="'+user_id+'">';
       html += '<a class="contact l-flexbox" href="#">';
       html += '<div class="l-flexbox_inline">';
-      html += '<img class="contact-avatar avatar" src="'+contacts[user_id].avatar_url+'" alt="user">';
+      // html += '<img class="contact-avatar avatar" src="'+contacts[user_id].avatar_url+'" alt="user">';
+      html += '<div class="contact-avatar avatar" style="background-image:url('+contacts[user_id].avatar_url+')"></div>';
       html += '<span class="name">'+contacts[user_id].full_name+'</span>';
       html += '</div><input class="form-checkbox" type="checkbox">';
       html += '</a></li>';
@@ -361,7 +362,8 @@ ContactListView.prototype = {
       html = '<li class="list-item" data-jid="'+jid+'">';
       html += '<a class="contact l-flexbox" href="#">';
       html += '<div class="l-flexbox_inline">';
-      html += '<img class="contact-avatar avatar" src="'+(typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '')+'" alt="user">';
+      // html += '<img class="contact-avatar avatar" src="'+(typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '')+'" alt="user">';
+      html += '<div class="contact-avatar avatar" style="background-image:url('+(typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '')+')"></div>';
       html += '<span class="name">'+(typeof contacts[id] !== 'undefined' ? contacts[id].full_name : '')+'</span>';
       html += '</div><div class="request-controls l-flexbox">';
       html += '<button class="request-button request-button_cancel">&#10005;</button>';
@@ -489,7 +491,8 @@ function createListResults(list, results, self) {
     item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
     item += '<a class="contact l-flexbox" href="#">';
     item += '<div class="l-flexbox_inline">';
-    item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
+    // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
+    item += '<div class="contact-avatar avatar" style="background-image:url('+contact.avatar_url+')"></div>';
     item += '<span class="name">'+contact.full_name+'</span>';
     item += '</div>';
     if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {

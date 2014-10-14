@@ -73,7 +73,8 @@ UserView.prototype = {
 
   successFormCallback: function() {
     this.removeSpinner();
-    $('#profile').find('img').attr('src', User.contact.avatar_url);
+    // $('#profile').find('img').attr('src', User.contact.avatar_url);
+    $('#profile').find('.avatar').css('background-image', "url("+User.contact.avatar_url+")");
     switchPage($('#mainPage'));
   },
 
@@ -269,7 +270,8 @@ var switchPage = function(page) {
   page.find('input').val('');
   if (!page.is('#mainPage')) {
     page.find('form').removeClass('is-hidden').next('.l-form').remove(); // reset Forgot form after success sending of letter
-    page.find('input:file').prev().find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
+    // page.find('input:file').prev().find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
+    page.find('input:file').prev().find('.avatar').css('background-image', "url("+QMCONFIG.defAvatar.url+")").siblings('span').text(QMCONFIG.defAvatar.caption);
     page.find('input:checkbox').prop('checked', false);
   }
 };
