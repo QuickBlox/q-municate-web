@@ -122,7 +122,7 @@ Routes.prototype = {
 
     /* signup page
     ----------------------------------------------------- */
-    $('#signupForm').on('click', function(event) {
+    $('#signupForm').on('click submit', function(event) {
       if (checkConnection() === false) return false;
 
       if (QMCONFIG.debug) console.log('create user');
@@ -138,7 +138,7 @@ Routes.prototype = {
       UserView.forgot();
     });
 
-    $('#loginForm').on('click', function(event) {
+    $('#loginForm').on('click submit', function(event) {
       if (checkConnection() === false) return false;
 
       if (QMCONFIG.debug) console.log('authorize user');
@@ -148,7 +148,7 @@ Routes.prototype = {
 
     /* forgot and reset page
     ----------------------------------------------------- */
-    $('#forgotForm').on('click', function(event) {
+    $('#forgotForm').on('click submit', function(event) {
       if (checkConnection() === false) return false;
 
       if (QMCONFIG.debug) console.log('send letter');
@@ -156,7 +156,7 @@ Routes.prototype = {
       UserView.forgotForm();
     });
 
-    $('#resetForm').on('click', function(event) {
+    $('#resetForm').on('click submit', function(event) {
       if (checkConnection() === false) return false;
 
       if (QMCONFIG.debug) console.log('reset password');
