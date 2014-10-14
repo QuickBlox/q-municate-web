@@ -2013,8 +2013,9 @@ function changeInputFile(objDom) {
       src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
       fileName = file ? file.name : QMCONFIG.defAvatar.caption;
   
-  objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
-  if (typeof file !== 'undefined') URL.revokeObjectURL(src);
+  // objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
+  objDom.prev().find('.avatar').css('background-image', "url("+src+")").siblings('span').text(fileName);
+  // if (typeof file !== 'undefined') URL.revokeObjectURL(src);
 }
 
 function removePopover() {
@@ -2431,7 +2432,8 @@ ContactListView.prototype = {
       html += '<li class="list-item" data-id="'+user_id+'">';
       html += '<a class="contact l-flexbox" href="#">';
       html += '<div class="l-flexbox_inline">';
-      html += '<img class="contact-avatar avatar" src="'+contacts[user_id].avatar_url+'" alt="user">';
+      // html += '<img class="contact-avatar avatar" src="'+contacts[user_id].avatar_url+'" alt="user">';
+      html += '<div class="contact-avatar avatar" style="background-image:url('+contacts[user_id].avatar_url+')"></div>';
       html += '<span class="name">'+contacts[user_id].full_name+'</span>';
       html += '</div><input class="form-checkbox" type="checkbox">';
       html += '</a></li>';
@@ -2693,7 +2695,8 @@ ContactListView.prototype = {
       html = '<li class="list-item" data-jid="'+jid+'">';
       html += '<a class="contact l-flexbox" href="#">';
       html += '<div class="l-flexbox_inline">';
-      html += '<img class="contact-avatar avatar" src="'+(typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '')+'" alt="user">';
+      // html += '<img class="contact-avatar avatar" src="'+(typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '')+'" alt="user">';
+      html += '<div class="contact-avatar avatar" style="background-image:url('+(typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '')+')"></div>';
       html += '<span class="name">'+(typeof contacts[id] !== 'undefined' ? contacts[id].full_name : '')+'</span>';
       html += '</div><div class="request-controls l-flexbox">';
       html += '<button class="request-button request-button_cancel">&#10005;</button>';
@@ -2821,7 +2824,8 @@ function createListResults(list, results, self) {
     item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
     item += '<a class="contact l-flexbox" href="#">';
     item += '<div class="l-flexbox_inline">';
-    item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
+    // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
+    item += '<div class="contact-avatar avatar" style="background-image:url('+contact.avatar_url+')"></div>';
     item += '<span class="name">'+contact.full_name+'</span>';
     item += '</div>';
     if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
@@ -3017,7 +3021,8 @@ DialogView.prototype = {
     html = '<li class="list-item dialog-item presence-listener" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
-    html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
+    // html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
+    html += '<div class="contact-avatar avatar" style="background-image:url(' + icon + ')"></div>';
     html += '<span class="name">' + name + '</span>';
     html += '</div>';
     
@@ -3084,8 +3089,9 @@ DialogView.prototype = {
       else
         html += '<div class="l-flexbox_inline groupTitle">';
       
+      // html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
       if (dialog.type === 3)
-        html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
+        html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
 
       html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
 
@@ -3491,7 +3497,8 @@ MessageView.prototype = {
         else
           html = '<article class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
 
-        html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
+        // html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
+        html += '<div class="message-avatar avatar contact-avatar_message" style="background-image:url('+contact.avatar_url+')"></div>';
         html += '<div class="message-container-wrap">';
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
@@ -3884,7 +3891,8 @@ UserView.prototype = {
 
   successFormCallback: function() {
     this.removeSpinner();
-    $('#profile').find('img').attr('src', User.contact.avatar_url);
+    // $('#profile').find('img').attr('src', User.contact.avatar_url);
+    $('#profile').find('.avatar').css('background-image', "url("+User.contact.avatar_url+")");
     switchPage($('#mainPage'));
   },
 
@@ -4080,7 +4088,8 @@ var switchPage = function(page) {
   page.find('input').val('');
   if (!page.is('#mainPage')) {
     page.find('form').removeClass('is-hidden').next('.l-form').remove(); // reset Forgot form after success sending of letter
-    page.find('input:file').prev().find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
+    // page.find('input:file').prev().find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
+    page.find('input:file').prev().find('.avatar').css('background-image', "url("+QMCONFIG.defAvatar.url+")").siblings('span').text(QMCONFIG.defAvatar.caption);
     page.find('input:checkbox').prop('checked', false);
   }
 };

@@ -162,7 +162,8 @@ DialogView.prototype = {
     html = '<li class="list-item dialog-item presence-listener" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
     html += '<a class="contact l-flexbox" href="#">';
     html += '<div class="l-flexbox_inline">';
-    html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
+    // html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
+    html += '<div class="contact-avatar avatar" style="background-image:url(' + icon + ')"></div>';
     html += '<span class="name">' + name + '</span>';
     html += '</div>';
     
@@ -229,8 +230,9 @@ DialogView.prototype = {
       else
         html += '<div class="l-flexbox_inline groupTitle">';
       
+      // html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
       if (dialog.type === 3)
-        html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
+        html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
 
       html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
 

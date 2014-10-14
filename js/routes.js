@@ -466,8 +466,9 @@ function changeInputFile(objDom) {
       src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
       fileName = file ? file.name : QMCONFIG.defAvatar.caption;
   
-  objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
-  if (typeof file !== 'undefined') URL.revokeObjectURL(src);
+  // objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
+  objDom.prev().find('.avatar').css('background-image', "url("+src+")").siblings('span').text(fileName);
+  // if (typeof file !== 'undefined') URL.revokeObjectURL(src);
 }
 
 function removePopover() {
