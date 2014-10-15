@@ -6,12 +6,15 @@
 }
 .l-chat_group .chat-title {
   max-width: 515px;
-  height: auto;
+  /*height: auto;*/
   line-height: 55px;
 }
   .groupTitle {
     cursor: pointer;
   }
+    .groupTitle .chat-occupants-wrap {
+      cursor: normal;
+    }
 
 /* occupants */
 .chat-occupants-wrap {

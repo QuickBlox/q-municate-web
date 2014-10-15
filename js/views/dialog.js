@@ -219,23 +219,17 @@ DialogView.prototype = {
     status = roster[user_id] ? roster[user_id] : null;
 
     if (chat.length === 0) {
-      if (dialog.type === 3)
+      if (dialog.type === 3) {
         html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="'+dialog_id+'" data-id="'+user_id+'" data-jid="'+jid+'">';
-      else
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
+      } else {
         html = '<section class="l-workspace l-chat l-chat_group is-group" data-dialog="'+dialog_id+'" data-jid="'+jid+'">';
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">';
+      }
 
-      html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
       html += '<div class="chat-title">';
-
-      if (dialog.type === 3)
-        html += '<div class="l-flexbox_inline">';
-      else
-        html += '<div class="l-flexbox_inline groupTitle">';
-      
-      // html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
-      if (dialog.type === 3)
-        html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
-
+      html += '<div class="l-flexbox_inline">';
+      html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
       html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
 
       if (dialog.type === 3) {

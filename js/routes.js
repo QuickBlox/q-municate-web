@@ -87,6 +87,50 @@ Routes.prototype = {
       openAttachPopup($('#popupAttach'), name, url, uid, attachType);
     });
 
+    /* group chats
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
+      var chat = $('.l-chat:visible');
+      if (chat.find('.triangle_up').is('.is-hidden')) {
+        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').addClass('is-overlay');
+        chat.find('.l-chat-content').addClass('l-chat-content_min');
+      } else {
+        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
+        chat.find('.l-chat-content').removeClass('l-chat-content_min');
+      }
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .avatar', function(event) {
+      event.stopPropagation();
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .name_chat', function(event) {
+      event.stopPropagation();
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .addToGroupChat', function(event) {
+      event.stopPropagation();
+      var dialog_id = $(this).data('dialog');
+      if (QMCONFIG.debug) console.log('add people to groupchat');
+      ContactListView.addContactsToChat($(this), 'add', dialog_id);
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat', function(event) {
+      event.stopPropagation();
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .chat-occupants-wrap, .groupTitle .chat-occupants-wrap *', function(event) {
+      event.stopPropagation();
+      removePopover();
+    });
+
+    // $('.l-workspace-wrap').on('click', '.groupTitle .occupant .name-occupant', function(event) {
+    //   event.stopPropagation();
+    //   removePopover();
+    // });
+
     /* scrollbars
     ----------------------------------------------------- */
     occupantScrollbar();
@@ -248,7 +292,7 @@ Routes.prototype = {
       ContactListView.addContactsToChat($(this));
     });
 
-    $('#mainPage').on('click', '.addToGroupChat', function(event) {
+    $('.l-sidebar').on('click', '.addToGroupChat', function(event) {
       event.preventDefault();
       var dialog_id = $(this).data('dialog');
       if (QMCONFIG.debug) console.log('add people to groupchat');
@@ -408,19 +452,6 @@ Routes.prototype = {
       event.preventDefault();
       $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.is-selected').removeClass('is-selected');
-    });
-
-    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
-      var chat = $('.l-chat:visible');
-      if (chat.find('.triangle_up').is('.is-hidden')) {
-        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-        chat.find('.chat-occupants-wrap').addClass('is-overlay');
-        chat.find('.l-chat-content').addClass('l-chat-content_min');
-      } else {
-        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
-        chat.find('.l-chat-content').removeClass('l-chat-content_min');
-      }
     });
 
     /* temporary routes

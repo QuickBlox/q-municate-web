@@ -1634,6 +1634,50 @@ Routes.prototype = {
       openAttachPopup($('#popupAttach'), name, url, uid, attachType);
     });
 
+    /* group chats
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
+      var chat = $('.l-chat:visible');
+      if (chat.find('.triangle_up').is('.is-hidden')) {
+        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').addClass('is-overlay');
+        chat.find('.l-chat-content').addClass('l-chat-content_min');
+      } else {
+        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
+        chat.find('.l-chat-content').removeClass('l-chat-content_min');
+      }
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .avatar', function(event) {
+      event.stopPropagation();
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .name_chat', function(event) {
+      event.stopPropagation();
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .addToGroupChat', function(event) {
+      event.stopPropagation();
+      var dialog_id = $(this).data('dialog');
+      if (QMCONFIG.debug) console.log('add people to groupchat');
+      ContactListView.addContactsToChat($(this), 'add', dialog_id);
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat', function(event) {
+      event.stopPropagation();
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .chat-occupants-wrap, .groupTitle .chat-occupants-wrap *', function(event) {
+      event.stopPropagation();
+      removePopover();
+    });
+
+    // $('.l-workspace-wrap').on('click', '.groupTitle .occupant .name-occupant', function(event) {
+    //   event.stopPropagation();
+    //   removePopover();
+    // });
+
     /* scrollbars
     ----------------------------------------------------- */
     occupantScrollbar();
@@ -1795,7 +1839,7 @@ Routes.prototype = {
       ContactListView.addContactsToChat($(this));
     });
 
-    $('#mainPage').on('click', '.addToGroupChat', function(event) {
+    $('.l-sidebar').on('click', '.addToGroupChat', function(event) {
       event.preventDefault();
       var dialog_id = $(this).data('dialog');
       if (QMCONFIG.debug) console.log('add people to groupchat');
@@ -1955,19 +1999,6 @@ Routes.prototype = {
       event.preventDefault();
       $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.is-selected').removeClass('is-selected');
-    });
-
-    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
-      var chat = $('.l-chat:visible');
-      if (chat.find('.triangle_up').is('.is-hidden')) {
-        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-        chat.find('.chat-occupants-wrap').addClass('is-overlay');
-        chat.find('.l-chat-content').addClass('l-chat-content_min');
-      } else {
-        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
-        chat.find('.l-chat-content').removeClass('l-chat-content_min');
-      }
     });
 
     /* temporary routes
@@ -3078,23 +3109,17 @@ DialogView.prototype = {
     status = roster[user_id] ? roster[user_id] : null;
 
     if (chat.length === 0) {
-      if (dialog.type === 3)
+      if (dialog.type === 3) {
         html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="'+dialog_id+'" data-id="'+user_id+'" data-jid="'+jid+'">';
-      else
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
+      } else {
         html = '<section class="l-workspace l-chat l-chat_group is-group" data-dialog="'+dialog_id+'" data-jid="'+jid+'">';
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">';
+      }
 
-      html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
       html += '<div class="chat-title">';
-
-      if (dialog.type === 3)
-        html += '<div class="l-flexbox_inline">';
-      else
-        html += '<div class="l-flexbox_inline groupTitle">';
-      
-      // html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
-      if (dialog.type === 3)
-        html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
-
+      html += '<div class="l-flexbox_inline">';
+      html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
       html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
 
       if (dialog.type === 3) {
