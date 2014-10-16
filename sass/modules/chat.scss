@@ -1,4 +1,8 @@
 /* chat */
+.groupTitle {
+  cursor: pointer;
+}
+
 .chat-title {
   /*max-width: 405px;*/ /* for situation when all btn_chat are shown */
   max-width: 515px;
@@ -6,15 +10,15 @@
 }
 .l-chat_group .chat-title {
   max-width: 515px;
-  /*height: auto;*/
   line-height: 55px;
+  position: relative;
+  z-index: 1;
 }
-  .groupTitle {
-    cursor: pointer;
-  }
-    .groupTitle .chat-occupants-wrap {
-      cursor: normal;
-    }
+.l-chat_group .chat-controls {
+  position: absolute;
+  top: 17px;
+  right: 20px;
+}
 
 /* occupants */
 .chat-occupants-wrap {

@@ -254,7 +254,7 @@ DialogView.prototype = {
       else
         html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.png" alt="delete"></button>';
       
-      html += '</div>';
+      html += '</div></header>';
 
       // build occupants of room
       if (dialog.type === 2) {
@@ -273,8 +273,7 @@ DialogView.prototype = {
         }
         html += '</div></div>';
       }
-
-      html += '</header>';
+      
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';

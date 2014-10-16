@@ -121,16 +121,6 @@ Routes.prototype = {
       event.stopPropagation();
     });
 
-    $('.l-workspace-wrap').on('click', '.groupTitle .chat-occupants-wrap, .groupTitle .chat-occupants-wrap *', function(event) {
-      event.stopPropagation();
-      removePopover();
-    });
-
-    // $('.l-workspace-wrap').on('click', '.groupTitle .occupant .name-occupant', function(event) {
-    //   event.stopPropagation();
-    //   removePopover();
-    // });
-
     /* scrollbars
     ----------------------------------------------------- */
     occupantScrollbar();
