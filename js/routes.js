@@ -138,23 +138,29 @@ Routes.prototype = {
       this.scrollLeft = 0;
       chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
 
-      if (typeof editedChatName !== 'undfined' && !editedChatName) {
-        chat.find('.name_chat').text(chatName);
-      } else if (editedChatName && editedChatName !== chatName) {
-        chat.find('.name_chat').text(editedChatName).attr('title', editedChatName);
-        Dialog.changeName(chat.data('dialog'), editedChatName);
+      if (editedChatName && !editedChatName.name) {
+        chat.find('.name_chat').text(chatName.name);
+      } else if (editedChatName && (editedChatName.name !== chatName.name) && (editedChatName.created_at > chatName.created_at)) {
+        chat.find('.name_chat').text(editedChatName.name).attr('title', editedChatName.name);
+        Dialog.changeName(chat.data('dialog'), editedChatName.name);
       }
     });
 
     $('.l-workspace-wrap').on('click', '.groupTitle .name_chat', function(event) {
       event.stopPropagation();
       $(this).addClass('is-focus');
-      chatName = $(this).text().trim();
+      chatName = {
+        name: $(this).text().trim(),
+        created_at: Date.now()
+      };
     });
 
     $('.l-workspace-wrap').on('keyup', '.groupTitle .name_chat', function(event) {
       var code = event.keyCode;
-      editedChatName = $(this).text().trim();
+      editedChatName = {
+        name: $(this).text().trim(),
+        created_at: Date.now()
+      };
       if (code === 13) {
         $(this).blur();
       } else if (code === 27) {
