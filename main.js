@@ -688,9 +688,8 @@ Dialog.prototype = {
       full_name: User.contact.full_name,
     }});
 
-    QB.chat.muc.leave(dialog.room_jid, function() {
-      QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {});
-    });
+    QB.chat.muc.leave(dialog.room_jid, function() {});
+    QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {});
     
     callback();
   }
@@ -2822,9 +2821,6 @@ ContactListView.prototype = {
         dialog_id = li.data('dialog'),
         roster = ContactList.roster;
 
-    li.remove();
-    isSectionEmpty(list);
-
     // update roster
     delete roster[id];
     ContactList.saveRoster(roster);
@@ -2843,9 +2839,11 @@ ContactListView.prototype = {
         full_name: User.contact.full_name,
       }});
 
+      li.remove();
+      isSectionEmpty(list);
+
       // delete chat section
-      if (chat.length > 0)
-        chat.remove();
+      if (chat.length > 0) chat.remove();
       $('#capBox').removeClass('is-hidden');
       delete dialogs[dialog_id];
     });
@@ -3449,17 +3447,15 @@ DialogView.prototype = {
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
         list = li.parents('ul');
 
-    li.remove();
-    isSectionEmpty(list);
-    // console.log(dialogs[dialog_id]);
-
-    // delete dialog messages
-    localStorage.removeItem('QM.dialog-' + dialog_id);
-
     Dialog.leaveChat(dialog, function() {
+      li.remove();
+      isSectionEmpty(list);
+
+      // delete dialog messages
+      localStorage.removeItem('QM.dialog-' + dialog_id);
+
       // delete chat section
-      if (chat.length > 0)
-        chat.remove();
+      if (chat.length > 0) chat.remove();
       $('#capBox').removeClass('is-hidden');
       delete dialogs[dialog_id];
     });

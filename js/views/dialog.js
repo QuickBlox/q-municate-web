@@ -415,17 +415,15 @@ DialogView.prototype = {
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
         list = li.parents('ul');
 
-    li.remove();
-    isSectionEmpty(list);
-    // console.log(dialogs[dialog_id]);
-
-    // delete dialog messages
-    localStorage.removeItem('QM.dialog-' + dialog_id);
-
     Dialog.leaveChat(dialog, function() {
+      li.remove();
+      isSectionEmpty(list);
+
+      // delete dialog messages
+      localStorage.removeItem('QM.dialog-' + dialog_id);
+
       // delete chat section
-      if (chat.length > 0)
-        chat.remove();
+      if (chat.length > 0) chat.remove();
       $('#capBox').removeClass('is-hidden');
       delete dialogs[dialog_id];
     });

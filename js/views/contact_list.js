@@ -327,9 +327,6 @@ ContactListView.prototype = {
         dialog_id = li.data('dialog'),
         roster = ContactList.roster;
 
-    li.remove();
-    isSectionEmpty(list);
-
     // update roster
     delete roster[id];
     ContactList.saveRoster(roster);
@@ -348,9 +345,11 @@ ContactListView.prototype = {
         full_name: User.contact.full_name,
       }});
 
+      li.remove();
+      isSectionEmpty(list);
+
       // delete chat section
-      if (chat.length > 0)
-        chat.remove();
+      if (chat.length > 0) chat.remove();
       $('#capBox').removeClass('is-hidden');
       delete dialogs[dialog_id];
     });
