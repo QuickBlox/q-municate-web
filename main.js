@@ -3131,6 +3131,7 @@ DialogView.prototype = {
 
           for (var i = 0, len = dialogs.length; i < len; i++) {
             dialog = Dialog.create(dialogs[i]);
+            if (ContactList.dialogs[dialog.id]) continue;
             ContactList.dialogs[dialog.id] = dialog;
             // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
