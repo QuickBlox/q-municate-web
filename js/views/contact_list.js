@@ -273,6 +273,9 @@ ContactListView.prototype = {
        $('#recentList').removeClass('is-hidden');
        isSectionEmpty($('#recentList ul')); 
       }
+
+      dialogItem = $('.presence-listener[data-id="'+id+'"]');
+      dialogItem.find('.status').removeClass('status_request');
     });
     
   },
