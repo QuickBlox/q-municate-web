@@ -263,10 +263,9 @@ Dialog.prototype = {
     }});
 
     QB.chat.muc.leave(dialog.room_jid, function() {});
-    QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {
-      callback();
-    });
+    QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {});
     
+    callback();
   }
 
 };
