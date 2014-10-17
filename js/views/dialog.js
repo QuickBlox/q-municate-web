@@ -219,28 +219,23 @@ DialogView.prototype = {
     status = roster[user_id] ? roster[user_id] : null;
 
     if (chat.length === 0) {
-      if (dialog.type === 3)
+      if (dialog.type === 3) {
         html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="'+dialog_id+'" data-id="'+user_id+'" data-jid="'+jid+'">';
-      else
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
+      } else {
         html = '<section class="l-workspace l-chat l-chat_group is-group" data-dialog="'+dialog_id+'" data-jid="'+jid+'">';
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">';
+      }
 
-      html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
       html += '<div class="chat-title">';
-
-      if (dialog.type === 3)
-        html += '<div class="l-flexbox_inline">';
-      else
-        html += '<div class="l-flexbox_inline groupTitle">';
-      
-      // html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
-      if (dialog.type === 3)
-        html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
-
-      html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
+      html += '<div class="l-flexbox_inline">';
+      html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
+      html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
 
       if (dialog.type === 3) {
         html = getStatus(status, html);
       } else {
+        html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';
         html += '<span class="triangle triangle_up is-hidden"></span>';
       }
@@ -260,7 +255,7 @@ DialogView.prototype = {
       else
         html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.png" alt="delete"></button>';
       
-      html += '</div>';
+      html += '</div></header>';
 
       // build occupants of room
       if (dialog.type === 2) {
@@ -280,7 +275,6 @@ DialogView.prototype = {
         html += '</div></div>';
       }
 
-      html += '</header>';
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';

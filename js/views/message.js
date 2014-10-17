@@ -66,7 +66,12 @@ MessageView.prototype = {
         html += '<div class="message-container-wrap">';
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
-        html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
+        if (message.occupants_ids) {
+          html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
+        }
+        if (message.room_name) {
+          html += '<h4 class="message-author">'+contact.full_name+' has changed the chat name to "'+message.room_name+'"</h4>';
+        }
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
@@ -296,16 +301,6 @@ MessageView.prototype = {
       dialogItem.find('.unread').text(unread);
     }
 
-    if (notification_type !== '1' && dialogItem.length > 0) {
-      copyDialogItem = dialogItem.clone();
-      dialogItem.remove();
-      $('#recentList ul').prepend(copyDialogItem);
-      if (!$('#searchList').is(':visible')) {
-       $('#recentList').removeClass('is-hidden');
-       isSectionEmpty($('#recentList ul')); 
-      }
-    }
-
     // create new group chat
     if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
       QB.chat.muc.join(room_jid);
@@ -344,25 +339,45 @@ MessageView.prototype = {
     // add new occupants
     if (notification_type === '2') {
       dialog = ContactList.dialogs[dialog_id];
-      dialog.occupants_ids = occupants_ids;
+      if (occupants_ids) dialog.occupants_ids = occupants_ids;
+      if (room_name) dialog.room_name = room_name;
       ContactList.dialogs[dialog_id] = dialog;
       
-      ContactList.add(dialog.occupants_ids, null, function() {
-        var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',') : [],
-            new_ids = _.difference(dialog.occupants_ids, ids),
-            contacts = ContactList.contacts,
-            new_id;
+      // add new people
+      if (occupants_ids) {
+        ContactList.add(dialog.occupants_ids, null, function() {
+          var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',') : [],
+              new_ids = _.difference(dialog.occupants_ids, ids),
+              contacts = ContactList.contacts,
+              new_id;
 
-        for (var i = 0, len = new_ids.length; i < len; i++) {
-          new_id = new_ids[i];
-          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
-          occupant = getStatus(roster[new_id], occupant);
-          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
-          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
-        }
+          for (var i = 0, len = new_ids.length; i < len; i++) {
+            new_id = new_ids[i];
+            occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+            occupant = getStatus(roster[new_id], occupant);
+            occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+            chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+          }
 
-        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
-      });
+          chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        });
+      }
+
+      // change name
+      if (room_name) {
+        chat.find('.name_chat').text(room_name).attr('title', room_name);
+        dialogItem.find('.name').text(room_name);
+      }
+    }
+
+    if (notification_type !== '1' && dialogItem.length > 0) {
+      copyDialogItem = dialogItem.clone();
+      dialogItem.remove();
+      $('#recentList ul').prepend(copyDialogItem);
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     }
 
     if (QMCONFIG.debug) console.log(msg);

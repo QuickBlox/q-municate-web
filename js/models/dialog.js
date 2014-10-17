@@ -176,6 +176,29 @@ Dialog.prototype = {
     });
   },
 
+  changeName: function(dialog_id, name) {
+    var QBApiCalls = this.app.service,
+        ContactList = this.app.models.ContactList,
+        self = this,
+        dialog;
+
+    QBApiCalls.updateDialog(dialog_id, {name: name}, function(res) {
+      dialog = self.create(res);
+      ContactList.dialogs[dialog_id] = dialog;
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+      // send notification about updating room
+      QB.chat.send(dialog.room_jid, {type: 'groupchat', extension: {
+        save_to_history: 1,
+        dialog_id: dialog.id,
+        date_sent: Math.floor(Date.now() / 1000),
+
+        notification_type: '2',
+        room_name: name,
+      }});
+    });
+  },
+
   leaveChat: function(dialog, callback) {
     var QBApiCalls = this.app.service,
         User = this.app.models.User,

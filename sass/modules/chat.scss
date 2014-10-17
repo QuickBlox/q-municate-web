@@ -1,17 +1,24 @@
 /* chat */
+.groupTitle {
+  cursor: pointer;
+}
+
 .chat-title {
   /*max-width: 405px;*/ /* for situation when all btn_chat are shown */
   max-width: 515px;
   height: 40px;
 }
 .l-chat_group .chat-title {
-  max-width: 515px;
-  height: auto;
+  max-width: 540px;
   line-height: 55px;
+  position: relative;
+  z-index: 1;
 }
-  .groupTitle {
-    cursor: pointer;
-  }
+.l-chat_group .chat-controls {
+  position: absolute;
+  top: 17px;
+  right: 20px;
+}
 
 /* occupants */
 .chat-occupants-wrap {
@@ -32,6 +39,19 @@
     width: 100%;
     height: 66px;
   }
+
+/* pencil */
+.pencil {
+  width: 18px;
+  height: 17px;
+  margin-left: 8px;
+  background: url(../images/icon-pencil.png) no-repeat center;
+}
+.pencil_active {
+  width: 17px;
+  height: 15px;
+  background: url(../images/icon-pencil_active.png) no-repeat center;
+}
 
 /* triangle */
 .triangle {

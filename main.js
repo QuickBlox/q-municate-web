@@ -602,6 +602,29 @@ Dialog.prototype = {
     });
   },
 
+  changeName: function(dialog_id, name) {
+    var QBApiCalls = this.app.service,
+        ContactList = this.app.models.ContactList,
+        self = this,
+        dialog;
+
+    QBApiCalls.updateDialog(dialog_id, {name: name}, function(res) {
+      dialog = self.create(res);
+      ContactList.dialogs[dialog_id] = dialog;
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+      // send notification about updating room
+      QB.chat.send(dialog.room_jid, {type: 'groupchat', extension: {
+        save_to_history: 1,
+        dialog_id: dialog.id,
+        date_sent: Math.floor(Date.now() / 1000),
+
+        notification_type: '2',
+        room_name: name,
+      }});
+    });
+  },
+
   leaveChat: function(dialog, callback) {
     var QBApiCalls = this.app.service,
         User = this.app.models.User,
@@ -667,7 +690,9 @@ Message.prototype = {
       date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
       read: params.read || false,
       attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) || (params.attachments && params.attachments[0]) || params.attachment || null,
-      sender_id: params.sender_id || null
+      sender_id: params.sender_id || null,
+      occupants_ids: (params.extension && params.extension.occupants_ids) || params.occupants_ids || null,
+      room_name: (params.extension && params.extension.room_name) || params.room_name || null,
     };
 
     if (message.attachment) {
@@ -1554,12 +1579,14 @@ var failSearch = function() {
 
 module.exports = Routes;
 
-var Session, UserView, ContactListView, DialogView, MessageView, AttachView;
+var Session, Dialog, UserView, ContactListView, DialogView, MessageView, AttachView;
+var chatName, editedChatName;
 
 function Routes(app) {
   this.app = app;
   
   Session = this.app.models.Session;
+  Dialog = this.app.models.Dialog;
   UserView = this.app.views.User;
   ContactListView = this.app.views.ContactList;
   DialogView = this.app.views.Dialog;
@@ -1632,6 +1659,80 @@ Routes.prototype = {
         attachType = 'video';
       }
       openAttachPopup($('#popupAttach'), name, url, uid, attachType);
+    });
+
+    /* group chats
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
+      var chat = $('.l-chat:visible');
+      if (chat.find('.triangle_up').is('.is-hidden')) {
+        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').addClass('is-overlay');
+        chat.find('.l-chat-content').addClass('l-chat-content_min');
+      } else {
+        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
+        chat.find('.l-chat-content').removeClass('l-chat-content_min');
+      }
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .addToGroupChat', function(event) {
+      event.stopPropagation();
+      var dialog_id = $(this).data('dialog');
+      if (QMCONFIG.debug) console.log('add people to groupchat');
+      ContactListView.addContactsToChat($(this), 'add', dialog_id);
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat', function(event) {
+      event.stopPropagation();
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .avatar', function(event) {
+      event.stopPropagation();
+    });
+    
+    /* change the chat name
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('mouseenter focus', '.groupTitle .name_chat', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.triangle:visible').addClass('is-hover').siblings('.pencil').removeClass('is-hidden');
+    });
+
+    $('.l-workspace-wrap').on('mouseleave', '.groupTitle .name_chat', function() {
+      var chat = $('.l-chat:visible');
+      if (!$(this).is('.is-focus'))
+        chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+    });
+
+    $('.l-workspace-wrap').on('blur', '.groupTitle .name_chat', function() {
+      var chat = $('.l-chat:visible');
+      $(this).removeClass('is-focus');
+      this.scrollLeft = 0;
+      chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+
+      if (typeof editedChatName !== 'undfined' && !editedChatName) {
+        chat.find('.name_chat').text(chatName);
+      } else if (editedChatName && editedChatName !== chatName) {
+        chat.find('.name_chat').text(editedChatName).attr('title', editedChatName);
+        Dialog.changeName(chat.data('dialog'), editedChatName);
+      }
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .name_chat', function(event) {
+      event.stopPropagation();
+      $(this).addClass('is-focus');
+      chatName = $(this).text().trim();
+    });
+
+    $('.l-workspace-wrap').on('keyup', '.groupTitle .name_chat', function(event) {
+      var code = event.keyCode;
+      editedChatName = $(this).text().trim();
+      if (code === 13) {
+        $(this).blur();
+      } else if (code === 27) {
+        editedChatName = null;
+        $(this).blur();
+      }
     });
 
     /* scrollbars
@@ -1795,7 +1896,7 @@ Routes.prototype = {
       ContactListView.addContactsToChat($(this));
     });
 
-    $('#mainPage').on('click', '.addToGroupChat', function(event) {
+    $('.l-sidebar').on('click', '.addToGroupChat', function(event) {
       event.preventDefault();
       var dialog_id = $(this).data('dialog');
       if (QMCONFIG.debug) console.log('add people to groupchat');
@@ -1955,19 +2056,6 @@ Routes.prototype = {
       event.preventDefault();
       $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.is-selected').removeClass('is-selected');
-    });
-
-    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
-      var chat = $('.l-chat:visible');
-      if (chat.find('.triangle_up').is('.is-hidden')) {
-        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-        chat.find('.chat-occupants-wrap').addClass('is-overlay');
-        chat.find('.l-chat-content').addClass('l-chat-content_min');
-      } else {
-        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
-        chat.find('.l-chat-content').removeClass('l-chat-content_min');
-      }
     });
 
     /* temporary routes
@@ -3078,28 +3166,23 @@ DialogView.prototype = {
     status = roster[user_id] ? roster[user_id] : null;
 
     if (chat.length === 0) {
-      if (dialog.type === 3)
+      if (dialog.type === 3) {
         html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="'+dialog_id+'" data-id="'+user_id+'" data-jid="'+jid+'">';
-      else
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
+      } else {
         html = '<section class="l-workspace l-chat l-chat_group is-group" data-dialog="'+dialog_id+'" data-jid="'+jid+'">';
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">';
+      }
 
-      html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
       html += '<div class="chat-title">';
-
-      if (dialog.type === 3)
-        html += '<div class="l-flexbox_inline">';
-      else
-        html += '<div class="l-flexbox_inline groupTitle">';
-      
-      // html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
-      if (dialog.type === 3)
-        html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
-
-      html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
+      html += '<div class="l-flexbox_inline">';
+      html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
+      html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
 
       if (dialog.type === 3) {
         html = getStatus(status, html);
       } else {
+        html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';
         html += '<span class="triangle triangle_up is-hidden"></span>';
       }
@@ -3119,7 +3202,7 @@ DialogView.prototype = {
       else
         html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.png" alt="delete"></button>';
       
-      html += '</div>';
+      html += '</div></header>';
 
       // build occupants of room
       if (dialog.type === 2) {
@@ -3139,7 +3222,6 @@ DialogView.prototype = {
         html += '</div></div>';
       }
 
-      html += '</header>';
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';
@@ -3428,7 +3510,12 @@ MessageView.prototype = {
         html += '<div class="message-container-wrap">';
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
-        html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
+        if (message.occupants_ids) {
+          html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
+        }
+        if (message.room_name) {
+          html += '<h4 class="message-author">'+contact.full_name+' has changed the chat name to "'+message.room_name+'"</h4>';
+        }
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
@@ -3658,16 +3745,6 @@ MessageView.prototype = {
       dialogItem.find('.unread').text(unread);
     }
 
-    if (notification_type !== '1' && dialogItem.length > 0) {
-      copyDialogItem = dialogItem.clone();
-      dialogItem.remove();
-      $('#recentList ul').prepend(copyDialogItem);
-      if (!$('#searchList').is(':visible')) {
-       $('#recentList').removeClass('is-hidden');
-       isSectionEmpty($('#recentList ul')); 
-      }
-    }
-
     // create new group chat
     if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
       QB.chat.muc.join(room_jid);
@@ -3706,25 +3783,45 @@ MessageView.prototype = {
     // add new occupants
     if (notification_type === '2') {
       dialog = ContactList.dialogs[dialog_id];
-      dialog.occupants_ids = occupants_ids;
+      if (occupants_ids) dialog.occupants_ids = occupants_ids;
+      if (room_name) dialog.room_name = room_name;
       ContactList.dialogs[dialog_id] = dialog;
       
-      ContactList.add(dialog.occupants_ids, null, function() {
-        var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',') : [],
-            new_ids = _.difference(dialog.occupants_ids, ids),
-            contacts = ContactList.contacts,
-            new_id;
+      // add new people
+      if (occupants_ids) {
+        ContactList.add(dialog.occupants_ids, null, function() {
+          var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',') : [],
+              new_ids = _.difference(dialog.occupants_ids, ids),
+              contacts = ContactList.contacts,
+              new_id;
 
-        for (var i = 0, len = new_ids.length; i < len; i++) {
-          new_id = new_ids[i];
-          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
-          occupant = getStatus(roster[new_id], occupant);
-          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
-          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
-        }
+          for (var i = 0, len = new_ids.length; i < len; i++) {
+            new_id = new_ids[i];
+            occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+            occupant = getStatus(roster[new_id], occupant);
+            occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+            chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+          }
 
-        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
-      });
+          chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        });
+      }
+
+      // change name
+      if (room_name) {
+        chat.find('.name_chat').text(room_name).attr('title', room_name);
+        dialogItem.find('.name').text(room_name);
+      }
+    }
+
+    if (notification_type !== '1' && dialogItem.length > 0) {
+      copyDialogItem = dialogItem.clone();
+      dialogItem.remove();
+      $('#recentList ul').prepend(copyDialogItem);
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
     }
 
     if (QMCONFIG.debug) console.log(msg);
