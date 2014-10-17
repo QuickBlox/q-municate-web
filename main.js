@@ -1739,12 +1739,12 @@ Routes.prototype = {
 
     /* change the chat avatar
     ----------------------------------------------------- */
-    $('.l-workspace-wrap').on('mouseenter', '.groupTitle .avatar_chat, .groupTitle .pencil_active', function() {
+    $('.l-workspace-wrap').on('mouseenter', '.groupTitle .avatar', function() {
       var chat = $('.l-chat:visible');
       chat.find('.pencil_active').removeClass('is-hidden');
     });
 
-    $('.l-workspace-wrap').on('mouseleave', '.groupTitle .avatar_chat, .groupTitle .pencil_active', function() {
+    $('.l-workspace-wrap').on('mouseleave', '.groupTitle .avatar', function() {
       var chat = $('.l-chat:visible');
       chat.find('.pencil_active').addClass('is-hidden');
     });
@@ -3190,7 +3190,7 @@ DialogView.prototype = {
 
       html += '<div class="chat-title">';
       html += '<div class="l-flexbox_inline">';
-      html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
+      html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
 
       if (dialog.type === 3) {
         html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';

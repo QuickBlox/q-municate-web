@@ -229,7 +229,7 @@ DialogView.prototype = {
 
       html += '<div class="chat-title">';
       html += '<div class="l-flexbox_inline">';
-      html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
+      html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
 
       if (dialog.type === 3) {
         html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
