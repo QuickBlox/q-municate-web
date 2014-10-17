@@ -1683,11 +1683,7 @@ Routes.prototype = {
       ContactListView.addContactsToChat($(this), 'add', dialog_id);
     });
 
-    $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat', function(event) {
-      event.stopPropagation();
-    });
-
-    $('.l-workspace-wrap').on('click', '.groupTitle .avatar', function(event) {
+    $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
       event.stopPropagation();
     });
     
@@ -1739,6 +1735,18 @@ Routes.prototype = {
         editedChatName = null;
         $(this).blur();
       }
+    });
+
+    /* change the chat avatar
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('mouseenter', '.groupTitle .avatar_chat, .groupTitle .pencil_active', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.pencil_active').removeClass('is-hidden');
+    });
+
+    $('.l-workspace-wrap').on('mouseleave', '.groupTitle .avatar_chat, .groupTitle .pencil_active', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.pencil_active').addClass('is-hidden');
     });
 
     /* scrollbars
@@ -3182,12 +3190,14 @@ DialogView.prototype = {
 
       html += '<div class="chat-title">';
       html += '<div class="l-flexbox_inline">';
-      html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
-      html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
+      html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
 
       if (dialog.type === 3) {
+        html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
         html = getStatus(status, html);
       } else {
+        html += '<span class="pencil_active avatar is-hidden"></span>';
+        html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
         html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';
         html += '<span class="triangle triangle_up is-hidden"></span>';

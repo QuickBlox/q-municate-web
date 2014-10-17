@@ -111,11 +111,7 @@ Routes.prototype = {
       ContactListView.addContactsToChat($(this), 'add', dialog_id);
     });
 
-    $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat', function(event) {
-      event.stopPropagation();
-    });
-
-    $('.l-workspace-wrap').on('click', '.groupTitle .avatar', function(event) {
+    $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
       event.stopPropagation();
     });
     
@@ -167,6 +163,18 @@ Routes.prototype = {
         editedChatName = null;
         $(this).blur();
       }
+    });
+
+    /* change the chat avatar
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('mouseenter', '.groupTitle .avatar_chat, .groupTitle .pencil_active', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.pencil_active').removeClass('is-hidden');
+    });
+
+    $('.l-workspace-wrap').on('mouseleave', '.groupTitle .avatar_chat, .groupTitle .pencil_active', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.pencil_active').addClass('is-hidden');
     });
 
     /* scrollbars

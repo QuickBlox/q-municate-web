@@ -229,12 +229,14 @@ DialogView.prototype = {
 
       html += '<div class="chat-title">';
       html += '<div class="l-flexbox_inline">';
-      html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
-      html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
+      html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
 
       if (dialog.type === 3) {
+        html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
         html = getStatus(status, html);
       } else {
+        html += '<span class="pencil_active avatar is-hidden"></span>';
+        html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
         html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';
         html += '<span class="triangle triangle_up is-hidden"></span>';

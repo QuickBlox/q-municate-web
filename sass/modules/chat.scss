@@ -48,9 +48,9 @@
   background: url(../images/icon-pencil.png) no-repeat center;
 }
 .pencil_active {
-  width: 17px;
-  height: 15px;
-  background: url(../images/icon-pencil_active.png) no-repeat center;
+  position: absolute;
+  left: 0;
+  background: url(../images/icon-pencil_active.png) no-repeat center, rgba(0, 0, 0, 0.2);
 }
 
 /* triangle */
