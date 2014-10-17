@@ -31,8 +31,10 @@ DialogView.prototype = {
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
 
     QB.chat.onDisconnectingListener = function() {
-      window.onLine = false;
-      $('.no-connection').removeClass('is-hidden');
+      if (localStorage['QM.user']) {
+        window.onLine = false;
+        $('.no-connection').removeClass('is-hidden');
+      }
     };
 
     QB.chat.onReconnectListener = function() {
