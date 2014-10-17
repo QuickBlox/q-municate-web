@@ -2828,17 +2828,17 @@ ContactListView.prototype = {
     // delete dialog messages
     localStorage.removeItem('QM.dialog-' + dialog_id);
 
+    // send notification about reject
+    QB.chat.send(jid, {type: 'chat', extension: {
+      save_to_history: 1,
+      dialog_id: dialog_id,
+      date_sent: Math.floor(Date.now() / 1000),
+
+      notification_type: '4',
+      full_name: User.contact.full_name,
+    }});
+
     QB.chat.roster.remove(jid, function() {
-      // send notification about reject
-      QB.chat.send(jid, {type: 'chat', extension: {
-        save_to_history: 1,
-        dialog_id: dialog_id,
-        date_sent: Math.floor(Date.now() / 1000),
-
-        notification_type: '4',
-        full_name: User.contact.full_name,
-      }});
-
       li.remove();
       isSectionEmpty(list);
 
