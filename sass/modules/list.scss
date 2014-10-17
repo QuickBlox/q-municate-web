@@ -7,6 +7,9 @@
 .list-item:hover {
   background: #f8f8f8;
 }
+#requestsList .list-item:hover {
+  background: #fff;
+}
 
 .list-actions {
   position: relative;

@@ -7,6 +7,9 @@
 .contact:hover {
   opacity: 1;
 }
+#requestsList .contact:hover {
+  cursor: default;
+}
   .contact-avatar {
     margin-right: 15px;
   }
@@ -113,6 +116,9 @@
     line-height: 32px;
     background: none;
     border-right: 1px solid #f0f0f0;
+  }
+  .request-button:hover {
+    background: #f8f8f8;
   }
   .request-button:last-child {
     border-right: 0;
