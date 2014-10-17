@@ -325,6 +325,9 @@ MessageView.prototype = {
 
       ContactList.add(dialog.occupants_ids, null, function() {
         DialogView.addDialogItem(dialog);
+        unread++;
+        dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
+        dialogGroupItem.find('.unread').text(unread);
       });
     }
 
