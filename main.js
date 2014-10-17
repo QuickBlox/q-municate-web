@@ -3418,19 +3418,19 @@ DialogView.prototype = {
            isSectionEmpty($('#recentList ul')); 
           }
         }
-        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        // chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
 
 
-        for (var i = 0, len = new_ids.length; i < len; i++) {
-          new_id = new_ids[i];
-          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
-          occupant = getStatus(roster[new_id], occupant);
-          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
-          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
-        }
+        // for (var i = 0, len = new_ids.length; i < len; i++) {
+        //   new_id = new_ids[i];
+        //   occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+        //   occupant = getStatus(roster[new_id], occupant);
+        //   occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+        //   chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+        // }
 
-        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        // chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
 
         // $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
       });
