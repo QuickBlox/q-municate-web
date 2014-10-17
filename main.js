@@ -3114,7 +3114,8 @@ DialogView.prototype = {
         notConfirmed,
         private_id,
         dialog,
-        occupants_ids;
+        occupants_ids,
+        chat;
 
     Dialog.download(function(dialogs) {
       self.removeDataSpinner();
@@ -3129,7 +3130,8 @@ DialogView.prototype = {
 
           for (var i = 0, len = dialogs.length; i < len; i++) {
             dialog = Dialog.create(dialogs[i]);
-            if (ContactList.dialogs[dialog.id]) continue;
+            chat = $('.l-chat[data-dialog="'+dialog.id+'"]')[0];
+            if (chat) continue;
             ContactList.dialogs[dialog.id] = dialog;
             // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
