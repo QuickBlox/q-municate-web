@@ -383,7 +383,7 @@ DialogView.prototype = {
           }
         }
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
-        $('.is-overlay').removeClass('is-overlay');
+        $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
 
 
         for (var i = 0, len = new_ids.length; i < len; i++) {
