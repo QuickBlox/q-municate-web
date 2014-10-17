@@ -38,7 +38,9 @@ Message.prototype = {
       date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
       read: params.read || false,
       attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) || (params.attachments && params.attachments[0]) || params.attachment || null,
-      sender_id: params.sender_id || null
+      sender_id: params.sender_id || null,
+      occupants_ids: (params.extension && params.extension.occupants_ids) || params.occupants_ids || null,
+      room_name: (params.extension && params.extension.room_name) || params.room_name || null,
     };
 
     if (message.attachment) {

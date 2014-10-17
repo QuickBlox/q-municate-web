@@ -230,11 +230,12 @@ DialogView.prototype = {
       html += '<div class="chat-title">';
       html += '<div class="l-flexbox_inline">';
       html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
-      html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
+      html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
 
       if (dialog.type === 3) {
         html = getStatus(status, html);
       } else {
+        html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';
         html += '<span class="triangle triangle_up is-hidden"></span>';
       }
@@ -273,7 +274,7 @@ DialogView.prototype = {
         }
         html += '</div></div>';
       }
-      
+
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';
