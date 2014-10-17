@@ -457,6 +457,7 @@ Dialog.prototype = {
       type: params.type,
       room_jid: params.xmpp_room_jid || null,
       room_name: params.name || null,
+      room_photo: params.photo || null,
       occupants_ids: occupants_ids,
       last_message_date_sent: params.last_message_date_sent || null,
       unread_count: params.unread_messages_count || ''
@@ -625,6 +626,53 @@ Dialog.prototype = {
     });
   },
 
+  changeAvatar: function(dialog_id, objDom, callback) {
+    var QBApiCalls = this.app.service,
+        ContactList = this.app.models.ContactList,
+        Attach = this.app.models.Attach,
+        file = objDom[0].files[0] || null,
+        self = this,
+        errMsg, dialog;
+
+    if (file) {
+      if (file.type.indexOf('image/') === -1)
+        errMsg = QMCONFIG.errors.avatarType;
+      else if (file.name.length > 100)
+        errMsg = QMCONFIG.errors.fileName;
+
+      if (errMsg) {
+        console.log(errMsg);
+        callback(false);
+      } else {
+
+        Attach.crop(file, {w: 40, h: 40}, function(avatar) {
+          Attach.upload(avatar, function(blob) {
+            QBApiCalls.updateDialog(dialog_id, {photo: blob.path}, function(res) {
+              dialog = self.create(res);
+              ContactList.dialogs[dialog_id] = dialog;
+              if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+              // send notification about updating room
+              QB.chat.send(dialog.room_jid, {type: 'groupchat', extension: {
+                save_to_history: 1,
+                dialog_id: dialog.id,
+                date_sent: Math.floor(Date.now() / 1000),
+
+                notification_type: '2',
+                room_photo: blob.path,
+              }});
+
+              callback(blob.path);
+            });
+          });
+        });
+
+      }      
+    } else {
+      callback(false);
+    }
+  },
+
   leaveChat: function(dialog, callback) {
     var QBApiCalls = this.app.service,
         User = this.app.models.User,
@@ -693,6 +741,7 @@ Message.prototype = {
       sender_id: params.sender_id || null,
       occupants_ids: (params.extension && params.extension.occupants_ids) || params.occupants_ids || null,
       room_name: (params.extension && params.extension.room_name) || params.room_name || null,
+      room_photo: (params.extension && params.extension.room_photo) || params.room_photo || null,
     };
 
     if (message.attachment) {
@@ -1749,6 +1798,18 @@ Routes.prototype = {
       chat.find('.pencil_active').addClass('is-hidden');
     });
 
+    $('.l-workspace-wrap').on('click', '.groupTitle .pencil_active', function() {
+      $(this).siblings('input:file').click();
+    });
+
+    $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
+      var chat = $('.l-chat:visible');
+      Dialog.changeAvatar(chat.data('dialog'), $(this), function(avatar) {
+        if (!avatar) return false;
+        chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
+      });
+    });
+
     /* scrollbars
     ----------------------------------------------------- */
     occupantScrollbar();
@@ -2115,7 +2176,6 @@ function changeInputFile(objDom) {
       src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
       fileName = file ? file.name : QMCONFIG.defAvatar.caption;
   
-  // objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
   objDom.prev().find('.avatar').css('background-image', "url("+src+")").siblings('span').text(fileName);
   // if (typeof file !== 'undefined') URL.revokeObjectURL(src);
 }
@@ -3118,7 +3178,7 @@ DialogView.prototype = {
         html, startOfCurrentDay;
 
     private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
-    icon = private_id ? contacts[private_id].avatar_url : QMCONFIG.defAvatar.group_url;
+    icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
     status = roster[private_id] ? roster[private_id] : null;
 
@@ -3175,7 +3235,7 @@ DialogView.prototype = {
     // if (QMCONFIG.debug) console.log(user);
 
     jid = dialog.room_jid || user.user_jid;
-    icon = user_id ? user.avatar_url : QMCONFIG.defAvatar.group_url;
+    icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
     name = dialog.room_name || user.full_name;
     status = roster[user_id] ? roster[user_id] : null;
 
@@ -3190,13 +3250,14 @@ DialogView.prototype = {
 
       html += '<div class="chat-title">';
       html += '<div class="l-flexbox_inline">';
-      html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
+      html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
 
       if (dialog.type === 3) {
         html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
-        html = getStatus(status, html);
+        html = getStatus(status, html); 
       } else {
         html += '<span class="pencil_active avatar is-hidden"></span>';
+        html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">'
         html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
         html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';
@@ -3532,6 +3593,9 @@ MessageView.prototype = {
         if (message.room_name) {
           html += '<h4 class="message-author">'+contact.full_name+' has changed the chat name to "'+message.room_name+'"</h4>';
         }
+        if (message.room_photo) {
+          html += '<h4 class="message-author">'+contact.full_name+' has changed the chat picture</h4>';
+        }
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
@@ -3737,6 +3801,7 @@ MessageView.prototype = {
         dialog_id = message.extension && message.extension.dialog_id,
         room_jid = message.extension && message.extension.room_jid,
         room_name = message.extension && message.extension.room_name,
+        room_photo = message.extension && message.extension.room_photo,
         occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
         dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
@@ -3801,6 +3866,7 @@ MessageView.prototype = {
       dialog = ContactList.dialogs[dialog_id];
       if (occupants_ids) dialog.occupants_ids = occupants_ids;
       if (room_name) dialog.room_name = room_name;
+      if (room_photo) dialog.room_photo = room_photo;
       ContactList.dialogs[dialog_id] = dialog;
       
       // add new people
@@ -3827,6 +3893,12 @@ MessageView.prototype = {
       if (room_name) {
         chat.find('.name_chat').text(room_name).attr('title', room_name);
         dialogItem.find('.name').text(room_name);
+      }
+
+      // change name
+      if (room_photo) {
+        chat.find('.avatar_chat').css('background-image', 'url('+room_photo+')');
+        dialogItem.find('.avatar').css('background-image', 'url('+room_photo+')');
       }
     }
 

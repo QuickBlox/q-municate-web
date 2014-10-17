@@ -157,7 +157,7 @@ DialogView.prototype = {
         html, startOfCurrentDay;
 
     private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
-    icon = private_id ? contacts[private_id].avatar_url : QMCONFIG.defAvatar.group_url;
+    icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
     status = roster[private_id] ? roster[private_id] : null;
 
@@ -214,7 +214,7 @@ DialogView.prototype = {
     // if (QMCONFIG.debug) console.log(user);
 
     jid = dialog.room_jid || user.user_jid;
-    icon = user_id ? user.avatar_url : QMCONFIG.defAvatar.group_url;
+    icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
     name = dialog.room_name || user.full_name;
     status = roster[user_id] ? roster[user_id] : null;
 
@@ -229,13 +229,14 @@ DialogView.prototype = {
 
       html += '<div class="chat-title">';
       html += '<div class="l-flexbox_inline">';
-      html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
+      html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
 
       if (dialog.type === 3) {
         html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
-        html = getStatus(status, html);
+        html = getStatus(status, html); 
       } else {
         html += '<span class="pencil_active avatar is-hidden"></span>';
+        html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">'
         html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
         html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';

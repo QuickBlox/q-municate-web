@@ -177,6 +177,18 @@ Routes.prototype = {
       chat.find('.pencil_active').addClass('is-hidden');
     });
 
+    $('.l-workspace-wrap').on('click', '.groupTitle .pencil_active', function() {
+      $(this).siblings('input:file').click();
+    });
+
+    $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
+      var chat = $('.l-chat:visible');
+      Dialog.changeAvatar(chat.data('dialog'), $(this), function(avatar) {
+        if (!avatar) return false;
+        chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
+      });
+    });
+
     /* scrollbars
     ----------------------------------------------------- */
     occupantScrollbar();
@@ -543,7 +555,6 @@ function changeInputFile(objDom) {
       src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
       fileName = file ? file.name : QMCONFIG.defAvatar.caption;
   
-  // objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
   objDom.prev().find('.avatar').css('background-image', "url("+src+")").siblings('span').text(fileName);
   // if (typeof file !== 'undefined') URL.revokeObjectURL(src);
 }

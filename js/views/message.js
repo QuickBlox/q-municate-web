@@ -72,6 +72,9 @@ MessageView.prototype = {
         if (message.room_name) {
           html += '<h4 class="message-author">'+contact.full_name+' has changed the chat name to "'+message.room_name+'"</h4>';
         }
+        if (message.room_photo) {
+          html += '<h4 class="message-author">'+contact.full_name+' has changed the chat picture</h4>';
+        }
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
@@ -277,6 +280,7 @@ MessageView.prototype = {
         dialog_id = message.extension && message.extension.dialog_id,
         room_jid = message.extension && message.extension.room_jid,
         room_name = message.extension && message.extension.room_name,
+        room_photo = message.extension && message.extension.room_photo,
         occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
         dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
@@ -341,6 +345,7 @@ MessageView.prototype = {
       dialog = ContactList.dialogs[dialog_id];
       if (occupants_ids) dialog.occupants_ids = occupants_ids;
       if (room_name) dialog.room_name = room_name;
+      if (room_photo) dialog.room_photo = room_photo;
       ContactList.dialogs[dialog_id] = dialog;
       
       // add new people
@@ -367,6 +372,12 @@ MessageView.prototype = {
       if (room_name) {
         chat.find('.name_chat').text(room_name).attr('title', room_name);
         dialogItem.find('.name').text(room_name);
+      }
+
+      // change name
+      if (room_photo) {
+        chat.find('.avatar_chat').css('background-image', 'url('+room_photo+')');
+        dialogItem.find('.avatar').css('background-image', 'url('+room_photo+')');
       }
     }
 
