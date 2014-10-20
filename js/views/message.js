@@ -70,6 +70,9 @@ MessageView.prototype = {
         if (message.occupants_ids) {
           html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
         }
+        if (message.deleted_id) {
+          html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+        }
         if (message.room_name) {
           html += '<h4 class="message-author">'+contact.full_name+' has changed the chat name to "'+message.room_name+'"</h4>';
         }
@@ -299,6 +302,7 @@ MessageView.prototype = {
         room_jid = message.extension && message.extension.room_jid,
         room_name = message.extension && message.extension.room_name,
         room_photo = message.extension && message.extension.room_photo,
+        deleted_id = message.extension && message.extension.deleted_id,
         occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
         dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
@@ -366,6 +370,7 @@ MessageView.prototype = {
     if (notification_type === '2') {
       dialog = ContactList.dialogs[dialog_id];
       if (occupants_ids) dialog.occupants_ids = occupants_ids;
+      if (deleted_id) dialog.occupants_ids = dialog.occupants_ids.join().replace(deleted_id, '').split();
       if (room_name) dialog.room_name = room_name;
       if (room_photo) dialog.room_photo = room_photo;
       ContactList.dialogs[dialog_id] = dialog;
@@ -392,13 +397,19 @@ MessageView.prototype = {
         });
       }
 
+      // delete occupant
+      if (deleted_id) {
+        chat.find('.occupant[data-id="'+id+'"]').remove();
+        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+      }
+
       // change name
       if (room_name) {
         chat.find('.name_chat').text(room_name).attr('title', room_name);
         dialogItem.find('.name').text(room_name);
       }
 
-      // change name
+      // change photo
       if (room_photo) {
         chat.find('.avatar_chat').css('background-image', 'url('+room_photo+')');
         dialogItem.find('.avatar').css('background-image', 'url('+room_photo+')');

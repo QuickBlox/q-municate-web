@@ -43,6 +43,7 @@ Message.prototype = {
       occupants_ids: (params.extension && params.extension.occupants_ids) || params.occupants_ids || null,
       room_name: (params.extension && params.extension.room_name) || params.room_name || null,
       room_photo: (params.extension && params.extension.room_photo) || params.room_photo || null,
+      deleted_id: (params.extension && params.extension.deleted_id) || params.deleted_id || null
     };
 
     if (message.attachment) {

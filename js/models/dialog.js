@@ -170,7 +170,6 @@ Dialog.prototype = {
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: '2',
-        full_name: User.contact.full_name,
         occupants_ids: dialog.occupants_ids.join(),
       }});
 
@@ -258,12 +257,12 @@ Dialog.prototype = {
       dialog_id: dialog.id,
       date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: '6',
-      full_name: User.contact.full_name,
+      notification_type: '2',
+      deleted_id: User.contact.id
     }});
 
     QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {
-      QB.chat.muc.leave(dialog.room_jid, function() {});
+      // QB.chat.muc.leave(dialog.room_jid, function() {});
     });
     
     callback();
