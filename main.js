@@ -3692,7 +3692,7 @@ MessageView.prototype = {
         if (message.sender_id === User.contact.id)
           html += '<h4 class="message-author">You have deleted '+recipient.full_name+' from your contact list';
         else
-          html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+          html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again btn_request_again_delete"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
           
 
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
