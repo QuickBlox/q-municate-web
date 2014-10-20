@@ -340,8 +340,7 @@ ContactListView.prototype = {
       dialog_id: dialog_id,
       date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: '4',
-      full_name: User.contact.full_name,
+      notification_type: '7'
     }});
 
     QB.chat.roster.remove(jid, function() {

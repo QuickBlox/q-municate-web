@@ -738,6 +738,7 @@ Message.prototype = {
       read: params.read || false,
       attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) || (params.attachments && params.attachments[0]) || params.attachment || null,
       sender_id: params.sender_id || null,
+      recipient_id: params.recipient_id || null,
       occupants_ids: (params.extension && params.extension.occupants_ids) || params.occupants_ids || null,
       room_name: (params.extension && params.extension.room_name) || params.room_name || null,
       room_photo: (params.extension && params.extension.room_photo) || params.room_photo || null,
@@ -2841,8 +2842,7 @@ ContactListView.prototype = {
       dialog_id: dialog_id,
       date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: '4',
-      full_name: User.contact.full_name,
+      notification_type: '7'
     }});
 
     QB.chat.roster.remove(jid, function() {
@@ -3345,7 +3345,7 @@ DialogView.prototype = {
         for (var i = 0, len = messages.length; i < len; i++) {
           message = Message.create(messages[i]);
           // if (QMCONFIG.debug) console.log(message);
-          MessageView.addItem(message);
+          MessageView.addItem(message, null, null, message.recipient_id);
         }
         self.messageScrollbar();
       });
@@ -3575,7 +3575,7 @@ MessageView.prototype = {
     }
   },
 
-  addItem: function(message, isCallback, isMessageListener) {
+  addItem: function(message, isCallback, isMessageListener, recipientId) {
     var DialogView = this.app.views.Dialog,
         ContactListMsg = this.app.models.ContactList,
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]');
@@ -3588,6 +3588,7 @@ MessageView.prototype = {
           contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
           type = message.notification_type || 'message',
           attachType = message.attachment && message.attachment.type,
+          recipient = contacts[recipientId] || null,
           html;
 
       switch (type) {
@@ -3677,6 +3678,23 @@ MessageView.prototype = {
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
         html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div></div></article>';
+        break;
+
+      case '7':
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+
+        if (message.sender_id === User.contact.id)
+          html += '<h4 class="message-author">You have deleted '+recipient.full_name+' from your contact list';
+        else
+          html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+          
+
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
@@ -3829,6 +3847,7 @@ MessageView.prototype = {
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
         roster = ContactList.roster,
+        recipientId = QB.chat.helpers.getIdFromNode(recipientJid),
         msg, copyDialogItem, dialog, occupant, msgArr;
 
     msg = Message.create(message);
@@ -3939,7 +3958,7 @@ MessageView.prototype = {
     }
 
     if (QMCONFIG.debug) console.log(msg);
-    self.addItem(msg, true, true);
+    self.addItem(msg, true, true, recipientId);
   }
 
 };

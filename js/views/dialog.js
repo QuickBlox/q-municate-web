@@ -306,7 +306,7 @@ DialogView.prototype = {
         for (var i = 0, len = messages.length; i < len; i++) {
           message = Message.create(messages[i]);
           // if (QMCONFIG.debug) console.log(message);
-          MessageView.addItem(message);
+          MessageView.addItem(message, null, null, message.recipient_id);
         }
         self.messageScrollbar();
       });
