@@ -3859,9 +3859,9 @@ MessageView.prototype = {
     msg = Message.create(message);
     msg.sender_id = id;
 
-    if ((notification_type !== '6' || msg.sender_id !== User.contact.id) && chat.is(':visible'))
+    if ((!deleted_id || msg.sender_id !== User.contact.id) && chat.is(':visible')) {
       Message.update(msg.id, dialog_id);
-    else if (!chat.is(':visible') && chat.length > 0) {
+    } else if (!chat.is(':visible') && chat.length > 0) {
       msgArr = dialogs[dialog_id].messages || [];
       msgArr.push(msg.id);
       dialogs[dialog_id].messages = msgArr;
@@ -3914,10 +3914,10 @@ MessageView.prototype = {
     if (notification_type === '2') {
       dialog = ContactList.dialogs[dialog_id];
       if (occupants_ids) dialog.occupants_ids = occupants_ids;
-      if (deleted_id) dialog.occupants_ids = dialog.occupants_ids.join().replace(deleted_id, '').split();
+      if (dialog && deleted_id) dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(','));
       if (room_name) dialog.room_name = room_name;
       if (room_photo) dialog.room_photo = room_photo;
-      ContactList.dialogs[dialog_id] = dialog;
+      if (dialog) ContactList.dialogs[dialog_id] = dialog;
       
       // add new people
       if (occupants_ids) {
@@ -3942,7 +3942,7 @@ MessageView.prototype = {
       }
 
       // delete occupant
-      if (deleted_id) {
+      if (deleted_id && msg.sender_id !== User.contact.id) {
         chat.find('.occupant[data-id="'+id+'"]').remove();
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
       }
