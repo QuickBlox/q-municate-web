@@ -383,7 +383,7 @@ ContactListView.prototype = {
 
       $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
       $('#emptyList').addClass('is-hidden');
-    });
+    }, 'subscribe');
   },
 
   onConfirm: function(id) {

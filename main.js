@@ -301,7 +301,7 @@ ContactList.prototype = {
     sessionStorage.setItem('QM.hiddenDialogs', JSON.stringify(hiddenDialogs));
   },
 
-  add: function(occupants_ids, dialog, callback) {
+  add: function(occupants_ids, dialog, callback, subscribe) {
     var QBApiCalls = this.app.service,
         Contact = this.app.models.Contact,
         self = this,
@@ -313,6 +313,7 @@ ContactList.prototype = {
     new_ids = [].concat(_.difference(occupants_ids, contact_ids));
     contact_ids = contact_ids.concat(new_ids);
     localStorage.setItem('QM.contacts', contact_ids.join());
+    if (subscribe) new_ids = occupants_ids;
 
     if (new_ids.length > 0) {
       params = { filter: { field: 'id', param: 'in', value: new_ids }, per_page: 100 };
@@ -2885,7 +2886,7 @@ ContactListView.prototype = {
 
       $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
       $('#emptyList').addClass('is-hidden');
-    });
+    }, 'subscribe');
   },
 
   onConfirm: function(id) {
