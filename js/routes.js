@@ -128,17 +128,21 @@ Routes.prototype = {
         chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
     });
 
-    $('.l-workspace-wrap').on('blur', '.groupTitle .name_chat', function() {
+    $(document.body).on('click', function() {
       var chat = $('.l-chat:visible');
-      $(this).removeClass('is-focus');
-      this.scrollLeft = 0;
-      chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+      if (chat.find('.groupTitle .name_chat').is('.is-focus')) {
+        chat.find('.groupTitle .name_chat').removeClass('is-focus');
+        chat.find('.groupTitle .name_chat')[0].scrollLeft = 0;
+        chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
 
-      if (editedChatName && !editedChatName.name) {
-        chat.find('.name_chat').text(chatName.name);
-      } else if (editedChatName && (editedChatName.name !== chatName.name) && (editedChatName.created_at > chatName.created_at)) {
-        chat.find('.name_chat').text(editedChatName.name).attr('title', editedChatName.name);
-        Dialog.changeName(chat.data('dialog'), editedChatName.name);
+        if (editedChatName && !editedChatName.name) {
+          chat.find('.name_chat').text(chatName.name);
+        } else if (editedChatName && (editedChatName.name !== chatName.name) && (editedChatName.created_at > chatName.created_at)) {
+          chat.find('.name_chat').text(editedChatName.name).attr('title', editedChatName.name);
+          Dialog.changeName(chat.data('dialog'), editedChatName.name);
+        } else {
+          chat.find('.name_chat').text(chat.find('.name_chat').text().trim());
+        }
       }
     });
 
@@ -158,9 +162,12 @@ Routes.prototype = {
         created_at: Date.now()
       };
       if (code === 13) {
+        $(document.body).click();
         $(this).blur();
       } else if (code === 27) {
         editedChatName = null;
+        $(this).text(chatName.name);
+        $(document.body).click();
         $(this).blur();
       }
     });
