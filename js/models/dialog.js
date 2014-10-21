@@ -170,7 +170,7 @@ Dialog.prototype = {
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: '2',
-        occupants_ids: dialog.occupants_ids.join(),
+        occupants_ids: params.new_ids.join(),
       }});
 
     });
