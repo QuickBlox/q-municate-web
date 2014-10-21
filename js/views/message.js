@@ -450,7 +450,7 @@ function getStatus(status, html) {
 }
 
 function getFileSize(size) {
-  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' Mb' : (size / 1024).toFixed(1) + 'Kb';
+  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
 }
 
 function getFileDownloadLink(uid) {

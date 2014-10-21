@@ -26,7 +26,7 @@ AttachView.prototype = {
         id = _.uniqueId(),
         fileSize = file.size,
         fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
-        fileSizeUnit = fileSize > (1024 * 1024) ? 'Mb' : 'Kb',
+        fileSizeUnit = fileSize > (1024 * 1024) ? 'MB' : 'KB',
         maxSize = QMCONFIG.maxLimitFile * 1024 * 1024,
         errMsg, html;
 
