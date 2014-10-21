@@ -153,6 +153,7 @@ Routes.prototype = {
         name: $(this).text().trim(),
         created_at: Date.now()
       };
+      removePopover();
     });
 
     $('.l-workspace-wrap').on('keyup', '.groupTitle .name_chat', function(event) {
@@ -186,6 +187,7 @@ Routes.prototype = {
 
     $('.l-workspace-wrap').on('click', '.groupTitle .pencil_active', function() {
       $(this).siblings('input:file').click();
+      removePopover();
     });
 
     $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
@@ -497,6 +499,7 @@ Routes.prototype = {
       if (code === 13 && !shiftKey) {
         MessageView.sendMessage($(this));
         $(this).find('.textarea').empty();
+        removePopover();
       }
     });
 
