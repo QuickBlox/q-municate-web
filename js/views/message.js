@@ -330,8 +330,6 @@ MessageView.prototype = {
 
     // create new group chat
     if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
-      QB.chat.muc.join(room_jid);
-
       dialog = Dialog.create({
         _id: dialog_id,
         type: 2,
@@ -347,6 +345,12 @@ MessageView.prototype = {
       }
 
       ContactList.add(dialog.occupants_ids, null, function() {
+        // don't create a duplicate dialog in contact list
+        dialogItem = $('.l-chat[data-dialog="'+dialog.id+'"]')[0];
+        if (dialogItem) return true;
+
+        QB.chat.muc.join(room_jid);
+
         DialogView.addDialogItem(dialog);
         unread++;
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');

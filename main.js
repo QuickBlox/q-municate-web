@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -3141,14 +3141,16 @@ DialogView.prototype = {
 
           for (var i = 0, len = dialogs.length; i < len; i++) {
             dialog = Dialog.create(dialogs[i]);
-            chat = $('.l-chat[data-dialog="'+dialog.id+'"]')[0];
-            if (chat) continue;
             ContactList.dialogs[dialog.id] = dialog;
             // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
             if (!localStorage['QM.dialog-' + dialog.id]) {
               localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
             }
+
+            // don't create a duplicate dialog in contact list
+            chat = $('.l-chat[data-dialog="'+dialog.id+'"]')[0];
+            if (chat) continue;
 
             if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);
 
@@ -3874,8 +3876,6 @@ MessageView.prototype = {
 
     // create new group chat
     if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
-      QB.chat.muc.join(room_jid);
-
       dialog = Dialog.create({
         _id: dialog_id,
         type: 2,
@@ -3891,6 +3891,12 @@ MessageView.prototype = {
       }
 
       ContactList.add(dialog.occupants_ids, null, function() {
+        // don't create a duplicate dialog in contact list
+        dialogItem = $('.l-chat[data-dialog="'+dialog.id+'"]')[0];
+        if (dialogItem) return true;
+
+        QB.chat.muc.join(room_jid);
+
         DialogView.addDialogItem(dialog);
         unread++;
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
@@ -4348,4 +4354,4 @@ var appearAnimation = function() {
   $('.popover:not(.popover_smile)').show(150);
 };
 
-},{}]},{},[1])
+},{}]},{},[1]);
