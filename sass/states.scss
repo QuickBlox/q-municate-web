@@ -39,6 +39,15 @@ input.is-error:focus {
 .list-item.is-selected:hover {
   background: #1cba48;
 }
+.list-actions_occupants .list-item:hover {
+  background: #f8f8f8;
+}
+.popup_search .list-item:hover {
+  background: #fff;
+}
+  .popup_search .list-item a {
+    cursor: default;
+  }
   .list-item.is-selected .name {
     color: #fff;
   }
