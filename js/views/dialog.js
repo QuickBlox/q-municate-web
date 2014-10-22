@@ -100,13 +100,18 @@ DialogView.prototype = {
 
           for (var i = 0, len = dialogs.length; i < len; i++) {
             dialog = Dialog.create(dialogs[i]);
-            chat = $('.l-chat[data-dialog="'+dialog.id+'"]')[0];
-            if (chat) continue;
             ContactList.dialogs[dialog.id] = dialog;
             // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
             if (!localStorage['QM.dialog-' + dialog.id]) {
               localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+            }
+
+            // don't create a duplicate dialog in contact list
+            chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
+            if (chat[0]) {
+              chat.find('.unread').text(dialog.unread_count);
+              continue;
             }
 
             if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);

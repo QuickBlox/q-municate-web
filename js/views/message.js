@@ -303,7 +303,7 @@ MessageView.prototype = {
         room_name = message.extension && message.extension.room_name,
         room_photo = message.extension && message.extension.room_photo,
         deleted_id = message.extension && message.extension.deleted_id,
-        occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
+        occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(',').map(Number),
         dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
@@ -330,8 +330,6 @@ MessageView.prototype = {
 
     // create new group chat
     if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
-      QB.chat.muc.join(room_jid);
-
       dialog = Dialog.create({
         _id: dialog_id,
         type: 2,
@@ -347,6 +345,12 @@ MessageView.prototype = {
       }
 
       ContactList.add(dialog.occupants_ids, null, function() {
+        // don't create a duplicate dialog in contact list
+        dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]')[0];
+        if (dialogItem) return true;
+
+        QB.chat.muc.join(room_jid);
+
         DialogView.addDialogItem(dialog);
         unread++;
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
@@ -369,8 +373,8 @@ MessageView.prototype = {
     // add new occupants
     if (notification_type === '2') {
       dialog = ContactList.dialogs[dialog_id];
-      if (occupants_ids) dialog.occupants_ids = occupants_ids;
-      if (dialog && deleted_id) dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(','));
+      if (occupants_ids && msg.sender_id !== User.contact.id) dialog.occupants_ids = dialog.occupants_ids.concat(occupants_ids);
+      if (dialog && deleted_id) dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(',')).map(Number);
       if (room_name) dialog.room_name = room_name;
       if (room_photo) dialog.room_photo = room_photo;
       if (dialog) ContactList.dialogs[dialog_id] = dialog;
@@ -378,11 +382,11 @@ MessageView.prototype = {
       // add new people
       if (occupants_ids) {
         ContactList.add(dialog.occupants_ids, null, function() {
-          var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',') : [],
+          var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',').map(Number) : [],
               new_ids = _.difference(dialog.occupants_ids, ids),
               contacts = ContactList.contacts,
               new_id;
-
+          
           for (var i = 0, len = new_ids.length; i < len; i++) {
             new_id = new_ids[i];
             if (new_id !== User.contact.id.toString()) {
@@ -446,7 +450,7 @@ function getStatus(status, html) {
 }
 
 function getFileSize(size) {
-  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' Mb' : (size / 1024).toFixed(1) + 'Kb';
+  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
 }
 
 function getFileDownloadLink(uid) {

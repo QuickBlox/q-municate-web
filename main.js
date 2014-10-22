@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*
  * Q-municate chat application
  *
@@ -597,7 +597,7 @@ Dialog.prototype = {
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: '2',
-        occupants_ids: dialog.occupants_ids.join(),
+        occupants_ids: params.new_ids.join(),
       }});
 
     });
@@ -1776,6 +1776,7 @@ Routes.prototype = {
         name: $(this).text().trim(),
         created_at: Date.now()
       };
+      removePopover();
     });
 
     $('.l-workspace-wrap').on('keyup', '.groupTitle .name_chat', function(event) {
@@ -1809,6 +1810,7 @@ Routes.prototype = {
 
     $('.l-workspace-wrap').on('click', '.groupTitle .pencil_active', function() {
       $(this).siblings('input:file').click();
+      removePopover();
     });
 
     $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
@@ -2120,6 +2122,7 @@ Routes.prototype = {
       if (code === 13 && !shiftKey) {
         MessageView.sendMessage($(this));
         $(this).find('.textarea').empty();
+        removePopover();
       }
     });
 
@@ -2285,7 +2288,7 @@ AttachView.prototype = {
         id = _.uniqueId(),
         fileSize = file.size,
         fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
-        fileSizeUnit = fileSize > (1024 * 1024) ? 'Mb' : 'Kb',
+        fileSizeUnit = fileSize > (1024 * 1024) ? 'MB' : 'KB',
         maxSize = QMCONFIG.maxLimitFile * 1024 * 1024,
         errMsg, html;
 
@@ -3141,13 +3144,18 @@ DialogView.prototype = {
 
           for (var i = 0, len = dialogs.length; i < len; i++) {
             dialog = Dialog.create(dialogs[i]);
-            chat = $('.l-chat[data-dialog="'+dialog.id+'"]')[0];
-            if (chat) continue;
             ContactList.dialogs[dialog.id] = dialog;
             // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
             if (!localStorage['QM.dialog-' + dialog.id]) {
               localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+            }
+
+            // don't create a duplicate dialog in contact list
+            chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
+            if (chat[0]) {
+              chat.find('.unread').text(dialog.unread_count);
+              continue;
             }
 
             if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);
@@ -3847,7 +3855,7 @@ MessageView.prototype = {
         room_name = message.extension && message.extension.room_name,
         room_photo = message.extension && message.extension.room_photo,
         deleted_id = message.extension && message.extension.deleted_id,
-        occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
+        occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(',').map(Number),
         dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
@@ -3874,8 +3882,6 @@ MessageView.prototype = {
 
     // create new group chat
     if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
-      QB.chat.muc.join(room_jid);
-
       dialog = Dialog.create({
         _id: dialog_id,
         type: 2,
@@ -3891,6 +3897,12 @@ MessageView.prototype = {
       }
 
       ContactList.add(dialog.occupants_ids, null, function() {
+        // don't create a duplicate dialog in contact list
+        dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]')[0];
+        if (dialogItem) return true;
+
+        QB.chat.muc.join(room_jid);
+
         DialogView.addDialogItem(dialog);
         unread++;
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
@@ -3913,8 +3925,8 @@ MessageView.prototype = {
     // add new occupants
     if (notification_type === '2') {
       dialog = ContactList.dialogs[dialog_id];
-      if (occupants_ids) dialog.occupants_ids = occupants_ids;
-      if (dialog && deleted_id) dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(','));
+      if (occupants_ids && msg.sender_id !== User.contact.id) dialog.occupants_ids = dialog.occupants_ids.concat(occupants_ids);
+      if (dialog && deleted_id) dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(',')).map(Number);
       if (room_name) dialog.room_name = room_name;
       if (room_photo) dialog.room_photo = room_photo;
       if (dialog) ContactList.dialogs[dialog_id] = dialog;
@@ -3922,11 +3934,11 @@ MessageView.prototype = {
       // add new people
       if (occupants_ids) {
         ContactList.add(dialog.occupants_ids, null, function() {
-          var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',') : [],
+          var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',').map(Number) : [],
               new_ids = _.difference(dialog.occupants_ids, ids),
               contacts = ContactList.contacts,
               new_id;
-
+          
           for (var i = 0, len = new_ids.length; i < len; i++) {
             new_id = new_ids[i];
             if (new_id !== User.contact.id.toString()) {
@@ -3990,7 +4002,7 @@ function getStatus(status, html) {
 }
 
 function getFileSize(size) {
-  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' Mb' : (size / 1024).toFixed(1) + 'Kb';
+  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
 }
 
 function getFileDownloadLink(uid) {
@@ -4348,4 +4360,4 @@ var appearAnimation = function() {
   $('.popover:not(.popover_smile)').show(150);
 };
 
-},{}]},{},[1])
+},{}]},{},[1]);
