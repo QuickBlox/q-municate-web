@@ -465,6 +465,8 @@ Routes.prototype = {
       } else {
         popup.addClass('not-selected');
       }
+
+      popup.find('.list_contacts').mCustomScrollbar("scrollTo","bottom");
     });
 
     $('.list_contextmenu').on('click', '.contact', function() {
