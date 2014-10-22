@@ -309,6 +309,7 @@ MessageView.prototype = {
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
         roster = ContactList.roster,
+        audioSignal = $('#new_message')[0],
         recipientId = QB.chat.helpers.getIdFromNode(recipientJid),
         msg, copyDialogItem, dialog, occupant, msgArr;
 
@@ -432,6 +433,7 @@ MessageView.prototype = {
 
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true, recipientId);
+    audioSignal.play();
   }
 
 };
