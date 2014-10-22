@@ -38,7 +38,7 @@ Dialog.prototype = {
     };
   },
 
-  createPrivate: function(jid) {
+  createPrivate: function(jid, isNew) {
     var QBApiCalls = this.app.service,
         DialogView = this.app.views.Dialog,        
         ContactList = this.app.models.ContactList,
@@ -67,7 +67,7 @@ Dialog.prototype = {
       }});
 
       ContactList.add(dialog.occupants_ids, null, function() {
-        DialogView.addDialogItem(dialog);
+        DialogView.addDialogItem(dialog, null, isNew);
       });
     });
   },

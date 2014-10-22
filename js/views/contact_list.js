@@ -181,7 +181,7 @@ ContactListView.prototype = {
 
           MessageView.addItem(message, true, true);
         } else {
-          Dialog.createPrivate(jid);
+          Dialog.createPrivate(jid, true);
         }
 
         dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');

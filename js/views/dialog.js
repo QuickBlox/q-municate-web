@@ -160,7 +160,7 @@ DialogView.prototype = {
     $('.l-list ul').html('');
   },
 
-  addDialogItem: function(dialog, isDownload) {
+  addDialogItem: function(dialog, isDownload, isNew) {
     var contacts = ContactList.contacts,
         roster = ContactList.roster,
         private_id, icon, name, status,
@@ -192,13 +192,13 @@ DialogView.prototype = {
     startOfCurrentDay.setHours(0,0,0,0);
 
     // checking if this dialog is recent OR no
-    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay) {
+    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay || isNew) {
       if (isDownload)
         $('#recentList').removeClass('is-hidden').find('ul').append(html);
       else if (!$('#searchList').is(':visible'))
         $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
       else
-        $('#recentList').find('ul').prepend(html);
+        $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
     } else if (!$('#searchList').is(':visible')) {
       $('#historyList').removeClass('is-hidden').find('ul').append(html);
     }
