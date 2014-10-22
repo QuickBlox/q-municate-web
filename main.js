@@ -3012,28 +3012,32 @@ function createListResults(list, results, self) {
       notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
       item;
 
-  results.forEach(function(contact) {
-    var rosterItem = roster[contact.id];
+  if (results.length > 0) {
+    results.forEach(function(contact) {
+      var rosterItem = roster[contact.id];
 
-    item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
-    item += '<a class="contact l-flexbox" href="#">';
-    item += '<div class="l-flexbox_inline">';
-    // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
-    item += '<div class="contact-avatar avatar" style="background-image:url('+contact.avatar_url+')"></div>';
-    item += '<span class="name">'+contact.full_name+'</span>';
-    item += '</div>';
-    if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
-      item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
-      item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
-    }
-    if (rosterItem && rosterItem.subscription === 'none' && rosterItem.ask) {
-      item += '<span class="send-request l-flexbox">Request Sent</span>';
-    }
-    item += '</a></li>';
+      item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
+      item += '<a class="contact l-flexbox" href="#">';
+      item += '<div class="l-flexbox_inline">';
+      // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
+      item += '<div class="contact-avatar avatar" style="background-image:url('+contact.avatar_url+')"></div>';
+      item += '<span class="name">'+contact.full_name+'</span>';
+      item += '</div>';
+      if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
+        item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
+        item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
+      }
+      if (rosterItem && rosterItem.subscription === 'none' && rosterItem.ask) {
+        item += '<span class="send-request l-flexbox">Request Sent</span>';
+      }
+      item += '</a></li>';
 
-    list.find('.mCSB_container').append(item);
-    list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
-  });
+      list.find('.mCSB_container').append(item);
+      list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
+    });
+  } else {
+    list.parents('.popup_search').find('.note').removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
+  }
 
   self.removeDataSpinner();
 }
@@ -3855,7 +3859,7 @@ MessageView.prototype = {
     }
   },
 
-  onMessage: function(id, message, recipientJid) {
+  onMessage: function(id, message, recipientJid, isOfflineStorage) {
     if (message.type === 'error') return true;
 
     var DialogView = self.app.views.Dialog,
@@ -3984,7 +3988,7 @@ MessageView.prototype = {
       }
     }
 
-    if (notification_type !== '1' && dialogItem.length > 0) {
+    if (notification_type !== '1' && dialogItem.length > 0 && !isOfflineStorage) {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
