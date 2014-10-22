@@ -108,17 +108,17 @@
 .request-controls {
   min-width: 70px;
   background: #fff;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #f2f2f2;
   border-radius: 8px;
 }
   .request-button {
     padding: 0 10px;
     line-height: 32px;
     background: none;
-    border-right: 1px solid #f0f0f0;
+    border-right: 1px solid #f2f2f2;
   }
   .request-button:hover {
-    background: #f8f8f8;
+    background: #f2f2f2;
   }
   .request-button:last-child {
     border-right: 0;
@@ -187,6 +187,6 @@ span.send-request {
   margin: 0 5px 5px 0;
   padding: 0 15px;
   background: #fff;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #f2f2f2;
   border-radius: 20px;
 }

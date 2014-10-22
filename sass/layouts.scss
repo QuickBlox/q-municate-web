@@ -95,7 +95,7 @@
 .l-container {
   height: calc(100% - 60px);
   background: #fff;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #f2f2f2;
   border-top: 0;
 }
 
@@ -113,7 +113,7 @@
 .l-sidebar {
   width: 330px;
   height: 100%;
-  border-right: 2px solid #f0f0f0;
+  border-right: 2px solid #f2f2f2;
 }
   .l-search {
     height: 60px;
@@ -125,7 +125,7 @@
   }
     .l-list-header {
       padding: 0 20px;
-      background: #f0f0f0;
+      background: #f2f2f2;
     }
       .l-list-header-title {
         font-size: 15px;
@@ -161,8 +161,8 @@
     position: relative;
     height: 75px;
     padding: 0 20px;
-    background: #f8f8f8;
-    border-bottom: 1px solid #f0f0f0;
+    background: #f2f2f2;
+    border-bottom: 1px solid #f2f2f2;
   }
   .l-chat_group .l-chat-header {
     height: 55px;
@@ -187,7 +187,7 @@
   .l-chat-footer {
     height: 90px;
     padding: 20px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid #f2f2f2;
   }
     .l-message {
       position: relative;

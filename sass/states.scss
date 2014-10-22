@@ -12,8 +12,8 @@ body.is-welcome {
   background-size: 100% 100%;
 }
   body.is-welcome .l-wrapper {
-    border-left: 1px solid #f0f0f0;
-    border-right: 1px solid #f0f0f0;
+    border-left: 1px solid #f2f2f2;
+    border-right: 1px solid #f2f2f2;
     background: rgba(255, 255, 255, .6);
   }
 
@@ -30,7 +30,7 @@ input.is-error:focus {
 
 .list-item.is-contextmenu,
 .list-item.is-chosen {
-  background: #f8f8f8;
+  background: #f2f2f2;
 }
 .list-item.is-selected {
   background: #1cba48;
@@ -81,7 +81,7 @@ input.is-error:focus {
   }
 
 .message.is-own {
-  background: #f8f8f8;
+  background: #f2f2f2;
 }
 
 .is-request .btn_chat_videocall,
