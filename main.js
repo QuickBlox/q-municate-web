@@ -2624,11 +2624,11 @@ ContactListView.prototype = {
       html += '</div><input class="form-checkbox" type="checkbox">';
       html += '</a></li>';
       
-      popup.find('.mCSB_container').append(html);      
+      popup.find('.mCSB_container').append(html);
     }
 
-    if (ids.length > 0)
-      popup.addClass('is-addition').data('existing_ids', ids);
+    if (type)
+      popup.addClass('is-addition').data('existing_ids', ids.length > 0 ? ids : null);
     else
       popup.data('existing_ids', null);
   },
@@ -3998,13 +3998,14 @@ MessageView.prototype = {
       $('#recentList ul').prepend(copyDialogItem);
       if (!$('#searchList').is(':visible')) {
        $('#recentList').removeClass('is-hidden');
-       isSectionEmpty($('#recentList ul')); 
+       isSectionEmpty($('#recentList ul'));
       }
     }
 
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true, recipientId);
-    audioSignal.play();
+    if (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)
+      audioSignal.play();
   }
 
 };

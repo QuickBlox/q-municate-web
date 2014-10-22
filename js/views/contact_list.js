@@ -106,11 +106,11 @@ ContactListView.prototype = {
       html += '</div><input class="form-checkbox" type="checkbox">';
       html += '</a></li>';
       
-      popup.find('.mCSB_container').append(html);      
+      popup.find('.mCSB_container').append(html);
     }
 
-    if (ids.length > 0)
-      popup.addClass('is-addition').data('existing_ids', ids);
+    if (type)
+      popup.addClass('is-addition').data('existing_ids', ids.length > 0 ? ids : null);
     else
       popup.data('existing_ids', null);
   },

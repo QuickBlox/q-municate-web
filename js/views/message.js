@@ -427,13 +427,14 @@ MessageView.prototype = {
       $('#recentList ul').prepend(copyDialogItem);
       if (!$('#searchList').is(':visible')) {
        $('#recentList').removeClass('is-hidden');
-       isSectionEmpty($('#recentList ul')); 
+       isSectionEmpty($('#recentList ul'));
       }
     }
 
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true, recipientId);
-    audioSignal.play();
+    if (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)
+      audioSignal.play();
   }
 
 };
