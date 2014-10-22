@@ -79,6 +79,7 @@ ContactListView.prototype = {
     popup.addClass('not-selected').removeClass('is-addition');
     popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
     popup.find('form')[0].reset();
+    popup.find('.list_contacts').mCustomScrollbar("scrollTo","top");
     popup.find('.mCSB_container').empty();
     popup.find('.btn').removeClass('is-hidden');
 
