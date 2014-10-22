@@ -510,6 +510,9 @@ function createListResults(list, results, self) {
       item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
       item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
     }
+    if (rosterItem && rosterItem.subscription === 'none' && rosterItem.ask) {
+      item += '<span class="send-request l-flexbox">Request Sent</span>';
+    }
     item += '</a></li>';
 
     list.find('.mCSB_container').append(item);
