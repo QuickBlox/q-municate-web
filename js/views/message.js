@@ -291,7 +291,7 @@ MessageView.prototype = {
     }
   },
 
-  onMessage: function(id, message, recipientJid) {
+  onMessage: function(id, message, recipientJid, isOfflineStorage) {
     if (message.type === 'error') return true;
 
     var DialogView = self.app.views.Dialog,
@@ -420,7 +420,7 @@ MessageView.prototype = {
       }
     }
 
-    if (notification_type !== '1' && dialogItem.length > 0) {
+    if (notification_type !== '1' && dialogItem.length > 0 && !isOfflineStorage) {
       copyDialogItem = dialogItem.clone();
       dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
