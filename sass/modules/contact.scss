@@ -169,13 +169,16 @@
 
 /* add people */
 .send-request {
-  height: 100%;
   margin-left: 10px;
   font-size: 15px;
   color: #bebebe;
 }
+.send-request:hover {
+  opacity: 1;
+}
 span.send-request {
   min-width: 95px;
+  height: 100%;
 }
   .send-request img {
     float: right;

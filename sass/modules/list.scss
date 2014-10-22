@@ -57,11 +57,11 @@
 .header-links-item .icon-active {
   display: none;
 }
-/*.list-item:hover .icon-normal,*/
+.send-request:hover .icon-normal,
 .header-links-item:hover .icon-normal {
   display: none;
 }
-/*.list-item:hover .icon-active,*/
+.send-request:hover .icon-active,
 .header-links-item:hover .icon-active {
   display: inline-block;
 }

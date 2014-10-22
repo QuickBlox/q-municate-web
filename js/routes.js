@@ -34,15 +34,6 @@ Routes.prototype = {
       changeInputFile($(this));
     });
 
-    // change the icon of adding friends [hover effect]
-    $('.popup_search').on('mouseenter', '.list-item .icon-normal', function() {
-      $(this).css('display', 'none').siblings('.icon-active').css('display', 'inline-block');
-    });
-
-    $('.popup_search').on('mouseleave', '.list-item .icon-active', function() {
-      $(this).css('display', 'none').siblings('.icon-normal').css('display', 'inline-block');
-    });
-
     /* smiles
     ----------------------------------------------------- */
     $('.smiles-tab').on('click', function() {
