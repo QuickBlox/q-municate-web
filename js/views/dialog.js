@@ -98,7 +98,8 @@ DialogView.prototype = {
       counter = Object.keys(unreadDialogs).length;
 
       $('title').text('('+counter+') ' + TITLE_NAME);
-      $('link[rel="icon"]').attr('href', FAVICON_COUNTER);
+      $('link[rel="icon"]').remove();
+      $('head').append('<link rel="icon" href="'+FAVICON_COUNTER+'">');
     }
   },
 
@@ -113,7 +114,8 @@ DialogView.prototype = {
         $('title').text('('+counter+') ' + TITLE_NAME);
       } else {
         $('title').text(TITLE_NAME);
-        $('link[rel="icon"]').attr('href', FAVICON);
+        $('link[rel="icon"]').remove();
+        $('head').append('<link rel="icon" href="'+FAVICON+'">');
       }
     }
   },
@@ -121,7 +123,8 @@ DialogView.prototype = {
   logoutWithClearData: function() {
     unreadDialogs = {};
     $('title').text(TITLE_NAME);
-    $('link[rel="icon"]').attr('href', FAVICON);
+    $('link[rel="icon"]').remove();
+    $('head').append('<link rel="icon" href="'+FAVICON+'">');
   },
 
   downloadDialogs: function(roster, ids) {
