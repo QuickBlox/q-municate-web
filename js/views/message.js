@@ -324,9 +324,10 @@ MessageView.prototype = {
       dialogs[dialog_id].messages = msgArr;
     }
 
-    if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
+    if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1' && !isOfflineStorage) {
       unread++;
       dialogItem.find('.unread').text(unread);
+      DialogView.getUnreadCounter(dialog_id);
     }
 
     // create new group chat
@@ -356,6 +357,7 @@ MessageView.prototype = {
         unread++;
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
         dialogGroupItem.find('.unread').text(unread);
+        DialogView.getUnreadCounter(dialog_id);
       });
     }
 

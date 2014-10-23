@@ -3062,6 +3062,11 @@ function isSectionEmpty(list) {
 module.exports = DialogView;
 
 var User, Dialog, Message, ContactList;
+var unreadDialogs = {};
+
+var TITLE_NAME = 'Q-municate',
+    FAVICON_COUNTER = 'favicon_counter.png',
+    FAVICON = 'favicon.png';
 
 function DialogView(app) {
   this.app = app;
@@ -3131,6 +3136,34 @@ DialogView.prototype = {
     ContactList.saveRoster(roster);
   },
 
+  getUnreadCounter: function(dialog_id) {
+    var counter;
+
+    if (typeof unreadDialogs[dialog_id] === 'undefined') {
+      unreadDialogs[dialog_id] = true;
+      counter = Object.keys(unreadDialogs).length;
+
+      $('title').text('('+counter+') ' + TITLE_NAME);
+      $('link[rel="icon"]').attr('href', FAVICON_COUNTER);
+    }
+  },
+
+  decUnreadCounter: function(dialog_id) {
+    var counter;
+
+    if (typeof unreadDialogs[dialog_id] !== 'undefined') {
+      delete unreadDialogs[dialog_id];
+      counter = Object.keys(unreadDialogs).length;
+
+      if (counter > 0) {
+        $('title').text('('+counter+') ' + TITLE_NAME);
+      } else {
+        $('title').text(TITLE_NAME);
+        $('link[rel="icon"]').attr('href', FAVICON);
+      }
+    }
+  },
+
   downloadDialogs: function(roster, ids) {
     var self = this,
         ContactListView = this.app.views.ContactList,
@@ -3163,8 +3196,9 @@ DialogView.prototype = {
 
             // don't create a duplicate dialog in contact list
             chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
-            if (chat[0]) {
+            if (chat[0] && dialog.unread_count) {
               chat.find('.unread').text(dialog.unread_count);
+              self.getUnreadCounter(dialog.id);
               continue;
             }
 
@@ -3218,7 +3252,8 @@ DialogView.prototype = {
     var contacts = ContactList.contacts,
         roster = ContactList.roster,
         private_id, icon, name, status,
-        html, startOfCurrentDay;
+        html, startOfCurrentDay,
+        self = this;
 
     private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
     icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
@@ -3258,6 +3293,7 @@ DialogView.prototype = {
     }
 
     $('#emptyList').addClass('is-hidden');
+    if (dialog.unread_count) self.getUnreadCounter(dialog.id);
   },
 
   htmlBuild: function(objDom) {
@@ -3388,6 +3424,7 @@ DialogView.prototype = {
 
     $('.is-selected').removeClass('is-selected');
     parent.addClass('is-selected').find('.unread').text('');
+    self.decUnreadCounter(dialog.id);
     
   },
 
@@ -3886,9 +3923,10 @@ MessageView.prototype = {
       dialogs[dialog_id].messages = msgArr;
     }
 
-    if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
+    if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1' && !isOfflineStorage) {
       unread++;
       dialogItem.find('.unread').text(unread);
+      DialogView.getUnreadCounter(dialog_id);
     }
 
     // create new group chat
@@ -3918,6 +3956,7 @@ MessageView.prototype = {
         unread++;
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
         dialogGroupItem.find('.unread').text(unread);
+        DialogView.getUnreadCounter(dialog_id);
       });
     }
 
