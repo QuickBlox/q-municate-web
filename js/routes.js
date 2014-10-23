@@ -25,6 +25,25 @@ function Routes(app) {
 Routes.prototype = {
 
   init: function() {
+    window.isQMAppActive = true;
+
+    $(window).focus(function() {
+      var dialogItem, dialog_id;
+
+      // console.log('ВКЛАДКА ОТКРЫТА');
+      window.isQMAppActive = true;
+
+      dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
+      dialog_id = dialogItem[0] && dialogItem.data('dialog');
+
+      // console.log(dialog_id);
+      if (dialog_id) DialogView.decUnreadCounter(dialog_id);
+    });
+
+    $(window).blur(function() {
+      // console.log('ВКЛАДКА ЗАКРЫТА');
+      window.isQMAppActive = false;
+    });
 
     $(document).on('click', function(event) {
       clickBehaviour(event);

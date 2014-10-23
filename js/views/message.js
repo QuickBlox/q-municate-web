@@ -324,7 +324,7 @@ MessageView.prototype = {
       dialogs[dialog_id].messages = msgArr;
     }
 
-    if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1' && !isOfflineStorage) {
+    if ((!chat.is(':visible') || !window.isQMAppActive) && dialogItem.length > 0 && notification_type !== '1' && !isOfflineStorage) {
       unread++;
       dialogItem.find('.unread').text(unread);
       DialogView.getUnreadCounter(dialog_id);
@@ -435,7 +435,7 @@ MessageView.prototype = {
 
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true, recipientId);
-    if (!chat.is(':visible') && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id))
+    if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id))
       audioSignal.play();
   }
 

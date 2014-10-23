@@ -1651,6 +1651,25 @@ function Routes(app) {
 Routes.prototype = {
 
   init: function() {
+    window.isQMAppActive = true;
+
+    $(window).focus(function() {
+      var dialogItem, dialog_id;
+
+      // console.log('ВКЛАДКА ОТКРЫТА');
+      window.isQMAppActive = true;
+
+      dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
+      dialog_id = dialogItem[0] && dialogItem.data('dialog');
+
+      // console.log(dialog_id);
+      if (dialog_id) DialogView.decUnreadCounter(dialog_id);
+    });
+
+    $(window).blur(function() {
+      // console.log('ВКЛАДКА ЗАКРЫТА');
+      window.isQMAppActive = false;
+    });
 
     $(document).on('click', function(event) {
       clickBehaviour(event);
@@ -3940,7 +3959,7 @@ MessageView.prototype = {
       dialogs[dialog_id].messages = msgArr;
     }
 
-    if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1' && !isOfflineStorage) {
+    if ((!chat.is(':visible') || !window.isQMAppActive) && dialogItem.length > 0 && notification_type !== '1' && !isOfflineStorage) {
       unread++;
       dialogItem.find('.unread').text(unread);
       DialogView.getUnreadCounter(dialog_id);
@@ -4051,7 +4070,7 @@ MessageView.prototype = {
 
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true, recipientId);
-    if (!chat.is(':visible') && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id))
+    if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id))
       audioSignal.play();
   }
 
