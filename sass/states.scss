@@ -88,6 +88,9 @@ input.is-error:focus {
     top: 20px;
     left: 46%;
   }
+  .l-chat .spinner_bounce.is-ajaxDownload {
+    position: static;
+  }
 
 .message.is-own {
   background: #f8f8f8;

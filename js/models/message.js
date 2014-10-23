@@ -14,13 +14,16 @@ function Message(app) {
 
 Message.prototype = {
 
-  download: function(dialog_id, callback, count) {
+  download: function(dialog_id, callback, count, isAjaxDownloading) {
     var QBApiCalls = this.app.service,
+        DialogView = this.app.views.Dialog,
         self = this;
 
     if (self.skip[dialog_id] && self.skip[dialog_id] === count) return false;
 
+    if (isAjaxDownloading) DialogView.createDataSpinner(null, null, true);
     QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50, skip: count || 0}, function(messages) {
+      if (isAjaxDownloading) DialogView.removeDataSpinner();
       callback(messages);
       self.skip[dialog_id] = count;
     });

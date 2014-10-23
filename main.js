@@ -714,13 +714,16 @@ function Message(app) {
 
 Message.prototype = {
 
-  download: function(dialog_id, callback, count) {
+  download: function(dialog_id, callback, count, isAjaxDownloading) {
     var QBApiCalls = this.app.service,
+        DialogView = this.app.views.Dialog,
         self = this;
 
     if (self.skip[dialog_id] && self.skip[dialog_id] === count) return false;
 
+    if (isAjaxDownloading) DialogView.createDataSpinner(null, null, true);
     QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50, skip: count || 0}, function(messages) {
+      if (isAjaxDownloading) DialogView.removeDataSpinner();
       callback(messages);
       self.skip[dialog_id] = count;
     });
@@ -3102,16 +3105,22 @@ DialogView.prototype = {
     };
   },
 
-  createDataSpinner: function(chat, groupchat) {
+  createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
     var spinnerBlock;
-    if (groupchat)
+    if (isAjaxDownloading) {
+      spinnerBlock = '<div class="message message_service"><div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
+    } else if (groupchat) {
       spinnerBlock = '<div class="popup-elem spinner_bounce is-creating">';
-    else
+    } else {
       spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
+    }
+
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
     spinnerBlock += '</div>';
+
+    if (isAjaxDownloading) spinnerBlock += '</div>';
 
     if (chat) {
       $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
@@ -3119,13 +3128,15 @@ DialogView.prototype = {
       $('#popupContacts .btn_popup').addClass('is-hidden');
       $('#popupContacts .popup-footer').append(spinnerBlock);
       $('#popupContacts .popup-footer').after('<div class="temp-box"></div>');
+    } else if (isAjaxDownloading) {
+      $('.l-chat:visible').find('.l-chat-content').prepend(spinnerBlock);
     } else {
       $('#emptyList').after(spinnerBlock);
     }
   },
 
   removeDataSpinner: function() {
-    $('.spinner_bounce, .temp-box').remove();
+    $('.spinner_bounce, .temp-box, div.message_service').remove();
   },
 
   prepareDownloading: function(roster) {
@@ -3554,7 +3565,7 @@ function ajaxDownloading(chat, self) {
       // if (QMCONFIG.debug) console.log(message);
       MessageView.addItem(message, true);
     }
-  }, count);
+  }, count, 'ajax');
 }
 
 function openPopup(objDom) {
