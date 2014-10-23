@@ -1663,7 +1663,10 @@ Routes.prototype = {
       dialog_id = dialogItem[0] && dialogItem.data('dialog');
 
       // console.log(dialog_id);
-      if (dialog_id) DialogView.decUnreadCounter(dialog_id);
+      if (dialog_id) {
+        dialogItem.find('.unread').text('');
+        DialogView.decUnreadCounter(dialog_id);
+      }
     });
 
     $(window).blur(function() {
