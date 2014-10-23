@@ -70,6 +70,7 @@ User.prototype = {
         self = this;
 
     FB.api('/me/permissions', function (response) {
+      console.log(66666, response);
         if (typeof response.data[3] !== 'undefined' && response.data[3].permission === 'user_friends' && response.data[3].status === 'granted') {
 
           // import FB friends
