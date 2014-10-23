@@ -469,17 +469,21 @@ Routes.prototype = {
       if (len === 1 && !popup.is('.is-addition')) {
         popup.removeClass('not-selected');
         popup.find('.btn_popup_private').removeClass('is-hidden').siblings().addClass('is-hidden');
+
+        if (obj.is('li:last')) popup.find('.list_contacts').mCustomScrollbar("scrollTo","bottom");
+
       } else if (len >= 1) {
         popup.removeClass('not-selected');
         if (popup.is('.add'))
           popup.find('.btn_popup_add').removeClass('is-hidden').siblings().addClass('is-hidden');
         else
           popup.find('.btn_popup_group').removeClass('is-hidden').siblings().addClass('is-hidden');
+
+        if (obj.is('li:last')) popup.find('.list_contacts').mCustomScrollbar("scrollTo","bottom");
+
       } else {
         popup.addClass('not-selected');
       }
-
-      popup.find('.list_contacts').mCustomScrollbar("scrollTo","bottom");
     });
 
     $('.list_contextmenu').on('click', '.contact', function() {
