@@ -3175,6 +3175,12 @@ DialogView.prototype = {
     }
   },
 
+  logoutWithClearData: function() {
+    unreadDialogs = {};
+    $('title').text(TITLE_NAME);
+    $('link[rel="icon"]').attr('href', FAVICON);
+  },
+
   downloadDialogs: function(roster, ids) {
     var self = this,
         ContactListView = this.app.views.ContactList,
@@ -4328,11 +4334,14 @@ UserView.prototype = {
   },
 
   logout: function() {
+    var DialogView = this.app.views.Dialog;
+
     User.logout(function() {
       switchOnWelcomePage();
       $('#capBox').removeClass('is-hidden');
       $('.l-chat').remove();
       if (QMCONFIG.debug) console.log('current User and Session were destroyed');
+      DialogView.logoutWithClearData();
     });
   },
 

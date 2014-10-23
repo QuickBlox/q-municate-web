@@ -118,6 +118,12 @@ DialogView.prototype = {
     }
   },
 
+  logoutWithClearData: function() {
+    unreadDialogs = {};
+    $('title').text(TITLE_NAME);
+    $('link[rel="icon"]').attr('href', FAVICON);
+  },
+
   downloadDialogs: function(roster, ids) {
     var self = this,
         ContactListView = this.app.views.ContactList,
