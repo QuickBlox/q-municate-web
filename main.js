@@ -889,7 +889,6 @@ User.prototype = {
       QBApiCalls.getUser(session.user_id, function(user) {
         self.contact = Contact.create(user);
         self._is_import = getImport(user);
-        console.log('import flag',self._is_import);
 
         if (QMCONFIG.debug) console.log('User', self);
 
@@ -899,10 +898,8 @@ User.prototype = {
           DialogView.prepareDownloading(roster);
 
           if (!self._is_import) {
-            console.log(1111, 'import');
             self.import(roster, user);
           } else {
-            console.log(2222, 'import');
             DialogView.downloadDialogs(roster);
           }
           
@@ -918,7 +915,7 @@ User.prototype = {
         self = this;
 
     FB.api('/me/permissions', function (response) {
-        console.log(66666, response);
+        if (QMCONFIG.debug) console.log('FB Permissions', response);
         for (var i = 0, len = response.data.length; i < len; i++) {
           if (response.data[i].permission === 'user_friends' && response.data[i].status === 'granted')
             isFriendsPermission = true;
@@ -927,7 +924,6 @@ User.prototype = {
         if (isFriendsPermission) {
 
           // import FB friends
-          console.log(3333, 'import');
           FB.api('/me/friends', function (res) {
               if (QMCONFIG.debug) console.log('FB friends', res);
               var ids = [];
@@ -935,8 +931,6 @@ User.prototype = {
               for (var i = 0, len = res.data.length; i < len; i++) {
                 ids.push(res.data[i].id);
               }
-
-              console.log(5555, ids);
 
               if (ids.length > 0)
                 DialogView.downloadDialogs(roster, ids);
@@ -946,7 +940,6 @@ User.prototype = {
           );
 
         } else {
-          console.log(4444, 'import');
           DialogView.downloadDialogs(roster);
         }
         self._is_import = true;
