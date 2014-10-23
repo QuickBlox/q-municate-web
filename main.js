@@ -4045,7 +4045,7 @@ MessageView.prototype = {
 
     if (QMCONFIG.debug) console.log(msg);
     self.addItem(msg, true, true, recipientId);
-    if (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)
+    if (!chat.is(':visible') && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id))
       audioSignal.play();
   }
 
