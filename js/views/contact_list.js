@@ -79,6 +79,7 @@ ContactListView.prototype = {
     popup.addClass('not-selected').removeClass('is-addition');
     popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
     popup.find('form')[0].reset();
+    popup.find('.list_contacts').mCustomScrollbar("scrollTo","top");
     popup.find('.mCSB_container').empty();
     popup.find('.btn').removeClass('is-hidden');
 
@@ -105,11 +106,11 @@ ContactListView.prototype = {
       html += '</div><input class="form-checkbox" type="checkbox">';
       html += '</a></li>';
       
-      popup.find('.mCSB_container').append(html);      
+      popup.find('.mCSB_container').append(html);
     }
 
-    if (ids.length > 0)
-      popup.addClass('is-addition').data('existing_ids', ids);
+    if (type)
+      popup.addClass('is-addition').data('existing_ids', ids.length > 0 ? ids : null);
     else
       popup.data('existing_ids', null);
   },
@@ -139,61 +140,68 @@ ContactListView.prototype = {
         roster = ContactList.roster,
         id = QB.chat.helpers.getIdFromNode(jid),
         dialogItem = $('.dialog-item[data-id="'+id+'"]')[0],
+        requestItem = $('#requestsList .list-item[data-jid="'+jid+'"]'),
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         time = Math.floor(Date.now() / 1000),
-        message, copyDialogItem;
-
+        message, copyDialogItem,
+        self = this;
+    
     if (!isChat) {
       objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
       objDom.remove();
     }
 
-    QB.chat.roster.add(jid, function() {
-      // update roster
-      roster[id] = {
-        subscription: 'none',
-        ask: 'subscribe'
-      };
-      ContactList.saveRoster(roster);
+    if (notConfirmed[id] && requestItem[0]) {
+      self.sendConfirm(requestItem);
+    } else {
+      QB.chat.roster.add(jid, function() {
+        // update roster
+        roster[id] = {
+          subscription: 'none',
+          ask: 'subscribe'
+        };
+        ContactList.saveRoster(roster);
 
-      if (dialogItem) {
-        // send notification about subscribe
-        QB.chat.send(jid, {type: 'chat', extension: {
-          save_to_history: 1,
-          dialog_id: dialogItem.getAttribute('data-dialog'),
-          date_sent: time,
+        if (dialogItem) {
+          // send notification about subscribe
+          QB.chat.send(jid, {type: 'chat', extension: {
+            save_to_history: 1,
+            dialog_id: dialogItem.getAttribute('data-dialog'),
+            date_sent: time,
 
-          notification_type: '3',
-          full_name: User.contact.full_name,
-        }});
+            notification_type: '3',
+            full_name: User.contact.full_name,
+          }});
 
-        message = Message.create({
-          chat_dialog_id: dialogItem.getAttribute('data-dialog'),
-          notification_type: '3',
-          date_sent: time,
-          sender_id: User.contact.id
-        });
+          message = Message.create({
+            chat_dialog_id: dialogItem.getAttribute('data-dialog'),
+            notification_type: '3',
+            date_sent: time,
+            sender_id: User.contact.id
+          });
 
-        MessageView.addItem(message, true, true);
-      } else {
-        Dialog.createPrivate(jid);
-      }
+          MessageView.addItem(message, true, true);
+        } else {
+          Dialog.createPrivate(jid, true);
+        }
 
-      dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');
-      copyDialogItem = dialogItem.clone();
-      dialogItem.remove();
-      $('#recentList ul').prepend(copyDialogItem);
-      if (!$('#searchList').is(':visible')) {
-       $('#recentList').removeClass('is-hidden');
-       isSectionEmpty($('#recentList ul')); 
-      }
-    });
+        dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');
+        copyDialogItem = dialogItem.clone();
+        dialogItem.remove();
+        $('#recentList ul').prepend(copyDialogItem);
+        if (!$('#searchList').is(':visible')) {
+         $('#recentList').removeClass('is-hidden');
+         isSectionEmpty($('#recentList ul')); 
+        }
+      });
+    }
 
   },
 
   sendConfirm: function(objDom) {
     var DialogView = this.app.views.Dialog,
         MessageView = this.app.views.Message,
-        jid = objDom.parents('li').data('jid'),
+        jid = objDom.data('jid') || objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
         roster = ContactList.roster,
@@ -202,7 +210,10 @@ ContactListView.prototype = {
         li, dialog, message, dialogItem, copyDialogItem,
         time = Math.floor(Date.now() / 1000);
 
-    objDom.parents('li').remove();
+    if (objDom.is('.request-button'))
+      objDom.parents('li').remove();
+    else
+      objDom.remove();
     isSectionEmpty(list);
 
     // update roster
@@ -263,6 +274,9 @@ ContactListView.prototype = {
        $('#recentList').removeClass('is-hidden');
        isSectionEmpty($('#recentList ul')); 
       }
+
+      dialogItem = $('.presence-listener[data-id="'+id+'"]');
+      dialogItem.find('.status').removeClass('status_request');
     });
     
   },
@@ -314,9 +328,6 @@ ContactListView.prototype = {
         dialog_id = li.data('dialog'),
         roster = ContactList.roster;
 
-    li.remove();
-    isSectionEmpty(list);
-
     // update roster
     delete roster[id];
     ContactList.saveRoster(roster);
@@ -324,20 +335,21 @@ ContactListView.prototype = {
     // delete dialog messages
     localStorage.removeItem('QM.dialog-' + dialog_id);
 
-    QB.chat.roster.remove(jid, function() {
-      // send notification about reject
-      QB.chat.send(jid, {type: 'chat', extension: {
-        save_to_history: 1,
-        dialog_id: dialog_id,
-        date_sent: Math.floor(Date.now() / 1000),
+    // send notification about reject
+    QB.chat.send(jid, {type: 'chat', extension: {
+      save_to_history: 1,
+      dialog_id: dialog_id,
+      date_sent: Math.floor(Date.now() / 1000),
 
-        notification_type: '4',
-        full_name: User.contact.full_name,
-      }});
+      notification_type: '7'
+    }});
+
+    QB.chat.roster.remove(jid, function() {
+      li.remove();
+      isSectionEmpty(list);
 
       // delete chat section
-      if (chat.length > 0)
-        chat.remove();
+      if (chat.length > 0) chat.remove();
       $('#capBox').removeClass('is-hidden');
       delete dialogs[dialog_id];
     });
@@ -372,7 +384,7 @@ ContactListView.prototype = {
 
       $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
       $('#emptyList').addClass('is-hidden');
-    });
+    }, 'subscribe');
   },
 
   onConfirm: function(id) {
@@ -485,25 +497,32 @@ function createListResults(list, results, self) {
       notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
       item;
 
-  results.forEach(function(contact) {
-    var rosterItem = roster[contact.id];
+  if (results.length > 0) {
+    results.forEach(function(contact) {
+      var rosterItem = roster[contact.id];
 
-    item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
-    item += '<a class="contact l-flexbox" href="#">';
-    item += '<div class="l-flexbox_inline">';
-    // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
-    item += '<div class="contact-avatar avatar" style="background-image:url('+contact.avatar_url+')"></div>';
-    item += '<span class="name">'+contact.full_name+'</span>';
-    item += '</div>';
-    if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
-      item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
-      item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
-    }
-    item += '</a></li>';
+      item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
+      item += '<a class="contact l-flexbox" href="#">';
+      item += '<div class="l-flexbox_inline">';
+      // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
+      item += '<div class="contact-avatar avatar" style="background-image:url('+contact.avatar_url+')"></div>';
+      item += '<span class="name">'+contact.full_name+'</span>';
+      item += '</div>';
+      if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
+        item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
+        item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
+      }
+      if (rosterItem && rosterItem.subscription === 'none' && rosterItem.ask) {
+        item += '<span class="send-request l-flexbox">Request Sent</span>';
+      }
+      item += '</a></li>';
 
-    list.find('.mCSB_container').append(item);
-    list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
-  });
+      list.find('.mCSB_container').append(item);
+      list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
+    });
+  } else {
+    list.parents('.popup_search').find('.note').removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
+  }
 
   self.removeDataSpinner();
 }

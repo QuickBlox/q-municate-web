@@ -31,13 +31,14 @@ Dialog.prototype = {
       type: params.type,
       room_jid: params.xmpp_room_jid || null,
       room_name: params.name || null,
+      room_photo: params.photo || null,
       occupants_ids: occupants_ids,
       last_message_date_sent: params.last_message_date_sent || null,
       unread_count: params.unread_messages_count || ''
     };
   },
 
-  createPrivate: function(jid) {
+  createPrivate: function(jid, isNew) {
     var QBApiCalls = this.app.service,
         DialogView = this.app.views.Dialog,        
         ContactList = this.app.models.ContactList,
@@ -66,7 +67,7 @@ Dialog.prototype = {
       }});
 
       ContactList.add(dialog.occupants_ids, null, function() {
-        DialogView.addDialogItem(dialog);
+        DialogView.addDialogItem(dialog, null, isNew);
       });
     });
   },
@@ -169,11 +170,80 @@ Dialog.prototype = {
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: '2',
-        full_name: User.contact.full_name,
-        occupants_ids: dialog.occupants_ids.join(),
+        occupants_ids: params.new_ids.join(),
       }});
 
     });
+  },
+
+  changeName: function(dialog_id, name) {
+    var QBApiCalls = this.app.service,
+        ContactList = this.app.models.ContactList,
+        self = this,
+        dialog;
+
+    QBApiCalls.updateDialog(dialog_id, {name: name}, function(res) {
+      dialog = self.create(res);
+      ContactList.dialogs[dialog_id] = dialog;
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+      // send notification about updating room
+      QB.chat.send(dialog.room_jid, {type: 'groupchat', extension: {
+        save_to_history: 1,
+        dialog_id: dialog.id,
+        date_sent: Math.floor(Date.now() / 1000),
+
+        notification_type: '2',
+        room_name: name,
+      }});
+    });
+  },
+
+  changeAvatar: function(dialog_id, objDom, callback) {
+    var QBApiCalls = this.app.service,
+        ContactList = this.app.models.ContactList,
+        Attach = this.app.models.Attach,
+        file = objDom[0].files[0] || null,
+        self = this,
+        errMsg, dialog;
+
+    if (file) {
+      if (file.type.indexOf('image/') === -1)
+        errMsg = QMCONFIG.errors.avatarType;
+      else if (file.name.length > 100)
+        errMsg = QMCONFIG.errors.fileName;
+
+      if (errMsg) {
+        console.log(errMsg);
+        callback(false);
+      } else {
+
+        Attach.crop(file, {w: 40, h: 40}, function(avatar) {
+          Attach.upload(avatar, function(blob) {
+            QBApiCalls.updateDialog(dialog_id, {photo: blob.path}, function(res) {
+              dialog = self.create(res);
+              ContactList.dialogs[dialog_id] = dialog;
+              if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+              // send notification about updating room
+              QB.chat.send(dialog.room_jid, {type: 'groupchat', extension: {
+                save_to_history: 1,
+                dialog_id: dialog.id,
+                date_sent: Math.floor(Date.now() / 1000),
+
+                notification_type: '2',
+                room_photo: blob.path,
+              }});
+
+              callback(blob.path);
+            });
+          });
+        });
+
+      }      
+    } else {
+      callback(false);
+    }
   },
 
   leaveChat: function(dialog, callback) {
@@ -187,12 +257,12 @@ Dialog.prototype = {
       dialog_id: dialog.id,
       date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: '6',
-      full_name: User.contact.full_name,
+      notification_type: '2',
+      deleted_id: User.contact.id
     }});
 
-    QB.chat.muc.leave(dialog.room_jid, function() {
-      QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {});
+    QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {
+      // QB.chat.muc.leave(dialog.room_jid, function() {});
     });
     
     callback();

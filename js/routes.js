@@ -7,12 +7,14 @@
 
 module.exports = Routes;
 
-var Session, UserView, ContactListView, DialogView, MessageView, AttachView;
+var Session, Dialog, UserView, ContactListView, DialogView, MessageView, AttachView;
+var chatName, editedChatName;
 
 function Routes(app) {
   this.app = app;
   
   Session = this.app.models.Session;
+  Dialog = this.app.models.Dialog;
   UserView = this.app.views.User;
   ContactListView = this.app.views.ContactList;
   DialogView = this.app.views.Dialog;
@@ -23,6 +25,28 @@ function Routes(app) {
 Routes.prototype = {
 
   init: function() {
+    window.isQMAppActive = true;
+
+    $(window).focus(function() {
+      var dialogItem, dialog_id;
+
+      // console.log('ВКЛАДКА ОТКРЫТА');
+      window.isQMAppActive = true;
+
+      dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
+      dialog_id = dialogItem[0] && dialogItem.data('dialog');
+
+      // console.log(dialog_id);
+      if (dialog_id) {
+        dialogItem.find('.unread').text('');
+        DialogView.decUnreadCounter(dialog_id);
+      }
+    });
+
+    $(window).blur(function() {
+      // console.log('ВКЛАДКА ЗАКРЫТА');
+      window.isQMAppActive = false;
+    });
 
     $(document).on('click', function(event) {
       clickBehaviour(event);
@@ -85,6 +109,115 @@ Routes.prototype = {
         attachType = 'video';
       }
       openAttachPopup($('#popupAttach'), name, url, uid, attachType);
+    });
+
+    /* group chats
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
+      var chat = $('.l-chat:visible');
+      if (chat.find('.triangle_up').is('.is-hidden')) {
+        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').addClass('is-overlay');
+        chat.find('.l-chat-content').addClass('l-chat-content_min');
+      } else {
+        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
+        chat.find('.l-chat-content').removeClass('l-chat-content_min');
+      }
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .addToGroupChat', function(event) {
+      event.stopPropagation();
+      var dialog_id = $(this).data('dialog');
+      if (QMCONFIG.debug) console.log('add people to groupchat');
+      ContactListView.addContactsToChat($(this), 'add', dialog_id);
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
+      event.stopPropagation();
+    });
+    
+    /* change the chat name
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('mouseenter focus', '.groupTitle .name_chat', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.triangle:visible').addClass('is-hover').siblings('.pencil').removeClass('is-hidden');
+    });
+
+    $('.l-workspace-wrap').on('mouseleave', '.groupTitle .name_chat', function() {
+      var chat = $('.l-chat:visible');
+      if (!$(this).is('.is-focus'))
+        chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+    });
+
+    $(document.body).on('click', function() {
+      var chat = $('.l-chat:visible');
+      if (chat.find('.groupTitle .name_chat').is('.is-focus')) {
+        chat.find('.groupTitle .name_chat').removeClass('is-focus');
+        chat.find('.groupTitle .name_chat')[0].scrollLeft = 0;
+        chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+
+        if (editedChatName && !editedChatName.name) {
+          chat.find('.name_chat').text(chatName.name);
+        } else if (editedChatName && (editedChatName.name !== chatName.name) && (editedChatName.created_at > chatName.created_at)) {
+          chat.find('.name_chat').text(editedChatName.name).attr('title', editedChatName.name);
+          Dialog.changeName(chat.data('dialog'), editedChatName.name);
+        } else {
+          chat.find('.name_chat').text(chat.find('.name_chat').text().trim());
+        }
+      }
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .name_chat', function(event) {
+      event.stopPropagation();
+      $(this).addClass('is-focus');
+      chatName = {
+        name: $(this).text().trim(),
+        created_at: Date.now()
+      };
+      removePopover();
+    });
+
+    $('.l-workspace-wrap').on('keyup', '.groupTitle .name_chat', function(event) {
+      var code = event.keyCode;
+      editedChatName = {
+        name: $(this).text().trim(),
+        created_at: Date.now()
+      };
+      if (code === 13) {
+        $(document.body).click();
+        $(this).blur();
+      } else if (code === 27) {
+        editedChatName = null;
+        $(this).text(chatName.name);
+        $(document.body).click();
+        $(this).blur();
+      }
+    });
+
+    /* change the chat avatar
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('mouseenter', '.groupTitle .avatar', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.pencil_active').removeClass('is-hidden');
+    });
+
+    $('.l-workspace-wrap').on('mouseleave', '.groupTitle .avatar', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.pencil_active').addClass('is-hidden');
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .pencil_active', function() {
+      $(this).siblings('input:file').click();
+      removePopover();
+    });
+
+    $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
+      var chat = $('.l-chat:visible');
+      Dialog.changeAvatar(chat.data('dialog'), $(this), function(avatar) {
+        if (!avatar) return false;
+        chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
+      });
     });
 
     /* scrollbars
@@ -248,7 +381,7 @@ Routes.prototype = {
       ContactListView.addContactsToChat($(this));
     });
 
-    $('#mainPage').on('click', '.addToGroupChat', function(event) {
+    $('.l-sidebar').on('click', '.addToGroupChat', function(event) {
       event.preventDefault();
       var dialog_id = $(this).data('dialog');
       if (QMCONFIG.debug) console.log('add people to groupchat');
@@ -336,12 +469,18 @@ Routes.prototype = {
       if (len === 1 && !popup.is('.is-addition')) {
         popup.removeClass('not-selected');
         popup.find('.btn_popup_private').removeClass('is-hidden').siblings().addClass('is-hidden');
+
+        if (obj.is('li:last')) popup.find('.list_contacts').mCustomScrollbar("scrollTo","bottom");
+
       } else if (len >= 1) {
         popup.removeClass('not-selected');
         if (popup.is('.add'))
           popup.find('.btn_popup_add').removeClass('is-hidden').siblings().addClass('is-hidden');
         else
           popup.find('.btn_popup_group').removeClass('is-hidden').siblings().addClass('is-hidden');
+
+        if (obj.is('li:last')) popup.find('.list_contacts').mCustomScrollbar("scrollTo","bottom");
+
       } else {
         popup.addClass('not-selected');
       }
@@ -388,6 +527,7 @@ Routes.prototype = {
       if (code === 13 && !shiftKey) {
         MessageView.sendMessage($(this));
         $(this).find('.textarea').empty();
+        removePopover();
       }
     });
 
@@ -408,19 +548,6 @@ Routes.prototype = {
       event.preventDefault();
       $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.is-selected').removeClass('is-selected');
-    });
-
-    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
-      var chat = $('.l-chat:visible');
-      if (chat.find('.triangle_up').is('.is-hidden')) {
-        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-        chat.find('.chat-occupants-wrap').addClass('is-overlay');
-        chat.find('.l-chat-content').addClass('l-chat-content_min');
-      } else {
-        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
-        chat.find('.l-chat-content').removeClass('l-chat-content_min');
-      }
     });
 
     /* temporary routes
@@ -466,7 +593,6 @@ function changeInputFile(objDom) {
       src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
       fileName = file ? file.name : QMCONFIG.defAvatar.caption;
   
-  // objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
   objDom.prev().find('.avatar').css('background-image', "url("+src+")").siblings('span').text(fileName);
   // if (typeof file !== 'undefined') URL.revokeObjectURL(src);
 }

@@ -8,6 +8,11 @@
 module.exports = DialogView;
 
 var User, Dialog, Message, ContactList;
+var unreadDialogs = {};
+
+var TITLE_NAME = 'Q-municate',
+    FAVICON_COUNTER = 'favicon_counter.png',
+    FAVICON = 'favicon.png';
 
 function DialogView(app) {
   this.app = app;
@@ -31,8 +36,10 @@ DialogView.prototype = {
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
 
     QB.chat.onDisconnectingListener = function() {
-      window.onLine = false;
-      $('.no-connection').removeClass('is-hidden');
+      if (localStorage['QM.user']) {
+        window.onLine = false;
+        $('.no-connection').removeClass('is-hidden');
+      }
     };
 
     QB.chat.onReconnectListener = function() {
@@ -41,16 +48,22 @@ DialogView.prototype = {
     };
   },
 
-  createDataSpinner: function(chat, groupchat) {
+  createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
     var spinnerBlock;
-    if (groupchat)
+    if (isAjaxDownloading) {
+      spinnerBlock = '<div class="message message_service"><div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
+    } else if (groupchat) {
       spinnerBlock = '<div class="popup-elem spinner_bounce is-creating">';
-    else
+    } else {
       spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
+    }
+
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
     spinnerBlock += '</div>';
+
+    if (isAjaxDownloading) spinnerBlock += '</div>';
 
     if (chat) {
       $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
@@ -58,13 +71,15 @@ DialogView.prototype = {
       $('#popupContacts .btn_popup').addClass('is-hidden');
       $('#popupContacts .popup-footer').append(spinnerBlock);
       $('#popupContacts .popup-footer').after('<div class="temp-box"></div>');
+    } else if (isAjaxDownloading) {
+      $('.l-chat:visible').find('.l-chat-content').prepend(spinnerBlock);
     } else {
       $('#emptyList').after(spinnerBlock);
     }
   },
 
   removeDataSpinner: function() {
-    $('.spinner_bounce, .temp-box').remove();
+    $('.spinner_bounce, .temp-box, div.message_service').remove();
   },
 
   prepareDownloading: function(roster) {
@@ -75,6 +90,43 @@ DialogView.prototype = {
     ContactList.saveRoster(roster);
   },
 
+  getUnreadCounter: function(dialog_id) {
+    var counter;
+
+    if (typeof unreadDialogs[dialog_id] === 'undefined') {
+      unreadDialogs[dialog_id] = true;
+      counter = Object.keys(unreadDialogs).length;
+
+      $('title').text('('+counter+') ' + TITLE_NAME);
+      $('link[rel="icon"]').remove();
+      $('head').append('<link rel="icon" href="'+FAVICON_COUNTER+'">');
+    }
+  },
+
+  decUnreadCounter: function(dialog_id) {
+    var counter;
+
+    if (typeof unreadDialogs[dialog_id] !== 'undefined') {
+      delete unreadDialogs[dialog_id];
+      counter = Object.keys(unreadDialogs).length;
+
+      if (counter > 0) {
+        $('title').text('('+counter+') ' + TITLE_NAME);
+      } else {
+        $('title').text(TITLE_NAME);
+        $('link[rel="icon"]').remove();
+        $('head').append('<link rel="icon" href="'+FAVICON+'">');
+      }
+    }
+  },
+
+  logoutWithClearData: function() {
+    unreadDialogs = {};
+    $('title').text(TITLE_NAME);
+    $('link[rel="icon"]').remove();
+    $('head').append('<link rel="icon" href="'+FAVICON+'">');
+  },
+
   downloadDialogs: function(roster, ids) {
     var self = this,
         ContactListView = this.app.views.ContactList,
@@ -82,7 +134,8 @@ DialogView.prototype = {
         notConfirmed,
         private_id,
         dialog,
-        occupants_ids;
+        occupants_ids,
+        chat;
 
     Dialog.download(function(dialogs) {
       self.removeDataSpinner();
@@ -102,6 +155,14 @@ DialogView.prototype = {
 
             if (!localStorage['QM.dialog-' + dialog.id]) {
               localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+            }
+
+            // don't create a duplicate dialog in contact list
+            chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
+            if (chat[0] && dialog.unread_count) {
+              chat.find('.unread').text(dialog.unread_count);
+              self.getUnreadCounter(dialog.id);
+              continue;
             }
 
             if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);
@@ -150,14 +211,15 @@ DialogView.prototype = {
     $('.l-list ul').html('');
   },
 
-  addDialogItem: function(dialog, isDownload) {
+  addDialogItem: function(dialog, isDownload, isNew) {
     var contacts = ContactList.contacts,
         roster = ContactList.roster,
         private_id, icon, name, status,
-        html, startOfCurrentDay;
+        html, startOfCurrentDay,
+        self = this;
 
     private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
-    icon = private_id ? contacts[private_id].avatar_url : QMCONFIG.defAvatar.group_url;
+    icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
     status = roster[private_id] ? roster[private_id] : null;
 
@@ -182,18 +244,19 @@ DialogView.prototype = {
     startOfCurrentDay.setHours(0,0,0,0);
 
     // checking if this dialog is recent OR no
-    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay) {
+    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay || isNew) {
       if (isDownload)
         $('#recentList').removeClass('is-hidden').find('ul').append(html);
       else if (!$('#searchList').is(':visible'))
         $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
       else
-        $('#recentList').find('ul').prepend(html);
+        $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
     } else if (!$('#searchList').is(':visible')) {
       $('#historyList').removeClass('is-hidden').find('ul').append(html);
     }
 
     $('#emptyList').addClass('is-hidden');
+    if (dialog.unread_count) self.getUnreadCounter(dialog.id);
   },
 
   htmlBuild: function(objDom) {
@@ -214,33 +277,31 @@ DialogView.prototype = {
     // if (QMCONFIG.debug) console.log(user);
 
     jid = dialog.room_jid || user.user_jid;
-    icon = user_id ? user.avatar_url : QMCONFIG.defAvatar.group_url;
+    icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
     name = dialog.room_name || user.full_name;
     status = roster[user_id] ? roster[user_id] : null;
 
     if (chat.length === 0) {
-      if (dialog.type === 3)
+      if (dialog.type === 3) {
         html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="'+dialog_id+'" data-id="'+user_id+'" data-jid="'+jid+'">';
-      else
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
+      } else {
         html = '<section class="l-workspace l-chat l-chat_group is-group" data-dialog="'+dialog_id+'" data-jid="'+jid+'">';
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">';
+      }
 
-      html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
       html += '<div class="chat-title">';
-
-      if (dialog.type === 3)
-        html += '<div class="l-flexbox_inline">';
-      else
-        html += '<div class="l-flexbox_inline groupTitle">';
-      
-      // html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
-      if (dialog.type === 3)
-        html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
-
-      html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
+      html += '<div class="l-flexbox_inline">';
+      html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
 
       if (dialog.type === 3) {
-        html = getStatus(status, html);
+        html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
+        html = getStatus(status, html); 
       } else {
+        html += '<span class="pencil_active avatar is-hidden"></span>';
+        html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">'
+        html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
+        html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';
         html += '<span class="triangle triangle_up is-hidden"></span>';
       }
@@ -260,7 +321,7 @@ DialogView.prototype = {
       else
         html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.png" alt="delete"></button>';
       
-      html += '</div>';
+      html += '</div></header>';
 
       // build occupants of room
       if (dialog.type === 2) {
@@ -280,7 +341,6 @@ DialogView.prototype = {
         html += '</div></div>';
       }
 
-      html += '</header>';
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';
@@ -304,7 +364,7 @@ DialogView.prototype = {
         for (var i = 0, len = messages.length; i < len; i++) {
           message = Message.create(messages[i]);
           // if (QMCONFIG.debug) console.log(message);
-          MessageView.addItem(message);
+          MessageView.addItem(message, null, null, message.recipient_id);
         }
         self.messageScrollbar();
       });
@@ -327,6 +387,7 @@ DialogView.prototype = {
 
     $('.is-selected').removeClass('is-selected');
     parent.addClass('is-selected').find('.unread').text('');
+    self.decUnreadCounter(dialog.id);
     
   },
 
@@ -384,19 +445,19 @@ DialogView.prototype = {
            isSectionEmpty($('#recentList ul')); 
           }
         }
-        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
-        $('.is-overlay').removeClass('is-overlay');
+        // chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
 
 
-        for (var i = 0, len = new_ids.length; i < len; i++) {
-          new_id = new_ids[i];
-          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
-          occupant = getStatus(roster[new_id], occupant);
-          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
-          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
-        }
+        // for (var i = 0, len = new_ids.length; i < len; i++) {
+        //   new_id = new_ids[i];
+        //   occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+        //   occupant = getStatus(roster[new_id], occupant);
+        //   occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+        //   chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+        // }
 
-        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        // chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
 
         // $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
       });
@@ -417,17 +478,15 @@ DialogView.prototype = {
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
         list = li.parents('ul');
 
-    li.remove();
-    isSectionEmpty(list);
-    // console.log(dialogs[dialog_id]);
-
-    // delete dialog messages
-    localStorage.removeItem('QM.dialog-' + dialog_id);
-
     Dialog.leaveChat(dialog, function() {
+      li.remove();
+      isSectionEmpty(list);
+
+      // delete dialog messages
+      localStorage.removeItem('QM.dialog-' + dialog_id);
+
       // delete chat section
-      if (chat.length > 0)
-        chat.remove();
+      if (chat.length > 0) chat.remove();
       $('#capBox').removeClass('is-hidden');
       delete dialogs[dialog_id];
     });
@@ -458,7 +517,7 @@ function ajaxDownloading(chat, self) {
       // if (QMCONFIG.debug) console.log(message);
       MessageView.addItem(message, true);
     }
-  }, count);
+  }, count, 'ajax');
 }
 
 function openPopup(objDom) {

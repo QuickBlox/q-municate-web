@@ -33,7 +33,7 @@ MessageView.prototype = {
     }
   },
 
-  addItem: function(message, isCallback, isMessageListener) {
+  addItem: function(message, isCallback, isMessageListener, recipientId) {
     var DialogView = this.app.views.Dialog,
         ContactListMsg = this.app.models.ContactList,
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]');
@@ -46,6 +46,7 @@ MessageView.prototype = {
           contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
           type = message.notification_type || 'message',
           attachType = message.attachment && message.attachment.type,
+          recipient = contacts[recipientId] || null,
           html;
 
       switch (type) {
@@ -66,7 +67,18 @@ MessageView.prototype = {
         html += '<div class="message-container-wrap">';
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
-        html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
+        if (message.occupants_ids) {
+          html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
+        }
+        if (message.deleted_id) {
+          html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+        }
+        if (message.room_name) {
+          html += '<h4 class="message-author">'+contact.full_name+' has changed the chat name to "'+message.room_name+'"</h4>';
+        }
+        if (message.room_photo) {
+          html += '<h4 class="message-author">'+contact.full_name+' has changed the chat picture</h4>';
+        }
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
@@ -95,7 +107,7 @@ MessageView.prototype = {
         html += '<div class="message-content">';
 
         if (message.sender_id === User.contact.id)
-          html += '<h4 class="message-author">'+User.contact.full_name+' has rejected a request';
+          html += '<h4 class="message-author">You have rejected a request';
         else
           html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
           
@@ -112,7 +124,7 @@ MessageView.prototype = {
         html += '<div class="message-content">';
 
         if (message.sender_id === User.contact.id)
-          html += '<h4 class="message-author">'+User.contact.full_name+' has accepted a request</h4>';
+          html += '<h4 class="message-author">You have accepted a request</h4>';
         else
           html += '<h4 class="message-author">Your request has been accepted</h4>';
 
@@ -127,6 +139,23 @@ MessageView.prototype = {
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
         html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div></div></article>';
+        break;
+
+      case '7':
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+
+        if (message.sender_id === User.contact.id)
+          html += '<h4 class="message-author">You have deleted '+recipient.full_name+' from your contact list';
+        else
+          html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again btn_request_again_delete"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+          
+
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
@@ -262,7 +291,7 @@ MessageView.prototype = {
     }
   },
 
-  onMessage: function(id, message, recipientJid) {
+  onMessage: function(id, message, recipientJid, isOfflineStorage) {
     if (message.type === 'error') return true;
 
     var DialogView = self.app.views.Dialog,
@@ -272,44 +301,37 @@ MessageView.prototype = {
         dialog_id = message.extension && message.extension.dialog_id,
         room_jid = message.extension && message.extension.room_jid,
         room_name = message.extension && message.extension.room_name,
-        occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
+        room_photo = message.extension && message.extension.room_photo,
+        deleted_id = message.extension && message.extension.deleted_id,
+        occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(',').map(Number),
         dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
         roster = ContactList.roster,
+        audioSignal = $('#new_message')[0],
+        recipientId = QB.chat.helpers.getIdFromNode(recipientJid),
         msg, copyDialogItem, dialog, occupant, msgArr;
 
     msg = Message.create(message);
     msg.sender_id = id;
 
-    if ((notification_type !== '6' || msg.sender_id !== User.contact.id) && chat.is(':visible'))
+    if ((!deleted_id || msg.sender_id !== User.contact.id) && chat.is(':visible')) {
       Message.update(msg.id, dialog_id);
-    else if (!chat.is(':visible') && chat.length > 0) {
+    } else if (!chat.is(':visible') && chat.length > 0) {
       msgArr = dialogs[dialog_id].messages || [];
       msgArr.push(msg.id);
       dialogs[dialog_id].messages = msgArr;
     }
 
-    if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
+    if ((!chat.is(':visible') || !window.isQMAppActive) && dialogItem.length > 0 && notification_type !== '1' && !isOfflineStorage) {
       unread++;
       dialogItem.find('.unread').text(unread);
-    }
-
-    if (notification_type !== '1' && dialogItem.length > 0) {
-      copyDialogItem = dialogItem.clone();
-      dialogItem.remove();
-      $('#recentList ul').prepend(copyDialogItem);
-      if (!$('#searchList').is(':visible')) {
-       $('#recentList').removeClass('is-hidden');
-       isSectionEmpty($('#recentList ul')); 
-      }
+      DialogView.getUnreadCounter(dialog_id);
     }
 
     // create new group chat
     if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
-      QB.chat.muc.join(room_jid);
-
       dialog = Dialog.create({
         _id: dialog_id,
         type: 2,
@@ -325,7 +347,17 @@ MessageView.prototype = {
       }
 
       ContactList.add(dialog.occupants_ids, null, function() {
+        // don't create a duplicate dialog in contact list
+        dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]')[0];
+        if (dialogItem) return true;
+
+        QB.chat.muc.join(room_jid);
+
         DialogView.addDialogItem(dialog);
+        unread++;
+        dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
+        dialogGroupItem.find('.unread').text(unread);
+        DialogView.getUnreadCounter(dialog_id);
       });
     }
 
@@ -344,29 +376,67 @@ MessageView.prototype = {
     // add new occupants
     if (notification_type === '2') {
       dialog = ContactList.dialogs[dialog_id];
-      dialog.occupants_ids = occupants_ids;
-      ContactList.dialogs[dialog_id] = dialog;
+      if (occupants_ids && msg.sender_id !== User.contact.id) dialog.occupants_ids = dialog.occupants_ids.concat(occupants_ids);
+      if (dialog && deleted_id) dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(',')).map(Number);
+      if (room_name) dialog.room_name = room_name;
+      if (room_photo) dialog.room_photo = room_photo;
+      if (dialog) ContactList.dialogs[dialog_id] = dialog;
       
-      ContactList.add(dialog.occupants_ids, null, function() {
-        var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',') : [],
-            new_ids = _.difference(dialog.occupants_ids, ids),
-            contacts = ContactList.contacts,
-            new_id;
+      // add new people
+      if (occupants_ids) {
+        ContactList.add(dialog.occupants_ids, null, function() {
+          var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',').map(Number) : [],
+              new_ids = _.difference(dialog.occupants_ids, ids),
+              contacts = ContactList.contacts,
+              new_id;
+          
+          for (var i = 0, len = new_ids.length; i < len; i++) {
+            new_id = new_ids[i];
+            if (new_id !== User.contact.id.toString()) {
+              occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+              occupant = getStatus(roster[new_id], occupant);
+              occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+              chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+            }
+          }
 
-        for (var i = 0, len = new_ids.length; i < len; i++) {
-          new_id = new_ids[i];
-          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
-          occupant = getStatus(roster[new_id], occupant);
-          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
-          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
-        }
+          chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        });
+      }
 
+      // delete occupant
+      if (deleted_id && msg.sender_id !== User.contact.id) {
+        chat.find('.occupant[data-id="'+id+'"]').remove();
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
-      });
+      }
+
+      // change name
+      if (room_name) {
+        chat.find('.name_chat').text(room_name).attr('title', room_name);
+        dialogItem.find('.name').text(room_name);
+      }
+
+      // change photo
+      if (room_photo) {
+        chat.find('.avatar_chat').css('background-image', 'url('+room_photo+')');
+        dialogItem.find('.avatar').css('background-image', 'url('+room_photo+')');
+      }
+    }
+
+    if (notification_type !== '1' && dialogItem.length > 0 && !isOfflineStorage) {
+      copyDialogItem = dialogItem.clone();
+      dialogItem.remove();
+      $('#recentList ul').prepend(copyDialogItem);
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul'));
+      }
     }
 
     if (QMCONFIG.debug) console.log(msg);
-    self.addItem(msg, true, true);
+    self.addItem(msg, true, true, recipientId);
+    if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id))
+      audioSignal.play();
   }
 
 };
@@ -385,7 +455,7 @@ function getStatus(status, html) {
 }
 
 function getFileSize(size) {
-  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' Mb' : (size / 1024).toFixed(1) + 'Kb';
+  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
 }
 
 function getFileDownloadLink(uid) {

@@ -95,7 +95,7 @@
 .l-container {
   height: calc(100% - 60px);
   background: #fff;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #f2f2f2;
   border-top: 0;
 }
 
@@ -113,7 +113,7 @@
 .l-sidebar {
   width: 330px;
   height: 100%;
-  border-right: 2px solid #f0f0f0;
+  border-right: 2px solid #f2f2f2;
 }
   .l-search {
     height: 60px;
@@ -125,7 +125,7 @@
   }
     .l-list-header {
       padding: 0 20px;
-      background: #f0f0f0;
+      background: #f2f2f2;
     }
       .l-list-header-title {
         font-size: 15px;
@@ -154,39 +154,42 @@
 
 /* Chats
 --------------------------------------------------*/
-.l-chat-header {
+.l-chat_group {
   position: relative;
-  height: 75px;
-  padding: 0 20px;
-  background: #f8f8f8;
-  border-bottom: 1px solid #f0f0f0;
 }
-.l-chat_group .l-chat-header {
-  height: 55px;
-}
-
-.l-chat-content {
-  position: relative;
-  height: calc(100% - 75px - 90px);
-  overflow-y: auto;
-}
-.l-chat_group .l-chat-content {
-  height: calc(100% - 55px - 90px);
-}
-  .is-request .l-chat-content {
-    height: calc(100% - 75px);
-  }
-  .l-chat_group .l-chat-content_min {
-    margin-top: 83px;
-    height: calc(100% - 55px - 90px - 83px);
-  }
-
-.l-chat-footer {
-  height: 90px;
-  padding: 20px;
-  border-top: 1px solid #f0f0f0;
-}
-  .l-message {
+  .l-chat-header {
     position: relative;
-    height: 100%;
+    height: 75px;
+    padding: 0 20px;
+    background: #f8f8f8;
+    border-bottom: 1px solid #f2f2f2;
   }
+  .l-chat_group .l-chat-header {
+    height: 55px;
+  }
+
+  .l-chat-content {
+    position: relative;
+    height: calc(100% - 75px - 90px);
+    overflow-y: auto;
+  }
+  .l-chat_group .l-chat-content {
+    height: calc(100% - 55px - 90px);
+  }
+    .is-request .l-chat-content {
+      height: calc(100% - 75px);
+    }
+    .l-chat_group .l-chat-content_min {
+      margin-top: 83px;
+      height: calc(100% - 55px - 90px - 83px);
+    }
+
+  .l-chat-footer {
+    height: 90px;
+    padding: 20px;
+    border-top: 1px solid #f2f2f2;
+  }
+    .l-message {
+      position: relative;
+      height: 100%;
+    }

@@ -301,7 +301,7 @@ ContactList.prototype = {
     sessionStorage.setItem('QM.hiddenDialogs', JSON.stringify(hiddenDialogs));
   },
 
-  add: function(occupants_ids, dialog, callback) {
+  add: function(occupants_ids, dialog, callback, subscribe) {
     var QBApiCalls = this.app.service,
         Contact = this.app.models.Contact,
         self = this,
@@ -313,6 +313,7 @@ ContactList.prototype = {
     new_ids = [].concat(_.difference(occupants_ids, contact_ids));
     contact_ids = contact_ids.concat(new_ids);
     localStorage.setItem('QM.contacts', contact_ids.join());
+    if (subscribe) new_ids = occupants_ids;
 
     if (new_ids.length > 0) {
       params = { filter: { field: 'id', param: 'in', value: new_ids }, per_page: 100 };
@@ -457,13 +458,14 @@ Dialog.prototype = {
       type: params.type,
       room_jid: params.xmpp_room_jid || null,
       room_name: params.name || null,
+      room_photo: params.photo || null,
       occupants_ids: occupants_ids,
       last_message_date_sent: params.last_message_date_sent || null,
       unread_count: params.unread_messages_count || ''
     };
   },
 
-  createPrivate: function(jid) {
+  createPrivate: function(jid, isNew) {
     var QBApiCalls = this.app.service,
         DialogView = this.app.views.Dialog,        
         ContactList = this.app.models.ContactList,
@@ -492,7 +494,7 @@ Dialog.prototype = {
       }});
 
       ContactList.add(dialog.occupants_ids, null, function() {
-        DialogView.addDialogItem(dialog);
+        DialogView.addDialogItem(dialog, null, isNew);
       });
     });
   },
@@ -595,11 +597,80 @@ Dialog.prototype = {
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: '2',
-        full_name: User.contact.full_name,
-        occupants_ids: dialog.occupants_ids.join(),
+        occupants_ids: params.new_ids.join(),
       }});
 
     });
+  },
+
+  changeName: function(dialog_id, name) {
+    var QBApiCalls = this.app.service,
+        ContactList = this.app.models.ContactList,
+        self = this,
+        dialog;
+
+    QBApiCalls.updateDialog(dialog_id, {name: name}, function(res) {
+      dialog = self.create(res);
+      ContactList.dialogs[dialog_id] = dialog;
+      if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+      // send notification about updating room
+      QB.chat.send(dialog.room_jid, {type: 'groupchat', extension: {
+        save_to_history: 1,
+        dialog_id: dialog.id,
+        date_sent: Math.floor(Date.now() / 1000),
+
+        notification_type: '2',
+        room_name: name,
+      }});
+    });
+  },
+
+  changeAvatar: function(dialog_id, objDom, callback) {
+    var QBApiCalls = this.app.service,
+        ContactList = this.app.models.ContactList,
+        Attach = this.app.models.Attach,
+        file = objDom[0].files[0] || null,
+        self = this,
+        errMsg, dialog;
+
+    if (file) {
+      if (file.type.indexOf('image/') === -1)
+        errMsg = QMCONFIG.errors.avatarType;
+      else if (file.name.length > 100)
+        errMsg = QMCONFIG.errors.fileName;
+
+      if (errMsg) {
+        console.log(errMsg);
+        callback(false);
+      } else {
+
+        Attach.crop(file, {w: 40, h: 40}, function(avatar) {
+          Attach.upload(avatar, function(blob) {
+            QBApiCalls.updateDialog(dialog_id, {photo: blob.path}, function(res) {
+              dialog = self.create(res);
+              ContactList.dialogs[dialog_id] = dialog;
+              if (QMCONFIG.debug) console.log('Dialog', dialog);
+
+              // send notification about updating room
+              QB.chat.send(dialog.room_jid, {type: 'groupchat', extension: {
+                save_to_history: 1,
+                dialog_id: dialog.id,
+                date_sent: Math.floor(Date.now() / 1000),
+
+                notification_type: '2',
+                room_photo: blob.path,
+              }});
+
+              callback(blob.path);
+            });
+          });
+        });
+
+      }      
+    } else {
+      callback(false);
+    }
   },
 
   leaveChat: function(dialog, callback) {
@@ -613,12 +684,12 @@ Dialog.prototype = {
       dialog_id: dialog.id,
       date_sent: Math.floor(Date.now() / 1000),
 
-      notification_type: '6',
-      full_name: User.contact.full_name,
+      notification_type: '2',
+      deleted_id: User.contact.id
     }});
 
-    QB.chat.muc.leave(dialog.room_jid, function() {
-      QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {});
+    QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {
+      // QB.chat.muc.leave(dialog.room_jid, function() {});
     });
     
     callback();
@@ -643,13 +714,16 @@ function Message(app) {
 
 Message.prototype = {
 
-  download: function(dialog_id, callback, count) {
+  download: function(dialog_id, callback, count, isAjaxDownloading) {
     var QBApiCalls = this.app.service,
+        DialogView = this.app.views.Dialog,
         self = this;
 
     if (self.skip[dialog_id] && self.skip[dialog_id] === count) return false;
 
+    if (isAjaxDownloading) DialogView.createDataSpinner(null, null, true);
     QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50, skip: count || 0}, function(messages) {
+      if (isAjaxDownloading) DialogView.removeDataSpinner();
       callback(messages);
       self.skip[dialog_id] = count;
     });
@@ -667,7 +741,12 @@ Message.prototype = {
       date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
       read: params.read || false,
       attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) || (params.attachments && params.attachments[0]) || params.attachment || null,
-      sender_id: params.sender_id || null
+      sender_id: params.sender_id || null,
+      recipient_id: params.recipient_id || null,
+      occupants_ids: (params.extension && params.extension.occupants_ids) || params.occupants_ids || null,
+      room_name: (params.extension && params.extension.room_name) || params.room_name || null,
+      room_photo: (params.extension && params.extension.room_photo) || params.room_photo || null,
+      deleted_id: (params.extension && params.extension.deleted_id) || params.deleted_id || null
     };
 
     if (message.attachment) {
@@ -810,6 +889,7 @@ User.prototype = {
       QBApiCalls.getUser(session.user_id, function(user) {
         self.contact = Contact.create(user);
         self._is_import = getImport(user);
+        console.log('import flag',self._is_import);
 
         if (QMCONFIG.debug) console.log('User', self);
 
@@ -819,8 +899,10 @@ User.prototype = {
           DialogView.prepareDownloading(roster);
 
           if (!self._is_import) {
+            console.log(1111, 'import');
             self.import(roster, user);
           } else {
+            console.log(2222, 'import');
             DialogView.downloadDialogs(roster);
           }
           
@@ -832,12 +914,20 @@ User.prototype = {
 
   import: function(roster, user) {
     var DialogView = this.app.views.Dialog,
+        isFriendsPermission = false,
         self = this;
 
     FB.api('/me/permissions', function (response) {
-        if (typeof response.data[3] !== 'undefined' && response.data[3].permission === 'user_friends' && response.data[3].status === 'granted') {
+        console.log(66666, response);
+        for (var i = 0, len = response.data.length; i < len; i++) {
+          if (response.data[i].permission === 'user_friends' && response.data[i].status === 'granted')
+            isFriendsPermission = true;
+        }
+
+        if (isFriendsPermission) {
 
           // import FB friends
+          console.log(3333, 'import');
           FB.api('/me/friends', function (res) {
               if (QMCONFIG.debug) console.log('FB friends', res);
               var ids = [];
@@ -845,6 +935,8 @@ User.prototype = {
               for (var i = 0, len = res.data.length; i < len; i++) {
                 ids.push(res.data[i].id);
               }
+
+              console.log(5555, ids);
 
               if (ids.length > 0)
                 DialogView.downloadDialogs(roster, ids);
@@ -854,6 +946,7 @@ User.prototype = {
           );
 
         } else {
+          console.log(4444, 'import');
           DialogView.downloadDialogs(roster);
         }
         self._is_import = true;
@@ -1554,12 +1647,14 @@ var failSearch = function() {
 
 module.exports = Routes;
 
-var Session, UserView, ContactListView, DialogView, MessageView, AttachView;
+var Session, Dialog, UserView, ContactListView, DialogView, MessageView, AttachView;
+var chatName, editedChatName;
 
 function Routes(app) {
   this.app = app;
   
   Session = this.app.models.Session;
+  Dialog = this.app.models.Dialog;
   UserView = this.app.views.User;
   ContactListView = this.app.views.ContactList;
   DialogView = this.app.views.Dialog;
@@ -1570,6 +1665,28 @@ function Routes(app) {
 Routes.prototype = {
 
   init: function() {
+    window.isQMAppActive = true;
+
+    $(window).focus(function() {
+      var dialogItem, dialog_id;
+
+      // console.log('ВКЛАДКА ОТКРЫТА');
+      window.isQMAppActive = true;
+
+      dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
+      dialog_id = dialogItem[0] && dialogItem.data('dialog');
+
+      // console.log(dialog_id);
+      if (dialog_id) {
+        dialogItem.find('.unread').text('');
+        DialogView.decUnreadCounter(dialog_id);
+      }
+    });
+
+    $(window).blur(function() {
+      // console.log('ВКЛАДКА ЗАКРЫТА');
+      window.isQMAppActive = false;
+    });
 
     $(document).on('click', function(event) {
       clickBehaviour(event);
@@ -1632,6 +1749,115 @@ Routes.prototype = {
         attachType = 'video';
       }
       openAttachPopup($('#popupAttach'), name, url, uid, attachType);
+    });
+
+    /* group chats
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
+      var chat = $('.l-chat:visible');
+      if (chat.find('.triangle_up').is('.is-hidden')) {
+        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').addClass('is-overlay');
+        chat.find('.l-chat-content').addClass('l-chat-content_min');
+      } else {
+        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
+        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
+        chat.find('.l-chat-content').removeClass('l-chat-content_min');
+      }
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .addToGroupChat', function(event) {
+      event.stopPropagation();
+      var dialog_id = $(this).data('dialog');
+      if (QMCONFIG.debug) console.log('add people to groupchat');
+      ContactListView.addContactsToChat($(this), 'add', dialog_id);
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
+      event.stopPropagation();
+    });
+    
+    /* change the chat name
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('mouseenter focus', '.groupTitle .name_chat', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.triangle:visible').addClass('is-hover').siblings('.pencil').removeClass('is-hidden');
+    });
+
+    $('.l-workspace-wrap').on('mouseleave', '.groupTitle .name_chat', function() {
+      var chat = $('.l-chat:visible');
+      if (!$(this).is('.is-focus'))
+        chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+    });
+
+    $(document.body).on('click', function() {
+      var chat = $('.l-chat:visible');
+      if (chat.find('.groupTitle .name_chat').is('.is-focus')) {
+        chat.find('.groupTitle .name_chat').removeClass('is-focus');
+        chat.find('.groupTitle .name_chat')[0].scrollLeft = 0;
+        chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+
+        if (editedChatName && !editedChatName.name) {
+          chat.find('.name_chat').text(chatName.name);
+        } else if (editedChatName && (editedChatName.name !== chatName.name) && (editedChatName.created_at > chatName.created_at)) {
+          chat.find('.name_chat').text(editedChatName.name).attr('title', editedChatName.name);
+          Dialog.changeName(chat.data('dialog'), editedChatName.name);
+        } else {
+          chat.find('.name_chat').text(chat.find('.name_chat').text().trim());
+        }
+      }
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .name_chat', function(event) {
+      event.stopPropagation();
+      $(this).addClass('is-focus');
+      chatName = {
+        name: $(this).text().trim(),
+        created_at: Date.now()
+      };
+      removePopover();
+    });
+
+    $('.l-workspace-wrap').on('keyup', '.groupTitle .name_chat', function(event) {
+      var code = event.keyCode;
+      editedChatName = {
+        name: $(this).text().trim(),
+        created_at: Date.now()
+      };
+      if (code === 13) {
+        $(document.body).click();
+        $(this).blur();
+      } else if (code === 27) {
+        editedChatName = null;
+        $(this).text(chatName.name);
+        $(document.body).click();
+        $(this).blur();
+      }
+    });
+
+    /* change the chat avatar
+    ----------------------------------------------------- */
+    $('.l-workspace-wrap').on('mouseenter', '.groupTitle .avatar', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.pencil_active').removeClass('is-hidden');
+    });
+
+    $('.l-workspace-wrap').on('mouseleave', '.groupTitle .avatar', function() {
+      var chat = $('.l-chat:visible');
+      chat.find('.pencil_active').addClass('is-hidden');
+    });
+
+    $('.l-workspace-wrap').on('click', '.groupTitle .pencil_active', function() {
+      $(this).siblings('input:file').click();
+      removePopover();
+    });
+
+    $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
+      var chat = $('.l-chat:visible');
+      Dialog.changeAvatar(chat.data('dialog'), $(this), function(avatar) {
+        if (!avatar) return false;
+        chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
+      });
     });
 
     /* scrollbars
@@ -1795,7 +2021,7 @@ Routes.prototype = {
       ContactListView.addContactsToChat($(this));
     });
 
-    $('#mainPage').on('click', '.addToGroupChat', function(event) {
+    $('.l-sidebar').on('click', '.addToGroupChat', function(event) {
       event.preventDefault();
       var dialog_id = $(this).data('dialog');
       if (QMCONFIG.debug) console.log('add people to groupchat');
@@ -1883,12 +2109,18 @@ Routes.prototype = {
       if (len === 1 && !popup.is('.is-addition')) {
         popup.removeClass('not-selected');
         popup.find('.btn_popup_private').removeClass('is-hidden').siblings().addClass('is-hidden');
+
+        if (obj.is('li:last')) popup.find('.list_contacts').mCustomScrollbar("scrollTo","bottom");
+
       } else if (len >= 1) {
         popup.removeClass('not-selected');
         if (popup.is('.add'))
           popup.find('.btn_popup_add').removeClass('is-hidden').siblings().addClass('is-hidden');
         else
           popup.find('.btn_popup_group').removeClass('is-hidden').siblings().addClass('is-hidden');
+
+        if (obj.is('li:last')) popup.find('.list_contacts').mCustomScrollbar("scrollTo","bottom");
+
       } else {
         popup.addClass('not-selected');
       }
@@ -1935,6 +2167,7 @@ Routes.prototype = {
       if (code === 13 && !shiftKey) {
         MessageView.sendMessage($(this));
         $(this).find('.textarea').empty();
+        removePopover();
       }
     });
 
@@ -1955,19 +2188,6 @@ Routes.prototype = {
       event.preventDefault();
       $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
       $('.is-selected').removeClass('is-selected');
-    });
-
-    $('.l-workspace-wrap').on('click', '.groupTitle', function() {
-      var chat = $('.l-chat:visible');
-      if (chat.find('.triangle_up').is('.is-hidden')) {
-        chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-        chat.find('.chat-occupants-wrap').addClass('is-overlay');
-        chat.find('.l-chat-content').addClass('l-chat-content_min');
-      } else {
-        chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-        chat.find('.chat-occupants-wrap').removeClass('is-overlay');
-        chat.find('.l-chat-content').removeClass('l-chat-content_min');
-      }
     });
 
     /* temporary routes
@@ -2013,7 +2233,6 @@ function changeInputFile(objDom) {
       src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
       fileName = file ? file.name : QMCONFIG.defAvatar.caption;
   
-  // objDom.prev().find('img').attr('src', src).siblings('span').text(fileName);
   objDom.prev().find('.avatar').css('background-image', "url("+src+")").siblings('span').text(fileName);
   // if (typeof file !== 'undefined') URL.revokeObjectURL(src);
 }
@@ -2114,7 +2333,7 @@ AttachView.prototype = {
         id = _.uniqueId(),
         fileSize = file.size,
         fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
-        fileSizeUnit = fileSize > (1024 * 1024) ? 'Mb' : 'Kb',
+        fileSizeUnit = fileSize > (1024 * 1024) ? 'MB' : 'KB',
         maxSize = QMCONFIG.maxLimitFile * 1024 * 1024,
         errMsg, html;
 
@@ -2412,6 +2631,7 @@ ContactListView.prototype = {
     popup.addClass('not-selected').removeClass('is-addition');
     popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
     popup.find('form')[0].reset();
+    popup.find('.list_contacts').mCustomScrollbar("scrollTo","top");
     popup.find('.mCSB_container').empty();
     popup.find('.btn').removeClass('is-hidden');
 
@@ -2438,11 +2658,11 @@ ContactListView.prototype = {
       html += '</div><input class="form-checkbox" type="checkbox">';
       html += '</a></li>';
       
-      popup.find('.mCSB_container').append(html);      
+      popup.find('.mCSB_container').append(html);
     }
 
-    if (ids.length > 0)
-      popup.addClass('is-addition').data('existing_ids', ids);
+    if (type)
+      popup.addClass('is-addition').data('existing_ids', ids.length > 0 ? ids : null);
     else
       popup.data('existing_ids', null);
   },
@@ -2472,61 +2692,68 @@ ContactListView.prototype = {
         roster = ContactList.roster,
         id = QB.chat.helpers.getIdFromNode(jid),
         dialogItem = $('.dialog-item[data-id="'+id+'"]')[0],
+        requestItem = $('#requestsList .list-item[data-jid="'+jid+'"]'),
+        notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
         time = Math.floor(Date.now() / 1000),
-        message, copyDialogItem;
-
+        message, copyDialogItem,
+        self = this;
+    
     if (!isChat) {
       objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
       objDom.remove();
     }
 
-    QB.chat.roster.add(jid, function() {
-      // update roster
-      roster[id] = {
-        subscription: 'none',
-        ask: 'subscribe'
-      };
-      ContactList.saveRoster(roster);
+    if (notConfirmed[id] && requestItem[0]) {
+      self.sendConfirm(requestItem);
+    } else {
+      QB.chat.roster.add(jid, function() {
+        // update roster
+        roster[id] = {
+          subscription: 'none',
+          ask: 'subscribe'
+        };
+        ContactList.saveRoster(roster);
 
-      if (dialogItem) {
-        // send notification about subscribe
-        QB.chat.send(jid, {type: 'chat', extension: {
-          save_to_history: 1,
-          dialog_id: dialogItem.getAttribute('data-dialog'),
-          date_sent: time,
+        if (dialogItem) {
+          // send notification about subscribe
+          QB.chat.send(jid, {type: 'chat', extension: {
+            save_to_history: 1,
+            dialog_id: dialogItem.getAttribute('data-dialog'),
+            date_sent: time,
 
-          notification_type: '3',
-          full_name: User.contact.full_name,
-        }});
+            notification_type: '3',
+            full_name: User.contact.full_name,
+          }});
 
-        message = Message.create({
-          chat_dialog_id: dialogItem.getAttribute('data-dialog'),
-          notification_type: '3',
-          date_sent: time,
-          sender_id: User.contact.id
-        });
+          message = Message.create({
+            chat_dialog_id: dialogItem.getAttribute('data-dialog'),
+            notification_type: '3',
+            date_sent: time,
+            sender_id: User.contact.id
+          });
 
-        MessageView.addItem(message, true, true);
-      } else {
-        Dialog.createPrivate(jid);
-      }
+          MessageView.addItem(message, true, true);
+        } else {
+          Dialog.createPrivate(jid, true);
+        }
 
-      dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');
-      copyDialogItem = dialogItem.clone();
-      dialogItem.remove();
-      $('#recentList ul').prepend(copyDialogItem);
-      if (!$('#searchList').is(':visible')) {
-       $('#recentList').removeClass('is-hidden');
-       isSectionEmpty($('#recentList ul')); 
-      }
-    });
+        dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]');
+        copyDialogItem = dialogItem.clone();
+        dialogItem.remove();
+        $('#recentList ul').prepend(copyDialogItem);
+        if (!$('#searchList').is(':visible')) {
+         $('#recentList').removeClass('is-hidden');
+         isSectionEmpty($('#recentList ul')); 
+        }
+      });
+    }
 
   },
 
   sendConfirm: function(objDom) {
     var DialogView = this.app.views.Dialog,
         MessageView = this.app.views.Message,
-        jid = objDom.parents('li').data('jid'),
+        jid = objDom.data('jid') || objDom.parents('li').data('jid'),
         id = QB.chat.helpers.getIdFromNode(jid),
         list = objDom.parents('ul'),
         roster = ContactList.roster,
@@ -2535,7 +2762,10 @@ ContactListView.prototype = {
         li, dialog, message, dialogItem, copyDialogItem,
         time = Math.floor(Date.now() / 1000);
 
-    objDom.parents('li').remove();
+    if (objDom.is('.request-button'))
+      objDom.parents('li').remove();
+    else
+      objDom.remove();
     isSectionEmpty(list);
 
     // update roster
@@ -2596,6 +2826,9 @@ ContactListView.prototype = {
        $('#recentList').removeClass('is-hidden');
        isSectionEmpty($('#recentList ul')); 
       }
+
+      dialogItem = $('.presence-listener[data-id="'+id+'"]');
+      dialogItem.find('.status').removeClass('status_request');
     });
     
   },
@@ -2647,9 +2880,6 @@ ContactListView.prototype = {
         dialog_id = li.data('dialog'),
         roster = ContactList.roster;
 
-    li.remove();
-    isSectionEmpty(list);
-
     // update roster
     delete roster[id];
     ContactList.saveRoster(roster);
@@ -2657,20 +2887,21 @@ ContactListView.prototype = {
     // delete dialog messages
     localStorage.removeItem('QM.dialog-' + dialog_id);
 
-    QB.chat.roster.remove(jid, function() {
-      // send notification about reject
-      QB.chat.send(jid, {type: 'chat', extension: {
-        save_to_history: 1,
-        dialog_id: dialog_id,
-        date_sent: Math.floor(Date.now() / 1000),
+    // send notification about reject
+    QB.chat.send(jid, {type: 'chat', extension: {
+      save_to_history: 1,
+      dialog_id: dialog_id,
+      date_sent: Math.floor(Date.now() / 1000),
 
-        notification_type: '4',
-        full_name: User.contact.full_name,
-      }});
+      notification_type: '7'
+    }});
+
+    QB.chat.roster.remove(jid, function() {
+      li.remove();
+      isSectionEmpty(list);
 
       // delete chat section
-      if (chat.length > 0)
-        chat.remove();
+      if (chat.length > 0) chat.remove();
       $('#capBox').removeClass('is-hidden');
       delete dialogs[dialog_id];
     });
@@ -2705,7 +2936,7 @@ ContactListView.prototype = {
 
       $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
       $('#emptyList').addClass('is-hidden');
-    });
+    }, 'subscribe');
   },
 
   onConfirm: function(id) {
@@ -2818,25 +3049,32 @@ function createListResults(list, results, self) {
       notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
       item;
 
-  results.forEach(function(contact) {
-    var rosterItem = roster[contact.id];
+  if (results.length > 0) {
+    results.forEach(function(contact) {
+      var rosterItem = roster[contact.id];
 
-    item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
-    item += '<a class="contact l-flexbox" href="#">';
-    item += '<div class="l-flexbox_inline">';
-    // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
-    item += '<div class="contact-avatar avatar" style="background-image:url('+contact.avatar_url+')"></div>';
-    item += '<span class="name">'+contact.full_name+'</span>';
-    item += '</div>';
-    if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
-      item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
-      item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
-    }
-    item += '</a></li>';
+      item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
+      item += '<a class="contact l-flexbox" href="#">';
+      item += '<div class="l-flexbox_inline">';
+      // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
+      item += '<div class="contact-avatar avatar" style="background-image:url('+contact.avatar_url+')"></div>';
+      item += '<span class="name">'+contact.full_name+'</span>';
+      item += '</div>';
+      if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
+        item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
+        item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
+      }
+      if (rosterItem && rosterItem.subscription === 'none' && rosterItem.ask) {
+        item += '<span class="send-request l-flexbox">Request Sent</span>';
+      }
+      item += '</a></li>';
 
-    list.find('.mCSB_container').append(item);
-    list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
-  });
+      list.find('.mCSB_container').append(item);
+      list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
+    });
+  } else {
+    list.parents('.popup_search').find('.note').removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
+  }
 
   self.removeDataSpinner();
 }
@@ -2867,6 +3105,11 @@ function isSectionEmpty(list) {
 module.exports = DialogView;
 
 var User, Dialog, Message, ContactList;
+var unreadDialogs = {};
+
+var TITLE_NAME = 'Q-municate',
+    FAVICON_COUNTER = 'favicon_counter.png',
+    FAVICON = 'favicon.png';
 
 function DialogView(app) {
   this.app = app;
@@ -2890,8 +3133,10 @@ DialogView.prototype = {
     QB.chat.onRejectSubscribeListener = ContactListView.onReject;
 
     QB.chat.onDisconnectingListener = function() {
-      window.onLine = false;
-      $('.no-connection').removeClass('is-hidden');
+      if (localStorage['QM.user']) {
+        window.onLine = false;
+        $('.no-connection').removeClass('is-hidden');
+      }
     };
 
     QB.chat.onReconnectListener = function() {
@@ -2900,16 +3145,22 @@ DialogView.prototype = {
     };
   },
 
-  createDataSpinner: function(chat, groupchat) {
+  createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
     var spinnerBlock;
-    if (groupchat)
+    if (isAjaxDownloading) {
+      spinnerBlock = '<div class="message message_service"><div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
+    } else if (groupchat) {
       spinnerBlock = '<div class="popup-elem spinner_bounce is-creating">';
-    else
+    } else {
       spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
+    }
+
     spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
     spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
     spinnerBlock += '</div>';
+
+    if (isAjaxDownloading) spinnerBlock += '</div>';
 
     if (chat) {
       $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
@@ -2917,13 +3168,15 @@ DialogView.prototype = {
       $('#popupContacts .btn_popup').addClass('is-hidden');
       $('#popupContacts .popup-footer').append(spinnerBlock);
       $('#popupContacts .popup-footer').after('<div class="temp-box"></div>');
+    } else if (isAjaxDownloading) {
+      $('.l-chat:visible').find('.l-chat-content').prepend(spinnerBlock);
     } else {
       $('#emptyList').after(spinnerBlock);
     }
   },
 
   removeDataSpinner: function() {
-    $('.spinner_bounce, .temp-box').remove();
+    $('.spinner_bounce, .temp-box, div.message_service').remove();
   },
 
   prepareDownloading: function(roster) {
@@ -2934,6 +3187,43 @@ DialogView.prototype = {
     ContactList.saveRoster(roster);
   },
 
+  getUnreadCounter: function(dialog_id) {
+    var counter;
+
+    if (typeof unreadDialogs[dialog_id] === 'undefined') {
+      unreadDialogs[dialog_id] = true;
+      counter = Object.keys(unreadDialogs).length;
+
+      $('title').text('('+counter+') ' + TITLE_NAME);
+      $('link[rel="icon"]').remove();
+      $('head').append('<link rel="icon" href="'+FAVICON_COUNTER+'">');
+    }
+  },
+
+  decUnreadCounter: function(dialog_id) {
+    var counter;
+
+    if (typeof unreadDialogs[dialog_id] !== 'undefined') {
+      delete unreadDialogs[dialog_id];
+      counter = Object.keys(unreadDialogs).length;
+
+      if (counter > 0) {
+        $('title').text('('+counter+') ' + TITLE_NAME);
+      } else {
+        $('title').text(TITLE_NAME);
+        $('link[rel="icon"]').remove();
+        $('head').append('<link rel="icon" href="'+FAVICON+'">');
+      }
+    }
+  },
+
+  logoutWithClearData: function() {
+    unreadDialogs = {};
+    $('title').text(TITLE_NAME);
+    $('link[rel="icon"]').remove();
+    $('head').append('<link rel="icon" href="'+FAVICON+'">');
+  },
+
   downloadDialogs: function(roster, ids) {
     var self = this,
         ContactListView = this.app.views.ContactList,
@@ -2941,7 +3231,8 @@ DialogView.prototype = {
         notConfirmed,
         private_id,
         dialog,
-        occupants_ids;
+        occupants_ids,
+        chat;
 
     Dialog.download(function(dialogs) {
       self.removeDataSpinner();
@@ -2961,6 +3252,14 @@ DialogView.prototype = {
 
             if (!localStorage['QM.dialog-' + dialog.id]) {
               localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+            }
+
+            // don't create a duplicate dialog in contact list
+            chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
+            if (chat[0] && dialog.unread_count) {
+              chat.find('.unread').text(dialog.unread_count);
+              self.getUnreadCounter(dialog.id);
+              continue;
             }
 
             if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);
@@ -3009,14 +3308,15 @@ DialogView.prototype = {
     $('.l-list ul').html('');
   },
 
-  addDialogItem: function(dialog, isDownload) {
+  addDialogItem: function(dialog, isDownload, isNew) {
     var contacts = ContactList.contacts,
         roster = ContactList.roster,
         private_id, icon, name, status,
-        html, startOfCurrentDay;
+        html, startOfCurrentDay,
+        self = this;
 
     private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
-    icon = private_id ? contacts[private_id].avatar_url : QMCONFIG.defAvatar.group_url;
+    icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
     name = private_id ? contacts[private_id].full_name : dialog.room_name;
     status = roster[private_id] ? roster[private_id] : null;
 
@@ -3041,18 +3341,19 @@ DialogView.prototype = {
     startOfCurrentDay.setHours(0,0,0,0);
 
     // checking if this dialog is recent OR no
-    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay) {
+    if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay || isNew) {
       if (isDownload)
         $('#recentList').removeClass('is-hidden').find('ul').append(html);
       else if (!$('#searchList').is(':visible'))
         $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
       else
-        $('#recentList').find('ul').prepend(html);
+        $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
     } else if (!$('#searchList').is(':visible')) {
       $('#historyList').removeClass('is-hidden').find('ul').append(html);
     }
 
     $('#emptyList').addClass('is-hidden');
+    if (dialog.unread_count) self.getUnreadCounter(dialog.id);
   },
 
   htmlBuild: function(objDom) {
@@ -3073,33 +3374,31 @@ DialogView.prototype = {
     // if (QMCONFIG.debug) console.log(user);
 
     jid = dialog.room_jid || user.user_jid;
-    icon = user_id ? user.avatar_url : QMCONFIG.defAvatar.group_url;
+    icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
     name = dialog.room_name || user.full_name;
     status = roster[user_id] ? roster[user_id] : null;
 
     if (chat.length === 0) {
-      if (dialog.type === 3)
+      if (dialog.type === 3) {
         html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="'+dialog_id+'" data-id="'+user_id+'" data-jid="'+jid+'">';
-      else
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
+      } else {
         html = '<section class="l-workspace l-chat l-chat_group is-group" data-dialog="'+dialog_id+'" data-jid="'+jid+'">';
+        html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">';
+      }
 
-      html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
       html += '<div class="chat-title">';
-
-      if (dialog.type === 3)
-        html += '<div class="l-flexbox_inline">';
-      else
-        html += '<div class="l-flexbox_inline groupTitle">';
-      
-      // html += '<img class="contact-avatar avatar" src="'+icon+'" alt="user">';
-      if (dialog.type === 3)
-        html += '<div class="contact-avatar avatar" style="background-image:url('+icon+')"></div>';
-
-      html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
+      html += '<div class="l-flexbox_inline">';
+      html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
 
       if (dialog.type === 3) {
-        html = getStatus(status, html);
+        html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
+        html = getStatus(status, html); 
       } else {
+        html += '<span class="pencil_active avatar is-hidden"></span>';
+        html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">'
+        html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
+        html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';
         html += '<span class="triangle triangle_up is-hidden"></span>';
       }
@@ -3119,7 +3418,7 @@ DialogView.prototype = {
       else
         html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.png" alt="delete"></button>';
       
-      html += '</div>';
+      html += '</div></header>';
 
       // build occupants of room
       if (dialog.type === 2) {
@@ -3139,7 +3438,6 @@ DialogView.prototype = {
         html += '</div></div>';
       }
 
-      html += '</header>';
       html += '<section class="l-chat-content scrollbar_message"></section>';
       html += '<footer class="l-chat-footer">';
       html += '<form class="l-message" action="#">';
@@ -3163,7 +3461,7 @@ DialogView.prototype = {
         for (var i = 0, len = messages.length; i < len; i++) {
           message = Message.create(messages[i]);
           // if (QMCONFIG.debug) console.log(message);
-          MessageView.addItem(message);
+          MessageView.addItem(message, null, null, message.recipient_id);
         }
         self.messageScrollbar();
       });
@@ -3186,6 +3484,7 @@ DialogView.prototype = {
 
     $('.is-selected').removeClass('is-selected');
     parent.addClass('is-selected').find('.unread').text('');
+    self.decUnreadCounter(dialog.id);
     
   },
 
@@ -3243,19 +3542,19 @@ DialogView.prototype = {
            isSectionEmpty($('#recentList ul')); 
           }
         }
-        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
-        $('.is-overlay').removeClass('is-overlay');
+        // chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
 
 
-        for (var i = 0, len = new_ids.length; i < len; i++) {
-          new_id = new_ids[i];
-          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
-          occupant = getStatus(roster[new_id], occupant);
-          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
-          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
-        }
+        // for (var i = 0, len = new_ids.length; i < len; i++) {
+        //   new_id = new_ids[i];
+        //   occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+        //   occupant = getStatus(roster[new_id], occupant);
+        //   occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+        //   chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+        // }
 
-        chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        // chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
 
         // $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
       });
@@ -3276,17 +3575,15 @@ DialogView.prototype = {
         chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
         list = li.parents('ul');
 
-    li.remove();
-    isSectionEmpty(list);
-    // console.log(dialogs[dialog_id]);
-
-    // delete dialog messages
-    localStorage.removeItem('QM.dialog-' + dialog_id);
-
     Dialog.leaveChat(dialog, function() {
+      li.remove();
+      isSectionEmpty(list);
+
+      // delete dialog messages
+      localStorage.removeItem('QM.dialog-' + dialog_id);
+
       // delete chat section
-      if (chat.length > 0)
-        chat.remove();
+      if (chat.length > 0) chat.remove();
       $('#capBox').removeClass('is-hidden');
       delete dialogs[dialog_id];
     });
@@ -3317,7 +3614,7 @@ function ajaxDownloading(chat, self) {
       // if (QMCONFIG.debug) console.log(message);
       MessageView.addItem(message, true);
     }
-  }, count);
+  }, count, 'ajax');
 }
 
 function openPopup(objDom) {
@@ -3395,7 +3692,7 @@ MessageView.prototype = {
     }
   },
 
-  addItem: function(message, isCallback, isMessageListener) {
+  addItem: function(message, isCallback, isMessageListener, recipientId) {
     var DialogView = this.app.views.Dialog,
         ContactListMsg = this.app.models.ContactList,
         chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]');
@@ -3408,6 +3705,7 @@ MessageView.prototype = {
           contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
           type = message.notification_type || 'message',
           attachType = message.attachment && message.attachment.type,
+          recipient = contacts[recipientId] || null,
           html;
 
       switch (type) {
@@ -3428,7 +3726,18 @@ MessageView.prototype = {
         html += '<div class="message-container-wrap">';
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
-        html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
+        if (message.occupants_ids) {
+          html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
+        }
+        if (message.deleted_id) {
+          html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+        }
+        if (message.room_name) {
+          html += '<h4 class="message-author">'+contact.full_name+' has changed the chat name to "'+message.room_name+'"</h4>';
+        }
+        if (message.room_photo) {
+          html += '<h4 class="message-author">'+contact.full_name+' has changed the chat picture</h4>';
+        }
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
@@ -3457,7 +3766,7 @@ MessageView.prototype = {
         html += '<div class="message-content">';
 
         if (message.sender_id === User.contact.id)
-          html += '<h4 class="message-author">'+User.contact.full_name+' has rejected a request';
+          html += '<h4 class="message-author">You have rejected a request';
         else
           html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
           
@@ -3474,7 +3783,7 @@ MessageView.prototype = {
         html += '<div class="message-content">';
 
         if (message.sender_id === User.contact.id)
-          html += '<h4 class="message-author">'+User.contact.full_name+' has accepted a request</h4>';
+          html += '<h4 class="message-author">You have accepted a request</h4>';
         else
           html += '<h4 class="message-author">Your request has been accepted</h4>';
 
@@ -3489,6 +3798,23 @@ MessageView.prototype = {
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
         html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div></div></article>';
+        break;
+
+      case '7':
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+
+        if (message.sender_id === User.contact.id)
+          html += '<h4 class="message-author">You have deleted '+recipient.full_name+' from your contact list';
+        else
+          html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again btn_request_again_delete"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+          
+
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
@@ -3624,7 +3950,7 @@ MessageView.prototype = {
     }
   },
 
-  onMessage: function(id, message, recipientJid) {
+  onMessage: function(id, message, recipientJid, isOfflineStorage) {
     if (message.type === 'error') return true;
 
     var DialogView = self.app.views.Dialog,
@@ -3634,44 +3960,37 @@ MessageView.prototype = {
         dialog_id = message.extension && message.extension.dialog_id,
         room_jid = message.extension && message.extension.room_jid,
         room_name = message.extension && message.extension.room_name,
-        occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(','),
+        room_photo = message.extension && message.extension.room_photo,
+        deleted_id = message.extension && message.extension.deleted_id,
+        occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(',').map(Number),
         dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
         dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
         chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
         unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
         roster = ContactList.roster,
+        audioSignal = $('#new_message')[0],
+        recipientId = QB.chat.helpers.getIdFromNode(recipientJid),
         msg, copyDialogItem, dialog, occupant, msgArr;
 
     msg = Message.create(message);
     msg.sender_id = id;
 
-    if ((notification_type !== '6' || msg.sender_id !== User.contact.id) && chat.is(':visible'))
+    if ((!deleted_id || msg.sender_id !== User.contact.id) && chat.is(':visible')) {
       Message.update(msg.id, dialog_id);
-    else if (!chat.is(':visible') && chat.length > 0) {
+    } else if (!chat.is(':visible') && chat.length > 0) {
       msgArr = dialogs[dialog_id].messages || [];
       msgArr.push(msg.id);
       dialogs[dialog_id].messages = msgArr;
     }
 
-    if (!chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1') {
+    if ((!chat.is(':visible') || !window.isQMAppActive) && dialogItem.length > 0 && notification_type !== '1' && !isOfflineStorage) {
       unread++;
       dialogItem.find('.unread').text(unread);
-    }
-
-    if (notification_type !== '1' && dialogItem.length > 0) {
-      copyDialogItem = dialogItem.clone();
-      dialogItem.remove();
-      $('#recentList ul').prepend(copyDialogItem);
-      if (!$('#searchList').is(':visible')) {
-       $('#recentList').removeClass('is-hidden');
-       isSectionEmpty($('#recentList ul')); 
-      }
+      DialogView.getUnreadCounter(dialog_id);
     }
 
     // create new group chat
     if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
-      QB.chat.muc.join(room_jid);
-
       dialog = Dialog.create({
         _id: dialog_id,
         type: 2,
@@ -3687,7 +4006,17 @@ MessageView.prototype = {
       }
 
       ContactList.add(dialog.occupants_ids, null, function() {
+        // don't create a duplicate dialog in contact list
+        dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]')[0];
+        if (dialogItem) return true;
+
+        QB.chat.muc.join(room_jid);
+
         DialogView.addDialogItem(dialog);
+        unread++;
+        dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
+        dialogGroupItem.find('.unread').text(unread);
+        DialogView.getUnreadCounter(dialog_id);
       });
     }
 
@@ -3706,29 +4035,67 @@ MessageView.prototype = {
     // add new occupants
     if (notification_type === '2') {
       dialog = ContactList.dialogs[dialog_id];
-      dialog.occupants_ids = occupants_ids;
-      ContactList.dialogs[dialog_id] = dialog;
+      if (occupants_ids && msg.sender_id !== User.contact.id) dialog.occupants_ids = dialog.occupants_ids.concat(occupants_ids);
+      if (dialog && deleted_id) dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(',')).map(Number);
+      if (room_name) dialog.room_name = room_name;
+      if (room_photo) dialog.room_photo = room_photo;
+      if (dialog) ContactList.dialogs[dialog_id] = dialog;
       
-      ContactList.add(dialog.occupants_ids, null, function() {
-        var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',') : [],
-            new_ids = _.difference(dialog.occupants_ids, ids),
-            contacts = ContactList.contacts,
-            new_id;
+      // add new people
+      if (occupants_ids) {
+        ContactList.add(dialog.occupants_ids, null, function() {
+          var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',').map(Number) : [],
+              new_ids = _.difference(dialog.occupants_ids, ids),
+              contacts = ContactList.contacts,
+              new_id;
+          
+          for (var i = 0, len = new_ids.length; i < len; i++) {
+            new_id = new_ids[i];
+            if (new_id !== User.contact.id.toString()) {
+              occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
+              occupant = getStatus(roster[new_id], occupant);
+              occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
+              chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+            }
+          }
 
-        for (var i = 0, len = new_ids.length; i < len; i++) {
-          new_id = new_ids[i];
-          occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
-          occupant = getStatus(roster[new_id], occupant);
-          occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
-          chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
-        }
+          chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+        });
+      }
 
+      // delete occupant
+      if (deleted_id && msg.sender_id !== User.contact.id) {
+        chat.find('.occupant[data-id="'+id+'"]').remove();
         chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
-      });
+      }
+
+      // change name
+      if (room_name) {
+        chat.find('.name_chat').text(room_name).attr('title', room_name);
+        dialogItem.find('.name').text(room_name);
+      }
+
+      // change photo
+      if (room_photo) {
+        chat.find('.avatar_chat').css('background-image', 'url('+room_photo+')');
+        dialogItem.find('.avatar').css('background-image', 'url('+room_photo+')');
+      }
+    }
+
+    if (notification_type !== '1' && dialogItem.length > 0 && !isOfflineStorage) {
+      copyDialogItem = dialogItem.clone();
+      dialogItem.remove();
+      $('#recentList ul').prepend(copyDialogItem);
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul'));
+      }
     }
 
     if (QMCONFIG.debug) console.log(msg);
-    self.addItem(msg, true, true);
+    self.addItem(msg, true, true, recipientId);
+    if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id))
+      audioSignal.play();
   }
 
 };
@@ -3747,7 +4114,7 @@ function getStatus(status, html) {
 }
 
 function getFileSize(size) {
-  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' Mb' : (size / 1024).toFixed(1) + 'Kb';
+  return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
 }
 
 function getFileDownloadLink(uid) {
@@ -4010,11 +4377,14 @@ UserView.prototype = {
   },
 
   logout: function() {
+    var DialogView = this.app.views.Dialog;
+
     User.logout(function() {
       switchOnWelcomePage();
       $('#capBox').removeClass('is-hidden');
       $('.l-chat').remove();
       if (QMCONFIG.debug) console.log('current User and Session were destroyed');
+      DialogView.logoutWithClearData();
     });
   },
 

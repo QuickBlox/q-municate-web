@@ -2,10 +2,13 @@
 .list-item {
   height: 60px;
   background: #fff;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f2f2f2;
 }
 .list-item:hover {
-  background: #f8f8f8;
+  background: #f2f2f2;
+}
+#requestsList .list-item:hover {
+  background: #fff;
 }
 
 .list-actions {
@@ -54,11 +57,11 @@
 .header-links-item .icon-active {
   display: none;
 }
-.list-item:hover .icon-normal,
+.send-request:hover .icon-normal,
 .header-links-item:hover .icon-normal {
   display: none;
 }
-.list-item:hover .icon-active,
+.send-request:hover .icon-active,
 .header-links-item:hover .icon-active {
   display: inline-block;
 }

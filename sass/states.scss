@@ -1,4 +1,5 @@
-.is-hidden {
+.is-hidden,
+.is-hover {
   display: none;
 }
 .is-notVisible {
@@ -11,8 +12,8 @@ body.is-welcome {
   background-size: 100% 100%;
 }
   body.is-welcome .l-wrapper {
-    border-left: 1px solid #f0f0f0;
-    border-right: 1px solid #f0f0f0;
+    border-left: 1px solid #f2f2f2;
+    border-right: 1px solid #f2f2f2;
     background: rgba(255, 255, 255, .6);
   }
 
@@ -29,7 +30,7 @@ input.is-error:focus {
 
 .list-item.is-contextmenu,
 .list-item.is-chosen {
-  background: #f8f8f8;
+  background: #f2f2f2;
 }
 .list-item.is-selected {
   background: #1cba48;
@@ -38,6 +39,15 @@ input.is-error:focus {
 .list-item.is-selected:hover {
   background: #1cba48;
 }
+.list-actions_occupants .list-item:hover {
+  background: #f8f8f8;
+}
+.popup_search .list-item:hover {
+  background: #fff;
+}
+  .popup_search .list-item a {
+    cursor: default;
+  }
   .list-item.is-selected .name {
     color: #fff;
   }
@@ -77,6 +87,9 @@ input.is-error:focus {
     position: absolute;
     top: 20px;
     left: 46%;
+  }
+  .l-chat .spinner_bounce.is-ajaxDownload {
+    position: static;
   }
 
 .message.is-own {

@@ -9,7 +9,7 @@ body {
   width: 100%;
   height: 100%;
   font-family: 'Helvetica Neue', Arial, sans-serif;
-  background: #f9f9f9;
+  background: #fafafa;
 }
 
 a {
@@ -40,10 +40,23 @@ input[type="file"] {
 }
 
 input:focus,
-div[contenteditable="true"]:focus {
+[contenteditable="true"]:focus {
   outline: 0;
   border-color: #66afe9;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+}
+
+h2[contenteditable="true"]:focus {
+  padding: 3px;
+  background: #fff;
+  text-overflow: clip;
+}
+h2[contenteditable="true"] * {
+  display:inline;
+  white-space:nowrap;
+}
+h2[contenteditable="true"] br {
+  display:none;
 }
 
 input[type="file"]:focus {

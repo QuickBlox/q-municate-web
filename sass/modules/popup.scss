@@ -30,7 +30,7 @@
   .popup_leave {
     width: 400px;
     height: 195px;
-    border: 1px solid #f0f0f0;
+    border: 1px solid #f2f2f2;
   }
   .popup_search,
   .popup_contacts,
@@ -41,8 +41,8 @@
     .popup-header {
       margin-top: -1px;
       padding: 0 20px;
-      background: #f8f8f8;
-      border-bottom: 1px solid #f0f0f0;
+      background: #f2f2f2;
+      border-bottom: 1px solid #f2f2f2;
     }
       .popup-header h3 {
         font-size: 18px;
@@ -52,7 +52,7 @@
     .popup-form {
       height: 60px;
       padding: 15px 20px;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f2f2f2;
     }
     .popup-content {
       height: calc(100% - 60px - 60px - 60px);

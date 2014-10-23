@@ -7,6 +7,9 @@
 .contact:hover {
   opacity: 1;
 }
+#requestsList .contact:hover {
+  cursor: default;
+}
   .contact-avatar {
     margin-right: 15px;
   }
@@ -48,6 +51,7 @@
 .name_chat {
   font-size: 20px;
   line-height: 24px;
+  max-width: 455px;
 }
 .name_occupant {
   font-size: 14px;
@@ -104,14 +108,17 @@
 .request-controls {
   min-width: 70px;
   background: #fff;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #f2f2f2;
   border-radius: 8px;
 }
   .request-button {
     padding: 0 10px;
     line-height: 32px;
     background: none;
-    border-right: 1px solid #f0f0f0;
+    border-right: 1px solid #f2f2f2;
+  }
+  .request-button:hover {
+    background: #f2f2f2;
   }
   .request-button:last-child {
     border-right: 0;
@@ -139,7 +146,7 @@
     }
     .request-button_cancel {
       font-size: 20px;
-      color: #ddb2b2;
+      color: #cc0200;
     }
     .message-avatar.request-button_cancel {
       width: 20px;
@@ -150,7 +157,7 @@
     }
     .request-button_ok {
       font-size: 26px;
-      color: #a0cead;
+      color: #1ec252;
     }
     .message-avatar.request-button_ok {
       width: 20px;
@@ -162,13 +169,16 @@
 
 /* add people */
 .send-request {
-  height: 100%;
   margin-left: 10px;
   font-size: 15px;
   color: #bebebe;
 }
+.send-request:hover {
+  opacity: 1;
+}
 span.send-request {
   min-width: 95px;
+  height: 100%;
 }
   .send-request img {
     float: right;
@@ -180,6 +190,6 @@ span.send-request {
   margin: 0 5px 5px 0;
   padding: 0 15px;
   background: #fff;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #f2f2f2;
   border-radius: 20px;
 }

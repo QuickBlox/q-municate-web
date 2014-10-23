@@ -190,11 +190,14 @@ UserView.prototype = {
   },
 
   logout: function() {
+    var DialogView = this.app.views.Dialog;
+
     User.logout(function() {
       switchOnWelcomePage();
       $('#capBox').removeClass('is-hidden');
       $('.l-chat').remove();
       if (QMCONFIG.debug) console.log('current User and Session were destroyed');
+      DialogView.logoutWithClearData();
     });
   },
 
