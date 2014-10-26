@@ -2005,6 +2005,7 @@ Routes.prototype = {
 
     $('.search').on('click', function() {
       if (QMCONFIG.debug) console.log('global search');
+      closePopup();
       ContactListView.globalPopup();
     });
 
@@ -2623,6 +2624,7 @@ ContactListView.prototype = {
     openPopup(popup, type, dialog_id);
     popup.addClass('not-selected').removeClass('is-addition');
     popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
+    popup.find('.popup-nofriends').addClass('is-hidden').siblings().removeClass('is-hidden');
     popup.find('form')[0].reset();
     popup.find('.list_contacts').mCustomScrollbar("scrollTo","top");
     popup.find('.mCSB_container').empty();
@@ -2634,6 +2636,12 @@ ContactListView.prototype = {
       return roster[el] && roster[el].subscription !== 'none';
     });
     if (QMCONFIG.debug) console.log('Friends', friends);
+
+    if (friends.length === 0) {
+      popup.children(':not(.popup-header)').addClass('is-hidden');
+      popup.find('.popup-nofriends').removeClass('is-hidden');
+      return true;
+    } 
 
     // exclude users who are already present in the dialog
     friends = _.difference(friends, ids);
