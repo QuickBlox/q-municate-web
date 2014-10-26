@@ -105,24 +105,6 @@ $(document).ready(function() {
   });
 });
 
-// FB SDK initialization
-// window.fbAsyncInit = function() {
-//   var view = APP.views.User;
-
-//   FB.init({
-//     appId: QMCONFIG.fbAccount.appId,
-//     version: 'v2.0'
-//   });
-//   if (QMCONFIG.debug) console.log('FB init', FB);
-
-//   // If you called the getFBStatus function before FB.init
-//   // Continue it again
-//   if (sessionStorage['QM.is_getFBStatus']) {
-//     sessionStorage.removeItem('QM.is_getFBStatus');
-//     view.getFBStatus();
-//   }
-// };
-
 // Leave a chat after closing window
 // window.onbeforeunload = function() {
 //   QB.chat.sendPres('unavailable');
@@ -167,7 +149,7 @@ Attach.prototype = {
       type: blob.content_type,
       name: blob.name,
       size: size,
-      url: blob.path,
+      url: blob.path && blob.path.replace('http://', 'https://') || null,
       uid: blob.uid
     };
   },
@@ -221,7 +203,7 @@ Contact.prototype = {
       full_name: qbUser.full_name,
       email: qbUser.email,
       blob_id: qbUser.blob_id,
-      avatar_url: qbUser.avatar_url || getAvatar(qbUser),
+      avatar_url: (qbUser.avatar_url || getAvatar(qbUser)).replace('http://', 'https://'),
       status: qbUser.status || getStatus(qbUser),
       tag: qbUser.tag || qbUser.user_tags || null,
       user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)
@@ -458,7 +440,7 @@ Dialog.prototype = {
       type: params.type,
       room_jid: params.xmpp_room_jid || null,
       room_name: params.name || null,
-      room_photo: params.photo || null,
+      room_photo: params.photo && params.photo.replace('http://', 'https://') || null,
       occupants_ids: occupants_ids,
       last_message_date_sent: params.last_message_date_sent || null,
       unread_count: params.unread_messages_count || ''
@@ -745,7 +727,9 @@ Message.prototype = {
       recipient_id: params.recipient_id || null,
       occupants_ids: (params.extension && params.extension.occupants_ids) || params.occupants_ids || null,
       room_name: (params.extension && params.extension.room_name) || params.room_name || null,
-      room_photo: (params.extension && params.extension.room_photo) || params.room_photo || null,
+      room_photo: (params.extension && params.extension.room_photo && params.extension.room_photo.replace('http://', 'https://'))
+                  || (params.room_photo && params.room_photo.replace('http://', 'https://'))
+                  || null,
       deleted_id: (params.extension && params.extension.deleted_id) || params.deleted_id || null
     };
 
@@ -889,7 +873,6 @@ User.prototype = {
       QBApiCalls.getUser(session.user_id, function(user) {
         self.contact = Contact.create(user);
         self._is_import = getImport(user);
-        console.log('import flag',self._is_import);
 
         if (QMCONFIG.debug) console.log('User', self);
 
@@ -899,10 +882,8 @@ User.prototype = {
           DialogView.prepareDownloading(roster);
 
           if (!self._is_import) {
-            console.log(1111, 'import');
             self.import(roster, user);
           } else {
-            console.log(2222, 'import');
             DialogView.downloadDialogs(roster);
           }
           
@@ -918,7 +899,7 @@ User.prototype = {
         self = this;
 
     FB.api('/me/permissions', function (response) {
-        console.log(66666, response);
+        if (QMCONFIG.debug) console.log('FB Permissions', response);
         for (var i = 0, len = response.data.length; i < len; i++) {
           if (response.data[i].permission === 'user_friends' && response.data[i].status === 'granted')
             isFriendsPermission = true;
@@ -927,7 +908,6 @@ User.prototype = {
         if (isFriendsPermission) {
 
           // import FB friends
-          console.log(3333, 'import');
           FB.api('/me/friends', function (res) {
               if (QMCONFIG.debug) console.log('FB friends', res);
               var ids = [];
@@ -935,8 +915,6 @@ User.prototype = {
               for (var i = 0, len = res.data.length; i < len; i++) {
                 ids.push(res.data[i].id);
               }
-
-              console.log(5555, ids);
 
               if (ids.length > 0)
                 DialogView.downloadDialogs(roster, ids);
@@ -946,7 +924,6 @@ User.prototype = {
           );
 
         } else {
-          console.log(4444, 'import');
           DialogView.downloadDialogs(roster);
         }
         self._is_import = true;
@@ -2012,6 +1989,7 @@ Routes.prototype = {
 
     $('.search').on('click', function() {
       if (QMCONFIG.debug) console.log('global search');
+      closePopup();
       ContactListView.globalPopup();
     });
 
@@ -2630,6 +2608,7 @@ ContactListView.prototype = {
     openPopup(popup, type, dialog_id);
     popup.addClass('not-selected').removeClass('is-addition');
     popup.find('.note').addClass('is-hidden').siblings('ul').removeClass('is-hidden');
+    popup.find('.popup-nofriends').addClass('is-hidden').siblings().removeClass('is-hidden');
     popup.find('form')[0].reset();
     popup.find('.list_contacts').mCustomScrollbar("scrollTo","top");
     popup.find('.mCSB_container').empty();
@@ -2641,6 +2620,12 @@ ContactListView.prototype = {
       return roster[el] && roster[el].subscription !== 'none';
     });
     if (QMCONFIG.debug) console.log('Friends', friends);
+
+    if (friends.length === 0) {
+      popup.children(':not(.popup-header)').addClass('is-hidden');
+      popup.find('.popup-nofriends').removeClass('is-hidden');
+      return true;
+    } 
 
     // exclude users who are already present in the dialog
     friends = _.difference(friends, ids);

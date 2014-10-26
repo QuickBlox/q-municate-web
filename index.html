@@ -334,6 +334,8 @@
         </nav>
       </footer>
     </section>
+
+    <div class="l-app-version">v. 0.1.1</div>
   </div>
 
   <div class="popups l-flexbox">
@@ -413,6 +415,15 @@
           <span class="text">No results found</span>
         </div>
       </div>
+      <div class="popup-nofriends l-flexbox is-hidden">
+        <div class="l-cap l-cap_contacts l-flexbox l-flexbox_column">
+          <span class="cap-text cap-text_contacts">It's a little lonely<br>over here</span>
+          <button class="search btn btn_invite btn_invite_contacts">
+            <img class="btn-icon btn-icon_invite btn-icon_invite_contacts" src="images/icon-invite.png" alt="invite">
+            Search Friends
+          </button>
+        </div>
+      </div>
       <footer class="popup-footer">
         <button class="btn btn_popup btn_popup_private">Create a chat</button>
         <button class="btn btn_popup btn_popup_group">Create group chat</button>
@@ -427,17 +438,6 @@
   </audio>
 
   <div id="fb-root"></div>
-  <!--<script>
-    // Async downloading FB SDK
-    (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) {return;}
-      js = d.createElement(s); js.id = id;
-      js.src = "https://connect.facebook.net/en_US/sdk.js";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-  </script>-->
-  
   <script>
     // Google Analytics
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

@@ -45,6 +45,13 @@
       margin-bottom: 2vh;
       background: #ff4945;
     }
+    .btn_invite_contacts {
+      width: 330px;
+      font-size: 24px;
+      line-height: 58px;
+      border-radius: 32px;
+      margin-bottom: 20px;
+    }
     .btn_share {
       background: #3b5998;
     }
@@ -120,6 +127,10 @@
   }
   .btn-icon_invite {
     width: 2.5vh;
+  }
+  .btn-icon_invite_contacts {
+    width: 25px;
+    margin-right: 20px;
   }
   .btn-icon_share {
     width: 2.4vh;

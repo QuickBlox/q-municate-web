@@ -372,6 +372,7 @@ Routes.prototype = {
 
     $('.search').on('click', function() {
       if (QMCONFIG.debug) console.log('global search');
+      closePopup();
       ContactListView.globalPopup();
     });
 
