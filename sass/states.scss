@@ -16,6 +16,9 @@ body.is-welcome {
     border-right: 1px solid #f2f2f2;
     background: rgba(255, 255, 255, .6);
   }
+  body.is-welcome .l-app-version {
+    right: 25px;
+  }
 
 span.is-error {
   opacity: 1;

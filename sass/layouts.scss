@@ -51,6 +51,7 @@
 /* Layouts
 --------------------------------------------------*/
 .l-wrapper {
+  position: relative;
   width: 1000px;
   height: 100%;
   margin: 0 auto;
@@ -153,6 +154,14 @@
 .l-footer {
   height: 60px;
   padding: 0 5px;
+}
+
+.l-app-version {
+  position: absolute;
+  right: 0;
+  bottom: 22px;
+  font-size: 14px;
+  color: #999;
 }
 
 /* Chats
