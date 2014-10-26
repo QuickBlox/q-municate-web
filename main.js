@@ -149,7 +149,7 @@ Attach.prototype = {
       type: blob.content_type,
       name: blob.name,
       size: size,
-      url: blob.path.replace('http://', 'https://'),
+      url: blob.path && blob.path.replace('http://', 'https://') || null,
       uid: blob.uid
     };
   },
@@ -440,7 +440,7 @@ Dialog.prototype = {
       type: params.type,
       room_jid: params.xmpp_room_jid || null,
       room_name: params.name || null,
-      room_photo: params.photo.replace('http://', 'https://') || null,
+      room_photo: params.photo && params.photo.replace('http://', 'https://') || null,
       occupants_ids: occupants_ids,
       last_message_date_sent: params.last_message_date_sent || null,
       unread_count: params.unread_messages_count || ''
@@ -727,7 +727,9 @@ Message.prototype = {
       recipient_id: params.recipient_id || null,
       occupants_ids: (params.extension && params.extension.occupants_ids) || params.occupants_ids || null,
       room_name: (params.extension && params.extension.room_name) || params.room_name || null,
-      room_photo: (params.extension && params.extension.room_photo).replace('http://', 'https://') || params.room_photo.replace('http://', 'https://') || null,
+      room_photo: (params.extension && params.extension.room_photo && params.extension.room_photo.replace('http://', 'https://'))
+                  || (params.room_photo && params.room_photo.replace('http://', 'https://'))
+                  || null,
       deleted_id: (params.extension && params.extension.deleted_id) || params.deleted_id || null
     };
 
