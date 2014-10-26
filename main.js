@@ -105,24 +105,6 @@ $(document).ready(function() {
   });
 });
 
-// FB SDK initialization
-// window.fbAsyncInit = function() {
-//   var view = APP.views.User;
-
-//   FB.init({
-//     appId: QMCONFIG.fbAccount.appId,
-//     version: 'v2.0'
-//   });
-//   if (QMCONFIG.debug) console.log('FB init', FB);
-
-//   // If you called the getFBStatus function before FB.init
-//   // Continue it again
-//   if (sessionStorage['QM.is_getFBStatus']) {
-//     sessionStorage.removeItem('QM.is_getFBStatus');
-//     view.getFBStatus();
-//   }
-// };
-
 // Leave a chat after closing window
 // window.onbeforeunload = function() {
 //   QB.chat.sendPres('unavailable');
@@ -167,7 +149,7 @@ Attach.prototype = {
       type: blob.content_type,
       name: blob.name,
       size: size,
-      url: blob.path,
+      url: blob.path.replace('http://', 'https://'),
       uid: blob.uid
     };
   },
@@ -221,7 +203,7 @@ Contact.prototype = {
       full_name: qbUser.full_name,
       email: qbUser.email,
       blob_id: qbUser.blob_id,
-      avatar_url: qbUser.avatar_url || getAvatar(qbUser),
+      avatar_url: (qbUser.avatar_url || getAvatar(qbUser)).replace('http://', 'https://'),
       status: qbUser.status || getStatus(qbUser),
       tag: qbUser.tag || qbUser.user_tags || null,
       user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)
@@ -458,7 +440,7 @@ Dialog.prototype = {
       type: params.type,
       room_jid: params.xmpp_room_jid || null,
       room_name: params.name || null,
-      room_photo: params.photo || null,
+      room_photo: params.photo.replace('http://', 'https://') || null,
       occupants_ids: occupants_ids,
       last_message_date_sent: params.last_message_date_sent || null,
       unread_count: params.unread_messages_count || ''
@@ -745,7 +727,7 @@ Message.prototype = {
       recipient_id: params.recipient_id || null,
       occupants_ids: (params.extension && params.extension.occupants_ids) || params.occupants_ids || null,
       room_name: (params.extension && params.extension.room_name) || params.room_name || null,
-      room_photo: (params.extension && params.extension.room_photo) || params.room_photo || null,
+      room_photo: (params.extension && params.extension.room_photo).replace('http://', 'https://') || params.room_photo.replace('http://', 'https://') || null,
       deleted_id: (params.extension && params.extension.deleted_id) || params.deleted_id || null
     };
 

@@ -104,24 +104,6 @@ $(document).ready(function() {
   });
 });
 
-// FB SDK initialization
-// window.fbAsyncInit = function() {
-//   var view = APP.views.User;
-
-//   FB.init({
-//     appId: QMCONFIG.fbAccount.appId,
-//     version: 'v2.0'
-//   });
-//   if (QMCONFIG.debug) console.log('FB init', FB);
-
-//   // If you called the getFBStatus function before FB.init
-//   // Continue it again
-//   if (sessionStorage['QM.is_getFBStatus']) {
-//     sessionStorage.removeItem('QM.is_getFBStatus');
-//     view.getFBStatus();
-//   }
-// };
-
 // Leave a chat after closing window
 // window.onbeforeunload = function() {
 //   QB.chat.sendPres('unavailable');

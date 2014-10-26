@@ -31,7 +31,7 @@ Dialog.prototype = {
       type: params.type,
       room_jid: params.xmpp_room_jid || null,
       room_name: params.name || null,
-      room_photo: params.photo || null,
+      room_photo: params.photo.replace('http://', 'https://') || null,
       occupants_ids: occupants_ids,
       last_message_date_sent: params.last_message_date_sent || null,
       unread_count: params.unread_messages_count || ''

@@ -20,7 +20,7 @@ Contact.prototype = {
       full_name: qbUser.full_name,
       email: qbUser.email,
       blob_id: qbUser.blob_id,
-      avatar_url: qbUser.avatar_url || getAvatar(qbUser),
+      avatar_url: (qbUser.avatar_url || getAvatar(qbUser)).replace('http://', 'https://'),
       status: qbUser.status || getStatus(qbUser),
       tag: qbUser.tag || qbUser.user_tags || null,
       user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)

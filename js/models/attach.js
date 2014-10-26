@@ -28,7 +28,7 @@ Attach.prototype = {
       type: blob.content_type,
       name: blob.name,
       size: size,
-      url: blob.path,
+      url: blob.path.replace('http://', 'https://'),
       uid: blob.uid
     };
   },
