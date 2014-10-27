@@ -83,7 +83,7 @@ MessageView.prototype = {
         html += '</div></div></article>';
         break;
 
-      case '3':
+      case '4':
         html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
         html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
         html += '<div class="message-container-wrap">';
@@ -94,23 +94,6 @@ MessageView.prototype = {
           html += '<h4 class="message-author">Your request has been sent</h4>';
         else
           html += '<h4 class="message-author">'+contact.full_name+' has sent a request to you</h4>';
-
-        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-        html += '</div></div></article>';
-        break;
-
-      case '4':
-        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-        html += '<span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>';
-        html += '<div class="message-container-wrap">';
-        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-        html += '<div class="message-content">';
-
-        if (message.sender_id === User.contact.id)
-          html += '<h4 class="message-author">You have rejected a request';
-        else
-          html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
-          
 
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
@@ -134,11 +117,17 @@ MessageView.prototype = {
 
       case '6':
         html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-        html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+        html += '<span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>';
         html += '<div class="message-container-wrap">';
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
-        html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+
+        if (message.sender_id === User.contact.id)
+          html += '<h4 class="message-author">You have rejected a request';
+        else
+          html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+          
+
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
@@ -160,6 +149,17 @@ MessageView.prototype = {
         html += '</div></div></article>';
         break;
 
+      case '6':
+        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+        html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+        html += '<div class="message-container-wrap">';
+        html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+        html += '<div class="message-content">';
+        html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+        html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+        html += '</div></div></article>';
+        break;
+        
       default:
         if (message.sender_id === User.contact.id)
           html = '<article class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
@@ -362,7 +362,7 @@ MessageView.prototype = {
     }
 
     // subscribe message
-    if (notification_type === '3') {
+    if (notification_type === '4') {
       // update hidden dialogs
       hiddenDialogs[id] = dialog_id;
       ContactList.saveHiddenDialogs(hiddenDialogs);

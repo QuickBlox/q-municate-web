@@ -176,13 +176,13 @@ ContactListView.prototype = {
             dialog_id: dialogItem.getAttribute('data-dialog'),
             date_sent: time,
 
-            notification_type: '3',
-            full_name: User.contact.full_name,
+            notification_type: '4',
+            occupants_ids: User.contact.id + ',' + id
           }});
 
           message = Message.create({
             chat_dialog_id: dialogItem.getAttribute('data-dialog'),
-            notification_type: '3',
+            notification_type: '4',
             date_sent: time,
             sender_id: User.contact.id
           });
@@ -241,8 +241,7 @@ ContactListView.prototype = {
         dialog_id: hiddenDialogs[id],
         date_sent: time,
 
-        notification_type: '5',
-        full_name: User.contact.full_name,
+        notification_type: '5'
       }});
 
       message = Message.create({
@@ -317,8 +316,7 @@ ContactListView.prototype = {
         dialog_id: hiddenDialogs[id],
         date_sent: Math.floor(Date.now() / 1000),
 
-        notification_type: '4',
-        full_name: User.contact.full_name,
+        notification_type: '6'
       }});
     });
 
