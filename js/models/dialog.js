@@ -119,7 +119,8 @@ Dialog.prototype = {
           date_sent: Math.floor(Date.now() / 1000),
 
           notification_type: '1',
-          occupants_ids: res.occupants_ids.join()
+          // all ids but without creator id
+          occupants_ids: dialog.occupants_ids.join()
         }});
         
       });
@@ -154,7 +155,6 @@ Dialog.prototype = {
             date_sent: Math.floor(Date.now() / 1000),
 
             notification_type: '1',
-            full_name: User.contact.full_name,
             room_jid: dialog.room_jid,
             room_name: dialog.room_name,
             occupants_ids: res.occupants_ids.join()
@@ -163,13 +163,14 @@ Dialog.prototype = {
       });
 
       // send message about added people for history
-      QB.chat.send(dialog.room_jid, {id: msgId, type: 'groupchat', body: occupants_names, extension: {
+      QB.chat.send(dialog.room_jid, {id: msgId, type: 'groupchat', extension: {
         save_to_history: 1,
         dialog_id: dialog.id,
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: '2',
-        occupants_ids: params.new_ids.join(),
+        // only new ids
+        occupants_ids: params.new_ids.join()
       }});
 
     });

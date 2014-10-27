@@ -53,12 +53,14 @@ MessageView.prototype = {
 
       switch (type) {
       case '1':
-        occupants_ids = _.without(message.occupants_ids.split(',').map(Number), User.contact.id);
+        occupants_ids = message.occupants_ids.split(',').map(Number);
 
-        for (var i = 0, len = occupants_ids.length, contact; i < len; i++) {
-          contact = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
-          if (contact)
-            (i + 1) === len ? occupants_names.concat(contact) : occupants_names.concat(contact).concat(', ');
+        for (var i = 0, len = occupants_ids.length, user; i < len; i++) {
+          user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
+          if (user)
+            (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
+          else (occupants_ids[i] === User.contact.id)
+            (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
         }
 
         html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
@@ -78,7 +80,17 @@ MessageView.prototype = {
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
         if (message.occupants_ids) {
-          html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+'</h4>';
+          occupants_ids = message.occupants_ids.split(',').map(Number);
+
+          for (var i = 0, len = occupants_ids.length, user; i < len; i++) {
+            user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
+            if (user)
+              (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
+            else (occupants_ids[i] === User.contact.id)
+              (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
+          }
+
+          html += '<h4 class="message-author">'+contact.full_name+' has added '+occupants_names+'</h4>';
         }
         if (message.deleted_id) {
           html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
