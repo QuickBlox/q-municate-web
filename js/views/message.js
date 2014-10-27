@@ -159,7 +159,7 @@ MessageView.prototype = {
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;
-        
+
       default:
         if (message.sender_id === User.contact.id)
           html = '<article class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
@@ -264,10 +264,7 @@ MessageView.prototype = {
       QB.chat.send(jid, {type: type, body: val, extension: {
         save_to_history: 1,
         dialog_id: dialog_id,
-        date_sent: time,
-
-        full_name: User.contact.full_name,
-        avatar_url: User.contact.avatar_url
+        date_sent: time
       }});
 
       message = Message.create({

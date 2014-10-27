@@ -186,10 +186,7 @@ AttachView.prototype = {
 
       attachments: [
         attach
-      ],
-
-      full_name: User.contact.full_name,
-      avatar_url: User.contact.avatar_url
+      ]
     }});
 
     message = Message.create({
