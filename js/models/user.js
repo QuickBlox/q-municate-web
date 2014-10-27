@@ -11,7 +11,7 @@ var tempParams;
 
 function User(app) {
   this.app = app;
-  this._is_import = false;
+  this._is_import = null;
   this._remember = false;
   this._valid = false;
 }
@@ -95,7 +95,7 @@ User.prototype = {
         } else {
           DialogView.downloadDialogs(roster);
         }
-        self._is_import = true;
+        self._is_import = '1';
         self.updateQBUser(user);
       }
     );
@@ -111,7 +111,7 @@ User.prototype = {
       custom_data = {};
     }
 
-    custom_data.is_import = true;
+    custom_data.is_import = '1';
     custom_data = JSON.stringify(custom_data);
     QBApiCalls.updateUser(user.id, {custom_data: custom_data}, function(res) {
       //if (QMCONFIG.debug) console.log('update of user', res);
@@ -392,9 +392,9 @@ function getImport(user) {
   var isImport;
   
   try {
-    isImport = JSON.parse(user.custom_data).is_import || false;
+    isImport = JSON.parse(user.custom_data).is_import || null;
   } catch(err) {
-    isImport = false;
+    isImport = null;
   }
 
   return isImport;

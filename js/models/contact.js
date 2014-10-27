@@ -16,10 +16,11 @@ Contact.prototype = {
   create: function(qbUser) {
     return {
       id: qbUser.id,
-      facebook_id: qbUser.facebook_id,
       full_name: qbUser.full_name,
       email: qbUser.email,
-      blob_id: qbUser.blob_id,
+      phone: qbUser.phone || null,
+      facebook_id: qbUser.facebook_id || null,
+      blob_id: qbUser.blob_id || null,
       avatar_url: (qbUser.avatar_url || getAvatar(qbUser)).replace('http://', 'https://'),
       status: qbUser.status || getStatus(qbUser),
       tag: qbUser.tag || qbUser.user_tags || null,
