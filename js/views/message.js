@@ -47,16 +47,26 @@ MessageView.prototype = {
           type = message.notification_type || 'message',
           attachType = message.attachment && message.attachment.type,
           recipient = contacts[recipientId] || null,
+          occupants_names = '',
+          occupants_ids,
           html;
 
       switch (type) {
       case '1':
+        occupants_ids = _.without(message.occupants_ids.split(',').map(Number), User.contact.id);
+
+        for (var i = 0, len = occupants_ids.length, contact; i < len; i++) {
+          contact = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
+          if (contact)
+            (i + 1) === len ? occupants_names.concat(contact) : occupants_names.concat(contact).concat(', ');
+        }
+
         html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
         html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
         html += '<div class="message-container-wrap">';
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';
-        html += '<h4 class="message-author">'+contact.full_name+' has added '+message.body+' to the group chat</h4>';
+        html += '<h4 class="message-author">'+contact.full_name+' has added '+occupants_names+' to the group chat</h4>';
         html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
         html += '</div></div></article>';
         break;

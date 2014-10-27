@@ -62,8 +62,8 @@ Dialog.prototype = {
         dialog_id: dialog.id,
         date_sent: Math.floor(Date.now() / 1000),
 
-        notification_type: '3',
-        full_name: User.contact.full_name,
+        notification_type: '4',
+        occupants_ids: User.contact.id + ',' + id
       }});
 
       ContactList.add(dialog.occupants_ids, null, function() {
@@ -97,7 +97,7 @@ Dialog.prototype = {
           DialogView.addDialogItem(dialog);
           callback(dialog);
 
-          // send notifications about adding people
+          // send invites for all occupants
           for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
             id = dialog.occupants_ids[i];
             QB.chat.send(contacts[id].user_jid, {type: 'chat', extension: {
@@ -105,7 +105,6 @@ Dialog.prototype = {
               date_sent: Math.floor(Date.now() / 1000),
 
               notification_type: '1',
-              full_name: User.contact.full_name,
               room_jid: dialog.room_jid,
               room_name: dialog.room_name,
               occupants_ids: res.occupants_ids.join()
@@ -113,14 +112,14 @@ Dialog.prototype = {
           }
         });
 
-        // send notification about creating room
-        QB.chat.send(dialog.room_jid, {id: msgId, type: 'groupchat', body: occupants_names, extension: {
+        // send message about added people for history
+        QB.chat.send(dialog.room_jid, {id: msgId, type: 'groupchat', extension: {
           save_to_history: 1,
           dialog_id: dialog.id,
           date_sent: Math.floor(Date.now() / 1000),
 
           notification_type: '1',
-          full_name: User.contact.full_name
+          occupants_ids: res.occupants_ids.join()
         }});
         
       });
@@ -147,7 +146,7 @@ Dialog.prototype = {
       QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {
         callback(dialog);
 
-        // send notifications about adding people
+        // send invites for all new occupants
         for (var i = 0, len = params.new_ids.length, id; i < len; i++) {
           id = params.new_ids[i];
           QB.chat.send(contacts[id].user_jid, {type: 'chat', extension: {
@@ -163,7 +162,7 @@ Dialog.prototype = {
         }
       });
 
-      // send notification about updating room
+      // send message about added people for history
       QB.chat.send(dialog.room_jid, {id: msgId, type: 'groupchat', body: occupants_names, extension: {
         save_to_history: 1,
         dialog_id: dialog.id,
