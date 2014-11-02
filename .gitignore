@@ -1,7 +1,13 @@
-node_modules
-dist
-test/temp
 .sass-cache
-app/bower_components
 .tmp
+
+# bower & npm packages
+bower_components
+node_modules
+
+# production environment
+dist
+
+# test environment
 test/bower_components/
+test/temp
