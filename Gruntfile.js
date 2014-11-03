@@ -26,7 +26,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
     yeoman: yeomanConfig,
     pkg: grunt.file.readJSON('bower.json'),
-    banner: '/* <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */',
+    banner: '/* <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n',
 
     // jshint: {
     //   options: {
@@ -42,7 +42,7 @@ module.exports = function (grunt) {
     // },
 
     clean: {
-      dev: ['.sass-cache', '.tmp'],
+      dev: ['.sass-cache', '.tmp/css'],
       dist: ['.sass-cache', '.tmp', '<%= yeoman.dist %>/*']
     },
 
@@ -106,16 +106,16 @@ module.exports = function (grunt) {
 
     watch: {
       options: {
-        nospawn: true
-      },
-      scripts: {
-        files: ['{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js'],
-        tasks: []
+        spawn: false
       },
       css: {
-        files: ['{.tmp,<%= yeoman.app %>}/styles/{,*/}*.scss'],
+        files: ['<%= yeoman.app %>/styles/{,*/}*.scss'],
         tasks: ['compass:dev']
       },
+      // scripts: {
+      //   files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+      //   tasks: []
+      // },
       // handlebars: {
       //   files: [
       //     '<%= yeoman.app %>/scripts/templates/*.hbs'
@@ -136,24 +136,14 @@ module.exports = function (grunt) {
     },
 
     cssmin: {
-      dist: {
-        options: {
-          banner: '<%= banner %>'
-        },
-        files: {
-          '<%= yeoman.dist %>/<%= pkg.name %>.min.css': ['.tmp/concat/css/{,*/}*.css']
-        }
+      options: {
+        banner: '<%= banner %>'
       }
     },
 
     uglify: {
-      dist: {
-        options: {
-          banner: '<%= banner %>'
-        },
-        files: {
-          '<%= yeoman.dist %>/<%= pkg.name %>.min.js': ['.tmp/concat/js/{,*/}*.js']
-        }
+      options: {
+        banner: '<%= banner %>'
       }
     },
 
@@ -162,7 +152,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg}',
+          src: '{,*/}*.{png,jpg,jpeg,svg}',
           dest: '<%= yeoman.dist %>/images'
         }]
       }
@@ -170,17 +160,6 @@ module.exports = function (grunt) {
 
     htmlmin: {
       dist: {
-        options: {
-          /*removeCommentsFromCDATA: true,
-          // https://github.com/yeoman/grunt-usemin/issues/44
-          //collapseWhitespace: true,
-          collapseBooleanAttributes: true,
-          removeAttributeQuotes: true,
-          removeRedundantAttributes: true,
-          useShortDoctype: true,
-          removeEmptyAttributes: true,
-          removeOptionalTags: true*/
-        },
         files: [{
           expand: true,
           cwd: '<%= yeoman.app %>',
@@ -196,8 +175,8 @@ module.exports = function (grunt) {
           src: [
             '<%= yeoman.dist %>/scripts/{,*/}*.js',
             '<%= yeoman.dist %>/styles/{,*/}*.css',
-            '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp}',
-            '/styles/fonts/{,*/}*.*',
+            '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+            '<%= yeoman.dist %>/vendor/{,*/}*.js',
           ]
         }
       }
@@ -205,8 +184,6 @@ module.exports = function (grunt) {
 
     usemin: {
       html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/*.min.css'],
-      js: ['<%= yeoman.dist %>/*.min.js']
       options: {
         dirs: ['<%= yeoman.dist %>']
       }
@@ -214,17 +191,15 @@ module.exports = function (grunt) {
 
     copy: {
       dist: {
-        files: {
+        files: [{
           expand: true,
-          dot: true,
           cwd: '<%= yeoman.app %>',
           src: [
             '*.{ico,png}',
-            'images/{,*/}*.{svg}',
             'audio/{,*/}*.*'
           ],
           dest: '<%= yeoman.dist %>'
-        }
+        }]
       }
     },
 
@@ -350,9 +325,9 @@ module.exports = function (grunt) {
     'concat',
     'cssmin',
     'uglify',
-    // 'imagemin',
-    // 'htmlmin',
-    // 'rev',
+    'imagemin',
+    'htmlmin',
+    'rev',
     'usemin',
     'copy'
   ]);
