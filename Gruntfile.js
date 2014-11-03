@@ -28,19 +28,36 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('bower.json'),
     banner: '/* <%= pkg.name %> v<%= pkg.version %> */',
 
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        reporter: require('jshint-stylish')
-      },
-      all: [
-        'Gruntfile.js',
-        '<%= yeoman.app %>/scripts/{,*/}*.js',
-        '!<%= yeoman.app %>/vendor/*',
-        'test/spec/{,*/}*.js'
-      ]
+    // jshint: {
+    //   options: {
+    //     jshintrc: '.jshintrc',
+    //     reporter: require('jshint-stylish')
+    //   },
+    //   all: [
+    //     'Gruntfile.js',
+    //     '<%= yeoman.app %>/scripts/{,*/}*.js',
+    //     '!<%= yeoman.app %>/vendor/*',
+    //     'test/spec/{,*/}*.js'
+    //   ]
+    // },
+
+    clean: {
+      dist: ['.tmp', '<%= yeoman.app %>/css', '<%= yeoman.dist %>/*'],
+      server: '.tmp'
     },
-    
+
+    // handlebars: {
+    //   compile: {
+    //     options: {
+    //       namespace: 'JST',
+    //       amd: true
+    //     },
+    //     files: {
+    //       '.tmp/scripts/templates.js': ['<%= yeoman.app %>/scripts/templates/*.hbs']
+    //     }
+    //   }
+    // },
+
     compass: {
       options: {
         sassDir: '<%= yeoman.app %>/styles',
@@ -64,13 +81,38 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
+    // bower: {
+    //   all: {
+    //     rjsConfig: '<%= yeoman.app %>/scripts/main.js'
+    //   }
+    // },
+
+    // requirejs: {
+    //   dist: {
+    //     // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
+
+    //     options: {
+    //       mainConfigFile: "<%= yeoman.app %>/scripts/main.js",
+    //       baseUrl: '<%= yeoman.app %>/scripts',
+    //       name: 'main',
+    //       optimize: 'none',
+    //       paths: {
+    //         'templates': '../../.tmp/scripts/templates',
+    //         'jquery': '../../<%= yeoman.app %>/bower_components/jquery/dist/jquery.min',
+    //         'underscore': '../../<%= yeoman.app %>/bower_components/lodash/dist/lodash.min',
+    //         'backbone': '../../<%= yeoman.app %>/bower_components/backbone/backbone'
+    //       },
+    //       out: "<%= yeoman.dist %>/scripts/main.min.js",
+    //       preserveLicenseComments: false,
+    //       useStrict: true
+    //     }
+    //   }
+    // },
+
     watch: {
       options: {
         nospawn: true
-      },
-      html: {
-        files: ['<%= yeoman.app %>/*.html']
       },
       scripts: {
         files: ['{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js'],
@@ -80,18 +122,109 @@ module.exports = function (grunt) {
         files: ['{.tmp,<%= yeoman.app %>}/styles/{,*/}*.scss'],
         tasks: ['compass:dev']
       },
-      images: {
-        files: ['<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}']
-      },
-      handlebars: {
-        files: [
-          '<%= yeoman.app %>/scripts/templates/*.hbs'
-        ],
-        tasks: ['handlebars']
-      },
-      test: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.js', 'test/spec/**/*.js'],
-        tasks: ['test:true']
+      // handlebars: {
+      //   files: [
+      //     '<%= yeoman.app %>/scripts/templates/*.hbs'
+      //   ],
+      //   tasks: ['handlebars']
+      // },
+      // test: {
+      //   files: ['<%= yeoman.app %>/scripts/{,*/}*.js', 'test/spec/**/*.js'],
+      //   tasks: ['test:true']
+      // }
+    },
+
+    useminPrepare: {
+      html: '<%= yeoman.app %>/index.html',
+      options: {
+        dest: '<%= yeoman.dist %>'
+      }
+    },
+
+    cssmin: {
+      dist: {
+        options: {
+          banner: '<%= banner %>'
+        },
+        files: {
+          '<%= yeoman.dist %>/styles/main.css': [
+            '.tmp/concat/css/{,*/}*.css',
+            // '<%= yeoman.app %>/css/{,*/}*.css'
+          ]
+        }
+      }
+    },
+
+    imagemin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.app %>/images',
+          src: '{,*/}*.{png,jpg,jpeg}',
+          dest: '<%= yeoman.dist %>/images'
+        }]
+      }
+    },
+
+    htmlmin: {
+      dist: {
+        options: {
+          /*removeCommentsFromCDATA: true,
+          // https://github.com/yeoman/grunt-usemin/issues/44
+          //collapseWhitespace: true,
+          collapseBooleanAttributes: true,
+          removeAttributeQuotes: true,
+          removeRedundantAttributes: true,
+          useShortDoctype: true,
+          removeEmptyAttributes: true,
+          removeOptionalTags: true*/
+        },
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.app %>',
+          src: '*.html',
+          dest: '<%= yeoman.dist %>'
+        }]
+      }
+    },
+
+    copy: {
+      dist: {
+        files: [{
+          expand: true,
+          dot: true,
+          cwd: '<%= yeoman.app %>',
+          dest: '<%= yeoman.dist %>',
+          src: [
+            '*.{ico,txt}',
+            'images/{,*/}*.{webp,gif}',
+            'styles/fonts/{,*/}*.*',
+          ]
+        }/*, {
+          src: 'node_modules/apache-server-configs/dist/.htaccess',
+          dest: '<%= yeoman.dist %>/.htaccess'
+        }*/]
+      }
+    },
+
+    rev: {
+      dist: {
+        files: {
+          src: [
+            '<%= yeoman.dist %>/scripts/{,*/}*.js',
+            '<%= yeoman.dist %>/styles/{,*/}*.css',
+            '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp}',
+            '/styles/fonts/{,*/}*.*',
+          ]
+        }
+      }
+    },
+
+    usemin: {
+      html: ['<%= yeoman.dist %>/{,*/}*.html'],
+      css: ['<%= yeoman.dist %>/css/{,*/}*.css'],
+      options: {
+        dirs: ['<%= yeoman.dist %>']
       }
     },
 
@@ -143,158 +276,19 @@ module.exports = function (grunt) {
       }
     },
 
-    clean: {
-      dist: ['.tmp', '<%= yeoman.app %>/css', '<%= yeoman.dist %>/*'],
-      server: '.tmp'
-    },
-
-    mocha: {
-      all: {
-        options: {
-          run: true,
-          urls: ['http://localhost:<%= connect.test.options.port %>/index.html']
-        }
-      }
-    },
-
-    requirejs: {
-      dist: {
-        // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
-
-        options: {
-          mainConfigFile: "<%= yeoman.app %>/scripts/main.js",
-          baseUrl: '<%= yeoman.app %>/scripts',
-          name: 'main',
-          optimize: 'none',
-          paths: {
-            'templates': '../../.tmp/scripts/templates',
-            'jquery': '../../<%= yeoman.app %>/bower_components/jquery/dist/jquery.min',
-            'underscore': '../../<%= yeoman.app %>/bower_components/lodash/dist/lodash.min',
-            'backbone': '../../<%= yeoman.app %>/bower_components/backbone/backbone'
-          },
-          out: "<%= yeoman.dist %>/scripts/main.min.js",
-          preserveLicenseComments: false,
-          useStrict: true
-        }
-      }
-    },
-
-    useminPrepare: {
-      html: '<%= yeoman.app %>/index.html',
-      options: {
-        dest: '<%= yeoman.dist %>'
-      }
-    },
-
-    usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/css/{,*/}*.css'],
-      options: {
-        dirs: ['<%= yeoman.dist %>']
-      }
-    },
-
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-
-    cssmin: {
-      dist: {
-        options: {
-          banner: '<%= banner %>'
-        },
-        files: {
-          '<%= yeoman.dist %>/styles/main.css': [
-            '.tmp/concat/css/{,*/}*.css',
-            // '<%= yeoman.app %>/css/{,*/}*.css'
-          ]
-        }
-      }
-    },
-
-    htmlmin: {
-      dist: {
-        options: {
-          /*removeCommentsFromCDATA: true,
-          // https://github.com/yeoman/grunt-usemin/issues/44
-          //collapseWhitespace: true,
-          collapseBooleanAttributes: true,
-          removeAttributeQuotes: true,
-          removeRedundantAttributes: true,
-          useShortDoctype: true,
-          removeEmptyAttributes: true,
-          removeOptionalTags: true*/
-        },
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>',
-          src: '*.html',
-          dest: '<%= yeoman.dist %>'
-        }]
-      }
-    },
-
-    copy: {
-      dist: {
-        files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
-          src: [
-            '*.{ico,txt}',
-            'images/{,*/}*.{webp,gif}',
-            'styles/fonts/{,*/}*.*',
-          ]
-        }/*, {
-          src: 'node_modules/apache-server-configs/dist/.htaccess',
-          dest: '<%= yeoman.dist %>/.htaccess'
-        }*/]
-      }
-    },
-
-    bower: {
-      all: {
-        rjsConfig: '<%= yeoman.app %>/scripts/main.js'
-      }
-    },
-
-    handlebars: {
-      compile: {
-        options: {
-          namespace: 'JST',
-          amd: true
-        },
-        files: {
-          '.tmp/scripts/templates.js': ['<%= yeoman.app %>/scripts/templates/*.hbs']
-        }
-      }
-    },
-
-    rev: {
-      dist: {
-        files: {
-          src: [
-            '<%= yeoman.dist %>/scripts/{,*/}*.js',
-            '<%= yeoman.dist %>/styles/{,*/}*.css',
-            '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp}',
-            '/styles/fonts/{,*/}*.*',
-          ]
-        }
-      }
-    }
+    // mocha: {
+    //   all: {
+    //     options: {
+    //       run: true,
+    //       urls: ['http://localhost:<%= connect.test.options.port %>/index.html']
+    //     }
+    //   }
+    // }
   });
 
-  grunt.registerTask('createDefaultTemplate', function () {
-    grunt.file.write('.tmp/scripts/templates.js', 'this.JST = this.JST || {};');
-  });
+  // grunt.registerTask('createDefaultTemplate', function () {
+  //   grunt.file.write('.tmp/scripts/templates.js', 'this.JST = this.JST || {};');
+  // });
 
   grunt.registerTask('server', function (target) {
     grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
@@ -306,52 +300,52 @@ module.exports = function (grunt) {
       return grunt.task.run(['build', 'open:server', 'connect:dist:keepalive']);
     }
 
-    if (target === 'test') {
-      return grunt.task.run([
-        'clean:server',
-        'createDefaultTemplate',
-        'handlebars',
-        'connect:test',
-        'open:test',
-        'watch'
-      ]);
-    }
+    // if (target === 'test') {
+    //   return grunt.task.run([
+    //     'clean:server',
+    //     'createDefaultTemplate',
+    //     'handlebars',
+    //     'connect:test',
+    //     'open:test',
+    //     'watch'
+    //   ]);
+    // }
 
     grunt.task.run([
       'clean:server',
-      'createDefaultTemplate',
-      'handlebars',
+      // 'createDefaultTemplate',
+      // 'handlebars',
       'connect:dev',
       'open:server',
       'watch'
     ]);
   });
 
-  grunt.registerTask('test', function (isConnected) {
-    isConnected = Boolean(isConnected);
-    var testTasks = [
-        'clean:server',
-        'createDefaultTemplate',
-        'handlebars',
-        'connect:test',
-        'mocha',
-      ];
+  // grunt.registerTask('test', function (isConnected) {
+  //   isConnected = Boolean(isConnected);
+  //   var testTasks = [
+  //       'clean:server',
+  //       'createDefaultTemplate',
+  //       'handlebars',
+  //       'connect:test',
+  //       'mocha',
+  //     ];
 
-    if(!isConnected) {
-      return grunt.task.run(testTasks);
-    } else {
-      // already connected so not going to connect again, remove the connect:test task
-      testTasks.splice(testTasks.indexOf('connect:test'), 1);
-      return grunt.task.run(testTasks);
-    }
-  });
+  //   if(!isConnected) {
+  //     return grunt.task.run(testTasks);
+  //   } else {
+  //     // already connected so not going to connect again, remove the connect:test task
+  //     testTasks.splice(testTasks.indexOf('connect:test'), 1);
+  //     return grunt.task.run(testTasks);
+  //   }
+  // });
 
   grunt.registerTask('build', [
     'clean:dist',
-    'createDefaultTemplate',
-    'handlebars',
+    // 'createDefaultTemplate',
+    // 'handlebars',
     'useminPrepare',
-    'requirejs',
+    // 'requirejs',
     'imagemin',
     'htmlmin',
     'concat',
@@ -366,19 +360,5 @@ module.exports = function (grunt) {
     // 'jshint',
     // 'test',
     'build'
-  ]);
-
-  grunt.registerTask('testtest', [
-    // 'jshint',
-    'clean:dist',
-    'compass:dev',
-    'watch:css'
-    // 'useminPrepare',
-    // 'imagemin',
-    // 'htmlmin',
-    // 'concat',
-    // 'cssmin',
-    // 'copy',
-    // 'usemin'
   ]);
 };
