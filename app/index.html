@@ -1,19 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>Q-municate</title>
-  <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
-
-  <link rel="stylesheet" href="lib/scrollbar/jquery.mCustomScrollbar.css">
-  <link rel="stylesheet" href="lib/progressbar/progressbar.css">
-  <link rel="stylesheet" href="lib/emoji/css/minEmoji.css">
+  <meta name="description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox">
   
-  <link rel="stylesheet" href="css/main.css">
-
   <link rel="icon" href="favicon.png">
+
+  <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
+  <!-- build:css(.tmp) css/build.css -->
+  <link rel="stylesheet" href="../bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
+  <link rel="stylesheet" href="../bower_components/progressbar.js/css/lib/control/progressbar.css">
+  <link rel="stylesheet" href="vendor/emoji/css/minEmoji.css">
+  <link rel="stylesheet" href="css/main.css">
+  <!-- endbuild -->
+
+  <!-- build:js vendor/modernizr.js -->
+  <script src="../bower_components/modernizr/modernizr.js"></script>
+  <!-- endbuild -->
 </head>
 <body class="is-welcome">
+  <!--[if lt IE 10]>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
   <div class="l-wrapper">
     <section id="welcomePage" class="l-page l-flexbox l-flexbox_column l-flexbox_flexbetween">
       <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
@@ -438,33 +451,38 @@
   </audio>
 
   <div id="fb-root"></div>
+  
+  <!-- Google Analytics -->
   <script>
-    // Google Analytics
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-    ga('create', 'UA-26728270-6', 'auto');
-    ga('send', 'pageview');
+    (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+    function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+    e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+    e.src='//www.google-analytics.com/analytics.js';
+    r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+    ga('create','UA-26728270-6');ga('send','pageview');
   </script>
   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
   <script src="https://vjs.zencdn.net/4.6/video.js"></script>
+  
+  <!-- build:js scripts/build.js -->
+  <script src="../bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script src="../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.min.js"></script>
+  <script src="../bower_components/progressbar.js/lib/control/progressbar.min.js"></script>
+  <script src="../bower_components/blueimp-load-image/js/load-image.all.min.js"></script>
+  <script src="../bower_components/jquery.nicescroll/jquery.nicescroll.min.js"></script>
+  <script src="../bower_components/quickblox-javascript-sdk/quickblox.min.js"></script>
+  <script src="../bower_components/Chroma-Hash/jquery.chroma-hash.js"></script>
+  <script src="../bower_components/jquery-timeago/jquery.timeago.js"></script>
+  <script src="../bower_components/underscore/underscore-min.js"></script>
+  <script src="../bower_components/OnlineJS/dist/online.min.js"></script>
+  <script src="vendor/emoji/js/minEmoji.js"></script>
 
-  <script src="lib/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
-  <script src="lib/scrollbar/jquery.nicescroll.min.js"></script>
-  <script src="lib/progressbar/progressbar.min.js"></script>
-  <script src="lib/canvas-to-blob.min.js"></script>
-  <script src="lib/emoji/js/minEmoji.js"></script>
-  <script src="lib/load-image.min.js"></script>
-  <script src="lib/jquery.timeago.js"></script>
-  <script src="lib/underscore-min.js"></script>
-  <script src="lib/chroma-hash.js"></script>
-  <script src="lib/online.min.js"></script>
-  <script src="lib/quickblox.js"></script>
+  <script data-main="scripts/main" src="../bower_components/requirejs/require.js"></script>
+  <!-- endbuild -->
 
-  <script src="config.js"></script>
-  <script src="main.js"></script>
+  <!-- <script src="config.js"></script>
+  <script src="main.js"></script> -->
 </body>
 </html>
