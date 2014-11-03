@@ -2,7 +2,7 @@
 .tmp
 
 # bower & npm packages
-bower_components
+app/bower_components
 node_modules
 
 # production environment

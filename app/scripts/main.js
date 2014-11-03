@@ -2,16 +2,16 @@
 'use strict';
 
 require.config({
-    shim: {,
+    shim: {
         handlebars: {
             exports: 'Handlebars'
         }
     },
     paths: {
-        jquery: '../bower_components/jquery/dist/jquery',
-        backbone: '../bower_components/backbone/backbone',
-        underscore: '../bower_components/lodash/dist/lodash',
-        handlebars: '../bower_components/handlebars/handlebars'
+        jquery: '../bower_components/jquery/dist/jquery.min',
+        underscore: '../bower_components/lodash/dist/lodash.min',
+        backbone: '../bower_components/backbone/backbone',        
+        handlebars: '../bower_components/handlebars/handlebars.amd.min'
     }
 });
 
