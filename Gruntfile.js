@@ -26,7 +26,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
     yeoman: yeomanConfig,
     pkg: grunt.file.readJSON('bower.json'),
-    banner: '/* <%= pkg.name %> v<%= pkg.version %> */',
+    banner: '/* <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */',
 
     // jshint: {
     //   options: {
@@ -60,26 +60,20 @@ module.exports = function (grunt) {
 
     compass: {
       options: {
+        cssDir: '.tmp/css',
         sassDir: '<%= yeoman.app %>/styles',
-        cssDir: '<%= yeoman.app %>/css',
-        imagesDir: '<%= yeoman.app %>/images',
         javascriptsDir: '<%= yeoman.app %>/scripts',
+        imagesDir: '<%= yeoman.app %>/images',
         noLineComments: true,
         relativeAssets: true,
         raw: 'preferred_syntax = :scss\n'
       },
       dist: {
         options: {
-          environment: 'production',
           outputStyle: 'compressed'
         }
       },
-      dev: {
-        options: {
-          // environment: 'production',
-          // outputStyle: 'compressed'
-        }
-      }
+      dev: {}
     },
 
     // bower: {
@@ -147,10 +141,18 @@ module.exports = function (grunt) {
           banner: '<%= banner %>'
         },
         files: {
-          '<%= yeoman.dist %>/styles/main.css': [
-            '.tmp/concat/css/{,*/}*.css',
-            // '<%= yeoman.app %>/css/{,*/}*.css'
-          ]
+          '<%= yeoman.dist %>/<%= pkg.name %>.min.css': ['.tmp/concat/css/{,*/}*.css']
+        }
+      }
+    },
+
+    uglify: {
+      dist: {
+        options: {
+          banner: '<%= banner %>'
+        },
+        files: {
+          '<%= yeoman.dist %>/<%= pkg.name %>.min.js': ['.tmp/concat/js/{,*/}*.js']
         }
       }
     },
@@ -188,25 +190,6 @@ module.exports = function (grunt) {
       }
     },
 
-    copy: {
-      dist: {
-        files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
-          src: [
-            '*.{ico,txt}',
-            'images/{,*/}*.{webp,gif}',
-            'styles/fonts/{,*/}*.*',
-          ]
-        }/*, {
-          src: 'node_modules/apache-server-configs/dist/.htaccess',
-          dest: '<%= yeoman.dist %>/.htaccess'
-        }*/]
-      }
-    },
-
     rev: {
       dist: {
         files: {
@@ -222,9 +205,26 @@ module.exports = function (grunt) {
 
     usemin: {
       html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/css/{,*/}*.css'],
+      css: ['<%= yeoman.dist %>/*.min.css'],
+      js: ['<%= yeoman.dist %>/*.min.js']
       options: {
         dirs: ['<%= yeoman.dist %>']
+      }
+    },
+
+    copy: {
+      dist: {
+        files: {
+          expand: true,
+          dot: true,
+          cwd: '<%= yeoman.app %>',
+          src: [
+            '*.{ico,png}',
+            'images/{,*/}*.{svg}',
+            'audio/{,*/}*.*'
+          ],
+          dest: '<%= yeoman.dist %>'
+        }
       }
     },
 
@@ -342,18 +342,19 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'compass:dev',
     // 'createDefaultTemplate',
     // 'handlebars',
     'useminPrepare',
     // 'requirejs',
-    'imagemin',
-    'htmlmin',
     'concat',
     'cssmin',
     'uglify',
-    'copy',
-    'rev',
-    'usemin'
+    // 'imagemin',
+    // 'htmlmin',
+    // 'rev',
+    'usemin',
+    'copy'
   ]);
 
   grunt.registerTask('default', [

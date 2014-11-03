@@ -1,7 +1,7 @@
 {
   "generator-backbone": {
     "appPath": "app",
-    "appName": "Q-municate",
+    "appName": "q-municate",
     "coffee": false,
     "testFramework": "mocha",
     "templateFramework": "handlebars",

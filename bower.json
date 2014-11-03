@@ -1,5 +1,5 @@
 {
-  "name": "Q-municate",
+  "name": "q-municate",
   "version": "0.8.0",
   "dependencies": {
     "jquery": "~2.1.0",

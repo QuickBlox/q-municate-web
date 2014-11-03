@@ -19,7 +19,6 @@
     "smarttabs": true,
     "jquery": true,
     "globals": {
-        "Q-municate": true,
         "q-municate": true,
         "_": false,
         "Backbone": false,
