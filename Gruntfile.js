@@ -42,8 +42,8 @@ module.exports = function (grunt) {
     // },
 
     clean: {
-      dist: ['.tmp', '<%= yeoman.app %>/css', '<%= yeoman.dist %>/*'],
-      server: '.tmp'
+      dev: ['.sass-cache', '.tmp'],
+      dist: ['.sass-cache', '.tmp', '<%= yeoman.dist %>/*']
     },
 
     // handlebars: {
@@ -302,7 +302,7 @@ module.exports = function (grunt) {
 
     // if (target === 'test') {
     //   return grunt.task.run([
-    //     'clean:server',
+    //     'clean:dev',
     //     'createDefaultTemplate',
     //     'handlebars',
     //     'connect:test',
@@ -312,7 +312,7 @@ module.exports = function (grunt) {
     // }
 
     grunt.task.run([
-      'clean:server',
+      'clean:dev',
       // 'createDefaultTemplate',
       // 'handlebars',
       'connect:dev',
@@ -324,7 +324,7 @@ module.exports = function (grunt) {
   // grunt.registerTask('test', function (isConnected) {
   //   isConnected = Boolean(isConnected);
   //   var testTasks = [
-  //       'clean:server',
+  //       'clean:dev',
   //       'createDefaultTemplate',
   //       'handlebars',
   //       'connect:test',

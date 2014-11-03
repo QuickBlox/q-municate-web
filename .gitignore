@@ -6,7 +6,6 @@ app/bower_components
 node_modules
 
 # production environment
-app/css
 dist
 
 # test environment
