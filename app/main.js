@@ -73,9 +73,10 @@ QM.prototype = {
   },
 
   chromaHash: function() {
-    new ChromaHash({
-      visualization: 'bars'
-    });
+    // new ChromaHash({
+    //   visualization: 'bars'
+    // });
+    $('input:password').chromaHash({bars: 4});
   },
 
   setHtml5Patterns: function() {

@@ -175,7 +175,7 @@ module.exports = function (grunt) {
           src: [
             '<%= yeoman.dist %>/scripts/{,*/}*.js',
             '<%= yeoman.dist %>/styles/{,*/}*.css',
-            '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+            // '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
             '<%= yeoman.dist %>/vendor/{,*/}*.js',
           ]
         }
@@ -198,6 +198,11 @@ module.exports = function (grunt) {
             '*.{ico,png}',
             'audio/{,*/}*.*'
           ],
+          dest: '<%= yeoman.dist %>'
+        }, {
+          expand: true,
+          cwd: '<%= yeoman.app %>/vendor/emoji/',
+          src: '{,*/}*.{png,jpg,jpeg,svg}',
           dest: '<%= yeoman.dist %>'
         }]
       }

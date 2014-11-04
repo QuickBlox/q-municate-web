@@ -1,3 +1,4 @@
+@import "compass";
 @import "reset";
 
 html {
@@ -78,11 +79,11 @@ div[contenteditable="true"]:focus:empty:before {
 
 /* Placeholder */
 input[type="search"]::-webkit-input-placeholder {text-align: center; vertical-align: top;}
-input[type="search"]::-moz-placeholder          {text-align: center; background: url(../images/icon-search.png) no-repeat 37% center;}
-input[type="search"]:-ms-input-placeholder      {text-align: center; background: url(../images/icon-search.png) no-repeat 37% center;}
+input[type="search"]::-moz-placeholder          {text-align: center; background: image-url('icon-search.png') no-repeat 37% center;}
+input[type="search"]:-ms-input-placeholder      {text-align: center; background: image-url('icon-search.png') no-repeat 37% center;}
 
 input[type="search"]::-webkit-input-placeholder:before {
-  content: url(../images/icon-search.png);
+  content: image-url('icon-search.png');
   position: relative;
   margin-right: 7px;
 }
