@@ -116,16 +116,16 @@ module.exports = function (grunt) {
       //   files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
       //   tasks: []
       // },
-      // handlebars: {
-      //   files: [
-      //     '<%= yeoman.app %>/scripts/templates/*.hbs'
-      //   ],
-      //   tasks: ['handlebars']
-      // },
-      // test: {
-      //   files: ['<%= yeoman.app %>/scripts/{,*/}*.js', 'test/spec/**/*.js'],
-      //   tasks: ['test:true']
-      // }
+      handlebars: {
+        files: [
+          '<%= yeoman.app %>/scripts/templates/*.hbs'
+        ],
+        tasks: ['handlebars']
+      },
+      test: {
+        files: ['<%= yeoman.app %>/scripts/{,*/}*.js', 'test/spec/**/*.js'],
+        tasks: ['test:true']
+      }
     },
 
     useminPrepare: {
@@ -175,7 +175,6 @@ module.exports = function (grunt) {
           src: [
             '<%= yeoman.dist %>/scripts/{,*/}*.js',
             '<%= yeoman.dist %>/styles/{,*/}*.css',
-            // '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
             '<%= yeoman.dist %>/vendor/{,*/}*.js',
           ]
         }
@@ -256,19 +255,19 @@ module.exports = function (grunt) {
       }
     },
 
-    // mocha: {
-    //   all: {
-    //     options: {
-    //       run: true,
-    //       urls: ['http://localhost:<%= connect.test.options.port %>/index.html']
-    //     }
-    //   }
-    // }
+    mocha: {
+      all: {
+        options: {
+          run: true,
+          urls: ['http://localhost:<%= connect.test.options.port %>/index.html']
+        }
+      }
+    }
   });
 
-  // grunt.registerTask('createDefaultTemplate', function () {
-  //   grunt.file.write('.tmp/scripts/templates.js', 'this.JST = this.JST || {};');
-  // });
+  grunt.registerTask('createDefaultTemplate', function () {
+    grunt.file.write('.tmp/scripts/templates.js', 'this.JST = this.JST || {};');
+  });
 
   grunt.registerTask('server', function (target) {
     grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
@@ -280,51 +279,53 @@ module.exports = function (grunt) {
       return grunt.task.run(['build', 'open:server', 'connect:dist:keepalive']);
     }
 
-    // if (target === 'test') {
-    //   return grunt.task.run([
-    //     'clean:dev',
-    //     'createDefaultTemplate',
-    //     'handlebars',
-    //     'connect:test',
-    //     'open:test',
-    //     'watch'
-    //   ]);
-    // }
+    if (target === 'test') {
+      return grunt.task.run([
+        'clean:dev',
+        'createDefaultTemplate',
+        'handlebars',
+        'connect:test',
+        'open:test',
+        'watch'
+      ]);
+    }
 
     grunt.task.run([
       'clean:dev',
-      // 'createDefaultTemplate',
-      // 'handlebars',
+      'compass:dev',
+      'createDefaultTemplate',
+      'handlebars',
       'connect:dev',
       'open:server',
       'watch'
     ]);
   });
 
-  // grunt.registerTask('test', function (isConnected) {
-  //   isConnected = Boolean(isConnected);
-  //   var testTasks = [
-  //       'clean:dev',
-  //       'createDefaultTemplate',
-  //       'handlebars',
-  //       'connect:test',
-  //       'mocha',
-  //     ];
+  grunt.registerTask('test', function (isConnected) {
+    isConnected = Boolean(isConnected);
+    var testTasks = [
+        'jshint',
+        'clean:dev',
+        'createDefaultTemplate',
+        'handlebars',
+        'connect:test',
+        'mocha',
+      ];
 
-  //   if(!isConnected) {
-  //     return grunt.task.run(testTasks);
-  //   } else {
-  //     // already connected so not going to connect again, remove the connect:test task
-  //     testTasks.splice(testTasks.indexOf('connect:test'), 1);
-  //     return grunt.task.run(testTasks);
-  //   }
-  // });
+    if(!isConnected) {
+      return grunt.task.run(testTasks);
+    } else {
+      // already connected so not going to connect again, remove the connect:test task
+      testTasks.splice(testTasks.indexOf('connect:test'), 1);
+      return grunt.task.run(testTasks);
+    }
+  });
 
   grunt.registerTask('build', [
     'clean:dist',
-    'compass:dev',
-    // 'createDefaultTemplate',
-    // 'handlebars',
+    'compass:dist',
+    'createDefaultTemplate',
+    'handlebars',
     'useminPrepare',
     // 'requirejs',
     'concat',
@@ -338,8 +339,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('default', [
-    // 'jshint',
-    // 'test',
+    'test',
     'build'
   ]);
 };
