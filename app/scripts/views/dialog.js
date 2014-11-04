@@ -240,7 +240,7 @@ DialogView.prototype = {
 
     html += '</a></li>';
 
-    startOfCurrentDay = new Date;
+    startOfCurrentDay = new Date();
     startOfCurrentDay.setHours(0,0,0,0);
 
     // checking if this dialog is recent OR no
@@ -299,7 +299,7 @@ DialogView.prototype = {
         html = getStatus(status, html); 
       } else {
         html += '<span class="pencil_active avatar is-hidden"></span>';
-        html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">'
+        html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">';
         html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
         html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';

@@ -33,7 +33,7 @@ QBApiCalls.prototype = {
   checkSession: function(callback) {
     var self = this;
 
-    if ((new Date).toISOString() > Session.expirationTime) {
+    if ((new Date()).toISOString() > Session.expirationTime) {
       // reset QuickBlox JS SDK after autologin via an existing token
       self.init();
 
@@ -95,7 +95,7 @@ QBApiCalls.prototype = {
           Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
         }
 
-        Session.update({ date: new Date });
+        Session.update({ date: new Date() });
         callback(res);
       }
     });
@@ -110,7 +110,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User has logged', res);
 
-          Session.update({ date: new Date, authParams: Session.encrypt(params) });
+          Session.update({ date: new Date(), authParams: Session.encrypt(params) });
           callback(res);
         }
       });
@@ -151,7 +151,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -168,7 +168,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -186,7 +186,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -204,7 +204,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -220,7 +220,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -243,7 +243,7 @@ QBApiCalls.prototype = {
             window.location.reload();
           }
         } else {
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -259,7 +259,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Dialogs is found', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res.items);
         }
       });
@@ -275,7 +275,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Dialog is created', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -291,7 +291,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Dialog is updated', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -307,7 +307,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Messages is found', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res.items);
         }
       });
@@ -323,7 +323,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Message is updated');
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback();
         }
       });
@@ -339,7 +339,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Message is deleted');
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback();
         }
       });

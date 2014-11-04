@@ -28,35 +28,35 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('bower.json'),
     banner: '/* <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n',
 
-    // jshint: {
-    //   options: {
-    //     jshintrc: '.jshintrc',
-    //     reporter: require('jshint-stylish')
-    //   },
-    //   all: [
-    //     'Gruntfile.js',
-    //     '<%= yeoman.app %>/scripts/{,*/}*.js',
-    //     '!<%= yeoman.app %>/vendor/*',
-    //     'test/spec/{,*/}*.js'
-    //   ]
-    // },
+    jshint: {
+      options: {
+        jshintrc: '.jshintrc',
+        reporter: require('jshint-stylish')
+      },
+      all: [
+        'Gruntfile.js',
+        '<%= yeoman.app %>/scripts/{,*/}*.js',
+        '!<%= yeoman.app %>/vendor/*',
+        'test/spec/{,*/}*.js'
+      ]
+    },
 
     clean: {
       dev: ['.sass-cache', '.tmp/css'],
       dist: ['.sass-cache', '.tmp', '<%= yeoman.dist %>/*']
     },
 
-    // handlebars: {
-    //   compile: {
-    //     options: {
-    //       namespace: 'JST',
-    //       amd: true
-    //     },
-    //     files: {
-    //       '.tmp/scripts/templates.js': ['<%= yeoman.app %>/scripts/templates/*.hbs']
-    //     }
-    //   }
-    // },
+    handlebars: {
+      compile: {
+        options: {
+          namespace: 'JST',
+          amd: true
+        },
+        files: {
+          '.tmp/scripts/templates.js': ['<%= yeoman.app %>/scripts/templates/*.hbs']
+        }
+      }
+    },
 
     compass: {
       options: {

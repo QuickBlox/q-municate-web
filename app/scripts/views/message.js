@@ -36,7 +36,8 @@ MessageView.prototype = {
   addItem: function(message, isCallback, isMessageListener, recipientId) {
     var DialogView = this.app.views.Dialog,
         ContactListMsg = this.app.models.ContactList,
-        chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]');
+        chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
+        i, len, user;
 
     if (typeof chat[0] === 'undefined' || (!message.body && !message.notification_type && !message.attachment)) return true;
 
@@ -55,11 +56,11 @@ MessageView.prototype = {
       case '1':
         occupants_ids = message.occupants_ids.split(',').map(Number);
 
-        for (var i = 0, len = occupants_ids.length, user; i < len; i++) {
+        for (i = 0, len = occupants_ids.length, user; i < len; i++) {
           user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
           if (user)
             (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
-          else (occupants_ids[i] === User.contact.id)
+          else if (occupants_ids[i] === User.contact.id)
             (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
         }
 
@@ -82,11 +83,11 @@ MessageView.prototype = {
         if (message.occupants_ids) {
           occupants_ids = message.occupants_ids.split(',').map(Number);
 
-          for (var i = 0, len = occupants_ids.length, user; i < len; i++) {
+          for (i = 0, len = occupants_ids.length, user; i < len; i++) {
             user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
             if (user)
               (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
-            else (occupants_ids[i] === User.contact.id)
+            else if (occupants_ids[i] === User.contact.id)
               (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
           }
 
@@ -477,7 +478,7 @@ function fixScroll(chat) {
 
 function getTime(time) {
   var messageDate = new Date(time * 1000),
-      startOfCurrentDay = new Date;
+      startOfCurrentDay = new Date();
 
   startOfCurrentDay.setHours(0,0,0,0);
 

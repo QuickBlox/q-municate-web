@@ -100,7 +100,7 @@ $(document).ready(function() {
       obj.html(minEmoji(obj.text()));
     });
 
-    APP = new QM;
+    APP = new QM();
     APP.init();
   });
 });

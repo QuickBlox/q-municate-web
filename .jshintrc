@@ -17,6 +17,7 @@
     "strict": false,
     "trailing": true,
     "smarttabs": true,
+    "expr": true,
     "jquery": true,
     "globals": {
         "q-municate": true,

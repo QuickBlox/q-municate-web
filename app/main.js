@@ -101,7 +101,7 @@ $(document).ready(function() {
       obj.html(minEmoji(obj.text()));
     });
 
-    APP = new QM;
+    APP = new QM();
     APP.init();
   });
 });
@@ -729,9 +729,9 @@ Message.prototype = {
       recipient_id: params.recipient_id || null,
       occupants_ids: (params.extension && params.extension.occupants_ids) || params.occupants_ids || null,
       room_name: (params.extension && params.extension.room_name) || params.room_name || null,
-      room_photo: (params.extension && params.extension.room_photo && params.extension.room_photo.replace('http://', 'https://'))
-                  || (params.room_photo && params.room_photo.replace('http://', 'https://'))
-                  || null,
+      room_photo: (params.extension && params.extension.room_photo && params.extension.room_photo.replace('http://', 'https://')) ||
+                  (params.room_photo && params.room_photo.replace('http://', 'https://')) ||
+                  null,
       deleted_id: (params.extension && params.extension.deleted_id) || params.deleted_id || null
     };
 
@@ -1269,7 +1269,7 @@ QBApiCalls.prototype = {
   checkSession: function(callback) {
     var self = this;
 
-    if ((new Date).toISOString() > Session.expirationTime) {
+    if ((new Date()).toISOString() > Session.expirationTime) {
       // reset QuickBlox JS SDK after autologin via an existing token
       self.init();
 
@@ -1331,7 +1331,7 @@ QBApiCalls.prototype = {
           Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
         }
 
-        Session.update({ date: new Date });
+        Session.update({ date: new Date() });
         callback(res);
       }
     });
@@ -1346,7 +1346,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User has logged', res);
 
-          Session.update({ date: new Date, authParams: Session.encrypt(params) });
+          Session.update({ date: new Date(), authParams: Session.encrypt(params) });
           callback(res);
         }
       });
@@ -1387,7 +1387,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -1404,7 +1404,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -1422,7 +1422,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -1440,7 +1440,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -1456,7 +1456,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -1479,7 +1479,7 @@ QBApiCalls.prototype = {
             window.location.reload();
           }
         } else {
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -1495,7 +1495,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Dialogs is found', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res.items);
         }
       });
@@ -1511,7 +1511,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Dialog is created', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -1527,7 +1527,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Dialog is updated', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res);
         }
       });
@@ -1543,7 +1543,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Messages is found', res);
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback(res.items);
         }
       });
@@ -1559,7 +1559,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Message is updated');
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback();
         }
       });
@@ -1575,7 +1575,7 @@ QBApiCalls.prototype = {
         } else {
           if (QMCONFIG.debug) console.log('QB SDK: Message is deleted');
 
-          Session.update({ date: new Date });
+          Session.update({ date: new Date() });
           callback();
         }
       });
@@ -3319,7 +3319,7 @@ DialogView.prototype = {
 
     html += '</a></li>';
 
-    startOfCurrentDay = new Date;
+    startOfCurrentDay = new Date();
     startOfCurrentDay.setHours(0,0,0,0);
 
     // checking if this dialog is recent OR no
@@ -3378,7 +3378,7 @@ DialogView.prototype = {
         html = getStatus(status, html); 
       } else {
         html += '<span class="pencil_active avatar is-hidden"></span>';
-        html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">'
+        html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">';
         html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
         html += '<span class="pencil is-hidden"></span>';
         html += '<span class="triangle triangle_down"></span>';
@@ -3677,7 +3677,8 @@ MessageView.prototype = {
   addItem: function(message, isCallback, isMessageListener, recipientId) {
     var DialogView = this.app.views.Dialog,
         ContactListMsg = this.app.models.ContactList,
-        chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]');
+        chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
+        i, len, user;
 
     if (typeof chat[0] === 'undefined' || (!message.body && !message.notification_type && !message.attachment)) return true;
 
@@ -3696,11 +3697,11 @@ MessageView.prototype = {
       case '1':
         occupants_ids = message.occupants_ids.split(',').map(Number);
 
-        for (var i = 0, len = occupants_ids.length, user; i < len; i++) {
+        for (i = 0, len = occupants_ids.length, user; i < len; i++) {
           user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
           if (user)
             (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
-          else (occupants_ids[i] === User.contact.id)
+          else if (occupants_ids[i] === User.contact.id)
             (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
         }
 
@@ -3723,11 +3724,11 @@ MessageView.prototype = {
         if (message.occupants_ids) {
           occupants_ids = message.occupants_ids.split(',').map(Number);
 
-          for (var i = 0, len = occupants_ids.length, user; i < len; i++) {
+          for (i = 0, len = occupants_ids.length, user; i < len; i++) {
             user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
             if (user)
               (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
-            else (occupants_ids[i] === User.contact.id)
+            else if (occupants_ids[i] === User.contact.id)
               (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
           }
 
@@ -4118,7 +4119,7 @@ function fixScroll(chat) {
 
 function getTime(time) {
   var messageDate = new Date(time * 1000),
-      startOfCurrentDay = new Date;
+      startOfCurrentDay = new Date();
 
   startOfCurrentDay.setHours(0,0,0,0);
 
