@@ -28,34 +28,9 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('bower.json'),
     banner: '/* <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n',
 
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        reporter: require('jshint-stylish')
-      },
-      all: [
-        'Gruntfile.js',
-        '<%= yeoman.app %>/scripts/{,*/}*.js',
-        '!<%= yeoman.app %>/vendor/*',
-        'test/spec/{,*/}*.js'
-      ]
-    },
-
     clean: {
-      dev: ['.sass-cache', '.tmp/css'],
+      dev: ['.sass-cache', '.tmp'],
       dist: ['.sass-cache', '.tmp', '<%= yeoman.dist %>/*']
-    },
-
-    handlebars: {
-      compile: {
-        options: {
-          namespace: 'JST',
-          amd: true
-        },
-        files: {
-          '.tmp/scripts/templates.js': ['<%= yeoman.app %>/scripts/templates/*.hbs']
-        }
-      }
     },
 
     compass: {
@@ -74,6 +49,18 @@ module.exports = function (grunt) {
         }
       },
       dev: {}
+    },
+
+    handlebars: {
+      compile: {
+        options: {
+          namespace: 'JST',
+          amd: true
+        },
+        files: {
+          '.tmp/scripts/templates.js': ['<%= yeoman.app %>/scripts/templates/*.hbs']
+        }
+      }
     },
 
     // bower: {
@@ -123,7 +110,7 @@ module.exports = function (grunt) {
         tasks: ['handlebars']
       },
       test: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.js', 'test/spec/**/*.js'],
+        files: ['test/spec/**/*.js'],
         tasks: ['test:true']
       }
     },
@@ -253,6 +240,19 @@ module.exports = function (grunt) {
       test: {
         path: 'http://localhost:<%= connect.test.options.port %>'
       }
+    },
+
+    jshint: {
+      options: {
+        jshintrc: '.jshintrc',
+        reporter: require('jshint-stylish')
+      },
+      all: [
+        'Gruntfile.js',
+        '<%= yeoman.app %>/scripts/{,*/}*.js',
+        '!<%= yeoman.app %>/vendor/*',
+        'test/spec/{,*/}*.js'
+      ]
     },
 
     mocha: {
