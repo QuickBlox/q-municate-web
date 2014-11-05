@@ -23,6 +23,7 @@
         "q-municate": true,
         "_": false,
         "Backbone": false,
+        "FB": false,
         "JST": false,
         "beforeEach": false,
         "describe": false,

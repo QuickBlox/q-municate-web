@@ -63,7 +63,7 @@ module.exports = function (grunt) {
       all: {
         rjsConfig: '<%= yeoman.app %>/scripts/main.js',
         options: {
-          exclude: ['modernizr', 'requirejs']
+          exclude: ['jquery', 'modernizr', 'requirejs']
         }
       }
     },

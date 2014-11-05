@@ -5,63 +5,67 @@
  *
  */
 
-module.exports = Contact;
+define(['config', 'quickblox'], function(QMCONFIG, QB) {
 
-function Contact(app) {
-  this.app = app;
-}
-
-Contact.prototype = {
-
-  create: function(qbUser) {
-    return {
-      id: qbUser.id,
-      full_name: qbUser.full_name,
-      email: qbUser.email,
-      phone: qbUser.phone || null,
-      facebook_id: qbUser.facebook_id || null,
-      blob_id: qbUser.blob_id || null,
-      avatar_url: (qbUser.avatar_url || getAvatar(qbUser)).replace('http://', 'https://'),
-      status: qbUser.status || getStatus(qbUser),
-      tag: qbUser.tag || qbUser.user_tags || null,
-      user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)
-    };
+  function Contact(app) {
+    this.app = app;
   }
 
-};
+  Contact.prototype = {
 
-/* Private
----------------------------------------------------------------------- */
-function getAvatar(contact) {
-  var avatar;
-
-  if (contact.blob_id) {
-    try {
-      avatar = JSON.parse(contact.custom_data).avatar_url;
-    } catch(err) {
-      // contact.website - temporary storage of avatar url for mobile apps (14.07.2014)
-      avatar = contact.website;
+    create: function(qbUser) {
+      return {
+        id: qbUser.id,
+        full_name: qbUser.full_name,
+        email: qbUser.email,
+        phone: qbUser.phone || null,
+        facebook_id: qbUser.facebook_id || null,
+        blob_id: qbUser.blob_id || null,
+        avatar_url: (qbUser.avatar_url || getAvatar(qbUser)).replace('http://', 'https://'),
+        status: qbUser.status || getStatus(qbUser),
+        tag: qbUser.tag || qbUser.user_tags || null,
+        user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId)
+      };
     }
-  } else {
-    if (contact.facebook_id) {
-      avatar = 'https://graph.facebook.com/' + contact.facebook_id + '/picture?width=146&height=146';
+
+  };
+
+  /* Private
+  ---------------------------------------------------------------------- */
+  function getAvatar(contact) {
+    var avatar;
+
+    if (contact.blob_id) {
+      try {
+        avatar = JSON.parse(contact.custom_data).avatar_url;
+      } catch(err) {
+        // contact.website - temporary storage of avatar url for mobile apps (14.07.2014)
+        avatar = contact.website;
+      }
     } else {
-      avatar = QMCONFIG.defAvatar.url;
+      if (contact.facebook_id) {
+        avatar = 'https://graph.facebook.com/' + contact.facebook_id + '/picture?width=146&height=146';
+      } else {
+        avatar = QMCONFIG.defAvatar.url;
+      }
     }
+
+    return avatar;
   }
 
-  return avatar;
-}
+  function getStatus(contact) {
+    var status;
+    
+    try {
+      status = JSON.parse(contact.custom_data).status || null;
+    } catch(err) {
+      // contact.custom_data - temporary storage of status message for mobile apps (14.07.2014)
+      status = contact.custom_data || null;
+    }
 
-function getStatus(contact) {
-  var status;
-  
-  try {
-    status = JSON.parse(contact.custom_data).status || null;
-  } catch(err) {
-    // contact.custom_data - temporary storage of status message for mobile apps (14.07.2014)
-    status = contact.custom_data || null;
+    return status;
   }
 
-  return status;
-}
+  return Contact;
+
+});

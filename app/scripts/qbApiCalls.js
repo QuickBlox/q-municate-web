@@ -5,377 +5,381 @@
  *
  */
 
-module.exports = QBApiCalls;
+define(['config', 'quickblox'], function(QMCONFIG, QB) {
 
-var Session, UserView, ContactListView;
+  var Session, UserView, ContactListView;
 
-function QBApiCalls(app) {
-  this.app = app;
+  function QBApiCalls(app) {
+    this.app = app;
 
-  Session = this.app.models.Session;
-  UserView = this.app.views.User;
-  ContactListView = this.app.views.ContactList;
-}
-
-QBApiCalls.prototype = {
-
-  init: function(token) {
-    if (typeof token === 'undefined') {
-      QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
-    } else {
-      QB.init(token);
-
-      Session.create(JSON.parse(localStorage['QM.session']), true);
-      UserView.autologin();
-    }
-  },
-
-  checkSession: function(callback) {
-    var self = this;
-
-    if ((new Date()).toISOString() > Session.expirationTime) {
-      // reset QuickBlox JS SDK after autologin via an existing token
-      self.init();
-
-      // recovery session
-      if (Session.authParams.provider) {
-        UserView.getFBStatus(function(token) {
-          Session.authParams.keys.token = token;
-          self.createSession(Session.authParams, callback, Session._remember);
-        });
-      } else {
-        self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
-        Session.encrypt(Session.authParams);
-      }
-      
-    } else {
-      callback();
-    }
-  },
-
-  createSession: function(params, callback, isRemember) {
-    QB.createSession(params, function(err, res) {
-      if (err) {
-        if (QMCONFIG.debug) console.log(err.detail);
-
-        var errMsg,
-            parseErr = JSON.parse(err.detail);
-
-        if (err.code === 401) {
-          errMsg = QMCONFIG.errors.unauthorized;
-          $('section:visible input:not(:checkbox)').addClass('is-error');
-        } else {
-          errMsg = parseErr.errors.email ? parseErr.errors.email[0] :
-                   parseErr.errors.base ? parseErr.errors.base[0] : parseErr.errors[0];
-
-          // This checking is needed when your user has exited from Facebook
-          // and you try to relogin on a project via FB without reload the page.
-          // All you need it is to get the new FB user status and show specific error message
-          if (errMsg.indexOf('Authentication') >= 0) {
-            errMsg = QMCONFIG.errors.crashFBToken;
-            UserView.getFBStatus();
-          
-          // This checking is needed when you trying to connect via FB
-          // and your primary email has already been taken on the project 
-          } else if (errMsg.indexOf('already') >= 0) {
-            errMsg = QMCONFIG.errors.emailExists;
-            UserView.getFBStatus();
-          } else {
-            errMsg = QMCONFIG.errors.session;
-          }
-        }
-
-        fail(errMsg);
-      } else {
-        if (QMCONFIG.debug) console.log('QB SDK: Session is created', res);
-
-        if (Session.token) {
-          Session.update({ token: res.token });
-        } else {
-          Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
-        }
-
-        Session.update({ date: new Date() });
-        callback(res);
-      }
-    });
-  },
-
-  loginUser: function(params, callback) {
-    this.checkSession(function(res) {
-      QB.login(params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: User has logged', res);
-
-          Session.update({ date: new Date(), authParams: Session.encrypt(params) });
-          callback(res);
-        }
-      });
-    });
-  },
-
-  logoutUser: function(callback) {
-    if (QMCONFIG.debug) console.log('QB SDK: User has exited');
-    // reset QuickBlox JS SDK after autologin via an existing token
-    this.init();
-    Session.destroy();
-    callback();
-  },
-
-  forgotPassword: function(email, callback) {
-    this.checkSession(function(res) {
-      QB.users.resetPassword(email, function(response) {
-        if (response.code === 404) {
-          if (QMCONFIG.debug) console.log(response.message);
-
-          failForgot();
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent');
-
-          Session.destroy();
-          callback();
-        }
-      });
-    });
-  },
-
-  listUsers: function(params, callback) {
-    this.checkSession(function(res) {
-      QB.users.listUsers(params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
-
-          Session.update({ date: new Date() });
-          callback(res);
-        }
-      });
-    });
-  },
-
-  getUser: function(params, callback) {
-    this.checkSession(function(res) {
-      QB.users.get(params, function(err, res) {
-        if (err && err.code === 404) {
-          if (QMCONFIG.debug) console.log(err.message);
-
-          failSearch();
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
-
-          Session.update({ date: new Date() });
-          callback(res);
-        }
-      });
-    });
-  },
-
-  createUser: function(params, callback) {
-    this.checkSession(function(res) {
-      QB.users.create(params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-
-          var parseErr = JSON.parse(err.detail).errors.email[0];
-          failUser(parseErr);
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
-
-          Session.update({ date: new Date() });
-          callback(res);
-        }
-      });
-    });
-  },
-
-  updateUser: function(id, params, callback) {
-    this.checkSession(function(res) {
-      QB.users.update(id, params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-
-          var parseErr = JSON.parse(err.detail).errors.email[0];
-          failUser(parseErr);
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
-
-          Session.update({ date: new Date() });
-          callback(res);
-        }
-      });
-    });
-  },
-
-  createBlob: function(params, callback) {
-    this.checkSession(function(res) {
-      QB.content.createAndUpload(params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
-
-          Session.update({ date: new Date() });
-          callback(res);
-        }
-      });
-    });
-  },
-
-  connectChat: function(jid, callback) {
-    this.checkSession(function(res) {
-      var password = Session.authParams.provider ? Session.token :
-                     Session.decrypt(Session.authParams).password;
-
-      Session.encrypt(Session.authParams);
-      QB.chat.connect({jid: jid, password: password}, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-
-          if (err.detail.indexOf('Status.ERROR') >= 0 || err.detail.indexOf('Status.AUTHFAIL') >= 0) {
-            fail(err.detail);
-            UserView.logout();
-            window.location.reload();
-          }
-        } else {
-          Session.update({ date: new Date() });
-          callback(res);
-        }
-      });
-    });
-  },
-
-  listDialogs: function(params, callback) {
-    this.checkSession(function(res) {
-      QB.chat.dialog.list(params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Dialogs is found', res);
-
-          Session.update({ date: new Date() });
-          callback(res.items);
-        }
-      });
-    });
-  },
-
-  createDialog: function(params, callback) {
-    this.checkSession(function(res) {
-      QB.chat.dialog.create(params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Dialog is created', res);
-
-          Session.update({ date: new Date() });
-          callback(res);
-        }
-      });
-    });
-  },
-
-  updateDialog: function(id, params, callback) {
-    this.checkSession(function(res) {
-      QB.chat.dialog.update(id, params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Dialog is updated', res);
-
-          Session.update({ date: new Date() });
-          callback(res);
-        }
-      });
-    });
-  },
-
-  listMessages: function(params, callback) {
-    this.checkSession(function(res) {
-      QB.chat.message.list(params, function(err, res) {
-        if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
-
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Messages is found', res);
-
-          Session.update({ date: new Date() });
-          callback(res.items);
-        }
-      });
-    });
-  },
-
-  updateMessage: function(id, params, callback) {
-    this.checkSession(function(res) {
-      QB.chat.message.update(id, params, function(response) {
-        if (response.code === 404) {
-          if (QMCONFIG.debug) console.log(response.message);
-
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Message is updated');
-
-          Session.update({ date: new Date() });
-          callback();
-        }
-      });
-    });
-  },
-
-  deleteMessage: function(params, callback) {
-    this.checkSession(function(res) {
-      QB.chat.message.delete(params, function(response) {
-        if (response.code === 404) {
-          if (QMCONFIG.debug) console.log(response.message);
-
-        } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Message is deleted');
-
-          Session.update({ date: new Date() });
-          callback();
-        }
-      });
-    });
+    Session = this.app.models.Session;
+    UserView = this.app.views.User;
+    ContactListView = this.app.views.ContactList;
   }
 
-};
+  QBApiCalls.prototype = {
 
-/* Private
----------------------------------------------------------------------- */
-var fail = function(errMsg) {
-  UserView.removeSpinner();
-  $('section:visible .text_error').addClass('is-error').text(errMsg);
-  $('section:visible input:password').val('');
-  $('section:visible .chroma-hash label').css('background-color', 'rgb(255, 255, 255)');
-};
+    init: function(token) {
+      if (typeof token === 'undefined') {
+        QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
+      } else {
+        QB.init(token);
 
-var failUser = function(err) {
-  var errMsg;
+        Session.create(JSON.parse(localStorage['QM.session']), true);
+        UserView.autologin();
+      }
+    },
 
-  if (err.indexOf('already') >= 0)
-    errMsg = QMCONFIG.errors.emailExists;
-  else if (err.indexOf('look like') >= 0)
-    errMsg = QMCONFIG.errors.invalidEmail;
+    checkSession: function(callback) {
+      var self = this;
 
-  $('section:visible input[type="email"]').addClass('is-error');
-  fail(errMsg);
-};
+      if ((new Date()).toISOString() > Session.expirationTime) {
+        // reset QuickBlox JS SDK after autologin via an existing token
+        self.init();
 
-var failForgot = function() {
-  var errMsg = QMCONFIG.errors.notFoundEmail;
-  $('section:visible input[type="email"]').addClass('is-error');
-  fail(errMsg);
-};
+        // recovery session
+        if (Session.authParams.provider) {
+          UserView.getFBStatus(function(token) {
+            Session.authParams.keys.token = token;
+            self.createSession(Session.authParams, callback, Session._remember);
+          });
+        } else {
+          self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
+          Session.encrypt(Session.authParams);
+        }
+        
+      } else {
+        callback();
+      }
+    },
 
-var failSearch = function() {
-  $('.popup:visible .note').removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
-  ContactListView.removeDataSpinner();
-};
+    createSession: function(params, callback, isRemember) {
+      QB.createSession(params, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+          var errMsg,
+              parseErr = JSON.parse(err.detail);
+
+          if (err.code === 401) {
+            errMsg = QMCONFIG.errors.unauthorized;
+            $('section:visible input:not(:checkbox)').addClass('is-error');
+          } else {
+            errMsg = parseErr.errors.email ? parseErr.errors.email[0] :
+                     parseErr.errors.base ? parseErr.errors.base[0] : parseErr.errors[0];
+
+            // This checking is needed when your user has exited from Facebook
+            // and you try to relogin on a project via FB without reload the page.
+            // All you need it is to get the new FB user status and show specific error message
+            if (errMsg.indexOf('Authentication') >= 0) {
+              errMsg = QMCONFIG.errors.crashFBToken;
+              UserView.getFBStatus();
+            
+            // This checking is needed when you trying to connect via FB
+            // and your primary email has already been taken on the project 
+            } else if (errMsg.indexOf('already') >= 0) {
+              errMsg = QMCONFIG.errors.emailExists;
+              UserView.getFBStatus();
+            } else {
+              errMsg = QMCONFIG.errors.session;
+            }
+          }
+
+          fail(errMsg);
+        } else {
+          if (QMCONFIG.debug) console.log('QB SDK: Session is created', res);
+
+          if (Session.token) {
+            Session.update({ token: res.token });
+          } else {
+            Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
+          }
+
+          Session.update({ date: new Date() });
+          callback(res);
+        }
+      });
+    },
+
+    loginUser: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.login(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: User has logged', res);
+
+            Session.update({ date: new Date(), authParams: Session.encrypt(params) });
+            callback(res);
+          }
+        });
+      });
+    },
+
+    logoutUser: function(callback) {
+      if (QMCONFIG.debug) console.log('QB SDK: User has exited');
+      // reset QuickBlox JS SDK after autologin via an existing token
+      this.init();
+      Session.destroy();
+      callback();
+    },
+
+    forgotPassword: function(email, callback) {
+      this.checkSession(function(res) {
+        QB.users.resetPassword(email, function(response) {
+          if (response.code === 404) {
+            if (QMCONFIG.debug) console.log(response.message);
+
+            failForgot();
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent');
+
+            Session.destroy();
+            callback();
+          }
+        });
+      });
+    },
+
+    listUsers: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.users.listUsers(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
+
+            Session.update({ date: new Date() });
+            callback(res);
+          }
+        });
+      });
+    },
+
+    getUser: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.users.get(params, function(err, res) {
+          if (err && err.code === 404) {
+            if (QMCONFIG.debug) console.log(err.message);
+
+            failSearch();
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
+
+            Session.update({ date: new Date() });
+            callback(res);
+          }
+        });
+      });
+    },
+
+    createUser: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.users.create(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+            var parseErr = JSON.parse(err.detail).errors.email[0];
+            failUser(parseErr);
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
+
+            Session.update({ date: new Date() });
+            callback(res);
+          }
+        });
+      });
+    },
+
+    updateUser: function(id, params, callback) {
+      this.checkSession(function(res) {
+        QB.users.update(id, params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+            var parseErr = JSON.parse(err.detail).errors.email[0];
+            failUser(parseErr);
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
+
+            Session.update({ date: new Date() });
+            callback(res);
+          }
+        });
+      });
+    },
+
+    createBlob: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.content.createAndUpload(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
+
+            Session.update({ date: new Date() });
+            callback(res);
+          }
+        });
+      });
+    },
+
+    connectChat: function(jid, callback) {
+      this.checkSession(function(res) {
+        var password = Session.authParams.provider ? Session.token :
+                       Session.decrypt(Session.authParams).password;
+
+        Session.encrypt(Session.authParams);
+        QB.chat.connect({jid: jid, password: password}, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+            if (err.detail.indexOf('Status.ERROR') >= 0 || err.detail.indexOf('Status.AUTHFAIL') >= 0) {
+              fail(err.detail);
+              UserView.logout();
+              window.location.reload();
+            }
+          } else {
+            Session.update({ date: new Date() });
+            callback(res);
+          }
+        });
+      });
+    },
+
+    listDialogs: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.chat.dialog.list(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Dialogs is found', res);
+
+            Session.update({ date: new Date() });
+            callback(res.items);
+          }
+        });
+      });
+    },
+
+    createDialog: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.chat.dialog.create(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Dialog is created', res);
+
+            Session.update({ date: new Date() });
+            callback(res);
+          }
+        });
+      });
+    },
+
+    updateDialog: function(id, params, callback) {
+      this.checkSession(function(res) {
+        QB.chat.dialog.update(id, params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Dialog is updated', res);
+
+            Session.update({ date: new Date() });
+            callback(res);
+          }
+        });
+      });
+    },
+
+    listMessages: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.chat.message.list(params, function(err, res) {
+          if (err) {
+            if (QMCONFIG.debug) console.log(err.detail);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Messages is found', res);
+
+            Session.update({ date: new Date() });
+            callback(res.items);
+          }
+        });
+      });
+    },
+
+    updateMessage: function(id, params, callback) {
+      this.checkSession(function(res) {
+        QB.chat.message.update(id, params, function(response) {
+          if (response.code === 404) {
+            if (QMCONFIG.debug) console.log(response.message);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Message is updated');
+
+            Session.update({ date: new Date() });
+            callback();
+          }
+        });
+      });
+    },
+
+    deleteMessage: function(params, callback) {
+      this.checkSession(function(res) {
+        QB.chat.message.delete(params, function(response) {
+          if (response.code === 404) {
+            if (QMCONFIG.debug) console.log(response.message);
+
+          } else {
+            if (QMCONFIG.debug) console.log('QB SDK: Message is deleted');
+
+            Session.update({ date: new Date() });
+            callback();
+          }
+        });
+      });
+    }
+
+  };
+
+  /* Private
+  ---------------------------------------------------------------------- */
+  var fail = function(errMsg) {
+    UserView.removeSpinner();
+    $('section:visible .text_error').addClass('is-error').text(errMsg);
+    $('section:visible input:password').val('');
+    $('section:visible .chroma-hash label').css('background-color', 'rgb(255, 255, 255)');
+  };
+
+  var failUser = function(err) {
+    var errMsg;
+
+    if (err.indexOf('already') >= 0)
+      errMsg = QMCONFIG.errors.emailExists;
+    else if (err.indexOf('look like') >= 0)
+      errMsg = QMCONFIG.errors.invalidEmail;
+
+    $('section:visible input[type="email"]').addClass('is-error');
+    fail(errMsg);
+  };
+
+  var failForgot = function() {
+    var errMsg = QMCONFIG.errors.notFoundEmail;
+    $('section:visible input[type="email"]').addClass('is-error');
+    fail(errMsg);
+  };
+
+  var failSearch = function() {
+    $('.popup:visible .note').removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
+    ContactListView.removeDataSpinner();
+  };
+
+  return QBApiCalls;
+
+});
