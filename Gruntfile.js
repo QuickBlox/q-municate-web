@@ -17,7 +17,9 @@ module.exports = function (grunt) {
   // configurable paths
   var yeomanConfig = {
     app: 'app',
-    dist: 'dist'
+    dist: 'dist',
+    originalScriptTag: '<script src="scripts/main.js"></script>',
+    tmpScriptTag: '<script src="scripts/.build.js"></script>'
   };
 
   grunt.initConfig({
@@ -27,25 +29,22 @@ module.exports = function (grunt) {
 
     clean: {
       dev: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css'],
-      dist: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css', '<%= yeoman.dist %>/*']
+      dist: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css', '<%= yeoman.dist %>/*'],
+      tmpBuild: ['<%= yeoman.app %>/scripts/.build.js']
     },
 
     compass: {
-      options: {
-        cssDir: '<%= yeoman.app %>/.css',
-        sassDir: '<%= yeoman.app %>/styles',
-        javascriptsDir: '<%= yeoman.app %>/scripts',
-        imagesDir: '<%= yeoman.app %>/images',
-        noLineComments: true,
-        relativeAssets: true,
-        raw: 'preferred_syntax = :scss\n'
-      },
-      dist: {
+      compile: {
         options: {
-          outputStyle: 'compressed'
+          cssDir: '<%= yeoman.app %>/.css',
+          sassDir: '<%= yeoman.app %>/styles',
+          javascriptsDir: '<%= yeoman.app %>/scripts',
+          imagesDir: '<%= yeoman.app %>/images',
+          noLineComments: true,
+          relativeAssets: true,
+          raw: 'preferred_syntax = :scss\n'
         }
-      },
-      dev: {}
+      }
     },
 
     handlebars: {
@@ -60,33 +59,33 @@ module.exports = function (grunt) {
       }
     },
 
-    // bower: {
-    //   all: {
-    //     rjsConfig: '<%= yeoman.app %>/scripts/main.js'
-    //   }
-    // },
+    bower: {
+      all: {
+        rjsConfig: '<%= yeoman.app %>/scripts/main.js',
+        options: {
+          exclude: ['modernizr', 'requirejs']
+        }
+      }
+    },
 
-    // requirejs: {
-    //   dist: {
-    //     // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
-
-    //     options: {
-    //       mainConfigFile: "<%= yeoman.app %>/scripts/main.js",
-    //       baseUrl: '<%= yeoman.app %>/scripts',
-    //       name: 'main',
-    //       optimize: 'none',
-    //       paths: {
-    //         'templates': '../../.tmp/scripts/templates',
-    //         'jquery': '../../<%= yeoman.app %>/bower_components/jquery/dist/jquery.min',
-    //         'underscore': '../../<%= yeoman.app %>/bower_components/lodash/dist/lodash.min',
-    //         'backbone': '../../<%= yeoman.app %>/bower_components/backbone/backbone'
-    //       },
-    //       out: "<%= yeoman.dist %>/scripts/main.min.js",
-    //       preserveLicenseComments: false,
-    //       useStrict: true
-    //     }
-    //   }
-    // },
+    requirejs: {
+      dist: {
+        options: {
+          baseUrl: '<%= yeoman.app %>/scripts',
+          mainConfigFile: "<%= yeoman.app %>/scripts/main.js",
+          name: 'main',
+          optimize: 'none',
+          out: "<%= yeoman.app %>/scripts/.build.js",
+          
+          paths: {
+            'templates': '.tmp/scripts/templates'
+          },
+          
+          almond: false,
+          preserveLicenseComments: false
+        }
+      }
+    },
 
     watch: {
       options: {
@@ -94,12 +93,8 @@ module.exports = function (grunt) {
       },
       css: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.scss'],
-        tasks: ['compass:dev']
+        tasks: ['compass']
       },
-      // scripts: {
-      //   files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-      //   tasks: []
-      // },
       handlebars: {
         files: [
           '<%= yeoman.app %>/scripts/templates/*.hbs'
@@ -253,6 +248,17 @@ module.exports = function (grunt) {
     grunt.file.write('.tmp/scripts/templates.js', 'this.JST = this.JST || {};');
   });
 
+  grunt.registerTask('createTmpScriptTag', function (rollBack) {
+    var path = yeomanConfig.app + '/index.html';
+    var indexFile = grunt.file.read(path);
+    if (typeof rollBack === 'undefined') {
+      grunt.file.write(path, indexFile.replace(yeomanConfig.originalScriptTag, yeomanConfig.tmpScriptTag));
+    } else {
+      grunt.file.write(path, indexFile.replace(yeomanConfig.tmpScriptTag, yeomanConfig.originalScriptTag));
+      grunt.task.run(['clean:tmpBuild']);
+    }
+  });
+
   grunt.registerTask('server', function (target) {
     grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
     grunt.task.run(['serve' + (target ? ':' + target : '')]);
@@ -276,7 +282,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:dev',
-      'compass:dev',
+      'compass',
       'createDefaultTemplate',
       'handlebars',
       'connect:dev',
@@ -306,11 +312,12 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'compass:dist',
+    'compass',
     'createDefaultTemplate',
     'handlebars',
+    'requirejs',
+    'createTmpScriptTag',
     'useminPrepare',
-    // 'requirejs',
     'concat',
     'cssmin',
     'uglify',
@@ -318,7 +325,8 @@ module.exports = function (grunt) {
     'htmlmin',
     'rev',
     'usemin',
-    'copy'
+    'copy',
+    'createTmpScriptTag:rollBack'
   ]);
 
   grunt.registerTask('default', [
