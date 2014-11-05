@@ -1,9 +1,6 @@
 'use strict';
 
 var SERVER_PORT = 9000;
-var mountFolder = function (connect, dir) {
-  return connect.static(require('path').resolve(dir));
-};
 
 // # Globbing
 // for performance reasons we're only matching one level down:
@@ -29,13 +26,13 @@ module.exports = function (grunt) {
     banner: '/* <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n',
 
     clean: {
-      dev: ['.sass-cache', '.tmp'],
-      dist: ['.sass-cache', '.tmp', '<%= yeoman.dist %>/*']
+      dev: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css'],
+      dist: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css', '<%= yeoman.dist %>/*']
     },
 
     compass: {
       options: {
-        cssDir: '.tmp/css',
+        cssDir: '<%= yeoman.app %>/.css',
         sassDir: '<%= yeoman.app %>/styles',
         javascriptsDir: '<%= yeoman.app %>/scripts',
         imagesDir: '<%= yeoman.app %>/images',
@@ -185,11 +182,6 @@ module.exports = function (grunt) {
             'audio/{,*/}*.*'
           ],
           dest: '<%= yeoman.dist %>'
-        }, {
-          expand: true,
-          cwd: '<%= yeoman.app %>/vendor/emoji/',
-          src: '{,*/}*.{png,jpg,jpeg,svg}',
-          dest: '<%= yeoman.dist %>'
         }]
       }
     },
@@ -197,46 +189,38 @@ module.exports = function (grunt) {
     connect: {
       options: {
         port: grunt.option('port') || SERVER_PORT,
+        open: true,
         // change this to '0.0.0.0' to access the server from outside
         hostname: 'localhost'
       },
       dev: {
         options: {
-          middleware: function (connect) {
-            return [
-              mountFolder(connect, '.tmp'),
-              mountFolder(connect, yeomanConfig.app)
-            ];
-          }
+          base: [
+            '.tmp',
+            '<%= yeoman.app %>'
+          ]
         }
       },
       test: {
         options: {
           port: 9001,
-          middleware: function (connect) {
-            return [
-              mountFolder(connect, '.tmp'),
-              mountFolder(connect, 'test'),
-              mountFolder(connect, yeomanConfig.app)
-            ];
-          }
+          open: false,
+          base: [
+            '.tmp',
+            'test',
+            '<%= yeoman.app %>'
+          ]
         }
       },
       dist: {
         options: {
-          middleware: function (connect) {
-            return [
-              mountFolder(connect, yeomanConfig.dist)
-            ];
-          }
+          protocol: 'https',
+          base: '<%= yeoman.dist %>'
         }
       }
     },
 
     open: {
-      server: {
-        path: 'http://localhost:<%= connect.options.port %>'
-      },
       test: {
         path: 'http://localhost:<%= connect.test.options.port %>'
       }
@@ -276,7 +260,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
-      return grunt.task.run(['build', 'open:server', 'connect:dist:keepalive']);
+      return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
 
     if (target === 'test') {
@@ -296,7 +280,6 @@ module.exports = function (grunt) {
       'createDefaultTemplate',
       'handlebars',
       'connect:dev',
-      'open:server',
       'watch'
     ]);
   });
@@ -309,7 +292,7 @@ module.exports = function (grunt) {
         'createDefaultTemplate',
         'handlebars',
         'connect:test',
-        'mocha',
+        'mocha'
       ];
 
     if(!isConnected) {
