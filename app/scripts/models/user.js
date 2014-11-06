@@ -5,7 +5,7 @@
  *
  */
 
-define(['config', 'quickblox'], function(QMCONFIG, QB) {
+define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
   var tempParams;
 

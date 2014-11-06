@@ -5,7 +5,7 @@
  *
  */
 
-define(['config', 'quickblox', 'underscore', 'progressbar'], function(QMCONFIG, QB, _, ProgressBar) {
+define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function($, QMCONFIG, QB, _, ProgressBar) {
 
   var User, Message, Attach;
   var self;

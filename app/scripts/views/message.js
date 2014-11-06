@@ -5,8 +5,8 @@
  *
  */
 
-define(['config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
-        function(QMCONFIG, QB, _, minEmoji) {
+define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
+        function($, QMCONFIG, QB, _, minEmoji) {
 
   var Session, User, Message, ContactList, Dialog;
   var self;

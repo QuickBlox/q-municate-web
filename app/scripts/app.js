@@ -6,13 +6,13 @@
  */
 
 define([
-    'UserModule', 'SessionModule', 'ContactModule',
+    'jquery', 'UserModule', 'SessionModule', 'ContactModule',
     'DialogModule', 'MessageModule', 'AttachModule',
     'ContactListModule', 'UserView', 'DialogView',
     'MessageView', 'AttachView', 'ContactListView',
     'Routes', 'QBApiCalls', 'config', 'chromaHash'
   ], function(
-    User, Session, Contact, Dialog,
+    $, User, Session, Contact, Dialog,
     Message, Attach, ContactList, UserView,
     DialogView, MessageView, AttachView,
     ContactListView, Routes, QBApiCalls, QMCONFIG

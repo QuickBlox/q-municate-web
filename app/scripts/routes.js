@@ -5,7 +5,7 @@
  *
  */
 
-define(['config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], function(QMCONFIG, minEmoji) {
+define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, minEmoji) {
 
   var Session, Dialog, UserView, ContactListView, DialogView, MessageView, AttachView;
   var chatName, editedChatName;

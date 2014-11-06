@@ -5,7 +5,7 @@
  *
  */
 
-define(['config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mousewheel'], function(QMCONFIG, QB, _) {
+define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, QB, _) {
 
   var Dialog, Message, ContactList, User;
 

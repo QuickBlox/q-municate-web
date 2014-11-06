@@ -5,9 +5,9 @@
  *
  */
 
-define(['config', 'quickblox', 'underscore',
+define(['jquery', 'config', 'quickblox', 'underscore',
   'mCustomScrollbar', 'nicescroll', 'mousewheel'],
-function(QMCONFIG, QB, _) {
+function($, QMCONFIG, QB, _) {
 
   var User, Dialog, Message, ContactList;
   var unreadDialogs = {};
