@@ -19,13 +19,14 @@ require.config({
     },
     minEmoji: {
       exports: 'minEmoji'
-    }
+    },
+    chromaHash: ['jquery']
   },
   paths: {
     // libs
-    jquery: 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min',
     cryptojs: '//crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes',
     videojs: '//vjs.zencdn.net/4.6/video',
+    jquery: '../bower_components/jquery/dist/jquery',
     underscore: '../bower_components/underscore/underscore',
     // lodash: '../bower_components/lodash/dist/lodash',
     backbone: '../bower_components/backbone/backbone',
@@ -71,6 +72,7 @@ require([
   'backbone'
 ], function ($, QMCONFIG, minEmoji, QM, Backbone) {
   var APP;
+  // Backbone.history.start();
 
   // Application initialization
   $(document).ready(function() {
