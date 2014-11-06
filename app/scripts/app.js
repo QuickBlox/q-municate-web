@@ -52,12 +52,19 @@ define([
       // Checking if autologin was chosen
       if (localStorage['QM.session'] && localStorage['QM.user'] &&
           // new format of storage data (20.07.2014)
-          JSON.parse(localStorage['QM.user']).user_jid) {
+          JSON.parse(localStorage['QM.user']).user_jid &&
+          // is requirejs format of app modules
+          localStorage['QM.isRequireJsUsed']) {
         
         token = JSON.parse(localStorage['QM.session']).token;
         this.service.init(token);
 
+      } else if (localStorage['QM.isRequireJsUsed']) {
+        this.service.init();
       } else {
+        // removing the old cached data from LocalStorage
+        localStorage.clear();
+        localStorage.setItem('QM.isRequireJsUsed', '1');
         this.service.init();
       }
 
