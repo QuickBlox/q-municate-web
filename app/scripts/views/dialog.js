@@ -400,14 +400,17 @@ function($, QMCONFIG, QB, _) {
 
       objDom.mCustomScrollbar({
         theme: 'minimal-dark',
-        scrollInertia: 1000,
+        scrollInertia: 0,
+        mouseWheel: {
+          scrollAmount: 60
+        },
         setTop: height + 'px',
         callbacks: {
           onTotalScrollBack: function() {
             ajaxDownloading(objDom, self);
-          },
-          alwaysTriggerOffsets: false
-        }
+          }
+        },
+        live: true
       });
     },
 
@@ -502,7 +505,11 @@ function($, QMCONFIG, QB, _) {
   function scrollbar() {
     $('.l-sidebar .scrollbar').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 1000
+      scrollInertia: 0,
+      mouseWheel: {
+        scrollAmount: 60
+      },
+      live: true
     });
   }
 
