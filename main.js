@@ -1684,7 +1684,10 @@ Routes.prototype = {
 
     $('.smiles-group').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 150
+      scrollInertia: 100,
+      mouseWheel: {
+        scrollAmount: 30
+      }
     });
 
     $('.em-wrap').on('click', function() {
@@ -2184,7 +2187,10 @@ Routes.prototype = {
 function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 50,
+    scrollInertia: 100,
+    mouseWheel: {
+      scrollAmount: 28
+    },
     live: true
   });
 }
@@ -2998,7 +3004,10 @@ function openPopup(objDom, type, dialog_id) {
 function scrollbarContacts() {
   $('.scrollbarContacts').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 150,
+    scrollInertia: 0,
+    mouseWheel: {
+      scrollAmount: 60
+    },
     live: true
   });
 }
@@ -3006,13 +3015,16 @@ function scrollbarContacts() {
 function scrollbar(list, self) {
   list.mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 150,
+    scrollInertia: 0,
+    mouseWheel: {
+      scrollAmount: 60
+    },
     callbacks: {
       onTotalScroll: function() {
         ajaxDownloading(list, self);
-      },
-      alwaysTriggerOffsets: false
-    }
+      }
+    },
+    live: true
   });
 }
 
@@ -3480,14 +3492,17 @@ DialogView.prototype = {
 
     objDom.mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 1000,
+      scrollInertia: 0,
+      mouseWheel: {
+        scrollAmount: 60
+      },
       setTop: height + 'px',
       callbacks: {
         onTotalScrollBack: function() {
           ajaxDownloading(objDom, self);
-        },
-        alwaysTriggerOffsets: false
-      }
+        }
+      },
+      live: true
     });
   },
 
@@ -3582,7 +3597,11 @@ DialogView.prototype = {
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 1000
+    scrollInertia: 0,
+    mouseWheel: {
+      scrollAmount: 60
+    },
+    live: true
   });
 }
 
