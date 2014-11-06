@@ -466,7 +466,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
   function scrollbarContacts() {
     $('.scrollbarContacts').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 150,
+      scrollInertia: 0,
+      mouseWheel: {
+        scrollAmount: 60
+      },
       live: true
     });
   }
@@ -474,13 +477,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
   function scrollbar(list, self) {
     list.mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 150,
+      scrollInertia: 0,
+      mouseWheel: {
+        scrollAmount: 60
+      },
       callbacks: {
         onTotalScroll: function() {
           ajaxDownloading(list, self);
-        },
-        alwaysTriggerOffsets: false
-      }
+        }
+      },
+      live: true
     });
   }
 
