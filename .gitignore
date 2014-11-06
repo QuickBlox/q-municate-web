@@ -7,7 +7,7 @@ app/bower_components
 node_modules
 
 # production environment
-dist
+# dist
 
 # test environment
 test/bower_components/
