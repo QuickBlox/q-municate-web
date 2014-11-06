@@ -19,6 +19,7 @@
     "grunt-bower-requirejs": "^1.1.0",
     "grunt-requirejs": "^0.4.2",
     "grunt-usemin": "^2.4.0",
+    "grunt-newer": "^0.8.0",
     "grunt-rev": "^0.1.0",
     "grunt-open": "^0.2.3",
     "grunt-mocha": "^0.4.11",

@@ -29,7 +29,8 @@ module.exports = function (grunt) {
 
     clean: {
       dev: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css'],
-      dist: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css', '<%= yeoman.dist %>/*'],
+      dist: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css',
+             '<%= yeoman.dist %>/scripts', '<%= yeoman.dist %>/styles', '<%= yeoman.dist %>/vendor'],
       tmpBuild: ['<%= yeoman.app %>/scripts/.build.js']
     },
 
@@ -321,11 +322,11 @@ module.exports = function (grunt) {
     'concat',
     'cssmin',
     'uglify',
-    'imagemin',
+    'newer:imagemin',
     'htmlmin',
     'rev',
     'usemin',
-    'copy',
+    'newer:copy',
     'createTmpScriptTag:rollBack'
   ]);
 
