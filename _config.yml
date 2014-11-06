@@ -1,4 +1,0 @@
-gems:
-  - jekyll-redirect-from
-
-baseurl: 'http://quickblox.github.io/q-municate-web/dist/'
