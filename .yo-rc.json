@@ -1,0 +1,12 @@
+{
+  "generator-backbone": {
+    "appPath": "app",
+    "appName": "q-municate",
+    "coffee": false,
+    "testFramework": "mocha",
+    "templateFramework": "handlebars",
+    "compassBootstrap": false,
+    "includeRequireJS": true
+  },
+  "generator-mocha": {}
+}
