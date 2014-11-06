@@ -1,1 +1,14 @@
-.sass-cache/
+.sass-cache
+app/.css
+.tmp
+
+# bower & npm packages
+app/bower_components
+node_modules
+
+# production environment
+# dist
+
+# test environment
+test/bower_components/
+test/temp
