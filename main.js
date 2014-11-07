@@ -1684,10 +1684,10 @@ Routes.prototype = {
 
     $('.smiles-group').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 150,
+      scrollInertia: 0,
       mouseWheel: {
-        scrollAmount: 30,
-        normalizeDelta: true
+        scrollAmount: QMCONFIG.isMac || 30,
+        deltaFactor: -1
       }
     });
 
@@ -2188,10 +2188,10 @@ Routes.prototype = {
 function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 150,
+    scrollInertia: 0,
     mouseWheel: {
-      scrollAmount: 28,
-      normalizeDelta: true
+      scrollAmount: QMCONFIG.isMac || 28,
+      deltaFactor: -1
     },
     live: true
   });
@@ -3006,10 +3006,10 @@ function openPopup(objDom, type, dialog_id) {
 function scrollbarContacts() {
   $('.scrollbarContacts').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 150,
+    scrollInertia: 0,
     mouseWheel: {
-      scrollAmount: 60,
-      normalizeDelta: true
+      scrollAmount: QMCONFIG.isMac || 60,
+      deltaFactor: -1
     },
     live: true
   });
@@ -3018,10 +3018,10 @@ function scrollbarContacts() {
 function scrollbar(list, self) {
   list.mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 150,
+    scrollInertia: 0,
     mouseWheel: {
-      scrollAmount: 60,
-      normalizeDelta: true
+      scrollAmount: QMCONFIG.isMac || 60,
+      deltaFactor: -1
     },
     callbacks: {
       onTotalScroll: function() {
@@ -3496,10 +3496,10 @@ DialogView.prototype = {
 
     objDom.mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 150,
+      scrollInertia: 0,
       mouseWheel: {
-        scrollAmount: 90,
-        normalizeDelta: true
+        scrollAmount: QMCONFIG.isMac || 90,
+        deltaFactor: -1
       },
       setTop: height + 'px',
       callbacks: {
@@ -3602,10 +3602,10 @@ DialogView.prototype = {
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 150,
+    scrollInertia: 0,
     mouseWheel: {
-      scrollAmount: 60,
-      normalizeDelta: true
+      scrollAmount: QMCONFIG.isMac || 60,
+      deltaFactor: -1
     },
     live: true
   });
