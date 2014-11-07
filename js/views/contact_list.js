@@ -468,9 +468,10 @@ function openPopup(objDom, type, dialog_id) {
 function scrollbarContacts() {
   $('.scrollbarContacts').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 0,
+    scrollInertia: 150,
     mouseWheel: {
-      scrollAmount: 60
+      scrollAmount: 60,
+      normalizeDelta: true
     },
     live: true
   });
@@ -479,9 +480,10 @@ function scrollbarContacts() {
 function scrollbar(list, self) {
   list.mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 0,
+    scrollInertia: 150,
     mouseWheel: {
-      scrollAmount: 60
+      scrollAmount: 60,
+      normalizeDelta: true
     },
     callbacks: {
       onTotalScroll: function() {

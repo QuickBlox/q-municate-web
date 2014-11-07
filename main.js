@@ -1684,9 +1684,10 @@ Routes.prototype = {
 
     $('.smiles-group').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 100,
+      scrollInertia: 150,
       mouseWheel: {
-        scrollAmount: 30
+        scrollAmount: 30,
+        normalizeDelta: true
       }
     });
 
@@ -2187,9 +2188,10 @@ Routes.prototype = {
 function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 100,
+    scrollInertia: 150,
     mouseWheel: {
-      scrollAmount: 28
+      scrollAmount: 28,
+      normalizeDelta: true
     },
     live: true
   });
@@ -3004,9 +3006,10 @@ function openPopup(objDom, type, dialog_id) {
 function scrollbarContacts() {
   $('.scrollbarContacts').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 0,
+    scrollInertia: 150,
     mouseWheel: {
-      scrollAmount: 60
+      scrollAmount: 60,
+      normalizeDelta: true
     },
     live: true
   });
@@ -3015,9 +3018,10 @@ function scrollbarContacts() {
 function scrollbar(list, self) {
   list.mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 0,
+    scrollInertia: 150,
     mouseWheel: {
-      scrollAmount: 60
+      scrollAmount: 60,
+      normalizeDelta: true
     },
     callbacks: {
       onTotalScroll: function() {
@@ -3492,9 +3496,10 @@ DialogView.prototype = {
 
     objDom.mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 150,
       mouseWheel: {
-        scrollAmount: 60
+        scrollAmount: 90,
+        normalizeDelta: true
       },
       setTop: height + 'px',
       callbacks: {
@@ -3597,9 +3602,10 @@ DialogView.prototype = {
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 0,
+    scrollInertia: 150,
     mouseWheel: {
-      scrollAmount: 60
+      scrollAmount: 60,
+      normalizeDelta: true
     },
     live: true
   });
