@@ -67,10 +67,10 @@ Routes.prototype = {
 
     $('.smiles-group').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 150,
+      scrollInertia: 0,
       mouseWheel: {
-        scrollAmount: 30,
-        normalizeDelta: true
+        scrollAmount: QMCONFIG.isMac || 30,
+        deltaFactor: -1
       }
     });
 
@@ -571,10 +571,10 @@ Routes.prototype = {
 function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 150,
+    scrollInertia: 0,
     mouseWheel: {
-      scrollAmount: 28,
-      normalizeDelta: true
+      scrollAmount: QMCONFIG.isMac || 28,
+      deltaFactor: -1
     },
     live: true
   });
