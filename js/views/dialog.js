@@ -398,9 +398,10 @@ DialogView.prototype = {
 
     objDom.mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 150,
       mouseWheel: {
-        scrollAmount: 60
+        scrollAmount: 90,
+        normalizeDelta: true
       },
       setTop: height + 'px',
       callbacks: {
@@ -503,9 +504,10 @@ DialogView.prototype = {
 function scrollbar() {
   $('.l-sidebar .scrollbar').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 0,
+    scrollInertia: 150,
     mouseWheel: {
-      scrollAmount: 60
+      scrollAmount: 60,
+      normalizeDelta: true
     },
     live: true
   });

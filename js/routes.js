@@ -67,9 +67,10 @@ Routes.prototype = {
 
     $('.smiles-group').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 100,
+      scrollInertia: 150,
       mouseWheel: {
-        scrollAmount: 30
+        scrollAmount: 30,
+        normalizeDelta: true
       }
     });
 
@@ -570,9 +571,10 @@ Routes.prototype = {
 function occupantScrollbar() {
   $('.chat-occupants').mCustomScrollbar({
     theme: 'minimal-dark',
-    scrollInertia: 100,
+    scrollInertia: 150,
     mouseWheel: {
-      scrollAmount: 28
+      scrollAmount: 28,
+      normalizeDelta: true
     },
     live: true
   });
