@@ -468,7 +468,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       theme: 'minimal-dark',
       scrollInertia: 0,
       mouseWheel: {
-        scrollAmount: 60
+        scrollAmount: QMCONFIG.isMac || 60,
+        deltaFactor: -1
       },
       live: true
     });
@@ -479,7 +480,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       theme: 'minimal-dark',
       scrollInertia: 0,
       mouseWheel: {
-        scrollAmount: 60
+        scrollAmount: QMCONFIG.isMac || 60,
+        deltaFactor: -1
       },
       callbacks: {
         onTotalScroll: function() {

@@ -402,7 +402,8 @@ function($, QMCONFIG, QB, _) {
         theme: 'minimal-dark',
         scrollInertia: 0,
         mouseWheel: {
-          scrollAmount: 60
+          scrollAmount: QMCONFIG.isMac || 90,
+          deltaFactor: -1
         },
         setTop: height + 'px',
         callbacks: {
@@ -507,7 +508,8 @@ function($, QMCONFIG, QB, _) {
       theme: 'minimal-dark',
       scrollInertia: 0,
       mouseWheel: {
-        scrollAmount: 60
+        scrollAmount: QMCONFIG.isMac || 60,
+        deltaFactor: -1
       },
       live: true
     });
