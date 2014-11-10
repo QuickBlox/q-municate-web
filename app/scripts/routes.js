@@ -67,9 +67,10 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
       $('.smiles-group').mCustomScrollbar({
         theme: 'minimal-dark',
-        scrollInertia: 100,
+        scrollInertia: 0,
         mouseWheel: {
-          scrollAmount: 30
+          scrollAmount: QMCONFIG.isMac || 30,
+          deltaFactor: -1
         }
       });
 
@@ -570,9 +571,10 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
   function occupantScrollbar() {
     $('.chat-occupants').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 100,
+      scrollInertia: 0,
       mouseWheel: {
-        scrollAmount: 28
+        scrollAmount: QMCONFIG.isMac || 28,
+        deltaFactor: -1
       },
       live: true
     });
