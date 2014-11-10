@@ -1,5 +1,5 @@
 .em {
-	background: url(/images/apple_sprite.png) top left no-repeat;
+	background: url(../images/apple_sprite.png) top left no-repeat;
 	width: 20px;
 	height: 20px;
 	display: -moz-inline-stack;
