@@ -27,7 +27,7 @@ require.config({
     // lodash: '../bower_components/lodash/dist/lodash',
     backbone: '../bower_components/backbone/backbone',
     handlebars: '../bower_components/handlebars/handlebars',
-    quickblox: '../bower_components/quickblox/quickblox',
+    quickblox: '../bower_components/quickblox/quickblox.min',
     progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
     loadImage: '../bower_components/blueimp-load-image/js/load-image',
     canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',

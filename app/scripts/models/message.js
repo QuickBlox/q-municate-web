@@ -52,7 +52,6 @@ define(function() {
       };
 
       if (message.attachment) {
-        message.attachment.id = parseInt(message.attachment.id);
         message.attachment.size = parseInt(message.attachment.size);
       }
 

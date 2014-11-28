@@ -7,13 +7,12 @@
 
 define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, minEmoji) {
 
-  var Session, Dialog, UserView, ContactListView, DialogView, MessageView, AttachView;
+  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView;
   var chatName, editedChatName;
 
   function Routes(app) {
     this.app = app;
     
-    Session = this.app.models.Session;
     Dialog = this.app.models.Dialog;
     UserView = this.app.views.User;
     ContactListView = this.app.views.ContactList;
@@ -102,7 +101,6 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
         var name = $(this).data('name'),
             url = $(this).data('url'),
-            uid = $(this).data('uid'),
             attachType;
 
         if ($(this).is('.preview-photo')) {
@@ -112,7 +110,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
           $('.attach-video').removeClass('is-hidden').siblings('.attach-photo').addClass('is-hidden');
           attachType = 'video';
         }
-        openAttachPopup($('#popupAttach'), name, url, uid, attachType);
+        openAttachPopup($('#popupAttach'), name, url, attachType);
       });
 
       /* group chats
@@ -626,14 +624,14 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
     objDom.add('.popups').addClass('is-overlay');
   }
 
-  function openAttachPopup(objDom, name, url, uid, attachType) {
+  function openAttachPopup(objDom, name, url, attachType) {
     if (attachType === 'video')
       objDom.find('.attach-video video').attr('src', url);
     else
       objDom.find('.attach-photo').attr('src', url);
     
     objDom.find('.attach-name').text(name);
-    objDom.find('.attach-download').attr('href', getFileDownloadLink(uid));
+    objDom.find('.attach-download').attr('href', url).attr('download', name);
     objDom.add('.popups').addClass('is-overlay');
   }
 
@@ -641,10 +639,6 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
     $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
     $('.temp-box').remove();
     if ($('.attach-video video')[0]) $('.attach-video video')[0].pause();
-  }
-
-  function getFileDownloadLink(uid) {
-    return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
   }
 
   function setCursorToEnd(el) {
