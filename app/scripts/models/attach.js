@@ -23,13 +23,16 @@ define(['loadImage', 'canvasToBlob'], function(loadImage, dataURLtoBlob) {
     },
 
     create: function(blob, size) {
+      var type = blob.content_type.indexOf('audio/') === 0 ? 'audio' :
+                 blob.content_type.indexOf('video/') === 0 ? 'video' :
+                 'photo';
+
       return {
-        id: blob.id,
-        type: blob.content_type,
+        type: type,
+        url: blob.path && blob.path.replace('http://', 'https://') || null,
         name: blob.name,
         size: size,
-        url: blob.path && blob.path.replace('http://', 'https://') || null,
-        uid: blob.uid
+        'content-type': blob.content_type
       };
     },
 
