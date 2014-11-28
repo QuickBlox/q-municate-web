@@ -57,13 +57,12 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
         }
 
         // send notification about subscribe
-        QB.chat.send(jid, {type: 'chat', extension: {
+        QB.chat.send(jid, {type: 'chat', body: 'Contact request ', extension: {
           save_to_history: 1,
           dialog_id: dialog.id,
           date_sent: Math.floor(Date.now() / 1000),
 
-          notification_type: '4',
-          occupants_ids: User.contact.id + ',' + id
+          notification_type: '4'
         }});
 
         ContactList.add(dialog.occupants_ids, null, function() {

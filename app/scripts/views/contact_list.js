@@ -171,13 +171,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
 
           if (dialogItem) {
             // send notification about subscribe
-            QB.chat.send(jid, {type: 'chat', extension: {
+            QB.chat.send(jid, {type: 'chat', body: 'Contact request ', extension: {
               save_to_history: 1,
               dialog_id: dialogItem.getAttribute('data-dialog'),
               date_sent: time,
 
-              notification_type: '4',
-              occupants_ids: User.contact.id + ',' + id
+              notification_type: '4'
             }});
 
             message = Message.create({
@@ -236,7 +235,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
 
       QB.chat.roster.confirm(jid, function() {
         // send notification about confirm
-        QB.chat.send(jid, {type: 'chat', extension: {
+        QB.chat.send(jid, {type: 'chat', body: 'Contact request ', extension: {
           save_to_history: 1,
           dialog_id: hiddenDialogs[id],
           date_sent: time,
@@ -311,7 +310,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
 
       QB.chat.roster.reject(jid, function() {
         // send notification about reject
-        QB.chat.send(jid, {type: 'chat', extension: {
+        QB.chat.send(jid, {type: 'chat', body: 'Contact request ', extension: {
           save_to_history: 1,
           dialog_id: hiddenDialogs[id],
           date_sent: Math.floor(Date.now() / 1000),
@@ -341,7 +340,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       localStorage.removeItem('QM.dialog-' + dialog_id);
 
       // send notification about reject
-      QB.chat.send(jid, {type: 'chat', extension: {
+      QB.chat.send(jid, {type: 'chat', body: 'Contact request ', extension: {
         save_to_history: 1,
         dialog_id: dialog_id,
         date_sent: Math.floor(Date.now() / 1000),

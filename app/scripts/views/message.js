@@ -40,7 +40,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
           i, len, user;
 
-      if (typeof chat[0] === 'undefined' || (!message.body && !message.notification_type && !message.attachment)) return true;
+      if (typeof chat[0] === 'undefined' || (!message.notification_type && !message.attachment && !message.body)) return true;
 
       this.checkSenderId(message.sender_id, function() {
 
