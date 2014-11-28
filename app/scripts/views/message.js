@@ -54,7 +54,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
         switch (type) {
         case '1':
-          occupants_ids = message.occupants_ids.split(',').map(Number);
+          occupants_ids = _.without(message.occupants_ids.split(',').map(Number), contact.id);
 
           for (i = 0, len = occupants_ids.length, user; i < len; i++) {
             user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
@@ -275,7 +275,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         // send message
         QB.chat.send(jid, {type: type, body: val, extension: {
           save_to_history: 1,
-          dialog_id: dialog_id,
+          // dialog_id: dialog_id,
           date_sent: time
         }});
 

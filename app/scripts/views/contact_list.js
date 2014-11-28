@@ -173,7 +173,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
             // send notification about subscribe
             QB.chat.send(jid, {type: 'chat', body: 'Contact request ', extension: {
               save_to_history: 1,
-              dialog_id: dialogItem.getAttribute('data-dialog'),
+              // dialog_id: dialogItem.getAttribute('data-dialog'),
               date_sent: time,
 
               notification_type: '4'
@@ -237,7 +237,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         // send notification about confirm
         QB.chat.send(jid, {type: 'chat', body: 'Contact request ', extension: {
           save_to_history: 1,
-          dialog_id: hiddenDialogs[id],
+          // dialog_id: hiddenDialogs[id],
           date_sent: time,
 
           notification_type: '5'
@@ -312,7 +312,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         // send notification about reject
         QB.chat.send(jid, {type: 'chat', body: 'Contact request ', extension: {
           save_to_history: 1,
-          dialog_id: hiddenDialogs[id],
+          // dialog_id: hiddenDialogs[id],
           date_sent: Math.floor(Date.now() / 1000),
 
           notification_type: '6'
@@ -342,7 +342,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       // send notification about reject
       QB.chat.send(jid, {type: 'chat', body: 'Contact request ', extension: {
         save_to_history: 1,
-        dialog_id: dialog_id,
+        // dialog_id: dialog_id,
         date_sent: Math.floor(Date.now() / 1000),
 
         notification_type: '7'
