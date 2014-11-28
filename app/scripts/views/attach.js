@@ -179,9 +179,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           copyDialogItem;
         
       // send message
-      QB.chat.send(jid, {type: type, extension: {
+      QB.chat.send(jid, {type: type, body: 'Attachment', extension: {
         save_to_history: 1,
-        dialog_id: dialog_id,
+        // dialog_id: dialog_id,
         date_sent: time,
 
         attachments: [

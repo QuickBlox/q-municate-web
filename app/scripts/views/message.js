@@ -8,12 +8,11 @@
 define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         function($, QMCONFIG, QB, _, minEmoji) {
 
-  var Session, User, Message, ContactList, Dialog;
+  var User, Message, ContactList, Dialog;
   var self;
 
   function MessageView(app) {
     this.app = app;
-    Session = this.app.models.Session;
     User = this.app.models.User;
     Dialog = this.app.models.Dialog;
     Message = this.app.models.Message;
@@ -40,14 +39,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
           i, len, user;
 
-      if (typeof chat[0] === 'undefined' || (!message.body && !message.notification_type && !message.attachment)) return true;
+      if (typeof chat[0] === 'undefined' || (!message.notification_type && !message.attachment && !message.body)) return true;
 
       this.checkSenderId(message.sender_id, function() {
 
         var contacts = ContactListMsg.contacts,
             contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
             type = message.notification_type || 'message',
-            attachType = message.attachment && message.attachment.type,
+            attachType = message.attachment && message.attachment['content-type'],
             recipient = contacts[recipientId] || null,
             occupants_names = '',
             occupants_ids,
@@ -55,7 +54,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
         switch (type) {
         case '1':
-          occupants_ids = message.occupants_ids.split(',').map(Number);
+          occupants_ids = _.without(message.occupants_ids.split(',').map(Number), contact.id);
 
           for (i = 0, len = occupants_ids.length, user; i < len; i++) {
             user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
@@ -189,7 +188,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           if (attachType && attachType.indexOf('image') > -1) {
 
             html += '<div class="message-body">';
-            html += '<div class="preview preview-photo" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'">';
+            html += '<div class="preview preview-photo" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'">';
             html += '<img src="'+message.attachment.url+'" alt="attach">';
             html += '</div></div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
@@ -201,24 +200,24 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html += '<audio src="'+message.attachment.url+'" controls></audio>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
-            html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
+            html += '<a href="'+message.attachment.url+'" download="'+message.attachment.name+'">Download</a></time>';
 
           } else if (attachType && attachType.indexOf('video') > -1) {
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<div class="preview preview-video" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'" data-uid="'+message.attachment.uid+'"></div>';
+            html += '<div class="preview preview-video" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'"></div>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
 
           } else if (attachType) {
 
             html += '<div class="message-body">';
-            html += '<a class="attach-file" href="'+getFileDownloadLink(message.attachment.uid)+'" download>'+message.attachment.name+'</a>';
+            html += '<a class="attach-file" href="'+message.attachment.url+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
             html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
-            html += '<a href="'+getFileDownloadLink(message.attachment.uid)+'" download>Download</a></time>';
+            html += '<a href="'+message.attachment.url+'" download="'+message.attachment.name+'">Download</a></time>';
 
           } else {
             html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
@@ -276,7 +275,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         // send message
         QB.chat.send(jid, {type: type, body: val, extension: {
           save_to_history: 1,
-          dialog_id: dialog_id,
+          // dialog_id: dialog_id,
           date_sent: time
         }});
 
@@ -461,10 +460,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
   function getFileSize(size) {
     return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
-  }
-
-  function getFileDownloadLink(uid) {
-    return 'https://api.quickblox.com/blobs/'+uid+'?token='+Session.token;
   }
 
   function fixScroll(chat) {

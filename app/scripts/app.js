@@ -53,18 +53,18 @@ define([
       if (localStorage['QM.session'] && localStorage['QM.user'] &&
           // new format of storage data (20.07.2014)
           JSON.parse(localStorage['QM.user']).user_jid &&
-          // is requirejs format of app modules
-          localStorage['QM.isRequireJsUsed']) {
+          // the integration was done
+          localStorage['QM.isIntegration']) {
         
         token = JSON.parse(localStorage['QM.session']).token;
         this.service.init(token);
 
-      } else if (localStorage['QM.isRequireJsUsed']) {
+      } else if (localStorage['QM.isIntegration']) {
         this.service.init();
       } else {
         // removing the old cached data from LocalStorage
         localStorage.clear();
-        localStorage.setItem('QM.isRequireJsUsed', '1');
+        localStorage.setItem('QM.isIntegration', '1');
         this.service.init();
       }
 
