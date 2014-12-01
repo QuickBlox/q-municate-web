@@ -547,6 +547,14 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         event.preventDefault();
       });
 
+      // fix QMW-253
+      // solution http://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser
+      $('.l-workspace-wrap').on('paste', '.l-message', function(e) {
+        e.preventDefault();
+        var text = (e.originalEvent || e).clipboardData.getData('text/plain');
+        document.execCommand('insertText', false, text);
+      });
+
       $('#home').on('click', function(event) {
         event.preventDefault();
         $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
