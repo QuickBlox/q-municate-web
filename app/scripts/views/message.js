@@ -86,9 +86,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             for (i = 0, len = occupants_ids.length, user; i < len; i++) {
               user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
               if (user)
-                (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
+                occupants_names = (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
               else if (occupants_ids[i] === User.contact.id)
-                (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
+                occupants_names = (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
             }
 
             html += '<h4 class="message-author">'+contact.full_name+' has added '+occupants_names+'</h4>';
