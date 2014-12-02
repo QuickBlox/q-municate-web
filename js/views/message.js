@@ -235,7 +235,10 @@ MessageView.prototype = {
           chat.find('.l-chat-content .mCSB_container').prepend(html);
         }
       } else {
-        chat.find('.l-chat-content').prepend(html);
+        if (chat.find('.l-chat-content .mCSB_container')[0])
+          chat.find('.l-chat-content .mCSB_container').prepend(html);
+        else
+          chat.find('.l-chat-content').prepend(html);
       }
 
     });
