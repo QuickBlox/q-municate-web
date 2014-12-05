@@ -381,7 +381,8 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
       $('#mainPage').on('click', '.createGroupChat', function(event) {
         event.preventDefault();
         if (QMCONFIG.debug) console.log('add people to groupchat');
-        ContactListView.addContactsToChat($(this));
+        var isPrivate = $(this).data('private');
+        ContactListView.addContactsToChat($(this), null, null, isPrivate);
       });
 
       $('.l-sidebar').on('click', '.addToGroupChat', function(event) {

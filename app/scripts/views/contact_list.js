@@ -68,7 +68,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       }
     },
 
-    addContactsToChat: function(objDom, type, dialog_id) {
+    addContactsToChat: function(objDom, type, dialog_id, isPrivate) {
       var ids = objDom.data('ids') ? objDom.data('ids').toString().split(',') : [],
           popup = $('#popupContacts'),
           contacts = ContactList.contacts,
@@ -116,7 +116,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         popup.find('.mCSB_container').append(html);
       }
 
-      if (type)
+      if (type || isPrivate)
         popup.addClass('is-addition').data('existing_ids', ids.length > 0 ? ids : null);
       else
         popup.data('existing_ids', null);
