@@ -104,7 +104,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
             for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
               id = dialog.occupants_ids[i];
               QB.chat.send(contacts[id].user_jid, {type: 'chat', body: 'Notification message', extension: {
-                // dialog_id: dialog.id,
+                dialog_id: dialog.id,
                 date_sent: Math.floor(Date.now() / 1000),
 
                 notification_type: '1',
@@ -153,7 +153,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           for (var i = 0, len = params.new_ids.length, id; i < len; i++) {
             id = params.new_ids[i];
             extension = {
-              // dialog_id: dialog.id,
+              dialog_id: dialog.id,
               date_sent: Math.floor(Date.now() / 1000),
 
               notification_type: '1',
