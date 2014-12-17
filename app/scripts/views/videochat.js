@@ -225,8 +225,8 @@ define(['jquery', 'quickblox'], function($, QB) {
     });
   };
 
-  VideoChatView.prototype.build = function(dialogId) {
-    var chat = dialogId ? $('.l-chat[data-dialog="'+dialogId+'"]') : $('.l-chat:visible'),
+  VideoChatView.prototype.build = function(id) {
+    var chat = id ? $('.l-chat[data-dialog="'+id+'"]') : $('.l-chat:visible'),
         userId = chat.data('id'),
         dialogId = chat.data('dialog'),
         contact = ContactList.contacts[userId],
