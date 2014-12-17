@@ -321,7 +321,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
           roster = ContactList.roster,
-          audioSignal = $('#new_message')[0],
+          audioSignal = $('#newMessageSignal')[0],
           recipientId = QB.chat.helpers.getIdFromNode(recipientJid),
           msg, copyDialogItem, dialog, occupant, msgArr;
 

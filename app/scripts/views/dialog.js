@@ -29,13 +29,20 @@ function($, QMCONFIG, QB, _) {
     // QBChat handlers
     chatCallbacksInit: function() {
       var ContactListView = this.app.views.ContactList,
-          MessageView = this.app.views.Message;
+          MessageView = this.app.views.Message,
+          VideoChatView = this.app.views.VideoChat;
 
       QB.chat.onMessageListener = MessageView.onMessage;
       QB.chat.onContactListListener = ContactListView.onPresence;
       QB.chat.onSubscribeListener = ContactListView.onSubscribe;
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
       QB.chat.onRejectSubscribeListener = ContactListView.onReject;
+
+      QB.webrtc.onCallListener = VideoChatView.onCall;
+      QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
+      QB.webrtc.onRejectCallListener = VideoChatView.onReject;
+      QB.webrtc.onStopCallListener = VideoChatView.onStop;
+      QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
 
       QB.chat.onDisconnectingListener = function() {
         if (localStorage['QM.user']) {

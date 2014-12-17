@@ -25,8 +25,6 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
   Routes.prototype = {
 
     init: function() {
-      VideoChatView.init();
-
       window.isQMAppActive = true;
 
       $(window).focus(function() {
@@ -573,6 +571,8 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         event.preventDefault();
       });
 
+      // videocalls
+      VideoChatView.init();
     }
   };
 

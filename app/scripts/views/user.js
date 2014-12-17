@@ -137,8 +137,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       html = '<ul class="list-actions list-actions_contacts popover">';
       
       if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription !== 'none') {
-        html += '<li class="list-item"><a class="videoCall list-actions-action" href="#">Video call</a></li>';
-        html += '<li class="list-item"><a class="audioCall list-actions-action" href="#">Audio call</a></li>';
+        html += '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="'+ids+'" href="#">Video call</a></li>';
+        html += '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="'+ids+'" href="#">Audio call</a></li>';
         html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" data-private="1" href="#">Add people</a></li>';
       } else if (dialogs[dialog_id].type !== 3)
         html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" data-dialog="'+dialog_id+'" href="#">Add people</a></li>';
@@ -167,8 +167,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       if (!roster[id] || (roster[id].subscription === 'none' && !roster[id].ask)) {
         html += '<li class="list-item" data-jid="'+jid+'"><a class="list-actions-action requestAction" data-id="'+id+'" href="#">Send request</a></li>';
       } else {
-        html += '<li class="list-item"><a class="videoCall list-actions-action" data-id="'+id+'" href="#">Video call</a></li>';
-        html += '<li class="list-item"><a class="audioCall list-actions-action" data-id="'+id+'" href="#">Audio call</a></li>';
+        html += '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="'+id+'" href="#">Video call</a></li>';
+        html += '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="'+id+'" href="#">Audio call</a></li>';
         html += '<li class="list-item"><a class="list-actions-action writeMessage" data-id="'+id+'" href="#">Write message</a></li>';
         // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
       }

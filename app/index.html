@@ -359,30 +359,6 @@
                 </div>
               </div>
             </div>
-
-            <div class="mediacall l-flexbox is-hidden">
-              <video id="remoteStream" class="mediacall-remote-stream"></video>
-              <video id="localStream" class="mediacall-local mediacall-local-stream"></video>
-              
-              <!-- <audio id="localStream"></audio>
-              <img id="localUser" class="mediacall-local mediacall-local-avatar" src="images/ava-single.png" alt="avatar">
-              <div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">
-                <img class="mediacall-remote-avatar" src="images/ava-single.png" alt="avatar">
-                <span class="mediacall-remote-name">Rosemary Woodhouse</span>
-                <span class="mediacall-remote-duration">connecting...</span>
-              </div> -->
-              
-              <div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">
-                <img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.png" alt="Q-municate">
-                <span class="mediacall-info-duration"></span>
-              </div>
-              <div class="mediacall-controls l-flexbox l-flexbox_flexcenter">
-                <button class="btn_mediacall"><img class="btn-icon_mediacall" src="images/icon-camera-off.png" alt="camera"></button>
-                <button class="btn_mediacall"><img class="btn-icon_mediacall" src="images/icon-mic-off.png" alt="mic"></button>
-                <button class="btn_mediacall"><img class="btn-icon_mediacall" src="images/icon-hangup.png" alt="hangup"></button>
-              </div>
-            </div>
-
           </div>
 
         </div>
@@ -409,18 +385,7 @@
   </div>
 
   <div class="popups l-flexbox">
-    <section id="popupIncoming" class="popup incoming-calls">
-      <div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween">
-        <div class="incoming-call-info l-flexbox l-flexbox_column">
-          <img class="info-avatar" src="images/ava-single.png" alt="avatar">
-          <span class="info-notice">Video Call from Taras Filatov</span>
-        </div>
-        <div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">
-          <button class="btn_decline">Decline</button>
-          <button class="btn_accept">Accept</button>
-        </div>
-      </div>
-    </section>
+    <section id="popupIncoming" class="popup incoming-calls is-open"></section>
 
     <section id="popupAttach" class="popup popup_attach">
       <img class="attach-photo" src="" alt="attach">
@@ -515,9 +480,24 @@
     </section>
   </div>
 
-  <audio id="new_message">
+  <audio id="newMessageSignal">
     <source src="audio/new_message.ogg"></source>
     <source src="audio/new_message.mp3"></source>
+  </audio>
+
+  <audio id="callingSignal" loop>
+    <source src="audio/calling.ogg"></source>
+    <source src="audio/calling.mp3"></source>
+  </audio>
+
+  <audio id="ringtoneSignal" loop>
+    <source src="audio/ringtone.ogg"></source>
+    <source src="audio/ringtone.mp3"></source>
+  </audio>
+
+  <audio id="endCallSignal">
+    <source src="audio/end_of_call.ogg"></source>
+    <source src="audio/end_of_call.mp3"></source>
   </audio>
 
   <div id="fb-root"></div>

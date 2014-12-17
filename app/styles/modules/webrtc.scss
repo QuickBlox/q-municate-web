@@ -3,7 +3,6 @@
   width: 345px;
   max-height: 538px;
   overflow-y: auto;
-  margin: auto;
   background: #fff;
   border: 1px solid #f0f0f0;
 }
@@ -53,10 +52,9 @@
 
 /* Video / audio calls */
 .mediacall {
-  position: relative;
-  width: 640px;
-  height: 480px;
-  margin: auto;
+  width: 100%;
+  height: 100%;
+  max-height: 550px;
   background: #262626;
   text-align: center;
 }
@@ -128,7 +126,8 @@
       height: 60px;
       background: rgba(0, 0, 0, 0.57);
     }
-    .btn_mediacall:hover {
+    .btn_mediacall:hover,
+    .btn_mediacall.off {
       opacity: 1;
       background: rgba(255, 0, 0, 0.57);
     }
@@ -138,4 +137,3 @@
       .btn-icon_mediacall {
         vertical-align: text-bottom;
       }
-      
