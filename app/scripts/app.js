@@ -8,14 +8,14 @@
 define([
     'jquery', 'UserModule', 'SessionModule', 'ContactModule',
     'DialogModule', 'MessageModule', 'AttachModule',
-    'ContactListModule', 'UserView', 'DialogView',
-    'MessageView', 'AttachView', 'ContactListView',
+    'ContactListModule', 'VideoChatModule', 'UserView', 'DialogView',
+    'MessageView', 'AttachView', 'ContactListView', 'VideoChatView', 
     'Routes', 'QBApiCalls', 'config', 'chromaHash'
   ], function(
     $, User, Session, Contact, Dialog,
-    Message, Attach, ContactList, UserView,
+    Message, Attach, ContactList, VideoChat, UserView,
     DialogView, MessageView, AttachView,
-    ContactListView, Routes, QBApiCalls, QMCONFIG
+    ContactListView, VideoChatView, Routes, QBApiCalls, QMCONFIG
   ) {
 
   function QM() {
@@ -26,7 +26,8 @@ define([
       Dialog: new Dialog(this),
       Message: new Message(this),
       Attach: new Attach(this),
-      ContactList: new ContactList(this)
+      ContactList: new ContactList(this),
+      VideoChat: new VideoChat(this)
     };
 
     this.views = {
@@ -34,7 +35,8 @@ define([
       Dialog: new DialogView(this),
       Message: new MessageView(this),
       Attach: new AttachView(this),
-      ContactList: new ContactListView(this)
+      ContactList: new ContactListView(this),
+      VideoChat: new VideoChatView(this)
     };
 
     this.routes = new Routes(this);

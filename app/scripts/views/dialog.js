@@ -29,13 +29,20 @@ function($, QMCONFIG, QB, _) {
     // QBChat handlers
     chatCallbacksInit: function() {
       var ContactListView = this.app.views.ContactList,
-          MessageView = this.app.views.Message;
+          MessageView = this.app.views.Message,
+          VideoChatView = this.app.views.VideoChat;
 
       QB.chat.onMessageListener = MessageView.onMessage;
       QB.chat.onContactListListener = ContactListView.onPresence;
       QB.chat.onSubscribeListener = ContactListView.onSubscribe;
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
       QB.chat.onRejectSubscribeListener = ContactListView.onReject;
+
+      QB.webrtc.onCallListener = VideoChatView.onCall;
+      QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
+      QB.webrtc.onRejectCallListener = VideoChatView.onReject;
+      QB.webrtc.onStopCallListener = VideoChatView.onStop;
+      QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
 
       QB.chat.onDisconnectingListener = function() {
         if (localStorage['QM.user']) {
@@ -310,11 +317,11 @@ function($, QMCONFIG, QB, _) {
 
         html += '</div></div>';
         html += '<div class="chat-controls">';
-        // html += '<button class="btn_chat btn_chat_videocall"><img src="images/icon-videocall.png" alt="videocall"></button>';
-        // html += '<button class="btn_chat btn_chat_audiocall"><img src="images/icon-audiocall.png" alt="audiocall"></button>';
-        if (dialog.type === 3)
+        if (dialog.type === 3) {
+          html += '<button class="btn_chat btn_chat_videocall videoCall"><img src="images/icon-videocall.png" alt="videocall"></button>';
+          html += '<button class="btn_chat btn_chat_audiocall audioCall"><img src="images/icon-audiocall.png" alt="audiocall"></button>';
           html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="'+dialog.occupants_ids.join()+'" data-private="1"><img src="images/icon-add.png" alt="add"></button>';
-        else
+        } else
           html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="'+dialog.occupants_ids.join()+'" data-dialog="'+dialog_id+'"><img src="images/icon-add.png" alt="add"></button>';
         // html += '<button class="btn_chat btn_chat_profile"><img src="images/icon-profile.png" alt="profile"></button>';
         

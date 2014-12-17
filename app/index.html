@@ -359,7 +359,6 @@
                 </div>
               </div>
             </div>
-
           </div>
 
         </div>
@@ -386,6 +385,8 @@
   </div>
 
   <div class="popups l-flexbox">
+    <section id="popupIncoming" class="popup incoming-calls is-open"></section>
+
     <section id="popupAttach" class="popup popup_attach">
       <img class="attach-photo" src="" alt="attach">
       <video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls autoplay preload="auto" data-setup="{}"></video>
@@ -479,9 +480,24 @@
     </section>
   </div>
 
-  <audio id="new_message">
+  <audio id="newMessageSignal">
     <source src="audio/new_message.ogg"></source>
     <source src="audio/new_message.mp3"></source>
+  </audio>
+
+  <audio id="callingSignal" loop>
+    <source src="audio/calling.ogg"></source>
+    <source src="audio/calling.mp3"></source>
+  </audio>
+
+  <audio id="ringtoneSignal" loop>
+    <source src="audio/ringtone.ogg"></source>
+    <source src="audio/ringtone.mp3"></source>
+  </audio>
+
+  <audio id="endCallSignal">
+    <source src="audio/end_of_call.ogg"></source>
+    <source src="audio/end_of_call.mp3"></source>
   </audio>
 
   <div id="fb-root"></div>
