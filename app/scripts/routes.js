@@ -7,7 +7,7 @@
 
 define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, minEmoji) {
 
-  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView;
+  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName;
 
   function Routes(app) {
@@ -19,11 +19,14 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
     DialogView = this.app.views.Dialog;
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
+    VideoChatView = this.app.views.VideoChat;
   }
 
   Routes.prototype = {
 
     init: function() {
+      VideoChatView.init();
+
       window.isQMAppActive = true;
 
       $(window).focus(function() {
