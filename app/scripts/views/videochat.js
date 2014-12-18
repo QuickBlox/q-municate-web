@@ -230,9 +230,10 @@ define(['jquery', 'quickblox'], function($, QB) {
         userId = chat.data('id'),
         dialogId = chat.data('dialog'),
         contact = ContactList.contacts[userId],
+        maxHeight = screen.height > 768 ? '420px' : '550px';
         html;
 
-    html = '<div class="mediacall l-flexbox">';
+    html = '<div class="mediacall l-flexbox" style="max-height:'+maxHeight+'">';
     html += '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>';
     html += '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>';
     html += '<img id="localUser" class="mediacall-local mediacall-local-avatar" src="'+User.contact.avatar_url+'" alt="avatar">';
@@ -253,7 +254,10 @@ define(['jquery', 'quickblox'], function($, QB) {
 
     chat.prepend(html);
     chat.find('.l-chat-header').hide();
-    chat.find('.l-chat-content').css({height: 'calc(100% - 550px - 90px)'});
+    chat.find('.l-chat-content').css({height: 'calc(100% - '+maxHeight+' - 90px)'});
+    if (screen.height > 768) {
+      chat.find('.mediacall-remote-user').css({position: 'absolute', top: '16%', left: '10%', margin: 0});
+    }    
 
     return {
       opponentId: userId,
