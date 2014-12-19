@@ -5,7 +5,7 @@
  *
  */
 
-define(['quickblox'], function(QB) {
+define(['jquery', 'quickblox'], function($, QB) {
 
   function VideoChat(app) {
     this.app = app;
@@ -13,10 +13,10 @@ define(['quickblox'], function(QB) {
 
   VideoChat.prototype.getUserMedia = function(options, className, callback) {
     var User = this.app.models.User;
-    var callType = className && !!className.match(/videoCall/) ? 'video' : 'audio';
+    var callType = (typeof className === 'string' && !!className.match(/videoCall/)) || (className === 1) ? 'video' : 'audio';
     var params = {
       audio: true,
-      video: true,
+      video: callType === 'video' ? true : false,
       elemId: 'localStream',
       options: {
         muted: true,
@@ -29,6 +29,8 @@ define(['quickblox'], function(QB) {
         console.log(err);
       } else {
         console.log(stream);
+
+        if (!$('.l-chat[data-dialog="'+options.dialogId+'"]').find('.mediacall')[0]) return true;
 
         if (options.isCallee) {
           QB.webrtc.createPeer({
