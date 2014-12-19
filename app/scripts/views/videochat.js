@@ -104,28 +104,26 @@ define(['jquery', 'quickblox'], function($, QB) {
       chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
     });
 
-    $('body').on('click', '.btn_camera_off', function(event) {
+    $('body').on('click', '.btn_camera_off, .btn_mic_off', function(event) {
       event.preventDefault();
-      var obj = $(this);
-
+      var obj = $(this),
+          opponentId = obj.data('id'),
+          dialogId = obj.data('dialog'),
+          deviceType = !!$(this).attr('class').match(/btn_camera_off/) ? 'video' : 'audio';
+      
       if (obj.is('.off')) {
-        self.unmute('video');
+        self.unmute(deviceType);
+        QB.webrtc.changeCall(opponentId, {
+          dialog_id: dialogId,
+          unmute: deviceType
+        });
         obj.removeClass('off');
       } else {
-        self.mute('video');
-        obj.addClass('off');
-      }
-    });
-
-    $('body').on('click', '.btn_mic_off', function(event) {
-      event.preventDefault();
-      var obj = $(this);
-
-      if (obj.is('.off')) {
-        self.unmute('audio');
-        obj.removeClass('off');
-      } else {
-        self.mute('audio');
+        self.mute(deviceType);
+        QB.webrtc.changeCall(opponentId, {
+          dialog_id: dialogId,
+          mute: deviceType
+        });
         obj.addClass('off');
       }
     });
@@ -197,8 +195,6 @@ define(['jquery', 'quickblox'], function($, QB) {
 
   VideoChatView.prototype.onStop = function(id, extension) {
     var chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]'),
-        opponentId = chat.data('id'),
-        dialogId = chat.data('dialog'),
         audioSignal = $('#endCallSignal')[0];
 
     audioSignal.play();
@@ -207,6 +203,21 @@ define(['jquery', 'quickblox'], function($, QB) {
     chat.find('.mediacall').remove();
     chat.find('.l-chat-header').show();
     chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
+  };
+
+  VideoChatView.prototype.onChangeCall = function(id, extension) {
+    if (extension.mute === 'video') {
+      $('#remoteStream').addClass('is-hidden');
+      $('#remoteUser').removeClass('is-hidden');
+      $('.mediacall-remote-duration').removeClass('is-hidden');
+      $('.mediacall-info-duration').addClass('is-hidden');
+    }
+    if (extension.unmute === 'video') {
+      $('#remoteStream').removeClass('is-hidden');
+      $('#remoteUser').addClass('is-hidden');
+      $('.mediacall-info-duration').removeClass('is-hidden');
+      $('.mediacall-remote-duration').addClass('is-hidden');
+    }
   };
 
   VideoChatView.prototype.startCall = function(className) {
@@ -230,7 +241,7 @@ define(['jquery', 'quickblox'], function($, QB) {
         userId = chat.data('id'),
         dialogId = chat.data('dialog'),
         contact = ContactList.contacts[userId],
-        maxHeight = screen.height > 768 ? '420px' : '550px';
+        maxHeight = screen.height > 768 ? '420px' : '550px',
         html;
 
     html = '<div class="mediacall l-flexbox" style="max-height:'+maxHeight+'">';
@@ -247,8 +258,8 @@ define(['jquery', 'quickblox'], function($, QB) {
     html += '<span class="mediacall-info-duration is-hidden"></span>';
     html += '</div>';
     html += '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">';
-    html += '<button class="btn_mediacall btn_camera_off"><img class="btn-icon_mediacall" src="images/icon-camera-off.png" alt="camera"></button>';
-    html += '<button class="btn_mediacall btn_mic_off"><img class="btn-icon_mediacall" src="images/icon-mic-off.png" alt="mic"></button>';
+    html += '<button class="btn_mediacall btn_camera_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-camera-off.png" alt="camera"></button>';
+    html += '<button class="btn_mediacall btn_mic_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-mic-off.png" alt="mic"></button>';
     html += '<button class="btn_mediacall btn_hangup" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-hangup.png" alt="hangup"></button>';
     html += '</div></div>';
 

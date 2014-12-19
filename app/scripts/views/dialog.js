@@ -42,6 +42,7 @@ function($, QMCONFIG, QB, _) {
       QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
       QB.webrtc.onRejectCallListener = VideoChatView.onReject;
       QB.webrtc.onStopCallListener = VideoChatView.onStop;
+      QB.webrtc.onChangeCallListener = VideoChatView.onChangeCall;
       QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
 
       QB.chat.onDisconnectingListener = function() {
