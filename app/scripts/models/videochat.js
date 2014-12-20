@@ -30,7 +30,10 @@ define(['jquery', 'quickblox'], function($, QB) {
       } else {
         console.log(stream);
 
-        if (!$('.l-chat[data-dialog="'+options.dialogId+'"]').find('.mediacall')[0]) return true;
+        if (!$('.l-chat[data-dialog="'+options.dialogId+'"]').find('.mediacall')[0]) {
+          stream.stop();
+          return true;
+        }
 
         if (options.isCallee) {
           QB.webrtc.createPeer({
