@@ -132,9 +132,7 @@ define(['jquery', 'quickblox'], function($, QB) {
           });
         obj.removeClass('off');
       } else {
-        console.log(123123123123);
         self.mute(deviceType);
-        console.log(32333222232);
         if (deviceType === 'video')
           QB.webrtc.changeCall(opponentId, {
             dialog_id: dialogId,
@@ -174,21 +172,15 @@ define(['jquery', 'quickblox'], function($, QB) {
   };
 
   VideoChatView.prototype.onRemoteStream = function(stream) {
-    console.log(1111111111111111);
     var video = document.getElementById('remoteStream');
 
     // console.log(stream);
     QB.webrtc.attachMediaStream('remoteStream', stream);
     
     video.addEventListener('timeupdate', function() {
-      console.log(222222222);
       var duration = getDuration(video.currentTime);
-      console.log(duration);
-      console.log($('.mediacall-info-duration, .mediacall-remote-duration'));
       $('.mediacall-info-duration, .mediacall-remote-duration').text(duration);
     });
-
-    console.log(333333333333);
 
     if (self.type === 'video') {
       $('#remoteUser').addClass('is-hidden');
@@ -349,17 +341,12 @@ function getDuration(currentTime) {
   var time = Math.floor(currentTime),
       h, min, sec;
 
-  console.log(currentTime);
-  console.log(time);
   h = Math.floor( time / 3600 );
   h = h >= 10 ? h : '0' + h;
-  console.log(h);
   min = Math.floor( time / 60 );
   min = min >= 10 ? min : '0' + min;
-  console.log(min);
   sec = Math.floor( time % 60 );
   sec = sec >= 10 ? sec : '0' + sec;
-  console.log(sec);
 
   return h + ':' + min + ':' + sec;
 }

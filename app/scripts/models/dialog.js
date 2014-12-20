@@ -97,7 +97,6 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           var msgId = QB.chat.helpers.getBsonObjectId();
           
           QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {
-            console.log(111111111);
             DialogView.addDialogItem(dialog);
             callback(dialog);
 
@@ -116,8 +115,6 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
             }
           });
 
-          console.log(222222222222);
-
           // send message about added people for history
           QB.chat.send(dialog.room_jid, {id: msgId, type: 'groupchat', body: 'Notification message', extension: {
             save_to_history: 1,
@@ -126,10 +123,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
 
             notification_type: '1',
             occupants_ids: res.occupants_ids.join()
-          }});
-
-          console.log(333333333);
-          
+          }});          
         });
 
       });
