@@ -5,6 +5,8 @@
  *
  */
 
+var callTimer;
+
 define(['jquery', 'quickblox'], function($, QB) {
 
   var self;
@@ -48,7 +50,7 @@ define(['jquery', 'quickblox'], function($, QB) {
       });
 
       incomingCall.remove();
-      if ($('#popupIncoming').children().length === 0) {
+      if ($('#popupIncoming .mCSB_container').children().length === 0) {
         closePopup();
         audioSignal.pause();
       }
@@ -73,7 +75,7 @@ define(['jquery', 'quickblox'], function($, QB) {
           params = self.build(dialogId);
 
       $(this).parents('.incoming-call').remove();
-      $('#popupIncoming').children().each(function() {
+      $('#popupIncoming .mCSB_container').children().each(function() {
         $(this).find('.btn_decline').click();
       });
       closePopup();
@@ -104,6 +106,7 @@ define(['jquery', 'quickblox'], function($, QB) {
 
       callingSignal.pause();
       endCallSignal.play();
+      clearTimeout(callTimer);
       QB.webrtc.stop(opponentId, 'manually', {
         dialog_id: dialogId
       });
@@ -121,8 +124,15 @@ define(['jquery', 'quickblox'], function($, QB) {
       var obj = $(this),
           opponentId = obj.data('id'),
           dialogId = obj.data('dialog'),
-          deviceType = !!$(this).attr('class').match(/btn_camera_off/) ? 'video' : 'audio';
+          deviceType = !!$(this).attr('class').match(/btn_camera_off/) ? 'video' : 'audio',
+          msg = deviceType === 'video' ? 'Camera' : 'Mic';
       
+      if (self.type !== deviceType && self.type === 'audio') {
+        obj.addClass('off');
+        obj.attr('title', msg + ' is off');
+        return true;
+      }
+
       if (obj.is('.off')) {
         self.unmute(deviceType);
         if (deviceType === 'video')
@@ -131,6 +141,7 @@ define(['jquery', 'quickblox'], function($, QB) {
             unmute: deviceType
           });
         obj.removeClass('off');
+        obj.removeAttr('title');
       } else {
         self.mute(deviceType);
         if (deviceType === 'video')
@@ -139,6 +150,7 @@ define(['jquery', 'quickblox'], function($, QB) {
             mute: deviceType
           });
         obj.addClass('off');
+        obj.attr('title', msg + ' is off');
       }
     });
   };
@@ -159,7 +171,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     html += '<button class="btn_accept" data-callType="'+extension.callType+'" data-session="'+extension.sessionID+'" data-dialog="'+extension.dialog_id+'" data-id="'+id+'">Accept</button>';
     html += '</div></div>';
 
-    incomings.prepend(html);
+    incomings.find('.mCSB_container').prepend(html);
     openPopup(incomings);
     audioSignal.play();
   };
@@ -176,18 +188,20 @@ define(['jquery', 'quickblox'], function($, QB) {
 
     // console.log(stream);
     QB.webrtc.attachMediaStream('remoteStream', stream);
-    
-    video.addEventListener('timeupdate', function() {
-      var duration = getDuration(video.currentTime);
-      $('.mediacall-info-duration, .mediacall-remote-duration').text(duration);
-    });
 
     if (self.type === 'video') {
+      video.addEventListener('timeupdate', function() {
+        var duration = getTimer(Math.floor(video.currentTime));
+        $('.mediacall-info-duration, .mediacall-remote-duration').text(duration);
+      });
+
       $('#remoteUser').addClass('is-hidden');
       $('#remoteStream').removeClass('is-hidden');
       $('.mediacall-info-duration').removeClass('is-hidden');
       $('.mediacall-remote-duration').addClass('is-hidden');
     } else {
+      setDuration();
+
       $('#remoteStream').addClass('is-hidden');
       $('#remoteUser').removeClass('is-hidden');
       $('.mediacall-remote-duration').removeClass('is-hidden');
@@ -199,7 +213,9 @@ define(['jquery', 'quickblox'], function($, QB) {
     var audioSignal = $('#callingSignal')[0],
         chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
 
-    QB.webrtc.hangup();
+    if (QB.webrtc.localStream) {
+      QB.webrtc.hangup();
+    }
     audioSignal.pause();
 
     chat.find('.mediacall').remove();
@@ -216,7 +232,10 @@ define(['jquery', 'quickblox'], function($, QB) {
 
     if (chat[0] && chat.find('.mediacall')[0]) {
       endCallSignal.play();
-      QB.webrtc.hangup();
+      clearTimeout(callTimer);
+      if (QB.webrtc.localStream) {
+        QB.webrtc.hangup();
+      }
 
       chat.find('.mediacall').remove();
       chat.find('.l-chat-header').show();
@@ -225,7 +244,7 @@ define(['jquery', 'quickblox'], function($, QB) {
         incomingCall = declineButton.parents('.incoming-call');
         incomingCall.remove();
 
-        if ($('#popupIncoming').children().length === 0) {
+        if ($('#popupIncoming .mCSB_container').children().length === 0) {
           closePopup();
           ringtoneSignal.pause();
         }
@@ -337,9 +356,17 @@ function closePopup() {
   if ($('.attach-video video')[0]) $('.attach-video video')[0].pause();
 }
 
-function getDuration(currentTime) {
-  var time = Math.floor(currentTime),
-      h, min, sec;
+function setDuration(currentTime) {
+  var currentTime = currentTime || 0;
+  $('.mediacall-info-duration, .mediacall-remote-duration').text(getTimer(currentTime));
+  callTimer = setTimeout(function() {
+    currentTime++;
+    setDuration(currentTime);
+  }, 1000);
+}      
+
+function getTimer(time) {
+  var h, min, sec;
 
   h = Math.floor( time / 3600 );
   h = h >= 10 ? h : '0' + h;

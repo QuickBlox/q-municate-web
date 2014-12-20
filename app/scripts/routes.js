@@ -579,7 +579,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
   /* Private
   ---------------------------------------------------------------------- */
   function occupantScrollbar() {
-    $('.chat-occupants').mCustomScrollbar({
+    $('.chat-occupants, #popupIncoming').mCustomScrollbar({
       theme: 'minimal-dark',
       scrollInertia: 0,
       mouseWheel: {
