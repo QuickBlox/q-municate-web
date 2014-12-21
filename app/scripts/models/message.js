@@ -48,7 +48,13 @@ define(function() {
         room_photo: (params.extension && params.extension.room_photo && params.extension.room_photo.replace('http://', 'https://')) ||
                     (params.room_photo && params.room_photo.replace('http://', 'https://')) ||
                     null,
-        deleted_id: (params.extension && params.extension.deleted_id) || params.deleted_id || null
+        deleted_id: (params.extension && params.extension.deleted_id) || params.deleted_id || null,
+
+        callType: (params.extension && params.extension.callType) || params.callType || null,
+        callState: (params.extension && params.extension.callState) || params.callState || null,
+        caller: parseInt((params.extension && params.extension.caller)) || parseInt(params.caller) || null,
+        callee: parseInt((params.extension && params.extension.callee)) || parseInt(params.callee) || null,
+        duration: (params.extension && params.extension.duration) || params.duration || null        
       };
 
       if (message.attachment) {

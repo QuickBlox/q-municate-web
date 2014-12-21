@@ -39,13 +39,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
           i, len, user;
 
-      if (typeof chat[0] === 'undefined' || (!message.notification_type && !message.attachment && !message.body)) return true;
+      if (typeof chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) return true;
 
       this.checkSenderId(message.sender_id, function() {
 
         var contacts = ContactListMsg.contacts,
             contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
-            type = message.notification_type || 'message',
+            type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
             attachType = message.attachment && message.attachment['content-type'],
             recipient = contacts[recipientId] || null,
             occupants_names = '',
@@ -149,7 +149,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html += '<h4 class="message-author">You have rejected a request';
           else
             html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
-            
 
           html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
           html += '</div></div></article>';
@@ -167,9 +166,68 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           else
             html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again btn_request_again_delete"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
             
-
           html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
           html += '</div></div></article>';
+          break;
+
+        case '8':
+          if (message.caller) {
+            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+            if (message.caller === User.contact.id)
+              html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_outgoing' : 'request-audio_outgoing')+'"></span>';
+            else
+              html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_incoming' : 'request-audio_incoming')+'"></span>';
+            html += '<div class="message-container-wrap">';
+            html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+            html += '<div class="message-content">';
+
+            if (message.caller === User.contact.id)
+              html += '<h4 class="message-author">Call to '+contacts[message.callee].full_name+', duration '+message.duration;
+            else
+              html += '<h4 class="message-author">Call from '+contacts[message.caller].full_name+', duration '+message.duration;
+              
+            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '</div></div></article>';
+          }
+          break;
+
+        case '9':
+          if (message.caller) {
+            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+            if (message.caller === User.contact.id)
+              html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_ended' : 'request-audio_ended')+'"></span>';
+            else
+              html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_missed' : 'request-audio_missed')+'"></span>';
+            html += '<div class="message-container-wrap">';
+            html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+            html += '<div class="message-content">';
+
+            if (message.caller === User.contact.id)
+              html += '<h4 class="message-author">Call to '+contacts[message.callee].full_name+', no answer';
+            else
+              html += '<h4 class="message-author">Missed call from '+contacts[message.caller].full_name;
+              
+            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '</div></div></article>';
+          }
+          break;
+
+        case '10':
+          if (message.caller) {
+            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+            html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_ended' : 'request-audio_ended')+'"></span>';
+            html += '<div class="message-container-wrap">';
+            html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+            html += '<div class="message-content">';
+
+            if (message.caller === User.contact.id)
+              html += '<h4 class="message-author">Call to '+contacts[message.callee].full_name+', busy';
+            else
+              html += '<h4 class="message-author">Call from '+contacts[message.caller].full_name+', busy';
+              
+            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '</div></div></article>';
+          }
           break;
 
         default:

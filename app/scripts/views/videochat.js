@@ -42,12 +42,16 @@ define(['jquery', 'quickblox'], function($, QB) {
           opponentId = $(this).data('id'),
           dialogId = $(this).data('dialog'),
           sessionId = $(this).data('session'),
+          callType = $(this).data('calltype'),
           audioSignal = $('#ringtoneSignal')[0];
 
+      callType = callType.toString();
       QB.webrtc.reject(opponentId, {
         sessionID: sessionId,
         dialog_id: dialogId
       });
+
+      VideoChat.sendMessage(opponentId, '3', null, dialogId, callType);
 
       incomingCall.remove();
       if ($('#popupIncoming .mCSB_container').children().length === 0) {
@@ -101,17 +105,26 @@ define(['jquery', 'quickblox'], function($, QB) {
       var chat = $(this).parents('.l-chat'),
           opponentId = $(this).data('id'),
           dialogId = $(this).data('dialog'),
+          duration = $(this).parents('.mediacall').find('.mediacall-info-duration').text(),
           callingSignal = $('#callingSignal')[0],
           endCallSignal = $('#endCallSignal')[0];
 
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
+      
       QB.webrtc.stop(opponentId, 'manually', {
         dialog_id: dialogId
       });
       QB.webrtc.hangup();
 
+      if (VideoChat.caller) {
+        VideoChat.sendMessage(opponentId, '1', duration, dialogId);
+        VideoChat.caller = null;
+        VideoChat.callee = null;
+      }
+
+      self.type = null;
       chat.find('.mediacall').remove();
       chat.find('.l-chat-header').show();
       chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
@@ -165,7 +178,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     html += '<span class="info-notice">'+(extension.callType === '2' ? 'Audio' : 'Video')+' Call from '+extension.full_name+'</span>';
     html += '</div>';
     html += '<div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">';
-    html += '<button class="btn_decline" data-session="'+extension.sessionID+'" data-dialog="'+extension.dialog_id+'" data-id="'+id+'">Decline</button>';
+    html += '<button class="btn_decline" data-callType="'+extension.callType+'" data-session="'+extension.sessionID+'" data-dialog="'+extension.dialog_id+'" data-id="'+id+'">Decline</button>';
     html += '<button class="btn_accept" data-callType="'+extension.callType+'" data-session="'+extension.sessionID+'" data-dialog="'+extension.dialog_id+'" data-id="'+id+'">Accept</button>';
     html += '</div></div>';
 
@@ -212,6 +225,9 @@ define(['jquery', 'quickblox'], function($, QB) {
         chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
 
     QB.webrtc.hangup();
+    VideoChat.caller = null;
+    VideoChat.callee = null;
+    self.type = null;
     audioSignal.pause();
 
     chat.find('.mediacall').remove();
@@ -232,6 +248,9 @@ define(['jquery', 'quickblox'], function($, QB) {
       endCallSignal.play();
       clearTimeout(callTimer);
       QB.webrtc.hangup();
+      VideoChat.caller = null;
+      VideoChat.callee = null;
+      self.type = null;
 
       chat.find('.mediacall').remove();
       chat.find('.l-chat-header').show();
