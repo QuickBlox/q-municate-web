@@ -76,7 +76,8 @@ define(['jquery', 'quickblox'], function($, QB) {
           callType = $(this).data('calltype'),
           sdp = incomingCall.data('sdp'),
           audioSignal = $('#ringtoneSignal')[0],
-          params = self.build(dialogId);
+          params = self.build(dialogId),
+          chat = $('.l-chat[data-dialog="'+dialogId+'"]');
 
       $(this).parents('.incoming-call').remove();
       $('#popupIncoming .mCSB_container').children().each(function() {
@@ -89,7 +90,14 @@ define(['jquery', 'quickblox'], function($, QB) {
       params.sessionId = sessionId;
       params.sdp = sdp;
 
-      VideoChat.getUserMedia(params, callType, function() {
+      VideoChat.getUserMedia(params, callType, function(err, res) {
+        if (err) {
+          chat.find('.mediacall .btn_hangup').click();
+          showError(chat);
+          fixScroll();
+          return true;
+        }
+
         if (callType === 2) {
           self.type = 'audio';
           $('.btn_camera_off').click();
@@ -286,9 +294,17 @@ define(['jquery', 'quickblox'], function($, QB) {
 
   VideoChatView.prototype.startCall = function(className) {
     var audioSignal = $('#callingSignal')[0],
-        params = self.build();
+        params = self.build(),
+        chat = $('.l-chat:visible');
 
-    VideoChat.getUserMedia(params, className, function() {
+    VideoChat.getUserMedia(params, className, function(err, res) {
+      if (err) {
+        chat.find('.mediacall .btn_hangup').click();
+        showError(chat);
+        fixScroll();
+        return true;
+      }
+
       audioSignal.play();
       if (!!className.match(/audioCall/)) {
         self.type = 'audio';
@@ -391,4 +407,28 @@ function getTimer(time) {
   sec = sec >= 10 ? sec : '0' + sec;
 
   return h + ':' + min + ':' + sec;
+}
+
+function showError(chat) {
+  var html;
+  html = '<article class="message message_service l-flexbox l-flexbox_alignstretch">';
+  html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+  html += '<div class="message-container-wrap">';
+  html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+  html += '<div class="message-content">';
+  html += '<h4 class="message-author message-error">Devices is not found</h4>';
+  html += '</div>';
+  html += '</div></div></article>';
+  chat.find('.mCSB_container').append(html);
+}
+
+function fixScroll() {
+  var chat = $('.l-chat:visible'),
+      containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
+      chatContentHeight = chat.find('.l-chat-content').height(),
+      draggerContainerHeight = chat.find('.l-chat-content .mCSB_draggerContainer').height(),
+      draggerHeight = chat.find('.l-chat-content .mCSB_dragger').height();
+
+  chat.find('.l-chat-content .mCSB_container').css({top: chatContentHeight - containerHeight + 'px'});
+  chat.find('.l-chat-content .mCSB_dragger').css({top: draggerContainerHeight - draggerHeight + 'px'});
 }

@@ -30,6 +30,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     QB.webrtc.getUserMedia(params, function(err, stream) {
       if (err) {
         console.log(err);
+        callback(err, null);
       } else {
         console.log(stream);
 
@@ -58,7 +59,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           self.caller = User.contact.id;
           self.callee = options.opponentId;
         }
-        callback();
+        callback(null, stream);
       }
     });
   };
