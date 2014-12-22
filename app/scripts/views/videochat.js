@@ -416,7 +416,7 @@ function showError(chat) {
   html += '<div class="message-container-wrap">';
   html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
   html += '<div class="message-content">';
-  html += '<h4 class="message-author message-error">Devices is not found</h4>';
+  html += '<h4 class="message-author message-error">Devices are not found</h4>';
   html += '</div>';
   html += '</div></div></article>';
   chat.find('.mCSB_container').append(html);
