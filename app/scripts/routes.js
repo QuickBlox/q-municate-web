@@ -464,6 +464,15 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         ContactListView.globalPopup();
       });
 
+      $('.btn_search').on('click', function(event) {
+        event.preventDefault();
+        var localSearch = $('#searchContacts input'),
+            globalSearch = $('#globalSearch input');
+
+        globalSearch.val(localSearch.val());
+        $('#globalSearch').submit();
+      });
+
       $('#mainPage').on('click', '.createGroupChat', function(event) {
         event.preventDefault();
         if (QMCONFIG.debug) console.log('add people to groupchat');
