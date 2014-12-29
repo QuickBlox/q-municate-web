@@ -11,9 +11,9 @@
   <link rel="icon" href="favicon.png">
 
   <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
-  <link rel="stylesheet" href="styles/04f16dd0.build.css">
+  <link rel="stylesheet" href="styles/41a3f611.build.css">
 
-  <script src="vendor/0a99eeff.modernizr.js"></script>
+  <script src="vendor/64f44457.modernizr.js"></script>
 </head>
 <body class="is-welcome">
   <!--[if lt IE 10]>
@@ -351,7 +351,6 @@
                 </div>
               </div>
             </div>
-
           </div>
 
         </div>
@@ -374,10 +373,12 @@
       </footer>
     </section>
 
-    <div class="l-app-version">v. 0.9.0</div>
+    <div class="l-app-version">v. 0.10.0</div>
   </div>
 
   <div class="popups l-flexbox">
+    <section id="popupIncoming" class="popup incoming-calls is-open"></section>
+
     <section id="popupAttach" class="popup popup_attach">
       <img class="attach-photo" src="" alt="attach">
       <video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls autoplay preload="auto" data-setup="{}"></video>
@@ -471,9 +472,24 @@
     </section>
   </div>
 
-  <audio id="new_message">
+  <audio id="newMessageSignal">
     <source src="audio/new_message.ogg"></source>
     <source src="audio/new_message.mp3"></source>
+  </audio>
+
+  <audio id="callingSignal" loop>
+    <source src="audio/calling.ogg"></source>
+    <source src="audio/calling.mp3"></source>
+  </audio>
+
+  <audio id="ringtoneSignal" loop>
+    <source src="audio/ringtone.ogg"></source>
+    <source src="audio/ringtone.mp3"></source>
+  </audio>
+
+  <audio id="endCallSignal">
+    <source src="audio/end_of_call.ogg"></source>
+    <source src="audio/end_of_call.mp3"></source>
   </audio>
 
   <div id="fb-root"></div>
@@ -488,6 +504,6 @@
     ga('create','UA-26728270-6');ga('send','pageview');
   </script>
 
-  <script src="scripts/cf279523.build.js"></script>
+  <script src="scripts/3e244859.build.js"></script>
 </body>
 </html>

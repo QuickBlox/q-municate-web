@@ -7,7 +7,7 @@
 
 define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, minEmoji) {
 
-  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView;
+  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName;
 
   function Routes(app) {
@@ -19,6 +19,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
     DialogView = this.app.views.Dialog;
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
+    VideoChatView = this.app.views.VideoChat;
   }
 
   Routes.prototype = {
@@ -570,13 +571,15 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         event.preventDefault();
       });
 
+      // videocalls
+      VideoChatView.init();
     }
   };
 
   /* Private
   ---------------------------------------------------------------------- */
   function occupantScrollbar() {
-    $('.chat-occupants').mCustomScrollbar({
+    $('.chat-occupants, #popupIncoming').mCustomScrollbar({
       theme: 'minimal-dark',
       scrollInertia: 0,
       mouseWheel: {

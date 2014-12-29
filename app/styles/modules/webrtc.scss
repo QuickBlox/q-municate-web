@@ -1,0 +1,140 @@
+/* Incomming calls */
+.incoming-calls {
+  width: 345px;
+  max-height: 538px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+}
+  .incoming-call {
+    width: 100%;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .incoming-call:last-child {
+    border-bottom: 0;
+  }
+
+.incoming-call-info {
+  width: 100%;
+}
+  .info-avatar {
+    width: 40px;
+    height: 40px;
+    margin: 15px 0;
+    border-radius: 50%;
+  }
+  .info-notice {
+    width: 100%;
+    padding: 0 15px;
+    font-size: 20px;
+    line-height: 25px;
+    color: #333;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+.incoming-call-controls {
+  width: 100%;
+  margin: 20px 0;
+}
+  .btn_decline,
+  .btn_accept {
+    text-transform: uppercase;
+  }
+  .btn_decline {
+    margin-right: 55px;
+    color: #b20001;
+  }
+  .btn_accept {
+    color: #1ec252;
+  }
+
+/* Video / audio calls */
+.mediacall {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /*max-height: 420px;*/
+  background: #262626;
+  text-align: center;
+}
+  .mediacall-remote-stream {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .mediacall-remote-user {
+    width: 80%;
+    margin: auto;
+  }
+    .mediacall-remote-avatar {
+      width: 146px;
+      height: 146px;
+      margin-bottom: 20px;
+      border-radius: 50%;
+    }
+    .mediacall-remote-name,
+    .mediacall-remote-duration {
+      font-size: 22px;
+      color: rgba(255, 255, 255, 0.2);
+    }
+    .mediacall-remote-name {
+      width: 100%;
+      margin-bottom: 15px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  
+  .mediacall-local {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+    .mediacall-local-stream {
+      width: 20%;
+    }
+    .mediacall-local-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+
+  .mediacall-info {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+  }
+    .mediacall-info-logo {
+      margin-bottom: 17px;
+    }
+    .mediacall-info-duration {
+      font-size: 16px;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+  .mediacall-controls {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 15px;
+  }
+    .btn_mediacall {
+      width: 60px;
+      height: 60px;
+      background: rgba(0, 0, 0, 0.57);
+    }
+    .btn_mediacall:hover,
+    .btn_mediacall.off {
+      opacity: 1;
+      background: rgba(255, 0, 0, 0.57);
+    }
+    .btn_mediacall:last-child:hover {
+      background: rgba(0, 0, 0, 0.4);
+    }
+      .btn-icon_mediacall {
+        vertical-align: text-bottom;
+      }

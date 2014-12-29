@@ -123,8 +123,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
 
             notification_type: '1',
             occupants_ids: res.occupants_ids.join()
-          }});
-          
+          }});          
         });
 
       });

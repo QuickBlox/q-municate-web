@@ -50,12 +50,14 @@ require.config({
     MessageModule: 'models/message',
     AttachModule: 'models/attach',
     ContactListModule: 'models/contact_list',
+    VideoChatModule: 'models/videochat',
     // views
     UserView: 'views/user',
     DialogView: 'views/dialog',
     MessageView: 'views/message',
     AttachView: 'views/attach',
     ContactListView: 'views/contact_list',
+    VideoChatView: 'views/videochat',
     // routes
     Routes: 'routes',
     QBApiCalls: 'qbApiCalls'
