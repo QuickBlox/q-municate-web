@@ -47,6 +47,27 @@
     margin: 1px 3vh 0 0 !important;
   }
 
+.chroma-hash_password {
+  height: 45px;
+  margin-bottom: 20px;
+}
+.chroma-hash_password:last-child {
+  margin-bottom: 0;
+}
+  .chroma-hash_password label {
+    width: 10px !important;
+    height: 42px !important;
+  }
+  .chroma-hash_password label:nth-child(3) {
+    margin: 1px 10px 0 0 !important;
+  }
+  .chroma-hash_password label:nth-child(4) {
+    margin: 1px 20px 0 0 !important;
+  }
+  .chroma-hash_password label:nth-child(5) {
+    margin: 1px 30px 0 0 !important;
+  }
+
 /* download */
 .download {
   position: absolute;

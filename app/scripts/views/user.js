@@ -7,12 +7,13 @@
 
 define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
-  var User, ContactList,
+  var User, ContactList, Contact,
       FBCallback = null;
 
   function UserView(app) {
     this.app = app;
     User = this.app.models.User;
+    Contact = this.app.models.Contact;
     ContactList = this.app.models.ContactList;
   }
 
@@ -208,7 +209,73 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     },
 
     buildProfile: function() {
-      
+      var popup = $('#popupProfile');
+
+      popup.find('.userDetails-avatar').css('background-image', 'url('+User.contact.avatar_url+')');
+      popup.find('.userProfile-filename').text(User.contact.full_name);
+
+      if (User.contact.status) {
+        popup.find('.userProfile-status-val').text(User.contact.status);
+      } else {
+        popup.find('.userProfile-status-val').text('[Empty field]');
+      }
+
+      popup.find('.userProfile-email').text(User.contact.email);
+
+      if (User.contact.phone) {
+        popup.find('.userProfile-phone').text(User.contact.phone);
+      } else {
+        popup.find('.userProfile-phone').text('[Empty field]');
+      }
+
+      if (User.contact.facebook_id) {
+        popup.find('.userProfile-field-facebook').html(
+          '<span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Connected</span>'
+        );
+      } else {
+        popup.find('.userProfile-field-facebook').html(
+          '<span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Not connected</span><button class="btn_userProfile btn_userProfile_connect">Connect</button>'
+        );
+      }
+    },
+
+    updateUserProfile: function() {
+      var objDom = $('#popupProfile'),
+          file = objDom.find('.btn_userProfile_file')[0],
+          userData, params = {};
+
+      userData = {
+        full_name: objDom.find('.userProfile-filename').text() || null,
+        phone: (objDom.find('.userProfile-phone').text() === '[Empty field]' ? null : objDom.find('.userProfile-phone').text()) || null,
+        status: (objDom.find('.userProfile-status-val').text() === '[Empty field]' ? null : objDom.find('.userProfile-status-val').text()) || null,
+      };
+      console.log(userData);
+
+      if (userData.full_name || userData.phone || userData.status || file) {
+        if (userData.full_name) params.full_name = userData.full_name;
+        if (userData.phone) params.phone = userData.phone;
+        // if (userData.status) params.custom_data = userData.full_name;
+        QB.users.update(User.contact.id, params, function(err, res) {
+          if (res) {
+            console.log(res);
+            User.contact = Contact.create(res);
+            if (userData.status) User.contact.status = userData.status;
+            User.rememberMe();
+            if (file) User.contact.avatar_url = URL.createObjectURL(file.files[0]);
+          }
+        });
+      }
+    },
+
+    addFBAccount: function(token) {
+      var popup = $('#popupProfile');
+
+      FB.api('/me', function (response) {
+        console.log(1111111111, response);
+        popup.find('.userProfile-field-facebook').html(
+          '<span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Connected</span>'
+        );
+      });
     },
 
     smilePopover: function(objDom) {

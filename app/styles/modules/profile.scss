@@ -14,6 +14,7 @@
     background-position: 50%;
   }
   .userDetails-info {
+    position: relative;
     overflow: hidden;
     padding-left: 5px;
   }
@@ -114,6 +115,15 @@
   margin-right: 0;
 }
 
+.btn_userProfile_file {
+  position: absolute;
+  left: 5px;
+  bottom: 0;
+  width: 127px;
+  height: 32px;
+  opacity: 0;
+}
+
 .userProfile-chatStatus {
   padding: 0 0 0 20px;
   text-align: left;
@@ -124,6 +134,10 @@
     font-size: 16px;
     line-height: 20px;
     border-bottom: 1px solid #f2f2f2;
+  }
+  .userProfile-status-val {
+    max-height: 46px;
+    overflow: hidden;
   }
 
 .userProfile-field {
@@ -167,3 +181,9 @@
   .userProfile-status-val br {
     display: inline;
   }
+
+/* Change Password */
+.popup-content_password {
+  padding: 30px 20px;
+  height: 170px;
+}
