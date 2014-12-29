@@ -446,10 +446,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       roster[id].status = type ? false : true;
       ContactList.saveRoster(roster);
 
-      if (type)
+      if (type) {
         dialogItem.find('.status').removeClass('status_online');
-      else
+        if (dialogItem.is('.popup_details'))
+          dialogItem.find('.status_text').text('Offline');
+      } else {
         dialogItem.find('.status').addClass('status_online');
+        if (dialogItem.is('.popup_details'))
+          dialogItem.find('.status_text').text('Online');
+      }
     }
 
   };

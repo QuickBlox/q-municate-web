@@ -56,6 +56,32 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         changeInputFile($(this));
       });
 
+      /* User Profile
+      ----------------------------------------------------- */
+      $('.btn_userProfile_file').on('change', function() {
+        var URL = window.webkitURL || window.URL,
+            file = $(this)[0].files[0],
+            src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
+            fileName = file ? file.name : QMCONFIG.defAvatar.caption;
+    
+        $('#popupProfile').find('.userDetails-avatar').css('background-image', "url("+src+")");
+      });
+
+      $('.updateUserProfile').on('click', function() {
+        UserView.updateUserProfile();
+      });
+
+      $('body').on('click', '.btn_userProfile_connect', function() {
+        FB.login(function(response) {
+          if (QMCONFIG.debug) console.log('FB authResponse', response);
+          if (response.status === 'connected') {
+            UserView.addFBAccount(response.authResponse.accessToken);
+          } else {
+            
+          }
+        }, {scope: QMCONFIG.fbAccount.scope});
+      });
+
       /* smiles
       ----------------------------------------------------- */
       $('.smiles-tab').on('click', function() {
@@ -154,7 +180,10 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
       });
 
       $(document.body).on('click', function() {
-        var chat = $('.l-chat:visible');
+        var chat = $('.l-chat:visible'),
+            profile = $('#popupProfile'),
+            elem;
+
         if (chat.find('.groupTitle .name_chat').is('.is-focus')) {
           chat.find('.groupTitle .name_chat').removeClass('is-focus');
           chat.find('.groupTitle .name_chat')[0].scrollLeft = 0;
@@ -169,19 +198,36 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
             chat.find('.name_chat').text(chat.find('.name_chat').text().trim());
           }
         }
+
+        if (profile.find('.editable-profile').is('.is-focus')) {
+          elem = profile.find('.is-focus');
+          elem.removeClass('is-focus');
+          elem[0].scrollLeft = 0;
+
+          if (editedChatName && !editedChatName.name) {
+            elem.text(chatName.name);
+          } else if (editedChatName && (editedChatName.name !== chatName.name) && (editedChatName.created_at > chatName.created_at)) {
+            elem.text(editedChatName.name);
+            // Dialog.changeName(profile.data('dialog'), editedChatName.name);
+          } else {
+            elem.text(elem.text().trim());
+          }
+        }
       });
 
-      $('.l-workspace-wrap').on('click', '.groupTitle .name_chat', function(event) {
+      $('body').on('click', '.groupTitle .name_chat, .editable-profile', function(event) {
         event.stopPropagation();
+        $('.editable-profile').removeClass('is-focus');
         $(this).addClass('is-focus');
         chatName = {
           name: $(this).text().trim(),
           created_at: Date.now()
         };
+        if ($(this).text() === '[Empty field]') $(this).text('');
         removePopover();
       });
 
-      $('.l-workspace-wrap').on('keyup', '.groupTitle .name_chat', function(event) {
+      $('body').on('keyup', '.groupTitle .name_chat, .editable-profile', function(event) {
         var code = event.keyCode;
         editedChatName = {
           name: $(this).text().trim(),
@@ -335,10 +381,15 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         openPopup($('#popupLogout'));
       });
 
-      $('.list, .l-workspace-wrap').on('click', '.deleteContact', function(event) {
+      $('body').on('click', '.deleteContact', function(event) {
         event.preventDefault();
-        var id = $(this).parents('.presence-listener').data('id');
-        openPopup($('#popupDelete'), id);
+        closePopup();
+        var parents = $(this).parents('.presence-listener');
+        var id = parents.data('id');
+        if (parents.is('.popup_details'))
+          openPopup($('#popupDelete'), id, null, true);
+        else
+          openPopup($('#popupDelete'), id);
       });
 
       $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {
@@ -368,9 +419,43 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         DialogView.leaveGroupChat($(this));
       });
 
-      $('.popup-control-button, .btn_popup_private').on('click', function(event) {
+      $('body').on('click', '.userDetails', function(event) {
+        event.preventDefault();
+        removePopover();
+        var id = $(this).data('id');
+        openPopup($('#popupDetails'), id);
+        UserView.buildDetails(id);
+      });
+
+      $('body').on('click', '#userProfile', function(event) {
+        event.preventDefault();
+        removePopover();
+        $('.popups').addClass('cancelUserProfile');
+        openPopup($('#popupProfile'));
+        UserView.buildProfile();
+      });
+
+      $('body').on('click', '.btn_changePassword', function(event) {
         event.preventDefault();
         closePopup();
+        $('.popups').addClass('cancelChangePassword');
+        $('#popupPassword input').val('');
+        openPopup($('#popupPassword'), null, null, null, true);
+      });
+
+      $('body').on('click', '.btn_popup_changepass', function(event) {
+        event.preventDefault();
+        $('.popups').removeClass('cancelChangePassword');
+        closePopup();
+        openPopup($('#popupProfile'));
+      });
+
+      $('.popup-control-button, .btn_popup_private').on('click', function(event) {
+        event.preventDefault();
+        var isProfile = $(this).data('isprofile');
+        closePopup();
+        if (isProfile)
+          openPopup($('#popupDetails'));
       });
 
       $('.search').on('click', function() {
@@ -508,6 +593,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         var id = $(this).data('id'),
             dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
         
+        closePopup();
         DialogView.htmlBuild(dialogItem);
       });
 
@@ -551,7 +637,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
       // fix QMW-253
       // solution http://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser
-      $('.l-workspace-wrap').on('paste', '.l-message', function(e) {
+      $('body').on('paste', '.l-message, .userProfile-status-val', function(e) {
         e.preventDefault();
         var text = (e.originalEvent || e).clipboardData.getData('text/plain');
         document.execCommand('insertText', false, text);
@@ -573,11 +659,22 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
       // videocalls
       VideoChatView.init();
+
+      editableScroll();
     }
   };
 
   /* Private
   ---------------------------------------------------------------------- */
+  function editableScroll() {
+    $('.userProfile-status-val').niceScroll({
+      cursoropacitymax: 0.5,
+      railpadding: {right: 5},
+      zindex: 1,
+      enablekeyboard: false
+    });
+  }
+
   function occupantScrollbar() {
     $('.chat-occupants, #popupIncoming').mCustomScrollbar({
       theme: 'minimal-dark',
@@ -592,14 +689,23 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
   // Checking if the target is not an object run popover
   function clickBehaviour(e) {
-    var objDom = $(e.target);
+    var objDom = $(e.target),
+        isPassword;
 
     if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
       return false;
     } else {
       removePopover();
       if (objDom.is('.popups') && !$('.popup.is-overlay').is('.is-open')) {
+        if (objDom.is('.cancelChangePassword')) {
+          objDom.removeClass('cancelChangePassword');
+          isPassword = true; 
+        }
+        if (objDom.is('.cancelUserProfile')) {
+          $('.updateUserProfile').click();
+        }
         closePopup();
+        if (isPassword) openPopup($('#popupProfile'));
       } else {
         return false;
       }
@@ -624,14 +730,21 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
     $('.popover_smile').hide();
   }
 
-  function openPopup(objDom, id, dialog_id) {
+  function openPopup(objDom, id, dialog_id, isProfile, isPassword) {
     // if it was the delete action
     if (id) {
+      objDom.attr('data-id', id);
       objDom.find('#deleteConfirm').data('id', id);
     }
     // if it was the leave action
     if (dialog_id) {
       objDom.find('#leaveConfirm').data('dialog', dialog_id);
+    }
+    if (isProfile) {
+      objDom.find('.popup-control-button_cancel').attr('data-isprofile', true);
+    }
+    if (isPassword) {
+      objDom.find('.btn_popup_changepass').attr('data-ispassword', true);
     }
     objDom.add('.popups').addClass('is-overlay');
   }

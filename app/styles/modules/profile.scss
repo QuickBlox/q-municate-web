@@ -1,0 +1,189 @@
+/* User Details */
+.userDetails-preview {
+  overflow: hidden;
+  padding: 20px;
+}
+  .userDetails-avatar {
+    width: 88px;
+    height: 88px;
+    float: left;
+    margin-right: 15px;
+    border-radius: 50%;
+    background-image: image-url('ava-single.png');
+    background-size: cover;
+    background-position: 50%;
+  }
+  .userDetails-info {
+    position: relative;
+    overflow: hidden;
+    padding-left: 5px;
+  }
+    .userDetails-filename,
+    .userProfile-filename-wrap {
+      padding-top: 7px;
+      margin-bottom: 7px;
+      font-size: 20px;
+      color: #333;
+      font-weight: normal;
+    }
+    .userDetails-status {
+      font-size: 14px;
+      line-height: 20px;
+      color: #999;
+    }
+
+.userDetails-chatStatus,
+.userProfile-chatStatus {
+  width: 100%;
+  background: #f2f2f2;
+  font-size: 16px;
+  line-height: 30px;
+  color: #999;
+  text-align: center;
+}
+  .userDetails-chatStatus .status_online {
+    display: inline-block;
+    margin-left: 0;
+    margin-right: 7px;
+  }
+
+.userDetails-controls {
+  border-bottom: 1px solid #f2f2f2;
+}
+  .btn_userDetails {
+    padding: 0 15px;
+    font-size: 16px;
+    line-height: 60px;
+    color: #333;
+    border-right: 1px solid #f2f2f2;
+  }
+  .btn_userDetails:last-child {
+    border-right: 0;
+  }
+    .btn_userDetails img {
+      margin-right: 10px;
+      vertical-align: text-bottom;
+    }
+    .btn_userDetails:first-child img {
+      margin-right: 13px;
+      vertical-align: text-top;
+    }
+
+.userDetails-field,
+.userProfile-field {
+  padding: 0 40px 0 20px;
+  font-size: 15px;
+  line-height: 60px;
+}
+  .userDetails-label {
+    margin-right: 12px;
+    color: #999;
+    font-weight: bold;
+  }
+
+/* User Profile */
+.userProfile-filename-wrap {
+  float: left;
+  margin-bottom: 15px;
+  line-height: 30px;
+}
+  .userProfile-header-pencil {
+    display: none;
+    width: 30px;
+    height: 30px;
+    background: image-url('icon-pencil.png') no-repeat center, #f8f8f8;
+    border: 1px solid #f2f2f2;
+    border-radius: 4px;
+    vertical-align: top;
+  }
+  .userProfile-filename-wrap:hover .userProfile-header-pencil {
+    display: inline-block;
+  }
+
+.btn_userProfile {
+  font-size: 14px;
+  line-height: 30px;
+  color: #333;
+  text-align: center;
+  padding: 0 10px;
+  margin-right: 10px;
+  background: #f8f8f8;
+  border: 1px solid #f2f2f2;
+  border-radius: 4px;
+}
+.btn_userProfile:last-child {
+  margin-right: 0;
+}
+
+.btn_userProfile_file {
+  position: absolute;
+  left: 5px;
+  bottom: 0;
+  width: 127px;
+  height: 32px;
+  opacity: 0;
+}
+
+.userProfile-chatStatus {
+  padding: 0 0 0 20px;
+  text-align: left;
+}
+  .userProfile-status-field {
+    padding: 20px 40px 20px 20px;
+    height: 80px;
+    font-size: 16px;
+    line-height: 20px;
+    border-bottom: 1px solid #f2f2f2;
+  }
+  .userProfile-status-val {
+    max-height: 46px;
+    overflow: hidden;
+  }
+
+.userProfile-field {
+  position: relative;
+  border-bottom: 1px solid #f2f2f2;
+}
+.userProfile-edit:hover {
+  background: image-url('icon-pencil.png') no-repeat 430px center, #f8f8f8;
+}
+  .btn_userProfile_connect {
+    position: absolute;
+    top: 14px;
+    right: 20px;
+  }
+
+.userProfile-errors {
+  padding: 20px;
+  font-size: 16px;
+  line-height: 20px;
+  color: #c03d3d;
+  text-align: center;
+}
+
+/* Editable */
+.editable-profile:focus {
+  padding: 3px;
+  background: #fff;
+  text-overflow: clip;
+}
+.editable-profile * {
+  display:inline;
+  white-space:nowrap;
+}
+.editable-profile br {
+  display:none;
+}
+  .userProfile-status-val {
+    display: block;
+    white-space: pre-wrap;
+  }
+  .userProfile-status-val br {
+    display: inline;
+  }
+
+/* Change Password */
+.popup-content_password {
+  padding: 30px 20px;
+  height: 170px;
+}

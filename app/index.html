@@ -385,6 +385,69 @@
   </div>
 
   <div class="popups l-flexbox">
+    <section id="popupPassword" class="popup popup_password">
+      <header class="popup-header">
+        <h3>Change password</h3>
+      </header>
+      <div class="popup-content popup-content_password">
+        <div class="chroma-hash chroma-hash_password">
+          <input id="old-password" class="form-input form-input-password pattern-pass" type="password" placeholder="Old password" required>
+        </div>
+        <div class="chroma-hash chroma-hash_password">
+          <input id="new-password" class="form-input form-input-password pattern-pass" type="password" placeholder="New password" required>
+        </div>
+      </div>
+      <footer class="popup-footer">
+        <button class="btn btn_popup btn_popup_changepass">Change</button>
+      </footer>
+    </section>
+
+    <section id="popupProfile" class="popup popup_profile">
+      <div class="userDetails-preview">
+        <div class="userDetails-avatar"></div>
+        <div class="userDetails-info">
+          <h3 class="userProfile-filename-wrap">
+            <span class="userProfile-filename editable-profile" contenteditable="true"></span>
+            <span class="userProfile-header-pencil"></span>
+          </h3>
+          <div style="clear:both"></div>
+          <button class="btn_userProfile btn_userProfile_photo">Set Profile Photo</button><button class="btn_userProfile btn_changePassword">Change password</button>
+          <input class="btn_userProfile_file" type="file" accept="image/*">
+        </div>
+      </div>
+      <div class="userProfile-chatStatus">Status</div>
+      <div class="userProfile-status-field userProfile-edit">
+       <span class="userProfile-status-val editable-profile" contenteditable="true"></span>
+      </div>
+      <div class="userProfile-field">
+        <span class="userDetails-label">Email:</span><span class="userProfile-email"></span>
+      </div>
+      <div class="userProfile-field userProfile-edit">
+        <span class="userDetails-label">Phone:</span><span class="userProfile-phone editable-profile" contenteditable="true"></span>
+      </div>
+      <div class="userProfile-field userProfile-field-facebook"></div>
+      <div class="userProfile-errors"></div>
+      <a class="updateUserProfile is-hidden" href="#"></a>
+    </section>
+
+    <section id="popupDetails" class="popup popup_details presence-listener">
+      <div class="userDetails-preview">
+        <div class="userDetails-avatar"></div>
+        <div class="userDetails-info">
+          <h3 class="userDetails-filename"></h3>
+          <span class="userDetails-status"></span>
+        </div>
+      </div>
+      <div class="userDetails-chatStatus"></div>
+      <div class="userDetails-controls l-flexbox">
+        <button class="btn_userDetails writeMessage videoCall"><img src="images/icon-videocall.png" alt="videocall">Video Call</button>
+        <button class="btn_userDetails writeMessage audioCall"><img src="images/icon-audiocall.png" alt="videocall">Call</button>
+        <button class="btn_userDetails writeMessage"><img src="images/icon-message.png" alt="videocall">Message</button>
+        <button class="btn_userDetails deleteContact"><img src="images/icon-delete.png" alt="videocall">Delete</button>
+      </div>
+      <div class="userDetails-field"></div>
+    </section>
+
     <section id="popupIncoming" class="popup incoming-calls is-open"></section>
 
     <section id="popupAttach" class="popup popup_attach">
