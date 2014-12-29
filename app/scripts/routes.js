@@ -335,10 +335,15 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         openPopup($('#popupLogout'));
       });
 
-      $('.list, .l-workspace-wrap').on('click', '.deleteContact', function(event) {
+      $('body').on('click', '.deleteContact', function(event) {
         event.preventDefault();
-        var id = $(this).parents('.presence-listener').data('id');
-        openPopup($('#popupDelete'), id);
+        closePopup();
+        var parents = $(this).parents('.presence-listener');
+        var id = parents.data('id');
+        if (parents.is('.popup_details'))
+          openPopup($('#popupDelete'), id, null, true);
+        else
+          openPopup($('#popupDelete'), id);
       });
 
       $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {
@@ -368,9 +373,27 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         DialogView.leaveGroupChat($(this));
       });
 
+      $('body').on('click', '.userDetails', function(event) {
+        event.preventDefault();
+        removePopover();
+        var id = $(this).data('id');
+        openPopup($('#popupDetails'), id);
+        UserView.buildDetails(id);
+      });
+
+      $('body').on('click', '#userProfile', function(event) {
+        event.preventDefault();
+        removePopover();
+        openPopup($('#popupProfile'));
+        UserView.buildProfile();
+      });
+
       $('.popup-control-button, .btn_popup_private').on('click', function(event) {
         event.preventDefault();
+        var isProfile = $(this).data('isprofile');
         closePopup();
+        if (isProfile)
+          openPopup($('#popupDetails'));
       });
 
       $('.search').on('click', function() {
@@ -508,6 +531,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         var id = $(this).data('id'),
             dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
         
+        closePopup();
         DialogView.htmlBuild(dialogItem);
       });
 
@@ -624,14 +648,18 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
     $('.popover_smile').hide();
   }
 
-  function openPopup(objDom, id, dialog_id) {
+  function openPopup(objDom, id, dialog_id, isProfile) {
     // if it was the delete action
     if (id) {
+      objDom.attr('data-id', id);
       objDom.find('#deleteConfirm').data('id', id);
     }
     // if it was the leave action
     if (dialog_id) {
       objDom.find('#leaveConfirm').data('dialog', dialog_id);
+    }
+    if (isProfile) {
+      objDom.find('.popup-control-button_cancel').attr('data-isprofile', true);
     }
     objDom.add('.popups').addClass('is-overlay');
   }

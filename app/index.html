@@ -385,6 +385,52 @@
   </div>
 
   <div class="popups l-flexbox">
+    <section id="popupProfile" class="popup popup_profile">
+      <div class="userDetails-preview">
+        <div class="userDetails-avatar"></div>
+        <div class="userDetails-info">
+          <h3 class="userProfile-filename-wrap">
+            <span class="userProfile-filename editable-profile" contenteditable="true">Rosemary Woodhouse</span>
+            <span class="userProfile-header-pencil"></span>
+          </h3>
+          <button class="btn_userProfile">Set Profile Photo</button><button class="btn_userProfile">Change password</button>
+        </div>
+      </div>
+      <div class="userProfile-chatStatus">Status</div>
+      <div class="userProfile-status-field userProfile-edit">
+       <span class="userProfile-status-val editable-profile" contenteditable="true">Speak when you are angry and you will make the best speech you will ever regret.</span>
+      </div>
+      <div class="userProfile-field">
+        <span class="userDetails-label">Email:</span><span class="userProfile-email">rose@gmail.com</span>
+      </div>
+      <div class="userProfile-field userProfile-edit">
+        <span class="userDetails-label">Phone:</span><span class="userProfile-phone editable-profile" contenteditable="true">+44 066 65568 99</span>
+      </div>
+      <div class="userProfile-field">
+        <span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Not connected</span>
+        <button class="btn_userProfile btn_userProfile_connect">Connect</button>
+      </div>
+      <div class="userProfile-errors"></div>
+    </section>
+
+    <section id="popupDetails" class="popup popup_details presence-listener">
+      <div class="userDetails-preview">
+        <div class="userDetails-avatar"></div>
+        <div class="userDetails-info">
+          <h3 class="userDetails-filename"></h3>
+          <span class="userDetails-status"></span>
+        </div>
+      </div>
+      <div class="userDetails-chatStatus"></div>
+      <div class="userDetails-controls l-flexbox">
+        <button class="btn_userDetails writeMessage videoCall"><img src="images/icon-videocall.png" alt="videocall">Video Call</button>
+        <button class="btn_userDetails writeMessage audioCall"><img src="images/icon-audiocall.png" alt="videocall">Call</button>
+        <button class="btn_userDetails writeMessage"><img src="images/icon-message.png" alt="videocall">Message</button>
+        <button class="btn_userDetails deleteContact"><img src="images/icon-delete.png" alt="videocall">Delete</button>
+      </div>
+      <div class="userDetails-field"></div>
+    </section>
+
     <section id="popupIncoming" class="popup incoming-calls is-open"></section>
 
     <section id="popupAttach" class="popup popup_attach">

@@ -119,7 +119,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     profilePopover: function(objDom) {
       var html = '<ul class="list-actions list-actions_profile popover">';
-      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+      html += '<li class="list-item"><a id="userProfile" class="list-actions-action" href="#">Profile</a></li>';
       html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Log Out</a></li>';
       html += '</ul>';
 
@@ -143,11 +143,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       } else if (dialogs[dialog_id].type !== 3)
         html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" data-dialog="'+dialog_id+'" href="#">Add people</a></li>';
       
-      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
-      
-      if (dialogs[dialog_id].type === 3)
+      if (dialogs[dialog_id].type === 3) {
+        html += '<li class="list-item"><a class="list-actions-action userDetails" data-id="'+ids+'" href="#">Profile</a></li>';
         html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
-      else
+      } else
         html += '<li class="list-item"><a class="leaveChat list-actions-action" data-group="true" href="#">Leave chat</a></li>';
       
       html += '</ul>';
@@ -170,7 +169,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         html += '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="'+id+'" href="#">Video call</a></li>';
         html += '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="'+id+'" href="#">Audio call</a></li>';
         html += '<li class="list-item"><a class="list-actions-action writeMessage" data-id="'+id+'" href="#">Write message</a></li>';
-        // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+        html += '<li class="list-item"><a class="list-actions-action userDetails" data-id="'+id+'" href="#">Profile</a></li>';
       }
       html += '</ul>';
 
@@ -179,6 +178,37 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
       objDom.addClass('is-active');
       $('.list-actions_occupants').offset({top: position.top, left: position.left});
+    },
+
+    buildDetails: function(userId) {
+      var popup = $('#popupDetails'),
+          contact = ContactList.contacts[userId],
+          roster = ContactList.roster,
+          chatStatus = roster[userId] ? roster[userId] : null;
+
+      popup.find('.userDetails-avatar').css('background-image', 'url('+contact.avatar_url+')');
+      popup.find('.userDetails-filename').text(contact.full_name);
+
+      if (contact.status) {
+        popup.find('.userDetails-status').text(contact.status);
+      }
+
+      if (chatStatus && chatStatus.status)
+        popup.find('.userDetails-chatStatus').html('<span class="status status_online"></span><span class="status_text">Online</span>');
+      else
+        popup.find('.userDetails-chatStatus').html('<span class="status"></span><span class="status_text">Offline</span>');
+
+      popup.find('.writeMessage').data('id', userId);
+
+      if (contact.phone) {
+        popup.find('.userDetails-field').html(
+          '<span class="userDetails-label">Phone:</span><span class="userDetails-phone">'+contact.phone+'</span>'
+        );
+      }
+    },
+
+    buildProfile: function() {
+      
     },
 
     smilePopover: function(objDom) {
