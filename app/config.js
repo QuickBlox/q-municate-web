@@ -41,7 +41,7 @@ define(function() {
 
     defAvatar: {
       url: 'images/ava-single.png',
-      group_url: 'images/ava-group.png',
+      group_url: 'images/ava-group.svg',
       caption: 'Choose user picture'
     },
 

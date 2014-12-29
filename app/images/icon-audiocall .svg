@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="19px" height="19px" viewBox="0 0 19 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-audiocall </title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="-icons" sketch:type="MSArtboardGroup" transform="translate(-1069.000000, -469.000000)" fill="#C6C6C6">
+            <g id="icon-audiocall-" sketch:type="MSLayerGroup" transform="translate(1069.000000, 469.000000)">
+                <path d="M8.041,10.959 C6.161,9.079 4.364,6.902 5.224,6.041 C6.457,4.809 7.53,4.049 5.347,1.332 C3.162,-1.384 1.707,0.702 0.514,1.896 C-0.864,3.273 0.441,8.408 5.516,13.484 C10.591,18.559 15.727,19.864 17.104,18.486 C18.299,17.292 20.384,15.837 17.667,13.654 C14.952,11.471 14.192,12.543 12.959,13.776 C12.098,14.636 9.922,12.84 8.041,10.959" id="Fill-10" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -334,13 +334,13 @@ define(['jquery', 'quickblox'], function($, QB) {
     html += '<span class="mediacall-remote-duration">connecting...</span>';
     html += '</div>';
     html += '<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">';
-    html += '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.png" alt="Q-municate">';
+    html += '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">';
     html += '<span class="mediacall-info-duration is-hidden"></span>';
     html += '</div>';
     html += '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">';
-    html += '<button class="btn_mediacall btn_camera_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-camera-off.png" alt="camera"></button>';
-    html += '<button class="btn_mediacall btn_mic_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-mic-off.png" alt="mic"></button>';
-    html += '<button class="btn_mediacall btn_hangup" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-hangup.png" alt="hangup"></button>';
+    html += '<button class="btn_mediacall btn_camera_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-camera-off.svg" alt="camera"></button>';
+    html += '<button class="btn_mediacall btn_mic_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>';
+    html += '<button class="btn_mediacall btn_hangup" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>';
     html += '</div></div>';
 
     chat.prepend(html);

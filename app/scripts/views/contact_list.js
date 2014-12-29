@@ -526,8 +526,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         item += '<span class="name">'+contact.full_name+'</span>';
         item += '</div>';
         if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
-          item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
-          item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
+          item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.svg" alt="request">';
+          item += '<img class="icon-active" src="images/icon-request_active.svg" alt="request"></button>';
         }
         if (rosterItem && rosterItem.subscription === 'none' && rosterItem.ask) {
           item += '<span class="send-request l-flexbox">Request Sent</span>';

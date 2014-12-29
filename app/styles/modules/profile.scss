@@ -91,7 +91,7 @@
     display: none;
     width: 30px;
     height: 30px;
-    background: image-url('icon-pencil.png') no-repeat center, #f8f8f8;
+    background: image-url('icon-pencil.svg') no-repeat center, #f8f8f8;
     border: 1px solid #f2f2f2;
     border-radius: 4px;
     vertical-align: top;
@@ -145,7 +145,7 @@
   border-bottom: 1px solid #f2f2f2;
 }
 .userProfile-edit:hover {
-  background: image-url('icon-pencil.png') no-repeat 430px center, #f8f8f8;
+  background: image-url('icon-pencil.svg') no-repeat 430px center, #f8f8f8;
 }
   .btn_userProfile_connect {
     position: absolute;

@@ -280,7 +280,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     smilePopover: function(objDom) {
       if (objDom.find('img').length === 1)
-        objDom.addClass('is-active').append('<img src="images/icon-smile_active.png" alt="smile">').find('*:first').addClass('is-hidden');
+        objDom.addClass('is-active').append('<img src="images/icon-smile_active.svg" alt="smile">').find('*:first').addClass('is-hidden');
       
       $('.popover_smile').show(150);
     },

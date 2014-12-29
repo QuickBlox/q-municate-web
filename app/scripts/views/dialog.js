@@ -319,17 +319,17 @@ function($, QMCONFIG, QB, _) {
         html += '</div></div>';
         html += '<div class="chat-controls">';
         if (dialog.type === 3) {
-          html += '<button class="btn_chat btn_chat_videocall videoCall"><img src="images/icon-videocall.png" alt="videocall"></button>';
-          html += '<button class="btn_chat btn_chat_audiocall audioCall"><img src="images/icon-audiocall.png" alt="audiocall"></button>';
-          html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="'+dialog.occupants_ids.join()+'" data-private="1"><img src="images/icon-add.png" alt="add"></button>';
-          html += '<button class="btn_chat btn_chat_profile userDetails" data-id="'+user_id+'"><img src="images/icon-profile.png" alt="profile"></button>';
+          html += '<button class="btn_chat btn_chat_videocall videoCall"><img src="images/icon-videocall.svg" alt="videocall"></button>';
+          html += '<button class="btn_chat btn_chat_audiocall audioCall"><img src="images/icon-audiocall.svg" alt="audiocall"></button>';
+          html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="'+dialog.occupants_ids.join()+'" data-private="1"><img src="images/icon-add.svg" alt="add"></button>';
+          html += '<button class="btn_chat btn_chat_profile userDetails" data-id="'+user_id+'"><img src="images/icon-profile.svg" alt="profile"></button>';
         } else
-          html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="'+dialog.occupants_ids.join()+'" data-dialog="'+dialog_id+'"><img src="images/icon-add.png" alt="add"></button>';
+          html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="'+dialog.occupants_ids.join()+'" data-dialog="'+dialog_id+'"><img src="images/icon-add.svg" alt="add"></button>';
         
         if (dialog.type === 3)
-          html += '<button class="btn_chat btn_chat_delete deleteContact"><img src="images/icon-delete.png" alt="delete"></button>';
+          html += '<button class="btn_chat btn_chat_delete deleteContact"><img src="images/icon-delete.svg" alt="delete"></button>';
         else
-          html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.png" alt="delete"></button>';
+          html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.svg" alt="delete"></button>';
         
         html += '</div></header>';
 
@@ -356,8 +356,8 @@ function($, QMCONFIG, QB, _) {
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
         // html += '<textarea class="text-message is-hidden"></textarea>';
-        html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.png" alt="smile"></button>';
-        html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.png" alt="attach"></button>';
+        html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.svg" alt="smile"></button>';
+        html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.svg" alt="attach"></button>';
         html += '<input class="attachment" type="file">';
         html += '</form></footer>';
         html += '</section>';
