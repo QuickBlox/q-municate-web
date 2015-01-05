@@ -431,6 +431,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         event.preventDefault();
         removePopover();
         $('.popups').addClass('cancelUserProfile');
+        $('.userProfile-errors').text('');
         openPopup($('#popupProfile'));
         UserView.buildProfile();
       });
@@ -447,6 +448,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         event.preventDefault();
         $('.popups').removeClass('cancelChangePassword');
         closePopup();
+        $('.userProfile-errors').text('');
         openPopup($('#popupProfile'));
       });
 
@@ -714,7 +716,10 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
           $('.updateUserProfile').click();
         }
         closePopup();
-        if (isPassword) openPopup($('#popupProfile'));
+        if (isPassword) {
+          $('.userProfile-errors').text('');
+          openPopup($('#popupProfile'));
+        }
       } else {
         return false;
       }

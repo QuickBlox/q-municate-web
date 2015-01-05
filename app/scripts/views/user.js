@@ -265,6 +265,9 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
               $('#profile').find('.avatar').css('background-image', "url("+User.contact.avatar_url+")");
             }
             User.rememberMe();
+          } else {
+            $('.userProfile-errors').text(err.detail);
+            openPopup($('#popupProfile'));
           }
         });
       }
@@ -386,6 +389,25 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
   var appearAnimation = function() {
     $('.popover:not(.popover_smile)').show(150);
   };
+
+  function openPopup(objDom, id, dialog_id, isProfile, isPassword) {
+    // if it was the delete action
+    if (id) {
+      objDom.attr('data-id', id);
+      objDom.find('#deleteConfirm').data('id', id);
+    }
+    // if it was the leave action
+    if (dialog_id) {
+      objDom.find('#leaveConfirm').data('dialog', dialog_id);
+    }
+    if (isProfile) {
+      objDom.find('.popup-control-button_cancel').attr('data-isprofile', true);
+    }
+    if (isPassword) {
+      objDom.find('.btn_popup_changepass').attr('data-ispassword', true);
+    }
+    objDom.add('.popups').addClass('is-overlay');
+  }
 
   return UserView;
 
