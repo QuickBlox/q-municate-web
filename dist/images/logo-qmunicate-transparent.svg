@@ -1,14 +1,21 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="55px" height="55px" viewBox="0 0 55 55" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-    <title>logo-qmunicate-transparent</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="-icons" sketch:type="MSArtboardGroup" transform="translate(-33.000000, -456.000000)" fill="#FFFFFF">
-            <g id="logo-qmunicate-transparent" sketch:type="MSLayerGroup" transform="translate(33.000000, 456.000000)">
-                <path d="M17.543,41.203 C15.068,41.203 13.053,39.189 13.053,36.713 L13.053,16.893 C13.053,14.416 15.068,12.4 17.543,12.4 L37.369,12.4 C39.844,12.4 41.856,14.416 41.856,16.893 L41.856,48.807 L31.353,41.203 L17.543,41.203 M35.75,0 L19.249,0 C13.777,0 11.041,0 8.095,0.931 C4.879,2.102 2.346,4.635 1.176,7.851 C0.245,10.796 0.245,13.532 0.245,19.004 L0.245,35.506 C0.245,40.979 0.245,43.715 1.176,46.66 C2.346,49.876 4.879,52.409 8.095,53.58 C11.041,54.511 13.777,54.511 19.249,54.511 L35.75,54.511 C41.223,54.511 43.959,54.511 46.905,53.58 C50.12,52.409 52.654,49.876 53.824,46.66 C54.755,43.715 54.755,40.979 54.755,35.506 L54.755,19.004 C54.755,13.532 54.755,10.796 53.824,7.851 C52.654,4.635 50.12,2.102 46.905,0.931 C43.959,0 41.223,0 35.75,0" id="Fill-38" sketch:type="MSShapeGroup"></path>
-            </g>
-        </g>
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="55px" height="55px"
+	 viewBox="0 0 55 55" enable-background="new 0 0 55 55" xml:space="preserve">
+<title>logo-qmunicate-transparent</title>
+<desc>Created with Sketch.</desc>
+<g id="Page-1" sketch:type="MSPage" opacity="0.2">
+	<g id="_x2D_icons" transform="translate(-33.000000, -456.000000)" sketch:type="MSArtboardGroup">
+		<g id="logo-qmunicate-transparent" transform="translate(33.000000, 456.000000)" sketch:type="MSLayerGroup">
+			<path id="Fill-38" sketch:type="MSShapeGroup" fill="#FFFFFF" d="M17.543,41.203c-2.475,0-4.49-2.014-4.49-4.49v-19.82
+				c0-2.477,2.015-4.493,4.49-4.493h19.826c2.475,0,4.487,2.016,4.487,4.493v31.914l-10.503-7.604H17.543 M35.75,0H19.249
+				c-5.472,0-8.208,0-11.154,0.931c-3.216,1.171-5.749,3.704-6.919,6.92c-0.931,2.945-0.931,5.681-0.931,11.153v16.502
+				c0,5.473,0,8.209,0.931,11.154c1.17,3.216,3.703,5.749,6.919,6.92c2.946,0.931,5.682,0.931,11.154,0.931H35.75
+				c5.473,0,8.209,0,11.155-0.931c3.215-1.171,5.749-3.704,6.919-6.92c0.931-2.945,0.931-5.681,0.931-11.154V19.004
+				c0-5.472,0-8.208-0.931-11.153c-1.17-3.216-3.704-5.749-6.919-6.92C43.959,0,41.223,0,35.75,0"/>
+		</g>
+	</g>
+</g>
 </svg>

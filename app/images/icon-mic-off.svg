@@ -1,14 +1,20 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="18px" height="26px" viewBox="0 0 18 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-    <title>icon-mic-off</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="-icons" sketch:type="MSArtboardGroup" transform="translate(-668.000000, -441.000000)" fill="#FFFFFF">
-            <g id="icon-mic-off" sketch:type="MSLayerGroup" transform="translate(668.000000, 441.000000)">
-                <path d="M18,11.673 L15.407,11.673 C15.407,15.701 12.619,18.929 8.94,18.929 C8.114,18.929 7.335,18.75 6.609,18.456 L4.857,20.217 C5.706,20.649 6.628,20.953 7.606,21.099 L7.606,25.507 L10.273,25.507 L10.273,21.099 C14.644,20.452 18,16.429 18,11.673 M15.999,2.685 L0.27,18.53 L1.866,20.137 L6.631,15.358 C7.282,15.829 8.076,16.11 8.94,16.11 C11.144,16.11 12.926,14.306 12.926,12.082 L12.926,9.017 L17.605,4.306 L15.999,2.685 M8.94,0 C6.73,0 5.032,1.666 5.032,3.891 L5.032,10.808 L12.814,3.027 C12.316,1.367 10.744,0 8.94,0" id="Fill-46" sketch:type="MSShapeGroup"></path>
-            </g>
-        </g>
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="18px" height="26px"
+	 viewBox="0 0 18 26" enable-background="new 0 0 18 26" xml:space="preserve">
+<title>icon-mic-off</title>
+<desc>Created with Sketch.</desc>
+<g id="Page-1" sketch:type="MSPage" opacity="0.5">
+	<g id="_x2D_icons" transform="translate(-668.000000, -441.000000)" sketch:type="MSArtboardGroup">
+		<g id="icon-mic-off" transform="translate(668.000000, 441.000000)" sketch:type="MSLayerGroup">
+			<path id="Fill-46" sketch:type="MSShapeGroup" fill="#FFFFFF" d="M18,11.673h-2.593c0,4.028-2.788,7.256-6.467,7.256
+				c-0.826,0-1.605-0.179-2.331-0.473l-1.752,1.761c0.849,0.432,1.771,0.736,2.749,0.882v4.408h2.667v-4.408
+				C14.644,20.452,18,16.429,18,11.673 M15.999,2.685L0.27,18.53l1.596,1.607l4.765-4.779c0.651,0.471,1.445,0.752,2.309,0.752
+				c2.204,0,3.986-1.804,3.986-4.028V9.017l4.679-4.711L15.999,2.685 M8.94,0C6.73,0,5.032,1.666,5.032,3.891v6.917l7.782-7.781
+				C12.316,1.367,10.744,0,8.94,0"/>
+		</g>
+	</g>
+</g>
 </svg>

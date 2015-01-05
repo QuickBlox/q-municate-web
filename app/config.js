@@ -40,7 +40,7 @@ define(function() {
     isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 
     defAvatar: {
-      url: 'images/ava-single.png',
+      url: 'images/ava-single.svg',
       group_url: 'images/ava-group.svg',
       caption: 'Choose user picture'
     },
