@@ -251,7 +251,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       };
       console.log(userData);
 
-      if (userData.full_name || userData.phone || userData.status || file) {
+      if (userData.full_name || userData.phone || userData.status || file.files[0]) {
         if (userData.full_name) params.full_name = userData.full_name;
         if (userData.phone) params.phone = userData.phone;
         // if (userData.status) params.custom_data = userData.full_name;
@@ -260,11 +260,11 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             console.log(res);
             User.contact = Contact.create(res);
             if (userData.status) User.contact.status = userData.status;
-            User.rememberMe();
-            if (file) {
+            if (file.files[0]) {
               User.contact.avatar_url = URL.createObjectURL(file.files[0]);
               $('#profile').find('.avatar').css('background-image', "url("+User.contact.avatar_url+")");
             }
+            User.rememberMe();
           }
         });
       }
