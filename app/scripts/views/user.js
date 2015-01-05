@@ -261,7 +261,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             User.contact = Contact.create(res);
             if (userData.status) User.contact.status = userData.status;
             User.rememberMe();
-            if (file) User.contact.avatar_url = URL.createObjectURL(file.files[0]);
+            if (file) {
+              User.contact.avatar_url = URL.createObjectURL(file.files[0]);
+              $('#profile').find('.avatar').css('background-image', "url("+User.contact.avatar_url+")");
+            }
           }
         });
       }
