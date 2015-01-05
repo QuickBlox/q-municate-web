@@ -69,12 +69,13 @@ require([
   'minEmoji', 'MainModule',
   'backbone', 'onlinejs'
 ], function ($, QMCONFIG, minEmoji, QM, Backbone) {
+  window.onLineURL = "https://qm.quickblox.com/online.php";
+  
   var APP;
   // Backbone.history.start();
 
   // Application initialization
   $(document).ready(function() {
-    window.onLineURL = "https://qm.quickblox.com/online.php";
     $.ajaxSetup({ cache: true });
     $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
       FB.init({
