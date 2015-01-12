@@ -135,6 +135,8 @@ function($, QMCONFIG, QB, _) {
       $('title').text(TITLE_NAME);
       $('link[rel="icon"]').remove();
       $('head').append('<link rel="icon" href="'+FAVICON+'">');
+      $('.mediacall-remote-duration').text('connecting...');
+      $('.mediacall-info-duration').text('');
     },
 
     downloadDialogs: function(roster, ids) {
