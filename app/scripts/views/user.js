@@ -187,6 +187,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           roster = ContactList.roster,
           chatStatus = roster[userId] ? roster[userId] : null;
 
+      if (!!navigator.userAgent.match(/Firefox/)) {
+        popup.find('.userDetails-controls button').css('padding', '0 12px');
+      }
+
       popup.find('.userDetails-avatar').css('background-image', 'url('+contact.avatar_url+')');
       popup.find('.userDetails-filename').text(contact.full_name);
 
