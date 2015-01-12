@@ -121,6 +121,8 @@ define(['jquery', 'quickblox'], function($, QB) {
           endCallSignal = $('#endCallSignal')[0],
           isErrorMessage = $(this).data('errorMessage');
 
+      // $('.mediacall-remote-duration').text('connecting...');
+      // $('.mediacall-info-duration').text('');
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
