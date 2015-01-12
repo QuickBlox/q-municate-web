@@ -294,6 +294,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     logout: function() {
       var DialogView = this.app.views.Dialog;
 
+      $('.mediacall .btn_hangup').click();
+
       User.logout(function() {
         switchOnWelcomePage();
         $('#capBox').removeClass('is-hidden');
