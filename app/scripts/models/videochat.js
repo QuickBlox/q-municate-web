@@ -76,6 +76,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         MessageView = this.app.views.Message,
         VideoChatView = this.app.views.VideoChat,
         time = Math.floor(Date.now() / 1000),
+        dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialogId+'"]'),
+        copyDialogItem,
         message;
 
     if (!isErrorMessage) {
@@ -123,7 +125,34 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     });
     if (QMCONFIG.debug) console.log(message);
     MessageView.addItem(message, true, true);
+
+    if (dialogItem.length > 0) {
+      copyDialogItem = dialogItem.clone();
+      dialogItem.remove();
+      $('#recentList ul').prepend(copyDialogItem);
+      if (!$('#searchList').is(':visible')) {
+       $('#recentList').removeClass('is-hidden');
+       isSectionEmpty($('#recentList ul')); 
+      }
+    }
   };
+
+  /* Private
+  ---------------------------------------------------------------------- */
+  function isSectionEmpty(list) {
+    if (list.contents().length === 0)
+      list.parent().addClass('is-hidden');
+
+    if ($('#historyList ul').contents().length === 0)
+        $('#historyList ul').parent().addClass('is-hidden');
+
+    if ($('#requestsList').is('.is-hidden') &&
+        $('#recentList').is('.is-hidden') &&
+        $('#historyList').is('.is-hidden')) {
+      
+      $('#emptyList').removeClass('is-hidden');
+    }
+  }
 
   return VideoChat;
 
