@@ -225,12 +225,14 @@ define(['jquery', 'quickblox'], function($, QB) {
       $('.mediacall-info-duration').removeClass('is-hidden');
       $('.mediacall-remote-duration').addClass('is-hidden');
     } else {
-      setDuration();
+      setTimeout(function () {
+        setDuration();
 
-      $('#remoteStream').addClass('is-hidden');
-      $('#remoteUser').removeClass('is-hidden');
-      $('.mediacall-remote-duration').removeClass('is-hidden');
-      $('.mediacall-info-duration').addClass('is-hidden');
+        $('#remoteStream').addClass('is-hidden');
+        $('#remoteUser').removeClass('is-hidden');
+        $('.mediacall-remote-duration').removeClass('is-hidden');
+        $('.mediacall-info-duration').addClass('is-hidden');
+      }, 2700);
     }
   };
 
