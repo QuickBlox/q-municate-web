@@ -106,6 +106,8 @@ define(['jquery', 'quickblox'], function($, QB) {
           self.type = 'video';
           self.unmute('video');
         }
+
+        self.sessionID = sessionId;
       });
     });
 
@@ -130,7 +132,7 @@ define(['jquery', 'quickblox'], function($, QB) {
 
       if (VideoChat.caller) {
         if (!isErrorMessage) {
-          VideoChat.sendMessage(opponentId, '1', duration, dialogId);
+          VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
         } else {
           $(this).removeAttr('data-errorMessage');
         }
@@ -206,6 +208,7 @@ define(['jquery', 'quickblox'], function($, QB) {
         chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
 
     audioSignal.pause();
+    self.sessionID = extension.sessionID;
   };
 
   VideoChatView.prototype.onRemoteStream = function(stream) {

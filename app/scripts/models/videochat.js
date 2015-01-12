@@ -69,7 +69,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     });
   };
 
-  VideoChat.prototype.sendMessage = function(userId, state, duration, dialogId, callType, isErrorMessage) {
+  VideoChat.prototype.sendMessage = function(userId, state, duration, dialogId, callType, isErrorMessage, sessionID) {
     var jid = QB.chat.helpers.getUserJid(userId, QMCONFIG.qbAccount.appId),
         User = this.app.models.User,
         Message = this.app.models.Message,
@@ -102,6 +102,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       };
     }
 
+    if (sessionID) extension.sessionID = sessionID;
+
     QB.chat.send(jid, {
       type: 'chat',
       body: 'Call info',
@@ -116,7 +118,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       callState: extension.callState,
       caller: extension.caller,
       callee: extension.callee,
-      duration: extension.duration || null
+      duration: extension.duration || null,
+      sessionID: extension.sessionID || null
     });
     if (QMCONFIG.debug) console.log(message);
     MessageView.addItem(message, true, true);
