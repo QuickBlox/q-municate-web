@@ -92,8 +92,9 @@ define(['jquery', 'quickblox'], function($, QB) {
 
       VideoChat.getUserMedia(params, callType, function(err, res) {
         if (err) {
+          chat.find('.mediacall .btn_hangup').data('errorMessage', 1);
           chat.find('.mediacall .btn_hangup').click();
-          showError(chat);
+          // showError(chat);
           fixScroll();
           return true;
         }
@@ -115,7 +116,8 @@ define(['jquery', 'quickblox'], function($, QB) {
           dialogId = $(this).data('dialog'),
           duration = $(this).parents('.mediacall').find('.mediacall-info-duration').text(),
           callingSignal = $('#callingSignal')[0],
-          endCallSignal = $('#endCallSignal')[0];
+          endCallSignal = $('#endCallSignal')[0],
+          isErrorMessage = $(this).data('errorMessage');
 
       callingSignal.pause();
       endCallSignal.play();
@@ -127,7 +129,11 @@ define(['jquery', 'quickblox'], function($, QB) {
       QB.webrtc.hangup();
 
       if (VideoChat.caller) {
-        VideoChat.sendMessage(opponentId, '1', duration, dialogId);
+        if (!isErrorMessage) {
+          VideoChat.sendMessage(opponentId, '1', duration, dialogId);
+        } else {
+          $(this).removeAttr('data-errorMessage');
+        }
         VideoChat.caller = null;
         VideoChat.callee = null;
       }

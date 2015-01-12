@@ -170,6 +170,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           html += '</div></div></article>';
           break;
 
+        // calls messages
         case '8':
           if (message.caller) {
             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
@@ -224,6 +225,24 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
               html += '<h4 class="message-author">Call to '+contacts[message.callee].full_name+', busy';
             else
               html += '<h4 class="message-author">Call from '+contacts[message.caller].full_name+', busy';
+              
+            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '</div></div></article>';
+          }
+          break;
+
+        case '11':
+          if (message.caller) {
+            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+            html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_ended' : 'request-audio_ended')+'"></span>';
+            html += '<div class="message-container-wrap">';
+            html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+            html += '<div class="message-content">';
+
+            if (message.caller === User.contact.id)
+              html += '<h4 class="message-author">Opponent doesn\'t have camera and/or microphone.';
+            else
+              html += '<h4 class="message-author">Camera and/or microphone wasn\'t found.';
               
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
             html += '</div></div></article>';

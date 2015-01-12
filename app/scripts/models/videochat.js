@@ -30,7 +30,12 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     QB.webrtc.getUserMedia(params, function(err, stream) {
       if (err) {
         console.log(err);
-        callback(err, null);
+        if (!options.isCallee) {
+          callback(err, null);
+        } else {
+          self.sendMessage(options.opponentId, '4', null, options.dialogId, callType, true);
+          callback(err, null);
+        }
       } else {
         console.log(stream);
 
@@ -64,7 +69,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     });
   };
 
-  VideoChat.prototype.sendMessage = function(userId, state, duration, dialogId, callType) {
+  VideoChat.prototype.sendMessage = function(userId, state, duration, dialogId, callType, isErrorMessage) {
     var jid = QB.chat.helpers.getUserJid(userId, QMCONFIG.qbAccount.appId),
         User = this.app.models.User,
         Message = this.app.models.Message,
@@ -73,17 +78,29 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         time = Math.floor(Date.now() / 1000),
         message;
 
-    var extension = {
-      save_to_history: 1,
-      date_sent: time,
+    if (!isErrorMessage) {
+      var extension = {
+        save_to_history: 1,
+        date_sent: time,
 
-      callType: state === '3' ? callType : VideoChatView.type === 'video' ? '1' : '2',
-      callState: state === '1' && !duration ? '2' : state,
-      caller: state === '3' ? userId : self.caller,
-      callee: state === '3' ? User.contact.id : self.callee
-    };
+        callType: state === '3' ? callType : VideoChatView.type === 'video' ? '1' : '2',
+        callState: state === '1' && !duration ? '2' : state,
+        caller: state === '3' ? userId : self.caller,
+        callee: state === '3' ? User.contact.id : self.callee
+      };
 
-    if (duration) extension.duration = duration;
+      if (duration) extension.duration = duration;
+    } else {
+      var extension = {
+        save_to_history: 1,
+        date_sent: time,
+
+        callType: callType === 'video' ? '1' : '2',
+        callState: state,
+        caller: userId,
+        callee: User.contact.id
+      };
+    }
 
     QB.chat.send(jid, {
       type: 'chat',
@@ -99,7 +116,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       callState: extension.callState,
       caller: extension.caller,
       callee: extension.callee,
-      duration: extension.duration
+      duration: extension.duration || null
     });
     if (QMCONFIG.debug) console.log(message);
     MessageView.addItem(message, true, true);
