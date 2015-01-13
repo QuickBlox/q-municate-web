@@ -5,12 +5,21 @@
  *
  */
 
-define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, minEmoji) {
+define([
+  'jquery',
+  'config',
+  'minEmoji',
+  'views/profile',
+  'mCustomScrollbar',
+  'mousewheel'
+], function($, QMCONFIG, minEmoji, ProfileView) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName;
+  var App;
 
   function Routes(app) {
+    App = app;
     this.app = app;
     
     Dialog = this.app.models.Dialog;
@@ -430,10 +439,13 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
       $('body').on('click', '#userProfile', function(event) {
         event.preventDefault();
         removePopover();
-        $('.popups').addClass('cancelUserProfile');
-        $('.userProfile-errors').text('');
-        openPopup($('#popupProfile'));
-        UserView.buildProfile();
+
+        var profileView = new ProfileView({ app: App });
+        console.log(profileView);
+        profileView.render();
+
+        // $('.popups').addClass('cancelUserProfile');
+        // openPopup($('#popupProfile'));
       });
 
       $('body').on('click', '.btn_changePassword', function(event) {
