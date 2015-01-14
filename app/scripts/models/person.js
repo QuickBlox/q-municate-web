@@ -5,11 +5,11 @@
  *
  */
 
-define([
-  'config',
+define([  
   'underscore',
-  'backbone'
-], function(QMCONFIG, _, Backbone) {
+  'backbone',
+  'config'
+], function(_, Backbone, QMCONFIG) {
 
   var App;
 
@@ -24,16 +24,18 @@ define([
     },
 
     parse: function(data, options) {
-      if (data && typeof data === 'object') {
-        App = data.app;
+      if (typeof options === 'object') {
+        App = options.app;
       }
 
       _.each(data, function(val, key) {
         var isHasKey = _.has(this.defaults, key);
-        if (!isHasKey) {
+        if (key !== 'id' && !isHasKey) {
           delete data[key];
         }
       }, this);
+
+      return data;
     },
 
     initialize: function() {

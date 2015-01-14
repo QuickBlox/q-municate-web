@@ -15,14 +15,13 @@ define([
   'mousewheel'
 ], function($, QMCONFIG, minEmoji, Person, ProfileView) {
 
-  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
+  var User, Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName;
-  var App;
 
   function Routes(app) {
-    App = app;
     this.app = app;
-    
+
+    User = this.app.models.User;
     Dialog = this.app.models.Dialog;
     UserView = this.app.views.User;
     ContactListView = this.app.views.ContactList;
@@ -37,10 +36,11 @@ define([
     init: function() {
       window.isQMAppActive = true;
 
-      var person = new Person({
-        app: App
-      }, {parse: true});
-      console.log(person);
+      var currentUser = new Person(User.contact, {
+        app: this.app,
+        parse: true
+      });
+      console.log(currentUser);
       var profileView = new ProfileView;
       console.log(profileView);
 
