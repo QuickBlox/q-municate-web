@@ -36,6 +36,9 @@ define([
     init: function() {
       window.isQMAppActive = true;
 
+      var profileView = new ProfileView({ app: App });
+      console.log(profileView);
+
       $(window).focus(function() {
         var dialogItem, dialog_id;
 
@@ -61,6 +64,18 @@ define([
         clickBehaviour(event);
       });
 
+      $('.popups').on('click', function(event) {
+        var objDom = $(event.target);
+
+        if (objDom.is('.popups') && !objDom.find('.popup.is-overlay').is('.is-open')) {
+          if (objDom.is('.cancelUserProfile')) {
+            objDom.removeClass('cancelUserProfile');
+            profileView.remove();
+          }
+          closePopup();
+        }
+      });
+
       $('#signup-avatar:file').on('change', function() {
         changeInputFile($(this));
       });
@@ -74,10 +89,6 @@ define([
             fileName = file ? file.name : QMCONFIG.defAvatar.caption;
     
         $('#popupProfile').find('.userDetails-avatar').css('background-image', "url("+src+")");
-      });
-
-      $('.updateUserProfile').on('click', function() {
-        UserView.updateUserProfile();
       });
 
       $('body').on('click', '.btn_userProfile_connect', function() {
@@ -439,13 +450,8 @@ define([
       $('body').on('click', '#userProfile', function(event) {
         event.preventDefault();
         removePopover();
-
-        var profileView = new ProfileView({ app: App });
-        console.log(profileView);
-        profileView.render();
-
-        // $('.popups').addClass('cancelUserProfile');
-        // openPopup($('#popupProfile'));
+        profileView.render().openPopup();
+        $('.popups').addClass('cancelUserProfile');
       });
 
       $('body').on('click', '.btn_changePassword', function(event) {
@@ -719,22 +725,6 @@ define([
       return false;
     } else {
       removePopover();
-      if (objDom.is('.popups') && !$('.popup.is-overlay').is('.is-open')) {
-        if (objDom.is('.cancelChangePassword')) {
-          objDom.removeClass('cancelChangePassword');
-          isPassword = true; 
-        }
-        if (objDom.is('.cancelUserProfile')) {
-          $('.updateUserProfile').click();
-        }
-        closePopup();
-        if (isPassword) {
-          $('.userProfile-errors').text('');
-          openPopup($('#popupProfile'));
-        }
-      } else {
-        return false;
-      }
     }
   }
 
