@@ -578,7 +578,12 @@
       <span class="userDetails-label">Phone:</span>
       <span class="userProfile-phone editable-profile" contenteditable="true"><%= phone %></span>
     </div>
-    <div class="userProfile-field userProfile-field-facebook"></div>
+    <div class="userProfile-field userProfile-field-facebook">
+      <% if (facebook_id) %>
+        <span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Connected</span>
+      <% else %>
+        <span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Not connected</span><button class="btn_userProfile btn_userProfile_connect">Connect</button>
+    </div>
     <div class="userProfile-errors"></div>
   </script>
 </body>
