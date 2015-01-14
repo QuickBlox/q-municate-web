@@ -40,9 +40,9 @@ define([
         app: this.app,
         parse: true
       });
-      console.log(currentUser);
-      var profileView = new ProfileView;
-      console.log(profileView);
+      var profileView = new ProfileView({
+        model: currentUser
+      });
 
       $(window).focus(function() {
         var dialogItem, dialog_id;

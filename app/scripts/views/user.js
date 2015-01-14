@@ -212,37 +212,6 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       }
     },
 
-    buildProfile: function() {
-      var popup = $('#popupProfile');
-
-      popup.find('.userDetails-avatar').css('background-image', 'url('+User.contact.avatar_url+')');
-      popup.find('.userProfile-filename').text(User.contact.full_name);
-
-      if (User.contact.status) {
-        popup.find('.userProfile-status-val').text(User.contact.status);
-      } else {
-        popup.find('.userProfile-status-val').text('[Empty field]');
-      }
-
-      popup.find('.userProfile-email').text(User.contact.email);
-
-      if (User.contact.phone) {
-        popup.find('.userProfile-phone').text(User.contact.phone);
-      } else {
-        popup.find('.userProfile-phone').text('[Empty field]');
-      }
-
-      if (User.contact.facebook_id) {
-        popup.find('.userProfile-field-facebook').html(
-          '<span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Connected</span>'
-        );
-      } else {
-        popup.find('.userProfile-field-facebook').html(
-          '<span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Not connected</span><button class="btn_userProfile btn_userProfile_connect">Connect</button>'
-        );
-      }
-    },
-
     updateUserProfile: function() {
       var objDom = $('#popupProfile'),
           file = objDom.find('.btn_userProfile_file')[0],

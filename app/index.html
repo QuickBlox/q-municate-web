@@ -554,10 +554,10 @@
 
   <script id="templateProfile" type="text/template">
     <div class="userDetails-preview">
-      <div class="userDetails-avatar"></div>
+      <div class="userDetails-avatar" style="background-image: url(<%= avatar_url %>)"></div>
       <div class="userDetails-info">
         <h3 class="userProfile-filename-wrap">
-          <span class="userProfile-filename editable-profile" contenteditable="true"></span>
+          <span class="userProfile-filename editable-profile" contenteditable="true"><%= full_name %></span>
           <span class="userProfile-header-pencil"></span>
         </h3>
         <div style="clear:both"></div>
@@ -568,15 +568,15 @@
     </div>
     <div class="userProfile-chatStatus">Status</div>
     <div class="userProfile-status-field userProfile-edit">
-      <span class="userProfile-status-val editable-profile" contenteditable="true"></span>
+      <span class="userProfile-status-val editable-profile" contenteditable="true"><%= status %></span>
     </div>
     <div class="userProfile-field">
       <span class="userDetails-label">Email:</span>
-      <span class="userProfile-email"></span>
+      <span class="userProfile-email"><%= email %></span>
     </div>
     <div class="userProfile-field userProfile-edit">
       <span class="userDetails-label">Phone:</span>
-      <span class="userProfile-phone editable-profile" contenteditable="true"></span>
+      <span class="userProfile-phone editable-profile" contenteditable="true"><%= phone %></span>
     </div>
     <div class="userProfile-field userProfile-field-facebook"></div>
     <div class="userProfile-errors"></div>
