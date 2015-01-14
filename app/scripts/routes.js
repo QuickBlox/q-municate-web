@@ -9,10 +9,11 @@ define([
   'jquery',
   'config',
   'minEmoji',
+  'models/person',
   'views/profile',
   'mCustomScrollbar',
   'mousewheel'
-], function($, QMCONFIG, minEmoji, ProfileView) {
+], function($, QMCONFIG, minEmoji, Person, ProfileView) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName;
@@ -36,7 +37,11 @@ define([
     init: function() {
       window.isQMAppActive = true;
 
-      var profileView = new ProfileView({ app: App });
+      var person = new Person({
+        app: App
+      }, {parse: true});
+      console.log(person);
+      var profileView = new ProfileView;
       console.log(profileView);
 
       $(window).focus(function() {

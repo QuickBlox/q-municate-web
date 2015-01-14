@@ -11,8 +11,6 @@ define([
   'backbone'
 ], function($, _, Backbone) {
 
-  var App;
-
   var ProfileView = Backbone.View.extend({
     tagName: 'section',
     id: 'popupProfile',
@@ -20,10 +18,8 @@ define([
 
     template: _.template( $('#templateProfile').html() ),
 
-    initialize: function(params) {
-      if (typeof params === 'object') {
-        App = params.app;
-      }
+    initialize: function() {
+      
     },
 
     render: function() {
