@@ -58,6 +58,7 @@ define(function() {
       shortName: "Name must be more than 2 characters",
       bigName: "Name mustn't be more than 50 characters",
       invalidEmail: "Please enter a valid Email address",
+      invalidPhone: "Phone mustn't contain letters",
       invalidPass: "Password mustn't contain non-Latin characters and spaces",
       shortPass: "Password must be more than 7 characters",
       bigPass: "Password mustn't be more than 40 characters",

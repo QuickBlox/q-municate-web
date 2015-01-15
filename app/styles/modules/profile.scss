@@ -144,6 +144,13 @@
   position: relative;
   border-bottom: 1px solid #f2f2f2;
 }
+  .userProfile-field_email {
+    width: 460px;
+    padding-right: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;  
+  }
 .userProfile-edit:hover {
   background: image-url('icon-pencil.svg') no-repeat 430px center, #f8f8f8;
 }
