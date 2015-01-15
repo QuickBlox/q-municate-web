@@ -11,7 +11,7 @@ define([
   'config'
 ], function(_, Backbone, QMCONFIG) {
 
-  var App, avatar;
+  var App;
 
   var Person = Backbone.Model.extend({
     defaults: {
@@ -48,14 +48,14 @@ define([
 
       // Field: avatar
       // only image file; not more than 10 MB; filename not more than 100 characters
-      if (avatar) {
-        if (!/^image.{0,}$/.test(avatar.type)) {
+      if (attrs.avatar) {
+        if (!/^image.{0,}$/.test(attrs.avatar.type)) {
           return QMCONFIG.errors.avatarType;
         }
-        if (avatar.size > MAX_SIZE) {
+        if (attrs.avatar.size > MAX_SIZE) {
           return QMCONFIG.errors.fileSize;
         }
-        if (avatar.name.length > 100) {
+        if (attrs.avatar.name.length > 100) {
           return QMCONFIG.errors.fileName;
         }
       }
@@ -65,10 +65,6 @@ define([
     parse: function(data, options) {
       if (typeof options === 'object') {
         App = options.app;
-      }
-
-      if (data.avatar) {
-        avatar = data.avatar;
       }
 
       _.each(data, function(val, key) {
@@ -84,7 +80,7 @@ define([
     },
 
     initialize: function() {
-      avatar = null;
+      
     }
 
   });
