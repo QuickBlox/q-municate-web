@@ -5,12 +5,21 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore',
-  'mCustomScrollbar', 'nicescroll', 'mousewheel'],
-function($, QMCONFIG, QB, _) {
+define([
+  'jquery',
+  'config',
+  'quickblox',
+  'underscore',
+  'models/person',
+  'views/profile',
+  'mCustomScrollbar',
+  'nicescroll',
+  'mousewheel'
+], function($, QMCONFIG, QB, _, Person, ProfileView) {
 
   var User, Dialog, Message, ContactList;
   var unreadDialogs = {};
+  var currentUser, profileView;
 
   var TITLE_NAME = 'Q-municate',
       FAVICON_COUNTER = 'favicon_counter.png',
@@ -56,6 +65,15 @@ function($, QMCONFIG, QB, _) {
         window.onLine = true;
         $('.no-connection').addClass('is-hidden');
       };
+
+      currentUser = new Person(User.contact, {
+        app: this.app,
+        parse: true
+      });
+      profileView = new ProfileView({
+        model: currentUser
+      });
+      this.app.views.Profile = profileView;
     },
 
     createDataSpinner: function(chat, groupchat, isAjaxDownloading) {

@@ -18,7 +18,7 @@ define(['config', 'quickblox'], function(QMCONFIG, QB) {
         id: qbUser.id,
         full_name: qbUser.full_name,
         email: qbUser.email,
-        phone: qbUser.phone || null,
+        phone: qbUser.phone || '',
         facebook_id: qbUser.facebook_id || null,
         blob_id: qbUser.blob_id || null,
         avatar_url: (qbUser.avatar_url || getAvatar(qbUser)).replace('http://', 'https://'),
@@ -48,7 +48,7 @@ define(['config', 'quickblox'], function(QMCONFIG, QB) {
   }
 
   function getStatus(contact) {
-    return contact.custom_data && JSON.parse(contact.custom_data).status || null;
+    return contact.custom_data && JSON.parse(contact.custom_data).status || '';
   }
 
   return Contact;

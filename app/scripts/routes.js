@@ -8,41 +8,32 @@
 define([
   'jquery',
   'config',
-  'minEmoji',
-  'models/person',
-  'views/profile',
+  'minEmoji',  
   'mCustomScrollbar',
   'mousewheel'
-], function($, QMCONFIG, minEmoji, Person, ProfileView) {
+], function($, QMCONFIG, minEmoji) {
 
-  var User, Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
+  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName;
+  var App;
 
   function Routes(app) {
+    App = app;
     this.app = app;
 
-    User = this.app.models.User;
     Dialog = this.app.models.Dialog;
     UserView = this.app.views.User;
     ContactListView = this.app.views.ContactList;
     DialogView = this.app.views.Dialog;
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
-    VideoChatView = this.app.views.VideoChat;
+    VideoChatView = this.app.views.VideoChat;    
   }
 
   Routes.prototype = {
 
     init: function() {
       window.isQMAppActive = true;
-
-      var currentUser = new Person(User.contact, {
-        app: this.app,
-        parse: true
-      });
-      var profileView = new ProfileView({
-        model: currentUser
-      });
 
       $(window).focus(function() {
         var dialogItem, dialog_id;
@@ -73,10 +64,6 @@ define([
         var objDom = $(event.target);
 
         if (objDom.is('.popups') && !objDom.find('.popup.is-overlay').is('.is-open')) {
-          if (objDom.is('.cancelUserProfile')) {
-            objDom.removeClass('cancelUserProfile');
-            profileView.remove();
-          }
           closePopup();
         }
       });
@@ -453,10 +440,10 @@ define([
       });
 
       $('body').on('click', '#userProfile', function(event) {
+        var profileView = App.views.Profile;
         event.preventDefault();
         removePopover();
         profileView.render().openPopup();
-        $('.popups').addClass('cancelUserProfile');
       });
 
       $('body').on('click', '.btn_changePassword', function(event) {

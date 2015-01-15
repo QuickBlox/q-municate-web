@@ -17,9 +17,9 @@ define([
     defaults: {
       full_name: null,
       email: null,
-      phone: null,
+      phone: '',
       avatar_url: QMCONFIG.defAvatar.url,
-      status: null,
+      status: '',
       facebook_id: null
     },
 
@@ -28,20 +28,20 @@ define([
 
       // Field: full_name
       // mandatory; 3-50 characters; could contain everything except '<', '>' and ';'
-      if (!attr.full_name) {
+      if (!attrs.full_name) {
         return 'Name is required';
       }
-      if (attr.full_name.length < 3) {
+      if (attrs.full_name.length < 3) {
         return QMCONFIG.errors.shortName;
       }
-      if (/^[^><;]{0,}$/.test(attr.full_name)) {
+      if (!/^[^><;]{0,}$/.test(attrs.full_name)) {
         return QMCONFIG.errors.invalidName;
       }
 
       // Field: phone
       // only valid phone number; 0-20 characters
-      if (attr.phone) {
-        if (!/^[-0-9()+*#]{0,}$/.test(attr.phone)) {
+      if (attrs.phone) {
+        if (!/^[-0-9()+*#]{0,}$/.test(attrs.phone)) {
           return QMCONFIG.errors.invalidPhone;
         }
       }
@@ -49,7 +49,7 @@ define([
       // Field: avatar
       // only image file; not more than 10 MB; filename not more than 100 characters
       if (avatar) {
-        if (/^image.{0,}$/.test(avatar.type)) {
+        if (!/^image.{0,}$/.test(avatar.type)) {
           return QMCONFIG.errors.avatarType;
         }
         if (avatar.size > MAX_SIZE) {

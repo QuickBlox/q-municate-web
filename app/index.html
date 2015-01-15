@@ -553,36 +553,38 @@
   <!-- endbuild -->
 
   <script id="templateProfile" type="text/template">
-    <div class="userProfile-preview">
-      <div class="userDetails-avatar" style="background-image: url(<%= avatar_url %>)"></div>
-      <div class="userDetails-info">
-        <div class="userProfile-filename-wrap">
-          <input class="userProfile-filename editable-profile" type="text" value="<%= full_name %>" maxlength="50">
-          <span class="userProfile-header-pencil"></span>
-        </div>        
-        <div style="clear:both"></div>
-        <button class="btn_userProfile btn_userProfile_photo">Set Profile Photo</button>
-        <button class="btn_userProfile btn_changePassword">Change password</button>
-        <input class="btn_userProfile_file" type="file" accept="image/*">
+    <section id="popupProfile" class="popup popup_profile">
+      <div class="userProfile-preview">
+        <div class="userDetails-avatar" style="background-image: url(<%= avatar_url %>)"></div>
+        <div class="userDetails-info">
+          <div class="userProfile-filename-wrap">
+            <input class="userProfile-filename editable-profile" type="text" value="<%= full_name %>" maxlength="50">
+            <span class="userProfile-header-pencil"></span>
+          </div>        
+          <div style="clear:both"></div>
+          <button class="btn_userProfile btn_userProfile_photo">Set Profile Photo</button>
+          <button class="btn_userProfile btn_changePassword">Change password</button>
+          <input class="btn_userProfile_file" type="file" accept="image/*">
+        </div>
       </div>
-    </div>
-    <div class="userProfile-chatStatus">Status</div>
-    <textarea name="" id="" class="userProfile-status-field userProfile-edit" value="<%= status %>" maxlength="80"></textarea>
-    <div class="userProfile-field userProfile-field_email">
-      <span class="userDetails-label">Email:</span>
-      <span class="userProfile-email"><%= email %></span>
-    </div>
-    <div class="userProfile-field userProfile-field_phone userProfile-edit">
-      <span class="userDetails-label">Phone:</span>
-      <input class="userProfile-phone editable-profile" type="text" value="<%= phone %>" maxlength="20">
-    </div>
-    <div class="userProfile-field userProfile-field-facebook">
-      <% if (facebook_id) %>
-        <span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Connected</span>
-      <% else %>
-        <span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Not connected</span><button class="btn_userProfile btn_userProfile_connect">Connect</button>
-    </div>
-    <div class="userProfile-errors"></div>
+      <div class="userProfile-chatStatus">Status</div>
+      <textarea class="userProfile-status-field userProfile-edit" maxlength="80"><%= status %></textarea>
+      <div class="userProfile-field userProfile-field_email">
+        <span class="userDetails-label">Email:</span>
+        <span class="userProfile-email"><%= email %></span>
+      </div>
+      <div class="userProfile-field userProfile-field_phone userProfile-edit">
+        <span class="userDetails-label">Phone:</span>
+        <input class="userProfile-phone editable-profile" type="text" value="<%= phone %>" maxlength="20">
+      </div>
+      <div class="userProfile-field userProfile-field-facebook">
+        <% if (facebook_id) %>
+          <span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Connected</span>
+        <% else %>
+          <span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Not connected</span><button class="btn_userProfile btn_userProfile_connect">Connect</button>
+      </div>
+      <div class="userProfile-errors"></div>
+    </section>
   </script>
 </body>
 </html>
