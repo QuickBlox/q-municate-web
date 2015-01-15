@@ -1,7 +1,11 @@
 /* User Details */
-.userDetails-preview {
+.userDetails-preview,
+.userProfile-preview {
   overflow: hidden;
   padding: 20px;
+}
+.userProfile-preview {
+  padding-right: 0;
 }
   .userDetails-avatar {
     width: 88px;
@@ -84,9 +88,15 @@
 /* User Profile */
 .userProfile-filename-wrap {
   float: left;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   line-height: 30px;
 }
+  .userProfile-filename {
+    width: 285px;
+    padding: 5px 0;
+    color: #333;
+    border: 0;
+  }
   .userProfile-header-pencil {
     display: none;
     width: 30px;
@@ -99,6 +109,15 @@
   .userProfile-filename-wrap:hover .userProfile-header-pencil {
     display: inline-block;
   }
+   .userProfile-header-pencil:hover {
+    display: none !important;
+  }
+
+.userProfile-phone {
+  width: 330px;
+  padding: 5px 0;
+  border: 0;
+}
 
 .btn_userProfile {
   font-size: 14px;
@@ -129,15 +148,19 @@
   text-align: left;
 }
   .userProfile-status-field {
+    width: 100%;
+    height: 100px;
     padding: 20px 40px 20px 20px;
-    height: 80px;
     font-size: 16px;
     line-height: 20px;
+    border: 0;
     border-bottom: 1px solid #f2f2f2;
-  }
-  .userProfile-status-val {
-    max-height: 46px;
+    resize: none;
     overflow: hidden;
+  }
+  .userProfile-status-field:focus {
+    background: #fff !important;
+    border: 0;
   }
 
 .userProfile-field {
@@ -150,6 +173,9 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;  
+  }
+  .userProfile-field_phone {
+    padding: 0 0 0 20px;
   }
 .userProfile-edit:hover {
   background: image-url('icon-pencil.svg') no-repeat 430px center, #f8f8f8;
@@ -170,24 +196,9 @@
 
 /* Editable */
 .editable-profile:focus {
-  padding: 3px;
+  padding: 5px 3px;
   background: #fff;
-  text-overflow: clip;
 }
-.editable-profile * {
-  display:inline;
-  white-space:nowrap;
-}
-.editable-profile br {
-  display:none;
-}
-  .userProfile-status-val {
-    display: block;
-    white-space: pre-wrap;
-  }
-  .userProfile-status-val br {
-    display: inline;
-  }
 
 /* Change Password */
 .popup-content_password {
