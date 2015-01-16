@@ -75,7 +75,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     successFormCallback: function() {
       this.removeSpinner();
       // $('#profile').find('img').attr('src', User.contact.avatar_url);
-      $('#profile').find('.avatar').css('background-image', "url("+User.contact.avatar_url+")");
+      $('#profile').find('.avatar').addClass('profileUserAvatar').css('background-image', "url("+User.contact.avatar_url+")");
+      $('#profile').find('.avatar').attr('data-id', User.contact.id);
       switchPage($('#mainPage'));
     },
 

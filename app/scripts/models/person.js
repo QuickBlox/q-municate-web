@@ -89,9 +89,10 @@ define([
           QBApiCalls = App.service,
           data = this.changed,
           params = {},
-          custom_data;
+          custom_data = currentUser.custom_data && JSON.parse(currentUser.custom_data) || {},
+          self = this;
 
-      if (Object.keys(data).length === 0) return;
+      if (Object.keys(data).length === 0 || (Object.keys(data).length === 1 && Object.keys(data)[0] === 'avatar' && !data.avatar)) return;
       
       if (data.full_name) {
         params.full_name = currentUser.full_name = data.full_name;
@@ -100,18 +101,43 @@ define([
         params.phone = currentUser.phone = data.phone;
       }
       if (data.status) {
-        custom_data = currentUser.custom_data && JSON.parse(currentUser.custom_data) || {};
         custom_data.status = currentUser.status = data.status;
         params.custom_data = currentUser.custom_data = JSON.stringify(custom_data);
       }
-      if (data.avatar)
+      if (data.avatar) {
+        this.uploadAvatar(data.avatar, function(blob) {
+          self.set('avatar_url', blob.path);
 
-      $('.profileUserName[data-id="'+currentUser.id+'"]').text(currentUser.full_name);
-      // $('.profileUserAvatar[data-id="'+currentUser.id+'"]').css('background-image', 'url('+currentUser.avatar_url+')');
+          params.blob_id = currentUser.blob_id = blob.id;
+          custom_data.avatar_url = currentUser.avatar_url = blob.path;
+          params.custom_data = currentUser.custom_data = JSON.stringify(custom_data);
 
-      App.models.User.rememberMe();
-      QBApiCalls.updateUser(currentUser.id, params, function(res) {
-        if (QMCONFIG.debug) console.log('update of user', res);
+          $('.profileUserName[data-id="'+currentUser.id+'"]').text(currentUser.full_name);
+          $('.profileUserAvatar[data-id="'+currentUser.id+'"]').css('background-image', 'url('+currentUser.avatar_url+')');
+          App.models.User.rememberMe();
+
+          QBApiCalls.updateUser(currentUser.id, params, function(res) {
+            if (QMCONFIG.debug) console.log('update of user', res);
+          });
+        });
+      } else {
+        $('.profileUserName[data-id="'+currentUser.id+'"]').text(currentUser.full_name);
+        App.models.User.rememberMe();
+
+        QBApiCalls.updateUser(currentUser.id, params, function(res) {
+          if (QMCONFIG.debug) console.log('update of user', res);
+        });
+      }      
+    },
+
+    uploadAvatar: function(avatar, callback) {
+      var QBApiCalls = App.service,
+          Attach = App.models.Attach;
+
+      Attach.crop(avatar, {w: 146, h: 146}, function(file) {
+        QBApiCalls.createBlob({file: file, 'public': true}, function(blob) {
+          callback(blob);
+        });
       });
     }
 

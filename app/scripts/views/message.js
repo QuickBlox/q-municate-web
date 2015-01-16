@@ -258,7 +258,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html = '<article class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
 
           // html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
-          html += '<div class="message-avatar avatar contact-avatar_message profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id"'+message.sender_id+'"></div>';
+          html += '<div class="message-avatar avatar contact-avatar_message profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id="'+message.sender_id+'"></div>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
