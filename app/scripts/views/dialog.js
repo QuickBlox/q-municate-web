@@ -66,7 +66,7 @@ define([
         $('.no-connection').addClass('is-hidden');
       };
 
-      currentUser = new Person(User.contact, {
+      currentUser = new Person(_.clone(User.contact), {
         app: this.app,
         parse: true
       });

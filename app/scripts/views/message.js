@@ -71,7 +71,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
-          html += '<h4 class="message-author">'+contact.full_name+' has added '+occupants_names+' to the group chat</h4>';
+          html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has added '+occupants_names+' to the group chat</h4>';
           html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
           html += '</div></div></article>';
           break;
@@ -93,16 +93,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
                 occupants_names = (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
             }
 
-            html += '<h4 class="message-author">'+contact.full_name+' has added '+occupants_names+'</h4>';
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has added '+occupants_names+'</h4>';
           }
           if (message.deleted_id) {
-            html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has left</h4>';
           }
           if (message.room_name) {
-            html += '<h4 class="message-author">'+contact.full_name+' has changed the chat name to "'+message.room_name+'"</h4>';
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has changed the chat name to "'+message.room_name+'"</h4>';
           }
           if (message.room_photo) {
-            html += '<h4 class="message-author">'+contact.full_name+' has changed the chat picture</h4>';
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has changed the chat picture</h4>';
           }
           html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
           html += '</div></div></article>';
@@ -118,7 +118,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           if (message.sender_id === User.contact.id)
             html += '<h4 class="message-author">Your request has been sent</h4>';
           else
-            html += '<h4 class="message-author">'+contact.full_name+' has sent a request to you</h4>';
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has sent a request to you</h4>';
 
           html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
           html += '</div></div></article>';
@@ -258,11 +258,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html = '<article class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
 
           // html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
-          html += '<div class="message-avatar avatar contact-avatar_message" style="background-image:url('+contact.avatar_url+')"></div>';
+          html += '<div class="message-avatar avatar contact-avatar_message profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id"'+message.sender_id+'"></div>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
-          html += '<h4 class="message-author">'+contact.full_name+'</h4>';
+          html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span></h4>';
 
           if (attachType && attachType.indexOf('image') > -1) {
 

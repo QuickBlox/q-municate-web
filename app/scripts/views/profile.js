@@ -57,6 +57,7 @@ define([
         this.model.set(params, {validate: true});
         console.log(this.model);
         if (!this.model.validationError) {
+          this.model.update();
           this.remove();
           this.closePopup();
         }

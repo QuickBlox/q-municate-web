@@ -81,6 +81,21 @@ define([
 
     initialize: function() {
       
+    },
+
+    update: function() {
+      var currentUser = App.models.User.contact,
+          params = this.changed;
+
+      console.log(currentUser);
+      console.log(params);
+      
+      currentUser.full_name = params.full_name || currentUser.full_name;
+      currentUser.phone = params.phone || currentUser.phone;
+      currentUser.status = params.status || currentUser.status;
+
+      $('.profileUserName[data-id="'+currentUser.id+'"]').text(currentUser.full_name);
+      // $('.profileUserAvatar[data-id="'+currentUser.id+'"]').css('background-image', 'url('+currentUser.avatar_url+')');
     }
 
   });
