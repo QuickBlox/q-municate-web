@@ -192,12 +192,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         popup.find('.userDetails-controls button').css('padding', '0 12px');
       }
 
-      popup.find('.userDetails-avatar').css('background-image', 'url('+contact.avatar_url+')');
-      popup.find('.userDetails-filename').text(contact.full_name);
+      popup.find('.userDetails-avatar').attr('data-id', userId).css('background-image', 'url('+contact.avatar_url+')');
+      popup.find('.userDetails-filename').attr('data-id', userId).text(contact.full_name);
 
-      if (contact.status) {
-        popup.find('.userDetails-status').text(contact.status);
-      }
+      popup.find('.userDetails-status').attr('data-id', userId).text(contact.status);
 
       if (chatStatus && chatStatus.status)
         popup.find('.userDetails-chatStatus').html('<span class="status status_online"></span><span class="status_text">Online</span>');
@@ -206,11 +204,33 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
       popup.find('.writeMessage').data('id', userId);
 
-      if (contact.phone) {
-        popup.find('.userDetails-field').html(
+      popup.find('.userDetails-field').attr('data-id', userId).html(
+        contact.phone ?
+        '<span class="userDetails-label">Phone:</span><span class="userDetails-phone">'+contact.phone+'</span>' :
+        ''
+      );
+
+      this.getNewProfile(userId);
+    },
+
+    getNewProfile: function(userId) {
+      var QBApiCalls = this.app.service,
+          Contact = this.app.models.Contact,
+          ContactList = this.app.models.ContactList;
+
+      QBApiCalls.getUser(userId, function(user) {
+        var contact = Contact.create(user);
+        ContactList.contacts[contact.id] = contact;
+
+        $('.profileUserName[data-id="'+contact.id+'"]').text(contact.full_name);
+        $('.profileUserStatus[data-id="'+contact.id+'"]').text(contact.status);
+        $('.profileUserPhone[data-id="'+contact.id+'"]').html(
           '<span class="userDetails-label">Phone:</span><span class="userDetails-phone">'+contact.phone+'</span>'
         );
-      }
+        $('.profileUserAvatar[data-id="'+contact.id+'"]').css('background-image', 'url('+contact.avatar_url+')');
+
+        localStorage.setItem('QM.contact-' + contact.id, JSON.stringify(contact));
+      });
     },
 
     addFBAccount: function(token) {

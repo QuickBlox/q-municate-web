@@ -404,10 +404,10 @@
 
     <section id="popupDetails" class="popup popup_details presence-listener">
       <div class="userDetails-preview">
-        <div class="userDetails-avatar"></div>
+        <div class="userDetails-avatar profileUserAvatar"></div>
         <div class="userDetails-info">
-          <h3 class="userDetails-filename"></h3>
-          <span class="userDetails-status"></span>
+          <h3 class="userDetails-filename profileUserName"></h3>
+          <span class="userDetails-status profileUserStatus"></span>
         </div>
       </div>
       <div class="userDetails-chatStatus"></div>
@@ -417,7 +417,7 @@
         <button class="btn_userDetails writeMessage"><img src="images/icon-message.png" alt="videocall">Message</button>
         <button class="btn_userDetails deleteContact"><img src="images/icon-delete.svg" alt="videocall">Delete</button>
       </div>
-      <div class="userDetails-field"></div>
+      <div class="userDetails-field profileUserPhone"></div>
     </section>
 
     <section id="popupIncoming" class="popup incoming-calls is-open"></section>
@@ -556,7 +556,7 @@
     <section id="popupProfile" class="popup popup_profile">
       <div class="userProfile-preview">
         <div class="userDetails-avatar" style="background-image: url(<%= avatar_url %>)"></div>
-        <div class="userDetails-info">
+        <div class="userProfile-info">
           <div class="userProfile-filename-wrap">
             <input class="userProfile-filename editable-profile" type="text" value="<%= full_name %>" maxlength="50">
             <span class="userProfile-header-pencil"></span>

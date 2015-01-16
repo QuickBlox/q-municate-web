@@ -4,6 +4,9 @@
   overflow: hidden;
   padding: 20px;
 }
+.userDetails-preview {
+  height: 128px;
+}
 .userProfile-preview {
   padding-right: 0;
 }
@@ -17,10 +20,14 @@
     background-size: cover;
     background-position: 50%;
   }
-  .userDetails-info {
+  .userDetails-info,
+  .userProfile-info {
     position: relative;
     overflow: hidden;
     padding-left: 5px;
+  }
+  .userDetails-info {
+    height: 95px;
   }
     .userDetails-filename,
     .userProfile-filename-wrap {
@@ -30,10 +37,17 @@
       color: #333;
       font-weight: normal;
     }
+    .userDetails-filename {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .userDetails-status {
       font-size: 14px;
       line-height: 20px;
       color: #999;
+      display: inline-block;
+      word-break: break-all;
+      /*white-space: pre;*/
     }
 
 .userDetails-chatStatus,
@@ -172,7 +186,7 @@
     padding-right: 20px;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;  
+    text-overflow: ellipsis;
   }
   .userProfile-field_phone {
     padding: 0 0 0 20px;

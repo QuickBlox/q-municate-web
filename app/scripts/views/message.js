@@ -519,7 +519,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         }
       }
 
-      if (QMCONFIG.debug) console.log(msg);
+      // if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, recipientId);
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id))
         audioSignal.play();
