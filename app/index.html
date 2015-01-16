@@ -385,23 +385,6 @@
   </div>
 
   <div class="popups l-flexbox">
-    <section id="popupPassword" class="popup popup_password">
-      <header class="popup-header">
-        <h3>Change password</h3>
-      </header>
-      <div class="popup-content popup-content_password">
-        <div class="chroma-hash chroma-hash_password">
-          <input id="old-password" class="form-input form-input-password pattern-pass" type="password" placeholder="Old password" required>
-        </div>
-        <div class="chroma-hash chroma-hash_password">
-          <input id="new-password" class="form-input form-input-password pattern-pass" type="password" placeholder="New password" required>
-        </div>
-      </div>
-      <footer class="popup-footer">
-        <button class="btn btn_popup btn_popup_changepass">Change</button>
-      </footer>
-    </section>
-
     <section id="popupDetails" class="popup popup_details presence-listener">
       <div class="userDetails-preview">
         <div class="userDetails-avatar profileUserAvatar"></div>
@@ -584,6 +567,26 @@
           <span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Not connected</span><button class="btn_userProfile btn_userProfile_connect">Connect</button>
       </div>
       <div class="userProfile-errors"></div>
+    </section>
+  </script>
+
+  <script id="templateChangePass" type="text/template">
+    <section id="popupPassword" class="popup popup_password">
+      <header class="popup-header">
+        <h3>Change password</h3>
+      </header>
+      <div class="changePass-errors"></div>
+      <div class="popup-content popup-content_password">
+        <div class="chroma-hash chroma-hash_password">
+          <input id="old-password" class="form-input form-input-password pattern-pass" type="password" placeholder="Old password" required>
+        </div>
+        <div class="chroma-hash chroma-hash_password">
+          <input id="new-password" class="form-input form-input-password pattern-pass" type="password" placeholder="New password" required>
+        </div>
+      </div>
+      <footer class="popup-footer">
+        <button class="btn btn_popup btn_popup_changepass">Change</button>
+      </footer>
     </section>
   </script>
 </body>

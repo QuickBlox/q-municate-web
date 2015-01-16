@@ -12,14 +12,15 @@ define([
   'underscore',
   'models/person',
   'views/profile',
+  'views/change_password',
   'mCustomScrollbar',
   'nicescroll',
   'mousewheel'
-], function($, QMCONFIG, QB, _, Person, ProfileView) {
+], function($, QMCONFIG, QB, _, Person, ProfileView, ChangePassView) {
 
   var User, Dialog, Message, ContactList;
   var unreadDialogs = {};
-  var currentUser, profileView;
+  var currentUser, profileView, changePassView;
 
   var TITLE_NAME = 'Q-municate',
       FAVICON_COUNTER = 'favicon_counter.png',
@@ -73,7 +74,11 @@ define([
       profileView = new ProfileView({
         model: currentUser
       });
+      changePassView = new ChangePassView({
+        model: currentUser
+      });
       this.app.views.Profile = profileView;
+      this.app.views.ChangePass = changePassView;
     },
 
     createDataSpinner: function(chat, groupchat, isAjaxDownloading) {

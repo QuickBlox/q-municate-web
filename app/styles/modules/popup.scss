@@ -10,7 +10,8 @@
   opacity: 0;
   transition: opacity .5s;
 }
-.profileWrap {
+.profileWrap,
+.passWrap {
   position: absolute;
   width: 100%;
   height: 100%;

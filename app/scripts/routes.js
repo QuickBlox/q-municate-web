@@ -419,19 +419,16 @@ define([
       });
 
       $('body').on('click', '.btn_changePassword', function(event) {
+        var changePassView = App.views.ChangePass;
         event.preventDefault();
         closePopup();
-        $('.popups').addClass('cancelChangePassword');
-        $('#popupPassword input').val('');
-        openPopup($('#popupPassword'), null, null, null, true);
+        changePassView.render().openPopup();
       });
 
       $('body').on('click', '.btn_popup_changepass', function(event) {
+        var profileView = App.views.Profile;
         event.preventDefault();
-        $('.popups').removeClass('cancelChangePassword');
-        closePopup();
-        $('.userProfile-errors').text('');
-        openPopup($('#popupProfile'));
+        profileView.render().openPopup();
       });
 
       $('.popup-control-button, .btn_popup_private').on('click', function(event) {
@@ -671,8 +668,7 @@ define([
 
   // Checking if the target is not an object run popover
   function clickBehaviour(e) {
-    var objDom = $(e.target),
-        isPassword;
+    var objDom = $(e.target);
 
     if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
       return false;
@@ -699,7 +695,7 @@ define([
     $('.popover_smile').hide();
   }
 
-  function openPopup(objDom, id, dialog_id, isProfile, isPassword) {
+  function openPopup(objDom, id, dialog_id, isProfile) {
     // if it was the delete action
     if (id) {
       objDom.attr('data-id', id);
@@ -711,9 +707,6 @@ define([
     }
     if (isProfile) {
       objDom.find('.popup-control-button_cancel').attr('data-isprofile', true);
-    }
-    if (isPassword) {
-      objDom.find('.btn_popup_changepass').attr('data-ispassword', true);
     }
     objDom.add('.popups').addClass('is-overlay');
   }

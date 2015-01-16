@@ -352,25 +352,6 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     $('.popover:not(.popover_smile)').show(150);
   };
 
-  function openPopup(objDom, id, dialog_id, isProfile, isPassword) {
-    // if it was the delete action
-    if (id) {
-      objDom.attr('data-id', id);
-      objDom.find('#deleteConfirm').data('id', id);
-    }
-    // if it was the leave action
-    if (dialog_id) {
-      objDom.find('#leaveConfirm').data('dialog', dialog_id);
-    }
-    if (isProfile) {
-      objDom.find('.popup-control-button_cancel').attr('data-isprofile', true);
-    }
-    if (isPassword) {
-      objDom.find('.btn_popup_changepass').attr('data-ispassword', true);
-    }
-    objDom.add('.popups').addClass('is-overlay');
-  }
-
   return UserView;
 
 });
