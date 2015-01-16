@@ -212,40 +212,6 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       }
     },
 
-    updateUserProfile: function() {
-      var objDom = $('#popupProfile'),
-          file = objDom.find('.btn_userProfile_file')[0],
-          userData, params = {};
-
-      userData = {
-        full_name: objDom.find('.userProfile-filename').text() || null,
-        phone: (objDom.find('.userProfile-phone').text() === '[Empty field]' ? null : objDom.find('.userProfile-phone').text()) || null,
-        status: (objDom.find('.userProfile-status-val').text() === '[Empty field]' ? null : objDom.find('.userProfile-status-val').text()) || null,
-      };
-      console.log(userData);
-
-      if (userData.full_name || userData.phone || userData.status || file.files[0]) {
-        if (userData.full_name) params.full_name = userData.full_name;
-        if (userData.phone) params.phone = userData.phone;
-        // if (userData.status) params.custom_data = userData.full_name;
-        QB.users.update(User.contact.id, params, function(err, res) {
-          if (res) {
-            console.log(res);
-            User.contact = Contact.create(res);
-            if (userData.status) User.contact.status = userData.status;
-            if (file.files[0]) {
-              User.contact.avatar_url = URL.createObjectURL(file.files[0]);
-              $('#profile').find('.avatar').css('background-image', "url("+User.contact.avatar_url+")");
-            }
-            User.rememberMe();
-          } else {
-            $('.userProfile-errors').text(err.detail);
-            openPopup($('#popupProfile'));
-          }
-        });
-      }
-    },
-
     addFBAccount: function(token) {
       var popup = $('#popupProfile');
 

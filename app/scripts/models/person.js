@@ -85,17 +85,33 @@ define([
 
     update: function() {
       var currentUser = App.models.User.contact,
-          params = this.changed;
+          QBApiCalls = App.service,
+          data = this.changed,
+          params = {},
+          custom_data;
 
       console.log(currentUser);
-      console.log(params);
+      console.log(data);
       
-      currentUser.full_name = params.full_name || currentUser.full_name;
-      currentUser.phone = params.phone || currentUser.phone;
-      currentUser.status = params.status || currentUser.status;
+      if (data.full_name) {
+        params.full_name = currentUser.full_name = data.full_name;
+      }
+      if (data.phone) {
+        params.phone = currentUser.phone = data.phone;
+      }
+      if (data.status) {
+        custom_data = currentUser.custom_data && JSON.parse(currentUser.custom_data) || {};
+        custom_data.status = currentUser.status = data.status;
+        params.custom_data = currentUser.custom_data = JSON.stringify(custom_data);
+      }
 
       $('.profileUserName[data-id="'+currentUser.id+'"]').text(currentUser.full_name);
       // $('.profileUserAvatar[data-id="'+currentUser.id+'"]').css('background-image', 'url('+currentUser.avatar_url+')');
+
+      App.models.User.rememberMe();
+      QBApiCalls.updateUser(currentUser.id, params, function(res) {
+        if (QMCONFIG.debug) console.log('update of user', res);
+      });
     }
 
   });
