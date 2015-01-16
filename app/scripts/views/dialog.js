@@ -161,6 +161,7 @@ define([
       var self = this,
           ContactListView = this.app.views.ContactList,
           hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+          rosterIds = Object.keys(roster),
           notConfirmed,
           private_id,
           dialog,
@@ -233,6 +234,32 @@ define([
           });
         }
 
+        self.getAllUsers(rosterIds);
+
+      });
+    },
+
+    getAllUsers: function(rosterIds) {
+      var QBApiCalls = this.app.service,
+          Contact = this.app.models.Contact,
+          ContactList = this.app.models.ContactList,
+          params = { filter: { field: 'id', param: 'in', value: rosterIds }, per_page: 100 };
+
+      QBApiCalls.listUsers(params, function(users) {
+        users.items.forEach(function(qbUser) {
+          var user = qbUser.user;
+          var contact = Contact.create(user);
+          ContactList.contacts[contact.id] = contact;
+
+          $('.profileUserName[data-id="'+contact.id+'"]').text(contact.full_name);
+          $('.profileUserStatus[data-id="'+contact.id+'"]').text(contact.status);
+          $('.profileUserPhone[data-id="'+contact.id+'"]').html(
+            '<span class="userDetails-label">Phone:</span><span class="userDetails-phone">'+contact.phone+'</span>'
+          );
+          $('.profileUserAvatar[data-id="'+contact.id+'"]').css('background-image', 'url('+contact.avatar_url+')');
+
+          localStorage.setItem('QM.contact-' + contact.id, JSON.stringify(contact));
+        });
       });
     },
 
