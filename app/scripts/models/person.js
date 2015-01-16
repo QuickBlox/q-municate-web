@@ -18,6 +18,7 @@ define([
       full_name: null,
       email: null,
       phone: '',
+      avatar: null,
       avatar_url: QMCONFIG.defAvatar.url,
       status: '',
       facebook_id: null
@@ -90,8 +91,7 @@ define([
           params = {},
           custom_data;
 
-      console.log(currentUser);
-      console.log(data);
+      if (Object.keys(data).length === 0) return;
       
       if (data.full_name) {
         params.full_name = currentUser.full_name = data.full_name;
@@ -104,6 +104,7 @@ define([
         custom_data.status = currentUser.status = data.status;
         params.custom_data = currentUser.custom_data = JSON.stringify(custom_data);
       }
+      if (data.avatar)
 
       $('.profileUserName[data-id="'+currentUser.id+'"]').text(currentUser.full_name);
       // $('.profileUserAvatar[data-id="'+currentUser.id+'"]').css('background-image', 'url('+currentUser.avatar_url+')');

@@ -74,15 +74,6 @@ define([
 
       /* User Profile
       ----------------------------------------------------- */
-      $('.btn_userProfile_file').on('change', function() {
-        var URL = window.webkitURL || window.URL,
-            file = $(this)[0].files[0],
-            src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
-            fileName = file ? file.name : QMCONFIG.defAvatar.caption;
-    
-        $('#popupProfile').find('.userDetails-avatar').css('background-image', "url("+src+")");
-      });
-
       $('body').on('click', '.btn_userProfile_connect', function() {
         FB.login(function(response) {
           if (QMCONFIG.debug) console.log('FB authResponse', response);
@@ -192,9 +183,7 @@ define([
       });
 
       $(document.body).on('click', function() {
-        var chat = $('.l-chat:visible'),
-            profile = $('#popupProfile'),
-            elem;
+        var chat = $('.l-chat:visible');
 
         if (chat.find('.groupTitle .name_chat').is('.is-focus')) {
           chat.find('.groupTitle .name_chat').removeClass('is-focus');
@@ -210,36 +199,19 @@ define([
             chat.find('.name_chat').text(chat.find('.name_chat').text().trim());
           }
         }
-
-        if (profile.find('.editable-profile').is('.is-focus')) {
-          elem = profile.find('.is-focus');
-          elem.removeClass('is-focus');
-          elem[0].scrollLeft = 0;
-
-          if (editedChatName && !editedChatName.name) {
-            elem.text(chatName.name);
-          } else if (editedChatName && (editedChatName.name !== chatName.name) && (editedChatName.created_at > chatName.created_at)) {
-            elem.text(editedChatName.name);
-            // Dialog.changeName(profile.data('dialog'), editedChatName.name);
-          } else {
-            elem.text(elem.text().trim());
-          }
-        }
       });
 
-      $('body').on('click', '.groupTitle .name_chat, .editable-profile', function(event) {
+      $('body').on('click', '.groupTitle .name_chat', function(event) {
         event.stopPropagation();
-        $('.editable-profile').removeClass('is-focus');
         $(this).addClass('is-focus');
         chatName = {
           name: $(this).text().trim(),
           created_at: Date.now()
         };
-        if ($(this).text() === '[Empty field]') $(this).text('');
         removePopover();
       });
 
-      $('body').on('keyup', '.groupTitle .name_chat, .editable-profile', function(event) {
+      $('body').on('keyup', '.groupTitle .name_chat', function(event) {
         var code = event.keyCode;
         editedChatName = {
           name: $(this).text().trim(),
@@ -658,7 +630,7 @@ define([
 
       // fix QMW-253
       // solution http://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser
-      $('body').on('paste', '.l-message, .userProfile-status-val', function(e) {
+      $('body').on('paste', '.l-message', function(e) {
         e.preventDefault();
         var text = (e.originalEvent || e).clipboardData.getData('text/plain');
         document.execCommand('insertText', false, text);
@@ -680,22 +652,11 @@ define([
 
       // videocalls
       VideoChatView.init();
-
-      editableScroll();
     }
   };
 
   /* Private
   ---------------------------------------------------------------------- */
-  function editableScroll() {
-    $('.userProfile-status-val').niceScroll({
-      cursoropacitymax: 0.5,
-      railpadding: {right: 5},
-      zindex: 1,
-      enablekeyboard: false
-    });
-  }
-
   function occupantScrollbar() {
     $('.chat-occupants, #popupIncoming').mCustomScrollbar({
       theme: 'minimal-dark',

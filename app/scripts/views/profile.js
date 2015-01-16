@@ -8,8 +8,9 @@
 define([
   'jquery',
   'underscore',
-  'backbone'
-], function($, _, Backbone) {
+  'backbone',
+  'config'
+], function($, _, Backbone, QMCONFIG) {
 
   var ProfileView = Backbone.View.extend({
     className: 'profileWrap',
@@ -22,7 +23,8 @@ define([
 
     events: {
       'click .userProfile-field_phone': 'editPhone',
-      'click': 'editProfile'
+      'click': 'editProfile',
+      'change .btn_userProfile_file': 'chooseAvatar'
     },
 
     render: function() {
@@ -52,7 +54,8 @@ define([
         params = {
           full_name: this.$el.find('.userProfile-filename').val(),
           phone: this.$el.find('.userProfile-phone').val(),
-          status: this.$el.find('.userProfile-status-field').val()
+          status: this.$el.find('.userProfile-status-field').val(),
+          avatar: this.$el.find('.btn_userProfile_file')[0].files[0] || null
         };
         this.model.set(params, {validate: true});
         console.log(this.model);
@@ -68,6 +71,14 @@ define([
 
     validateError: function(model, error) {
       this.$el.find('.userProfile-errors').text(error);
+    },
+
+    chooseAvatar: function() {
+      var URL = window.webkitURL || window.URL,
+          avatar = this.$el.find('.btn_userProfile_file')[0].files[0],
+          src = avatar ? URL.createObjectURL(avatar) : (this.model.get('avatar_url') === QMCONFIG.defAvatar.url) ? QMCONFIG.defAvatar.url : this.model.get('avatar_url');
+  
+      this.$el.find('.userDetails-avatar').css('background-image', "url("+src+")");
     }
   });
 
