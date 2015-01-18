@@ -200,12 +200,23 @@
     right: 20px;
   }
 
-.userProfile-errors {
+.userProfile-errors,
+.changePass-errors,
+.userProfile-success {
   padding: 20px;
   font-size: 16px;
   line-height: 20px;
   color: #c03d3d;
   text-align: center;
+}
+.changePass-errors {
+  padding: 15px 20px;
+  line-height: 20px;
+}
+.userProfile-success {
+  position: relative;
+  top: -40px;
+  color: green;
 }
 
 /* Editable */
@@ -216,6 +227,6 @@
 
 /* Change Password */
 .popup-content_password {
-  padding: 30px 20px;
-  height: 170px;
+  padding: 0 20px 30px;
+  height: 140px;
 }

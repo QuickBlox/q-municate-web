@@ -36,7 +36,6 @@
   }
   .popup_password {
     width: 460px;
-    height: 290px;
   }
   .popup_attach {
     padding: 20px 20px 25px;
@@ -80,6 +79,9 @@
     }
     .not-selected .popup-footer {
       display: none;
+    }
+    .popup-footer_changepass {
+      height: 60px;
     }
     .popup-alert {
       height: calc(100% - 45px);

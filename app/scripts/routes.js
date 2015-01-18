@@ -419,16 +419,20 @@ define([
       });
 
       $('body').on('click', '.btn_changePassword', function(event) {
-        var changePassView = App.views.ChangePass;
+        var changePassView = App.views.ChangePass,
+            profileView = App.views.Profile;
+        
         event.preventDefault();
-        closePopup();
+        profileView.$el.hide();
         changePassView.render().openPopup();
       });
 
       $('body').on('click', '.btn_popup_changepass', function(event) {
-        var profileView = App.views.Profile;
+        var profileView = App.views.Profile,
+            changePassView = App.views.ChangePass;
+
         event.preventDefault();
-        profileView.render().openPopup();
+        changePassView.submitForm();
       });
 
       $('.popup-control-button, .btn_popup_private').on('click', function(event) {

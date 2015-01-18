@@ -567,6 +567,7 @@
           <span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Not connected</span><button class="btn_userProfile btn_userProfile_connect">Connect</button>
       </div>
       <div class="userProfile-errors"></div>
+      <div class="userProfile-success"></div>
     </section>
   </script>
 
@@ -578,13 +579,13 @@
       <div class="changePass-errors"></div>
       <div class="popup-content popup-content_password">
         <div class="chroma-hash chroma-hash_password">
-          <input id="old-password" class="form-input form-input-password pattern-pass" type="password" placeholder="Old password" required>
+          <input id="old-password" class="form-input form-input-password" type="password" placeholder="Old password" maxlength="40">
         </div>
         <div class="chroma-hash chroma-hash_password">
-          <input id="new-password" class="form-input form-input-password pattern-pass" type="password" placeholder="New password" required>
+          <input id="new-password" class="form-input form-input-password" type="password" placeholder="New password" maxlength="40">
         </div>
       </div>
-      <footer class="popup-footer">
+      <footer class="popup-footer popup-footer_changepass">
         <button class="btn btn_popup btn_popup_changepass">Change</button>
       </footer>
     </section>

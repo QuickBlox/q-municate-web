@@ -200,8 +200,12 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
-            var parseErr = JSON.parse(err.detail).errors.email[0];
-            failUser(parseErr);
+            var parseErr = JSON.parse(err.detail).errors.email;
+            if (parseErr) {
+              failUser(parseErr[0]);
+            } else {
+              callback(null, err);
+            }
           } else {
             if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
 
@@ -230,10 +234,11 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     connectChat: function(jid, callback) {
       this.checkSession(function(res) {
-        var password = Session.authParams.provider ? Session.token :
-                       Session.decrypt(Session.authParams).password;
+        // var password = Session.authParams.provider ? Session.token :
+        //                Session.decrypt(Session.authParams).password;
 
-        Session.encrypt(Session.authParams);
+        // Session.encrypt(Session.authParams);
+        var password = Session.token;
         QB.chat.connect({jid: jid, password: password}, function(err, res) {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);

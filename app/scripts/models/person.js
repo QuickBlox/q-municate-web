@@ -18,6 +18,7 @@ define([
     defaults: {
       full_name: null,
       email: null,
+      password: '',
       phone: '',
       avatar: null,
       avatar_url: QMCONFIG.defAvatar.url,
@@ -36,14 +37,25 @@ define([
       if (attrs.full_name.length < 3) {
         return QMCONFIG.errors.shortName;
       }
-      if (!/^[^><;]{0,}$/.test(attrs.full_name)) {
+      if (!/^[^><;]+$/.test(attrs.full_name)) {
         return QMCONFIG.errors.invalidName;
+      }
+
+      // Field: password
+      // mustn’t contain non-Latin characters and spaces; 8-40 characters
+      if (attrs.password) {
+        if (!/^[A-Za-z0-9`~!@#%&=_<>;:,'\"\.\$\^\*\-\+\\\/\|\(\)\[\]\{\}\?]+$/.test(attrs.password)) {
+          return QMCONFIG.errors.invalidPass;
+        }
+        if (attrs.password.length < 8) {
+          return QMCONFIG.errors.shortPass;
+        }
       }
 
       // Field: phone
       // only valid phone number; 0-20 characters
       if (attrs.phone) {
-        if (!/^[-0-9()+*#]{0,}$/.test(attrs.phone)) {
+        if (!/^[-0-9()+*#]+$/.test(attrs.phone)) {
           return QMCONFIG.errors.invalidPhone;
         }
       }
@@ -128,7 +140,7 @@ define([
         QBApiCalls.updateUser(currentUser.id, params, function(res) {
           if (QMCONFIG.debug) console.log('update of user', res);
         });
-      }      
+      }
     },
 
     uploadAvatar: function(avatar, callback) {
@@ -139,6 +151,26 @@ define([
         QBApiCalls.createBlob({file: file, 'public': true}, function(blob) {
           callback(blob);
         });
+      });
+    },
+
+    changeQBPass: function(data, callback) {
+      var currentUser = App.models.User.contact,
+          Session = App.models.Session,
+          QBApiCalls = App.service,
+          params = {};
+      
+      params.old_password = data.oldPass;
+      params.password = data.newPass;
+
+      QBApiCalls.updateUser(currentUser.id, params, function(res, err) {
+        if (res) {
+          if (QMCONFIG.debug) console.log('update of user', res);
+          Session.update({ authParams: Session.encrypt({email: currentUser.email, password: params.password}) }, true);
+          callback(null, res);
+        } else {
+          callback(err, null);
+        }
       });
     }
 

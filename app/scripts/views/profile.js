@@ -50,11 +50,11 @@ define([
       var obj = $(event.target),
           params;
       
-      if (obj.is('.profileWrap')) {
+      if (obj.is('.' + this.className)) {
         params = {
-          full_name: this.$el.find('.userProfile-filename').val(),
-          phone: this.$el.find('.userProfile-phone').val(),
-          status: this.$el.find('.userProfile-status-field').val(),
+          full_name: this.$el.find('.userProfile-filename').val().trim(),
+          phone: this.$el.find('.userProfile-phone').val().trim(),
+          status: this.$el.find('.userProfile-status-field').val().trim(),
           avatar: this.$el.find('.btn_userProfile_file')[0].files[0] || null
         };
         this.model.set(params, {validate: true});
@@ -71,6 +71,7 @@ define([
 
     validateError: function(model, error) {
       this.$el.find('.userProfile-errors').text(error);
+      this.$el.find('.userProfile-success').text('');
     },
 
     chooseAvatar: function() {
