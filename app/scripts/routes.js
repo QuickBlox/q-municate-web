@@ -72,17 +72,53 @@ define([
         changeInputFile($(this));
       });
 
-      /* User Profile
+      /* User Profile: FB connected
       ----------------------------------------------------- */
+      $('body').on('click', '.userDetails', function(event) {
+        event.preventDefault();
+        removePopover();
+        var id = $(this).data('id');
+        openPopup($('#popupDetails'), id);
+        UserView.buildDetails(id);
+      });
+
+      $('body').on('click', '#userProfile', function(event) {
+        var profileView = App.views.Profile;
+        event.preventDefault();
+        removePopover();
+        profileView.render().openPopup();
+      });
+
+      $('body').on('click', '.btn_changePassword', function(event) {
+        var changePassView = App.views.ChangePass,
+            profileView = App.views.Profile;
+        
+        event.preventDefault();
+        profileView.$el.hide();
+        changePassView.render().openPopup();
+      });
+
+      $('body').on('click', '.btn_popup_changepass', function(event) {
+        if (checkConnection() === false) return false;
+
+        var profileView = App.views.Profile,
+            changePassView = App.views.ChangePass;
+
+        event.preventDefault();
+        changePassView.submitForm();
+      });
+
       $('body').on('click', '.btn_userProfile_connect', function() {
+        if (checkConnection() === false) return false;
+
+        var profileView = App.views.Profile;
+
         FB.login(function(response) {
           if (QMCONFIG.debug) console.log('FB authResponse', response);
           if (response.status === 'connected') {
-            UserView.addFBAccount(response.authResponse.accessToken);
-          } else {
-            
+            profileView.addFBAccount(response.authResponse.userID);
           }
-        }, {scope: QMCONFIG.fbAccount.scope});
+        }, {scope: QMCONFIG.fbAccount.scopeFriends});
       });
 
       /* smiles
@@ -401,38 +437,6 @@ define([
 
         if (QMCONFIG.debug) console.log('leave chat');
         DialogView.leaveGroupChat($(this));
-      });
-
-      $('body').on('click', '.userDetails', function(event) {
-        event.preventDefault();
-        removePopover();
-        var id = $(this).data('id');
-        openPopup($('#popupDetails'), id);
-        UserView.buildDetails(id);
-      });
-
-      $('body').on('click', '#userProfile', function(event) {
-        var profileView = App.views.Profile;
-        event.preventDefault();
-        removePopover();
-        profileView.render().openPopup();
-      });
-
-      $('body').on('click', '.btn_changePassword', function(event) {
-        var changePassView = App.views.ChangePass,
-            profileView = App.views.Profile;
-        
-        event.preventDefault();
-        profileView.$el.hide();
-        changePassView.render().openPopup();
-      });
-
-      $('body').on('click', '.btn_popup_changepass', function(event) {
-        var profileView = App.views.Profile,
-            changePassView = App.views.ChangePass;
-
-        event.preventDefault();
-        changePassView.submitForm();
       });
 
       $('.popup-control-button, .btn_popup_private').on('click', function(event) {

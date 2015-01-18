@@ -80,6 +80,21 @@ define([
           src = avatar ? URL.createObjectURL(avatar) : (this.model.get('avatar_url') === QMCONFIG.defAvatar.url) ? QMCONFIG.defAvatar.url : this.model.get('avatar_url');
   
       this.$el.find('.userDetails-avatar').css('background-image', "url("+src+")");
+    },
+
+    addFBAccount: function(fbId) {
+      var self = this;
+
+      console.log(fbId);
+      this.model.connectFB(fbid, function(err, res) {
+        if (err) {
+          self.validateError(self.model, QMCONFIG.errors.FBAccountExists);
+        } else {
+          self.$el.find('.userProfile-field-facebook').html(
+            '<span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Connected</span>'
+          );
+        }
+      });
     }
   });
 

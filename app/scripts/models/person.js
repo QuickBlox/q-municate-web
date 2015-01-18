@@ -172,6 +172,31 @@ define([
           callback(err, null);
         }
       });
+    },
+
+    connectFB: function(fbId, callback) {
+      var currentUser = App.models.User.contact,
+          QBApiCalls = App.service,
+          custom_data = currentUser.custom_data && JSON.parse(currentUser.custom_data) || {},
+          params = {};
+      
+      custom_data.is_import = '1';
+      params.facebook_id = fbId;
+      params.custom_data = JSON.stringify(custom_data);
+
+      QBApiCalls.updateUser(currentUser.id, params, function(res, err) {
+        if (res) {
+          if (QMCONFIG.debug) console.log('update of user', res);
+
+          currentUser.facebook_id = fbId;
+          currentUser.custom_data = params.custom_data;
+          App.models.User.rememberMe();
+          
+          callback(null, res);
+        } else {
+          callback(err, null);
+        }
+      });
     }
 
   });

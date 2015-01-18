@@ -224,23 +224,14 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
         $('.profileUserName[data-id="'+contact.id+'"]').text(contact.full_name);
         $('.profileUserStatus[data-id="'+contact.id+'"]').text(contact.status);
-        $('.profileUserPhone[data-id="'+contact.id+'"]').html(
-          '<span class="userDetails-label">Phone:</span><span class="userDetails-phone">'+contact.phone+'</span>'
-        );
+        if (contact.phone) {
+          $('.profileUserPhone[data-id="'+contact.id+'"]').html(
+            '<span class="userDetails-label">Phone:</span><span class="userDetails-phone">'+contact.phone+'</span>'
+          );
+        }
         $('.profileUserAvatar[data-id="'+contact.id+'"]').css('background-image', 'url('+contact.avatar_url+')');
 
         localStorage.setItem('QM.contact-' + contact.id, JSON.stringify(contact));
-      });
-    },
-
-    addFBAccount: function(token) {
-      var popup = $('#popupProfile');
-
-      FB.api('/me', function (response) {
-        console.log(1111111111, response);
-        popup.find('.userProfile-field-facebook').html(
-          '<span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Connected</span>'
-        );
       });
     },
 
