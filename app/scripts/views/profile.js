@@ -86,7 +86,7 @@ define([
       var self = this;
 
       console.log(fbId);
-      this.model.connectFB(fbid, function(err, res) {
+      this.model.connectFB(fbId, function(err, res) {
         if (err) {
           self.validateError(self.model, QMCONFIG.errors.FBAccountExists);
         } else {
