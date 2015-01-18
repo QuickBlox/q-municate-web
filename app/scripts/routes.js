@@ -5,21 +5,29 @@
  *
  */
 
-define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, minEmoji) {
+define([
+  'jquery',
+  'config',
+  'minEmoji',  
+  'mCustomScrollbar',
+  'mousewheel'
+], function($, QMCONFIG, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName;
+  var App;
 
   function Routes(app) {
+    App = app;
     this.app = app;
-    
+
     Dialog = this.app.models.Dialog;
     UserView = this.app.views.User;
     ContactListView = this.app.views.ContactList;
     DialogView = this.app.views.Dialog;
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
-    VideoChatView = this.app.views.VideoChat;
+    VideoChatView = this.app.views.VideoChat;    
   }
 
   Routes.prototype = {
@@ -52,34 +60,65 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         clickBehaviour(event);
       });
 
+      $('.popups').on('click', function(event) {
+        var objDom = $(event.target);
+
+        if (objDom.is('.popups') && !objDom.find('.popup.is-overlay').is('.is-open')) {
+          closePopup();
+        }
+      });
+
       $('#signup-avatar:file').on('change', function() {
         changeInputFile($(this));
       });
 
-      /* User Profile
+      /* User Profile: FB connected
       ----------------------------------------------------- */
-      $('.btn_userProfile_file').on('change', function() {
-        var URL = window.webkitURL || window.URL,
-            file = $(this)[0].files[0],
-            src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
-            fileName = file ? file.name : QMCONFIG.defAvatar.caption;
-    
-        $('#popupProfile').find('.userDetails-avatar').css('background-image', "url("+src+")");
+      $('body').on('click', '.userDetails', function(event) {
+        event.preventDefault();
+        removePopover();
+        var id = $(this).data('id');
+        openPopup($('#popupDetails'), id);
+        UserView.buildDetails(id);
       });
 
-      $('.updateUserProfile').on('click', function() {
-        UserView.updateUserProfile();
+      $('body').on('click', '#userProfile', function(event) {
+        var profileView = App.views.Profile;
+        event.preventDefault();
+        removePopover();
+        profileView.render().openPopup();
+      });
+
+      $('body').on('click', '.btn_changePassword', function(event) {
+        var changePassView = App.views.ChangePass,
+            profileView = App.views.Profile;
+        
+        event.preventDefault();
+        profileView.$el.hide();
+        changePassView.render().openPopup();
+      });
+
+      $('body').on('click', '.btn_popup_changepass', function(event) {
+        if (checkConnection() === false) return false;
+
+        var profileView = App.views.Profile,
+            changePassView = App.views.ChangePass;
+
+        event.preventDefault();
+        changePassView.submitForm();
       });
 
       $('body').on('click', '.btn_userProfile_connect', function() {
+        if (checkConnection() === false) return false;
+
+        var profileView = App.views.Profile;
+
         FB.login(function(response) {
           if (QMCONFIG.debug) console.log('FB authResponse', response);
           if (response.status === 'connected') {
-            UserView.addFBAccount(response.authResponse.accessToken);
-          } else {
-            
+            profileView.addFBAccount(response.authResponse.userID);
           }
-        }, {scope: QMCONFIG.fbAccount.scope});
+        }, {scope: QMCONFIG.fbAccount.scopeFriends});
       });
 
       /* smiles
@@ -180,9 +219,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
       });
 
       $(document.body).on('click', function() {
-        var chat = $('.l-chat:visible'),
-            profile = $('#popupProfile'),
-            elem;
+        var chat = $('.l-chat:visible');
 
         if (chat.find('.groupTitle .name_chat').is('.is-focus')) {
           chat.find('.groupTitle .name_chat').removeClass('is-focus');
@@ -198,36 +235,19 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
             chat.find('.name_chat').text(chat.find('.name_chat').text().trim());
           }
         }
-
-        if (profile.find('.editable-profile').is('.is-focus')) {
-          elem = profile.find('.is-focus');
-          elem.removeClass('is-focus');
-          elem[0].scrollLeft = 0;
-
-          if (editedChatName && !editedChatName.name) {
-            elem.text(chatName.name);
-          } else if (editedChatName && (editedChatName.name !== chatName.name) && (editedChatName.created_at > chatName.created_at)) {
-            elem.text(editedChatName.name);
-            // Dialog.changeName(profile.data('dialog'), editedChatName.name);
-          } else {
-            elem.text(elem.text().trim());
-          }
-        }
       });
 
-      $('body').on('click', '.groupTitle .name_chat, .editable-profile', function(event) {
+      $('body').on('click', '.groupTitle .name_chat', function(event) {
         event.stopPropagation();
-        $('.editable-profile').removeClass('is-focus');
         $(this).addClass('is-focus');
         chatName = {
           name: $(this).text().trim(),
           created_at: Date.now()
         };
-        if ($(this).text() === '[Empty field]') $(this).text('');
         removePopover();
       });
 
-      $('body').on('keyup', '.groupTitle .name_chat, .editable-profile', function(event) {
+      $('body').on('keyup', '.groupTitle .name_chat', function(event) {
         var code = event.keyCode;
         editedChatName = {
           name: $(this).text().trim(),
@@ -417,39 +437,6 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
         if (QMCONFIG.debug) console.log('leave chat');
         DialogView.leaveGroupChat($(this));
-      });
-
-      $('body').on('click', '.userDetails', function(event) {
-        event.preventDefault();
-        removePopover();
-        var id = $(this).data('id');
-        openPopup($('#popupDetails'), id);
-        UserView.buildDetails(id);
-      });
-
-      $('body').on('click', '#userProfile', function(event) {
-        event.preventDefault();
-        removePopover();
-        $('.popups').addClass('cancelUserProfile');
-        $('.userProfile-errors').text('');
-        openPopup($('#popupProfile'));
-        UserView.buildProfile();
-      });
-
-      $('body').on('click', '.btn_changePassword', function(event) {
-        event.preventDefault();
-        closePopup();
-        $('.popups').addClass('cancelChangePassword');
-        $('#popupPassword input').val('');
-        openPopup($('#popupPassword'), null, null, null, true);
-      });
-
-      $('body').on('click', '.btn_popup_changepass', function(event) {
-        event.preventDefault();
-        $('.popups').removeClass('cancelChangePassword');
-        closePopup();
-        $('.userProfile-errors').text('');
-        openPopup($('#popupProfile'));
       });
 
       $('.popup-control-button, .btn_popup_private').on('click', function(event) {
@@ -648,7 +635,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
       // fix QMW-253
       // solution http://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser
-      $('body').on('paste', '.l-message, .userProfile-status-val', function(e) {
+      $('body').on('paste', '.l-message', function(e) {
         e.preventDefault();
         var text = (e.originalEvent || e).clipboardData.getData('text/plain');
         document.execCommand('insertText', false, text);
@@ -670,22 +657,11 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
       // videocalls
       VideoChatView.init();
-
-      editableScroll();
     }
   };
 
   /* Private
   ---------------------------------------------------------------------- */
-  function editableScroll() {
-    $('.userProfile-status-val').niceScroll({
-      cursoropacitymax: 0.5,
-      railpadding: {right: 5},
-      zindex: 1,
-      enablekeyboard: false
-    });
-  }
-
   function occupantScrollbar() {
     $('.chat-occupants, #popupIncoming').mCustomScrollbar({
       theme: 'minimal-dark',
@@ -700,29 +676,12 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
   // Checking if the target is not an object run popover
   function clickBehaviour(e) {
-    var objDom = $(e.target),
-        isPassword;
+    var objDom = $(e.target);
 
     if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
       return false;
     } else {
       removePopover();
-      if (objDom.is('.popups') && !$('.popup.is-overlay').is('.is-open')) {
-        if (objDom.is('.cancelChangePassword')) {
-          objDom.removeClass('cancelChangePassword');
-          isPassword = true; 
-        }
-        if (objDom.is('.cancelUserProfile')) {
-          $('.updateUserProfile').click();
-        }
-        closePopup();
-        if (isPassword) {
-          $('.userProfile-errors').text('');
-          openPopup($('#popupProfile'));
-        }
-      } else {
-        return false;
-      }
     }
   }
 
@@ -744,7 +703,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
     $('.popover_smile').hide();
   }
 
-  function openPopup(objDom, id, dialog_id, isProfile, isPassword) {
+  function openPopup(objDom, id, dialog_id, isProfile) {
     // if it was the delete action
     if (id) {
       objDom.attr('data-id', id);
@@ -756,9 +715,6 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
     }
     if (isProfile) {
       objDom.find('.popup-control-button_cancel').attr('data-isprofile', true);
-    }
-    if (isPassword) {
-      objDom.find('.btn_popup_changepass').attr('data-ispassword', true);
     }
     objDom.add('.popups').addClass('is-overlay');
   }

@@ -5,12 +5,22 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore',
-  'mCustomScrollbar', 'nicescroll', 'mousewheel'],
-function($, QMCONFIG, QB, _) {
+define([
+  'jquery',
+  'config',
+  'quickblox',
+  'underscore',
+  'models/person',
+  'views/profile',
+  'views/change_password',
+  'mCustomScrollbar',
+  'nicescroll',
+  'mousewheel'
+], function($, QMCONFIG, QB, _, Person, ProfileView, ChangePassView) {
 
   var User, Dialog, Message, ContactList;
   var unreadDialogs = {};
+  var currentUser, profileView, changePassView;
 
   var TITLE_NAME = 'Q-municate',
       FAVICON_COUNTER = 'favicon_counter.png',
@@ -56,6 +66,19 @@ function($, QMCONFIG, QB, _) {
         window.onLine = true;
         $('.no-connection').addClass('is-hidden');
       };
+
+      currentUser = new Person(_.clone(User.contact), {
+        app: this.app,
+        parse: true
+      });
+      profileView = new ProfileView({
+        model: currentUser
+      });
+      changePassView = new ChangePassView({
+        model: currentUser
+      });
+      this.app.views.Profile = profileView;
+      this.app.views.ChangePass = changePassView;
     },
 
     createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
@@ -143,6 +166,7 @@ function($, QMCONFIG, QB, _) {
       var self = this,
           ContactListView = this.app.views.ContactList,
           hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+          rosterIds = Object.keys(roster),
           notConfirmed,
           private_id,
           dialog,
@@ -215,6 +239,32 @@ function($, QMCONFIG, QB, _) {
           });
         }
 
+        self.getAllUsers(rosterIds);
+
+      });
+    },
+
+    getAllUsers: function(rosterIds) {
+      var QBApiCalls = this.app.service,
+          Contact = this.app.models.Contact,
+          ContactList = this.app.models.ContactList,
+          params = { filter: { field: 'id', param: 'in', value: rosterIds }, per_page: 100 };
+
+      QBApiCalls.listUsers(params, function(users) {
+        users.items.forEach(function(qbUser) {
+          var user = qbUser.user;
+          var contact = Contact.create(user);
+          ContactList.contacts[contact.id] = contact;
+
+          $('.profileUserName[data-id="'+contact.id+'"]').text(contact.full_name);
+          $('.profileUserStatus[data-id="'+contact.id+'"]').text(contact.status);
+          $('.profileUserPhone[data-id="'+contact.id+'"]').html(
+            '<span class="userDetails-label">Phone:</span><span class="userDetails-phone">'+contact.phone+'</span>'
+          );
+          $('.profileUserAvatar[data-id="'+contact.id+'"]').css('background-image', 'url('+contact.avatar_url+')');
+
+          localStorage.setItem('QM.contact-' + contact.id, JSON.stringify(contact));
+        });
       });
     },
 
@@ -239,8 +289,8 @@ function($, QMCONFIG, QB, _) {
       html += '<a class="contact l-flexbox" href="#">';
       html += '<div class="l-flexbox_inline">';
       // html += '<img class="contact-avatar avatar" src="' + icon + '" alt="user">';
-      html += '<div class="contact-avatar avatar" style="background-image:url(' + icon + ')"></div>';
-      html += '<span class="name">' + name + '</span>';
+      html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="'+private_id+'"></div>';
+      html += '<span class="name profileUserName" data-id="'+private_id+'">' + name + '</span>';
       html += '</div>';
       
       if (dialog.type === 3)
@@ -304,12 +354,13 @@ function($, QMCONFIG, QB, _) {
 
         html += '<div class="chat-title">';
         html += '<div class="l-flexbox_inline">';
-        html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
 
         if (dialog.type === 3) {
-          html += '<h2 class="name name_chat" title="'+name+'">'+name+'</h2>';
+          html += '<div class="contact-avatar avatar avatar_chat profileUserAvatar" style="background-image:url('+icon+')" data-id="'+user_id+'"></div>';
+          html += '<h2 class="name name_chat profileUserName" title="'+name+'" data-id="'+user_id+'">'+name+'</h2>';
           html = getStatus(status, html); 
         } else {
+          html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
           html += '<span class="pencil_active avatar is-hidden"></span>';
           html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">';
           html += '<h2 class="name name_chat" contenteditable="true" title="'+name+'">'+name+'</h2>';
@@ -461,21 +512,7 @@ function($, QMCONFIG, QB, _) {
              isSectionEmpty($('#recentList ul')); 
             }
           }
-          // chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
           $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
-
-
-          // for (var i = 0, len = new_ids.length; i < len; i++) {
-          //   new_id = new_ids[i];
-          //   occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
-          //   occupant = getStatus(roster[new_id], occupant);
-          //   occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
-          //   chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
-          // }
-
-          // chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
-
-          // $('.dialog-item[data-dialog="'+dialog.id+'"]').find('.contact').click();
         });
       } else {
         Dialog.createGroup(occupants_names, {name: groupName, occupants_ids: occupants_ids, type: 2}, function(dialog) {
