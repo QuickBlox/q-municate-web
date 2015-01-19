@@ -39,7 +39,8 @@ define([
       this.$el.find('.popup').add('.popups').addClass('is-overlay');
     },
 
-    returnToPopup: function() {
+    returnToPopup: function(event) {
+      event.preventDefault();
       this.remove();
       $('.tempHide').show();
       $('.tempHide').removeClass('tempHide');

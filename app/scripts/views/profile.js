@@ -88,6 +88,7 @@ define([
       this.model.connectFB(fbId, function(err, res) {
         if (err) {
           self.validateError(self.model, QMCONFIG.errors.FBAccountExists);
+          self.$el.find('.btn_userProfile_connect').prop('disabled', false);
         } else {
           self.$el.find('.userProfile-field-facebook').html(
             '<span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Connected</span>'

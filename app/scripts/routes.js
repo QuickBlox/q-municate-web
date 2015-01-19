@@ -111,14 +111,19 @@ define([
       $('body').on('click', '.btn_userProfile_connect', function() {
         if (checkConnection() === false) return false;
 
-        var profileView = App.views.Profile;
+        var profileView = App.views.Profile,
+            btn = $(this);
+
+        btn.prop('disabled', true);
 
         FB.login(function(response) {
           if (QMCONFIG.debug) console.log('FB authResponse', response);
           if (response.status === 'connected') {
             profileView.addFBAccount(response.authResponse.userID);
+          } else {
+            btn.prop('disabled', false);
           }
-        }, {scope: QMCONFIG.fbAccount.scopeFriends});
+        }, {scope: QMCONFIG.fbAccount.scope});
       });
 
       /* smiles
