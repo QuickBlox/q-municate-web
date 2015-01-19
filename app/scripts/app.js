@@ -54,17 +54,17 @@ define([
       // Checking if autologin was chosen
       if (localStorage['QM.session'] && localStorage['QM.user'] &&
           // new format of storage data (16.01.2015)
-          localStorage['QM.isUserWithCustomData']) {
+          localStorage['QM.isFBnewAPI']) {
         
         token = JSON.parse(localStorage['QM.session']).token;
         this.service.init(token);
 
-      } else if (localStorage['QM.isUserWithCustomData']) {
+      } else if (localStorage['QM.isFBnewAPI']) {
         this.service.init();
       } else {
         // removing the old cached data from LocalStorage
         localStorage.clear();
-        localStorage.setItem('QM.isUserWithCustomData', '1');
+        localStorage.setItem('QM.isFBnewAPI', '1');
         this.service.init();
       }
 
