@@ -108,8 +108,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         html += '<a class="contact l-flexbox" href="#">';
         html += '<div class="l-flexbox_inline">';
         // html += '<img class="contact-avatar avatar" src="'+contacts[user_id].avatar_url+'" alt="user">';
-        html += '<div class="contact-avatar avatar" style="background-image:url('+contacts[user_id].avatar_url+')"></div>';
-        html += '<span class="name">'+contacts[user_id].full_name+'</span>';
+        html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url('+contacts[user_id].avatar_url+')" data-id="'+user_id+'"></div>';
+        html += '<span class="name profileUserName" data-id="'+user_id+'">'+contacts[user_id].full_name+'</span>';
         html += '</div><input class="form-checkbox" type="checkbox">';
         html += '</a></li>';
         
@@ -379,8 +379,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         html += '<a class="contact l-flexbox" href="#">';
         html += '<div class="l-flexbox_inline">';
         // html += '<img class="contact-avatar avatar" src="'+(typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '')+'" alt="user">';
-        html += '<div class="contact-avatar avatar" style="background-image:url('+(typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '')+')"></div>';
-        html += '<span class="name">'+(typeof contacts[id] !== 'undefined' ? contacts[id].full_name : '')+'</span>';
+        html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url('+(typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '')+')" data-id="'+id+'"></div>';
+        html += '<span class="name profileUserName" data-id="'+id+'">'+(typeof contacts[id] !== 'undefined' ? contacts[id].full_name : '')+'</span>';
         html += '</div><div class="request-controls l-flexbox">';
         html += '<button class="request-button request-button_cancel">&#10005;</button>';
         html += '<button class="request-button request-button_ok">&#10003;</button>';
@@ -446,10 +446,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       roster[id].status = type ? false : true;
       ContactList.saveRoster(roster);
 
-      if (type)
+      if (type) {
         dialogItem.find('.status').removeClass('status_online');
-      else
+        if (dialogItem.is('.popup_details'))
+          dialogItem.find('.status_text').text('Offline');
+      } else {
         dialogItem.find('.status').addClass('status_online');
+        if (dialogItem.is('.popup_details'))
+          dialogItem.find('.status_text').text('Online');
+      }
     }
 
   };
@@ -517,12 +522,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         item += '<a class="contact l-flexbox" href="#">';
         item += '<div class="l-flexbox_inline">';
         // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
-        item += '<div class="contact-avatar avatar" style="background-image:url('+contact.avatar_url+')"></div>';
-        item += '<span class="name">'+contact.full_name+'</span>';
+        item += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id="'+contact.id+'"></div>';
+        item += '<span class="name profileUserName" data-id="'+contact.id+'">'+contact.full_name+'</span>';
         item += '</div>';
         if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
-          item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.png" alt="request">';
-          item += '<img class="icon-active" src="images/icon-request_active.png" alt="request"></button>';
+          item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.svg" alt="request">';
+          item += '<img class="icon-active" src="images/icon-request_active.svg" alt="request"></button>';
         }
         if (rosterItem && rosterItem.subscription === 'none' && rosterItem.ask) {
           item += '<span class="send-request l-flexbox">Request Sent</span>';

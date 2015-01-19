@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="22px" height="28px" viewBox="0 0 22 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-ios</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="-icons" sketch:type="MSArtboardGroup" transform="translate(-707.000000, -447.000000)" fill="#DDDDDD">
+            <g id="icon-ios" sketch:type="MSLayerGroup" transform="translate(707.000000, 446.000000)">
+                <path d="M15.029,5.475 C16.79,3.278 16.424,0.998 16.424,0.998 C16.424,0.998 13.959,1.01 12.186,3.435 C10.609,5.591 11.011,7.436 11.011,7.436 C11.011,7.436 13.148,7.82 15.029,5.475 L15.029,5.475 Z M18.364,15.838 C18.364,12.081 21.282,10.533 21.282,10.533 C21.282,10.533 19.79,7.732 15.997,7.732 C13.793,7.732 12.1,9.033 11.188,9.033 C10.126,9.033 8.54,7.81 6.496,7.81 C3.352,7.81 0,10.731 0,16.3 C0,21.959 3.96,29 7.095,29 C8.188,29 9.869,27.857 11.561,27.857 C13.222,27.857 14.448,28.959 16.025,28.959 C19.458,28.959 21.999,21.536 21.999,21.536 C21.999,21.536 18.364,20.076 18.364,15.838 L18.364,15.838 Z" id="Fill-14" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

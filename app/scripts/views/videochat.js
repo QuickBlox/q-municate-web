@@ -92,8 +92,9 @@ define(['jquery', 'quickblox'], function($, QB) {
 
       VideoChat.getUserMedia(params, callType, function(err, res) {
         if (err) {
+          chat.find('.mediacall .btn_hangup').data('errorMessage', 1);
           chat.find('.mediacall .btn_hangup').click();
-          showError(chat);
+          // showError(chat);
           fixScroll();
           return true;
         }
@@ -105,6 +106,8 @@ define(['jquery', 'quickblox'], function($, QB) {
           self.type = 'video';
           self.unmute('video');
         }
+
+        self.sessionID = sessionId;
       });
     });
 
@@ -115,8 +118,11 @@ define(['jquery', 'quickblox'], function($, QB) {
           dialogId = $(this).data('dialog'),
           duration = $(this).parents('.mediacall').find('.mediacall-info-duration').text(),
           callingSignal = $('#callingSignal')[0],
-          endCallSignal = $('#endCallSignal')[0];
+          endCallSignal = $('#endCallSignal')[0],
+          isErrorMessage = $(this).data('errorMessage');
 
+      // $('.mediacall-remote-duration').text('connecting...');
+      // $('.mediacall-info-duration').text('');
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
@@ -127,7 +133,11 @@ define(['jquery', 'quickblox'], function($, QB) {
       QB.webrtc.hangup();
 
       if (VideoChat.caller) {
-        VideoChat.sendMessage(opponentId, '1', duration, dialogId);
+        if (!isErrorMessage) {
+          VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
+        } else {
+          $(this).removeAttr('data-errorMessage');
+        }
         VideoChat.caller = null;
         VideoChat.callee = null;
       }
@@ -200,6 +210,7 @@ define(['jquery', 'quickblox'], function($, QB) {
         chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
 
     audioSignal.pause();
+    self.sessionID = extension.sessionID;
   };
 
   VideoChatView.prototype.onRemoteStream = function(stream) {
@@ -219,12 +230,14 @@ define(['jquery', 'quickblox'], function($, QB) {
       $('.mediacall-info-duration').removeClass('is-hidden');
       $('.mediacall-remote-duration').addClass('is-hidden');
     } else {
-      setDuration();
+      setTimeout(function () {
+        setDuration();
 
-      $('#remoteStream').addClass('is-hidden');
-      $('#remoteUser').removeClass('is-hidden');
-      $('.mediacall-remote-duration').removeClass('is-hidden');
-      $('.mediacall-info-duration').addClass('is-hidden');
+        $('#remoteStream').addClass('is-hidden');
+        $('#remoteUser').removeClass('is-hidden');
+        $('.mediacall-remote-duration').removeClass('is-hidden');
+        $('.mediacall-info-duration').addClass('is-hidden');
+      }, 2700);
     }
   };
 
@@ -334,13 +347,13 @@ define(['jquery', 'quickblox'], function($, QB) {
     html += '<span class="mediacall-remote-duration">connecting...</span>';
     html += '</div>';
     html += '<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">';
-    html += '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.png" alt="Q-municate">';
+    html += '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">';
     html += '<span class="mediacall-info-duration is-hidden"></span>';
     html += '</div>';
     html += '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">';
-    html += '<button class="btn_mediacall btn_camera_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-camera-off.png" alt="camera"></button>';
-    html += '<button class="btn_mediacall btn_mic_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-mic-off.png" alt="mic"></button>';
-    html += '<button class="btn_mediacall btn_hangup" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-hangup.png" alt="hangup"></button>';
+    html += '<button class="btn_mediacall btn_camera_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-camera-off.svg" alt="camera"></button>';
+    html += '<button class="btn_mediacall btn_mic_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>';
+    html += '<button class="btn_mediacall btn_hangup" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>';
     html += '</div></div>';
 
     chat.prepend(html);

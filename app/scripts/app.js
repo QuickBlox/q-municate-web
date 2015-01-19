@@ -53,20 +53,18 @@ define([
       // QB SDK initialization
       // Checking if autologin was chosen
       if (localStorage['QM.session'] && localStorage['QM.user'] &&
-          // new format of storage data (20.07.2014)
-          JSON.parse(localStorage['QM.user']).user_jid &&
-          // the integration was done
-          localStorage['QM.isIntegration']) {
+          // new format of storage data (16.01.2015)
+          localStorage['QM.isFBnewAPI']) {
         
         token = JSON.parse(localStorage['QM.session']).token;
         this.service.init(token);
 
-      } else if (localStorage['QM.isIntegration']) {
+      } else if (localStorage['QM.isFBnewAPI']) {
         this.service.init();
       } else {
         // removing the old cached data from LocalStorage
         localStorage.clear();
-        localStorage.setItem('QM.isIntegration', '1');
+        localStorage.setItem('QM.isFBnewAPI', '1');
         this.service.init();
       }
 

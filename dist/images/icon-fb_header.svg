@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="19px" height="19px" viewBox="0 0 19 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-fb_header</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="-icons" sketch:type="MSArtboardGroup" transform="translate(-900.000000, -454.000000)" fill="#CCCCCC">
+            <g id="icon-fb_header" sketch:type="MSLayerGroup" transform="translate(900.000000, 454.000000)">
+                <path d="M17.951,0 L1.049,0 C0.469,0 0,0.469 0,1.049 L0,17.952 C0,18.531 0.469,19 1.049,19 L10.148,19 L10.148,11.642 L7.672,11.642 L7.672,8.775 L10.148,8.775 L10.148,6.66 C10.148,4.206 11.647,2.87 13.836,2.87 C14.885,2.87 15.786,2.948 16.049,2.983 L16.049,5.547 L14.531,5.548 C13.34,5.548 13.109,6.114 13.109,6.944 L13.109,8.775 L15.949,8.775 L15.579,11.642 L13.109,11.642 L13.109,19 L17.951,19 C18.53,19 19,18.531 19,17.952 L19,1.049 C19,0.469 18.53,0 17.951,0" id="Fill-2" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -54,7 +54,8 @@ define(function() {
         callState: (params.extension && params.extension.callState) || params.callState || null,
         caller: parseInt((params.extension && params.extension.caller)) || parseInt(params.caller) || null,
         callee: parseInt((params.extension && params.extension.callee)) || parseInt(params.callee) || null,
-        duration: (params.extension && params.extension.duration) || params.duration || null        
+        duration: (params.extension && params.extension.duration) || params.duration || null,
+        sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null
       };
 
       if (message.attachment) {

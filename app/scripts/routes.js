@@ -5,21 +5,29 @@
  *
  */
 
-define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, minEmoji) {
+define([
+  'jquery',
+  'config',
+  'minEmoji',  
+  'mCustomScrollbar',
+  'mousewheel'
+], function($, QMCONFIG, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName;
+  var App;
 
   function Routes(app) {
+    App = app;
     this.app = app;
-    
+
     Dialog = this.app.models.Dialog;
     UserView = this.app.views.User;
     ContactListView = this.app.views.ContactList;
     DialogView = this.app.views.Dialog;
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
-    VideoChatView = this.app.views.VideoChat;
+    VideoChatView = this.app.views.VideoChat;    
   }
 
   Routes.prototype = {
@@ -52,8 +60,70 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         clickBehaviour(event);
       });
 
+      $('.popups').on('click', function(event) {
+        var objDom = $(event.target);
+
+        if (objDom.is('.popups') && !objDom.find('.popup.is-overlay').is('.is-open')) {
+          closePopup();
+        }
+      });
+
       $('#signup-avatar:file').on('change', function() {
         changeInputFile($(this));
+      });
+
+      /* User Profile
+      ----------------------------------------------------- */
+      $('body').on('click', '.userDetails', function(event) {
+        event.preventDefault();
+        removePopover();
+        var id = $(this).data('id');
+        openPopup($('#popupDetails'), id);
+        UserView.buildDetails(id);
+      });
+
+      $('body').on('click', '#userProfile', function(event) {
+        var profileView = App.views.Profile;
+        event.preventDefault();
+        removePopover();
+        profileView.render().openPopup();
+      });
+
+      $('body').on('click', '.btn_changePassword', function(event) {
+        var changePassView = App.views.ChangePass,
+            profileView = App.views.Profile;
+        
+        event.preventDefault();
+        profileView.$el.hide();
+        changePassView.render().openPopup();
+      });
+
+      $('body').on('click', '.btn_popup_changepass', function(event) {
+        if (checkConnection() === false) return false;
+
+        var profileView = App.views.Profile,
+            changePassView = App.views.ChangePass;
+
+        event.preventDefault();
+        changePassView.submitForm();
+      });
+
+      $('body').on('click', '.btn_userProfile_connect', function() {
+        if (checkConnection() === false) return false;
+
+        var profileView = App.views.Profile,
+            btn = $(this);
+
+        btn.prop('disabled', true);
+
+        FB.login(function(response) {
+          if (QMCONFIG.debug) console.log('FB authResponse', response);
+          if (response.status === 'connected') {
+            profileView.addFBAccount(response.authResponse.userID);
+          } else {
+            btn.prop('disabled', false);
+          }
+        }, {scope: QMCONFIG.fbAccount.scope});
       });
 
       /* smiles
@@ -155,6 +225,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
       $(document.body).on('click', function() {
         var chat = $('.l-chat:visible');
+
         if (chat.find('.groupTitle .name_chat').is('.is-focus')) {
           chat.find('.groupTitle .name_chat').removeClass('is-focus');
           chat.find('.groupTitle .name_chat')[0].scrollLeft = 0;
@@ -171,7 +242,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         }
       });
 
-      $('.l-workspace-wrap').on('click', '.groupTitle .name_chat', function(event) {
+      $('body').on('click', '.groupTitle .name_chat', function(event) {
         event.stopPropagation();
         $(this).addClass('is-focus');
         chatName = {
@@ -181,7 +252,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         removePopover();
       });
 
-      $('.l-workspace-wrap').on('keyup', '.groupTitle .name_chat', function(event) {
+      $('body').on('keyup', '.groupTitle .name_chat', function(event) {
         var code = event.keyCode;
         editedChatName = {
           name: $(this).text().trim(),
@@ -335,10 +406,15 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         openPopup($('#popupLogout'));
       });
 
-      $('.list, .l-workspace-wrap').on('click', '.deleteContact', function(event) {
+      $('body').on('click', '.deleteContact', function(event) {
         event.preventDefault();
-        var id = $(this).parents('.presence-listener').data('id');
-        openPopup($('#popupDelete'), id);
+        closePopup();
+        var parents = $(this).parents('.presence-listener');
+        var id = parents.data('id');
+        if (parents.is('.popup_details'))
+          openPopup($('#popupDelete'), id, null, true);
+        else
+          openPopup($('#popupDelete'), id);
       });
 
       $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {
@@ -370,13 +446,26 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
       $('.popup-control-button, .btn_popup_private').on('click', function(event) {
         event.preventDefault();
-        closePopup();
+        var isProfile = $(this).data('isprofile');
+        if (!$(this).is('.returnBackToPopup'))
+          closePopup();
+        if (isProfile)
+          openPopup($('#popupDetails'));
       });
 
       $('.search').on('click', function() {
         if (QMCONFIG.debug) console.log('global search');
         closePopup();
         ContactListView.globalPopup();
+      });
+
+      $('.btn_search').on('click', function(event) {
+        event.preventDefault();
+        var localSearch = $('#searchContacts input'),
+            globalSearch = $('#globalSearch input');
+
+        globalSearch.val(localSearch.val());
+        $('#globalSearch').submit();
       });
 
       $('#mainPage').on('click', '.createGroupChat', function(event) {
@@ -508,6 +597,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
         var id = $(this).data('id'),
             dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
         
+        closePopup();
         DialogView.htmlBuild(dialogItem);
       });
 
@@ -551,7 +641,7 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
 
       // fix QMW-253
       // solution http://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser
-      $('.l-workspace-wrap').on('paste', '.l-message', function(e) {
+      $('body').on('paste', '.l-message', function(e) {
         e.preventDefault();
         var text = (e.originalEvent || e).clipboardData.getData('text/plain');
         document.execCommand('insertText', false, text);
@@ -598,11 +688,6 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
       return false;
     } else {
       removePopover();
-      if (objDom.is('.popups') && !$('.popup.is-overlay').is('.is-open')) {
-        closePopup();
-      } else {
-        return false;
-      }
     }
   }
 
@@ -624,14 +709,18 @@ define(['jquery', 'config', 'minEmoji', 'mCustomScrollbar', 'mousewheel'], funct
     $('.popover_smile').hide();
   }
 
-  function openPopup(objDom, id, dialog_id) {
+  function openPopup(objDom, id, dialog_id, isProfile) {
     // if it was the delete action
     if (id) {
+      objDom.attr('data-id', id);
       objDom.find('#deleteConfirm').data('id', id);
     }
     // if it was the leave action
     if (dialog_id) {
       objDom.find('#leaveConfirm').data('dialog', dialog_id);
+    }
+    if (isProfile) {
+      objDom.find('.popup-control-button_cancel').attr('data-isprofile', true);
     }
     objDom.add('.popups').addClass('is-overlay');
   }

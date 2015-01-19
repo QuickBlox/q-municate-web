@@ -56,7 +56,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
         else
           html = '<article class="message message_service message_attach l-flexbox l-flexbox_alignstretch">';
         html += '<span class="message-avatar contact-avatar_message request-button_attach">';
-        html += '<img src="images/icon-attach.png" alt="attach"></span>';
+        html += '<img src="images/icon-attach.svg" alt="attach"></span>';
         html += '<div class="message-container-wrap">';
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
         html += '<div class="message-content">';

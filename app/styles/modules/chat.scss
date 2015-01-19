@@ -4,8 +4,7 @@
 }
 
 .chat-title {
-  /*max-width: 405px;*/ /* for situation when all btn_chat are shown */
-  max-width: 515px;
+  max-width: 430px;
   height: 40px;
 }
 .l-chat_group .chat-title {
@@ -45,13 +44,13 @@
   width: 18px;
   height: 17px;
   margin-left: 8px;
-  background: image-url('icon-pencil.png') no-repeat center;
+  background: image-url('icon-pencil.svg') no-repeat center;
 }
 .pencil_active {
   position: absolute;
   top: 0;
   left: 0;
-  background: image-url('icon-pencil_active.png') no-repeat center, rgba(0, 0, 0, 0.2);
+  background: image-url('icon-pencil_active.svg') no-repeat center, rgba(0, 0, 0, 0.2);
 }
 
 /* triangle */

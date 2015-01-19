@@ -40,7 +40,8 @@ input[type="file"] {
 }
 
 input:focus,
-[contenteditable="true"]:focus {
+[contenteditable="true"]:focus,
+textarea:focus {
   outline: 0;
   border-color: #66afe9;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
@@ -78,11 +79,11 @@ div[contenteditable="true"]:focus:empty:before {
 
 /* Placeholder */
 input[type="search"]::-webkit-input-placeholder {text-align: center; vertical-align: top;}
-input[type="search"]::-moz-placeholder          {text-align: center; background: image-url('icon-search.png') no-repeat 37% center;}
-input[type="search"]:-ms-input-placeholder      {text-align: center; background: image-url('icon-search.png') no-repeat 37% center;}
+input[type="search"]::-moz-placeholder          {text-align: center; background: image-url('icon-search.svg') no-repeat 37% center;}
+input[type="search"]:-ms-input-placeholder      {text-align: center; background: image-url('icon-search.svg') no-repeat 37% center;}
 
 input[type="search"]::-webkit-input-placeholder:before {
-  content: image-url('icon-search.png');
+  content: image-url('icon-search.svg');
   position: relative;
   margin-right: 7px;
 }

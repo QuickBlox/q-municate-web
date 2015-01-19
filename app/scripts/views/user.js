@@ -7,12 +7,13 @@
 
 define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
-  var User, ContactList,
+  var User, ContactList, Contact,
       FBCallback = null;
 
   function UserView(app) {
     this.app = app;
     User = this.app.models.User;
+    Contact = this.app.models.Contact;
     ContactList = this.app.models.ContactList;
   }
 
@@ -74,7 +75,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     successFormCallback: function() {
       this.removeSpinner();
       // $('#profile').find('img').attr('src', User.contact.avatar_url);
-      $('#profile').find('.avatar').css('background-image', "url("+User.contact.avatar_url+")");
+      $('#profile').find('.avatar').addClass('profileUserAvatar').css('background-image', "url("+User.contact.avatar_url+")");
+      $('#profile').find('.avatar').attr('data-id', User.contact.id);
       switchPage($('#mainPage'));
     },
 
@@ -119,7 +121,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     profilePopover: function(objDom) {
       var html = '<ul class="list-actions list-actions_profile popover">';
-      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+      html += '<li class="list-item"><a id="userProfile" class="list-actions-action" href="#">Profile</a></li>';
       html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Log Out</a></li>';
       html += '</ul>';
 
@@ -143,11 +145,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       } else if (dialogs[dialog_id].type !== 3)
         html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" data-dialog="'+dialog_id+'" href="#">Add people</a></li>';
       
-      // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
-      
-      if (dialogs[dialog_id].type === 3)
+      if (dialogs[dialog_id].type === 3) {
+        html += '<li class="list-item"><a class="list-actions-action userDetails" data-id="'+ids+'" href="#">Profile</a></li>';
         html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
-      else
+      } else
         html += '<li class="list-item"><a class="leaveChat list-actions-action" data-group="true" href="#">Leave chat</a></li>';
       
       html += '</ul>';
@@ -170,7 +171,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         html += '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="'+id+'" href="#">Video call</a></li>';
         html += '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="'+id+'" href="#">Audio call</a></li>';
         html += '<li class="list-item"><a class="list-actions-action writeMessage" data-id="'+id+'" href="#">Write message</a></li>';
-        // html += '<li class="list-item"><a class="list-actions-action" href="#">Profile</a></li>';
+        html += '<li class="list-item"><a class="list-actions-action userDetails" data-id="'+id+'" href="#">Profile</a></li>';
       }
       html += '</ul>';
 
@@ -181,15 +182,70 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       $('.list-actions_occupants').offset({top: position.top, left: position.left});
     },
 
+    buildDetails: function(userId) {
+      var popup = $('#popupDetails'),
+          contact = ContactList.contacts[userId],
+          roster = ContactList.roster,
+          chatStatus = roster[userId] ? roster[userId] : null;
+
+      if (!!navigator.userAgent.match(/Firefox/)) {
+        popup.find('.userDetails-controls button').css('padding', '0 12px');
+      }
+
+      popup.find('.userDetails-avatar').attr('data-id', userId).css('background-image', 'url('+contact.avatar_url+')');
+      popup.find('.userDetails-filename').attr('data-id', userId).text(contact.full_name);
+
+      popup.find('.userDetails-status').attr('data-id', userId).text(contact.status);
+
+      if (chatStatus && chatStatus.status)
+        popup.find('.userDetails-chatStatus').html('<span class="status status_online"></span><span class="status_text">Online</span>');
+      else
+        popup.find('.userDetails-chatStatus').html('<span class="status"></span><span class="status_text">Offline</span>');
+
+      popup.find('.writeMessage').data('id', userId);
+
+      popup.find('.userDetails-field').attr('data-id', userId).html(
+        contact.phone ?
+        '<span class="userDetails-label">Phone:</span><span class="userDetails-phone">'+contact.phone+'</span>' :
+        ''
+      );
+
+      this.getNewProfile(userId);
+    },
+
+    getNewProfile: function(userId) {
+      var QBApiCalls = this.app.service,
+          Contact = this.app.models.Contact,
+          ContactList = this.app.models.ContactList;
+
+      QBApiCalls.getUser(userId, function(user) {
+        var contact = Contact.create(user);
+        ContactList.contacts[contact.id] = contact;
+
+        $('.profileUserName[data-id="'+contact.id+'"]').text(contact.full_name);
+        $('.profileUserStatus[data-id="'+contact.id+'"]').text(contact.status);
+        if (contact.phone) {
+          $('.profileUserPhone[data-id="'+contact.id+'"]').html(
+            '<span class="userDetails-label">Phone:</span><span class="userDetails-phone">'+contact.phone+'</span>'
+          );
+        }
+        $('.profileUserAvatar[data-id="'+contact.id+'"]').css('background-image', 'url('+contact.avatar_url+')');
+
+        localStorage.setItem('QM.contact-' + contact.id, JSON.stringify(contact));
+      });
+    },
+
     smilePopover: function(objDom) {
       if (objDom.find('img').length === 1)
-        objDom.addClass('is-active').append('<img src="images/icon-smile_active.png" alt="smile">').find('*:first').addClass('is-hidden');
+        objDom.addClass('is-active').append('<img src="images/icon-smile_active.svg" alt="smile">').find('*:first').addClass('is-hidden');
       
       $('.popover_smile').show(150);
     },
 
     logout: function() {
       var DialogView = this.app.views.Dialog;
+
+      $('.mediacall .btn_hangup').click();
 
       User.logout(function() {
         switchOnWelcomePage();

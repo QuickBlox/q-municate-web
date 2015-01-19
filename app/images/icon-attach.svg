@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="14px" height="34px" viewBox="0 0 14 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-attach</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="-icons" sketch:type="MSArtboardGroup" transform="translate(-1260.000000, -471.000000)" fill="#BEBEBE">
+            <g id="icon-attach" sketch:type="MSLayerGroup" transform="translate(1260.000000, 470.000000)">
+                <path d="M2.56,1.704 C4.092,0.773 6.068,0.765 7.594,1.682 C9.147,2.616 10.034,4.36 10.026,6.468 L9.949,26.361 C9.944,27.497 9.649,28.475 9.095,29.191 C8.546,29.899 7.765,30.306 6.949,30.31 C5.47,30.316 3.978,28.977 3.988,26.405 L4.042,12.432 C4.044,11.858 4.49,11.391 5.039,11.388 C5.588,11.386 6.031,11.849 6.029,12.423 L5.975,26.396 C5.97,27.604 6.466,28.233 6.957,28.232 C7.173,28.231 7.385,28.11 7.555,27.89 C7.815,27.555 7.959,27.014 7.962,26.369 L8.039,6.476 C8.044,5.112 7.531,4.05 6.593,3.486 C5.67,2.931 4.474,2.936 3.546,3.499 C2.604,4.07 2.083,5.137 2.077,6.502 C2.055,12.44 2.009,24.335 1.997,27.304 C1.982,31.179 4.551,32.934 6.943,32.924 C9.335,32.914 11.917,31.138 11.933,27.262 L12.013,6.46 C12.015,5.886 12.462,5.419 13.01,5.417 C13.559,5.414 14.002,5.878 14,6.451 L13.92,27.253 C13.91,29.705 13.083,31.596 11.841,32.895 C10.516,34.281 8.719,34.994 6.935,35.002 C3.479,35.017 -0.01,32.38 0.01,27.312 C0.022,24.342 0.068,12.448 0.09,6.51 C0.099,4.403 0.999,2.65 2.56,1.704" id="Fill-18" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

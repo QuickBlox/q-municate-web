@@ -41,6 +41,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
       if (typeof chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) return true;
 
+      if (message.sessionID && $('.message[data-session="'+message.sessionID+'"]')[0]) return true;
+
       this.checkSenderId(message.sender_id, function() {
 
         var contacts = ContactListMsg.contacts,
@@ -69,7 +71,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
-          html += '<h4 class="message-author">'+contact.full_name+' has added '+occupants_names+' to the group chat</h4>';
+          html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has added '+occupants_names+' to the group chat</h4>';
           html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
           html += '</div></div></article>';
           break;
@@ -91,16 +93,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
                 occupants_names = (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
             }
 
-            html += '<h4 class="message-author">'+contact.full_name+' has added '+occupants_names+'</h4>';
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has added '+occupants_names+'</h4>';
           }
           if (message.deleted_id) {
-            html += '<h4 class="message-author">'+contact.full_name+' has left</h4>';
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has left</h4>';
           }
           if (message.room_name) {
-            html += '<h4 class="message-author">'+contact.full_name+' has changed the chat name to "'+message.room_name+'"</h4>';
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has changed the chat name to "'+message.room_name+'"</h4>';
           }
           if (message.room_photo) {
-            html += '<h4 class="message-author">'+contact.full_name+' has changed the chat picture</h4>';
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has changed the chat picture</h4>';
           }
           html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
           html += '</div></div></article>';
@@ -116,7 +118,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           if (message.sender_id === User.contact.id)
             html += '<h4 class="message-author">Your request has been sent</h4>';
           else
-            html += '<h4 class="message-author">'+contact.full_name+' has sent a request to you</h4>';
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has sent a request to you</h4>';
 
           html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
           html += '</div></div></article>';
@@ -148,7 +150,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           if (message.sender_id === User.contact.id)
             html += '<h4 class="message-author">You have rejected a request';
           else
-            html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+            html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
 
           html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
           html += '</div></div></article>';
@@ -164,15 +166,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           if (message.sender_id === User.contact.id)
             html += '<h4 class="message-author">You have deleted '+recipient.full_name+' from your contact list';
           else
-            html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again btn_request_again_delete"><img class="btn-icon btn-icon_request" src="images/icon-request.png" alt="request">Send Request Again</button></h4>';
+            html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again btn_request_again_delete"><img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
             
           html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
           html += '</div></div></article>';
           break;
 
+        // calls messages
         case '8':
           if (message.caller) {
-            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'" data-session="'+message.sessionID+'">';
             if (message.caller === User.contact.id)
               html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_outgoing' : 'request-audio_outgoing')+'"></span>';
             else
@@ -230,6 +233,24 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           }
           break;
 
+        case '11':
+          if (message.caller) {
+            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+            html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_ended' : 'request-audio_ended')+'"></span>';
+            html += '<div class="message-container-wrap">';
+            html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
+            html += '<div class="message-content">';
+
+            if (message.caller === User.contact.id)
+              html += '<h4 class="message-author">Opponent doesn\'t have camera and/or microphone.';
+            else
+              html += '<h4 class="message-author">Camera and/or microphone wasn\'t found.';
+              
+            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '</div></div></article>';
+          }
+          break;
+
         default:
           if (message.sender_id === User.contact.id)
             html = '<article class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
@@ -237,11 +258,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html = '<article class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
 
           // html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
-          html += '<div class="message-avatar avatar contact-avatar_message" style="background-image:url('+contact.avatar_url+')"></div>';
+          html += '<div class="message-avatar avatar contact-avatar_message profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id="'+message.sender_id+'"></div>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
-          html += '<h4 class="message-author">'+contact.full_name+'</h4>';
+          html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span></h4>';
 
           if (attachType && attachType.indexOf('image') > -1) {
 
@@ -498,7 +519,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         }
       }
 
-      if (QMCONFIG.debug) console.log(msg);
+      // if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, recipientId);
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id))
         audioSignal.play();
