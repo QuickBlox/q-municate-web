@@ -39,9 +39,15 @@ define([
     },
 
     validateError: function(model, error) {
-      this.remove();
-      this.render().openPopup();
-      this.$el.find('.changePass-errors').text(error);
+      if (error === "Fields mustn't be empty" ||
+          error === QMCONFIG.errors.oldPass ||
+          error === QMCONFIG.errors.invalidPass ||
+          error === QMCONFIG.errors.shortPass) {
+
+        this.remove();
+        this.render().openPopup();
+        this.$el.find('.changePass-errors').text(error);
+      }
     },
 
     cancelChange: function(event) {

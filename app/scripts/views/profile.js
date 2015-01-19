@@ -93,6 +93,7 @@ define([
           self.$el.find('.userProfile-field-facebook').html(
             '<span class="userDetails-label">Facebook:</span><span class="userProfile-facebook">Connected</span>'
           );
+          self.$el.find('.userProfile-errors, .userProfile-success').text('');
         }
       });
     }
