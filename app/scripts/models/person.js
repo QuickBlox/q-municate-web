@@ -183,6 +183,9 @@ define([
           params = {},
           self = this;
       
+      if (self.get('avatar_url') === QMCONFIG.defAvatar.url) {
+        custom_data.avatar_url = 'https://graph.facebook.com/v2.2/' + fbId + '/picture?width=146&height=146';
+      }
       custom_data.is_import = '1';
       params.facebook_id = fbId;
       params.custom_data = JSON.stringify(custom_data);
@@ -191,8 +194,14 @@ define([
         if (res) {
           if (QMCONFIG.debug) console.log('update of user', res);
 
+          if (self.get('avatar_url') === QMCONFIG.defAvatar.url) {
+            self.set('avatar_url', custom_data.avatar_url);
+            currentUser.avatar_url = custom_data.avatar_url;
+          }
           currentUser.facebook_id = fbId;
           currentUser.custom_data = params.custom_data;
+
+          $('.profileUserAvatar[data-id="'+currentUser.id+'"]').css('background-image', 'url('+currentUser.avatar_url+')');
           App.models.User.rememberMe();
 
           // import friends

@@ -538,7 +538,7 @@
   <script id="templateProfile" type="text/template">
     <section id="popupProfile" class="popup popup_profile">
       <div class="userProfile-preview">
-        <div class="userDetails-avatar" style="background-image: url(<%= avatar_url %>)"></div>
+        <div class="userDetails-avatar profileUserAvatar" style="background-image: url(<%= avatar_url %>)" data-id="<%= id %>"></div>
         <div class="userProfile-info">
           <div class="userProfile-filename-wrap">
             <input class="userProfile-filename editable-profile" type="text" value="<%= full_name %>" maxlength="50">
