@@ -158,7 +158,8 @@ define([
       var currentUser = App.models.User.contact,
           Session = App.models.Session,
           QBApiCalls = App.service,
-          params = {};
+          params = {},
+          self = this;
       
       params.old_password = data.oldPass;
       params.password = data.newPass;
@@ -167,6 +168,7 @@ define([
         if (res) {
           if (QMCONFIG.debug) console.log('update of user', res);
           Session.update({ authParams: Session.encrypt({email: currentUser.email, password: params.password}) }, true);
+          self.set('password', '');
           callback(null, res);
         } else {
           callback(err, null);

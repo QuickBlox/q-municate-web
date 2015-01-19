@@ -44,6 +44,7 @@ define([
           error === QMCONFIG.errors.invalidPass ||
           error === QMCONFIG.errors.shortPass) {
 
+        model.set('password', '');
         this.remove();
         this.render().openPopup();
         this.$el.find('.changePass-errors').text(error);
