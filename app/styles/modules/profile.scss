@@ -40,6 +40,7 @@
     .userDetails-filename {
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .userDetails-status {
       font-size: 14px;
