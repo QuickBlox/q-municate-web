@@ -198,6 +198,7 @@ define([
             self.set('avatar_url', custom_data.avatar_url);
             currentUser.avatar_url = custom_data.avatar_url;
           }
+          self.set('facebook_id', fbId);
           currentUser.facebook_id = fbId;
           currentUser.custom_data = params.custom_data;
 
