@@ -522,7 +522,7 @@
     ga('create','UA-26728270-6');ga('send','pageview');
   </script>
 
-  <script src="scripts/db6e6bfc.build.js"></script>
+  <script src="scripts/d49c1dcf.build.js"></script>
 
   <script id="templateProfile" type="text/template">
     <section id="popupProfile" class="popup popup_profile">
@@ -535,7 +535,9 @@
           </div>        
           <div style="clear:both"></div>
           <button class="btn_userProfile btn_userProfile_photo">Set Profile Photo</button>
-          <button class="btn_userProfile btn_changePassword">Change password</button>
+          <% if (tag) { %>
+            <button class="btn_userProfile btn_changePassword">Change password</button>
+          <% } %>
           <input class="btn_userProfile_file" type="file" accept="image/*">
         </div>
       </div>

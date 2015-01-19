@@ -20,10 +20,11 @@ define([
       email: null,
       password: '',
       phone: '',
+      facebook_id: null,
       avatar: null,
       avatar_url: QMCONFIG.defAvatar.url,
       status: '',
-      facebook_id: null
+      tag: null
     },
 
     validate: function(attrs) {
