@@ -72,7 +72,7 @@ define([
         changeInputFile($(this));
       });
 
-      /* User Profile: FB connected
+      /* User Profile
       ----------------------------------------------------- */
       $('body').on('click', '.userDetails', function(event) {
         event.preventDefault();
@@ -442,7 +442,8 @@ define([
       $('.popup-control-button, .btn_popup_private').on('click', function(event) {
         event.preventDefault();
         var isProfile = $(this).data('isprofile');
-        closePopup();
+        if (!$(this).is('.returnBackToPopup'))
+          closePopup();
         if (isProfile)
           openPopup($('#popupDetails'));
       });

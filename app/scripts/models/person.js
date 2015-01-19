@@ -178,7 +178,8 @@ define([
       var currentUser = App.models.User.contact,
           QBApiCalls = App.service,
           custom_data = currentUser.custom_data && JSON.parse(currentUser.custom_data) || {},
-          params = {};
+          params = {},
+          self = this;
       
       custom_data.is_import = '1';
       params.facebook_id = fbId;
@@ -191,11 +192,60 @@ define([
           currentUser.facebook_id = fbId;
           currentUser.custom_data = params.custom_data;
           App.models.User.rememberMe();
+
+          // import friends
+          self.getFBFriends();
           
           callback(null, res);
         } else {
           callback(err, null);
         }
+      });
+    },
+
+    getFBFriends: function() {
+      var isFriendsPermission = false,
+          self = this;
+
+      FB.api('/me/permissions', function(response) {
+          if (QMCONFIG.debug) console.log('FB Permissions', response);
+          for (var i = 0, len = response.data.length; i < len; i++) {
+            if (response.data[i].permission === 'user_friends' && response.data[i].status === 'granted')
+              isFriendsPermission = true;
+          }
+
+          if (isFriendsPermission) {
+
+            // import FB friends
+            FB.api('/me/friends', function (res) {
+                if (QMCONFIG.debug) console.log('FB friends', res);
+                var ids = [];
+
+                for (var i = 0, len = res.data.length; i < len; i++) {
+                  ids.push(res.data[i].id);
+                }
+
+                if (ids.length > 0) {
+                  self.import(ids);
+                }
+              }
+            );
+
+          }
+        }
+      );
+    },
+
+    import: function(ids) {
+      var ContactList = App.models.ContactList,
+          ContactListView = App.views.ContactList,
+          FBImport = App.views.FBImport;
+
+      ContactList.getFBFriends(ids, function(new_ids) {
+        for (var i = 0, len = new_ids.length; i < len; i++) {
+          ContactListView.importFBFriend(new_ids[i]);
+        }
+        FBImport.render().openPopup();
       });
     }
 
