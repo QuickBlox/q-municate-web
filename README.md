@@ -15,7 +15,7 @@ Enjoy and please get in touch if you need an assistance.
 
 ## Software Environment
 *	Web component is based on QuickBlox platform
-*	The Web panel has English language interface
+*	The Web application has English language interface
 *	No crashes or unexpected stops are allowed
 * The App should immediately react to any user action or give notifications about each activity which requires time to be processed
 * Client information must be kept safely and securely.
@@ -33,7 +33,7 @@ Q-municate is a fully fledged chat application using the Quickblox API.
 * [Chat (v 2.0.)](http://quickblox.com/modules/chat)
 * [Users](http://quickblox.com/modules/users/)
 * [Content](http://quickblox.com/modules/content/) 
-* [WebRTC calling](http://quickblox.com/developers/Sample-webrtc-web)
+* [WebRTC calling](http://quickblox.com/modules/video-calling/)
 
 
 Please note, in order to start using Chat 2.0, you should know the [following](http://quickblox.com/developers/Chat#Pre-Requirements)
@@ -41,22 +41,22 @@ Please note, in order to start using Chat 2.0, you should know the [following](h
 ## It includes features such as:
 
 1. [Welcome page](#1-welcome-page)
-2. [Sign up page (with QM account)](#2-sign-up-page-(with-qm-account))
+2. [Sign up page (with QM account)](#2-sign-up-page-with-qm-account)
 3. [Sign up with Facebook](#3-sign-up-with-facebook)
-4. [Log in page (with QM account)](#4log-in-page-(with-qm-account))
+4. [Log in page (with QM account)](#4-log-in-page-with-qm-account)
 5. [Main page](#5-main-page)
 6. [Contact list](#6-contact-list)
 7. [Chat page](#7-chat-page)
 8. [Group chat page](#8-group-chat-page)
-9. [Audio calls (WebRTC)](#9-audio-calls-(webrtc))
-10. [Video calls (WebRTC)](#10-video-calls-(webrtc))
+9. [Audio calls (WebRTC)](#9-audio-calls-webrtc)
+10. [Video calls (WebRTC)](#10-video-calls-webrtc)
 11. [My profile page](#11-my-profile-page)
 12. [Сontact profile page](#12-contact-profile-page)
 13. [Local Search](#13-local-search)  
 14. [Global Search](#14-global-search)
 15. [File transfer via chat](#15-file-transfer-via-chat)
 16. [Chat emojes](#16-chat-emojes)
-17. [Icons and sound on a browser's tab](#17-icons-and-sound-on-a-browser's-tab)
+17. [Icons and sound on a browser's tab](#17-icons-and-sound-on-a-browsers-tab)
 
 Please note all these features are available in the open source code, so you can customize your app depending on your needs.
 
@@ -70,10 +70,10 @@ Please note all these features are available in the open source code, so you can
 * Bug fixes
 
 ### v. 0.8 – December 19, 2014
-* [Video calls (WebRTC)](#10-video-calls-(webrtc))
-* [Audio calls (WebRTC)](#9-audio-calls-(webrtc))
+* [Video calls (WebRTC)](#10-video-calls-webrtc)
+* [Audio calls (WebRTC)](#9-audio-calls-webrtc)
 * Call history
-* [Icons and sound on a browser's tab](#17-icons-and-sound-on-a-browser's-tab)
+* [Icons and sound on a browser's tab](#17-icons-and-sound-on-a-browsers-tab)
 * Bug fixes
 
 ### v. 0.7 – November 7, 2014
@@ -93,10 +93,10 @@ Please note all these features are available in the open source code, so you can
 
 ### v. 0.5 – August 26, 2014
 * [Welcome page](#1-welcome-page)
-* [Log in page (with QM account)](#4log-in-page-(with-qm-account))
+* [Log in page (with QM account)](#4-log-in-page-with-qm-account)
 * Forgot password 
 * [Sign up with Facebook](#3-sign-up-with-facebook)
-* [Log in page (with QM account)](#4log-in-page-(with-qm-account))
+* [Log in page (with QM account)](#4-log-in-page-with-qm-account)
 * Import friends from Facebook 
 * [Main page](#5-main-page)
 * [Local Search](#13-local-search)  
@@ -144,6 +144,48 @@ Sign up page allows to create a new QM user.
 
 ##### The code
 ```
+User.prototype.signup = function(params, avatarFile) {
+var self = this;
+
+QB.createSession(function(err, session) {
+  if (session) {
+    Session.create({ token: session.token });
+
+    QB.users.create(params, function(err, newUser) {
+      if (newUser) {
+        delete params.full_name;
+        delete params.tag_list;
+
+        QB.login(params, function(err, user) {
+          if (user) {
+            Session.update({ date: new Date(), authParams: Session.encrypt(params) });
+            chatService.connect(user, function(roster) {
+              // callback
+              if (avatarFile) self.uploadAvatar(avatarFile);
+            });            
+          }
+        });
+      }
+    });
+  }
+});
+
+};
+
+User.prototype.uploadAvatar = function(file) {
+var self = this, custom_data;
+
+QB.content.createAndUpload({file: file, 'public': true}, function(err, blob) {
+  if (blob) {
+    custom_data = JSON.stringify({avatar_url: blob.path});
+
+    QB.users.update(self.id, {blob_id: blob.id, custom_data: custom_data}, function(err, user) {
+      // callback
+    });
+  }
+});
+
+};
 
 ```
 
@@ -164,6 +206,71 @@ If user signs up with Facebook, FB avatar image, full name, email and friends wh
 
 ##### The code
 ```
+FB.login(function(response) {
+  if (response.status === 'connected') {
+    User.connectFB(response.authResponse.accessToken);
+  }
+}, {scope: QMCONFIG.fbAccount.scope});
+
+User.prototype.connectFB = function(token) {
+var self = this;
+
+QB.createSession({provider: 'facebook', keys: {token: token}}, function(err, session) {
+  if (session) {
+    Session.create({ token: session.token });
+
+    QB.users.get(session.user_id, function(err, user) {
+      if (user) {
+        Session.update({ date: new Date(), authParams: Session.encrypt(params) });
+        chatService.connect(user, function(roster) {
+          self.import(roster);
+        });        
+      }
+    });
+  }
+});
+
+};
+
+User.prototype.import = function(roster) {
+var self = this;
+var isFriendsPermission = false;
+
+FB.api('/me/permissions', function (response) {
+  response.data.forEach(function(item) {
+    if (item.permission === 'user_friends' && item.status === 'granted')
+      isFriendsPermission = true;
+  });
+
+  if (isFriendsPermission) {
+    FB.api('/me/friends', function (friends) {
+      var ids = [];
+      for (var i = 0, len = friends.data.length; i < len; i++) {
+        ids.push(friends.data[i].id);
+      }
+
+      if (ids.length > 0)
+        dialog.download(roster, ids);
+      else
+        dialog.download(roster);
+    });
+  } else {
+    dialog.download(roster);
+  }
+
+  self.updateQBUser();
+});
+
+};
+
+User.prototype.updateQBUser = function() {
+var custom_data = JSON.stringify({is_import: '1'});
+
+QB.users.update(this.id, {custom_data: custom_data}, function(err, user) {
+  // callback
+});
+
+};
 
 ```
 
@@ -187,6 +294,24 @@ User can log in the app as a QM user.
  
 ##### The code
 ```
+User.prototype.login = function(params) {
+
+QB.createSession(params, function(err, session) {
+  if (session) {
+    Session.create({ token: session.token });
+
+    QB.users.get(session.user_id, function(err, user) {
+      if (user) {
+        Session.update({ date: new Date(), authParams: Session.encrypt(params) });
+        chatService.connect(user, function(roster) {
+          // callback
+        });        
+      }
+    });
+  }
+});
+
+};
 
 ```
 
@@ -234,6 +359,45 @@ When connection in recovered, the alert message disappears.
 
 ##### The code
 ```
+// connect to chat service
+ChatService.prototype.connect = function(user, callback) {
+var self = this;
+var password = Session.token;
+
+QB.chat.connect({jid: self.getUserJid(user), password: password}, function(err, roster) {
+  if (roster) {
+    Session.update({ date: new Date() });
+
+    // set inner listener functions
+    QB.chat.onMessageListener = MessageView.onMessage;
+    QB.chat.onContactListListener = ContactListView.onPresence;
+    QB.chat.onSubscribeListener = ContactListView.onSubscribe;
+    QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
+    QB.chat.onRejectSubscribeListener = ContactListView.onReject;
+
+    QB.webrtc.onCallListener = VideoChatView.onCall;
+    QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
+    QB.webrtc.onRejectCallListener = VideoChatView.onReject;
+    QB.webrtc.onStopCallListener = VideoChatView.onStop;
+    QB.webrtc.onChangeCallListener = VideoChatView.onChangeCall;
+    QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
+
+    callback(roster);
+  }
+});
+
+};
+
+// get all dialogs
+Dialog.prototype.download = function() {
+
+QB.chat.dialog.list({sort_desc: 'last_message_date_sent'}, function(err, dialogs) {
+  if (dialogs) {
+    // callback
+  }
+});
+
+};
 
 ```
 
@@ -257,6 +421,42 @@ After receiving a request user sees the following page:
 
 ##### The code
 ```
+// send subscribe request
+var time = Math.floor(Date.now() / 1000;
+QB.chat.roster.add(jid, function() {
+  QB.chat.send(jid, {type: 'chat', body: 'Contact request', extension: {
+    save_to_history: 1,
+    date_sent: time,
+    notification_type: '4'
+  }});
+});
+
+// send confirm answer
+QB.chat.roster.confirm(jid, function() {
+  QB.chat.send(jid, {type: 'chat', body: 'Contact request', extension: {
+    save_to_history: 1,
+    date_sent: time,
+    notification_type: '5'
+  }});
+});
+
+// send reject answer
+QB.chat.roster.reject(jid, function() {
+  QB.chat.send(jid, {type: 'chat', body: 'Contact request', extension: {
+    save_to_history: 1,
+    date_sent: time,
+    notification_type: '6'
+  }});
+});
+
+// delete a contact
+QB.chat.roster.remove(jid, function() {
+  QB.chat.send(jid, {type: 'chat', body: 'Contact request', extension: {
+    save_to_history: 1,
+    date_sent: time,
+    notification_type: '7'
+  }});
+});
 
 ```
 
@@ -284,6 +484,30 @@ In the Recent section are displayed only chats with today’s activities.
 
 ##### The code
 ```
+// create a private dialog
+QB.chat.dialog.create({type: 3, occupants_ids: id}, function(err, dialog) {
+  if (dialog) {
+    // callback
+  }
+});
+
+// get all messages for dialog
+Message.prototype.download = function(dialog_id, count) {
+  var params = {chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50, skip: count || 0};
+  QB.chat.message.list(params, function(err, messages) {
+    if (messages) {
+      // callback
+    }
+  });
+};
+
+// send message
+Message.prototype.send = function(value) {
+  QB.chat.send(jid, {type: 'chat', body: value, extension: {
+    save_to_history: 1,
+    date_sent: Math.floor(Date.now() / 1000;
+  }});
+};
 
 ```
 
@@ -305,6 +529,65 @@ Each member of the group chat has the same capabilities.
  
 ##### The code
 ```
+/* on creator side
+---------------------------------------*/
+// create the group dialog
+QB.chat.dialog.create({type: 2, occupants_ids: params.ids, name: params.name}, function(err, dialog) {
+  if (dialog) {
+
+    // join to created room
+    QB.chat.muc.join(dialog.xmpp_room_jid, function() {
+      // send message about added people for history
+      QB.chat.send(dialog.room_jid, {type: 'groupchat', body: 'Notification message', extension: {
+        save_to_history: 1,
+        date_sent: Math.floor(Date.now() / 1000),
+        notification_type: '1',
+        occupants_ids: dialog.occupants_ids.join()
+      }});
+
+      // send notifications about adding people
+      for (var i = 0, len = dialog.occupants_ids.length, id, jid; i < len; i++) {
+        id = dialog.occupants_ids[i];
+        jid = QB.chat.helpers.getUserJid(id, appId); // appId - your QB application ID
+ 
+        QB.chat.send(jid, {type: 'chat', extension: {
+          notification_type: '1',
+          dialog_id: dialog._id,
+          room_jid: dialog.xmpp_room_jid,
+          room_name: dialog.name,
+          occupants_ids: dialog.occupants_ids.join()
+        }});
+      }
+    });
+  }
+}); 
+
+/* on recipient side
+---------------------------------------*/
+// receive a new message
+QB.chat.onMessageListener = function(senderId, message) {
+  // check if this message is a notification about new room
+  if (message.extension && message.extension.notification_type === '1') {
+ 
+    // join to created room
+    QB.chat.muc.join(message.extension.room_jid, function() {
+      // callback
+    })
+  } 
+};
+
+/* leave a room
+---------------------------------------*/
+QB.chat.send(dialog.room_jid, {type: 'groupchat', body: 'Notification message', extension: {
+  save_to_history: 1,
+  date_sent: Math.floor(Date.now() / 1000),
+  notification_type: '2',
+  deleted_id: User.id
+}});
+
+QB.chat.dialog.update(dialog.id, {pull_all: {occupants_ids: [User.id]}}, function(err, dialog) {
+  // callback
+});
 
 ```
 
@@ -326,6 +609,43 @@ Colour of the buttons:
 
 ##### The code
 ```
+// call user
+var mediaParams = {
+  audio: true,
+  video: false,
+  elemId: 'localStream',
+  options: {
+    muted: true,
+  }
+};
+QB.webrtc.getUserMedia(mediaParams, function(err, stream) {
+  if (stream) {
+    QB.webrtc.call(params.opponent_id, 'audio', {
+      dialog_id: params.dialogId,
+      avatar: User.avatar_url,
+      full_name: User.full_name
+    });
+  }
+});
+
+// accept call
+QB.webrtc.getUserMedia(mediaParams, function(err, stream) {
+  if (stream) {
+    QB.webrtc.accept(params.opponent_id, {
+      dialog_id: params.dialogId
+    });
+  }
+});
+
+// reject call
+QB.webrtc.reject(params.opponent_id, {
+  dialog_id: params.dialogId
+});
+
+// stop call
+QB.webrtc.stop(params.opponent_id, 'manually', {
+  dialog_id: params.dialogId
+});
 
 ```
 
@@ -352,6 +672,39 @@ Colour of the buttons:
 
 ##### The code
 ```
+// call user
+var mediaParams = {
+  audio: true,
+  video: true,
+  elemId: 'localStream',
+  options: {
+    muted: true,
+    mirror: true
+  }
+};
+QB.webrtc.getUserMedia(mediaParams, function(err, stream) {
+  if (stream) {
+    QB.webrtc.call(params.opponent_id, 'video', {
+      dialog_id: params.dialogId,
+      avatar: User.avatar_url,
+      full_name: User.full_name
+    });
+  }
+});
+
+// mute webcam
+QB.webrtc.mute('video');
+QB.webrtc.changeCall(params.opponent_id, {
+  dialog_id: params.dialogId,
+  mute: 'video'
+});
+
+// unmute webcam
+QB.webrtc.unmute('video');
+QB.webrtc.changeCall(params.opponent_id, {
+  dialog_id: params.dialogId,
+  unmute: 'video'
+});
 
 ```
 
@@ -377,6 +730,13 @@ Profile page allows user view and edit his/her profile info.
 
 ##### The code
 ```
+User.prototype.updateProfile = function(params) {
+  QB.users.update(this.id, params, function(err, user) {
+    if (user) {
+      // callback      
+    }
+  });
+};
 
 ```
 
@@ -401,6 +761,13 @@ Contact profile page shows user’s information:
 
 ##### The code
 ```
+User.prototype.getContactProfile = function(contactId) {
+  QB.users.get(contactId, function(err, user) {
+    if (user) {
+      // callback      
+    }
+  });
+};
 
 ```
 
@@ -415,11 +782,6 @@ The search is started automatically by inputting characters. Found contacts are 
 #### Buttons:
 * Global Search  - opens the Global search pop-up to find a user all over the app.
 
-##### The code
-```
-
-```
-
 
 ### 14. Global Search
 User can use  global search to find users from the all QM users.
@@ -432,6 +794,13 @@ User can use  global search to find users from the all QM users.
 
 ##### The code
 ```
+User.prototype.getContactProfile = function(userName, page) {
+  QB.users.get({full_name: userName, page: page}, function(users) {
+    if (users) {
+      // callback      
+    }
+  });
+};
 
 ```
 
@@ -454,11 +823,33 @@ screen
 
 ##### The code
 ```
+Message.prototype.attach = function(file) {
+var attachment;
+
+QB.content.createAndUpload({file: file, 'public': true}, function(err, blob) {
+  if (blob) { 
+    attachment = {
+        type: type,
+        url: blob.path,
+        name: blob.name,
+        size: blob.size,
+        'content-type': blob.content_type
+    };
+
+    QB.chat.send(user_jid, {type: 'chat', extension: {
+      attachments: [
+        attachment
+      ]
+    }});
+  }
+});
+
+};
 
 ```
 
 
-### 16. Chat  emojes
+### 16. Chat emojes
 User can send an emoje by clicking the smile icon. All emojes are divided by 5 taps.
 
 <img src="http://files.quickblox.com/Chat_Emojes.png" height="400" />&nbsp;
@@ -484,13 +875,14 @@ If you want to build your own app using Q-municate as a basis, please do the fol
 
  1. Download the project from here (GIT)
  2. Register a QuickBlox account (if you don't have one yet): http://admin.quickblox.com/register
- 3. Log in to QuickBlox admin panel [http://admin.quickblox.com/signin]http://admin.quickblox.com/signin
+ 3. Log in to QuickBlox admin panel http://admin.quickblox.com/signin]http://admin.quickblox.com/signin
  4. Create a new app
  5. Click on the app title in the list to reveal the app details:
    ![App credentials](http://files.quickblox.com/app_credentials.png)
- 6. Copy credentials (App ID, Authorization key, Authorization secret) into your Q-municate project code in Consts.java<br />
- 7. Note! To enable automatic push notifications in chat to offline users follow Setup GCM guide [http://quickblox.com/developers/SimpleSample-messages_users-android#Setup_GCM]
- 8. Enjoy!
+ 6. Create Facebook Application for ability connecting via Facebook
+ 7. Copy credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID into your Q-municate project code in <code>config.js</code><br />
+ 8. Run in your terminal next command <code>grunt build</code> which gathers your application
+ 9. Enjoy!
 
 
 
