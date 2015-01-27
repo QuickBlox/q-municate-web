@@ -1,10 +1,507 @@
-# Q-municate 
-Q-municate is an open source code of chat application with full range of communication features on board (such as messaging, file transfer, push notifications, audio/video calls).
 
-We are inspired to give you chat application out of the box. You can customize this application depending of your needs.
+# Q-municate 
+Q-municate is an open source code of chat application with full range of communication features on board (such as one-to-one messaging, group chat messaging, file transfer, connecting via Facebook, audio/video calls). http://q-municate.com/
+
+We are inspired to give you a chat application out of the box. You can customize this application depending of your needs.
 QuickBlox is used for backend http://quickblox.com
 
 Find the source code and more information about Q-municate in our Developers section: http://quickblox.com/developers/q-municate
 
 # Q-municate Web
-We are in an earlier alpha - more updates coming soon, stay with us! 
+This description was created by the QuickBlox Web team in order to explain how you can build a communication app on javascript with Quickblox API.
+
+It's designed for developers of all levels including beginners as we move from simple to more complex implementation. 
+Enjoy and please get in touch if you need an assistance.
+
+## Software Environment
+*	Web component is based on QuickBlox platform
+*	The Web panel has English language interface
+*	No crashes or unexpected stops are allowed
+* The App should immediately react to any user action or give notifications about each activity which requires time to be processed
+* Client information must be kept safely and securely.
+* Users’ password should be encoded and kept in the local storage.
+* The App should work correctly on the following browsers:
+   - Chrome 13+
+   - Firefox 4+
+   - Opera 17+
+   - Safari 6.1+ (without audio, video calls)  
+   - IE 10+ (without audio, video calls)
+
+Q-municate is a fully fledged chat application using the Quickblox API.
+
+## Q-municate application uses following QuickBlox modules:
+* [Chat (v 2.0.)](http://quickblox.com/modules/chat)
+* [Users](http://quickblox.com/modules/users/)
+* [Content](http://quickblox.com/modules/content/) 
+* [WebRTC calling](http://quickblox.com/developers/Sample-webrtc-web)
+
+
+Please note, in order to start using Chat 2.0, you should know the [following](http://quickblox.com/developers/Chat#Pre-Requirements)
+
+## It includes features such as:
+
+1. [Welcome page](#1-welcome-page)
+2. [Sign up page (with QM account)](#2-sign-up-page-(with-qm-account))
+3. [Sign up with Facebook](#3-sign-up-with-facebook)
+4. [Log in page (with QM account)](#4log-in-page-(with-qm-account))
+5. [Main page](#5-main-page)
+6. [Contact list](#6-contact-list)
+7. [Chat page](#7-chat-page)
+8. [Group chat page](#8-group-chat-page)
+9. [Audio calls (WebRTC)](#9-audio-calls-(webrtc))
+10. [Video calls (WebRTC)](#10-video-calls-(webrtc))
+11. [My profile page](#11-my-profile-page)
+12. [Сontact profile page](#12-contact-profile-page)
+13. [Local Search](#13-local-search)  
+14. [Global Search](#14-global-search)
+15. [File transfer via chat](#15-file-transfer-via-chat)
+16. [Chat emojes](#16-chat-emojes)
+17. [Icons and sound on a browser's tab](#17-icons-and-sound-on-a-browser's-tab)
+
+Please note all these features are available in the open source code, so you can customize your app depending on your needs.
+
+## Changelog
+
+### v. 0.9 – January 19, 2014
+* [My profile page](#11-my-profile-page)
+* [Сontact profile page](#12-contact-profile-page)
+* Retina icons
+* Improvements
+* Bug fixes
+
+### v. 0.8 – December 19, 2014
+* [Video calls (WebRTC)](#10-video-calls-(webrtc))
+* [Audio calls (WebRTC)](#9-audio-calls-(webrtc))
+* Call history
+* [Icons and sound on a browser's tab](#17-icons-and-sound-on-a-browser's-tab)
+* Bug fixes
+
+### v. 0.7 – November 7, 2014
+* Backbone (Core and QB wrapper)
+* Backbone (Session, User, Contact modules)
+* Backbone (Contact List, Dialog modules)
+* Backbone (Message, Attach modules)
+* Bug fixes 
+
+### v. 0.6 – September 30, 2014
+* Optimization of emojis uploading
+* Fixing FB SDK asynchronous uploading 
+* Fixing cache data uploading from the Local Storage 
+* Optimization of css files import 
+* Integration of current features with mobile versions 
+* Bug fixes 
+
+### v. 0.5 – August 26, 2014
+* [Welcome page](#1-welcome-page)
+* [Log in page (with QM account)](#4log-in-page-(with-qm-account))
+* Forgot password 
+* [Sign up with Facebook](#3-sign-up-with-facebook)
+* [Log in page (with QM account)](#4log-in-page-(with-qm-account))
+* Import friends from Facebook 
+* [Main page](#5-main-page)
+* [Local Search](#13-local-search)  
+* [Global Search](#14-global-search)
+* [Contact list](#6-contact-list)
+* [Chat page](#7-chat-page)
+* [Group chat page](#8-group-chat-page)
+* [File transfer via chat](#15-file-transfer-via-chat)
+* [Chat emojes](#16-chat-emojes)
+
+
+## Features list
+
+### 1. Welcome page
+When user opens the App, the Welcome page is shown.
+
+<img src="http://files.quickblox.com/qm-web_0008_04-1-welcome.png" height="400" />&nbsp;
+
+#### Available features:
+##### Buttons:
+* Connect with Facebook allows to user to sign up with his Facebook credentials;
+* Sign Up with Email opens Sign up page;
+* Already have an account? opens Login page.
+
+
+### 2. Sign up page (with QM account)
+Sign up page allows to create a new QM user.
+
+<img src="http://files.quickblox.com/Sign_Up_Page.png" height="400" />&nbsp;
+
+#### Available features:
+#####Fields set:
+* Full name – contains everything except '<', '>' and ';', 3-50 characters; mandatory;
+* Email – should look like an email address, 3-255 characters, mandatory;
+* Password – contains everything except non-Latin characters and spaces; 8-40 character; mandatory;
+* Choose user picture avatar icon- will be auto filled with selected image, if image is chosen.
+
+##### Buttons:
+* Choose user picture – all area and button is clickable. After clicking, user chooses image from the computer, not mandatory; 
+* Sign Up: 
+  - If all fields are populated correctly, user is redirected to Main page and gets a welcome email;
+  - If some field isn’t populated correctly, user sees the Sign Up Page with appropriate alert and password field is cleared. The alert depends on what field user has filled in incorrectly;
+* User Agreement opens the page http://q-municate.com/agreement/ in a new tab;
+* Privacy Policy opens the page http://quickblox.com/privacy/ in a new tap.
+
+##### The code
+```
+
+```
+
+
+### 3. Sign up with Facebook
+Sign Up with Facebook allows to create QM user with the help of Facebook credentials.
+
+<img src="http://files.quickblox.com/Facebook_request.png" height="400" />&nbsp;
+
+#### Available features:
+Sign Up with Facebook feature allows to create QM user with the help of Facebook credentials. 
+<br>
+If user signs up via Facebook, he can’t log in using QM login form. 
+<br>
+If user signs up with Facebook, FB avatar image, full name, email and friends who use the App will be imported from a FB account.
+
+<img src="http://files.quickblox.com/Imported_friends_pop_up.png" height="400" />&nbsp;
+
+##### The code
+```
+
+```
+
+
+### 4. Log in page (with QM account)
+User can log in the app as a QM user.
+
+<img src="http://files.quickblox.com/Log_In.png" height="400" />&nbsp;
+
+#### Available features:
+* Email – text/numeric/symbolic fields 3 chars min - no border, mandatory (email symbols validation included). User should be able to paste his/her email address in this field if it is currently in clipboard;
+* Password – text/numeric/symbolic field 8-40 chars (should contain alphanumeric and punctuation characters only) , mandatory Input symbols are replaced with * ,so that nobody could steal user's password. User should be able to paste his/her password in this field if it is currently in clipboard;
+* Remember me – checkbox is 1 by default. Allows user to save his login data so that he/she doesn't have to enter them again on the next work session start. If this checkbox is set to 1, then user returns to the Main page of the App after refreshing the page or whole closing. Login Page is shown again if user tapped Log Out button. 
+
+##### Buttons:
+* Connect with Facebook button allows user to sign up with Facebook credentials;
+* Log in button allows user to enter the App:
+ - If user provides valid login credentials, he is redirected to Main page; 
+ - If user provides incorrect/invalid login credentials (email and password), the App shows Log in page with alert message;
+* Forgot password? link redirects user to the Forgot password page.
+ 
+##### The code
+```
+
+```
+
+
+### 5. Main page
+After clicking the QM logo and Q-municate at the top left corner, user is redirected to the Main page.
+<br>
+The Main page is displayed a list of user’s contact chats.
+
+<img src="http://files.quickblox.com/Main_page.png" height="400" />&nbsp;
+
+#### Available features:
+* All user contacts (online/offline/pending contact request) are displayed in the left panel in 2 sections – Recent and History (the same as in the Chats page). For each contact are shown full name, avatar image and online/offline status. The icons for statuses:
+  - Green icon – user is online;
+  - Question icon -  pending contact request;
+  - No icon -  user is offline. 
+* Contacts shown as a scrollable table view;
+* Contact is highlighted when hovering;
+* User can click some contact to open a chat;
+* Search field;
+* A version of the app is displayed at the bottom of the page;
+
+##### Buttons:
+* Search Friends button opens Global Search pop-up;
+* Contacts button:
+  -	User can create a chat with any contact;
+  -	User can create a group chat with any contacts.
+* Navigate to user’s profile or log out by clicking on the user at top right corner.
+
+<img src="http://files.quickblox.com/action_popover.png" height="400" />&nbsp;
+
+#### Available features:
+* Possible actions after right clicking a contact in the left panel:
+  -	Video call – start a video call;
+  -	Audio call – start an audio call;
+  - Add people – add people to the group chat;
+  -	Profile – open a details page;
+  -	Delete contact – delete from contacts.
+
+If there is no connection to the internet, an alert message is displayed on the top section. 
+<br>
+When connection in recovered, the alert message disappears.
+
+<img src="http://files.quickblox.com/Internet_connection_alert.png" height="400" />&nbsp;
+
+##### The code
+```
+
+```
+
+
+### 6. Contact list
+User can add or delete contacts from his/her contact list.
+<br>
+After sending a request user sees the following page:
+
+<img src="http://files.quickblox.com/Rejected_contact_request.png" height="400" />&nbsp;
+
+When user sends a request he sees “Your request has been sent” in the chat section, the contact is marked with “?”. User doesn't have a possibility to write a message to the contact before accepting a request.
+
+After receiving a request user sees the following page:
+
+<img src="http://files.quickblox.com/Contact_request.png" height="400" />&nbsp;
+
+##### Buttons:
+   - Tick icon adds new contact to user’s contact list; 
+   - Cross icon rejects the contact request.
+
+##### The code
+```
+
+```
+
+
+### 7. Chat page
+User can chat with all contacts from his/her contact list.
+
+<img src="http://files.quickblox.com/Chats_page.png" height="400" />&nbsp;
+
+#### Available features:
+After opening a private (one-to-one) chat, user sees last 50 messages. He can open older history (till the first message) by scrolling.
+<br>
+Messages are sent after pressing Enter button.
+<br>
+If user has chats with unread messages, these chats are displayed with a counter of the unread messages on the right.
+In the Recent section are displayed only chats with today’s activities.
+##### Buttons:
+* The phone icon starts an audio call;
+* The video icon starts a video call;
+* The plus icon allows to add contacts to a group chat;
+* The profile icon opens contact’s details page;
+* The delete icon opens a pop-up and allows to delete a contact from the contact list;
+* The smile icon opens chat Emojes;
+* The attachment icon allows to add files from the computer.
+
+##### The code
+```
+
+```
+
+
+### 8. Group chat page
+User can create a group chat with all contacts from his/her contact list.
+<br>
+Each member of the group chat has the same capabilities.
+
+<img src="http://files.quickblox.com/Group_chat_page_with_edit_icon.png" height="400" />&nbsp;
+
+##### Available features:
+* Change a group chat name
+* Change a group chat avatar
+* Add new contacts to a chat. 
+* Leave a chat. 
+* Show/hide chat’s members. 
+* Start a video/audio call, write a message or open a profile page of any contact in a group chat if this contact is in the contact list. If no - user can send a request to him.
+ 
+##### The code
+```
+
+```
+
+
+### 9. Audio calls (WebRTC)
+Every user with a microphone can start an audio call by clicking audio call icon in the chat section. 
+<br>
+A call is started after allowing to use the microphone and displayed in the chat section.
+
+<img src="http://files.quickblox.com/Audio_call_page.png" height="400" />&nbsp;
+
+##### Buttons:
+* Mute camera – camera is turned off by default. User can’t start the video call by clicking this icon;
+* Mute voice – clicking this icon, user can turn on/off his microphone;
+* End call – ends current call and redirects user to the Chats Page.
+Colour of the buttons:
+- Red – a feature isn’t enabled;
+- Black - a feature is enabled.
+
+##### The code
+```
+
+```
+
+
+### 10. Video calls (WebRTC)
+
+<img src="http://files.quickblox.com/call_video.png" height="400" />&nbsp;
+
+#### Available features:
+
+Every user with a microphone and a camera can start a video call by clicking the video call icon in the chat section.
+ <br>
+ call is started after allowing to use the microphone and the camera and displayed in the chat section.
+ <br>
+ Call history is displayed in the chat section.
+##### Buttons:
+* Mute camera – clicking this icon, user can turn on/off his camera. If user hovers on this icon when camera is disabled, the call with pop-up “Camera is off” is displayed;
+* Mute voice – clicking this icon, user can turn on/off his microphone;
+* End call – ends current call and redirects user to the Chats Page.
+
+Colour of the buttons:
+* Red – a feature isn’t enabled;
+* Black - a feature is enabled.
+
+##### The code
+```
+
+```
+
+
+### 11. My profile page
+Profile page allows user view and edit his/her profile info.
+
+<img src="http://files.quickblox.com/Profile_page_with_alert_message.png" height="400" />&nbsp;
+
+#### Fields set:
+-	Name – contains everything except '<', '>' and ';', 3-50 characters; mandatory;
+-	Email – if user has a long email, only beginning of an email is displayed (the remaining is hidden by 3 dots);
+-	User picture field is auto filled with current image if image is chosen while signing up; 
+-	Status – text/numeric/symbolic field; 0-80 characters;
+-	Phone – numeric/symbolic field; 0-20 characters.
+
+#### Buttons:
+* Set Profile Photo – after clicking, user can choose image from the computer.
+* Change password – after clicking, user can change his password;
+* Add/ Edit status – user can add or change his status (changes are saved immediately).
+* Edit User name – user can change his user name (changes are saved immediately).
+* Connect - allows user connect his QM account with Facebook account. 
+
+##### The code
+```
+
+```
+
+
+
+### 12. Сontact profile page
+Details page is used for contacts profile information.
+
+<img src="http://files.quickblox.com/Details_page.png" height="400" />&nbsp;
+
+Contact profile page shows user’s information:
+* Full name. If a name is very long, extra characters are hidden by three dots;  
+* Status (short text message). The full status is always displayed; 
+* Presence (online/offline); 
+* Tel. number (if filled). If a number is very long, extra characters are hidden by three dots.
+
+#### Buttons:
+* Video call button starts a video call with current user;
+* Audio call button starts an audio call with current user;
+* Message button starts a chat with current user;
+* Delete contact opens the Delete user pop-up.
+
+##### The code
+```
+
+```
+
+
+### 13. Local Search 
+User can use a local search field to find contacts in the contact list.
+
+ <img src="http://files.quickblox.com/Chats_page_with_search.png" height="400" />&nbsp;
+
+The search is started automatically by inputting characters. Found contacts are displayed in the same order as they were located before searching. 
+
+#### Buttons:
+* Global Search  - opens the Global search pop-up to find a user all over the app.
+
+##### The code
+```
+
+```
+
+
+### 14. Global Search
+User can use  global search to find users from the all QM users.
+
+<img src="http://files.quickblox.com/Global_Search_pop-up.png" height="400" />&nbsp;
+
+##### Buttons:
+* The search field – allows user input the different search criteria;
+* “Add” icons – allows user send a request to any QM user. 
+
+##### The code
+```
+
+```
+
+
+### 15. File transfer via chat
+After clicking the attach icon, user can choose a file from his computer to attach. 
+User can upload any files. An attachment is sent automatically after a choice.
+
+<img src="http://files.quickblox.com/File_transfer.png" height="400" />&nbsp;
+
+An attachment is sent as a separate message (there is no possibility to send a message with attachment file).
+Spinner shows a downloading process.
+
+#### Available features:
+* User can stop uploading by clicking a Cancel button;
+* User can download a file by clicking a Download button;
+* User can play an audio or video file in the chat section;
+* User can open a full image by clicking it in the chat section.
+screen
+
+##### The code
+```
+
+```
+
+
+### 16. Chat  emojes
+User can send an emoje by clicking the smile icon. All emojes are divided by 5 taps.
+
+<img src="http://files.quickblox.com/Chat_Emojes.png" height="400" />&nbsp;
+
+
+
+### 17. Icons and sound on a browser's tab
+There are some possible changes on a QM tab:
+
+<img src="http://files.quickblox.com/Tab_with_unread_messages.png" height="400" />&nbsp;
+
+#### Available features:
+If user gets a message, but QM tab isn’t chosen or a dialog with unread messages isn’t active – QM tab is changed.
+* A red dot is added to the QM icon;
+* An amount of unread dialogs in brackets is added to the QM tab;
+* A sound when message is received.
+
+If QM tab is active while messages receiving, no actions are taken.
+
+### Important - how to build your own Chat app</h3>
+
+If you want to build your own app using Q-municate as a basis, please do the following:
+
+ 1. Download the project from here (GIT)
+ 2. Register a QuickBlox account (if you don't have one yet): http://admin.quickblox.com/register
+ 3. Log in to QuickBlox admin panel [http://admin.quickblox.com/signin]http://admin.quickblox.com/signin
+ 4. Create a new app
+ 5. Click on the app title in the list to reveal the app details:
+   ![App credentials](http://files.quickblox.com/app_credentials.png)
+ 6. Copy credentials (App ID, Authorization key, Authorization secret) into your Q-municate project code in Consts.java<br />
+ 7. Note! To enable automatic push notifications in chat to offline users follow Setup GCM guide [http://quickblox.com/developers/SimpleSample-messages_users-android#Setup_GCM]
+ 8. Enjoy!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
