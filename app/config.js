@@ -11,7 +11,8 @@ define(function() {
     // },
     // fbAccount: {
     //   appId: '1445555125707161',
-    //   scope: 'email,user_friends'
+    //   scope: 'email,user_friends',
+    //   scopeFriends: 'user_friends'
     // },
 
     /* Development environment */
@@ -34,7 +35,8 @@ define(function() {
     // },
     // fbAccount: {
     //   appId: '623755094412840',
-    //   scope: 'email,user_friends'
+    //   scope: 'email,user_friends',
+    //   scopeFriends: 'user_friends'
     // },
 
     debug: true,
