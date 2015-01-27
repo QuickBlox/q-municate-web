@@ -143,7 +143,7 @@ Sign up page allows to create a new QM user.
 * Privacy Policy opens the page http://quickblox.com/privacy/ in a new tap.
 
 ##### The code
-```
+```javascript
 User.prototype.signup = function(params, avatarFile) {
 var self = this;
 
@@ -205,7 +205,7 @@ If user signs up with Facebook, FB avatar image, full name, email and friends wh
 <img src="http://files.quickblox.com/Imported_friends_pop_up.png" height="400" />&nbsp;
 
 ##### The code
-```
+```javascript
 FB.login(function(response) {
   if (response.status === 'connected') {
     User.connectFB(response.authResponse.accessToken);
@@ -293,7 +293,7 @@ User can log in the app as a QM user.
 * Forgot password? link redirects user to the Forgot password page.
  
 ##### The code
-```
+```javascript
 User.prototype.login = function(params) {
 
 QB.createSession(params, function(err, session) {
@@ -358,7 +358,7 @@ When connection in recovered, the alert message disappears.
 <img src="http://files.quickblox.com/Internet_connection_alert.png" height="400" />&nbsp;
 
 ##### The code
-```
+```javascript
 // connect to chat service
 ChatService.prototype.connect = function(user, callback) {
 var self = this;
@@ -420,7 +420,7 @@ After receiving a request user sees the following page:
    - Cross icon rejects the contact request.
 
 ##### The code
-```
+```javascript
 // send subscribe request
 var time = Math.floor(Date.now() / 1000;
 QB.chat.roster.add(jid, function() {
@@ -483,7 +483,7 @@ In the Recent section are displayed only chats with today’s activities.
 * The attachment icon allows to add files from the computer.
 
 ##### The code
-```
+```javascript
 // create a private dialog
 QB.chat.dialog.create({type: 3, occupants_ids: id}, function(err, dialog) {
   if (dialog) {
@@ -528,7 +528,7 @@ Each member of the group chat has the same capabilities.
 * Start a video/audio call, write a message or open a profile page of any contact in a group chat if this contact is in the contact list. If no - user can send a request to him.
  
 ##### The code
-```
+```javascript
 /* on creator side
 ---------------------------------------*/
 // create the group dialog
@@ -608,7 +608,7 @@ Colour of the buttons:
 - Black - a feature is enabled.
 
 ##### The code
-```
+```javascript
 // call user
 var mediaParams = {
   audio: true,
@@ -671,7 +671,7 @@ Colour of the buttons:
 * Black - a feature is enabled.
 
 ##### The code
-```
+```javascript
 // call user
 var mediaParams = {
   audio: true,
@@ -729,7 +729,7 @@ Profile page allows user view and edit his/her profile info.
 * Connect - allows user connect his QM account with Facebook account. 
 
 ##### The code
-```
+```javascript
 User.prototype.updateProfile = function(params) {
   QB.users.update(this.id, params, function(err, user) {
     if (user) {
@@ -760,7 +760,7 @@ Contact profile page shows user’s information:
 * Delete contact opens the Delete user pop-up.
 
 ##### The code
-```
+```javascript
 User.prototype.getContactProfile = function(contactId) {
   QB.users.get(contactId, function(err, user) {
     if (user) {
@@ -793,7 +793,7 @@ User can use  global search to find users from the all QM users.
 * “Add” icons – allows user send a request to any QM user. 
 
 ##### The code
-```
+```javascript
 User.prototype.getContactProfile = function(userName, page) {
   QB.users.get({full_name: userName, page: page}, function(users) {
     if (users) {
@@ -822,7 +822,7 @@ Spinner shows a downloading process.
 screen
 
 ##### The code
-```
+```javascript
 Message.prototype.attach = function(file) {
 var attachment;
 
