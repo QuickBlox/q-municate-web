@@ -471,7 +471,7 @@ After opening a private (one-to-one) chat, the user sees last 50 messages. He ca
 Messages are sent after pressing Enter button.
 <br>
 If the user has chats with unread messages, these chats are displayed with a counter of the unread messages on the right.
-In the Recent section are displayed only chats with today’s activities.
+The recent section displays contacts with whom the user has recently interacted with (within the last day).
 ##### Buttons:
 * The phone icon starts an audio call;
 * The video icon starts a video call;
