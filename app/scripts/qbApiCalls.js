@@ -7,12 +7,13 @@
 
 define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
-  var Session, UserView, ContactListView;
+  var Session, User, UserView, ContactListView;
 
   function QBApiCalls(app) {
     this.app = app;
 
     Session = this.app.models.Session;
+    User = this.app.models.User;
     UserView = this.app.views.User;
     ContactListView = this.app.views.ContactList;
   }
@@ -37,16 +38,19 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       if ((new Date()).toISOString() > Session.expirationTime) {
         // reset QuickBlox JS SDK after autologin via an existing token
         self.init();
+        QB.chat.disconnect();
 
         // recovery session
         if (Session.authParams.provider) {
           UserView.getFBStatus(function(token) {
             Session.authParams.keys.token = token;
             self.createSession(Session.authParams, callback, Session._remember);
+            self.connectChat(User.contact.user_jid);
           });
         } else {
           self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
           Session.encrypt(Session.authParams);
+          self.connectChat(User.contact.user_jid);
         }
         
       } else {
@@ -250,7 +254,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             }
           } else {
             Session.update({ date: new Date() });
-            callback(res);
+            if (callback) callback(res);
           }
         });
       });
