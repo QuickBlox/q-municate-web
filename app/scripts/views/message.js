@@ -242,7 +242,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html += '<div class="message-content">';
 
             if (message.caller === User.contact.id)
-              html += '<h4 class="message-author">Opponent doesn\'t have camera and/or microphone.';
+              html += '<h4 class="message-author">'+contacts[message.callee].full_name+' doesn\'t have camera and/or microphone.';
             else
               html += '<h4 class="message-author">Camera and/or microphone wasn\'t found.';
               
