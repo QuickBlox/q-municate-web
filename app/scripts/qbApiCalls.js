@@ -45,12 +45,12 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           UserView.getFBStatus(function(token) {
             Session.authParams.keys.token = token;
             self.createSession(Session.authParams, callback, Session._remember);
-            self.connectChat(User.contact.user_jid);
+            self.reconnectChat(User.contact.user_jid);
           });
         } else {
           self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
           Session.encrypt(Session.authParams);
-          self.connectChat(User.contact.user_jid);
+          self.reconnectChat(User.contact.user_jid);
         }
         
       } else {
@@ -257,6 +257,23 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             if (callback) callback(res);
           }
         });
+      });
+    },
+
+    reconnectChat: function(jid) {
+      var password = Session.token;
+      QB.chat.connect({jid: jid, password: password}, function(err, res) {
+        if (err) {
+          if (QMCONFIG.debug) console.log(err.detail);
+
+          if (err.detail.indexOf('Status.ERROR') >= 0 || err.detail.indexOf('Status.AUTHFAIL') >= 0) {
+            fail(err.detail);
+            UserView.logout();
+            window.location.reload();
+          }
+        } else {
+          Session.update({ date: new Date() });
+        }
       });
     },
 
