@@ -78,7 +78,7 @@ define([
       changePassView = new ChangePassView({
         model: currentUser
       });
-      fbImportView = new FBImportView;
+      fbImportView = new FBImportView();
       this.app.views.Profile = profileView;
       this.app.views.ChangePass = changePassView;
       this.app.views.FBImport = fbImportView;

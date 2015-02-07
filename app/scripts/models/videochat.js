@@ -72,10 +72,11 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         time = Math.floor(Date.now() / 1000),
         dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialogId+'"]'),
         copyDialogItem,
-        message;
+        message,
+        extension;
 
     if (!isErrorMessage) {
-      var extension = {
+      extension = {
         save_to_history: 1,
         date_sent: time,
 
@@ -87,7 +88,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
       if (duration) extension.duration = duration;
     } else {
-      var extension = {
+      extension = {
         save_to_history: 1,
         date_sent: time,
 
