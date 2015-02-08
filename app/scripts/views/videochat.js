@@ -41,13 +41,10 @@ define(['jquery', 'quickblox'], function($, QB) {
       var incomingCall = $(this).parents('.incoming-call'),
           opponentId = $(this).data('id'),
           dialogId = $(this).data('dialog'),
-          sessionId = $(this).data('session'),
           callType = $(this).data('calltype'),
           audioSignal = $('#ringtoneSignal')[0];
 
-      callType = callType.toString();
       QB.webrtc.reject(opponentId, {
-        sessionID: sessionId,
         dialog_id: dialogId
       });
 
@@ -74,7 +71,6 @@ define(['jquery', 'quickblox'], function($, QB) {
           dialogId = $(this).data('dialog'),
           sessionId = $(this).data('session'),
           callType = $(this).data('calltype'),
-          sdp = incomingCall.data('sdp'),
           audioSignal = $('#ringtoneSignal')[0],
           params = self.build(dialogId),
           chat = $('.l-chat[data-dialog="'+dialogId+'"]');
@@ -87,19 +83,16 @@ define(['jquery', 'quickblox'], function($, QB) {
       audioSignal.pause();
 
       params.isCallee = true;
-      params.sessionId = sessionId;
-      params.sdp = sdp;
 
       VideoChat.getUserMedia(params, callType, function(err, res) {
         if (err) {
           chat.find('.mediacall .btn_hangup').data('errorMessage', 1);
           chat.find('.mediacall .btn_hangup').click();
-          // showError(chat);
           fixScroll();
           return true;
         }
 
-        if (callType === 2) {
+        if (callType === 'audio') {
           self.type = 'audio';
           $('.btn_camera_off').click();
         } else {
@@ -121,8 +114,6 @@ define(['jquery', 'quickblox'], function($, QB) {
           endCallSignal = $('#endCallSignal')[0],
           isErrorMessage = $(this).data('errorMessage');
 
-      // $('.mediacall-remote-duration').text('connecting...');
-      // $('.mediacall-info-duration').text('');
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
@@ -130,7 +121,6 @@ define(['jquery', 'quickblox'], function($, QB) {
       QB.webrtc.stop(opponentId, 'manually', {
         dialog_id: dialogId
       });
-      QB.webrtc.hangup();
 
       if (VideoChat.caller) {
         if (!isErrorMessage) {
@@ -165,7 +155,7 @@ define(['jquery', 'quickblox'], function($, QB) {
       if (obj.is('.off')) {
         self.unmute(deviceType);
         if (deviceType === 'video')
-          QB.webrtc.changeCall(opponentId, {
+          QB.webrtc.update(opponentId, {
             dialog_id: dialogId,
             unmute: deviceType
           });
@@ -174,7 +164,7 @@ define(['jquery', 'quickblox'], function($, QB) {
       } else {
         self.mute(deviceType);
         if (deviceType === 'video')
-          QB.webrtc.changeCall(opponentId, {
+          QB.webrtc.update(opponentId, {
             dialog_id: dialogId,
             mute: deviceType
           });
@@ -189,14 +179,13 @@ define(['jquery', 'quickblox'], function($, QB) {
         incomings = $('#popupIncoming'),
         html;
 
-    html = '<div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween" data-sdp="'+extension.sdp+'">';
+    html = '<div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween">';
     html += '<div class="incoming-call-info l-flexbox l-flexbox_column">';
-    // html += '<img class="info-avatar" src="'+extension.avatar+'" alt="avatar">';
     html += '<div class="message-avatar avatar contact-avatar_message info-avatar" style="background-image:url('+extension.avatar+')"></div>';
-    html += '<span class="info-notice">'+(extension.callType === '2' ? 'Audio' : 'Video')+' Call from '+extension.full_name+'</span>';
+    html += '<span class="info-notice">'+capitaliseFirstLetter(extension.callType)+' Call from '+extension.full_name+'</span>';
     html += '</div>';
     html += '<div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">';
-    html += '<button class="btn_decline" data-callType="'+extension.callType+'" data-session="'+extension.sessionID+'" data-dialog="'+extension.dialog_id+'" data-id="'+id+'">Decline</button>';
+    html += '<button class="btn_decline" data-callType="'+extension.callType+'" data-dialog="'+extension.dialog_id+'" data-id="'+id+'">Decline</button>';
     html += '<button class="btn_accept" data-callType="'+extension.callType+'" data-session="'+extension.sessionID+'" data-dialog="'+extension.dialog_id+'" data-id="'+id+'">Accept</button>';
     html += '</div></div>';
 
@@ -216,7 +205,6 @@ define(['jquery', 'quickblox'], function($, QB) {
   VideoChatView.prototype.onRemoteStream = function(stream) {
     var video = document.getElementById('remoteStream');
 
-    // console.log(stream);
     QB.webrtc.attachMediaStream('remoteStream', stream);
 
     if (self.type === 'video') {
@@ -245,7 +233,6 @@ define(['jquery', 'quickblox'], function($, QB) {
     var audioSignal = $('#callingSignal')[0],
         chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
 
-    QB.webrtc.hangup();
     VideoChat.caller = null;
     VideoChat.callee = null;
     self.type = null;
@@ -268,7 +255,6 @@ define(['jquery', 'quickblox'], function($, QB) {
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
-      QB.webrtc.hangup();
       VideoChat.caller = null;
       VideoChat.callee = null;
       self.type = null;
@@ -287,7 +273,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     }
   };
 
-  VideoChatView.prototype.onChangeCall = function(id, extension) {
+  VideoChatView.prototype.onUpdateCall = function(id, extension) {
     var chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
     if (chat[0] && chat.find('.mediacall')[0]) {
       if (extension.mute === 'video') {
@@ -308,9 +294,10 @@ define(['jquery', 'quickblox'], function($, QB) {
   VideoChatView.prototype.startCall = function(className) {
     var audioSignal = $('#callingSignal')[0],
         params = self.build(),
-        chat = $('.l-chat:visible');
+        chat = $('.l-chat:visible'),
+        callType = !!className.match(/audioCall/) ? 'audio' : 'video';
 
-    VideoChat.getUserMedia(params, className, function(err, res) {
+    VideoChat.getUserMedia(params, callType, function(err, res) {
       if (err) {
         chat.find('.mediacall .btn_hangup').click();
         showError(chat);
@@ -319,7 +306,7 @@ define(['jquery', 'quickblox'], function($, QB) {
       }
 
       audioSignal.play();
-      if (!!className.match(/audioCall/)) {
+      if (callType === 'audio') {
         self.type = 'audio';
         $('.btn_camera_off').click();
       } else {
@@ -444,4 +431,8 @@ function fixScroll() {
 
   chat.find('.l-chat-content .mCSB_container').css({top: chatContentHeight - containerHeight + 'px'});
   chat.find('.l-chat-content .mCSB_dragger').css({top: draggerContainerHeight - draggerHeight + 'px'});
+}
+
+function capitaliseFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }

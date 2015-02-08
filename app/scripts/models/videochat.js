@@ -14,9 +14,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     self = this;
   }
 
-  VideoChat.prototype.getUserMedia = function(options, className, callback) {
+  VideoChat.prototype.getUserMedia = function(options, callType, callback) {
     var User = this.app.models.User;
-    var callType = (typeof className === 'string' && !!className.match(/videoCall/)) || (className === 1) ? 'video' : 'audio';
     var params = {
       audio: true,
       video: callType === 'video' ? true : false,
@@ -45,17 +44,12 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         }
 
         if (options.isCallee) {
-          QB.webrtc.createPeer({
-            sessionID: options.sessionId,
-            description: options.sdp
-          });
           QB.webrtc.accept(options.opponentId, {
             dialog_id: options.dialogId
           });
           self.caller = options.opponentId;
           self.callee = User.contact.id;
         } else {
-          QB.webrtc.createPeer();
           QB.webrtc.call(options.opponentId, callType, {
             dialog_id: options.dialogId,
             avatar: User.contact.avatar_url,
@@ -78,14 +72,15 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         time = Math.floor(Date.now() / 1000),
         dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialogId+'"]'),
         copyDialogItem,
-        message;
+        message,
+        extension;
 
     if (!isErrorMessage) {
-      var extension = {
+      extension = {
         save_to_history: 1,
         date_sent: time,
 
-        callType: state === '3' ? callType : VideoChatView.type === 'video' ? '1' : '2',
+        callType: state === '3' ? (callType === 'video' ? '1' : '2') : (VideoChatView.type === 'video' ? '1' : '2'),
         callState: state === '1' && !duration ? '2' : state,
         caller: state === '3' ? userId : self.caller,
         callee: state === '3' ? User.contact.id : self.callee
@@ -93,7 +88,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
       if (duration) extension.duration = duration;
     } else {
-      var extension = {
+      extension = {
         save_to_history: 1,
         date_sent: time,
 

@@ -5,14 +5,13 @@ define(function() {
 
     /* Production environment */
     qbAccount: {
-      appId: 12496,
-      authKey: 'DxGShn2UtN5TUfd',
-      authSecret: 'gypfTzd3VbqYxsK'
+      appId: 13318,
+      authKey: 'WzrAY7vrGmbgFfP',
+      authSecret: 'xS2uerEveGHmEun'
     },
     fbAccount: {
-      appId: '1445555125707161',
+      appId: '605405446247805',
       scope: 'email,user_friends',
-      scopeFriends: 'user_friends'
     },
 
     /* Development environment */
@@ -24,7 +23,6 @@ define(function() {
     // fbAccount: {
     //   appId: '605405446247805',
     //   scope: 'email,user_friends',
-    //   scopeFriends: 'user_friends'
     // },
 
     /* Test local environment */
@@ -36,7 +34,6 @@ define(function() {
     // fbAccount: {
     //   appId: '623755094412840',
     //   scope: 'email,user_friends',
-    //   scopeFriends: 'user_friends'
     // },
 
     debug: true,

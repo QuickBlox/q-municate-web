@@ -53,7 +53,7 @@ define([
       QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
       QB.webrtc.onRejectCallListener = VideoChatView.onReject;
       QB.webrtc.onStopCallListener = VideoChatView.onStop;
-      QB.webrtc.onChangeCallListener = VideoChatView.onChangeCall;
+      QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
       QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
 
       QB.chat.onDisconnectingListener = function() {
@@ -78,7 +78,7 @@ define([
       changePassView = new ChangePassView({
         model: currentUser
       });
-      fbImportView = new FBImportView;
+      fbImportView = new FBImportView();
       this.app.views.Profile = profileView;
       this.app.views.ChangePass = changePassView;
       this.app.views.FBImport = fbImportView;
