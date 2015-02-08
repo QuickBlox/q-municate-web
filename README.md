@@ -378,7 +378,7 @@ QB.chat.connect({jid: self.getUserJid(user), password: password}, function(err, 
     QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
     QB.webrtc.onRejectCallListener = VideoChatView.onReject;
     QB.webrtc.onStopCallListener = VideoChatView.onStop;
-    QB.webrtc.onChangeCallListener = VideoChatView.onChangeCall;
+    QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
     QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
 
     callback(roster);
@@ -614,7 +614,7 @@ var mediaParams = {
   video: false,
   elemId: 'localStream',
   options: {
-    muted: true,
+    muted: true
   }
 };
 QB.webrtc.getUserMedia(mediaParams, function(err, stream) {
@@ -693,14 +693,14 @@ QB.webrtc.getUserMedia(mediaParams, function(err, stream) {
 
 // mute webcam
 QB.webrtc.mute('video');
-QB.webrtc.changeCall(params.opponent_id, {
+QB.webrtc.update(params.opponent_id, {
   dialog_id: params.dialogId,
   mute: 'video'
 });
 
 // unmute webcam
 QB.webrtc.unmute('video');
-QB.webrtc.changeCall(params.opponent_id, {
+QB.webrtc.update(params.opponent_id, {
   dialog_id: params.dialogId,
   unmute: 'video'
 });
@@ -870,26 +870,13 @@ If the QM tab is active while messages receiving, no actions are taken.
 If you want to build your own app using Q-municate as a base, please do the following:
 
  1. Download the project from here (GitHub)
- 2. [Register a QuickBlox account](http://admin.quickblox.com/register) (if you don't have one yet).
- 3. Login to the [QuickBlox admin panel](http://admin.quickblox.com/signin)
- 4. Create a new app
- 5. Click on the app title in the list to reveal the app's credentials:
+ 2. Run <code>bower install</code> and <code>npm install</code> to install all additional packages
+ 3. [Register a QuickBlox account](http://admin.quickblox.com/register) (if you don't have one yet).
+ 4. Login to the [QuickBlox admin panel](http://admin.quickblox.com/signin)
+ 5. Create a new app
+ 6. Click on the app title in the list to reveal the app's credentials:
    ![App credentials](http://files.quickblox.com/app_credentials.png)
- 6. Create Facebook Application for ability connecting via Facebook
- 7. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID into your Q-municate project code in <code>config.js</code><br />
- 8. Run <code>grunt build</code> in your terminal to build Q-municate
- 9. Enjoy!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 7. Create Facebook Application for ability connecting via Facebook
+ 8. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID into your Q-municate project code in <code>config.js</code><br />
+ 9. Run <code>grunt build</code> in your terminal to build Q-municate
+ 10. Enjoy!
