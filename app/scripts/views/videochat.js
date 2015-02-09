@@ -175,29 +175,28 @@ define(['jquery', 'quickblox'], function($, QB) {
 
     // full-mode
     $('body').on('click', '.btn_full-mode', function() {
-      return true;
       var userId = $(this).data('id'),
           dialogId = $(this).data('dialog'),
           mediacall = $('.mediacall').clone(),
+          contact = ContactList.contacts[userId],
           selector;
   
-      win = openPopup();
-
-      console.log(win);
-      console.log(win.document);
-      console.log(win.document.body);
-
-      selector = $(win.document).find('body');
-      selector.html(mediacall);
-
+      win = enableFullMode();
       
       win.onload = function() {
-        console.log(123123);
-        
-        console.log(selector);
-        
-        console.log(selector);
-        
+        selector = $(win.document.body);
+        selector.html(mediacall);
+
+        selector.find('.mediacall').removeAttr('style');
+        selector.find('.mediacall-local-avatar').attr('src', User.contact.avatar_url);
+        selector.find('.mediacall-remote-avatar').attr('src', contact.avatar_url);
+        selector.find('.mediacall-remote-name').text(contact.full_name);
+        selector.find('.btn_full-mode img').attr('src', 'images/icon-full-mode-off.png');
+        selector.find('#remoteStream')[0].play();
+        selector.find('#localStream')[0].play();
+
+        // QB.webrtc.attachMediaStream('localStream', )
+
         // win.onresize = function() {
         //   resize(win, this.innerWidth, this.innerHeight);
         // };
@@ -475,7 +474,7 @@ function capitaliseFirstLetter(string) {
 }
 
 // full-mode
-function openPopup() {
+function enableFullMode() {
   var scrWidth, scrHeight, winWidth, winHeight, disWidth, disHeight;
   var url, params;
   
@@ -486,11 +485,10 @@ function openPopup() {
   disWidth = (scrWidth - winWidth) / 2;
   disHeight = (scrHeight - winHeight) / 2;
   
-  // url = window.location.origin + window.location.pathname;
+  url = window.location.origin + window.location.pathname + 'full-mode.html';
   params = 'width='+winWidth+',height='+winHeight+',left='+disWidth+',top='+disHeight+',resizable=yes';
   
-  // console.log(url);
-  return window.open('', 'call-full-mode', params);
+  return window.open(url, 'call-full-mode', params);
 }
 
 // function resize(win, innerWidth, innerHeight) {
