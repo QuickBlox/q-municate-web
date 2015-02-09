@@ -218,6 +218,7 @@ define(['jquery', 'quickblox'], function($, QB) {
 
           if (isHangUp) {
             selector.find('.mediacall .btn_hangup').click();
+            videoStreamTime = null;
           }
         }
       };
@@ -312,6 +313,7 @@ define(['jquery', 'quickblox'], function($, QB) {
       VideoChat.caller = null;
       VideoChat.callee = null;
       self.type = null;
+      videoStreamTime = null;
 
       chat.find('.mediacall').remove();
       chat.find('.l-chat-header').show();
