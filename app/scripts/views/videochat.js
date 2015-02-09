@@ -301,7 +301,8 @@ define(['jquery', 'quickblox'], function($, QB) {
         ringtoneSignal = $('#ringtoneSignal')[0],
         incomingCall;
 
-    if (chat[0] && chat.find('.mediacall')[0]) {
+    if (chat[0] && (chat.find('.mediacall')[0] || win)) {
+      if (win) win.close();
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
