@@ -203,7 +203,7 @@ define(['jquery', 'quickblox'], function($, QB) {
           selector.find('#localStream')[0].play();
           selector.find('#localStream')[0].muted = true;
 
-          if (self.type === 'video' && !isHangUp) {
+          if (self.type === 'video') {
             video = selector.find('#remoteStream')[0];
             video.onload = function() {
               video.currentTime = videoStreamTime;
