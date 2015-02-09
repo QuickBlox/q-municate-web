@@ -203,14 +203,17 @@ define(['jquery', 'quickblox'], function($, QB) {
           selector.find('#localStream')[0].play();
           selector.find('#localStream')[0].muted = true;
 
-          if (self.type === 'video') {
+          if (self.type === 'video' && !isHangUp) {
             video = selector.find('#remoteStream')[0];
-            video.currentTime = videoStreamTime;
-            video.addEventListener('timeupdate', function() {
-              videoStreamTime = video.currentTime;
-              var duration = getTimer(Math.floor(video.currentTime));
-              selector.find('.mediacall-info-duration, .mediacall-remote-duration').text(duration);
-            });
+            video.onload = function() {
+              video.currentTime = videoStreamTime;
+              video.addEventListener('timeupdate', function() {
+                if (videoStreamTime === video.currentTime) return true;
+                videoStreamTime = video.currentTime;
+                var duration = getTimer(Math.floor(video.currentTime));
+                selector.find('.mediacall-info-duration, .mediacall-remote-duration').text(duration);
+              });
+            };
           }
 
           if (isHangUp) {
