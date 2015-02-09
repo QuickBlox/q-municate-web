@@ -9,7 +9,7 @@ var callTimer;
 
 define(['jquery', 'quickblox'], function($, QB) {
 
-  var self;
+  var self, win;
   var User, ContactList, VideoChat;
 
   function VideoChatView(app) {
@@ -172,6 +172,42 @@ define(['jquery', 'quickblox'], function($, QB) {
         obj.attr('title', msg + ' is off');
       }
     });
+
+    // full-mode
+    $('body').on('click', '.btn_full-mode', function() {
+      return true;
+      var userId = $(this).data('id'),
+          dialogId = $(this).data('dialog'),
+          mediacall = $('.mediacall').clone(),
+          selector;
+  
+      win = openPopup();
+
+      console.log(win);
+      console.log(win.document);
+      console.log(win.document.body);
+
+      selector = $(win.document).find('body');
+      selector.html(mediacall);
+
+      
+      win.onload = function() {
+        console.log(123123);
+        
+        console.log(selector);
+        
+        console.log(selector);
+        
+        // win.onresize = function() {
+        //   resize(win, this.innerWidth, this.innerHeight);
+        // };
+        
+        win.onbeforeunload = function() {
+          
+        };
+      };
+    });
+
   };
 
   VideoChatView.prototype.onCall = function(id, extension) {
@@ -338,6 +374,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     html += '<span class="mediacall-info-duration is-hidden"></span>';
     html += '</div>';
     html += '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">';
+    html += '<button class="btn_mediacall btn_full-mode" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-full-mode-on.png" alt="full mode"></button>';
     html += '<button class="btn_mediacall btn_camera_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-camera-off.svg" alt="camera"></button>';
     html += '<button class="btn_mediacall btn_mic_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>';
     html += '<button class="btn_mediacall btn_hangup" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>';
@@ -436,3 +473,51 @@ function fixScroll() {
 function capitaliseFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+// full-mode
+function openPopup() {
+  var scrWidth, scrHeight, winWidth, winHeight, disWidth, disHeight;
+  var url, params;
+  
+  scrWidth = window.screen.availWidth;
+  scrHeight = window.screen.availHeight;
+  winWidth = scrWidth / 2;
+  winHeight = scrHeight / 2;
+  disWidth = (scrWidth - winWidth) / 2;
+  disHeight = (scrHeight - winHeight) / 2;
+  
+  // url = window.location.origin + window.location.pathname;
+  params = 'width='+winWidth+',height='+winHeight+',left='+disWidth+',top='+disHeight+',resizable=yes';
+  
+  // console.log(url);
+  return window.open('', 'call-full-mode', params);
+}
+
+// function resize(win, innerWidth, innerHeight) {
+//   var elem, elemWidth, elemHeight, elemLeft, elemTop;
+//   var selector, footerHeight, aspectRatio;
+  
+//   selector = $(win.document);
+//   footerHeight = selector.find('#videochat-footer').height();
+  
+//   elem = selector.find('.fullVideo:visible')[0];
+//   aspectRatio = elem.videoWidth / elem.videoHeight;
+  
+//   elemWidth = innerWidth < aspectRatio * win.innerHeight ?
+//                innerWidth : aspectRatio * win.innerHeight;
+//   elemHeight = innerHeight < win.innerWidth / aspectRatio ?
+//                 innerHeight : win.innerWidth / aspectRatio;
+  
+//   elemLeft = (innerWidth - elemWidth) / 2;
+//   elemTop = (innerHeight - elemHeight - footerHeight) / 2;
+  
+//   if (elemTop > 0)
+//     selector.find('#videochat').css('position', 'absolute');
+//   else
+//     selector.find('#videochat').css('position', 'static');
+    
+//   selector.find('#videochat').css({'width': elemWidth + 'px',
+//                                    'height': elemHeight + 'px',
+//                                    'left': elemLeft + 'px',
+//                                    'top': elemTop + 'px'});
+// }
