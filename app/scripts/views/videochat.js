@@ -5,7 +5,7 @@
  *
  */
 
-var callTimer;
+var callTimer, win, videoStreamTime, maxHeight;
 
 define(['jquery', 'quickblox'], function($, QB) {
 
@@ -138,40 +138,90 @@ define(['jquery', 'quickblox'], function($, QB) {
       chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
     });
 
-    $('body').on('click', '.btn_camera_off, .btn_mic_off', function(event) {
-      event.preventDefault();
-      var obj = $(this),
-          opponentId = obj.data('id'),
-          dialogId = obj.data('dialog'),
-          deviceType = !!$(this).attr('class').match(/btn_camera_off/) ? 'video' : 'audio',
-          msg = deviceType === 'video' ? 'Camera' : 'Mic';
-      
-      if (self.type !== deviceType && self.type === 'audio') {
-        obj.addClass('off');
-        obj.attr('title', msg + ' is off');
-        return true;
-      }
+    $('body').on('click', '.btn_camera_off, .btn_mic_off', switchOffDevice);
 
-      if (obj.is('.off')) {
-        self.unmute(deviceType);
-        if (deviceType === 'video')
-          QB.webrtc.update(opponentId, {
-            dialog_id: dialogId,
-            unmute: deviceType
-          });
-        obj.removeClass('off');
-        obj.removeAttr('title');
-      } else {
-        self.mute(deviceType);
-        if (deviceType === 'video')
-          QB.webrtc.update(opponentId, {
-            dialog_id: dialogId,
-            mute: deviceType
-          });
-        obj.addClass('off');
-        obj.attr('title', msg + ' is off');
-      }
+    // full-screen-mode
+    $('body').on('click', '.btn_full-mode', function() {
+      var userId = $(this).data('id'),
+          dialogId = $(this).data('dialog'),
+          chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
+          mediacall = $('.mediacall').clone(),
+          contact = ContactList.contacts[userId],
+          selector, video, isHangUp;
+  
+      win = enableFullScreenMode();
+      
+      win.onload = function() {
+        selector = $(win.document.body);
+        selector.html(mediacall);
+
+        destroyOldScreen();
+        buildNewScreen(selector, 'full');
+
+        win.onbeforeunload = disableFullScreenMode;
+
+        selector.find('.btn_full-mode').on('click', function() {
+          win.close();
+        });
+
+        selector.find('.btn_camera_off, .btn_mic_off').on('click', switchOffDevice);
+
+        selector.find('.btn_hangup').on('click', function() {
+          isHangUp = true;
+          win.close();
+        });
+
+        function disableFullScreenMode() {
+          mediacall = selector.find('.mediacall').clone();
+          chat.prepend(mediacall);
+          chat.find('.l-chat-header').hide();
+          chat.find('.l-chat-content').css({height: 'calc(100% - '+maxHeight+' - 90px)'});
+          if (screen.height > 768) {
+            chat.find('.mediacall-remote-user').css({position: 'absolute', top: '16%', left: '10%', margin: 0});
+          }
+
+          $('.dialog-item[data-dialog="'+dialogId+'"]').find('.contact').click();
+
+          buildNewScreen($(window.document.body), 'normal');
+        }
+
+        function destroyOldScreen() {
+          chat.find('.mediacall').remove();
+          chat.find('.l-chat-header').show();
+          chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
+        }
+
+        function buildNewScreen(selector, mode) {
+          if (mode === 'full') {
+            selector.find('.mediacall').removeAttr('style');
+            selector.find('.btn_full-mode img').attr('src', 'images/icon-full-mode-off.png');
+          } else {
+            selector.find('.mediacall').attr('style', 'max-height:'+maxHeight);
+            selector.find('.btn_full-mode img').attr('src', 'images/icon-full-mode-on.png');
+          }
+          selector.find('#remoteStream')[0].play();
+          selector.find('#localStream')[0].play();
+          selector.find('#localStream')[0].muted = true;
+
+          if (self.type === 'video' && !isHangUp) {
+            video = selector.find('#remoteStream')[0];
+            video.currentTime = videoStreamTime;
+            video.addEventListener('timeupdate', function() {
+              if (videoStreamTime === video.currentTime) return true;
+              videoStreamTime = video.currentTime;
+              var duration = getTimer(Math.floor(video.currentTime));
+              selector.find('.mediacall-info-duration, .mediacall-remote-duration').text(duration);
+            });
+          }
+
+          if (isHangUp) {
+            selector.find('.mediacall .btn_hangup').click();
+            videoStreamTime = null;
+          }
+        }
+      };
     });
+
   };
 
   VideoChatView.prototype.onCall = function(id, extension) {
@@ -206,9 +256,11 @@ define(['jquery', 'quickblox'], function($, QB) {
     var video = document.getElementById('remoteStream');
 
     QB.webrtc.attachMediaStream('remoteStream', stream);
+    $('.mediacall .btn_full-mode').prop('disabled', false);
 
     if (self.type === 'video') {
       video.addEventListener('timeupdate', function() {
+        videoStreamTime = video.currentTime;
         var duration = getTimer(Math.floor(video.currentTime));
         $('.mediacall-info-duration, .mediacall-remote-duration').text(duration);
       });
@@ -251,13 +303,15 @@ define(['jquery', 'quickblox'], function($, QB) {
         ringtoneSignal = $('#ringtoneSignal')[0],
         incomingCall;
 
-    if (chat[0] && chat.find('.mediacall')[0]) {
+    if (chat[0] && (chat.find('.mediacall')[0] || win)) {
+      if (win) win.close();
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
       VideoChat.caller = null;
       VideoChat.callee = null;
       self.type = null;
+      videoStreamTime = null;
 
       chat.find('.mediacall').remove();
       chat.find('.l-chat-header').show();
@@ -275,18 +329,19 @@ define(['jquery', 'quickblox'], function($, QB) {
 
   VideoChatView.prototype.onUpdateCall = function(id, extension) {
     var chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
-    if (chat[0] && chat.find('.mediacall')[0]) {
+    var selector = win ? $(win.document.body) : $(window.document.body);
+    if (chat[0] && (chat.find('.mediacall')[0] || win)) {
       if (extension.mute === 'video') {
-        $('#remoteStream').addClass('is-hidden');
-        $('#remoteUser').removeClass('is-hidden');
-        $('.mediacall-remote-duration').removeClass('is-hidden');
-        $('.mediacall-info-duration').addClass('is-hidden');
+        selector.find('#remoteStream').addClass('is-hidden');
+        selector.find('#remoteUser').removeClass('is-hidden');
+        selector.find('.mediacall-remote-duration').removeClass('is-hidden');
+        selector.find('.mediacall-info-duration').addClass('is-hidden');
       }
       if (extension.unmute === 'video') {
-        $('#remoteStream').removeClass('is-hidden');
-        $('#remoteUser').addClass('is-hidden');
-        $('.mediacall-info-duration').removeClass('is-hidden');
-        $('.mediacall-remote-duration').addClass('is-hidden');
+        selector.find('#remoteStream').removeClass('is-hidden');
+        selector.find('#remoteUser').addClass('is-hidden');
+        selector.find('.mediacall-info-duration').removeClass('is-hidden');
+        selector.find('.mediacall-remote-duration').addClass('is-hidden');
       }
     }
   };
@@ -320,9 +375,10 @@ define(['jquery', 'quickblox'], function($, QB) {
     var chat = id ? $('.l-chat[data-dialog="'+id+'"]') : $('.l-chat:visible'),
         userId = chat.data('id'),
         dialogId = chat.data('dialog'),
-        contact = ContactList.contacts[userId],
-        maxHeight = screen.height > 768 ? '420px' : '550px',
+        contact = ContactList.contacts[userId],        
         html;
+
+    maxHeight = screen.height > 768 ? '420px' : '550px';
 
     html = '<div class="mediacall l-flexbox" style="max-height:'+maxHeight+'">';
     html += '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>';
@@ -338,6 +394,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     html += '<span class="mediacall-info-duration is-hidden"></span>';
     html += '</div>';
     html += '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">';
+    html += '<button class="btn_mediacall btn_full-mode" data-id="'+userId+'" data-dialog="'+dialogId+'" disabled><img class="btn-icon_mediacall" src="images/icon-full-mode-on.png" alt="full mode"></button>';
     html += '<button class="btn_mediacall btn_camera_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-camera-off.svg" alt="camera"></button>';
     html += '<button class="btn_mediacall btn_mic_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>';
     html += '<button class="btn_mediacall btn_hangup" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>';
@@ -348,7 +405,9 @@ define(['jquery', 'quickblox'], function($, QB) {
     chat.find('.l-chat-content').css({height: 'calc(100% - '+maxHeight+' - 90px)'});
     if (screen.height > 768) {
       chat.find('.mediacall-remote-user').css({position: 'absolute', top: '16%', left: '10%', margin: 0});
-    }    
+    }
+
+    $('.dialog-item[data-dialog="'+dialogId+'"]').find('.contact').click();
 
     return {
       opponentId: userId,
@@ -360,7 +419,9 @@ define(['jquery', 'quickblox'], function($, QB) {
     QB.webrtc.mute(callType);
     if (callType === 'video') {
       $('#localStream').addClass('is-hidden');
+      if (win) $(win.document.body).find('#localStream').addClass('is-hidden');
       $('#localUser').removeClass('is-hidden');
+      if (win) $(win.document.body).find('#localUser').removeClass('is-hidden');
     }
   };
 
@@ -368,9 +429,46 @@ define(['jquery', 'quickblox'], function($, QB) {
     QB.webrtc.unmute(callType);
     if (callType === 'video') {
       $('#localStream').removeClass('is-hidden');
-      $('#localUser').addClass('is-hidden');      
+      if (win) $(win.document.body).find('#localStream').removeClass('is-hidden');
+      $('#localUser').addClass('is-hidden');
+      if (win) $(win.document.body).find('#localUser').addClass('is-hidden');
     }
   };
+
+  function switchOffDevice(event) {
+    event.preventDefault();
+    var obj = $(event.target).data('id') ? $(event.target) : $(event.target).parent(),
+        opponentId = obj.data('id'),
+        dialogId = obj.data('dialog'),
+        deviceType = !!obj.attr('class').match(/btn_camera_off/) ? 'video' : 'audio',
+        msg = deviceType === 'video' ? 'Camera' : 'Mic';
+    
+    if (self.type !== deviceType && self.type === 'audio') {
+      obj.addClass('off');
+      obj.attr('title', msg + ' is off');
+      return true;
+    }
+
+    if (obj.is('.off')) {
+      self.unmute(deviceType);
+      if (deviceType === 'video')
+        QB.webrtc.update(opponentId, {
+          dialog_id: dialogId,
+          unmute: deviceType
+        });
+      obj.removeClass('off');
+      obj.removeAttr('title');
+    } else {
+      self.mute(deviceType);
+      if (deviceType === 'video')
+        QB.webrtc.update(opponentId, {
+          dialog_id: dialogId,
+          mute: deviceType
+        });
+      obj.addClass('off');
+      obj.attr('title', msg + ' is off');
+    }
+  }
 
   return VideoChatView;
 });
@@ -390,6 +488,7 @@ function closePopup() {
 function setDuration(currentTime) {
   var c = currentTime || 0;
   $('.mediacall-info-duration, .mediacall-remote-duration').text(getTimer(c));
+  if (win) $(win.document.body).find('.mediacall-info-duration, .mediacall-remote-duration').text(getTimer(c));
   callTimer = setTimeout(function() {
     c++;
     setDuration(c);
@@ -435,4 +534,21 @@ function fixScroll() {
 
 function capitaliseFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function enableFullScreenMode() {
+  var scrWidth, scrHeight, winWidth, winHeight, disWidth, disHeight;
+  var url, params;
+  
+  scrWidth = window.screen.availWidth;
+  scrHeight = window.screen.availHeight;
+  winWidth = scrWidth / 2;
+  winHeight = scrHeight / 2;
+  disWidth = (scrWidth - winWidth) / 2;
+  disHeight = (scrHeight - winHeight) / 2;
+  
+  url = window.location.origin + window.location.pathname + 'full-mode.html';
+  params = 'width='+winWidth+',height='+winHeight+',left='+disWidth+',top='+disHeight+',resizable=yes';
+  
+  return window.open(url, 'call-full-mode', params);
 }
