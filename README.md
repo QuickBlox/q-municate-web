@@ -56,10 +56,16 @@ Please note, in order to start using Chat 2.0, you should read the [following.](
 15. [File transfer via chat](#15-file-transfer-via-chat)
 16. [Chat emojes](#16-chat-emojes)
 17. [Icons and sound on a browser's tab](#17-icons-and-sound-on-a-browsers-tab)
+18. [Full screen mode for audio and video calls](#18-full-screen-mode-for-audio-and-video-calls)
 
 Please note all these features are available in the code, so you can customize your app depending on your needs.
 
 ## Changelog
+
+### v. 1.0.0 – February 12, 2015
+* [Full screen mode for audio and video calls](#18-full-screen-mode-for-audio-and-video-calls)
+* Improvements of calls 
+* Bug  fixes of the chat session expiration
 
 ### v. 0.9 – January 19, 2014
 * [My profile page](#11-my-profile-page)
@@ -864,6 +870,18 @@ If the user recieves a message, but the QM tab isn’t open or a dialog with unr
 * A sound plays when a message is received.
 
 If the QM tab is active while messages receiving, no actions are taken.
+
+### 18. Full screen mode for audio and video calls
+During the audio or video call user can click Extend icon to open a call in a separate window.
+
+<img src="http://files.quickblox.com/fullmode_500x337.png" height="400" />&nbsp;
+
+#### Available features during the call in a separate window:
+* Narrow icon – after clicking this icon, a call in narrowed back to the chat section;
+* Mute camera – clicking this icon, user can turn on/off his camera (only for video calls);
+* Mute voice – clicking this icon, user can turn on/off his microphone (for both audio and video calls);
+* End call – ends current call and redirects user to the Chats Page.
+
 
 ### Important - how to build your own Chat app</h3>
 
