@@ -69,8 +69,6 @@ require([
   'minEmoji', 'MainModule',
   'backbone', 'onlinejs'
 ], function ($, QMCONFIG, minEmoji, QM, Backbone) {
-  window.onLineURL = "https://qm.quickblox.com/online.php";
-  
   var APP;
   // Backbone.history.start();
 
