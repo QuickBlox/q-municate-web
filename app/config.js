@@ -4,26 +4,26 @@ define(function() {
   var QMCONFIG = {
 
     /* Production environment */
-    // qbAccount: {
-    //   appId: 13318,
-    //   authKey: 'WzrAY7vrGmbgFfP',
-    //   authSecret: 'xS2uerEveGHmEun'
-    // },
-    // fbAccount: {
-    //   appId: '605405446247805',
-    //   scope: 'email,user_friends',
-    // },
-
-    /* Development environment */
     qbAccount: {
-      appId: 14542,
-      authKey: 'rJqAFphrSnpyZW2',
-      authSecret: 'tTEB2wK-dU8X3Ra'
+      appId: 13318,
+      authKey: 'WzrAY7vrGmbgFfP',
+      authSecret: 'xS2uerEveGHmEun'
     },
     fbAccount: {
       appId: '605405446247805',
       scope: 'email,user_friends',
     },
+
+    /* Development environment */
+    // qbAccount: {
+    //   appId: 14542,
+    //   authKey: 'rJqAFphrSnpyZW2',
+    //   authSecret: 'tTEB2wK-dU8X3Ra'
+    // },
+    // fbAccount: {
+    //   appId: '605405446247805',
+    //   scope: 'email,user_friends',
+    // },
 
     /* Test local environment */
     // qbAccount: {
