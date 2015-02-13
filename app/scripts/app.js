@@ -53,18 +53,18 @@ define([
       // QB SDK initialization
       // Checking if autologin was chosen
       if (localStorage['QM.session'] && localStorage['QM.user'] &&
-          // new format of storage data (16.01.2015)
-          localStorage['QM.isFBnewAPI']) {
+          // new QB release account (13.02.2015)
+          localStorage['QM.isReleaseQBAccount']) {
         
         token = JSON.parse(localStorage['QM.session']).token;
         this.service.init(token);
 
-      } else if (localStorage['QM.isFBnewAPI']) {
+      } else if (localStorage['QM.isReleaseQBAccount']) {
         this.service.init();
       } else {
         // removing the old cached data from LocalStorage
         localStorage.clear();
-        localStorage.setItem('QM.isFBnewAPI', '1');
+        localStorage.setItem('QM.isReleaseQBAccount', '1');
         this.service.init();
       }
 
