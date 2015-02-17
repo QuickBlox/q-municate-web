@@ -98,12 +98,13 @@ input:focus:-ms-input-placeholder      {transition: all 0.2s ease; line-height: 
 
 /* Search cancel button */
 input[type="search"]::-webkit-search-cancel-button {
+  margin: -6px 4px 0;
   -webkit-appearance: none;
   cursor: pointer;
 }
 input[type="search"]::-webkit-search-cancel-button:after {
   content: "\00d7";
-  font-size: 30px;
+  font-size: 24px;
   color: #bebebe;
   vertical-align: middle;
 }
