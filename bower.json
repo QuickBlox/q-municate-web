@@ -14,9 +14,9 @@
     "jquery.nicescroll": "~3.5.6",
     "blueimp-load-image": "~1.13.0",
     "blueimp-canvas-to-blob": "~2.1.1",
-    "Chroma-Hash": "git@github.com:mattt/Chroma-Hash.git#~1.0.1",
-    "progressbar.js": "git@github.com:bug7a/progressbar.js.git",
-    "OnlineJS": "git@github.com:PixelsCommander/OnlineJS.git"
+    "Chroma-Hash": "https://github.com/mattt/Chroma-Hash.git#~1.0.1",
+    "progressbar.js": "https://github.com/bug7a/progressbar.js.git",
+    "OnlineJS": "https://github.com/PixelsCommander/OnlineJS.git"
   },
   "devDependencies": {}
 }
