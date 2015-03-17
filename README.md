@@ -888,13 +888,17 @@ During the audio or video call user can click Extend icon to open a call in a se
 If you want to build your own app using Q-municate as a base, please do the following:
 
  1. Download the project from here (GitHub)
- 2. Run <code>bower install</code> and <code>npm install</code> to install all additional packages
- 3. [Register a QuickBlox account](http://admin.quickblox.com/register) (if you don't have one yet).
- 4. Login to the [QuickBlox admin panel](http://admin.quickblox.com/signin)
- 5. Create a new app
- 6. Click on the app title in the list to reveal the app's credentials:
+ 2. Run <code>sudo npm install -g bower</code> in your terminal
+ 3. Run <code>sudo gem install compass</code> in your terminal
+ 4. Run <code>sudo npm install -g grunt-cli</code> in your terminal
+ 5. Run <code>bower install</code> to install all additional packages in your terminal
+ 6. Run <code>sudo npm install</code> to install all additional packages in your terminal
+ 7. [Register a QuickBlox account](http://admin.quickblox.com/register) (if you don't have one yet).
+ 8. Login to the [QuickBlox admin panel](http://admin.quickblox.com/signin)
+ 9. Create a new app
+ 10. Click on the app title in the list to reveal the app's credentials:
    ![App credentials](http://files.quickblox.com/app_credentials.png)
- 7. Create Facebook Application for ability connecting via Facebook
- 8. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID into your Q-municate project code in <code>config.js</code><br />
- 9. Run <code>grunt build</code> in your terminal to build Q-municate
- 10. Enjoy!
+ 11. Create Facebook Application for ability connecting via Facebook
+ 12. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID into your Q-municate project code in <code>config.js</code><br />
+ 13. Run <code>grunt build</code> in your terminal to build Q-municate
+ 14. Run <code>grunt serve</code> in your terminal to run Q-municate 
