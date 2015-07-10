@@ -1,7 +1,7 @@
 /*global require*/
 'use strict';
 
-require.config({
+requirejs.config({
   baseUrl: 'scripts',
   shim: {
     handlebars: {
@@ -20,7 +20,7 @@ require.config({
   },
   paths: {
     // libs
-    cryptojs: '//crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes',
+    cryptojs: 'http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes',
     videojs: '//vjs.zencdn.net/4.6/video',
     jquery: '../bower_components/jquery/dist/jquery',
     underscore: '../bower_components/underscore/underscore',
@@ -64,7 +64,7 @@ require.config({
   }
 });
 
-require([
+requirejs([
   'jquery', 'config',
   'minEmoji', 'MainModule',
   'backbone', 'onlinejs'

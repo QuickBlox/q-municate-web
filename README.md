@@ -902,3 +902,18 @@ If you want to build your own app using Q-municate as a base, please do the foll
  12. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID into your Q-municate project code in <code>config.js</code><br />
  13. Run <code>grunt build</code> in your terminal to build Q-municate
  14. Run <code>grunt serve</code> in your terminal to run Q-municate 
+
+
+### Additional: how to build desktop version
+ 
+ 1. Download nw.js dependent to your system(Win, OS X, Linux) [NW.js](http://nwjs.io/).
+ 2. Add in package.json after engines section -> 
+ ```javascript 
+   "window": {
+     "toolbar": false,
+     "width": 1000,
+     "height": 800
+   },
+   "main": "app/index.html"
+ 3. Run: $ /path/to/nw .  (suppose the current directory contains 'package.json')
+ 4. [How to package app](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps). 
