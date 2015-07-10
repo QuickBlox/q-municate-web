@@ -12,3 +12,5 @@ node_modules
 # test environment
 test/bower_components/
 test/temp
+
+dist
