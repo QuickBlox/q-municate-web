@@ -908,6 +908,7 @@ If you want to build your own app using Q-municate as a base, please do the foll
  
  1. Download nw.js dependent to your system(Win, OS X, Linux) [NW.js](http://nwjs.io/).
  2. Add in 'package.json' after 'engines' section next lines:
+
  ```javascript 
    "window": {
      "toolbar": false,
