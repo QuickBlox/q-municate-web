@@ -917,5 +917,5 @@ If you want to build your own app using Q-municate as a base, please do the foll
    },
    "main": "app/index.html"
    ```
- 3. Run: $ /path/to/nw .  (suppose the current directory contains 'package.json')
+ 3. Run: $ /path/to/nw .  (suppose the current directory contains 'package.json'). Read more https://github.com/nwjs/nw.js#quick-start about OS X and Windows
  4. [How to package app](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps). 
