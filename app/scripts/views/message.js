@@ -343,7 +343,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           val = form.find('.textarea').html().trim(),
           time = Math.floor(Date.now() / 1000),
           type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
-          dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
+          dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           copyDialogItem;
 
       if (val.length > 0) {
@@ -355,11 +355,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         }
         
         // send message
-        QB.chat.send(jid, {type: type, body: val, extension: {
-          save_to_history: 1,
-          // dialog_id: dialog_id,
-          date_sent: time
-        }});
+        var msg = {
+          type: type,
+          body: val,
+          extension: {
+            save_to_history: 1,
+            dialog_id: dialog_id,
+            date_sent: time
+          }
+        };
+        QB.chat.send(jid, msg);
 
         message = Message.create({
           chat_dialog_id: dialog_id,
@@ -382,7 +387,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       }
     },
 
-    onMessage: function(id, message, recipientJid, isOfflineStorage) {
+    onMessage: function(id, message) {
       if (message.type === 'error') return true;
 
       var DialogView = self.app.views.Dialog,
@@ -401,7 +406,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
           roster = ContactList.roster,
           audioSignal = $('#newMessageSignal')[0],
-          recipientId = QB.chat.helpers.getIdFromNode(recipientJid),
+          isOfflineStorage = message.delay,
+          selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
           msg, copyDialogItem, dialog, occupant, msgArr;
 
       msg = Message.create(message);
@@ -415,8 +421,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         dialogs[dialog_id].messages = msgArr;
       }
 
-      if ((!chat.is(':visible') || !window.isQMAppActive) && dialogItem.length > 0 && notification_type !== '1' && !isOfflineStorage) {
+      if (!selected && !chat.is(':visible') && !window.isQMAppActive && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
         unread++;
+        console.log(unread);
         dialogItem.find('.unread').text(unread);
         DialogView.getUnreadCounter(dialog_id);
       }
@@ -514,15 +521,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         dialogItem.remove();
         $('#recentList ul').prepend(copyDialogItem);
         if (!$('#searchList').is(':visible')) {
-         $('#recentList').removeClass('is-hidden');
-         isSectionEmpty($('#recentList ul'));
+          $('#recentList').removeClass('is-hidden');
+          isSectionEmpty($('#recentList ul'));
         }
       }
 
-      // if (QMCONFIG.debug) console.log(msg);
-      self.addItem(msg, true, true, recipientId);
-      if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id))
+      if (QMCONFIG.debug) console.log(msg);
+      self.addItem(msg, true, true, id);
+      if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
+      }
     }
 
   };
