@@ -15,8 +15,7 @@
     "blueimp-load-image": "~1.14.0",
     "blueimp-canvas-to-blob": "~2.2.2",
     "Chroma-Hash": "https://github.com/mattt/Chroma-Hash.git#~1.0.1",
-    "progressbar.js": "https://github.com/bug7a/progressbar.js.git",
-    "OnlineJS": "https://github.com/PixelsCommander/OnlineJS.git"
+    "progressbar.js": "https://github.com/bug7a/progressbar.js.git"
   },
   "devDependencies": {}
 }

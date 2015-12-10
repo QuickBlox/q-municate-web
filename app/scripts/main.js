@@ -37,7 +37,6 @@ requirejs.config({
     timeago: '../bower_components/jquery-timeago/jquery.timeago',
     minEmoji: '../vendor/emoji/js/minEmoji',
     chromaHash: '../bower_components/Chroma-Hash/jquery.chroma-hash',
-    onlinejs: '../bower_components/OnlineJS/src/online',
 
     // Q-municate application
     config: '../config',
@@ -67,7 +66,7 @@ requirejs.config({
 requirejs([
   'jquery', 'config',
   'minEmoji', 'MainModule',
-  'backbone', 'onlinejs'
+  'backbone',
 ], function ($, QMCONFIG, minEmoji, QM, Backbone) {
   var APP;
   // Backbone.history.start();
@@ -93,16 +92,4 @@ requirejs([
     });
   });
 
-  // Leave a chat after closing window
-  // window.onbeforeunload = function() {
-  //   QB.chat.sendPres('unavailable');
-  // };
-
-  window.offLineHandler = function() {
-    $('.no-connection').removeClass('is-hidden');
-  };
-
-  window.onLineHandler = function() {
-    $('.no-connection').addClass('is-hidden');
-  };
 });
