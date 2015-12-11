@@ -7,7 +7,3 @@ app/bower_components
 node_modules
 
 # production environment
-
-# test environment
-test/bower_components/
-test/temp
