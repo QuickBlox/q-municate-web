@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "dependencies": {},
   "devDependencies": {
+    "bower": "^1.7.0",
     "grunt": "^0.4.5",
     "grunt-contrib-clean": "^0.7.0",
     "grunt-contrib-compass": "^1.0.4",
@@ -22,13 +23,12 @@
     "grunt-newer": "^1.1.1",
     "grunt-rev": "^0.1.0",
     "grunt-open": "^0.2.3",
-    "grunt-mocha": "^0.4.15",
     "load-grunt-tasks": "^3.3.0",
     "connect-livereload": "^0.5.4",
     "jshint-stylish": "^2.1.0",
     "time-grunt": "^1.2.2"
   },
   "engines": {
-    "node": "^5.1.1"
+    "node": ">=5.1.1"
   }
 }

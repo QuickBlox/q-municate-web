@@ -103,7 +103,6 @@ module.exports = function (grunt) {
         tasks: ['handlebars']
       },
       test: {
-        files: ['test/spec/**/*.js'],
         tasks: ['test:true']
       }
     },
@@ -230,18 +229,8 @@ module.exports = function (grunt) {
       all: [
         'Gruntfile.js',
         '<%= yeoman.app %>/scripts/{,*/}*.js',
-        '!<%= yeoman.app %>/vendor/*',
-        'test/spec/{,*/}*.js'
+        '!<%= yeoman.app %>/vendor/*'
       ]
-    },
-
-    mocha: {
-      all: {
-        options: {
-          run: true,
-          urls: ['http://localhost:<%= connect.test.options.port %>/index.html']
-        }
-      }
     }
 
   });
@@ -299,8 +288,7 @@ module.exports = function (grunt) {
         'clean:dev',
         'createDefaultTemplate',
         'handlebars',
-        'connect:test',
-        'mocha'
+        'connect:test'
       ];
 
     if(!isConnected) {
