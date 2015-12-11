@@ -233,7 +233,17 @@ module.exports = function (grunt) {
         '!<%= yeoman.app %>/vendor/*',
         'test/spec/{,*/}*.js'
       ]
+    },
+
+    mocha: {
+      all: {
+        options: {
+          run: true,
+          urls: ['http://localhost:<%= connect.test.options.port %>/index.html']
+        }
+      }
     }
+
   });
 
   grunt.registerTask('createDefaultTemplate', function () {
@@ -289,7 +299,8 @@ module.exports = function (grunt) {
         'clean:dev',
         'createDefaultTemplate',
         'handlebars',
-        'connect:test'
+        'connect:test',
+        'mocha'
       ];
 
     if(!isConnected) {
