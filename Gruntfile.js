@@ -3,10 +3,7 @@
 var SERVER_PORT = 9000;
 
 // # Globbing
-// for performance reasons we're only matching one level down:
-// 'test/spec/{,*/}*.js'
-// use this if you want to match all subfolders:
-// 'test/spec/**/*.js'
+
 
 module.exports = function (grunt) {
   // show elapsed time at the end
@@ -101,9 +98,6 @@ module.exports = function (grunt) {
           '<%= yeoman.app %>/scripts/templates/*.hbs'
         ],
         tasks: ['handlebars']
-      },
-      test: {
-        tasks: ['test:true']
       }
     },
 
@@ -196,28 +190,11 @@ module.exports = function (grunt) {
           ]
         }
       },
-      test: {
-        options: {
-          port: 9001,
-          open: false,
-          base: [
-            '.tmp',
-            'test',
-            '<%= yeoman.app %>'
-          ]
-        }
-      },
       dist: {
         options: {
           protocol: 'https',
           base: '<%= yeoman.dist %>'
         }
-      }
-    },
-
-    open: {
-      test: {
-        path: 'https://localhost:<%= connect.test.options.port %>'
       }
     },
 
@@ -232,7 +209,6 @@ module.exports = function (grunt) {
         '!<%= yeoman.app %>/vendor/*'
       ]
     }
-
   });
 
   grunt.registerTask('createDefaultTemplate', function () {
@@ -260,17 +236,6 @@ module.exports = function (grunt) {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
 
-    if (target === 'test') {
-      return grunt.task.run([
-        'clean:dev',
-        'createDefaultTemplate',
-        'handlebars',
-        'connect:test',
-        'open:test',
-        'watch'
-      ]);
-    }
-
     grunt.task.run([
       'clean:dev',
       'compass',
@@ -279,25 +244,6 @@ module.exports = function (grunt) {
       'connect:dev',
       'watch'
     ]);
-  });
-
-  grunt.registerTask('test', function (isConnected) {
-    isConnected = Boolean(isConnected);
-    var testTasks = [
-        'jshint',
-        'clean:dev',
-        'createDefaultTemplate',
-        'handlebars',
-        'connect:test'
-      ];
-
-    if(!isConnected) {
-      return grunt.task.run(testTasks);
-    } else {
-      // already connected so not going to connect again, remove the connect:test task
-      testTasks.splice(testTasks.indexOf('connect:test'), 1);
-      return grunt.task.run(testTasks);
-    }
   });
 
   grunt.registerTask('build', [
@@ -319,8 +265,6 @@ module.exports = function (grunt) {
     'createTmpScriptTag:rollBack'
   ]);
 
-  grunt.registerTask('default', [
-    'test',
-    'build'
-  ]);
+  grunt.registerTask('default', ['build']);
+
 };

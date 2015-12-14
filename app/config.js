@@ -14,7 +14,7 @@ define(function() {
     //   scope: 'email,user_friends',
     // },
 
-    /* Development environment */
+    /* Test local environment */
     // qbAccount: {
     //   appId: 14542,
     //   authKey: 'rJqAFphrSnpyZW2',
@@ -25,14 +25,14 @@ define(function() {
     //   scope: 'email,user_friends',
     // },
 
-    /* Test local environment */
+    /* Development environment */
     qbAccount: {
       appId: 27915,
       authKey: '2EADMZadWZkCH8x',
       authSecret: 'ZvOFxvW4bpRg2Tm'
     },
     fbAccount: {
-      appId: '623755094412840',
+      appId: '981238481924492',
       scope: 'email,user_friends',
     },
 
