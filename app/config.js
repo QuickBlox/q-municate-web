@@ -32,7 +32,7 @@ define(function() {
       authSecret: 'ZvOFxvW4bpRg2Tm'
     },
     fbAccount: {
-      appId: '981238481924492',
+      appId: '733699423398348',
       scope: 'email,user_friends',
     },
 

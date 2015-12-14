@@ -77,8 +77,7 @@ requirejs([
     $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
       FB.init({
         appId: QMCONFIG.fbAccount.appId,
-        xfbml: true,
-        version: 'v2.5'
+        version: 'v2.0'
       });
       if (QMCONFIG.debug) console.log('FB init', FB);
 
