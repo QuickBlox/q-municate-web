@@ -333,6 +333,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         if (this.validity.valueMissing) {
           errMsg = errName + ' is required';
         } else if (this.validity.typeMismatch) {
+          this.value = '';
           errMsg = QMCONFIG.errors.invalidEmail;
         } else if (this.validity.patternMismatch && errName === 'Name') {
           if (value.length < 3)
