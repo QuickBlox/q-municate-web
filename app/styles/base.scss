@@ -39,6 +39,10 @@ input[type="file"] {
   cursor: pointer;
 }
 
+input, textarea {
+  box-shadow: none;
+}
+
 input:focus,
 [contenteditable="true"]:focus,
 textarea:focus {
