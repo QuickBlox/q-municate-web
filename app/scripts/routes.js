@@ -327,6 +327,18 @@ define([
         UserView.loginQB();
       });
 
+      /* button "back"
+      ----------------------------------------------------- */
+      $('.back_to_welcome_page').on('click', function() {
+        if (checkConnection() === false) return false;
+        UserView.logout();
+      });
+
+      $('.back_to_welcome_page').on('click', function() {
+        if (checkConnection() === false) return false;
+        UserView.signupForm();
+      });
+
       /* signup page
       ----------------------------------------------------- */
       $('#signupForm').on('click submit', function(event) {

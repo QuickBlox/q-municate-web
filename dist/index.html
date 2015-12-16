@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
   <link rel="stylesheet" href="styles/a0edec7b.build.css">
 
-  <script src="vendor/b07731cc.modernizr.js"></script>
+  <script src="vendor/bc6b661d.modernizr.js"></script>
 
 </head>
 <body class="is-welcome">
@@ -31,12 +31,12 @@
           <a class="download-app" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank"><img src="images/app-ios.svg" alt="download Q-municate iOS"></a>
         </div>
       </header>
-      <div class="l-form l-flexbox l-flexbox_column">
+      <div class="l-form l-flexbox l-flexbox_column is-hidden">
         <button id="signupFB" class="btn btn_form btn_welcome btn_fb"><img class="btn-icon btn-icon_fb" src="images/icon-fb.svg" alt="fb">Connect with Facebook</button>
         <button id="signupQB" class="btn btn_form btn_welcome btn_qb">Sign Up with Email</button>
         <a id="loginQB" class="text text_welcome" href="#">Already have an account?</a>
       </div>
-      <footer class="l-welcome-footer l-flexbox l-flexbox_column l-flexbox_flexbetween">
+      <footer class="l-welcome-footer l-flexbox l-flexbox_column l-flexbox_flexbetween is-hidden">
         <div class="l-welcome-footer-logo">
           <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox.svg" alt="QuickBlox"></a>
         </div>
@@ -48,6 +48,12 @@
           </ul>
         </nav> -->
       </footer>
+      <div class="l-spinner">
+        <div class="spinner">
+          <div class="spinner-dot1"></div>
+          <div class="spinner-dot2"></div>
+        </div>
+      </div>
     </section>
 
     <section id="signUpPage" class="l-page is-hidden">
@@ -78,7 +84,7 @@
           <button id="signupForm" class="btn btn_form btn_signup btn_qb">Sign Up</button>
           <span class="text text_signup">
             By clicking Sign Up, you agree to<br>
-            Q-MUNICATE <a href="https://q-municate.com/agreement/" target="_blank"><b>User Agreement</b></a>, <a href="https://quickblox.com/privacy/" target="_blank"><b>Privacy Policy</b></a>.
+            Q-MUNICATE <a href="http://q-municate.com/agreement/" target="_blank"><b>User Agreement</b></a>, <a href="https://quickblox.com/privacy/" target="_blank"><b>Privacy Policy</b></a>.
           </span>
         </form>
       </div>
@@ -120,6 +126,12 @@
           <button id="loginFB" class="btn btn_form btn_login btn_fb"><img class="btn-icon btn-icon_fb" src="images/icon-fb.svg" alt="fb">Connect with Facebook</button>
           <a id="forgot" class="text text_login" href="#">Forgot password?</a>
         </form>
+        <div class="l-spinner is-hidden">
+          <div class="spinner">
+            <div class="spinner-dot1"></div>
+            <div class="spinner-dot2"></div>
+          </div>
+        </div>
       </div>
       <footer class="l-footer l-flexbox l-flexbox_flexbetween">
         <div class="footer-logo">
@@ -374,7 +386,7 @@
       </footer>
     </section>
 
-    <div class="l-app-version">v. 1.0.1</div>
+    <div class="l-app-version">v. 1.1.0</div>
   </div>
 
   <div class="popups l-flexbox">
@@ -523,7 +535,7 @@
     ga('create','UA-26728270-6');ga('send','pageview');
   </script>
 
-  <script src="scripts/2c0b85a3.build.js"></script>
+  <script src="scripts/b57189d9.build.js"></script>
 
   <script id="templateProfile" type="text/template">
     <section id="popupProfile" class="popup popup_profile">

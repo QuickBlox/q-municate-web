@@ -61,16 +61,13 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     },
 
     createSpinner: function() {
-      var spinnerBlock = '<div class="l-spinner"><div class="spinner">';
-      spinnerBlock += '<div class="spinner-dot1"></div><div class="spinner-dot2"></div>';
-      spinnerBlock += '</div></div>';
-
-      $('section:visible form').addClass('is-hidden').after(spinnerBlock);
+      $('section:visible form').addClass('is-hidden').next('.l-spinner').removeClass('is-hidden');
     },
 
     removeSpinner: function() {
-      $('section:visible form').removeClass('is-hidden').next('.l-spinner').remove();
+      $('section:visible form').removeClass('is-hidden').next('.l-spinner').addClass('is-hidden');
     },
+
 
     successFormCallback: function() {
       this.removeSpinner();

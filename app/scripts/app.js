@@ -49,6 +49,7 @@ define([
 
       this.chromaHash();
       this.setHtml5Patterns();
+      this.preloader();
 
       // QB SDK initialization
       // Checking if autologin was chosen
@@ -69,8 +70,16 @@ define([
       }
 
       this.routes.init();
+      
 
       if (QMCONFIG.debug) console.log('App init', this);
+    },
+
+    preloader: function() {
+      var spinner = $('#welcomePage .l-spinner');
+
+      spinner.addClass('is-hidden');
+      spinner.prevAll().removeClass('is-hidden');
     },
 
     chromaHash: function() {
