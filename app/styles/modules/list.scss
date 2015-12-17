@@ -15,9 +15,17 @@
   position: relative;
   width: 160px;
   z-index: 2;
+  position: absolute;
+  left: 47%;
+  transform: translate(-50%, 0);
+  top: 100%;
 }
   .list-actions_contacts {
     margin: -15px auto 0;
+  }
+  .list-actions_contacts.margin-up {
+    top: inherit;
+    bottom: 70%;
   }
   .list-actions_occupants {
     position: absolute;

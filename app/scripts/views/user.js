@@ -152,6 +152,13 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
       objDom.after(html).parent().addClass('is-contextmenu');
       appearAnimation();
+
+        var elemPosition      = objDom.offset().top,
+            botListOffset     = $('.mCustomScrollBox').height() + $('.mCustomScrollBox').offset().top,
+            dropList          = objDom.next(),
+            dropListElemCount = dropList.children().length;
+
+        if (botListOffset - elemPosition <= dropListElemCount * 50) dropList.addClass('margin-up');
     },
 
     occupantPopover: function(objDom, e) {

@@ -34,6 +34,7 @@ input.is-error:focus {
 .list-item.is-contextmenu,
 .list-item.is-chosen {
   background: #f2f2f2;
+  position: relative;
 }
 .list-item.is-selected {
   background: #1cba48;
