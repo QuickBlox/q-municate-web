@@ -14,7 +14,7 @@ define([
 ], function($, QMCONFIG, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
-  var chatName, editedChatName;
+  var chatName, editedChatName, typeTimeout;
   var App;
 
   function Routes(app) {
@@ -627,7 +627,9 @@ define([
       });
 
       $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
-        var shiftKey = event.shiftKey,
+        var jid = $(this).parents('.l-chat').data('jid'),
+            type = $(this).parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+            shiftKey = event.shiftKey,
             code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
             val = $('.l-chat:visible .textarea').html().trim();
 
@@ -635,6 +637,29 @@ define([
           MessageView.sendMessage($(this));
           $(this).find('.textarea').empty();
           removePopover();
+        }
+      });
+      
+      $('.l-workspace-wrap').on('keyup', '.l-message', function(event) {
+        var jid = $(this).parents('.l-chat').data('jid'),
+            type = $(this).parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+            shiftKey = event.shiftKey,
+            code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+
+        function isStopTyping() {
+          clearTimeout(typeTimeout);
+          typeTimeout = undefined;
+          MessageView.sendTypingStatus(type, jid, false);
+        }
+
+        if (code === 13 && !shiftKey) {
+          isStopTyping();
+        } else if (typeTimeout === undefined) {
+          MessageView.sendTypingStatus(type, jid, true);
+          typeTimeout = setTimeout(isStopTyping, 3000);
+        } else {
+          clearTimeout(typeTimeout);
+          typeTimeout = setTimeout(isStopTyping, 3000);
         }
       });
 

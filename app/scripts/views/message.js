@@ -307,15 +307,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           break;
         }
 
-        // <div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">
-        //                   <div class="message-content">
-        //                     <div class="message-body">
-        //                       <div class="preview preview-photo"><img src="images/test.jpg" alt="attach"></div>
-        //                     </div>
-        //                   </div>
-        //                   <time class="message-time">30/05/2014</time>
-        //                 </div>
-
         if (isCallback) {
           if (isMessageListener) {
             chat.find('.l-chat-content .mCSB_container').append(html);
@@ -385,6 +376,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           }
         }
       }
+    },
+
+    sendTypingStatus: function(type, jid, start) {
+      var recipient = QB.chat.helpers.getIdFromNode(jid),
+          roomJid = QB.chat.helpers.getRoomJid(jid),
+          xmppRoomJid = roomJid.split('/')[0],
+          idOrJid = type === 'chat' ? recipient : xmppRoomJid;
+
+      start ? QB.chat.sendIsTypingStatus(idOrJid) : QB.chat.sendIsStopTypingStatus(idOrJid);
     },
 
     onMessage: function(id, message) {
@@ -531,8 +531,33 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
-    }
+    },
 
+    onMessageTyping: function(isTyping, userId, dialogId) {
+      var ContactListMsg = self.app.models.ContactList,
+          contacts = ContactListMsg.contacts,
+          contact = contacts[userId],
+          form = $('article.message[data-status="typing"]'),
+          chat = dialogId === null ? $('.l-chat[data-id="'+userId+'"]') : $('.l-chat[data-dialog="'+dialogId+'"]'),
+          visible = chat.is(':visible') ? true : false;
+
+      if (userId !== User.contact.id && visible) {
+        if (isTyping && form) {
+          html = '<article class="message l-flexbox l-flexbox_alignstretch" data-status="typing">';
+          html += '<div class="message_typing" data-id="'+userId+'"></div>';
+          html += '<div class="popup-elem spinner_bounce is-typing">';
+          html += '<div class="spinner_bounce-bounce1"></div>';
+          html += '<div class="spinner_bounce-bounce2"></div>';
+          html += '<div class="spinner_bounce-bounce3"></div>';
+          html += '</div></article>';
+          chat.find('.l-chat-content .mCSB_container').append(html);        
+          fixScroll(chat);
+        } else {
+          $('article.message[data-status="typing"]').remove();
+        }
+      }
+    }
+ // html = '<div class="user_typing" data-id="'+userId+'">'+contact.full_name+' is typing </div>';
   };
 
   /* Private
