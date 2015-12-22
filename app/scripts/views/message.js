@@ -37,6 +37,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
           chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
+          isTyping = $('article.message[data-status="typing"]').length > 0 ? true : false,
           i, len, user;
 
       if (typeof chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) return true;
@@ -309,18 +310,23 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
         if (isCallback) {
           if (isMessageListener) {
-            chat.find('.l-chat-content .mCSB_container').append(html);
-            
+            if (isTyping) {
+              chat.find('article.message[data-status="typing"]').before(html);
+            } else {
+              chat.find('.l-chat-content .mCSB_container').append(html);
+            }
+
             // fix for custom scroll
             fixScroll(chat);
           } else {
             chat.find('.l-chat-content .mCSB_container').prepend(html);
           }
         } else {
-          if (chat.find('.l-chat-content .mCSB_container')[0])
+          if (chat.find('.l-chat-content .mCSB_container')[0]) {
             chat.find('.l-chat-content .mCSB_container').prepend(html);
-          else
+          } else {
             chat.find('.l-chat-content').prepend(html);
+          }
         }
 
       });
@@ -536,27 +542,38 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       var ContactListMsg = self.app.models.ContactList,
           contacts = ContactListMsg.contacts,
           contact = contacts[userId],
-          userHtml = '<div class="user_typing_'+userId+'">'+contact.full_name+'</div>';
+          userHtml = '<div style="display:inline-block;margin-left:6px;" class="typing_'+userId+'">'+contact.full_name+',</div>',
+          userHtmlArr = $('div.message_typing').children(),
           chat = dialogId === null ? $('.l-chat[data-id="'+userId+'"]') : $('.l-chat[data-dialog="'+dialogId+'"]'),
           form = $('article.message[data-status="typing"]').length > 0 ? true : false,
           recipient = userId !== User.contact.id ? true : false,
-          visible = chat.is(':visible') ? true : false;
+          visible = chat.is(':visible') ? true : false,
+          html;
+
+      html = '<article class="message l-flexbox l-flexbox_alignstretch" data-status="typing">';
+      html += '<div class="message_typing">'+userHtml+'</div>';
+      html += '<div>is typing</div>';
+      html += '<div class="popup-elem spinner_bounce is-typing">';
+      html += '<div class="spinner_bounce-bounce1"></div>';
+      html += '<div class="spinner_bounce-bounce2"></div>';
+      html += '<div class="spinner_bounce-bounce3"></div>';
+      html += '</div></article>';
 
       if (recipient && visible) {
-        if (isTyping && !form) {
-          html = '<article class="message l-flexbox l-flexbox_alignstretch" data-status="typing">';
-          html += '<div class="message_typing">'+userHtml+' is typing</div>';
-          html += '<div class="popup-elem spinner_bounce is-typing">';
-          html += '<div class="spinner_bounce-bounce1"></div>';
-          html += '<div class="spinner_bounce-bounce2"></div>';
-          html += '<div class="spinner_bounce-bounce3"></div>';
-          html += '</div></article>';
-          chat.find('.l-chat-content .mCSB_container').append(html);        
-          fixScroll(chat);
-        } else if (isTyping && form) {
-          chat.find(form+' .message_typing').prepend(userHtml);
+        if (isTyping) {
+          if (!form) {
+            chat.find('.l-chat-content .mCSB_container').append(html);        
+            fixScroll(chat);
+          } else {
+            if (userHtmlArr.length >= 3) userHtmlArr.last().remove();
+            chat.find('article.message[data-status="typing"] .message_typing').prepend(userHtml);
+          }
         } else {
-          $('article.message[data-status="typing"]').remove();
+          if (userHtmlArr.length == 1) {
+            $('article.message[data-status="typing"]').remove();
+          } else {
+            $('div.typing_'+userId).remove();
+          }
         }
       }
     }

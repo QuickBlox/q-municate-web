@@ -107,12 +107,11 @@
 
 /* spinner bounce */
 .spinner_bounce.is-typing {
-  margin: 0px 0px 0px 10px;
-  display: inline-block;
+  margin: 0;
 }
   .spinner_bounce.is-typing > div {
-    width: 9px;
-    height: 9px;
-    margin-right: 6px;
+    width: 8px;
+    height: 8px;
+    margin-right: 5px;
     background-color: #B2B2B2;
   }
