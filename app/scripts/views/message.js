@@ -423,7 +423,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
       if (!selected && !chat.is(':visible') && !window.isQMAppActive && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
         unread++;
-        console.log(unread);
         dialogItem.find('.unread').text(unread);
         DialogView.getUnreadCounter(dialog_id);
       }
@@ -537,14 +536,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       var ContactListMsg = self.app.models.ContactList,
           contacts = ContactListMsg.contacts,
           contact = contacts[userId],
-          form = $('article.message[data-status="typing"]'),
+          userHtml = '<div class="user_typing_'+userId+'">'+contact.full_name+'</div>';
           chat = dialogId === null ? $('.l-chat[data-id="'+userId+'"]') : $('.l-chat[data-dialog="'+dialogId+'"]'),
+          form = $('article.message[data-status="typing"]').length > 0 ? true : false,
+          recipient = userId !== User.contact.id ? true : false,
           visible = chat.is(':visible') ? true : false;
 
-      if (userId !== User.contact.id && visible) {
-        if (isTyping && form) {
+      if (recipient && visible) {
+        if (isTyping && !form) {
           html = '<article class="message l-flexbox l-flexbox_alignstretch" data-status="typing">';
-          html += '<div class="message_typing" data-id="'+userId+'"></div>';
+          html += '<div class="message_typing">'+userHtml+' is typing</div>';
           html += '<div class="popup-elem spinner_bounce is-typing">';
           html += '<div class="spinner_bounce-bounce1"></div>';
           html += '<div class="spinner_bounce-bounce2"></div>';
@@ -552,12 +553,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           html += '</div></article>';
           chat.find('.l-chat-content .mCSB_container').append(html);        
           fixScroll(chat);
+        } else if (isTyping && form) {
+          chat.find(form+' .message_typing').prepend(userHtml);
         } else {
           $('article.message[data-status="typing"]').remove();
         }
       }
     }
- // html = '<div class="user_typing" data-id="'+userId+'">'+contact.full_name+' is typing </div>';
+
   };
 
   /* Private
