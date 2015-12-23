@@ -580,12 +580,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             fixScroll(chat);
           }
         } else {
-          if (!isPrivat && typingList.length > 1) {
+          if (isPrivat || typingList.length <= 1) {
+            $('article.message[data-status="typing"]').remove();
+          } else {
             index = typingList.indexOf(contact.full_name);
             typingList.splice(index, 1);
             chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
-          } else {
-            $('article.message[data-status="typing"]').remove();
           }
         }
       }
