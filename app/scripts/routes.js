@@ -593,6 +593,10 @@ define([
       });
 
       $('.list_contextmenu').on('click', '.contact', function() {
+        var dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog");
+
+        MessageView.claerTheListTyping(dataDialog);
+        
         DialogView.htmlBuild($(this));
       });
 
@@ -656,10 +660,10 @@ define([
           isStopTyping();
         } else if (typeTimeout === undefined) {
           MessageView.sendTypingStatus(type, jid, true);
-          typeTimeout = setTimeout(isStopTyping, 33000);
+          typeTimeout = setTimeout(isStopTyping, 3000);
         } else {
           clearTimeout(typeTimeout);
-          typeTimeout = setTimeout(isStopTyping, 33000);
+          typeTimeout = setTimeout(isStopTyping, 3000);
         }
       });
 
