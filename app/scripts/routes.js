@@ -660,10 +660,10 @@ define([
           isStopTyping();
         } else if (typeTimeout === undefined) {
           MessageView.sendTypingStatus(type, jid, true);
-          typeTimeout = setTimeout(isStopTyping, 3000);
+          typeTimeout = setTimeout(isStopTyping, 30000);
         } else {
           clearTimeout(typeTimeout);
-          typeTimeout = setTimeout(isStopTyping, 3000);
+          typeTimeout = setTimeout(isStopTyping, 30000);
         }
       });
 
