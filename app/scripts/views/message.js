@@ -551,7 +551,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           contacts = ContactListMsg.contacts,
           contact = contacts[userId],
           chat = dialogId === null ? $('.l-chat[data-id="'+userId+'"]') : $('.l-chat[data-dialog="'+dialogId+'"]'),
-          isPrivat = dialogId === null ? true : false,
           form = $('article.message[data-status="typing"]').length > 0 ? true : false,
           recipient = userId !== User.contact.id ? true : false,
           visible = chat.is(':visible') ? true : false,
@@ -583,7 +582,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           index = typingList.indexOf(contact.full_name);
           typingList.splice(index, 1);
 
-          if (typingList.length < 1 || isPrivat) {
+          if (typingList.length < 1) {
             $('article.message[data-status="typing"]').remove();
           } else {
             chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
