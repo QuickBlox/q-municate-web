@@ -11,9 +11,9 @@
   <link rel="icon" href="favicon.png">
 
   <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
-  <link rel="stylesheet" href="styles/6e415d80.build.css">
+  <link rel="stylesheet" href="styles/b188a912.build.css">
 
-  <script src="vendor/cd1e6cdf.modernizr.js"></script>
+  <script src="vendor/15c7f16e.modernizr.js"></script>
 
 </head>
 <body class="is-welcome">
@@ -82,6 +82,7 @@
             <input id="signup-avatar" class="form-file-default" type="file" accept="image/jpeg,image/png,image/svg">
           </div>
           <button id="signupForm" class="btn btn_form btn_signup btn_qb">Sign Up</button>
+          <span class="text text_back">Already have account? <a id="backFromSignUp" class="click_to_back back_to_welcome_page" href="#">Login!</a></span>
           <span class="text text_signup">
             By clicking Sign Up, you agree to<br>
             Q-MUNICATE <a href="http://q-municate.com/agreement/" target="_blank"><b>User Agreement</b></a>, <a href="https://quickblox.com/privacy/" target="_blank"><b>Privacy Policy</b></a>.
@@ -125,6 +126,7 @@
           <button id="loginForm" class="btn btn_form btn_login btn_qb">Log In</button>
           <button id="loginFB" class="btn btn_form btn_login btn_fb"><img class="btn-icon btn-icon_fb" src="images/icon-fb.svg" alt="fb">Connect with Facebook</button>
           <a id="forgot" class="text text_login" href="#">Forgot password?</a>
+          <span class="text text_back">Looking to create an account? <a id="backFromLogin" class="click_to_back back_to_welcome_page" href="#">Sign Up!</a></span>
         </form>
         <div class="l-spinner is-hidden">
           <div class="spinner">
@@ -169,6 +171,7 @@
           <span class="text text_error">Error</span>
           <input id="forgot-email" class="form-input" type="email" placeholder="Email" required>
           <button id="forgotForm" class="btn btn_form btn_reset btn_qb">Send Verification Email</button>
+          <span class="text text_back">Remember your password? <a id="backFromForgot" class="click_to_back back_to_login_page" href="#">Login!</a></span>
         </form>
       </div>
       <footer class="l-footer l-flexbox l-flexbox_flexbetween">
@@ -535,7 +538,7 @@
     ga('create','UA-26728270-6');ga('send','pageview');
   </script>
 
-  <script src="scripts/402637c7.build.js"></script>
+  <script src="scripts/c55552b5.build.js"></script>
 
   <script id="templateProfile" type="text/template">
     <section id="popupProfile" class="popup popup_profile">

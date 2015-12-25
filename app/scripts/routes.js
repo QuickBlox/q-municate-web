@@ -8,7 +8,7 @@
 define([
   'jquery',
   'config',
-  'minEmoji',  
+  'minEmoji',
   'mCustomScrollbar',
   'mousewheel'
 ], function($, QMCONFIG, minEmoji) {
@@ -27,7 +27,7 @@ define([
     DialogView = this.app.views.Dialog;
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
-    VideoChatView = this.app.views.VideoChat;    
+    VideoChatView = this.app.views.VideoChat;
   }
 
   Routes.prototype = {
@@ -92,7 +92,7 @@ define([
       $('body').on('click', '.btn_changePassword', function(event) {
         var changePassView = App.views.ChangePass,
             profileView = App.views.Profile;
-        
+
         event.preventDefault();
         profileView.$el.hide();
         changePassView.render().openPopup();
@@ -209,7 +209,7 @@ define([
       $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
         event.stopPropagation();
       });
-      
+
       /* change the chat name
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('mouseenter focus', '.groupTitle .name_chat', function() {
@@ -334,9 +334,9 @@ define([
         UserView.logout();
       });
 
-      $('.back_to_welcome_page').on('click', function() {
+      $('.back_to_login_page').on('click', function() {
         if (checkConnection() === false) return false;
-        UserView.signupForm();
+        UserView.loginQB();
       });
 
       /* signup page
@@ -596,14 +596,14 @@ define([
         var dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog");
 
         MessageView.claerTheListTyping(dataDialog);
-        
+
         DialogView.htmlBuild($(this));
       });
 
       $('#popupContacts .btn_popup_private').on('click', function() {
         var id = $('#popupContacts .is-chosen').data('id'),
             dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
-        
+
         DialogView.htmlBuild(dialogItem);
       });
 
@@ -612,7 +612,7 @@ define([
 
         var id = $(this).data('id'),
             dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
-        
+
         closePopup();
         DialogView.htmlBuild(dialogItem);
       });
@@ -643,7 +643,7 @@ define([
           removePopover();
         }
       });
-      
+
       $('.l-workspace-wrap').on('keyup', '.l-message', function(event) {
         var jid = $(this).parents('.l-chat').data('jid'),
             type = $(this).parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
@@ -737,7 +737,7 @@ define([
         file = objDom[0].files[0],
         src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
         fileName = file ? file.name : QMCONFIG.defAvatar.caption;
-    
+
     objDom.prev().find('.avatar').css('background-image', "url("+src+")").siblings('span').text(fileName);
     // if (typeof file !== 'undefined') URL.revokeObjectURL(src);
   }
@@ -771,7 +771,7 @@ define([
       objDom.find('.attach-video video').attr('src', url);
     else
       objDom.find('.attach-photo').attr('src', url);
-    
+
     objDom.find('.attach-name').text(name);
     objDom.find('.attach-download').attr('href', url).attr('download', name);
     objDom.add('.popups').addClass('is-overlay');
