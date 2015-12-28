@@ -44,6 +44,7 @@ define([
           VideoChatView = this.app.views.VideoChat;
 
       QB.chat.onMessageListener = MessageView.onMessage;
+      QB.chat.onSystemMessageListener = MessageView.onSystemMessage;
       QB.chat.onMessageTypingListener = MessageView.onMessageTyping;
       QB.chat.onContactListListener = ContactListView.onPresence;
       QB.chat.onSubscribeListener = ContactListView.onSubscribe;
@@ -184,7 +185,7 @@ define([
 
           occupants_ids = _.uniq(_.flatten(_.pluck(dialogs, 'occupants_ids'), true));
 
-          // updating of Contact List whereto are included all people 
+          // updating of Contact List whereto are included all people
           // with which maybe user will be to chat (there aren't only his friends)
           ContactList.add(occupants_ids, null, function() {
 
@@ -216,14 +217,14 @@ define([
               notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
               if (private_id && (!roster[private_id] || (roster[private_id] && roster[private_id].subscription === 'none' && !roster[private_id].ask && notConfirmed[private_id])))
                 continue;
-              
+
               self.addDialogItem(dialog, true);
             }
 
             if ($('#requestsList').is('.is-hidden') &&
                 $('#recentList').is('.is-hidden') &&
                 $('#historyList').is('.is-hidden')) {
-              
+
               $('#emptyList').removeClass('is-hidden');
             }
 
@@ -296,7 +297,7 @@ define([
       html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="'+private_id+'"></div>';
       html += '<span class="name profileUserName" data-id="'+private_id+'">' + name + '</span>';
       html += '</div>';
-      
+
       if (dialog.type === 3)
         html = getStatus(status, html);
       else
@@ -362,7 +363,7 @@ define([
         if (dialog.type === 3) {
           html += '<div class="contact-avatar avatar avatar_chat profileUserAvatar" style="background-image:url('+icon+')" data-id="'+user_id+'"></div>';
           html += '<h2 class="name name_chat profileUserName" title="'+name+'" data-id="'+user_id+'">'+name+'</h2>';
-          html = getStatus(status, html); 
+          html = getStatus(status, html);
         } else {
           html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
           html += '<span class="pencil_active avatar is-hidden"></span>';
@@ -382,12 +383,12 @@ define([
           html += '<button class="btn_chat btn_chat_profile userDetails" data-id="'+user_id+'"><img src="images/icon-profile.svg" alt="profile"></button>';
         } else
           html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="'+dialog.occupants_ids.join()+'" data-dialog="'+dialog_id+'"><img src="images/icon-add.svg" alt="add"></button>';
-        
+
         if (dialog.type === 3)
           html += '<button class="btn_chat btn_chat_delete deleteContact"><img src="images/icon-delete.svg" alt="delete"></button>';
         else
           html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.svg" alt="delete"></button>';
-        
+
         html += '</div></header>';
 
         // build occupants of room
@@ -449,13 +450,13 @@ define([
           Message.update(dialog.messages.join(), dialog_id);
           dialog.messages = [];
         }
-        
+
       }
 
       $('.is-selected').removeClass('is-selected');
       parent.addClass('is-selected').find('.unread').text('');
       self.decUnreadCounter(dialog.id);
-      
+
     },
 
     messageScrollbar: function() {
@@ -513,7 +514,7 @@ define([
             $('#recentList ul').prepend(copyDialogItem);
             if (!$('#searchList').is(':visible')) {
              $('#recentList').removeClass('is-hidden');
-             isSectionEmpty($('#recentList ul')); 
+             isSectionEmpty($('#recentList ul'));
             }
           }
           $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
@@ -616,7 +617,7 @@ define([
     if ($('#requestsList').is('.is-hidden') &&
         $('#recentList').is('.is-hidden') &&
         $('#historyList').is('.is-hidden')) {
-      
+
       $('#emptyList').removeClass('is-hidden');
     }
   }

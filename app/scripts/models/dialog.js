@@ -40,7 +40,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
 
     createPrivate: function(jid, isNew) {
       var QBApiCalls = this.app.service,
-          DialogView = this.app.views.Dialog,        
+          DialogView = this.app.views.Dialog,
           ContactList = this.app.models.ContactList,
           User = this.app.models.User,
           id = QB.chat.helpers.getIdFromNode(jid),
@@ -77,7 +77,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
 
     createGroup: function(occupants_names, params, callback) {
       var QBApiCalls = this.app.service,
-          DialogView = this.app.views.Dialog,        
+          DialogView = this.app.views.Dialog,
           ContactList = this.app.models.ContactList,
           contacts = ContactList.contacts,
           User = this.app.models.User,
@@ -95,7 +95,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
 
         QB.chat.muc.join(dialog.room_jid, function() {
           var msgId = QB.chat.helpers.getBsonObjectId();
-          
+
           QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {
             DialogView.addDialogItem(dialog);
             callback(dialog);
@@ -123,7 +123,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
 
             notification_type: '1',
             occupants_ids: res.occupants_ids.join()
-          }});          
+          }});
         });
 
       });
@@ -144,7 +144,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
         if (QMCONFIG.debug) console.log('Dialog', dialog);
 
         var msgId = QB.chat.helpers.getBsonObjectId();
-        
+
         QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {
           callback(dialog);
 
@@ -245,7 +245,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
             });
           });
 
-        }      
+        }
       } else {
         callback(false);
       }
@@ -269,7 +269,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       QBApiCalls.updateDialog(dialog.id, {pull_all: {occupants_ids: [User.contact.id]}}, function() {
         // QB.chat.muc.leave(dialog.room_jid, function() {});
       });
-      
+
       callback();
     }
 
