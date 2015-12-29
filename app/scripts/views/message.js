@@ -385,34 +385,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       }
     },
 
-    sendSystemNotification: function(dialogOccupants, dialogId, notificationType) {
-      var ContactListMsg = self.app.models.ContactList,
-          contacts = ContactListMsg.contacts,
-          contact = contacts[userId],
-          currentUser = User.contact.id;
-
-      dialogOccupants.forEach(function(item, i, arr) {
-        if (item != currentUser) {
-          var msg = {
-            type: 'chat',
-            extension: {
-              notification_type: notificationType,
-              dialog_id: dialogId
-            }
-          };
-
-          QB.chat.sendSystemMessage(itemOccupanId, msg);
-        }
-      });
-    },
-
     sendTypingStatus: function(type, jid, start) {
-      var recipient = QB.chat.helpers.getIdFromNode(jid),
-          roomJid = QB.chat.helpers.getRoomJid(jid),
-          xmppRoomJid = roomJid.split('/')[0],
-          idOrJid = type === 'chat' ? recipient : xmppRoomJid;
+      var roomJid = QB.chat.helpers.getRoomJid(jid),
+          xmppRoomJid = roomJid.split('/')[0];
 
-      start ? QB.chat.sendIsTypingStatus(idOrJid) : QB.chat.sendIsStopTypingStatus(idOrJid);
+      start ? QB.chat.sendIsTypingStatus(xmppRoomJid) : QB.chat.sendIsStopTypingStatus(xmppRoomJid);
     },
 
     claerTheListTyping: function(dialogId) {
@@ -564,16 +541,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       self.addItem(msg, true, true, id);
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
-      }
-    },
-
-    onSystemMessage: function(message) {
-      if (message.type === 'error') return true;
-        console.log(message);
-      var userOnline = !message.delay;
-
-      if (userOnline) {
-        console.log(message);
       }
     },
 

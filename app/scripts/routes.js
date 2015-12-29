@@ -650,6 +650,10 @@ define([
             shiftKey = event.shiftKey,
             code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
+        function isStartTyping() {
+          MessageView.sendTypingStatus(type, jid, true);
+        }
+
         function isStopTyping() {
           clearTimeout(typeTimeout);
           typeTimeout = undefined;
@@ -659,7 +663,7 @@ define([
         if (code === 13 && !shiftKey) {
           isStopTyping();
         } else if (typeTimeout === undefined) {
-          MessageView.sendTypingStatus(type, jid, true);
+          isStartTyping();
           typeTimeout = setTimeout(isStopTyping, 3000);
         } else {
           clearTimeout(typeTimeout);

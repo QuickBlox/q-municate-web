@@ -44,8 +44,8 @@ define([
           VideoChatView = this.app.views.VideoChat;
 
       QB.chat.onMessageListener = MessageView.onMessage;
-      QB.chat.onSystemMessageListener = MessageView.onSystemMessage;
       QB.chat.onMessageTypingListener = MessageView.onMessageTyping;
+      QB.chat.onSystemMessageListener = MessageView.onSystemMessage;
       QB.chat.onContactListListener = ContactListView.onPresence;
       QB.chat.onSubscribeListener = ContactListView.onSubscribe;
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
