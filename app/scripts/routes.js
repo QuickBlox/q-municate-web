@@ -14,7 +14,7 @@ define([
 ], function($, QMCONFIG, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
-  var chatName, editedChatName, typeTimeout;
+  var chatName, editedChatName, stopTyping, retryTyping;
   var App;
 
   function Routes(app) {
@@ -651,23 +651,28 @@ define([
             code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
         function isStartTyping() {
-          MessageView.sendTypingStatus(type, jid, true);
+          MessageView.sendTypingStatus(jid, true);
         }
 
         function isStopTyping() {
-          clearTimeout(typeTimeout);
-          typeTimeout = undefined;
-          MessageView.sendTypingStatus(type, jid, false);
+          clearTimeout(stopTyping);
+          stopTyping = undefined;
+
+          clearInterval(retryTyping);
+          retryTyping === undefined;
+
+          MessageView.sendTypingStatus(jid, false);
         }
 
         if (code === 13 && !shiftKey) {
           isStopTyping();
-        } else if (typeTimeout === undefined) {
+        } else if (stopTyping === undefined) {
           isStartTyping();
-          typeTimeout = setTimeout(isStopTyping, 3000);
+          stopTyping = setTimeout(isStopTyping, 4000);
+          retryTyping = setInterval(isStartTyping, 4000);
         } else {
-          clearTimeout(typeTimeout);
-          typeTimeout = setTimeout(isStopTyping, 3000);
+          clearTimeout(stopTyping);
+          stopTyping = setTimeout(isStopTyping, 4000);
         }
       });
 

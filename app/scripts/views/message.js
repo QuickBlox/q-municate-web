@@ -9,7 +9,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         function($, QMCONFIG, QB, _, minEmoji) {
 
   var User, Message, ContactList, Dialog;
-  var typingList = [];
+  var clearTyping, typingList = []; // for typing statuses
   var self;
 
   function MessageView(app) {
@@ -385,13 +385,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       }
     },
 
-    sendTypingStatus: function(type, jid, start) {
+    // send start or stop typing status to chat or groupchat
+    sendTypingStatus: function(jid, start) {
       var roomJid = QB.chat.helpers.getRoomJid(jid),
           xmppRoomJid = roomJid.split('/')[0];
 
       start ? QB.chat.sendIsTypingStatus(xmppRoomJid) : QB.chat.sendIsStopTypingStatus(xmppRoomJid);
     },
 
+    // claer the list typing when switch to another chat
     claerTheListTyping: function(dialogId) {
       var chat = $('.l-chat[data-dialog="'+dialogId+'"]');
 
@@ -549,42 +551,31 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           contacts = ContactListMsg.contacts,
           contact = contacts[userId],
           chat = dialogId === null ? $('.l-chat[data-id="'+userId+'"]') : $('.l-chat[data-dialog="'+dialogId+'"]'),
-          form = $('article.message[data-status="typing"]').length > 0 ? true : false,
           recipient = userId !== User.contact.id ? true : false,
-          visible = chat.is(':visible') ? true : false,
-          index = typingList.indexOf(contact.full_name),
-          html;
-
-      html = '<article class="message l-flexbox l-flexbox_alignstretch" data-status="typing">';
-      html += '<div class="message_typing"></div>';
-      html += '<div> is typing</div>';
-      html += '<div class="popup-elem spinner_bounce is-typing">';
-      html += '<div class="spinner_bounce-bounce1"></div>';
-      html += '<div class="spinner_bounce-bounce2"></div>';
-      html += '<div class="spinner_bounce-bounce3"></div>';
-      html += '</div></article>';
+          visible = chat.is(':visible') ? true : false;
 
       if (recipient && visible) {
-        if (isTyping) {
-          typingList.unshift(contact.full_name);
-          $.unique(typingList);
 
-          if (form) {
-            chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
-          } else {
-            chat.find('.l-chat-content .mCSB_container').append(html);
-            chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
-            fixScroll(chat);
-          }
+        // stop displays the status if they do not come
+        if (clearTyping === undefined) {
+          clearTyping = setTimeout(function(){
+            typingList = [];
+            stopShowTyping(chat, contact.full_name);
+          }, 6000);
         } else {
-          index = typingList.indexOf(contact.full_name);
-          typingList.splice(index, 1);
+          clearTimeout(clearTyping);
+          clearTyping = setTimeout(function(){
+            typingList = [];
+            stopShowTyping(chat, contact.full_name);
+          }, 6000);
+        }
 
-          if (typingList.length < 1) {
-            $('article.message[data-status="typing"]').remove();
-          } else {
-            chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
-          }
+        if (isTyping) {
+          // display start typing status
+          startShowTyping(chat, contact.full_name);
+        } else {
+          // stop display typing status
+          stopShowTyping(chat, contact.full_name);
         }
       }
     }
@@ -668,6 +659,46 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         $('#historyList').is('.is-hidden')) {
 
       $('#emptyList').removeClass('is-hidden');
+    }
+  }
+
+  function stopShowTyping(chat, user) {
+    var index = typingList.indexOf(user);
+    
+    typingList.splice(index, 1); // removing current user from typing list
+
+    // remove typing html or that user from this html
+    if (typingList.length < 1) {
+      $('article.message[data-status="typing"]').remove();
+    } else {
+      chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
+    }
+  }
+
+  function startShowTyping(chat, user) { 
+    var form = $('article.message[data-status="typing"]').length > 0 ? true : false,
+        html;
+
+    // build html for typing statuses
+    html = '<article class="message l-flexbox l-flexbox_alignstretch" data-status="typing">';
+    html += '<div class="message_typing"></div>';
+    html += '<div> is typing</div>';
+    html += '<div class="popup-elem spinner_bounce is-typing">';
+    html += '<div class="spinner_bounce-bounce1"></div>';
+    html += '<div class="spinner_bounce-bounce2"></div>';
+    html += '<div class="spinner_bounce-bounce3"></div>';
+    html += '</div></article>';
+
+    typingList.unshift(user); // add user's name in begining of typing list
+    $.unique(typingList); // remove duplicates
+    typingList.splice(3, Number.MAX_VALUE); // leave the last three users which are typing
+
+    // add a new typing html or use existing for display users which are typing    
+    if (form) {
+      chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
+    } else {
+      chat.find('.l-chat-content .mCSB_container').append(html);
+      chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     }
   }
 
