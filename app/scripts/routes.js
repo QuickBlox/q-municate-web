@@ -644,6 +644,7 @@ define([
         }
       });
 
+      // send typing statuses with keyup event
       $('.l-workspace-wrap').on('keyup', '.l-message', function(event) {
         var jid = $(this).parents('.l-chat').data('jid'),
             type = $(this).parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
