@@ -1,6 +1,6 @@
 {
   "name": "q-municate",
-  "version": "1.1.0.3460f35",
+  "version": "1.1.0",
   "dependencies": {},
   "devDependencies": {
     "bower": "^1.7.0",
