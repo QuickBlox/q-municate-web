@@ -48,23 +48,34 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       var self = this,
           popup = form.parent(),
           list = popup.find('ul:first'),
-          val = form.find('input[type="search"]').val().trim();
+          val = form.find('input[type="search"]').val().trim(),
+          len = val.length;
 
-      if (val.length > 0) {
-        form.find('input').prop('disabled', true).val(val);
-        popup.find('.popup-elem').addClass('is-hidden');
-        popup.find('.mCSB_container').empty();
+      if (len > 0) {
 
-        scrollbar(list, self);
-        self.createDataSpinner(list);
-        $('.popup:visible .spinner_bounce').removeClass('is-hidden').addClass('is-empty');
+        // display "Name must be more than 2 characters" or "No results found"
+        if (len < 3) {
+          popup.find('.popup-elem .not_found').addClass('is-hidden');
+          popup.find('.popup-elem .short_length').removeClass('is-hidden');
+        } else {
+          popup.find('.popup-elem .not_found').removeClass('is-hidden');
+          popup.find('.popup-elem .short_length').addClass('is-hidden');
+        }
 
-        sessionStorage.setItem('QM.search.value', val);
-        sessionStorage.setItem('QM.search.page', 1);
+          form.find('input').prop('disabled', true).val(val);
+          popup.find('.popup-elem').addClass('is-hidden');
+          popup.find('.mCSB_container').empty();
 
-        ContactList.globalSearch(function(results) {
-          createListResults(list, results, self);
-        });
+          scrollbar(list, self);
+          self.createDataSpinner(list);
+          $('.popup:visible .spinner_bounce').removeClass('is-hidden').addClass('is-empty');
+
+          sessionStorage.setItem('QM.search.value', val);
+          sessionStorage.setItem('QM.search.page', 1);
+
+          ContactList.globalSearch(function(results) {
+            createListResults(list, results, self);
+          });
       }
     },
 
@@ -95,7 +106,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         popup.children(':not(.popup-header)').addClass('is-hidden');
         popup.find('.popup-nofriends').removeClass('is-hidden');
         return true;
-      } 
+      }
 
       // exclude users who are already present in the dialog
       friends = _.difference(friends, ids);
@@ -112,7 +123,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         html += '<span class="name profileUserName" data-id="'+user_id+'">'+contacts[user_id].full_name+'</span>';
         html += '</div><input class="form-checkbox" type="checkbox">';
         html += '</a></li>';
-        
+
         popup.find('.mCSB_container').append(html);
       }
 
@@ -152,7 +163,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
           time = Math.floor(Date.now() / 1000),
           message, copyDialogItem,
           self = this;
-      
+
       if (!isChat) {
         objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
         objDom.remove();
@@ -197,7 +208,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
           $('#recentList ul').prepend(copyDialogItem);
           if (!$('#searchList').is(':visible')) {
            $('#recentList').removeClass('is-hidden');
-           isSectionEmpty($('#recentList ul')); 
+           isSectionEmpty($('#recentList ul'));
           }
         });
       }
@@ -277,13 +288,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         $('#recentList ul').prepend(copyDialogItem);
         if (!$('#searchList').is(':visible')) {
          $('#recentList').removeClass('is-hidden');
-         isSectionEmpty($('#recentList ul')); 
+         isSectionEmpty($('#recentList ul'));
         }
 
         dialogItem = $('.presence-listener[data-id="'+id+'"]');
         dialogItem.find('.status').removeClass('status_request');
       });
-      
+
     },
 
     sendReject: function(objDom) {
@@ -357,7 +368,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         $('#capBox').removeClass('is-hidden');
         delete dialogs[dialog_id];
       });
-      
+
     },
 
     // callbacks
@@ -432,7 +443,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         QB.chat.roster.remove(jid, function() {
           request.remove();
           isSectionEmpty(list);
-        });      
+        });
       }
       dialogItem.addClass('is-request');
     },
@@ -440,7 +451,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
     onPresence: function(id, type) {
       var dialogItem = $('.presence-listener[data-id="'+id+'"]'),
           roster = ContactList.roster;
-      
+
       // update roster
       if (typeof roster[id] === 'undefined') return true;
       roster[id].status = type ? false : true;
@@ -554,7 +565,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
     if ($('#requestsList').is('.is-hidden') &&
         $('#recentList').is('.is-hidden') &&
         $('#historyList').is('.is-hidden')) {
-      
+
       $('#emptyList').removeClass('is-hidden');
     }
   }
