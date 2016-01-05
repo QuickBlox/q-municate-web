@@ -134,20 +134,20 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           html;
 
       html = '<ul class="list-actions list-actions_contacts popover">';
-      
+
       if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription !== 'none') {
         html += '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="'+ids+'" href="#">Video call</a></li>';
         html += '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="'+ids+'" href="#">Audio call</a></li>';
         html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" data-private="1" href="#">Add people</a></li>';
       } else if (dialogs[dialog_id].type !== 3)
         html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" data-dialog="'+dialog_id+'" href="#">Add people</a></li>';
-      
+
       if (dialogs[dialog_id].type === 3) {
         html += '<li class="list-item"><a class="list-actions-action userDetails" data-id="'+ids+'" href="#">Profile</a></li>';
         html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
       } else
         html += '<li class="list-item"><a class="leaveChat list-actions-action" data-group="true" href="#">Leave chat</a></li>';
-      
+
       html += '</ul>';
 
       objDom.after(html).parent().addClass('is-contextmenu');
@@ -156,9 +156,11 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         var elemPosition      = objDom.offset().top,
             botListOffset     = $('.mCustomScrollBox').height() + $('.mCustomScrollBox').offset().top,
             dropList          = objDom.next(),
-            dropListElemCount = dropList.children().length;
+            dropListElemCount = dropList.children().length,
+            contactsViewPort  = $('.mCustomScrollBox').height();
+            console.log(contactsViewPort);
 
-        if (botListOffset - elemPosition <= dropListElemCount * 50) dropList.addClass('margin-up');
+        if (botListOffset - elemPosition <= dropListElemCount * 50 && ????????) dropList.addClass('margin-up');
     },
 
     occupantPopover: function(objDom, e) {
@@ -242,7 +244,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     smilePopover: function(objDom) {
       if (objDom.find('img').length === 1)
         objDom.addClass('is-active').append('<img src="images/icon-smile_active.svg" alt="smile">').find('*:first').addClass('is-hidden');
-      
+
       $('.popover_smile').show(150);
     },
 
@@ -262,7 +264,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     localSearch: function(form) {
       var val = form.find('input[type="search"]').val().trim().toLowerCase();
-      
+
       if (val.length > 0) {
         // if (QMCONFIG.debug) console.log('local search =', val);
         $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
@@ -276,12 +278,12 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             $('#searchList ul').append(li);
             $('#searchList .note').addClass('is-hidden');
           }
-          
+
         });
 
         if ($('#searchList ul').find('li').length === 0)
           $('#searchList .note').removeClass('is-hidden').siblings('ul').addClass('is-hidden');
-        
+
       } else {
         $('#searchList').addClass('is-hidden');
         $('#recentList, #historyList, #requestsList').each(function() {
@@ -296,7 +298,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     friendsSearch: function(form) {
       var val = form.find('input[type="search"]').val().trim().toLowerCase(),
           result = form.next();
-      
+
       result.find('ul').removeClass('is-hidden').siblings().addClass('is-hidden');
       result.find('ul li').removeClass('is-hidden');
 
