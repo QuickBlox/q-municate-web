@@ -156,13 +156,15 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         var elemPosition       = objDom.offset().top,
             topListOffset      = $('.mCustomScrollBox').offset().top,
             listHeigth         = $('.mCustomScrollBox').height(),
+            listViewPort       = $('.mCustomScrollbar').height(),
             botListOffset      = listHeigth + topListOffset,
             dropList           = objDom.next(),
             dropListElemCount  = objDom.next().children().length,
             botElemPosition    = botListOffset - elemPosition,
             elemPositionInList = elemPosition - topListOffset;
 
-        if ((botElemPosition <= dropListElemCount * 50) && (elemPositionInList > dropListElemCount * 40)) dropList.addClass('margin-up');
+        if ((botElemPosition <= dropListElemCount*50) && (elemPositionInList > dropListElemCount*40)) dropList.addClass('margin-up');
+        if (listViewPort <= 400) $('#mCSB_8_container')[0].style.paddingBottom = (dropListElemCount*40)+"px";
     },
 
     occupantPopover: function(objDom, e) {
