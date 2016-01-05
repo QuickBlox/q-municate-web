@@ -153,13 +153,16 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       objDom.after(html).parent().addClass('is-contextmenu');
       appearAnimation();
 
-        var elemPosition      = objDom.offset().top,
-            botListOffset     = $('.mCustomScrollBox').height() + $('.mCustomScrollBox').offset().top,
-            dropList          = objDom.next(),
-            dropListElemCount = dropList.children().length,
-            contactsViewPort  = $('.mCustomScrollBox').height();
+        var elemPosition       = objDom.offset().top,
+            topListOffset      = $('.mCustomScrollBox').offset().top,
+            listHeigth         = $('.mCustomScrollBox').height(),
+            botListOffset      = listHeigth + topListOffset,
+            dropList           = objDom.next(),
+            dropListElemCount  = objDom.next().children().length,
+            botElemPosition    = botListOffset - elemPosition,
+            elemPositionInList = elemPosition - topListOffset;
 
-        if (botListOffset - elemPosition <= dropListElemCount * 50) dropList.addClass('margin-up');
+        if ((botElemPosition <= dropListElemCount * 50) && (elemPositionInList > dropListElemCount * 40)) dropList.addClass('margin-up');
     },
 
     occupantPopover: function(objDom, e) {
