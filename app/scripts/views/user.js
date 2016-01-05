@@ -158,9 +158,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             dropList          = objDom.next(),
             dropListElemCount = dropList.children().length,
             contactsViewPort  = $('.mCustomScrollBox').height();
-            console.log(contactsViewPort);
 
-        if (botListOffset - elemPosition <= dropListElemCount * 50 && ????????) dropList.addClass('margin-up');
+        if (botListOffset - elemPosition <= dropListElemCount * 50) dropList.addClass('margin-up');
     },
 
     occupantPopover: function(objDom, e) {
