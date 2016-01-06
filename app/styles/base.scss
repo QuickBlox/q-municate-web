@@ -106,7 +106,18 @@ input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;
   cursor: pointer;
 }
-input[type="search"]::-webkit-search-cancel-button:after {
+input[type="search"]::-moz-search-cancel-button:after {
+  content: "\00d7";
+  font-size: 24px;
+  color: #bebebe;
+  vertical-align: middle;
+}
+input[type="search"]::-moz-search-cancel-button {
+  margin: -6px 4px 0;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+input[type="search"]::-moz-search-cancel-button:after {
   content: "\00d7";
   font-size: 24px;
   color: #bebebe;

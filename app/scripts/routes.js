@@ -758,7 +758,7 @@ define([
     $('.btn_message_smile .is-hidden').removeClass('is-hidden').siblings().remove();
     $('.popover:not(.popover_smile)').remove();
     $('.popover_smile').hide();
-    $('#mCSB_8_container')[0].style.paddingBottom = "0px";
+    if ($('#mCSB_8_container').is(':visible')) $('#mCSB_8_container')[0].style.paddingBottom = "0px";
   }
 
   function openPopup(objDom, id, dialog_id, isProfile) {

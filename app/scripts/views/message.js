@@ -58,7 +58,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
         switch (type) {
         case '1':
-          occupants_ids = _.without(message.occupants_ids.split(',').map(Number), contact.id);
+          occupants_ids = _.without(message.current_occupant_ids.split(',').map(Number), contact.id);
 
           for (i = 0, len = occupants_ids.length, user; i < len; i++) {
             user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
@@ -84,8 +84,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
-          if (message.occupants_ids) {
-            occupants_ids = message.occupants_ids.split(',').map(Number);
+          if (message.added_occupant_ids) {
+            occupants_ids = message.added_occupant_ids.split(',').map(Number);
 
             for (i = 0, len = occupants_ids.length, user; i < len; i++) {
               user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
@@ -412,8 +412,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           room_jid = message.extension && message.extension.room_jid,
           room_name = message.extension && message.extension.room_name,
           room_photo = message.extension && message.extension.room_photo,
-          deleted_id = message.extension && message.extension.deleted_id,
-          occupants_ids = message.extension && message.extension.occupants_ids && message.extension.occupants_ids.split(',').map(Number),
+          deleted_id = message.extension && message.extension.deleted_occupant_ids,
+          occupants_ids = message.extension && message.extension.current_occupant_ids && message.extension.current_occupant_ids.split(',').map(Number),
           dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
