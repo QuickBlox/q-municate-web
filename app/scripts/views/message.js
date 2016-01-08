@@ -546,6 +546,64 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       }
     },
 
+    // onSystemMessage: function(message) {
+    //   var DialogView = self.app.views.Dialog,
+    //       hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+    //       dialogs = ContactList.dialogs,
+    //       notification_type = message.extension && message.extension.notification_type,
+    //       dialog_id = message.extension && message.extension.dialog_id,
+    //       room_jid = getRoomJidFromDialogId(dialog_id),
+    //       room_name = message.extension && message.extension.room_name,
+    //       room_photo = message.extension && message.extension.room_photo,
+    //       deleted_id = message.extension && message.extension.deleted_occupant_ids,
+    //       occupants_ids = message.extension && message.extension.current_occupant_ids 
+    //       dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
+    //       dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
+    //       chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
+    //       unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
+    //       roster = ContactList.roster,
+    //       audioSignal = $('#newMessageSignal')[0],
+    //       isOfflineStorage = message.delay,
+    //       selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
+    //       msg, copyDialogItem, dialog, occupant, msgArr;
+
+    //   msg = Message.create(message);
+    //   msg.sender_id = id;
+
+    //   // create new group chat
+    //   if (notification_type === '1' && dialogGroupItem.length === 0) {
+    //     dialog = Dialog.create({
+    //       _id: dialog_id,
+    //       type: 2,
+    //       occupants_ids: occupants_ids,
+    //       name: room_name,
+    //       xmpp_room_jid: room_jid,
+    //       unread_count: 1
+    //     });
+    //     ContactList.dialogs[dialog.id] = dialog;
+    //     if (QMCONFIG.debug) console.log('Dialog', dialog);
+    //     if (!localStorage['QM.dialog-' + dialog.id]) {
+    //       localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+    //     }
+
+    //     ContactList.add(dialog.occupants_ids, null, function() {
+    //       // don't create a duplicate dialog in contact list
+    //       dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]')[0];
+    //       if (dialogItem) return true;
+
+    //       QB.chat.muc.join(room_jid);
+
+    //       DialogView.addDialogItem(dialog);
+    //       unread++;
+    //       dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
+    //       dialogGroupItem.find('.unread').text(unread);
+    //       DialogView.getUnreadCounter(dialog_id);
+    //     });
+    //   }
+
+    //   self.addItem(msg, true, true, id);
+    // },
+
     onMessageTyping: function(isTyping, userId, dialogId) {
       var ContactListMsg = self.app.models.ContactList,
           contacts = ContactListMsg.contacts,

@@ -48,8 +48,7 @@ define(function() {
         deleted_occupant_ids: (params.extension && params.extension.deleted_occupant_ids) || params.deleted_occupant_ids || null,
         room_name: (params.extension && params.extension.room_name) || params.room_name || null,
         room_photo: (params.extension && params.extension.room_photo && params.extension.room_photo.replace('http://', 'https://')) ||
-                    (params.room_photo && params.room_photo.replace('http://', 'https://')) ||
-                    null,
+                    (params.room_photo && params.room_photo.replace('http://', 'https://')) || null,
         room_updated_date: (params.extension && params.extension.room_updated_date) || params.room_updated_date || null,
         dialog_update_info: (params.extension && params.extension.dialog_update_info) || params.dialog_update_info || null,
         callType: (params.extension && params.extension.callType) || params.callType || null,

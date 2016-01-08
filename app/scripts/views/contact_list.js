@@ -182,13 +182,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
 
           if (dialogItem) {
             // send notification about subscribe
-            QB.chat.send(jid, {type: 'chat', body: 'Contact request', extension: {
-              save_to_history: 1,
-              // dialog_id: dialogItem.getAttribute('data-dialog'),
-              date_sent: time,
-
-              notification_type: '4'
-            }});
+            QB.chat.send(jid, {
+              type: 'chat',
+              body: 'Contact request',
+              extension: {
+                save_to_history: 1,
+                dialog_id: dialogItem.getAttribute('data-dialog'),
+                date_sent: time,
+                notification_type: '4'
+              }
+            });
 
             message = Message.create({
               chat_dialog_id: dialogItem.getAttribute('data-dialog'),
@@ -246,13 +249,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
 
       QB.chat.roster.confirm(jid, function() {
         // send notification about confirm
-        QB.chat.send(jid, {type: 'chat', body: 'Contact request', extension: {
-          save_to_history: 1,
-          // dialog_id: hiddenDialogs[id],
-          date_sent: time,
-
-          notification_type: '5'
-        }});
+        QB.chat.send(jid, {
+          type: 'chat',
+          body: 'Contact request',
+          extension: {
+            save_to_history: 1,
+            dialog_id: hiddenDialogs[id],
+            date_sent: time,
+            notification_type: '5'
+          }
+        });
 
         message = Message.create({
           chat_dialog_id: hiddenDialogs[id],
@@ -303,7 +309,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
           list = objDom.parents('ul'),
           roster = ContactList.roster,
           notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
-          hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']);
+          hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
+          time = Math.floor(Date.now() / 1000);
 
       objDom.parents('li').remove();
       isSectionEmpty(list);
@@ -321,13 +328,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
 
       QB.chat.roster.reject(jid, function() {
         // send notification about reject
-        QB.chat.send(jid, {type: 'chat', body: 'Contact request', extension: {
-          save_to_history: 1,
-          // dialog_id: hiddenDialogs[id],
-          date_sent: Math.floor(Date.now() / 1000),
-
-          notification_type: '6'
-        }});
+        QB.chat.send(jid, {
+          type: 'chat',
+          body: 'Contact request',
+          extension: {
+            save_to_history: 1,
+            dialog_id: hiddenDialogs[id],
+            date_sent: time,
+            notification_type: '6'
+          }
+        });
       });
 
     },
@@ -341,7 +351,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
           chat = $('.l-chat[data-id="'+id+'"]'),
           list = li.parents('ul'),
           dialog_id = li.data('dialog'),
-          roster = ContactList.roster;
+          roster = ContactList.roster,
+          time = Math.floor(Date.now() / 1000);
 
       // update roster
       delete roster[id];
@@ -351,13 +362,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       localStorage.removeItem('QM.dialog-' + dialog_id);
 
       // send notification about reject
-      QB.chat.send(jid, {type: 'chat', body: 'Contact request', extension: {
-        save_to_history: 1,
-        // dialog_id: dialog_id,
-        date_sent: Math.floor(Date.now() / 1000),
-
-        notification_type: '7'
-      }});
+      QB.chat.send(jid, {
+        type: 'chat',
+        body: 'Contact request',
+        extension: {
+          save_to_history: 1,
+          dialog_id: dialog_id,
+          date_sent: time,
+          notification_type: '7'
+        }
+      });
 
       QB.chat.roster.remove(jid, function() {
         li.remove();

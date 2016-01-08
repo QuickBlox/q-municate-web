@@ -63,9 +63,8 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           body: 'Contact request',
           extension: {
             save_to_history: 1,
-            // dialog_id: dialog.id,
+            dialog_id: dialog.id,
             date_sent: Math.floor(Date.now() / 1000),
-
             notification_type: '4'
           }
         });
@@ -104,27 +103,34 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
             // send invites for all occupants
             for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
               id = dialog.occupants_ids[i];
-              QB.chat.send(contacts[id].user_jid, {type: 'chat', body: 'Notification message', extension: {
-                date_sent: Math.floor(Date.now() / 1000),
-                notification_type: '1',
-                room_jid: dialog.room_jid,
-                room_name: dialog.room_name,
-                dialog_id: dialog.id,
-                current_occupant_ids: res.occupants_ids.join(),
-                dialog_update_info: 3
-              }});
+              QB.chat.sendSystemMessage(contacts[id].user_jid, {
+                extension: {
+                  date_sent: Math.floor(Date.now() / 1000),
+                  notification_type: '1',
+                  dialog_id: dialog.id,
+                  room_name: dialog.room_name,
+                  room_updated_date: dialog.room_updated_date,
+                  current_occupant_ids: res.occupants_ids.join(),
+                  type: 2
+                }
+              });
             }
           });
 
           // send message about added people for history
-          QB.chat.send(dialog.room_jid, {id: msgId, type: 'groupchat', body: 'Notification message', extension: {
-            date_sent: Math.floor(Date.now() / 1000),
-            save_to_history: 1,
-            notification_type: '1',
-            dialog_id: dialog.id,
-            current_occupant_ids: res.occupants_ids.join(),
-            dialog_update_info: 3
-          }});
+          QB.chat.send(dialog.room_jid, {
+            id: msgId,
+            type: 'groupchat',
+            body: 'Notification message',
+            extension: {
+              date_sent: Math.floor(Date.now() / 1000),
+              save_to_history: 1,
+              notification_type: '1',
+              dialog_id: dialog.id,
+              current_occupant_ids: res.occupants_ids.join(),
+              dialog_update_info: 3
+            }
+          });
         });
 
       });

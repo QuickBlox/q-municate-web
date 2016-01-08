@@ -128,10 +128,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
 
       setPercent();
 
-      console.log(1111111, file);
+      console.log(file);
 
       Attach.upload(file, function(blob) {
-        console.log(2222222, blob);
+        console.log(blob);
 
         var chat;
         isUpload = true;
@@ -179,15 +179,18 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           copyDialogItem;
         
       // send message
-      QB.chat.send(jid, {type: type, body: 'Attachment', extension: {
-        save_to_history: 1,
-        // dialog_id: dialog_id,
-        date_sent: time,
-
-        attachments: [
-          attach
-        ]
-      }});
+      QB.chat.send(jid, {
+        type: type,
+        body: 'Attachment',
+        extension: {
+          save_to_history: 1,
+          dialog_id: dialog_id,
+          date_sent: time,
+          attachments: [
+            attach
+          ]
+        }
+      });
 
       message = Message.create({
         chat_dialog_id: dialog_id,
