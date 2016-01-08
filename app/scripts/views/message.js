@@ -673,6 +673,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     } else {
       chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     }
+
+    isTypingOrAreTyping(chat);
   }
 
   function startShowTyping(chat, user) { 
@@ -682,7 +684,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     // build html for typing statuses
     html = '<article class="message l-flexbox l-flexbox_alignstretch" data-status="typing">';
     html += '<div class="message_typing"></div>';
-    html += '<div> is typing</div>';
+    html += '<div class="is_or_are"> is typing</div>';
     html += '<div class="popup-elem spinner_bounce is-typing">';
     html += '<div class="spinner_bounce-bounce1"></div>';
     html += '<div class="spinner_bounce-bounce2"></div>';
@@ -699,6 +701,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     } else {
       chat.find('.l-chat-content .mCSB_container').append(html);
       chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
+    }
+
+    isTypingOrAreTyping(chat);
+  }
+
+  function isTypingOrAreTyping(chat) {
+    if (typingList.length > 1) {
+      chat.find('div.is_or_are').text(' are typing');
+    } else {
+      chat.find('div.is_or_are').text(' is typing');
     }
   }
 
