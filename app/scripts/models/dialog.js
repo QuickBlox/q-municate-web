@@ -25,7 +25,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       var User = this.app.models.User,
           // exclude current user from dialog occupants that he doesn't hit to yourself in Contact List
           occupants_ids = _.without(params.occupants_ids, User.contact.id);
-
+          
       return {
         id: params._id,
         type: params.type,
@@ -34,7 +34,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
         room_photo: params.photo && params.photo.replace('http://', 'https://') || null,
         occupants_ids: occupants_ids,
         last_message_date_sent: params.last_message_date_sent || null,
-        room_updated_date: Date.parse(params.updated_at) || null,
+        room_updated_date: Date.parse(params.updated_at) || params.room_updated_date || null,
         unread_count: params.unread_messages_count || ''
       };
     },
@@ -62,9 +62,9 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           type: 'chat',
           body: 'Contact request',
           extension: {
-            save_to_history: 1,
-            dialog_id: dialog.id,
             date_sent: Math.floor(Date.now() / 1000),
+            dialog_id: dialog.id,
+            save_to_history: 1,
             notification_type: '4'
           }
         });
@@ -109,7 +109,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
                   notification_type: '1',
                   dialog_id: dialog.id,
                   room_name: dialog.room_name,
-                  room_updated_date: dialog.room_updated_date,
+                  room_updated_date: Math.floor(Date.now() / 1000),
                   current_occupant_ids: res.occupants_ids.join(),
                   type: 2
                 }
@@ -287,8 +287,10 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           date_sent: Math.floor(Date.now() / 1000),
           save_to_history: 1,
           notification_type: '2',
-          deleted_id: User.contact.id,
-          dialog_id: dialog.id
+          deleted_occupant_ids: User.contact.id,
+          dialog_id: dialog.id,
+          room_updated_date: dialog.room_updated_date,
+          dialog_update_info: 3
         }
       });
 
