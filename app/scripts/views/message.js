@@ -360,7 +360,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             save_to_history: 1,
             dialog_id: dialog_id,
             date_sent: time
-          }
+          },
+          markable: 1
         };
         QB.chat.send(jid, msg);
 
@@ -435,7 +436,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         dialogs[dialog_id].messages = msgArr;
       }
 
-      if (!selected && !chat.is(':visible') && !window.isQMAppActive && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
+      if (!selected && !chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
         unread++;
         dialogItem.find('.unread').text(unread);
         DialogView.getUnreadCounter(dialog_id);
