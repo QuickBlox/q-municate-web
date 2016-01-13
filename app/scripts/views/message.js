@@ -255,9 +255,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
         default:
           if (message.sender_id === User.contact.id)
-            html = '<article class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+            html = '<article id="'+message.id+'" class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
           else
-            html = '<article class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+            html = '<article id="'+message.id+'" class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
 
           // html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
           html += '<div class="message-avatar avatar contact-avatar_message profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id="'+message.sender_id+'"></div>';
@@ -403,6 +403,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     },
 
     onMessage: function(id, message) {
+      console.log(message)
       if (message.type === 'error') return true;
 
       var DialogView = self.app.views.Dialog,
@@ -511,6 +512,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
+      if (msg.sender_id !== User.contact.id && chat.is(':visible') && $('#'+message.id).is(':visible')) {
+        QB.chat.sendReadStatus({messageId: message.id, userId: id, dialogId: dialog_id});
+      }
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
@@ -537,7 +541,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         dialog = Dialog.create({
           _id: dialog_id,
           type: 2,
-          occupants_ids: occupants_ids.split(','),
+          occupants_ids: occupants_ids.toString().split(','),
           name: room_name,
           room_updated_date: room_updated_at,
           xmpp_room_jid: room_jid,
@@ -600,6 +604,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           stopShowTyping(chat, contact.full_name);
         }
       }
+    },
+
+    onDeliveredStatus: function(messageId, dialogId, userId) {
+      console.log(messageId); console.log(dialogId); console.log(userId);
+    },
+
+    onReadStatus: function(messageId, dialogId, userId) {
+      console.log(messageId); console.log(dialogId); console.log(userId);
     }
 
   };
