@@ -403,7 +403,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     },
 
     onMessage: function(id, message) {
-      console.log(message)
       if (message.type === 'error') return true;
 
       var DialogView = self.app.views.Dialog,
