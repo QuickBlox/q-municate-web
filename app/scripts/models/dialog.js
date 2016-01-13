@@ -94,6 +94,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
         }
 
         QB.chat.muc.join(dialog.room_jid, function() {
+          console.log(dialog.room_jid)
           var msgId = QB.chat.helpers.getBsonObjectId();
 
           QB.chat.addListener({name: 'message', type: 'groupchat', id: msgId}, function() {

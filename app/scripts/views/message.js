@@ -533,7 +533,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
           msg, dialog;
 
-      msg = Message.create(message);
+      msg = Message.create(message); 
 
       // create new group chat
       if (notification_type === '1' && dialogGroupItem.length === 0) {
