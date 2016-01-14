@@ -410,7 +410,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           dialogs = ContactList.dialogs,
           notification_type = message.extension && message.extension.notification_type,
           dialog_id = message.extension && message.extension.dialog_id,
-          room_jid = roomJidVerifycation(dialog_id),
+          room_jid = roomJidVerification(dialog_id),
           room_name = message.extension && message.extension.room_name,
           room_photo = message.extension && message.extension.room_photo,
           deleted_id = message.extension && message.extension.deleted_occupant_ids,
@@ -526,7 +526,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           dialogs = ContactList.dialogs,
           notification_type = message.extension && message.extension.notification_type,
           dialog_id = message.extension && message.extension.dialog_id,
-          room_jid = roomJidVerifycation(dialog_id),
+          room_jid = roomJidVerification(dialog_id),
           room_name = message.extension && message.extension.room_name,
           room_updated_at = message.extension && message.extension.room_updated_date,
           occupants_ids = message.extension && message.extension.current_occupant_ids,
@@ -749,7 +749,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     }
   }
 
-  function roomJidVerifycation(dialog_id) {
+  function roomJidVerification(dialog_id) {
     var roomJid = QB.chat.helpers.getRoomJidFromDialogId(dialog_id);
 
     arrayString = roomJid.split('');
