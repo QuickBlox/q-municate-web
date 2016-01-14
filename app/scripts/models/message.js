@@ -56,9 +56,9 @@ define(function() {
         caller: parseInt((params.extension && params.extension.caller)) || parseInt(params.caller) || null,
         callee: parseInt((params.extension && params.extension.callee)) || parseInt(params.callee) || null,
         duration: (params.extension && params.extension.duration) || params.duration || null,
-        sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null
-        // read_ids: (params.extension && params.extension.read_ids) || params.read_ids || null,
-        // delivered_ids: (params.delivered_ids && params.extension.delivered_ids) || params.delivered_ids || null
+        sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
+        read_ids: params.read_ids || null,
+        delivered_ids: params.delivered_ids || null
       };
 
       if (message.attachment) {

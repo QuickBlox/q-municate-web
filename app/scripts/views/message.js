@@ -318,7 +318,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             }
 
             // fix for custom scroll
-            fixScroll(chat);
+            // fixScroll(chat);
           } else {
             chat.find('.l-chat-content .mCSB_container').prepend(html);
           }
@@ -410,7 +410,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           dialogs = ContactList.dialogs,
           notification_type = message.extension && message.extension.notification_type,
           dialog_id = message.extension && message.extension.dialog_id,
-          room_jid = message.extension && message.extension.room_jid,
+          room_jid = QB.chat.helpers.getRoomJidFromDialogId(dialog_id),
           room_name = message.extension && message.extension.room_name,
           room_photo = message.extension && message.extension.room_photo,
           deleted_id = message.extension && message.extension.deleted_occupant_ids,
@@ -511,9 +511,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
+
       if (msg.sender_id !== User.contact.id && chat.is(':visible') && $('#'+message.id).is(':visible')) {
         QB.chat.sendReadStatus({messageId: message.id, userId: id, dialogId: dialog_id});
       }
+
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
@@ -606,11 +608,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     },
 
     onDeliveredStatus: function(messageId, dialogId, userId) {
-      console.log(messageId); console.log(dialogId); console.log(userId);
+      console.log([messageId, dialogId, userId]);
     },
 
     onReadStatus: function(messageId, dialogId, userId) {
-      console.log(messageId); console.log(dialogId); console.log(userId);
+      console.log([messageId, dialogId, userId]);
     }
 
   };
