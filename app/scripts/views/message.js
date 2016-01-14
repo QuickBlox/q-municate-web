@@ -410,7 +410,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           dialogs = ContactList.dialogs,
           notification_type = message.extension && message.extension.notification_type,
           dialog_id = message.extension && message.extension.dialog_id,
-          room_jid = QB.chat.helpers.getRoomJidFromDialogId(dialog_id),
+          room_jid = roomJidVerifycation(dialog_id),
           room_name = message.extension && message.extension.room_name,
           room_photo = message.extension && message.extension.room_photo,
           deleted_id = message.extension && message.extension.deleted_occupant_ids,
@@ -526,7 +526,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           dialogs = ContactList.dialogs,
           notification_type = message.extension && message.extension.notification_type,
           dialog_id = message.extension && message.extension.dialog_id,
-          room_jid = QB.chat.helpers.getRoomJidFromDialogId(dialog_id),
+          room_jid = roomJidVerifycation(dialog_id),
           room_name = message.extension && message.extension.room_name,
           room_updated_at = message.extension && message.extension.room_updated_date,
           occupants_ids = message.extension && message.extension.current_occupant_ids,
@@ -535,7 +535,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
           msg, dialog;
 
-      msg = Message.create(message); 
+      msg = Message.create(message);
 
       // create new group chat
       if (notification_type === '1' && dialogGroupItem.length === 0) {
@@ -747,6 +747,17 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     } else {
       chat.find('div.is_or_are').text(' is typing');
     }
+  }
+
+  function roomJidVerifycation(dialog_id) {
+    var roomJid = QB.chat.helpers.getRoomJidFromDialogId(dialog_id);
+
+    arrayString = roomJid.split('');
+
+    if (arrayString[0] == '_') {
+      roomJid = QMCONFIG.qbAccount.appId + roomJid.toString();
+    }
+    return roomJid;
   }
 
   return MessageView;

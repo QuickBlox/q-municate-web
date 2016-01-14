@@ -25,11 +25,11 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       var User = this.app.models.User,
           // exclude current user from dialog occupants that he doesn't hit to yourself in Contact List
           occupants_ids = _.without(params.occupants_ids, User.contact.id);
-          
+
       return {
         id: params._id,
         type: params.type,
-        room_jid: QB.chat.helpers.getRoomJidFromDialogId(params._id) || null,
+        room_jid: params.xmpp_room_jid || null,
         room_name: params.name || null,
         room_photo: params.photo && params.photo.replace('http://', 'https://') || null,
         occupants_ids: occupants_ids,
