@@ -189,7 +189,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           attachments: [
             attach
           ]
-        }
+        },
+        markable: 1
       });
 
       message = Message.create({

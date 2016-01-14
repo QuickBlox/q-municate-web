@@ -313,6 +313,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           if (isMessageListener) {
             if (isTyping) {
               chat.find('article.message[data-status="typing"]').before(html);
+              fixScroll(chat);
             } else {
               chat.find('.l-chat-content .mCSB_container').append(html);
             }
