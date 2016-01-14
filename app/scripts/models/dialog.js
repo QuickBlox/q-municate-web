@@ -29,7 +29,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       return {
         id: params._id,
         type: params.type,
-        room_jid: params.xmpp_room_jid || null,
+        room_jid: QB.chat.helpers.getRoomJidFromDialogId(params._id) || null,
         room_name: params.name || null,
         room_photo: params.photo && params.photo.replace('http://', 'https://') || null,
         occupants_ids: occupants_ids,
