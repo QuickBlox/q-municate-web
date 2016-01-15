@@ -50,7 +50,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         var contacts = ContactListMsg.contacts,
             contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
             type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
-            attachType = message.attachment && message.attachment['content-type'],
+            attachType = message.attachment && message.attachment['content-type'] || null,
+            attachUrl = null,
             recipient = contacts[recipientId] || null,
             occupants_names = '',
             occupants_ids,
@@ -269,8 +270,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           if (attachType && attachType.indexOf('image') > -1) {
 
             html += '<div class="message-body">';
-            html += '<div class="preview preview-photo" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'">';
-            html += '<img src="'+message.attachment.url+'" alt="attach">';
+            html += '<div class="preview preview-photo" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'">';
+            html += '<img src="'+attachUrl+'" alt="attach">';
             html += '</div></div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
 
@@ -278,27 +279,27 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<audio src="'+message.attachment.url+'" controls></audio>';
+            html += '<audio src="'+attachUrl+'" controls></audio>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
-            html += '<a href="'+message.attachment.url+'" download="'+message.attachment.name+'">Download</a></time>';
+            html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
 
           } else if (attachType && attachType.indexOf('video') > -1) {
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<div class="preview preview-video" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'"></div>';
+            html += '<div class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
 
           } else if (attachType) {
 
             html += '<div class="message-body">';
-            html += '<a class="attach-file" href="'+message.attachment.url+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
+            html += '<a class="attach-file" href="'+attachUrl+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
             html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
-            html += '<a href="'+message.attachment.url+'" download="'+message.attachment.name+'">Download</a></time>';
+            html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
 
           } else {
             html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
@@ -409,6 +410,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       var DialogView = self.app.views.Dialog,
           hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
           dialogs = ContactList.dialogs,
+          attach = message.extension && message.extension.attachments,
           notification_type = message.extension && message.extension.notification_type,
           dialog_id = message.extension && message.extension.dialog_id,
           room_jid = roomJidVerification(dialog_id),
@@ -424,11 +426,17 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           audioSignal = $('#newMessageSignal')[0],
           isOfflineStorage = message.delay,
           selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
-          msg, copyDialogItem, dialog, occupant, msgArr;
+          msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
 
       msg = Message.create(message);
       msg.sender_id = id;
 
+      if (attach != null) {
+        QB.content.getInfo(attach[0].id, function(err,res) {
+          if (res) blobObj = res.blob;console.log(blobObj);
+        });
+      }
+      console.log(blobObj);
       if ((!deleted_id || msg.sender_id !== User.contact.id) && chat.is(':visible')) {
         Message.update(msg.id, dialog_id);
       } else if (!chat.is(':visible') && chat.length > 0) {
