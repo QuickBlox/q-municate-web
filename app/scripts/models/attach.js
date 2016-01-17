@@ -33,7 +33,7 @@ define(['loadImage', 'canvasToBlob'], function(loadImage, dataURLtoBlob) {
         id: blob.id,
         name: blob.name,
         size: size,
-        'content-type': blob.content_type
+        content_type: blob.content_type
       };
     },
 

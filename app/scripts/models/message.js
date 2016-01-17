@@ -65,8 +65,6 @@ define(function() {
         message.attachment.size = parseInt(message.attachment.size);
       }
 
-      console.log(message)
-
       return message;
     },
 

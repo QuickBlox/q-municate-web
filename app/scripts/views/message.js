@@ -34,7 +34,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       }
     },
 
-    addItem: function(message, isCallback, isMessageListener, recipientId) {
+    addItem: function(message, isCallback, isMessageListener, recipientId) {console.log(message);
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
           chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
@@ -50,8 +50,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         var contacts = ContactListMsg.contacts,
             contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
             type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
-            attachType = message.attachment && message.attachment['content-type'] || null,
-            attachUrl = message.attachment.public ? QB.content.publicUrl(message.attachment.uid) : QB.content.privateUrl(message.attachment.uid) || null,
+            attachType = message.attachment && message.attachment.content_type || message.attachment && message.attachment.type || null,
+            attachUrl = message.attachment && message.attachment.url || null,
             recipient = contacts[recipientId] || null,
             occupants_names = '',
             occupants_ids,
@@ -406,11 +406,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
     onMessage: function(id, message) {
       if (message.type === 'error') return true;
-;
+
       var DialogView = self.app.views.Dialog,
           hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
           dialogs = ContactList.dialogs,
-          attach = message.extension && message.extension.attachments,
           notification_type = message.extension && message.extension.notification_type,
           dialog_id = message.extension && message.extension.dialog_id,
           room_jid = roomJidVerification(dialog_id),
@@ -513,20 +512,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       }
 
       if (QMCONFIG.debug) console.log(msg);
-
-      if (attach != null) {
-        QB.content.getInfo(attach[0].id, function(err,res) {
-          if (res) {
-            console.log(res);
-            msg.attachment = res.items[0];
-            console.log(msg);
-            msg.attachment = res.blob;
-            self.addItem(msg, true, true, id);
-          } 
-        });
-      } else {
-        self.addItem(msg, true, true, id);
-      }
+      self.addItem(msg, true, true, id);
 
       if (msg.sender_id !== User.contact.id && chat.is(':visible') && $('#'+message.id).is(':visible')) {
         QB.chat.sendReadStatus({messageId: message.id, userId: id, dialogId: dialog_id});
