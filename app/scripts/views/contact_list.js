@@ -186,18 +186,18 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
               type: 'chat',
               body: 'Contact request',
               extension: {
-                save_to_history: 1,
-                dialog_id: dialogItem.getAttribute('data-dialog'),
                 date_sent: time,
+                dialog_id: dialogItem.getAttribute('data-dialog'),
+                save_to_history: 1,
                 notification_type: '4'
               }
             });
 
             message = Message.create({
-              chat_dialog_id: dialogItem.getAttribute('data-dialog'),
-              notification_type: '4',
               date_sent: time,
-              sender_id: User.contact.id
+              chat_dialog_id: dialogItem.getAttribute('data-dialog'),
+              sender_id: User.contact.id,
+              notification_type: '4'
             });
 
             MessageView.addItem(message, true, true);
@@ -253,9 +253,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
           type: 'chat',
           body: 'Contact request',
           extension: {
-            save_to_history: 1,
-            dialog_id: hiddenDialogs[id],
             date_sent: time,
+            dialog_id: hiddenDialogs[id],
+            save_to_history: 1,
             notification_type: '5'
           }
         });
@@ -332,9 +332,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
           type: 'chat',
           body: 'Contact request',
           extension: {
-            save_to_history: 1,
-            dialog_id: hiddenDialogs[id],
             date_sent: time,
+            dialog_id: hiddenDialogs[id],
+            save_to_history: 1,
             notification_type: '6'
           }
         });
@@ -366,9 +366,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         type: 'chat',
         body: 'Contact request',
         extension: {
-          save_to_history: 1,
-          dialog_id: dialog_id,
           date_sent: time,
+          dialog_id: dialog_id,
+          save_to_history: 1,
           notification_type: '7'
         }
       });

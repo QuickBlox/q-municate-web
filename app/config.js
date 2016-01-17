@@ -4,15 +4,11 @@ define(function() {
   var QMCONFIG = {
 
     /* Production environment */
-    // qbAccount: {
-    //   appId: 13318,
-    //   authKey: 'WzrAY7vrGmbgFfP',
-    //   authSecret: 'xS2uerEveGHmEun'
-    // },
-    // fbAccount: {
-    //   appId: '605405446247805',
-    //   scope: 'email,user_friends',
-    // },
+    qbAccount: {
+      appId: 13318,
+      authKey: 'WzrAY7vrGmbgFfP',
+      authSecret: 'xS2uerEveGHmEun'
+    },
 
     /* Test local environment */
     // qbAccount: {
@@ -20,17 +16,14 @@ define(function() {
     //   authKey: 'rJqAFphrSnpyZW2',
     //   authSecret: 'tTEB2wK-dU8X3Ra'
     // },
-    // fbAccount: {
-    //   appId: '605405446247805',
-    //   scope: 'email,user_friends',
-    // },
 
     /* Development environment */
-    qbAccount: {
-      appId: 27915,
-      authKey: '2EADMZadWZkCH8x',
-      authSecret: 'ZvOFxvW4bpRg2Tm'
-    },
+    // qbAccount: {
+    //   appId: 27915,
+    //   authKey: '2EADMZadWZkCH8x',
+    //   authSecret: 'ZvOFxvW4bpRg2Tm'
+    // },
+    
     fbAccount: {
       appId: '605405446247805',
       scope: 'email,user_friends',

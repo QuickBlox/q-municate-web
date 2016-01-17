@@ -30,6 +30,7 @@ define(['loadImage', 'canvasToBlob'], function(loadImage, dataURLtoBlob) {
       return {
         type: type,
         url: blob.path && blob.path.replace('http://', 'https://') || null,
+        id: blob.id,
         name: blob.name,
         size: size,
         'content-type': blob.content_type

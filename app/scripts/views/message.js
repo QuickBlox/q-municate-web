@@ -50,7 +50,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         var contacts = ContactListMsg.contacts,
             contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
             type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
-            attachType = message.attachment && message.attachment['content-type'],
+            attachType = message.attachment && message.attachment['content-type'] || null,
+            attachUrl = message.attachment.public ? QB.content.publicUrl(message.attachment.uid) : QB.content.privateUrl(message.attachment.uid) || null,
             recipient = contacts[recipientId] || null,
             occupants_names = '',
             occupants_ids,
@@ -97,7 +98,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has added '+occupants_names+'</h4>';
           }
-          if (message.deleted_id) {
+          if (message.deleted_occupant_ids) {
             html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has left</h4>';
           }
           if (message.room_name) {
@@ -255,9 +256,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
         default:
           if (message.sender_id === User.contact.id)
-            html = '<article class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+            html = '<article id="'+message.id+'" class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
           else
-            html = '<article class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
+            html = '<article id="'+message.id+'" class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
 
           // html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
           html += '<div class="message-avatar avatar contact-avatar_message profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id="'+message.sender_id+'"></div>';
@@ -269,8 +270,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           if (attachType && attachType.indexOf('image') > -1) {
 
             html += '<div class="message-body">';
-            html += '<div class="preview preview-photo" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'">';
-            html += '<img src="'+message.attachment.url+'" alt="attach">';
+            html += '<div class="preview preview-photo" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'">';
+            html += '<img src="'+attachUrl+'" alt="attach">';
             html += '</div></div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
 
@@ -278,27 +279,27 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<audio src="'+message.attachment.url+'" controls></audio>';
+            html += '<audio src="'+attachUrl+'" controls></audio>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
-            html += '<a href="'+message.attachment.url+'" download="'+message.attachment.name+'">Download</a></time>';
+            html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
 
           } else if (attachType && attachType.indexOf('video') > -1) {
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<div class="preview preview-video" data-url="'+message.attachment.url+'" data-name="'+message.attachment.name+'"></div>';
+            html += '<div class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
 
           } else if (attachType) {
 
             html += '<div class="message-body">';
-            html += '<a class="attach-file" href="'+message.attachment.url+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
+            html += '<a class="attach-file" href="'+attachUrl+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
             html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
-            html += '<a href="'+message.attachment.url+'" download="'+message.attachment.name+'">Download</a></time>';
+            html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
 
           } else {
             html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
@@ -313,12 +314,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           if (isMessageListener) {
             if (isTyping) {
               chat.find('article.message[data-status="typing"]').before(html);
+              fixScroll(chat);
             } else {
               chat.find('.l-chat-content .mCSB_container').append(html);
             }
 
             // fix for custom scroll
-            fixScroll(chat);
+            // fixScroll(chat);
           } else {
             chat.find('.l-chat-content .mCSB_container').prepend(html);
           }
@@ -360,7 +362,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             save_to_history: 1,
             dialog_id: dialog_id,
             date_sent: time
-          }
+          },
+          markable: 1
         };
         QB.chat.send(jid, msg);
 
@@ -403,13 +406,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
     onMessage: function(id, message) {
       if (message.type === 'error') return true;
-
+;
       var DialogView = self.app.views.Dialog,
           hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
           dialogs = ContactList.dialogs,
+          attach = message.extension && message.extension.attachments,
           notification_type = message.extension && message.extension.notification_type,
           dialog_id = message.extension && message.extension.dialog_id,
-          room_jid = message.extension && message.extension.room_jid,
+          room_jid = roomJidVerification(dialog_id),
           room_name = message.extension && message.extension.room_name,
           room_photo = message.extension && message.extension.room_photo,
           deleted_id = message.extension && message.extension.deleted_occupant_ids,
@@ -422,7 +426,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           audioSignal = $('#newMessageSignal')[0],
           isOfflineStorage = message.delay,
           selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
-          msg, copyDialogItem, dialog, occupant, msgArr;
+          msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
 
       msg = Message.create(message);
       msg.sender_id = id;
@@ -435,41 +439,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         dialogs[dialog_id].messages = msgArr;
       }
 
-      if (!selected && !chat.is(':visible') && !window.isQMAppActive && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
+      if (!selected && !chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
         unread++;
         dialogItem.find('.unread').text(unread);
         DialogView.getUnreadCounter(dialog_id);
-      }
-
-      // create new group chat
-      if (notification_type === '1' && message.type === 'chat' && dialogGroupItem.length === 0) {
-        dialog = Dialog.create({
-          _id: dialog_id,
-          type: 2,
-          occupants_ids: occupants_ids,
-          name: room_name,
-          xmpp_room_jid: room_jid,
-          unread_count: 1
-        });
-        ContactList.dialogs[dialog.id] = dialog;
-        if (QMCONFIG.debug) console.log('Dialog', dialog);
-        if (!localStorage['QM.dialog-' + dialog.id]) {
-          localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-        }
-
-        ContactList.add(dialog.occupants_ids, null, function() {
-          // don't create a duplicate dialog in contact list
-          dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]')[0];
-          if (dialogItem) return true;
-
-          QB.chat.muc.join(room_jid);
-
-          DialogView.addDialogItem(dialog);
-          unread++;
-          dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
-          dialogGroupItem.find('.unread').text(unread);
-          DialogView.getUnreadCounter(dialog_id);
-        });
       }
 
       // subscribe message
@@ -540,69 +513,81 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       }
 
       if (QMCONFIG.debug) console.log(msg);
-      self.addItem(msg, true, true, id);
+
+      if (attach != null) {
+        QB.content.getInfo(attach[0].id, function(err,res) {
+          if (res) {
+            console.log(res);
+            msg.attachment = res.items[0];
+            console.log(msg);
+            msg.attachment = res.blob;
+            self.addItem(msg, true, true, id);
+          } 
+        });
+      } else {
+        self.addItem(msg, true, true, id);
+      }
+
+      if (msg.sender_id !== User.contact.id && chat.is(':visible') && $('#'+message.id).is(':visible')) {
+        QB.chat.sendReadStatus({messageId: message.id, userId: id, dialogId: dialog_id});
+      }
+
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
     },
 
-    // onSystemMessage: function(message) {
-    //   var DialogView = self.app.views.Dialog,
-    //       hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-    //       dialogs = ContactList.dialogs,
-    //       notification_type = message.extension && message.extension.notification_type,
-    //       dialog_id = message.extension && message.extension.dialog_id,
-    //       room_jid = getRoomJidFromDialogId(dialog_id),
-    //       room_name = message.extension && message.extension.room_name,
-    //       room_photo = message.extension && message.extension.room_photo,
-    //       deleted_id = message.extension && message.extension.deleted_occupant_ids,
-    //       occupants_ids = message.extension && message.extension.current_occupant_ids 
-    //       dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
-    //       dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
-    //       chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
-    //       unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-    //       roster = ContactList.roster,
-    //       audioSignal = $('#newMessageSignal')[0],
-    //       isOfflineStorage = message.delay,
-    //       selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
-    //       msg, copyDialogItem, dialog, occupant, msgArr;
+    onSystemMessage: function(message) {
+      var DialogView = self.app.views.Dialog,
+          dialogs = ContactList.dialogs,
+          notification_type = message.extension && message.extension.notification_type,
+          dialog_id = message.extension && message.extension.dialog_id,
+          room_jid = roomJidVerification(dialog_id),
+          room_name = message.extension && message.extension.room_name,
+          room_updated_at = message.extension && message.extension.room_updated_date,
+          occupants_ids = message.extension && message.extension.current_occupant_ids,
+          dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
+          dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
+          unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
+          msg, dialog;
 
-    //   msg = Message.create(message);
-    //   msg.sender_id = id;
+      msg = Message.create(message);
 
-    //   // create new group chat
-    //   if (notification_type === '1' && dialogGroupItem.length === 0) {
-    //     dialog = Dialog.create({
-    //       _id: dialog_id,
-    //       type: 2,
-    //       occupants_ids: occupants_ids,
-    //       name: room_name,
-    //       xmpp_room_jid: room_jid,
-    //       unread_count: 1
-    //     });
-    //     ContactList.dialogs[dialog.id] = dialog;
-    //     if (QMCONFIG.debug) console.log('Dialog', dialog);
-    //     if (!localStorage['QM.dialog-' + dialog.id]) {
-    //       localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-    //     }
+      // create new group chat
+      if (notification_type === '1' && dialogGroupItem.length === 0) {
+        dialog = Dialog.create({
+          _id: dialog_id,
+          type: 2,
+          occupants_ids: occupants_ids.toString().split(','),
+          name: room_name,
+          room_updated_date: room_updated_at,
+          xmpp_room_jid: room_jid,
+          unread_count: 1
+        });
 
-    //     ContactList.add(dialog.occupants_ids, null, function() {
-    //       // don't create a duplicate dialog in contact list
-    //       dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]')[0];
-    //       if (dialogItem) return true;
+        ContactList.dialogs[dialog.id] = dialog;
+        if (QMCONFIG.debug) console.log('Dialog', dialog);
+        if (!localStorage['QM.dialog-' + dialog.id]) {
+          localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
+        }
 
-    //       QB.chat.muc.join(room_jid);
+        ContactList.add(dialog.occupants_ids, null, function() {
+          // don't create a duplicate dialog in contact list
+          dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]')[0];
+          if (dialogItem) return true;
 
-    //       DialogView.addDialogItem(dialog);
-    //       unread++;
-    //       dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
-    //       dialogGroupItem.find('.unread').text(unread);
-    //       DialogView.getUnreadCounter(dialog_id);
-    //     });
-    //   }
+          QB.chat.muc.join(room_jid);
 
-    //   self.addItem(msg, true, true, id);
-    // },
+          DialogView.addDialogItem(dialog);
+          unread++;
+          dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]');
+          dialogGroupItem.find('.unread').text(unread);
+          DialogView.getUnreadCounter(dialog_id);
+        });
+      }
+
+      self.addItem(msg, true, true, true);
+    },
 
     onMessageTyping: function(isTyping, userId, dialogId) {
       var ContactListMsg = self.app.models.ContactList,
@@ -636,6 +621,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           stopShowTyping(chat, contact.full_name);
         }
       }
+    },
+
+    onDeliveredStatus: function(messageId, dialogId, userId) {
+      console.log([messageId, dialogId, userId]);
+    },
+
+    onReadStatus: function(messageId, dialogId, userId) {
+      console.log([messageId, dialogId, userId]);
     }
 
   };
@@ -770,6 +763,17 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     } else {
       chat.find('div.is_or_are').text(' is typing');
     }
+  }
+
+  function roomJidVerification(dialog_id) {
+    var roomJid = QB.chat.helpers.getRoomJidFromDialogId(dialog_id);
+
+    arrayString = roomJid.split('');
+
+    if (arrayString[0] == '_') {
+      roomJid = QMCONFIG.qbAccount.appId + roomJid.toString();
+    }
+    return roomJid;
   }
 
   return MessageView;
