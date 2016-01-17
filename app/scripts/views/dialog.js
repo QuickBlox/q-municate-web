@@ -419,7 +419,7 @@ define([
         // html += '<textarea class="text-message is-hidden"></textarea>';
         html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.svg" alt="smile"></button>';
         html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.svg" alt="attach"></button>';
-        html += '<input class="attachment" type="file">';
+        html += '<input class="attachment" type="file" accept="image/*">';
         html += '</form></footer>';
         html += '</section>';
 

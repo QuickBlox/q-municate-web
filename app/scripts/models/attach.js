@@ -5,7 +5,7 @@
  *
  */
 
-define(['loadImage', 'canvasToBlob'], function(loadImage, dataURLtoBlob) {
+define(['loadImage', 'canvasToBlob', 'quickblox'], function(loadImage, dataURLtoBlob, QB) {
 
   function Attach(app) {
     this.app = app;
@@ -29,7 +29,7 @@ define(['loadImage', 'canvasToBlob'], function(loadImage, dataURLtoBlob) {
 
       return {
         type: type,
-        url: blob.path && blob.path.replace('http://', 'https://') || null,
+        url: QB.content.publicUrl(blob.uid) || null,
         id: blob.id,
         name: blob.name,
         size: size,
