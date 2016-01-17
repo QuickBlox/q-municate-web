@@ -34,7 +34,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       }
     },
 
-    addItem: function(message, isCallback, isMessageListener, recipientId) {console.log(message);
+    addItem: function(message, isCallback, isMessageListener, recipientId) {
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
           chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
