@@ -23,14 +23,15 @@ define(['loadImage', 'canvasToBlob', 'quickblox'], function(loadImage, dataURLto
     },
 
     create: function(blob, size) {
-      var type = blob.content_type.indexOf('audio/') === 0 ? 'audio' :
+      var type = blob.content_type.indexOf('image/') === 0 ? 'image' :
+                 blob.content_type.indexOf('audio/') === 0 ? 'audio' :
                  blob.content_type.indexOf('video/') === 0 ? 'video' :
                  'photo';
 
       return {
         type: type,
         url: QB.content.publicUrl(blob.uid) || null,
-        id: blob.id,
+        id: blob.uid,
         name: blob.name,
         size: size,
         'content-type': blob.content_type
