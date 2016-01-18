@@ -38,7 +38,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
           chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
-          isTyping = $('article.message[data-status="typing"]').length > 0 ? true : false,
           i, len, user;
 
       if (typeof chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) return true;
@@ -313,15 +312,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
         if (isCallback) {
           if (isMessageListener) {
-            if (isTyping) {
-              chat.find('article.message[data-status="typing"]').before(html);
-              fixScroll(chat);
-            } else {
-              chat.find('.l-chat-content .mCSB_container').append(html);
-            }
-
-            // fix for custom scroll
-            // fixScroll(chat);
+            chat.find('.l-chat-content .mCSB_container').append(html);
           } else {
             chat.find('.l-chat-content .mCSB_container').prepend(html);
           }
@@ -332,6 +323,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             chat.find('.l-chat-content').prepend(html);
           }
         }
+
+        fixScroll(chat);
 
       });
 
@@ -709,7 +702,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     if (typingList.length < 1) {
       $('article.message[data-status="typing"]').remove();
     } else {
-      chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
+      $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     }
 
     isTypingOrAreTyping(chat);
@@ -720,7 +713,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         html;
 
     // build html for typing statuses
-    html = '<article class="message l-flexbox l-flexbox_alignstretch" data-status="typing">';
+    html =  '<article class="message typing l-flexbox l-flexbox_alignstretch" data-status="typing">';
     html += '<div class="message_typing"></div>';
     html += '<div class="is_or_are"> is typing</div>';
     html += '<div class="popup-elem spinner_bounce is-typing">';
@@ -735,10 +728,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
     // add a new typing html or use existing for display users which are typing    
     if (form) {
-      chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
+      $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     } else {
-      chat.find('.l-chat-content .mCSB_container').append(html);
-      chat.find('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
+      $('.l-typing').append(html);
+      $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     }
 
     isTypingOrAreTyping(chat);
@@ -746,9 +739,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
   function isTypingOrAreTyping(chat) {
     if (typingList.length > 1) {
-      chat.find('div.is_or_are').text(' are typing');
+      $('div.is_or_are').text(' are typing');
     } else {
-      chat.find('div.is_or_are').text(' is typing');
+      $('div.is_or_are').text(' is typing');
     }
   }
 

@@ -9,6 +9,12 @@
 .message_service:last-of-type .btn_request_again {
   display: inline-block;
 }
+article.message[data-status="typing"] {
+  height: 100%;
+  line-height: 100%;
+  padding: 10px;
+  border-bottom: none;
+}
 article.message[data-status="typing"] > div {
   display: inline-block;
   margin-left: 7px;
