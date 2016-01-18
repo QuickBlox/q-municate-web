@@ -14,7 +14,7 @@ define([
 ], function($, QMCONFIG, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
-  var chatName, editedChatName, stopTyping, retryTyping;
+  var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
   var App;
 
   function Routes(app) {
@@ -496,11 +496,29 @@ define([
 
       /* search
       ----------------------------------------------------- */
-      $('#globalSearch').on('submit', function(event) {
+      $('#globalSearch').on('keyup search submit', function(event) {
         if (checkConnection() === false) return false;
 
         event.preventDefault();
-        ContactListView.globalSearch($(this));
+        var code = event.keyCode;
+            form = $(this);
+
+        if (code === 13) {
+          clearTimeout(keyupSearch);
+          keyupSearch = undefined;
+          ContactListView.globalSearch(form);
+        } else if (keyupSearch === undefined) {
+          keyupSearch = setTimeout(function() {
+            keyupSearch = undefined;
+            ContactListView.globalSearch(form);
+          }, 1000);
+        } else {
+          clearTimeout(keyupSearch);
+          keyupSearch = setTimeout(function() {
+            keyupSearch = undefined;
+            ContactListView.globalSearch(form);
+          }, 1000);
+        }
       });
 
       $('.localSearch').on('keyup search submit', function(event) {

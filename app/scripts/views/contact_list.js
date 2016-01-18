@@ -62,7 +62,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
           popup.find('.popup-elem .short_length').addClass('is-hidden');
         }
 
-          form.find('input').prop('disabled', true).val(val);
+          form.find('input').prop('disabled', false).val(val);
           popup.find('.popup-elem').addClass('is-hidden');
           popup.find('.mCSB_container').empty();
 
