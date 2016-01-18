@@ -33,7 +33,7 @@ define(['loadImage', 'canvasToBlob', 'quickblox'], function(loadImage, dataURLto
         id: blob.id,
         name: blob.name,
         size: size,
-        content_type: blob.content_type
+        'content-type': blob.content_type
       };
     },
 
