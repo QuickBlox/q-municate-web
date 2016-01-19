@@ -54,12 +54,12 @@ define([
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
       QB.chat.onRejectSubscribeListener = ContactListView.onReject;
 
-      QB.webrtc.onCallListener = VideoChatView.onCall;
-      QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
-      QB.webrtc.onRejectCallListener = VideoChatView.onReject;
-      QB.webrtc.onStopCallListener = VideoChatView.onStop;
-      QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
-      QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
+      // QB.webrtc.onCallListener = VideoChatView.onCall;
+      // QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
+      // QB.webrtc.onRejectCallListener = VideoChatView.onReject;
+      // QB.webrtc.onStopCallListener = VideoChatView.onStop;
+      // QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
+      // QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
 
       QB.chat.onDisconnectingListener = function() {
         if (localStorage['QM.user']) {
