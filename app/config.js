@@ -29,6 +29,10 @@ define(function() {
       scope: 'email,user_friends',
     },
 
+    QBdebug : {
+      mode: 1,
+      file: 0
+    },
     debug: true,
     isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 

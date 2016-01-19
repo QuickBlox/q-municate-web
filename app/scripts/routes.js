@@ -52,7 +52,6 @@ define([
       });
 
       $(window).blur(function() {
-        // console.log('ВКЛАДКА ЗАКРЫТА');
         window.isQMAppActive = false;
       });
 

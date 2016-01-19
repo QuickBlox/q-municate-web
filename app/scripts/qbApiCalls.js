@@ -22,7 +22,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     init: function(token) {
       if (typeof token === 'undefined') {
-        QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret);
+        QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, QMCONFIG.QBdebug);
       } else {
         QB.init(token);
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
