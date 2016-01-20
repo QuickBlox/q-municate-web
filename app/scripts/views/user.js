@@ -55,7 +55,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       User.resetPass();
     },
 
-    autologin: function() {
+    autologin: function() {console.log('USER VIEWS AUTOLOGIN');
       switchPage($('#loginPage'));
       User.autologin();
     },

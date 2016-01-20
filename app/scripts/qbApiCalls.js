@@ -28,7 +28,9 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
 
         Session.create(JSON.parse(localStorage['QM.session']), true);
+        console.log('AUTOLOGIN - BEGIN');
         UserView.autologin();
+        console.log('AUTOLOGIN - END');
       }
 
       if (QMCONFIG.debug) console.log('QB init', this);
