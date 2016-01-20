@@ -44,21 +44,21 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           self._is_import = getImport(user);
 
           if (QMCONFIG.debug) console.log('User', self);
-
+console.log('roster');
           QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
-            console.log('111');
-            self.rememberMe();console.log('222');
-            UserView.successFormCallback();console.log('333');
-            DialogView.prepareDownloading(roster);console.log('444');
-
-            if (!self._is_import) {console.log('555');
+            console.log(roster);
+            self.rememberMe();
+            UserView.successFormCallback();
+            DialogView.prepareDownloading(roster);
+console.log(roster);
+            if (!self._is_import) {
               self.import(roster, user);
-            } else {console.log('666');
+            } else {
               DialogView.downloadDialogs(roster);
             }
-            
+            console.log(roster);
           });
-
+console.log('roster');
         });
       }, true);
     },
@@ -216,10 +216,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
               if (self._remember) {
                 self.rememberMe();
               }
-console.log('1111');
-              UserView.successFormCallback();console.log('2222');
-              DialogView.prepareDownloading(roster);console.log('3333');
-              DialogView.downloadDialogs(roster);console.log('44444');
+
+              UserView.successFormCallback();
+              DialogView.prepareDownloading(roster);
+              DialogView.downloadDialogs(roster);
             });
 
           });
@@ -281,10 +281,10 @@ console.log('1111');
 
       if (QMCONFIG.debug) console.log('User', self);
 
-      QBApiCalls.connectChat(self.contact.user_jid, function(roster) {console.log(roster);
-        UserView.successFormCallback();console.log('11111111111111');
-        DialogView.prepareDownloading(roster);console.log('22222222222222');
-        DialogView.downloadDialogs(roster);console.log('33333333333333');
+      QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
+        UserView.successFormCallback();
+        DialogView.prepareDownloading(roster);
+        DialogView.downloadDialogs(roster);
       });
     },
 
