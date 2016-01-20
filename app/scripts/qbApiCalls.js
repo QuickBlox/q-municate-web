@@ -240,11 +240,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         // var password = Session.authParams.provider ? Session.token :
         //                Session.decrypt(Session.authParams).password;
-
+console.log(res);
         // Session.encrypt(Session.authParams);
         var password = Session.token;
-        console.log(Session.token);
-        QB.chat.connect({jid: jid, password: password}, function(err, res) {
+        QB.chat.connect({jid: jid, password: password}, function(err, roster) {
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
 
@@ -256,7 +255,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           } else {
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
-            callback(res);
+            callback(roster);
           }
         });
       });
