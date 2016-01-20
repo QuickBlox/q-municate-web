@@ -259,7 +259,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             setRecoverySessionInterval();
             callback(res);
             console.log(res);
-          }console.log('123123123123123123123123123123123123123123123')
+          }console.log('123123123123123123123123123123123123123123123');
         });
       });
     },
