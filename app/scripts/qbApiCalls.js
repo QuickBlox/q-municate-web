@@ -22,7 +22,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     init: function(token) {
       if (typeof token === 'undefined') {
-        QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, QMCONFIG.QBconsole);
+        QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, {debug: {mode: 1, file: null}});
       } else {
         QB.init(token);
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
@@ -30,6 +30,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         Session.create(JSON.parse(localStorage['QM.session']), true);
         UserView.autologin();
       }
+
+      if (QMCONFIG.debug) console.log('QB init', this);
     },
 
     checkSession: function(callback) {

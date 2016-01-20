@@ -28,13 +28,6 @@ define(function() {
       appId: '605405446247805',
       scope: 'email,user_friends',
     },
-
-    QBconsole:
-      dedug: {
-        mode: 1,
-        file: 0
-      },
-
       
     debug: true,
     isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
