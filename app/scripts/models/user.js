@@ -216,10 +216,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
               if (self._remember) {
                 self.rememberMe();
               }
-onsole.log('1111');
-              UserView.successFormCallback();onsole.log('2222');
-              DialogView.prepareDownloading(roster);onsole.log('3333');
-              DialogView.downloadDialogs(roster);onsole.log('44444');
+console.log('1111');
+              UserView.successFormCallback();console.log('2222');
+              DialogView.prepareDownloading(roster);console.log('3333');
+              DialogView.downloadDialogs(roster);console.log('44444');
             });
 
           });

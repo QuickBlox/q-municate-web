@@ -258,6 +258,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);
+          }
         });
       });
     },
