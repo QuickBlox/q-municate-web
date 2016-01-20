@@ -46,13 +46,14 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           if (QMCONFIG.debug) console.log('User', self);
 
           QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
-            self.rememberMe();
-            UserView.successFormCallback();
-            DialogView.prepareDownloading(roster);
+            console.log('111');
+            self.rememberMe();console.log('222');
+            UserView.successFormCallback();console.log('333');
+            DialogView.prepareDownloading(roster);console.log('444');
 
-            if (!self._is_import) {
+            if (!self._is_import) {console.log('555');
               self.import(roster, user);
-            } else {
+            } else {console.log('666');
               DialogView.downloadDialogs(roster);
             }
             
@@ -215,10 +216,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
               if (self._remember) {
                 self.rememberMe();
               }
-
-              UserView.successFormCallback();
-              DialogView.prepareDownloading(roster);
-              DialogView.downloadDialogs(roster);
+onsole.log('1111');
+              UserView.successFormCallback();onsole.log('2222');
+              DialogView.prepareDownloading(roster);onsole.log('3333');
+              DialogView.downloadDialogs(roster);onsole.log('44444');
             });
 
           });

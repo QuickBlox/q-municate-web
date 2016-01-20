@@ -254,12 +254,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
               UserView.logout();
               window.location.reload();
             }
-          } else {console.log(res);
+          } else {
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);
-            console.log(res);
-          }console.log('123123123123123123123123123123123123123123123');
         });
       });
     },
