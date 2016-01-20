@@ -313,7 +313,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         if (isCallback) {
           if (isMessageListener) {
             chat.find('.l-chat-content .mCSB_container').append(html);
-            attachType ? setTimeout(function(){fixScroll(chat)},1500) : fixScroll(chat);
+            attachType ? setTimeout(function(){fixScroll(chat);},1500) : fixScroll(chat);
           } else {
             chat.find('.l-chat-content .mCSB_container').prepend(html);
           }
@@ -323,7 +323,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           } else {
             chat.find('.l-chat-content').prepend(html);
           }
-          setTimeout(function(){fixScroll(chat)},1000);
+          setTimeout(function(){fixScroll(chat);},1000);
         }
 
       });
