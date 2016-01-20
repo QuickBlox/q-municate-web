@@ -22,7 +22,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     init: function(token) {
       if (typeof token === 'undefined') {
-        QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, {debug: {mode: 1, file: null}});
+        QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, {debug: {mode: 0, file: null}});
       } else {
         QB.init(token);
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
@@ -259,7 +259,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             setRecoverySessionInterval();
             callback(res);
             console.log(res);
-          }
+          }console.log('123123123123123123123123123123123123123123123')
         });
       });
     },
