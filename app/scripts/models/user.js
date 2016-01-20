@@ -279,6 +279,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.contact = Contact.create(storage);
 
       if (QMCONFIG.debug) console.log('User', self);
+      console.log('AUTOLOGIN');
 
       QBApiCalls.connectChat(self.contact.user_jid, function(roster) {console.log(roster);
         UserView.successFormCallback();console.log('11111111111111');
