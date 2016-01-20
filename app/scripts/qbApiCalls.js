@@ -239,28 +239,36 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     },
 
     connectChat: function(jid, callback) {
+      console.log('1');
       this.checkSession(function(res) {
         // var password = Session.authParams.provider ? Session.token :
         //                Session.decrypt(Session.authParams).password;
-
+console.log('2');
         // Session.encrypt(Session.authParams);
         var password = Session.token;
+        console.log('3');
         QB.chat.connect({jid: jid, password: password}, function(err, res) {
+          console.log('4');
           if (err) {
             if (QMCONFIG.debug) console.log(err.detail);
-
+console.log('5');
             if (err.detail.indexOf('Status.ERROR') >= 0 || err.detail.indexOf('Status.AUTHFAIL') >= 0) {
               fail(err.detail);
               UserView.logout();
               window.location.reload();
             }
           } else {
+            console.log('6');
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);
+            console.log('7');
           }
+          console.log('8');
         });
+        console.log('9');
       });
+      console.log('10');
     },
 
     listDialogs: function(params, callback) {

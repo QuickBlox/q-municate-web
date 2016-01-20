@@ -44,21 +44,20 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           self._is_import = getImport(user);
 
           if (QMCONFIG.debug) console.log('User', self);
-console.log('roster');
+
           QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
-            console.log(roster);
             self.rememberMe();
             UserView.successFormCallback();
             DialogView.prepareDownloading(roster);
-console.log(roster);
+
             if (!self._is_import) {
               self.import(roster, user);
             } else {
               DialogView.downloadDialogs(roster);
             }
-            console.log(roster);
+            
           });
-console.log('roster');
+
         });
       }, true);
     },
