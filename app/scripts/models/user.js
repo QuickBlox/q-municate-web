@@ -280,10 +280,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
       if (QMCONFIG.debug) console.log('User', self);
 
-      QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
-        UserView.successFormCallback();
-        DialogView.prepareDownloading(roster);
-        DialogView.downloadDialogs(roster);
+      QBApiCalls.connectChat(self.contact.user_jid, function(roster) {console.log(roster);
+        UserView.successFormCallback();console.log('11111111111111');
+        DialogView.prepareDownloading(roster);console.log('22222222222222');
+        DialogView.downloadDialogs(roster);console.log('33333333333333');
       });
     },
 
