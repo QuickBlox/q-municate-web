@@ -22,7 +22,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     init: function(token) {
       if (typeof token === 'undefined') {
-        QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, {debug: {mode: 1, file: null}});
+        QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, {debug: {mode: 0, file: null}});
       } else {
         QB.init(token);
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
@@ -237,14 +237,14 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     },
 
     connectChat: function(jid, callback) {
-      this.checkSession(function(res) {
-        // var password = Session.authParams.provider ? Session.token :
-        //                Session.decrypt(Session.authParams).password;
-console.log(res);
-        // Session.encrypt(Session.authParams);
+
         var password = Session.token;
         QB.chat.connect({jid: jid, password: password}, function(err, roster) {
-          if (err) {
+          if (roster) {
+            Session.update({ date: new Date() });
+            setRecoverySessionInterval();
+            callback(roster);
+          } else {
             if (QMCONFIG.debug) console.log(err.detail);
 
             if (err.detail.indexOf('Status.ERROR') >= 0 || err.detail.indexOf('Status.AUTHFAIL') >= 0) {
@@ -252,13 +252,9 @@ console.log(res);
               UserView.logout();
               window.location.reload();
             }
-          } else {
-            Session.update({ date: new Date() });
-            setRecoverySessionInterval();
-            callback(roster);
           }
         });
-      });
+
     },
 
     listDialogs: function(params, callback) {
