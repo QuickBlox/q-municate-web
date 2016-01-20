@@ -64,6 +64,10 @@ define(function() {
       notFoundEmail: "The email you entered wasn't found",
       crashFBToken: "Sorry, we noticed that you had logged out from Facebook so we need to recreate your FB token now. Please click the Connect with FB button again",
       FBAccountExists: "This FB user already has an account in the Q-municate. You can't combine two Q-municate users"
+    },
+
+    QBconf: {
+      debug: {mode: 1, file: null}
     }
 
   };
