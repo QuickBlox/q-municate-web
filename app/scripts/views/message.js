@@ -271,7 +271,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += '<div class="preview preview-photo" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'">';
-            html += '<img id="img_'+message.id+'" src="'+attachUrl+'" alt="attach">';
+            html += '<img id="attach_'+message.id+'" src="'+attachUrl+'" alt="attach">';
             html += '</div></div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
 
@@ -279,7 +279,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<audio src="'+attachUrl+'" controls></audio>';
+            html += '<audio id="attach_'+message.id+'" src="'+attachUrl+'" controls></audio>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
             html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
@@ -288,14 +288,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<div class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
+            html += '<div id="attach_'+message.id+'" class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
 
           } else if (attachType) {
 
             html += '<div class="message-body">';
-            html += '<a class="attach-file" href="'+attachUrl+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
+            html += '<a id="attach_'+message.id+'" class="attach-file" href="'+attachUrl+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
             html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
@@ -322,11 +322,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           } else {
             chat.find('.l-chat-content').prepend(html);
           }
-          setTimeout(function(){fixScroll(chat);},5);
         }
 
         if (attachType) {
-          $('#img_'+message.id).load(function() {
+          $('#attach_'+message.id).load(function() {
             fixScroll(chat);
           });
         } else {
