@@ -271,7 +271,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += '<div class="preview preview-photo" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'">';
-            html += '<img src="'+attachUrl+'" alt="attach">';
+            html += '<img id="img_'+message.id+'" src="'+attachUrl+'" alt="attach">';
             html += '</div></div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
 
@@ -313,7 +313,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         if (isCallback) {
           if (isMessageListener) {
             chat.find('.l-chat-content .mCSB_container').append(html);
-            attachType ? setTimeout(function(){fixScroll(chat);},1500) : fixScroll(chat);
           } else {
             chat.find('.l-chat-content .mCSB_container').prepend(html);
           }
@@ -323,7 +322,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           } else {
             chat.find('.l-chat-content').prepend(html);
           }
-          setTimeout(function(){fixScroll(chat);},1000);
+          setTimeout(function(){fixScroll(chat);},5);
+        }
+
+        if (attachType) {
+          $('#img_'+message.id).load(function() {
+            fixScroll(chat);
+          });
+        } else {
+          fixScroll(chat);
         }
 
       });
