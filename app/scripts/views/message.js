@@ -501,7 +501,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         }
       }
 
-      if (notification_type !== '1' && dialogItem.length > 0 && !isOfflineStorage) {
+      if (notification_type !== '1' && dialogItem.length > 0/* && !isOfflineStorage*/) {
         copyDialogItem = dialogItem.clone();
         dialogItem.remove();
         $('#recentList ul').prepend(copyDialogItem);
