@@ -161,16 +161,16 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
             extension = {
               date_sent: Math.floor(Date.now() / 1000),
               notification_type: '1',
-              room_jid: dialog.room_jid,
-              room_name: dialog.room_name,
               dialog_id: dialog.id,
+              room_name: dialog.room_name,
+              room_updated_date: Math.floor(Date.now() / 1000),
               current_occupant_ids: res.occupants_ids.join(),
-              dialog_update_info: 3
+              type: 2
             };
 
             if (dialog.room_photo) extension.room_photo = dialog.room_photo;
 
-            QB.chat.send(contacts[id].user_jid, {type: 'chat', body: 'Notification message', extension: extension});
+            QB.chat.sendSystemMessage(contacts[id].user_jid, {extension: extension});
           }
         });
 
