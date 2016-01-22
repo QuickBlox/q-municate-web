@@ -143,7 +143,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           contacts = ContactList.contacts,
           User = this.app.models.User,
           self = this,
-          dialog, extension;
+          dialog;
 
       QBApiCalls.updateDialog(params.dialog_id, {push_all: {occupants_ids: [params.occupants_ids]}}, function(res) {
         dialog = self.create(res);
@@ -158,19 +158,18 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           // send invites for all new occupants
           for (var i = 0, len = params.new_ids.length, id; i < len; i++) {
             id = params.new_ids[i];
-            extension = {
-              date_sent: Math.floor(Date.now() / 1000),
-              notification_type: '1',
-              dialog_id: dialog.id,
-              room_name: dialog.room_name,
-              room_updated_date: Math.floor(Date.now() / 1000),
-              current_occupant_ids: res.occupants_ids.join(),
-              type: 2
-            };
-
-            if (dialog.room_photo) extension.room_photo = dialog.room_photo;
-
-            QB.chat.sendSystemMessage(contacts[id].user_jid, {extension: extension});
+            QB.chat.sendSystemMessage(contacts[id].user_jid, {
+              extension: {
+                date_sent: Math.floor(Date.now() / 1000),
+                notification_type: '1',
+                dialog_id: dialog.id,
+                room_name: dialog.room_name,
+                room_photo: dialog.room_photo,
+                room_updated_date: Math.floor(Date.now() / 1000),
+                current_occupant_ids: res.occupants_ids.join(),
+                type: 2
+              }
+            });
           }
         });
 
