@@ -415,9 +415,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           room_jid = roomJidVerification(dialog_id),
           room_name = message.extension && message.extension.room_name,
           room_photo = message.extension && message.extension.room_photo,
-          deleted_id = message.extension && message.extension.deleted_occupant_ids,
-          new_ids = message.extension && message.extension.added_occupant_ids,
-          occupants_ids = message.extension && message.extension.current_occupant_ids,
+          deleted_id = message.extension && message.extension.deleted_occupant_ids ? message.extension.deleted_occupant_ids.split(',').map(Number) : null,
+          new_ids = message.extension && message.extension.added_occupant_ids ? message.extension.added_occupant_ids.split(',').map(Number) : null,
+          occupants_ids = message.extension && message.extension.current_occupant_ids ? message.extension.current_occupant_ids.split(',').map(Number) : null,
           dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
@@ -431,9 +431,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       msg = Message.create(message);
       msg.sender_id = id;
 
-      new_ids ? new_ids.split(',').map(Number) : null;
-      deleted_id ? new_ids.split(',').map(Number) : null;
-      occupants_ids ? new_ids.split(',').map(Number) : null;
+      // new_ids ? new_ids.split(',').map(Number) : null;
+      // deleted_id ? new_ids.split(',').map(Number) : null;
+      // occupants_ids ? new_ids.split(',').map(Number) : null;
 
       if ((!deleted_id || msg.sender_id !== User.contact.id) && chat.is(':visible')) {
         Message.update(msg.id, dialog_id);
@@ -472,8 +472,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
                 contacts = ContactList.contacts;
             
             for (var i = 0, len = new_ids.length; i < len; i++) {
-              new_id = new_ids[i];
-              console.log(new_id)
+              new_id = new_ids[i]; 
               if (new_id !== User.contact.id.toString()) {
                 occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
                 occupant = getStatus(roster[new_id], occupant);
