@@ -428,12 +428,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
           msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
 
+      typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
+      typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
+      typeof occupants_ids === "string" ? occupants_ids = occupants_ids.split(',').map(Number) : null;
+      
       msg = Message.create(message);
       msg.sender_id = id;
-
-      new_ids ? new_ids.split(',').map(Number) : null;
-      deleted_id ? new_ids.split(',').map(Number) : null;
-      occupants_ids ? new_ids.split(',').map(Number) : null;
 
       if ((!deleted_id || msg.sender_id !== User.contact.id) && chat.is(':visible')) {
         Message.update(msg.id, dialog_id);
@@ -466,14 +466,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         if (dialog) ContactList.dialogs[dialog_id] = dialog;
 
         // add new people
-        if (occupants_ids) {
+        if (new_ids) {
           ContactList.add(dialog.occupants_ids, null, function() {
             var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',').map(Number) : [],
                 contacts = ContactList.contacts;
             
             for (var i = 0, len = new_ids.length; i < len; i++) {
               new_id = new_ids[i];
-              console.log(new_id)
               if (new_id !== User.contact.id.toString()) {
                 occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
                 occupant = getStatus(roster[new_id], occupant);

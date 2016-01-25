@@ -277,7 +277,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       var QBApiCalls = this.app.service,
           User = this.app.models.User,
           self = this;
-
+console.log(dialog.occupants_ids.join())
       // send notification about leave
       QB.chat.send(dialog.room_jid, {
         type: 'groupchat',
@@ -286,6 +286,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           date_sent: Math.floor(Date.now() / 1000),
           save_to_history: 1,
           notification_type: '2',
+          current_occupant_ids: dialog.occupants_ids.join(),
           deleted_occupant_ids: User.contact.id,
           dialog_id: dialog.id,
           room_updated_date: dialog.room_updated_date,
