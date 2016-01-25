@@ -194,6 +194,7 @@ define([
 
             for (var i = 0, len = dialogs.length; i < len; i++) {
               dialog = Dialog.create(dialogs[i]);
+
               ContactList.dialogs[dialog.id] = dialog;
               // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
@@ -340,7 +341,7 @@ define([
           dialog = dialogs[dialog_id],
           user = contacts[user_id],
           chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
-          html, jid, icon, name, status, message,
+          html, jid, icon, name, status, message, msgArr,
           self = this;
 
       // if (QMCONFIG.debug) console.log(dialog);
@@ -432,12 +433,17 @@ define([
 
         self.createDataSpinner(true);
         Message.download(dialog_id, function(messages) {
-          self.removeDataSpinner();
           for (var i = 0, len = messages.length; i < len; i++) {
             message = Message.create(messages[i]);
             // if (QMCONFIG.debug) console.log(message);
+            if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
+              QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
+            }
+
             MessageView.addItem(message, null, null, message.recipient_id);
           }
+
+          self.removeDataSpinner();
           self.messageScrollbar();
         });
 
@@ -450,9 +456,8 @@ define([
         // console.log(2222222);
         // console.log(self.app.models.ContactList.dialogs[dialog_id]);
 
-        if (typeof dialog.messages !== 'undefined') {
-          Message.update(dialog.messages.join(), dialog_id);
-          dialog.messages = [];
+        if (typeof dialog.messages.length > 0) {
+          Message.update(dialog.messages.join(), dialog_id, user_id);
         }
 
       }

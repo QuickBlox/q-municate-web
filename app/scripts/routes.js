@@ -610,7 +610,8 @@ define([
       });
 
       $('.list_contextmenu').on('click', '.contact', function() {
-        var dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog");
+        var dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog"),
+            dataId = $('.l-list .list-item.is-selected').attr("data-id");
 
         MessageView.claerTheListTyping(dataDialog);
 

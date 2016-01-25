@@ -67,7 +67,13 @@ define(function() {
     },
 
     QBconf: {
-      debug: {mode: 1, file: null}
+      chatProtocol: {
+        active: 2
+      },
+      debug: {
+        mode: 1,
+        file: null
+      }
     }
 
   };

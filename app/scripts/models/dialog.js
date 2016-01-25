@@ -24,7 +24,10 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
     create: function(params) {
       var User = this.app.models.User,
           // exclude current user from dialog occupants that he doesn't hit to yourself in Contact List
-          occupants_ids = _.without(params.occupants_ids, User.contact.id);
+          occupants_ids = _.chain(params.occupants_ids)
+                          .without(params.occupants_ids, User.contact.id)
+                          .uniq(occupants_ids)
+                          .value();
 
       return {
         id: params._id,
@@ -143,7 +146,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           contacts = ContactList.contacts,
           User = this.app.models.User,
           self = this,
-          dialog, extension;
+          dialog;
 
       QBApiCalls.updateDialog(params.dialog_id, {push_all: {occupants_ids: [params.occupants_ids]}}, function(res) {
         dialog = self.create(res);
@@ -158,19 +161,18 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           // send invites for all new occupants
           for (var i = 0, len = params.new_ids.length, id; i < len; i++) {
             id = params.new_ids[i];
-            extension = {
-              date_sent: Math.floor(Date.now() / 1000),
-              notification_type: '1',
-              room_jid: dialog.room_jid,
-              room_name: dialog.room_name,
-              dialog_id: dialog.id,
-              current_occupant_ids: res.occupants_ids.join(),
-              dialog_update_info: 3
-            };
-
-            if (dialog.room_photo) extension.room_photo = dialog.room_photo;
-
-            QB.chat.send(contacts[id].user_jid, {type: 'chat', body: 'Notification message', extension: extension});
+            QB.chat.sendSystemMessage(contacts[id].user_jid, {
+              extension: {
+                date_sent: Math.floor(Date.now() / 1000),
+                notification_type: '1',
+                dialog_id: dialog.id,
+                room_name: dialog.room_name,
+                room_photo: dialog.room_photo,
+                room_updated_date: Math.floor(Date.now() / 1000),
+                current_occupant_ids: res.occupants_ids.join(),
+                type: 2
+              }
+            });
           }
         });
 
@@ -278,7 +280,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       var QBApiCalls = this.app.service,
           User = this.app.models.User,
           self = this;
-
+          
       // send notification about leave
       QB.chat.send(dialog.room_jid, {
         type: 'groupchat',
@@ -287,6 +289,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           date_sent: Math.floor(Date.now() / 1000),
           save_to_history: 1,
           notification_type: '2',
+          current_occupant_ids: dialog.occupants_ids.join(),
           deleted_occupant_ids: User.contact.id,
           dialog_id: dialog.id,
           room_updated_date: dialog.room_updated_date,

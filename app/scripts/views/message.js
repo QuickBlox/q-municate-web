@@ -44,9 +44,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
       if (message.sessionID && $('.message[data-session="'+message.sessionID+'"]')[0]) return true;
 
-        console.log(chat.find('.mCSB_container'));
-
-
       this.checkSenderId(message.sender_id, function() {
 
         var contacts = ContactListMsg.contacts,
@@ -274,7 +271,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += '<div class="preview preview-photo" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'">';
-            html += '<img src="'+attachUrl+'" alt="attach">';
+            html += '<img id="attach_'+message.id+'" src="'+attachUrl+'" alt="attach">';
             html += '</div></div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
 
@@ -282,7 +279,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<audio src="'+attachUrl+'" controls></audio>';
+            html += '<audio id="attach_'+message.id+'" src="'+attachUrl+'" controls></audio>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
             html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
@@ -291,14 +288,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<div class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
+            html += '<div id="attach_'+message.id+'" class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
 
           } else if (attachType) {
 
             html += '<div class="message-body">';
-            html += '<a class="attach-file" href="'+attachUrl+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
+            html += '<a id="attach_'+message.id+'" class="attach-file" href="'+attachUrl+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
             html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
@@ -316,7 +313,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         if (isCallback) {
           if (isMessageListener) {
             chat.find('.l-chat-content .mCSB_container').append(html);
-            attachType ? setTimeout(function(){fixScroll(chat);},1500) : fixScroll(chat);
           } else {
             chat.find('.l-chat-content .mCSB_container').prepend(html);
           }
@@ -326,7 +322,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           } else {
             chat.find('.l-chat-content').prepend(html);
           }
-          scrollBottom ? setTimeout(function(){fixScroll(chat);},1000) : null;
+        }
+
+        if (attachType) {
+          $('#attach_'+message.id).load(function() {
+            fixScroll(chat);
+          });
+        } else {
+          fixScroll(chat);
         }
 
       });
@@ -413,7 +416,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           room_name = message.extension && message.extension.room_name,
           room_photo = message.extension && message.extension.room_photo,
           deleted_id = message.extension && message.extension.deleted_occupant_ids,
-          occupants_ids = message.extension && message.extension.current_occupant_ids && message.extension.current_occupant_ids.split(',').map(Number),
+          new_ids = message.extension && message.extension.added_occupant_ids,
+          occupants_ids = message.extension && message.extension.current_occupant_ids,
           dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
@@ -424,11 +428,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
           msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
 
+      typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
+      typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
+      typeof occupants_ids === "string" ? occupants_ids = occupants_ids.split(',').map(Number) : null;
+      
       msg = Message.create(message);
       msg.sender_id = id;
 
       if ((!deleted_id || msg.sender_id !== User.contact.id) && chat.is(':visible')) {
-        Message.update(msg.id, dialog_id);
+        // send read status if message displayed in chat
+        Message.update(msg.id, dialog_id, id);
       } else if (!chat.is(':visible') && chat.length > 0) {
         msgArr = dialogs[dialog_id].messages || [];
         msgArr.push(msg.id);
@@ -451,22 +460,21 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       // add new occupants
       if (notification_type === '2') {
         dialog = ContactList.dialogs[dialog_id];
-        if (occupants_ids && msg.sender_id !== User.contact.id) dialog.occupants_ids = dialog.occupants_ids.concat(occupants_ids);
+        if (occupants_ids && msg.sender_id !== User.contact.id) dialog.occupants_ids = dialog.occupants_ids.concat(new_ids);
         if (dialog && deleted_id) dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(',')).map(Number);
         if (room_name) dialog.room_name = room_name;
         if (room_photo) dialog.room_photo = room_photo;
         if (dialog) ContactList.dialogs[dialog_id] = dialog;
 
         // add new people
-        if (occupants_ids) {
+        if (new_ids) {
           ContactList.add(dialog.occupants_ids, null, function() {
             var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',').map(Number) : [],
-                new_ids = _.difference(dialog.occupants_ids, ids),
-                contacts = ContactList.contacts,
-                new_id;
-
+                contacts = ContactList.contacts;
+            
             for (var i = 0, len = new_ids.length; i < len; i++) {
-              new_id = new_ids[i];
+              new_id = new_ids[i].toString();
+
               if (new_id !== User.contact.id.toString()) {
                 occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
                 occupant = getStatus(roster[new_id], occupant);
@@ -498,7 +506,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         }
       }
 
-      if (notification_type !== '1' && dialogItem.length > 0 && !isOfflineStorage) {
+      if (notification_type !== '1' && dialogItem.length > 0 /* && !isOfflineStorage*/) {
         copyDialogItem = dialogItem.clone();
         dialogItem.remove();
         $('#recentList ul').prepend(copyDialogItem);
@@ -511,13 +519,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
 
-      if (msg.sender_id !== User.contact.id && chat.is(':visible') && $('#'+message.id).is(':visible')) {
-        QB.chat.sendReadStatus({messageId: message.id, userId: id, dialogId: dialog_id});
-      }
-
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
+
     },
 
     onSystemMessage: function(message) {
@@ -527,8 +532,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           dialog_id = message.extension && message.extension.dialog_id,
           room_jid = roomJidVerification(dialog_id),
           room_name = message.extension && message.extension.room_name,
+          room_photo = message.extension && message.extension.room_photo,
           room_updated_at = message.extension && message.extension.room_updated_date,
-          occupants_ids = message.extension && message.extension.current_occupant_ids,
+          occupants_ids = message.extension && message.extension.current_occupant_ids ? message.extension.current_occupant_ids.split(',').map(Number) : null,
           dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
@@ -541,8 +547,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         dialog = Dialog.create({
           _id: dialog_id,
           type: 2,
-          occupants_ids: occupants_ids.toString().split(','),
+          occupants_ids: occupants_ids,
           name: room_name,
+          photo: room_photo,
           room_updated_date: room_updated_at,
           xmpp_room_jid: room_jid,
           unread_count: 1
@@ -607,7 +614,23 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     },
 
     onDeliveredStatus: function(messageId, dialogId, userId) {
-      console.log([messageId, dialogId, userId]);
+      var DialogView = self.app.views.Dialog,
+          hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+          dialogs = ContactList.dialogs,
+          notification_type = message.extension && message.extension.notification_type,
+          dialog_id = message.extension && message.extension.dialog_id,
+          dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
+          dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
+          chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
+          unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
+          roster = ContactList.roster,
+          audioSignal = $('#newMessageSignal')[0],
+          isOfflineStorage = message.delay,
+          selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
+          msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
+
+
+      console.log([messageId, dialogId, userId])
     },
 
     onReadStatus: function(messageId, dialogId, userId) {
