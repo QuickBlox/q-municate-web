@@ -24,7 +24,10 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
     create: function(params) {
       var User = this.app.models.User,
           // exclude current user from dialog occupants that he doesn't hit to yourself in Contact List
-          occupants_ids = _.without(params.occupants_ids, User.contact.id);
+          occupants_ids = _.chain(params.occupants_ids)
+                          .without(params.occupants_ids, User.contact.id)
+                          .uniq(occupants_ids)
+                          .value();
 
       return {
         id: params._id,
@@ -277,7 +280,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       var QBApiCalls = this.app.service,
           User = this.app.models.User,
           self = this;
-console.log(dialog.occupants_ids.join())
+          
       // send notification about leave
       QB.chat.send(dialog.room_jid, {
         type: 'groupchat',

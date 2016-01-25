@@ -415,9 +415,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           room_jid = roomJidVerification(dialog_id),
           room_name = message.extension && message.extension.room_name,
           room_photo = message.extension && message.extension.room_photo,
-          deleted_id = message.extension && message.extension.deleted_occupant_ids,
-          new_ids = message.extension && message.extension.added_occupant_ids,
-          occupants_ids = message.extension && message.extension.current_occupant_ids,
+          deleted_id = message.extension && message.extension.deleted_occupant_ids ? message.extension.deleted_occupant_ids.split(',').map(Number) : null,
+          new_ids = message.extension && message.extension.added_occupant_ids ? message.extension.added_occupant_ids.split(',').map(Number) : null,
+          occupants_ids = message.extension && message.extension.current_occupant_ids ? message.extension.current_occupant_ids.split(',').map(Number) : null,
           dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
@@ -459,7 +459,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       // add new occupants
       if (notification_type === '2') {
         dialog = ContactList.dialogs[dialog_id];
-        if (occupants_ids && msg.sender_id !== User.contact.id) dialog.occupants_ids = dialog.occupants_ids.concat(occupants_ids);
+        if (occupants_ids && msg.sender_id !== User.contact.id) dialog.occupants_ids = dialog.occupants_ids.concat(new_ids);
         if (dialog && deleted_id) dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(',')).map(Number);
         if (room_name) dialog.room_name = room_name;
         if (room_photo) dialog.room_photo = room_photo;
@@ -472,7 +472,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
                 contacts = ContactList.contacts;
             
             for (var i = 0, len = new_ids.length; i < len; i++) {
-              new_id = new_ids[i];
+              new_id = new_ids[i].toString();
+              
               if (new_id !== User.contact.id.toString()) {
                 occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
                 occupant = getStatus(roster[new_id], occupant);
@@ -524,6 +525,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
+
     },
 
     onSystemMessage: function(message) {
@@ -535,7 +537,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           room_name = message.extension && message.extension.room_name,
           room_photo = message.extension && message.extension.room_photo,
           room_updated_at = message.extension && message.extension.room_updated_date,
-          occupants_ids = message.extension && message.extension.current_occupant_ids,
+          occupants_ids = message.extension && message.extension.current_occupant_ids ? message.extension.current_occupant_ids.split(',').map(Number) : null,
           dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
@@ -548,7 +550,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         dialog = Dialog.create({
           _id: dialog_id,
           type: 2,
-          occupants_ids: occupants_ids.toString().split(','),
+          occupants_ids: occupants_ids,
           name: room_name,
           photo: room_photo,
           room_updated_date: room_updated_at,
