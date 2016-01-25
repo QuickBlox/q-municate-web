@@ -44,6 +44,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
       if (message.sessionID && $('.message[data-session="'+message.sessionID+'"]')[0]) return true;
 
+        console.log(chat.find('.mCSB_container'));
+
+
       this.checkSenderId(message.sender_id, function() {
 
         var contacts = ContactListMsg.contacts,
@@ -323,7 +326,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           } else {
             chat.find('.l-chat-content').prepend(html);
           }
-          setTimeout(function(){fixScroll(chat);},1000);
+          scrollBottom ? setTimeout(function(){fixScroll(chat);},1000) : null;
         }
 
       });
