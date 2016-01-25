@@ -5,7 +5,7 @@
  *
  */
 
-define(function() {
+define(['quickblox'], function(QB) {
 
   function Message(app) {
     this.app = app;
@@ -68,12 +68,21 @@ define(function() {
       return message;
     },
 
-    update: function(message_id, dialog_id) {
-      var QBApiCalls = this.app.service;
+    update: function(message_ids, dialog_id, user_id) {
+      var QBApiCalls = this.app.service,
+          ContactList = this.app.models.ContactList,
+          dialog = ContactList.dialogs[dialog_id],
+          unreadMsg = message_ids.split(',');
 
-      QBApiCalls.updateMessage(message_id, {chat_dialog_id: dialog_id, read: 1}, function() {
-        
+      for (var i = 0, len = unreadMsg.length; i < len; i++) {
+        QB.chat.sendReadStatus({messageId: unreadMsg[i], userId: user_id, dialogId: dialog_id});
+      }
+
+      QBApiCalls.updateMessage(message_ids, {chat_dialog_id: dialog_id, read: 1}, function() {
+        dialog.messages = [];
+        console.log(message_ids+' - send read status to this messages');
       });
+
     }
 
   };

@@ -436,7 +436,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       msg.sender_id = id;
 
       if ((!deleted_id || msg.sender_id !== User.contact.id) && chat.is(':visible')) {
-        Message.update(msg.id, dialog_id);
+        Message.update(msg.id, dialog_id, id);
       } else if (!chat.is(':visible') && chat.length > 0) {
         msgArr = dialogs[dialog_id].messages || [];
         msgArr.push(msg.id);
@@ -517,10 +517,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
-
-      if (msg.sender_id !== User.contact.id && chat.is(':visible') && $('#'+message.id).is(':visible')) {
-        QB.chat.sendReadStatus({messageId: message.id, userId: id, dialogId: dialog_id});
-      }
 
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
