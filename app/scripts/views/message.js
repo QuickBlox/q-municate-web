@@ -630,7 +630,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       //     msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
 
 
-      console.log([messageId, dialogId, userId])
+      console.log([messageId, dialogId, userId]);
     },
 
     onReadStatus: function(messageId, dialogId, userId) {
