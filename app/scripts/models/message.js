@@ -80,9 +80,9 @@ define(['quickblox'], function(QB) {
         QB.chat.sendReadStatus({messageId: unreadMessages[i], userId: user_id, dialogId: dialog_id});
         console.log(unreadMessage);
         console.log(dialog.messages);
-        if (i == len) dialog.messages = [];
-        console.log(dialog.messages);
       }
+      dialog.messages = [];
+      console.log(dialog.messages);
 
       QBApiCalls.updateMessage(message_ids, {chat_dialog_id: dialog_id, read: 1}, function() {});
 
