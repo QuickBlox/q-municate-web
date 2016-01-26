@@ -337,14 +337,17 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     },
 
     addStatusMessages: function(messageId, dialogId, messageStatus) {
-      // var DialogView = this.app.views.Dialog,
-      //     ContactListMsg = this.app.models.ContactList,
-      //     chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
-      //     status = messageStatus === 'delivered' ? '<div class="message-status '+messageStatus+' is-hidden">Delivered</div>' : '<div class="message-status '+messageStatus+' is-hidden">Seen</div>';
+      var DialogView = this.app.views.Dialog,
+          ContactListMsg = this.app.models.ContactList,
+          chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
+          html = messageStatus === 'delivered' ? '<div class="message-status '+messageStatus+' is-hidden">Delivered</div>' : '<div class="message-status '+messageStatus+' is-hidden">Seen</div>';
 
-      // if (messageStatus === 'delivered') {}
-      // chat.find('article#'+messageId+' time.message-time').siblings().remove();
-      // chat.find('article#'+messageId+' .message-container').append(html);
+      if (messageStatus === 'delivered') {
+        chat.find('article#'+messageId+' time.message-time').siblings().remove();
+        chat.find('article#'+messageId+' .message-container').append(html);
+      } else if (messageStatus === 'displayed') {
+        chat.find('article#'+messageId+' time.message-time').siblings().remove();
+        chat.find('article#'+messageId+' .message-container').append(html);
       console.log(messageStatus)
     },
 
