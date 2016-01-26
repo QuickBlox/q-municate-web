@@ -614,20 +614,20 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     },
 
     onDeliveredStatus: function(messageId, dialogId, userId) {
-      var DialogView = self.app.views.Dialog,
-          hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-          dialogs = ContactList.dialogs,
-          notification_type = message.extension && message.extension.notification_type,
-          dialog_id = message.extension && message.extension.dialog_id,
-          dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
-          dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
-          chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
-          unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-          roster = ContactList.roster,
-          audioSignal = $('#newMessageSignal')[0],
-          isOfflineStorage = message.delay,
-          selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
-          msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
+      // var DialogView = self.app.views.Dialog,
+      //     hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+      //     dialogs = ContactList.dialogs,
+      //     notification_type = message.extension && message.extension.notification_type,
+      //     dialog_id = message.extension && message.extension.dialog_id,
+      //     dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
+      //     dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
+      //     chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
+      //     unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
+      //     roster = ContactList.roster,
+      //     audioSignal = $('#newMessageSignal')[0],
+      //     isOfflineStorage = message.delay,
+      //     selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
+      //     msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
 
 
       console.log([messageId, dialogId, userId])

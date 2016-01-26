@@ -72,16 +72,19 @@ define(['quickblox'], function(QB) {
       var QBApiCalls = this.app.service,
           ContactList = this.app.models.ContactList,
           dialog = ContactList.dialogs[dialog_id],
-          unreadMsg = message_ids.split(',');
+          unreadMessages = message_ids.split(','),
+          unreadMessage;
 
       for (var i = 0, len = unreadMsg.length; i < len; i++) {
-        QB.chat.sendReadStatus({messageId: unreadMsg[i], userId: user_id, dialogId: dialog_id});
+        unreadMessage = unreadMessages[i];
+        QB.chat.sendReadStatus({messageId: unreadMessages[i], userId: user_id, dialogId: dialog_id});
+        console.log(unreadMessage);
+        console.log(dialog.messages);
+        if (i == len) dialog.messages = [];
+        console.log(dialog.messages);
       }
 
-      QBApiCalls.updateMessage(message_ids, {chat_dialog_id: dialog_id, read: 1}, function() {
-        dialog.messages = [];
-        console.log(message_ids+' - send read status to this messages');
-      });
+      QBApiCalls.updateMessage(message_ids, {chat_dialog_id: dialog_id, read: 1}, function() {});
 
     }
 
