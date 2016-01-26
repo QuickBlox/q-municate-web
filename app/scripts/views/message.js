@@ -336,6 +336,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
     },
 
+    addStatusMessages: function(msgId, msgStatus) {
+      if (msgStatus == 'Delivered') {
+
+      } else {
+
+      }
+    },
+
     sendMessage: function(form) {
       var jid = form.parents('.l-chat').data('jid'),
           id = form.parents('.l-chat').data('id'),
@@ -630,11 +638,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       //     msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
 
 
-      console.log([messageId, dialogId, userId]);
+      console.log('delivered', [messageId, dialogId, userId]);
     },
 
     onReadStatus: function(messageId, dialogId, userId) {
-      console.log([messageId, dialogId, userId]);
+      console.log('seen', [messageId, dialogId, userId]);
     }
 
   };

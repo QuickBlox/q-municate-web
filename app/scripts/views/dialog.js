@@ -423,6 +423,7 @@ define([
         html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.svg" alt="attach"></button>';
         html += '<input class="attachment" type="file" accept="image/*">';
         html += '</form></footer>';
+
         html += '</section>';
 
         $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append(html);
@@ -438,7 +439,10 @@ define([
             // if (QMCONFIG.debug) console.log(message);
             if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
               QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
-              console.log(message.id);
+            }
+
+            if (message.sender_id == User.contact.id && dialog.type == 2) {
+              console.log(message);
             }
 
             MessageView.addItem(message, null, null, message.recipient_id);
@@ -457,9 +461,8 @@ define([
         // console.log(2222222);
         // console.log(self.app.models.ContactList.dialogs[dialog_id]);
 
-        if (typeof dialog.messages.length !== "undefined") {
+        if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0) {
           Message.update(dialog.messages.join(), dialog_id, user_id);
-          console.log('SENDED READ STATUS');
         }
 
       }

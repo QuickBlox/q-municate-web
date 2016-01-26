@@ -38,7 +38,8 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
         occupants_ids: occupants_ids,
         last_message_date_sent: params.last_message_date_sent || null,
         room_updated_date: Date.parse(params.updated_at) || params.room_updated_date || null,
-        unread_count: params.unread_messages_count || ''
+        unread_count: params.unread_messages_count || '',
+        messages: []
       };
     },
 
