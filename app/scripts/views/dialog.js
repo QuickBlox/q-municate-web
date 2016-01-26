@@ -437,9 +437,7 @@ define([
             message = Message.create(messages[i]);
             // if (QMCONFIG.debug) console.log(message);
             if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
-              dialog.messages.push(message.id);
-              console.log(dialog.messages);
-              // QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
+              QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
             }
 
             MessageView.addItem(message, null, null, message.recipient_id);
@@ -458,7 +456,7 @@ define([
         // console.log(2222222);
         // console.log(self.app.models.ContactList.dialogs[dialog_id]);
 
-        if (typeof dialog.messages.length > 0) {
+        if (dialog.messages.length > 0) {
           Message.update(dialog.messages.join(), dialog_id, user_id);
           console.log('SENDED READ STATUS');
         }
