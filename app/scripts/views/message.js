@@ -336,12 +336,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
     },
 
-    addStatusMessages: function(msgId, msgStatus) {
-      if (msgStatus == 'Delivered') {
+    addStatusMessages: function(messageId, dialogId, messageStatus) {
+      // var DialogView = this.app.views.Dialog,
+      //     ContactListMsg = this.app.models.ContactList,
+      //     chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
+      //     status = messageStatus === 'delivered' ? '<div class="message-status '+messageStatus+' is-hidden">Delivered</div>' : '<div class="message-status '+messageStatus+' is-hidden">Seen</div>';
 
-      } else {
-
-      }
+      // if (messageStatus === 'delivered') {}
+      // chat.find('article#'+messageId+' time.message-time').siblings().remove();
+      // chat.find('article#'+messageId+' .message-container').append(html);
+      console.log(messageStatus)
     },
 
     sendMessage: function(form) {
@@ -443,10 +447,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       msg = Message.create(message);
       msg.sender_id = id;
 
-      if ((!deleted_id || msg.sender_id !== User.contact.id) && chat.is(':visible')) {
+      if (message.markable == 1 && chat.is(':visible')) {
         // send read status if message displayed in chat
         Message.update(msg.id, dialog_id, id);
-      } else if (!chat.is(':visible') && chat.length > 0) {
+      } else if (!chat.is(':visible') && chat.length > 0 && message.markable == 1) {
         msgArr = dialogs[dialog_id].messages || [];
         msgArr.push(msg.id);
         dialogs[dialog_id].messages = msgArr;
@@ -622,26 +626,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     },
 
     onDeliveredStatus: function(messageId, dialogId, userId) {
-      // var DialogView = self.app.views.Dialog,
-      //     hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-      //     dialogs = ContactList.dialogs,
-      //     notification_type = message.extension && message.extension.notification_type,
-      //     dialog_id = message.extension && message.extension.dialog_id,
-      //     dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
-      //     dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
-      //     chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
-      //     unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-      //     roster = ContactList.roster,
-      //     audioSignal = $('#newMessageSignal')[0],
-      //     isOfflineStorage = message.delay,
-      //     selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
-      //     msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
-
-
+      self.addStatusMessages(messageId, dialogId, 'delivered');
       console.log('delivered', [messageId, dialogId, userId]);
     },
 
     onReadStatus: function(messageId, dialogId, userId) {
+      self.addStatusMessages(messageId, dialogId, 'displayed');
       console.log('seen', [messageId, dialogId, userId]);
     }
 

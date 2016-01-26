@@ -91,6 +91,13 @@ article.message[data-status="typing"] > div {
       .message-time {
         margin-top: 5px;
       }
+      .message-status {
+        margin-top: 5px;
+        font-size: 15px;
+        line-height: 26px;
+        color: #999;
+        text-align: right;
+      }
       .message-avatar.request-button_pending {
         margin: 5px 30px 0 10px;
       }

@@ -461,7 +461,7 @@ define([
         // console.log(2222222);
         // console.log(self.app.models.ContactList.dialogs[dialog_id]);
 
-        if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0) {
+        if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 3) {
           Message.update(dialog.messages.join(), dialog_id, user_id);
         }
 
