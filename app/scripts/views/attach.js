@@ -177,9 +177,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           type = chat.is('.is-group') ? 'groupchat' : 'chat',
           dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           copyDialogItem;
-        
-      // send message
-      QB.chat.send(jid, {
+
+     var msg = {
         type: type,
         body: 'Attachment',
         extension: {
@@ -191,14 +190,19 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           ]
         },
         markable: 1
-      });
+      };
+      
+      // send message
+      QB.chat.send(jid, msg);
 
       message = Message.create({
         chat_dialog_id: dialog_id,
         date_sent: time,
         attachment: attach,
-        sender_id: User.contact.id
+        sender_id: User.contact.id,
+        _id: msg.id
       });
+
       if (QMCONFIG.debug) console.log(message);
       if (type === 'chat') MessageView.addItem(message, true, true);
 
