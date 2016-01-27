@@ -347,7 +347,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     addStatusMessages: function(messageId, dialogId, messageStatus) {
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
-          chat = $('.l-chat[data-dialog="'+dialogId+'"]')
+          chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
           statusHtml = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status');
 
       if (messageStatus === 'delivered') {
