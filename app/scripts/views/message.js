@@ -637,12 +637,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
     onDeliveredStatus: function(messageId, dialogId, userId) {
       self.addStatusMessages(messageId, dialogId, 'delivered');
-      console.log('delivered', [messageId, dialogId, userId]);
     },
 
     onReadStatus: function(messageId, dialogId, userId) {
       self.addStatusMessages(messageId, dialogId, 'displayed');
-      console.log('seen', [messageId, dialogId, userId]);
     }
 
   };

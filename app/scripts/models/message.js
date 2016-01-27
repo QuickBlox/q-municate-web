@@ -77,9 +77,6 @@ define(['quickblox'], function(QB) {
 
       for (var i = 0, len = unreadMessages.length; i < len; i++) {
         unreadMessage = unreadMessages[i];
-        console.log(unreadMessage);
-        console.log(user_id);
-        console.log(dialog_id);
         QB.chat.sendReadStatus({messageId: unreadMessage, userId: user_id, dialogId: dialog_id});
       }
       dialog.messages = [];
