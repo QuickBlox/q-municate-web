@@ -274,7 +274,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html += '<img id="attach_'+message.id+'" src="'+attachUrl+'" alt="attach">';
             html += '</div></div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-            html += '<div class="message-status is-hidden"></div>';
+            html += '<div class="message-status is-hidden">Not delivered</div>';
 
           } else if (attachType && attachType.indexOf('audio') > -1) {
 
@@ -292,7 +292,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html += '<div id="'+message.id+'" class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-            html += '<div class="message-status is-hidden"></div>';
+            html += '<div class="message-status is-hidden">Not delivered</div>';
 
           } else if (attachType) {
 
@@ -306,7 +306,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           } else {
             html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-            html += '<div class="message-status is-hidden"></div>';
+            html += '<div class="message-status is-hidden">Not delivered</div>';
           }
 
           html += '</div></div></article>';
