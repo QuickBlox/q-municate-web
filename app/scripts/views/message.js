@@ -271,15 +271,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += '<div class="preview preview-photo" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'">';
-            html += '<img id="attach_'+message.id+'" src="'+attachUrl+'" alt="attach">';
+            html += '<img id="'+message.id+'" class="attach" src="'+attachUrl+'" alt="attach">';
             html += '</div></div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '<div class="message-status is-hidden"></div>';
 
           } else if (attachType && attachType.indexOf('audio') > -1) {
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<audio id="attach_'+message.id+'" src="'+attachUrl+'" controls></audio>';
+            html += '<audio id="'+message.id+'" class="attach" src="'+attachUrl+'" controls></audio>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
             html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
@@ -288,14 +289,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
             html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
-            html += '<div id="attach_'+message.id+'" class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
+            html += '<div id="'+message.id+'" class="attach preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '<div class="message-status is-hidden"></div>';
 
           } else if (attachType) {
 
             html += '<div class="message-body">';
-            html += '<a id="attach_'+message.id+'" class="attach-file" href="'+attachUrl+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
+            html += '<a id="'+message.id+'" class="attach attach-file" href="'+attachUrl+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
             html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
             html += '</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
@@ -304,6 +306,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           } else {
             html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
             html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '<div class="message-status is-hidden"></div>';
           }
 
           html += '</div></div></article>';
@@ -325,11 +328,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         }
 
         if (attachType) {
-          $('#attach_'+message.id).load(function() {
-            fixScroll(chat);
-          });
+          $('#'+message.id+'.attach').load(function() { fixScroll(chat); });
         } else {
           fixScroll(chat);
+        }
+
+        if (message.sender_id == User.contact.id && message.delivered_ids.length > 0) {
+          self.addStatusMessages(message.id, message.dialog_id, 'delivered');
+        }
+        if (message.sender_id == User.contact.id && message.read_ids.length > 1) {
+          self.addStatusMessages(message.id, message.dialog_id, 'displayed');
         }
 
       });
@@ -339,16 +347,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     addStatusMessages: function(messageId, dialogId, messageStatus) {
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
-          chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
-          html = messageStatus === 'delivered' ? '<div class="message-status '+messageStatus+' is-hidden">Delivered</div>' : '<div class="message-status '+messageStatus+' is-hidden">Seen</div>';
+          chat = $('.l-chat[data-dialog="'+dialogId+'"]')
+          statusHtml = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status');
 
       if (messageStatus === 'delivered') {
-        chat.find('article#'+messageId+' time.message-time').siblings().remove();
-        chat.find('article#'+messageId+' .message-container').append(html);
+        statusHtml.hasClass('delivered') ? statusHtml.html('Delivered') : statusHtml.addClass('delivered').html('Delivered');
       } else if (messageStatus === 'displayed') {
-        chat.find('article#'+messageId+' time.message-time').siblings().remove();
-        chat.find('article#'+messageId+' .message-container').append(html);
-      console.log(messageStatus)
+        statusHtml.hasClass('delivered') ? statusHtml.removeClass('delivered').addClass('displayed').html('Seen') : statusHtml.addClass('displayed').html('Seen');
+      }
     },
 
     sendMessage: function(form) {
@@ -386,7 +392,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           chat_dialog_id: dialog_id,
           body: val,
           date_sent: time,
-          sender_id: User.contact.id
+          sender_id: User.contact.id,
+          _id: msg.id
         });
         if (QMCONFIG.debug) console.log(message);
         if (type === 'chat') self.addItem(message, true, true);

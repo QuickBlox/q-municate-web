@@ -662,6 +662,23 @@ define([
         }
       });
 
+      // show message status on hover event
+      $('body').on('mouseenter', 'article.message.is-own', function() {
+        var time = $(this).find('.message-time'),
+            status = $(this).find('.message-status');
+
+        time.addClass('is-hidden');
+        status.removeClass('is-hidden');
+      });
+
+      $('body').on('mouseleave', 'article.message.is-own', function() {
+        var time = $(this).find('.message-time'),
+            status = $(this).find('.message-status');
+
+        status.addClass('is-hidden');
+        time.removeClass('is-hidden');
+      });
+
       // send typing statuses with keyup event
       $('.l-workspace-wrap').on('keyup', '.l-message', function(event) {
         var jid = $(this).parents('.l-chat').data('jid'),

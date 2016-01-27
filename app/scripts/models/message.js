@@ -57,8 +57,8 @@ define(['quickblox'], function(QB) {
         callee: parseInt((params.extension && params.extension.callee)) || parseInt(params.callee) || null,
         duration: (params.extension && params.extension.duration) || params.duration || null,
         sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
-        read_ids: params.read_ids || null,
-        delivered_ids: params.delivered_ids || null
+        read_ids: params.read_ids || [],
+        delivered_ids: params.delivered_ids || []
       };
 
       if (message.attachment) {

@@ -441,10 +441,6 @@ define([
               QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
             }
 
-            if (message.sender_id == User.contact.id && dialog.type == 2) {
-              console.log(message);
-            }
-
             MessageView.addItem(message, null, null, message.recipient_id);
           }
 
