@@ -461,8 +461,8 @@ define([
           Message.update(dialog.messages.join(), dialog_id, user_id);
         }
         if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 2) {
-          for (var i = 0, len = dialog.messages.length; i < len; i++) {
-            messageId = dialog.messages[i];
+          for (var j = 0, ln = dialog.messages.length; j < ln; j++) {
+            messageId = dialog.messages[j];
             userId = $('#'+messageId).data('id');
             QB.chat.sendReadStatus({messageId: messageId, userId: userId, dialogId: dialog_id});
           }

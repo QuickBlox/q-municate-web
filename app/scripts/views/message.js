@@ -348,7 +348,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
           chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
-          time = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status')
+          time = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status'),
           statusHtml = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status');
 
       if (messageStatus === 'delivered') {
