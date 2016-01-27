@@ -341,7 +341,7 @@ define([
           dialog = dialogs[dialog_id],
           user = contacts[user_id],
           chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
-          html, jid, icon, name, status, message, msgArr,
+          html, jid, icon, name, status, message, msgArr, userId, messageId,
           self = this;
 
       // if (QMCONFIG.debug) console.log(dialog);
@@ -460,7 +460,13 @@ define([
         if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 3) {
           Message.update(dialog.messages.join(), dialog_id, user_id);
         }
-
+        if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 2) {
+          for (var i = 0, len = dialog.messages.length; i < len; i++) {
+            messageId = dialog.messages[i];
+            userId = $('#'+messageId).data('id');
+            QB.chat.sendReadStatus({messageId: messageId, userId: userId, dialogId: dialog_id});
+          }
+        }
       }
 
       $('.is-selected').removeClass('is-selected');

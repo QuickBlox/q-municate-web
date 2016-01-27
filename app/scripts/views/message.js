@@ -348,6 +348,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
           chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
+          time = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status')
           statusHtml = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status');
 
       if (messageStatus === 'delivered') {
@@ -355,6 +356,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       } else if (messageStatus === 'displayed') {
         statusHtml.hasClass('delivered') ? statusHtml.removeClass('delivered').addClass('displayed').html('Seen') : statusHtml.addClass('displayed').html('Seen');
       }
+
+      // time.addClass('is-hidden');
+      // status.removeClass('is-hidden');
     },
 
     sendMessage: function(form) {
@@ -457,7 +461,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       msg = Message.create(message);
       msg.sender_id = id;
 
-      if (message.markable == 1 && chat.is(':visible')) {
+      if (message.markable === 1 && chat.is(':visible') && msg.sender_id !== User.contact.id) {
         // send read status if message displayed in chat
         Message.update(msg.id, dialog_id, id);
       } else if (!chat.is(':visible') && chat.length > 0 && message.markable == 1) {
