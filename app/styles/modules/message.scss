@@ -76,7 +76,7 @@ article.message[data-status="typing"] > div {
           }
       .message-time {
         font-size: 15px;
-        line-height: 26px;
+        line-height: 24px;
         color: #999;
         text-align: right;
       }
@@ -87,14 +87,10 @@ article.message[data-status="typing"] > div {
         .message_attach_row .message-time {
           line-height: 28px;
         }
-
-      .message-time {
-        margin-top: 5px;
-      }
       .message-status {
         margin-top: 5px;
         font-size: 15px;
-        line-height: 26px;
+        line-height: 24px;
         color: #999;
         text-align: right;
       }
