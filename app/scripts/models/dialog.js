@@ -34,7 +34,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
         type: params.type,
         room_jid: params.xmpp_room_jid || null,
         room_name: params.name || null,
-        room_photo: params.photo && params.photo.replace('http://', 'https://') || null,
+        room_photo: params.photo && params.photo.replace('http://', 'https://') || '',
         occupants_ids: occupants_ids,
         last_message_date_sent: params.last_message_date_sent || null,
         room_updated_date: Date.parse(params.updated_at) || params.room_updated_date || null,
@@ -105,6 +105,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
             callback(dialog);
 
             // send invites for all occupants
+            var id;
             for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
               id = dialog.occupants_ids[i];
               QB.chat.sendSystemMessage(contacts[id].user_jid, {
