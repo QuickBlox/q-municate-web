@@ -105,7 +105,6 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
             callback(dialog);
 
             // send invites for all occupants
-            var id;
             for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
               id = dialog.occupants_ids[i];
               QB.chat.sendSystemMessage(contacts[id].user_jid, {
