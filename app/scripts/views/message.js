@@ -466,7 +466,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       msg = Message.create(message);
       msg.sender_id = id;
 
-      if (message.markable === 1 && chat.is(':visible') && msg.sender_id !== User.contact.id) {
+      if (message.markable === 1 && chat.is(':visible') && window.isQMAppActive && msg.sender_id !== User.contact.id) {
         // send read status if message displayed in chat
         Message.update(msg.id, dialog_id, id);
       } else if (!chat.is(':visible') && chat.length > 0 && message.markable == 1) {
