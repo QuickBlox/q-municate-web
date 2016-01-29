@@ -289,8 +289,9 @@ define([
           html, startOfCurrentDay,
           self = this;
       private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
-console.log(dialog.occupants_ids[0], dialog.occupants_ids);
-console.log(private_id);
+console.log(dialog.occupants_ids[0]);
+console.log(contacts['8626122']);
+console.log(contacts[8626122]);
       icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
       name = private_id ? contacts[private_id].full_name : dialog.room_name;
       status = roster[private_id] ? roster[private_id] : null;
