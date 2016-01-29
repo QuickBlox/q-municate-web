@@ -14,6 +14,7 @@ define(['config', 'quickblox'], function(QMCONFIG, QB) {
   Contact.prototype = {
 
     create: function(qbUser) {
+      console.log(qbUser);
       return {
         id: qbUser.id,
         full_name: qbUser.full_name,
