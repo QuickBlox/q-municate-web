@@ -45,7 +45,7 @@ define([
         dialog_id = dialogItem[0] && dialogItem.data('dialog');
         dialog = $('.dialog-item[data-dialog="'+dialog_id+'"] .contact');
 
-        if (dialog) {
+        if (dialogItem) {
           DialogView.htmlBuild(dialog);
         }
         // console.log(dialog_id);
