@@ -351,11 +351,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           time = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-time'),
           statusHtml = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status');
 
-      if (messageStatus === 'delivered') {
-        statusHtml.hasClass('delivered') ? statusHtml.html('Delivered') : statusHtml.addClass('delivered').html('Delivered');
-      } else if (messageStatus === 'displayed') {
+      if (messageStatus === 'displayed') {
         statusHtml.hasClass('delivered') ? statusHtml.removeClass('delivered').addClass('displayed').html('Seen') : statusHtml.addClass('displayed').html('Seen');
-      }
+      } else if (messageStatus === 'delivered') {
+        statusHtml.hasClass('displayed') ? return true;
+        statusHtml.hasClass('delivered') ? statusHtml.html('Delivered') : statusHtml.addClass('delivered').html('Delivered');
+
       if (isListener) {
         setTimeout(function() {
           time.removeClass('is-hidden');

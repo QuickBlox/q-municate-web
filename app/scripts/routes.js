@@ -44,10 +44,9 @@ define([
         dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
         dialog_id = dialogItem[0] && dialogItem.data('dialog');
         dialog = $('.dialog-item[data-dialog="'+dialog_id+'"] .contact');
-        
+
         if (dialog) {
           DialogView.htmlBuild(dialog);
-          console.log('<<<<<< HELLO >>>>>>');
         }
         // console.log(dialog_id);
         if (dialog_id) {
