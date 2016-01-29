@@ -353,9 +353,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
       if (messageStatus === 'displayed') {
         statusHtml.hasClass('delivered') ? statusHtml.removeClass('delivered').addClass('displayed').html('Seen') : statusHtml.addClass('displayed').html('Seen');
-      } else if (messageStatus === 'delivered') {
-        statusHtml.hasClass('displayed') ? return true;
+      } else if (statusHtml.hasClass('displayed') && messageStatus === 'delivered') {
+        return true;
+      } else {
         statusHtml.hasClass('delivered') ? statusHtml.html('Delivered') : statusHtml.addClass('delivered').html('Delivered');
+      }
 
       if (isListener) {
         setTimeout(function() {
