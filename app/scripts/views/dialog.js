@@ -296,7 +296,7 @@ define([
         name = private_id ? contacts[private_id].full_name : dialog.room_name;
         status = roster[private_id] ? roster[private_id] : null;
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
 
       html = '<li class="list-item dialog-item presence-listener" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
