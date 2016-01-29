@@ -292,7 +292,7 @@ define([
 console.log(dialog.occupants_ids[0]);
 console.log(contacts['8626122']);
 console.log(contacts['8636106']);
-      icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
+      icon = contacts[private_id] ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
       name = private_id ? contacts[private_id].full_name : dialog.room_name;
       status = roster[private_id] ? roster[private_id] : null;
 

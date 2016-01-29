@@ -47,7 +47,7 @@ define([
         dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
         dialog_id = dialogItem[0] && dialogItem.data('dialog');
 
-        if (currentChat) DialogView.htmlBuild($('.l-list .list-item.is-selected'));
+        if (currentChat) DialogView.htmlBuild($('.l-list .list-item.is-selected .contact'));
         // console.log(dialog_id);
         if (dialog_id) {
           dialogItem.find('.unread').text('');
