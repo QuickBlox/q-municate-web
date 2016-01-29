@@ -48,6 +48,7 @@ define([
         if (dialogItem) {
           DialogView.htmlBuild(dialog);
         }
+        
         // console.log(dialog_id);
         if (dialog_id) {
           dialogItem.find('.unread').text('');
