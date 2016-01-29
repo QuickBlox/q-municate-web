@@ -469,7 +469,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       if (message.markable === 1 && chat.is(':visible') && window.isQMAppActive && msg.sender_id !== User.contact.id) {
         // send read status if message displayed in chat
         Message.update(msg.id, dialog_id, id);
-      } else if (!chat.is(':visible') && chat.length > 0 && message.markable == 1) {
+      } else if ((!chat.is(':visible') || !window.isQMAppActive) && chat.length > 0 && message.markable == 1) {
         msgArr = dialogs[dialog_id].messages || [];
         msgArr.push(msg.id);
         dialogs[dialog_id].messages = msgArr;

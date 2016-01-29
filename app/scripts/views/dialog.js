@@ -288,9 +288,11 @@ define([
           private_id, icon, name, status,
           html, startOfCurrentDay,
           self = this;
-      console.log(dialog);
+
       private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
+      
       if (contacts[private_id] === undefined) return true;
+
       icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
       name = private_id ? contacts[private_id].full_name : dialog.room_name;
       status = roster[private_id] ? roster[private_id] : null;

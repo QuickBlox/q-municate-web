@@ -36,19 +36,17 @@ define([
       window.isQMAppActive = true;
 
       $(window).focus(function() {
-        var dialogItem, dialog_id,
-            dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog"),
-            dialog = $('.dialog-item[data-dialog="'+dataDialog+'"] .contact');
+        var dialogItem, dialog_id, dialog;
 
         // console.log('ВКЛАДКА ОТКРЫТА');
         window.isQMAppActive = true;
 
         dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
         dialog_id = dialogItem[0] && dialogItem.data('dialog');
-
+        dialog = $('.dialog-item[data-dialog="'+dialog_id+'"] .contact');
+        
         if (dialog) {
           DialogView.htmlBuild(dialog);
-          DialogView.htmlBuild(dialogItem);
           console.log('<<<<<< HELLO >>>>>>');
         }
         // console.log(dialog_id);
