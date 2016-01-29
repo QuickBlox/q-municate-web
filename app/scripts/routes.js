@@ -679,6 +679,10 @@ define([
         time.removeClass('is-hidden');
       });
 
+      $(window).on('active', function() {
+        console.log('<<<<<<<<<<<<<<<<<<<<<<<    hello   >>>>>>>>>>>>>>>>>>>>>>>>>>');
+      });
+
       // send typing statuses with keyup event
       $('.l-workspace-wrap').on('keyup', '.l-message', function(event) {
         var jid = $(this).parents('.l-chat').data('jid'),
