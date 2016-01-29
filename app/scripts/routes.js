@@ -38,8 +38,7 @@ define([
       $(window).focus(function() {
         var dialogItem, dialog_id,
             dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog"),
-            dataId = $('.l-list .list-item.is-selected').attr("data-id"),
-            dialogItem = dataId ? $('.dialog-item[data-id="'+dataId+'"]').find('.contact') : $('.dialog-item[data-dialog="'+dataDialog+'"]').find('.contact');
+            dialogItem = $('.dialog-item[data-dialog="'+dataDialog+'"] .contact');
 
         // console.log('ВКЛАДКА ОТКРЫТА');
         window.isQMAppActive = true;
