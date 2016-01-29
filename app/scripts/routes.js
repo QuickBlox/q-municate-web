@@ -38,7 +38,8 @@ define([
       $(window).focus(function() {
         var dialogItem, dialog_id,
             dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog"),
-            dataId = $('.l-list .list-item.is-selected').attr("data-id");
+            dataId = $('.l-list .list-item.is-selected').attr("data-id"),
+            dialogItem = dataId ? $('.dialog-item[data-id="'+dataId+'"]').find('.contact') : $('.dialog-item[data-dialog="'+dataDialog+'"]').find('.contact');
 
         // console.log('ВКЛАДКА ОТКРЫТА');
         window.isQMAppActive = true;
@@ -46,8 +47,8 @@ define([
         dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
         dialog_id = dialogItem[0] && dialogItem.data('dialog');
 
-        if (dataDialog) {
-          DialogView.htmlBuild($('.l-list .list-item.is-selected .contact'));
+        if (dialogItem) {
+          DialogView.htmlBuild(dialogItem);
           console.log('<<<<<< HELLO >>>>>>');
         }
         // console.log(dialog_id);
