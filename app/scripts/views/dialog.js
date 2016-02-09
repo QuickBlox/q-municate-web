@@ -290,9 +290,14 @@ define([
           self = this;
 
       private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
-      icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
-      name = private_id ? contacts[private_id].full_name : dialog.room_name;
-      status = roster[private_id] ? roster[private_id] : null;
+
+      try {
+        icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
+        name = private_id ? contacts[private_id].full_name : dialog.room_name;
+        status = roster[private_id] ? roster[private_id] : null;
+      } catch (error) {
+        console.error(error);
+      }
 
       html = '<li class="list-item dialog-item presence-listener" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
       html += '<a class="contact l-flexbox" href="#">';

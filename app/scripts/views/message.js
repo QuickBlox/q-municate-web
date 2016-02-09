@@ -351,11 +351,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           time = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-time'),
           statusHtml = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status');
 
-      if (messageStatus === 'delivered') {
-        statusHtml.hasClass('delivered') ? statusHtml.html('Delivered') : statusHtml.addClass('delivered').html('Delivered');
-      } else if (messageStatus === 'displayed') {
+      if (messageStatus === 'displayed') {
         statusHtml.hasClass('delivered') ? statusHtml.removeClass('delivered').addClass('displayed').html('Seen') : statusHtml.addClass('displayed').html('Seen');
+      } else if (statusHtml.hasClass('displayed') && messageStatus === 'delivered') {
+        return true;
+      } else {
+        statusHtml.hasClass('delivered') ? statusHtml.html('Delivered') : statusHtml.addClass('delivered').html('Delivered');
       }
+
       if (isListener) {
         setTimeout(function() {
           time.removeClass('is-hidden');
@@ -370,7 +373,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       var jid = form.parents('.l-chat').data('jid'),
           id = form.parents('.l-chat').data('id'),
           dialog_id = form.parents('.l-chat').data('dialog'),
-          val = form.find('.textarea').html().trim(),
+          val = form.find('.textarea').text().trim(),
           time = Math.floor(Date.now() / 1000),
           type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
           dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
@@ -469,7 +472,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       if (message.markable === 1 && chat.is(':visible') && window.isQMAppActive && msg.sender_id !== User.contact.id) {
         // send read status if message displayed in chat
         Message.update(msg.id, dialog_id, id);
-      } else if (!chat.is(':visible') && chat.length > 0 && message.markable == 1) {
+      } else if ((!chat.is(':visible') || !window.isQMAppActive) && chat.length > 0 && message.markable == 1) {
         msgArr = dialogs[dialog_id].messages || [];
         msgArr.push(msg.id);
         dialogs[dialog_id].messages = msgArr;

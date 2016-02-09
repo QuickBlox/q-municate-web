@@ -36,14 +36,19 @@ define([
       window.isQMAppActive = true;
 
       $(window).focus(function() {
-        var dialogItem, dialog_id;
+        var dialogItem, dialog_id, dialog;
 
         // console.log('ВКЛАДКА ОТКРЫТА');
         window.isQMAppActive = true;
 
         dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
         dialog_id = dialogItem[0] && dialogItem.data('dialog');
+        dialog = $('.dialog-item[data-dialog="'+dialog_id+'"] .contact');
 
+        if (dialogItem) {
+          DialogView.htmlBuild(dialog);
+        }
+        
         // console.log(dialog_id);
         if (dialog_id) {
           dialogItem.find('.unread').text('');
