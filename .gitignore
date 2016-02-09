@@ -7,8 +7,5 @@ app/bower_components
 node_modules
 npm-debug.log
 
-# production environment
-q-municate-web-2
-
 # builded QM
 dist
