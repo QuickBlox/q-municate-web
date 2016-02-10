@@ -127,7 +127,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
             $('.attach-part_'+id).parents('article').remove();
           }, 50);
 
-        } else {console.log(time)
+        } else {
           progressBar.setPercent(percent);
           part = (fileSizeCrop * percent / 100).toFixed(1);
           $('.attach-part_'+id).text(part);
