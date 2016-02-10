@@ -83,6 +83,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
     },
 
     createProgressBar: function(id, fileSizeCrop, fileSize, file) {
+      console.log(fileSizeCrop)
       var progressBar = new ProgressBar('progress_'+id),
           percent = 5,
           isUpload = false,
