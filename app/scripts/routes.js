@@ -541,7 +541,7 @@ define([
       $('.clean-button').on('click', function(event) {
         event.preventDefault();
 
-        $(this).prev().val('');
+        $(this).prev().val('').focus();
       });  
 
       /* subscriptions
