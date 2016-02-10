@@ -538,6 +538,12 @@ define([
         }
       });
 
+      $('.clean-button').on('click', function(event) {
+        event.preventDefault();
+
+        $(this).prev().val('');
+      });  
+
       /* subscriptions
       ----------------------------------------------------- */
       $('.list_contacts').on('click', 'button.send-request', function() {

@@ -39,6 +39,24 @@
   -webkit-appearance: none;
 }
 
+.search-position {
+  position: relative;
+}
+  .clean-button {
+    position: absolute;
+    top: 19px;
+    right: 32px;
+    color: #fff;
+    cursor: text;
+  }
+    #searchContacts .clean-button {
+      right: 27px;
+    }
+      .form-input-search:focus + .clean-button {
+        color: #ccc;
+        cursor: pointer;
+      }
+
 .form-input-message {
   width: 100%;
   height: 100%;
@@ -48,6 +66,7 @@
   border: 1px solid #bebebe;
   resize: none;
 }
+
 .form-input-message::-webkit-input-placeholder   {position: relative; color: #ccc; line-height: 33px;}
 .form-input-message::-moz-placeholder            {position: relative; color: #ccc; line-height: 33px;}
 .form-input-message:-ms-input-placeholder        {position: relative; color: #ccc; line-height: 33px;}
