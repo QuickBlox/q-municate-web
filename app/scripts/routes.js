@@ -538,10 +538,11 @@ define([
         }
       });
 
-      $('.clean-button').on('click', function(event) {
-        event.preventDefault();
+      $('.clean-button').on('click', function() {
+        var form = $(this).parent('form.formSearch');
 
-        $(this).prev().val('').focus();
+        form.find('input.form-input-search').val('').focus();
+        return false;
       });  
 
       /* subscriptions

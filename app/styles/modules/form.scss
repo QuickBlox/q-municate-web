@@ -39,7 +39,7 @@
   -webkit-appearance: none;
 }
 
-.search-position {
+.formSearch {
   position: relative;
 }
   .clean-button {
@@ -69,6 +69,7 @@
 
 .form-input-message::-webkit-input-placeholder   {position: relative; color: #ccc; line-height: 33px;}
 .form-input-message::-moz-placeholder            {position: relative; color: #ccc; line-height: 33px;}
+.form-input-message:-moz-placeholder             {position: relative; color: #ccc; line-height: 33px;}
 .form-input-message:-ms-input-placeholder        {position: relative; color: #ccc; line-height: 33px;}
 
 .form-label {
