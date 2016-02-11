@@ -538,6 +538,13 @@ define([
         }
       });
 
+      $('.clean-button').on('click', function() {
+        var form = $(this).parent('form.formSearch');
+
+        form.find('input.form-input-search').val('').focus();
+        return false;
+      });  
+
       /* subscriptions
       ----------------------------------------------------- */
       $('.list_contacts').on('click', 'button.send-request', function() {
