@@ -256,8 +256,9 @@
         <div class="l-content l-flexbox">
 
           <aside class="l-sidebar">
-            <form id="searchContacts" class="l-search localSearch" action="#">
+            <form id="searchContacts" class="l-search localSearch formSearch" action="#">
               <input class="form-input-search" type="search" placeholder="Search">
+              <button class="clean-button" type="reset">✕</button>
             </form>
 
             <div class="l-list-wrap scrollbar">
@@ -397,7 +398,7 @@
       </footer>
     </section>
 
-    <div class="l-app-version">v.1.2.0.0</div>
+    <div class="l-app-version">v.1.2.0.1</div>
   </div>
 
   <div class="popups l-flexbox">
@@ -479,8 +480,9 @@
       <header class="popup-header">
         <h3>Global Search</h3>
       </header>
-      <form id="globalSearch" class="popup-form" action="#">
+      <form id="globalSearch" class="popup-form formSearch" action="#">
         <input class="form-input-search" type="search" placeholder="Search" autofocus>
+        <button class="clean-button" type="reset">✕</button>
       </form>
       <ul class="popup-elem list list_contacts"></ul>
       <div class="popup-elem note l-flexbox l-flexbox_column">
@@ -494,8 +496,9 @@
       <header class="popup-header">
         <h3>Contacts</h3>
       </header>
-      <form id="searchFriends" class="popup-form localSearch" action="#">
+      <form id="searchFriends" class="popup-form localSearch formSearch" action="#">
         <input class="form-input-search" type="search" placeholder="Search">
+        <button class="clean-button" type="reset">✕</button>
       </form>
       <div class="popup-content">
         <ul class="list list_contacts scrollbarContacts"></ul>
