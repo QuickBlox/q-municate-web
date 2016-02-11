@@ -52,7 +52,7 @@
     #searchContacts .clean-button {
       right: 27px;
     }
-      .form-input-search:focus + .clean-button {
+      .form-input-search:focus ~ .clean-button {
         color: #ccc;
         cursor: pointer;
       }
