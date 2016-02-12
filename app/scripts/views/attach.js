@@ -88,43 +88,18 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           isUpload = false,
           part, time;
 
-      // TODO: Need to rewrite this part of code
-      if (fileSize < 100 * 1024)
+      if (fileSize <= 5 * 1024 * 1024)
         time = 50;
-      else if (fileSize < 300 * 1024)
-        time = 200;
-      else if (fileSize < 400 * 1024)
-        time = 350;
-      else if (fileSize < 500 * 1024)
-        time = 400;
-      else if (fileSize < 600 * 1024)
-        time = 450;
-      else if (fileSize < 700 * 1024)
-        time = 550;
-      else if (fileSize < 800 * 1024)
-        time = 600;
-      else if (fileSize < 900 * 1024)
-        time = 650;
-      else if (fileSize < 1 * 1024 * 1024)
-        time = 1000;
-      else if (fileSize < 2 * 1024 * 1024)
-        time = 1400;
-      else if (fileSize < 3 * 1024 * 1024)
-        time = 2000;
-      else if (fileSize < 4 * 1024 * 1024)
-        time = 2700;
-      else if (fileSize < 5 * 1024 * 1024)
-        time = 3700;
-      else if (fileSize < 6 * 1024 * 1024)
-        time = 4900;
-      else if (fileSize < 7 * 1024 * 1024)
-        time = 5400;
-      else if (fileSize < 8 * 1024 * 1024)
-        time = 6600;
-      else if (fileSize < 9 * 1024 * 1024)
-        time = 7500;
-      else if (fileSize < 10 * 1024 * 1024)
-        time = 9000;
+      else if (fileSize > 5 * 1024 * 1024)
+        time = 60;
+      else if (fileSize > 6 * 1024 * 1024)
+        time = 70;
+      else if (fileSize > 7 * 1024 * 1024)
+        time = 80;
+      else if (fileSize > 8 * 1024 * 1024)
+        time = 90;
+      else if (fileSize > 9 * 1024 * 1024)
+        time = 100;
 
       setPercent();
 
@@ -157,7 +132,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           part = (fileSizeCrop * percent / 100).toFixed(1);
           $('.attach-part_'+id).text(part);
           percent += 5;
-          if (percent > 90) return false;
+          if (percent > 95) return false;
           setTimeout(setPercent, time);
         }      
       }  
