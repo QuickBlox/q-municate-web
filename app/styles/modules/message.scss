@@ -9,6 +9,23 @@
 .message_service:last-of-type .btn_request_again {
   display: inline-block;
 }
+article.message[data-status="typing"] {
+  height: 100%;
+  line-height: 100%;
+  padding: 10px;
+  border-bottom: none;
+}
+article.message[data-status="typing"] > div {
+  display: inline-block;
+  margin-left: 7px;
+  color: #B2B2B2;
+}
+.message_typing {
+  max-width: 475px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
   .message-container-wrap {
     width: 100%;
   }
@@ -59,7 +76,7 @@
           }
       .message-time {
         font-size: 15px;
-        line-height: 26px;
+        line-height: 24px;
         color: #999;
         text-align: right;
       }
@@ -70,9 +87,12 @@
         .message_attach_row .message-time {
           line-height: 28px;
         }
-      
-      .message-time {
+      .message-status {
         margin-top: 5px;
+        font-size: 15px;
+        line-height: 24px;
+        color: #999;
+        text-align: right;
       }
       .message-avatar.request-button_pending {
         margin: 5px 30px 0 10px;

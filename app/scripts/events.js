@@ -1,23 +1,23 @@
 /*
  * Q-municate chat application
  *
- * Routes Module
+ * Events Module
  *
  */
 
 define([
   'jquery',
   'config',
-  'minEmoji',  
+  'minEmoji',
   'mCustomScrollbar',
   'mousewheel'
 ], function($, QMCONFIG, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
-  var chatName, editedChatName;
+  var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
   var App;
 
-  function Routes(app) {
+  function Events(app) {
     App = app;
     this.app = app;
 
@@ -27,23 +27,28 @@ define([
     DialogView = this.app.views.Dialog;
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
-    VideoChatView = this.app.views.VideoChat;    
+    VideoChatView = this.app.views.VideoChat;
   }
 
-  Routes.prototype = {
+  Events.prototype = {
 
     init: function() {
       window.isQMAppActive = true;
 
       $(window).focus(function() {
-        var dialogItem, dialog_id;
+        var dialogItem, dialog_id, dialog;
 
         // console.log('ВКЛАДКА ОТКРЫТА');
         window.isQMAppActive = true;
 
         dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
         dialog_id = dialogItem[0] && dialogItem.data('dialog');
+        dialog = $('.dialog-item[data-dialog="'+dialog_id+'"] .contact');
 
+        if (dialogItem) {
+          DialogView.htmlBuild(dialog);
+        }
+        
         // console.log(dialog_id);
         if (dialog_id) {
           dialogItem.find('.unread').text('');
@@ -52,7 +57,6 @@ define([
       });
 
       $(window).blur(function() {
-        // console.log('ВКЛАДКА ЗАКРЫТА');
         window.isQMAppActive = false;
       });
 
@@ -92,7 +96,7 @@ define([
       $('body').on('click', '.btn_changePassword', function(event) {
         var changePassView = App.views.ChangePass,
             profileView = App.views.Profile;
-        
+
         event.preventDefault();
         profileView.$el.hide();
         changePassView.render().openPopup();
@@ -209,7 +213,7 @@ define([
       $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
         event.stopPropagation();
       });
-      
+
       /* change the chat name
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('mouseenter focus', '.groupTitle .name_chat', function() {
@@ -324,6 +328,18 @@ define([
       $('#loginQB').on('click', function(event) {
         if (QMCONFIG.debug) console.log('login wih QB');
         event.preventDefault();
+        UserView.loginQB();
+      });
+
+      /* button "back"
+      ----------------------------------------------------- */
+      $('.back_to_welcome_page').on('click', function() {
+        if (checkConnection() === false) return false;
+        UserView.logout();
+      });
+
+      $('.back_to_login_page').on('click', function() {
+        if (checkConnection() === false) return false;
         UserView.loginQB();
       });
 
@@ -484,11 +500,29 @@ define([
 
       /* search
       ----------------------------------------------------- */
-      $('#globalSearch').on('submit', function(event) {
+      $('#globalSearch').on('keyup search submit', function(event) {
         if (checkConnection() === false) return false;
 
         event.preventDefault();
-        ContactListView.globalSearch($(this));
+        var code = event.keyCode;
+            form = $(this);
+
+        if (code === 13) {
+          clearTimeout(keyupSearch);
+          keyupSearch = undefined;
+          ContactListView.globalSearch(form);
+        } else if (keyupSearch === undefined) {
+          keyupSearch = setTimeout(function() {
+            keyupSearch = undefined;
+            ContactListView.globalSearch(form);
+          }, 1000);
+        } else {
+          clearTimeout(keyupSearch);
+          keyupSearch = setTimeout(function() {
+            keyupSearch = undefined;
+            ContactListView.globalSearch(form);
+          }, 1000);
+        }
       });
 
       $('.localSearch').on('keyup search submit', function(event) {
@@ -503,6 +537,13 @@ define([
             UserView.friendsSearch($(this));
         }
       });
+
+      $('.clean-button').on('click', function() {
+        var form = $(this).parent('form.formSearch');
+
+        form.find('input.form-input-search').val('').focus();
+        return false;
+      });  
 
       /* subscriptions
       ----------------------------------------------------- */
@@ -581,13 +622,18 @@ define([
       });
 
       $('.list_contextmenu').on('click', '.contact', function() {
+        var dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog"),
+            dataId = $('.l-list .list-item.is-selected').attr("data-id");
+
+        MessageView.claerTheListTyping(dataDialog);
+
         DialogView.htmlBuild($(this));
       });
 
       $('#popupContacts .btn_popup_private').on('click', function() {
         var id = $('#popupContacts .is-chosen').data('id'),
             dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
-        
+
         DialogView.htmlBuild(dialogItem);
       });
 
@@ -596,7 +642,7 @@ define([
 
         var id = $(this).data('id'),
             dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
-        
+
         closePopup();
         DialogView.htmlBuild(dialogItem);
       });
@@ -615,7 +661,9 @@ define([
       });
 
       $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
-        var shiftKey = event.shiftKey,
+        var jid = $(this).parents('.l-chat').data('jid'),
+            type = $(this).parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+            shiftKey = event.shiftKey,
             code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
             val = $('.l-chat:visible .textarea').html().trim();
 
@@ -623,6 +671,56 @@ define([
           MessageView.sendMessage($(this));
           $(this).find('.textarea').empty();
           removePopover();
+        }
+      });
+
+      // show message status on hover event
+      $('body').on('mouseenter', 'article.message.is-own', function() {
+        var time = $(this).find('.message-time'),
+            status = $(this).find('.message-status');
+
+        time.addClass('is-hidden');
+        status.removeClass('is-hidden');
+      });
+
+      $('body').on('mouseleave', 'article.message.is-own', function() {
+        var time = $(this).find('.message-time'),
+            status = $(this).find('.message-status');
+
+        status.addClass('is-hidden');
+        time.removeClass('is-hidden');
+      });
+
+      // send typing statuses with keyup event
+      $('.l-workspace-wrap').on('keyup', '.l-message', function(event) {
+        var jid = $(this).parents('.l-chat').data('jid'),
+            type = $(this).parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+            shiftKey = event.shiftKey,
+            code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+
+        function isStartTyping() {
+          MessageView.sendTypingStatus(jid, true);
+        }
+
+        function isStopTyping() {
+          clearTimeout(stopTyping);
+          stopTyping = undefined;
+
+          clearInterval(retryTyping);
+          retryTyping === undefined;
+
+          MessageView.sendTypingStatus(jid, false);
+        }
+
+        if (code === 13 && !shiftKey) {
+          isStopTyping();
+        } else if (stopTyping === undefined) {
+          isStartTyping();
+          stopTyping = setTimeout(isStopTyping, 4000);
+          retryTyping = setInterval(isStartTyping, 4000);
+        } else {
+          clearTimeout(stopTyping);
+          stopTyping = setTimeout(isStopTyping, 4000);
         }
       });
 
@@ -653,7 +751,7 @@ define([
         $('.is-selected').removeClass('is-selected');
       });
 
-      /* temporary routes
+      /* temporary events
       ----------------------------------------------------- */
       $('#share').on('click', function(event) {
         if (checkConnection() === false) return false;
@@ -696,7 +794,7 @@ define([
         file = objDom[0].files[0],
         src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
         fileName = file ? file.name : QMCONFIG.defAvatar.caption;
-    
+
     objDom.prev().find('.avatar').css('background-image', "url("+src+")").siblings('span').text(fileName);
     // if (typeof file !== 'undefined') URL.revokeObjectURL(src);
   }
@@ -707,6 +805,7 @@ define([
     $('.btn_message_smile .is-hidden').removeClass('is-hidden').siblings().remove();
     $('.popover:not(.popover_smile)').remove();
     $('.popover_smile').hide();
+    if ($('#mCSB_8_container').is(':visible')) $('#mCSB_8_container')[0].style.paddingBottom = "0px";
   }
 
   function openPopup(objDom, id, dialog_id, isProfile) {
@@ -730,7 +829,7 @@ define([
       objDom.find('.attach-video video').attr('src', url);
     else
       objDom.find('.attach-photo').attr('src', url);
-    
+
     objDom.find('.attach-name').text(name);
     objDom.find('.attach-download').attr('href', url).attr('download', name);
     objDom.add('.popups').addClass('is-overlay');
@@ -768,6 +867,6 @@ define([
     }
   }
 
-  return Routes;
+  return Events;
 
 });

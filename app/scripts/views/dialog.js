@@ -44,17 +44,22 @@ define([
           VideoChatView = this.app.views.VideoChat;
 
       QB.chat.onMessageListener = MessageView.onMessage;
+      QB.chat.onMessageTypingListener = MessageView.onMessageTyping;
+      QB.chat.onSystemMessageListener = MessageView.onSystemMessage;
+      QB.chat.onDeliveredStatusListener = MessageView.onDeliveredStatus;
+      QB.chat.onReadStatusListener = MessageView.onReadStatus;
+      
       QB.chat.onContactListListener = ContactListView.onPresence;
       QB.chat.onSubscribeListener = ContactListView.onSubscribe;
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
       QB.chat.onRejectSubscribeListener = ContactListView.onReject;
 
-      QB.webrtc.onCallListener = VideoChatView.onCall;
-      QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
-      QB.webrtc.onRejectCallListener = VideoChatView.onReject;
-      QB.webrtc.onStopCallListener = VideoChatView.onStop;
-      QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
-      QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
+      // QB.webrtc.onCallListener = VideoChatView.onCall;
+      // QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
+      // QB.webrtc.onRejectCallListener = VideoChatView.onReject;
+      // QB.webrtc.onStopCallListener = VideoChatView.onStop;
+      // QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
+      // QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
 
       QB.chat.onDisconnectingListener = function() {
         if (localStorage['QM.user']) {
@@ -183,12 +188,13 @@ define([
 
           occupants_ids = _.uniq(_.flatten(_.pluck(dialogs, 'occupants_ids'), true));
 
-          // updating of Contact List whereto are included all people 
+          // updating of Contact List whereto are included all people
           // with which maybe user will be to chat (there aren't only his friends)
           ContactList.add(occupants_ids, null, function() {
 
             for (var i = 0, len = dialogs.length; i < len; i++) {
               dialog = Dialog.create(dialogs[i]);
+
               ContactList.dialogs[dialog.id] = dialog;
               // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
@@ -215,14 +221,14 @@ define([
               notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
               if (private_id && (!roster[private_id] || (roster[private_id] && roster[private_id].subscription === 'none' && !roster[private_id].ask && notConfirmed[private_id])))
                 continue;
-              
+
               self.addDialogItem(dialog, true);
             }
 
             if ($('#requestsList').is('.is-hidden') &&
                 $('#recentList').is('.is-hidden') &&
                 $('#historyList').is('.is-hidden')) {
-              
+
               $('#emptyList').removeClass('is-hidden');
             }
 
@@ -284,9 +290,14 @@ define([
           self = this;
 
       private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
-      icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
-      name = private_id ? contacts[private_id].full_name : dialog.room_name;
-      status = roster[private_id] ? roster[private_id] : null;
+
+      try {
+        icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
+        name = private_id ? contacts[private_id].full_name : dialog.room_name;
+        status = roster[private_id] ? roster[private_id] : null;
+      } catch (error) {
+        console.error(error);
+      }
 
       html = '<li class="list-item dialog-item presence-listener" data-dialog="'+dialog.id+'" data-id="'+private_id+'">';
       html += '<a class="contact l-flexbox" href="#">';
@@ -295,7 +306,7 @@ define([
       html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="'+private_id+'"></div>';
       html += '<span class="name profileUserName" data-id="'+private_id+'">' + name + '</span>';
       html += '</div>';
-      
+
       if (dialog.type === 3)
         html = getStatus(status, html);
       else
@@ -335,7 +346,7 @@ define([
           dialog = dialogs[dialog_id],
           user = contacts[user_id],
           chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
-          html, jid, icon, name, status, message,
+          html, jid, icon, name, status, message, msgArr, userId, messageId,
           self = this;
 
       // if (QMCONFIG.debug) console.log(dialog);
@@ -361,7 +372,7 @@ define([
         if (dialog.type === 3) {
           html += '<div class="contact-avatar avatar avatar_chat profileUserAvatar" style="background-image:url('+icon+')" data-id="'+user_id+'"></div>';
           html += '<h2 class="name name_chat profileUserName" title="'+name+'" data-id="'+user_id+'">'+name+'</h2>';
-          html = getStatus(status, html); 
+          html = getStatus(status, html);
         } else {
           html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url('+icon+')"></div>';
           html += '<span class="pencil_active avatar is-hidden"></span>';
@@ -381,12 +392,12 @@ define([
           html += '<button class="btn_chat btn_chat_profile userDetails" data-id="'+user_id+'"><img src="images/icon-profile.svg" alt="profile"></button>';
         } else
           html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="'+dialog.occupants_ids.join()+'" data-dialog="'+dialog_id+'"><img src="images/icon-add.svg" alt="add"></button>';
-        
+
         if (dialog.type === 3)
           html += '<button class="btn_chat btn_chat_delete deleteContact"><img src="images/icon-delete.svg" alt="delete"></button>';
         else
           html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.svg" alt="delete"></button>';
-        
+
         html += '</div></header>';
 
         // build occupants of room
@@ -409,13 +420,15 @@ define([
 
         html += '<section class="l-chat-content scrollbar_message"></section>';
         html += '<footer class="l-chat-footer">';
+        html += '<div class="l-typing"></div>';
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
         // html += '<textarea class="text-message is-hidden"></textarea>';
         html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.svg" alt="smile"></button>';
         html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.svg" alt="attach"></button>';
-        html += '<input class="attachment" type="file">';
+        html += '<input class="attachment" type="file" accept="image/*">';
         html += '</form></footer>';
+
         html += '</section>';
 
         $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append(html);
@@ -426,12 +439,17 @@ define([
 
         self.createDataSpinner(true);
         Message.download(dialog_id, function(messages) {
-          self.removeDataSpinner();
           for (var i = 0, len = messages.length; i < len; i++) {
             message = Message.create(messages[i]);
             // if (QMCONFIG.debug) console.log(message);
+            if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
+              QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
+            }
+
             MessageView.addItem(message, null, null, message.recipient_id);
           }
+
+          self.removeDataSpinner();
           self.messageScrollbar();
         });
 
@@ -444,17 +462,22 @@ define([
         // console.log(2222222);
         // console.log(self.app.models.ContactList.dialogs[dialog_id]);
 
-        if (typeof dialog.messages !== 'undefined') {
-          Message.update(dialog.messages.join(), dialog_id);
-          dialog.messages = [];
+        if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 3) {
+          Message.update(dialog.messages.join(), dialog_id, user_id);
         }
-        
+        if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 2) {
+          for (var j = 0, ln = dialog.messages.length; j < ln; j++) {
+            messageId = dialog.messages[j];
+            userId = $('#'+messageId).data('id');
+            QB.chat.sendReadStatus({messageId: messageId, userId: userId, dialogId: dialog_id});
+          }
+        }
       }
 
       $('.is-selected').removeClass('is-selected');
       parent.addClass('is-selected').find('.unread').text('');
       self.decUnreadCounter(dialog.id);
-      
+
     },
 
     messageScrollbar: function() {
@@ -512,7 +535,7 @@ define([
             $('#recentList ul').prepend(copyDialogItem);
             if (!$('#searchList').is(':visible')) {
              $('#recentList').removeClass('is-hidden');
-             isSectionEmpty($('#recentList ul')); 
+             isSectionEmpty($('#recentList ul'));
             }
           }
           $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
@@ -615,7 +638,7 @@ define([
     if ($('#requestsList').is('.is-hidden') &&
         $('#recentList').is('.is-hidden') &&
         $('#historyList').is('.is-hidden')) {
-      
+
       $('#emptyList').removeClass('is-hidden');
     }
   }

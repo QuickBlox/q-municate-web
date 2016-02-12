@@ -9,33 +9,26 @@ define(function() {
       authKey: 'WzrAY7vrGmbgFfP',
       authSecret: 'xS2uerEveGHmEun'
     },
-    fbAccount: {
-      appId: '605405446247805',
-      scope: 'email,user_friends',
-    },
 
-    /* Development environment */
+    /* Test local environment */
     // qbAccount: {
     //   appId: 14542,
     //   authKey: 'rJqAFphrSnpyZW2',
     //   authSecret: 'tTEB2wK-dU8X3Ra'
     // },
-    // fbAccount: {
-    //   appId: '605405446247805',
-    //   scope: 'email,user_friends',
-    // },
 
-    /* Test local environment */
+    /* Development environment */
     // qbAccount: {
-    //   appId: 14303,
-    //   authKey: 'gj5Vps4QB-HKJgt',
-    //   authSecret: 'AHpJ6T4L9cVrMxc'
+    //   appId: 27915,
+    //   authKey: '2EADMZadWZkCH8x',
+    //   authSecret: 'ZvOFxvW4bpRg2Tm'
     // },
-    // fbAccount: {
-    //   appId: '623755094412840',
-    //   scope: 'email,user_friends',
-    // },
-
+    
+    fbAccount: {
+      appId: '605405446247805',
+      scope: 'email,user_friends',
+    },
+      
     debug: true,
     isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 
@@ -71,6 +64,16 @@ define(function() {
       notFoundEmail: "The email you entered wasn't found",
       crashFBToken: "Sorry, we noticed that you had logged out from Facebook so we need to recreate your FB token now. Please click the Connect with FB button again",
       FBAccountExists: "This FB user already has an account in the Q-municate. You can't combine two Q-municate users"
+    },
+
+    QBconf: {
+      chatProtocol: {
+        active: 2
+      },
+      debug: {
+        mode: 1,
+        file: null
+      }
     }
 
   };

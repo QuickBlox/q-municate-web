@@ -23,13 +23,10 @@
   <script src="bower_components/modernizr/modernizr.js"></script>
   <!-- endbuild -->
 
-  <script>
-    window.onLineURL = "https://qm.quickblox.com/online.php";
-  </script>
 </head>
 <body class="is-welcome">
   <!--[if lt IE 10]>
-    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
 
   <div class="l-wrapper">
@@ -42,14 +39,14 @@
           <a class="download-app" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank"><img src="images/app-ios.svg" alt="download Q-municate iOS"></a>
         </div>
       </header>
-      <div class="l-form l-flexbox l-flexbox_column">
+      <div class="l-form l-flexbox l-flexbox_column is-hidden">
         <button id="signupFB" class="btn btn_form btn_welcome btn_fb"><img class="btn-icon btn-icon_fb" src="images/icon-fb.svg" alt="fb">Connect with Facebook</button>
         <button id="signupQB" class="btn btn_form btn_welcome btn_qb">Sign Up with Email</button>
         <a id="loginQB" class="text text_welcome" href="#">Already have an account?</a>
       </div>
-      <footer class="l-welcome-footer l-flexbox l-flexbox_column l-flexbox_flexbetween">
+      <footer class="l-welcome-footer l-flexbox l-flexbox_column l-flexbox_flexbetween is-hidden">
         <div class="l-welcome-footer-logo">
-          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox.svg" alt="QuickBlox"></a>
+          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox.svg" alt="QuickBlox"></a>
         </div>
         <!-- <nav class="footer-links footer-links_welcome">
           <ul>
@@ -59,6 +56,12 @@
           </ul>
         </nav> -->
       </footer>
+      <div class="l-spinner">
+        <div class="spinner">
+          <div class="spinner-dot1"></div>
+          <div class="spinner-dot2"></div>
+        </div>
+      </div>
     </section>
 
     <section id="signUpPage" class="l-page is-hidden">
@@ -84,18 +87,19 @@
               <div class="contact-avatar_signup avatar avatar_signup"></div>
               <span class="name name_signup"></span>
             </div>
-            <input id="signup-avatar" class="form-file-default" type="file" accept="image/*">
+            <input id="signup-avatar" class="form-file-default" type="file" accept="image/jpeg,image/png,image/svg">
           </div>
           <button id="signupForm" class="btn btn_form btn_signup btn_qb">Sign Up</button>
+          <span class="text text_back">Already have account? <a id="backFromSignUp" class="click_to_back back_to_welcome_page" href="#">Login!</a></span>
           <span class="text text_signup">
             By clicking Sign Up, you agree to<br>
-            Q-MUNICATE <a href="http://q-municate.com/agreement/" target="_blank"><b>User Agreement</b></a>, <a href="http://quickblox.com/privacy/" target="_blank"><b>Privacy Policy</b></a>.
+            Q-MUNICATE <a href="http://q-municate.com/agreement/" target="_blank"><b>User Agreement</b></a>, <a href="https://quickblox.com/privacy/" target="_blank"><b>Privacy Policy</b></a>.
           </span>
         </form>
       </div>
       <footer class="l-footer l-flexbox l-flexbox_flexbetween">
         <div class="footer-logo">
-          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
+          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
         </div>
         <nav class="footer-links is-notVisible">
           <ul>
@@ -130,11 +134,18 @@
           <button id="loginForm" class="btn btn_form btn_login btn_qb">Log In</button>
           <button id="loginFB" class="btn btn_form btn_login btn_fb"><img class="btn-icon btn-icon_fb" src="images/icon-fb.svg" alt="fb">Connect with Facebook</button>
           <a id="forgot" class="text text_login" href="#">Forgot password?</a>
+          <span class="text text_back">Looking to create an account? <a id="backFromLogin" class="click_to_back back_to_welcome_page" href="#">Sign Up!</a></span>
         </form>
+        <div class="l-spinner is-hidden">
+          <div class="spinner">
+            <div class="spinner-dot1"></div>
+            <div class="spinner-dot2"></div>
+          </div>
+        </div>
       </div>
       <footer class="l-footer l-flexbox l-flexbox_flexbetween">
         <div class="footer-logo">
-          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
+          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
         </div>
         <nav class="footer-links is-notVisible">
           <ul>
@@ -168,11 +179,12 @@
           <span class="text text_error">Error</span>
           <input id="forgot-email" class="form-input" type="email" placeholder="Email" required>
           <button id="forgotForm" class="btn btn_form btn_reset btn_qb">Send Verification Email</button>
+          <span class="text text_back">Back to login form? <a id="backFromForgot" class="click_to_back back_to_login_page" href="#">Back!</a></span>
         </form>
       </div>
       <footer class="l-footer l-flexbox l-flexbox_flexbetween">
         <div class="footer-logo">
-          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
+          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
         </div>
         <nav class="footer-links is-notVisible">
           <ul>
@@ -205,7 +217,7 @@
       </div>
       <footer class="l-footer l-flexbox l-flexbox_flexbetween">
         <div class="footer-logo">
-          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
+          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
         </div>
         <nav class="footer-links">
           <ul>
@@ -244,8 +256,9 @@
         <div class="l-content l-flexbox">
 
           <aside class="l-sidebar">
-            <form id="searchContacts" class="l-search localSearch" action="#">
+            <form id="searchContacts" class="l-search localSearch formSearch" action="#">
               <input class="form-input-search" type="search" placeholder="Search">
+              <button class="clean-button" type="reset">✕</button>
             </form>
 
             <div class="l-list-wrap scrollbar">
@@ -369,7 +382,7 @@
       </div>
       <footer class="l-footer l-flexbox l-flexbox_flexbetween">
         <div class="footer-logo">
-          <a href="http://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
+          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
         </div>
         <div class="footer-apps l-flexbox">
           <a class="footer-apps-ios" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank"><img src="images/icon-ios.svg" alt="download Q-municate iOS"></a>
@@ -385,7 +398,7 @@
       </footer>
     </section>
 
-    <div class="l-app-version">v. 1.0.1</div>
+    <div class="l-app-version">v.1.2.0.3</div>
   </div>
 
   <div class="popups l-flexbox">
@@ -408,6 +421,12 @@
     </section>
 
     <section id="popupIncoming" class="popup incoming-calls is-open"></section>
+
+    <section id="popupNoWebRTC" class="popup popup_logout" style="height: auto; width: auto;">
+      <div class="sorry-msg" style="padding: 30px 60px; text-align:center;">
+        <span class="alert alert_logout">Coming soon...<br>we are still working on it.</span>
+      </div>
+    </section>
 
     <section id="popupAttach" class="popup popup_attach">
       <img class="attach-photo" src="" alt="attach">
@@ -461,13 +480,15 @@
       <header class="popup-header">
         <h3>Global Search</h3>
       </header>
-      <form id="globalSearch" class="popup-form" action="#">
+      <form id="globalSearch" class="popup-form formSearch" action="#">
         <input class="form-input-search" type="search" placeholder="Search" autofocus>
+        <button class="clean-button" type="reset">✕</button>
       </form>
       <ul class="popup-elem list list_contacts"></ul>
       <div class="popup-elem note l-flexbox l-flexbox_column">
         <span class="text text_alert">Sorry...</span>
-        <span class="text">No results found</span>
+        <span class="text not_found">No results found</span>
+        <span class="text short_length is-hidden">Name must be more than 2 characters</span>
       </div>
     </section>
 
@@ -475,8 +496,9 @@
       <header class="popup-header">
         <h3>Contacts</h3>
       </header>
-      <form id="searchFriends" class="popup-form localSearch" action="#">
+      <form id="searchFriends" class="popup-form localSearch formSearch" action="#">
         <input class="form-input-search" type="search" placeholder="Search">
+        <button class="clean-button" type="reset">✕</button>
       </form>
       <div class="popup-content">
         <ul class="list list_contacts scrollbarContacts"></ul>
@@ -553,7 +575,7 @@
           <% if (tag) { %>
             <button class="btn_userProfile btn_changePassword">Change password</button>
           <% } %>
-          <input class="btn_userProfile_file" type="file" accept="image/*">
+          <input class="btn_userProfile_file" type="file" accept="image/jpeg,image/png,image/svg">
         </div>
       </div>
       <div class="userProfile-chatStatus">Status</div>

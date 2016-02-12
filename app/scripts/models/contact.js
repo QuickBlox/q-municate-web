@@ -21,9 +21,9 @@ define(['config', 'quickblox'], function(QMCONFIG, QB) {
         phone: qbUser.phone || '',
         facebook_id: qbUser.facebook_id || null,
         blob_id: qbUser.blob_id || null,
-        avatar_url: (qbUser.avatar_url || getAvatar(qbUser)).replace('http://', 'https://'),
+        user_tags: qbUser.tag || qbUser.user_tags || null,
+        avatar_url: (qbUser.avatar_url || getAvatar(qbUser)).replace('http://', 'https://') || QMCONFIG.defAvatar.url,
         status: qbUser.status || getStatus(qbUser),
-        tag: qbUser.tag || qbUser.user_tags || null,
         user_jid: qbUser.user_jid || QB.chat.helpers.getUserJid(qbUser.id, QMCONFIG.qbAccount.appId),
         custom_data: qbUser.custom_data || null
       };

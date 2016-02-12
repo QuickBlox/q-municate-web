@@ -5,7 +5,7 @@
  *
  */
 
-define(['loadImage', 'canvasToBlob'], function(loadImage, dataURLtoBlob) {
+define(['loadImage', 'canvasToBlob', 'quickblox'], function(loadImage, dataURLtoBlob, QB) {
 
   function Attach(app) {
     this.app = app;
@@ -23,13 +23,15 @@ define(['loadImage', 'canvasToBlob'], function(loadImage, dataURLtoBlob) {
     },
 
     create: function(blob, size) {
-      var type = blob.content_type.indexOf('audio/') === 0 ? 'audio' :
+      var type = blob.content_type.indexOf('image/') === 0 ? 'image' :
+                 blob.content_type.indexOf('audio/') === 0 ? 'audio' :
                  blob.content_type.indexOf('video/') === 0 ? 'video' :
                  'photo';
 
       return {
         type: type,
-        url: blob.path && blob.path.replace('http://', 'https://') || null,
+        url: QB.content.publicUrl(blob.uid) || null,
+        id: blob.uid,
         name: blob.name,
         size: size,
         'content-type': blob.content_type

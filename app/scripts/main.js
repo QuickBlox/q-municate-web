@@ -20,14 +20,14 @@ requirejs.config({
   },
   paths: {
     // libs
-    cryptojs: 'http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes',
+    cryptojs: 'https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes',
     videojs: '//vjs.zencdn.net/4.6/video',
     jquery: '../bower_components/jquery/dist/jquery',
     underscore: '../bower_components/underscore/underscore',
     // lodash: '../bower_components/lodash/dist/lodash',
     backbone: '../bower_components/backbone/backbone',
     handlebars: '../bower_components/handlebars/handlebars',
-    quickblox: '../bower_components/quickblox/quickblox',
+    quickblox: '../bower_components/quickblox/quickblox.min',
     progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
     loadImage: '../bower_components/blueimp-load-image/js/load-image',
     canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
@@ -37,7 +37,6 @@ requirejs.config({
     timeago: '../bower_components/jquery-timeago/jquery.timeago',
     minEmoji: '../vendor/emoji/js/minEmoji',
     chromaHash: '../bower_components/Chroma-Hash/jquery.chroma-hash',
-    onlinejs: '../bower_components/OnlineJS/src/online',
 
     // Q-municate application
     config: '../config',
@@ -58,8 +57,8 @@ requirejs.config({
     AttachView: 'views/attach',
     ContactListView: 'views/contact_list',
     VideoChatView: 'views/videochat',
-    // routes
-    Routes: 'routes',
+    // events
+    Events: 'events',
     QBApiCalls: 'qbApiCalls'
   }
 });
@@ -67,10 +66,9 @@ requirejs.config({
 requirejs([
   'jquery', 'config',
   'minEmoji', 'MainModule',
-  'backbone', 'onlinejs'
+  'backbone',
 ], function ($, QMCONFIG, minEmoji, QM, Backbone) {
   var APP;
-  // Backbone.history.start();
 
   // Application initialization
   $(document).ready(function() {
@@ -78,7 +76,7 @@ requirejs([
     $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
       FB.init({
         appId: QMCONFIG.fbAccount.appId,
-        version: 'v2.0'
+        version: 'v2.1'
       });
       if (QMCONFIG.debug) console.log('FB init', FB);
 
@@ -93,16 +91,4 @@ requirejs([
     });
   });
 
-  // Leave a chat after closing window
-  // window.onbeforeunload = function() {
-  //   QB.chat.sendPres('unavailable');
-  // };
-
-  window.offLineHandler = function() {
-    $('.no-connection').removeClass('is-hidden');
-  };
-
-  window.onLineHandler = function() {
-    $('.no-connection').addClass('is-hidden');
-  };
 });

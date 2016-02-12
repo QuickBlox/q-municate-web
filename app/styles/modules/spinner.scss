@@ -104,3 +104,14 @@
     transform: scale(1.0);    
   }
 }
+
+/* spinner bounce */
+.spinner_bounce.is-typing {
+  margin: 0;
+}
+  .spinner_bounce.is-typing > div {
+    width: 8px;
+    height: 8px;
+    margin-right: 5px;
+    background-color: #B2B2B2;
+  }

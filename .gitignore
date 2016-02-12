@@ -5,12 +5,7 @@ app/.css
 # bower & npm packages
 app/bower_components
 node_modules
+npm-debug.log
 
-# production environment
-# dist
-
-# test environment
-test/bower_components/
-test/temp
-
+# builded QM
 dist
