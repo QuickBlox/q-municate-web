@@ -135,7 +135,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
               dialog_update_info: 3
             }
           };
-console.log(a);
+
           // send message about added people for history
           QB.chat.send(dialog.room_jid, {
             id: msgId,
