@@ -10,12 +10,12 @@ define([
     'DialogModule', 'MessageModule', 'AttachModule',
     'ContactListModule', 'VideoChatModule', 'UserView', 'DialogView',
     'MessageView', 'AttachView', 'ContactListView', 'VideoChatView', 
-    'Events', /*'Routes',*/ 'QBApiCalls', 'config', 'chromaHash'
+    'Events', 'QBApiCalls', 'config', 'chromaHash'
   ], function(
     $, User, Session, Contact, Dialog,
     Message, Attach, ContactList, VideoChat, UserView,
     DialogView, MessageView, AttachView,
-    ContactListView, VideoChatView, Events, /*Routes,*/ QBApiCalls, QMCONFIG
+    ContactListView, VideoChatView, Events, QBApiCalls, QMCONFIG
   ) {
 
   function QM() {
@@ -40,7 +40,6 @@ define([
     };
 
     this.events = new Events(this);
-    // this.routes = new Routes(this);
     this.service = new QBApiCalls(this);
   }
 
@@ -71,7 +70,6 @@ define([
       }
 
       this.events.init();
-      // this.routes.init();
 
       if (QMCONFIG.debug) console.log('App init', this);
     },

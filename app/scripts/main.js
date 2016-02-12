@@ -57,9 +57,8 @@ requirejs.config({
     AttachView: 'views/attach',
     ContactListView: 'views/contact_list',
     VideoChatView: 'views/videochat',
-    // routes and events
-    Events: 'events',  
-    // Routes: 'routes',
+    // events
+    Events: 'events',
     QBApiCalls: 'qbApiCalls'
   }
 });
@@ -70,7 +69,6 @@ requirejs([
   'backbone',
 ], function ($, QMCONFIG, minEmoji, QM, Backbone) {
   var APP;
-  // Backbone.history.start();
 
   // Application initialization
   $(document).ready(function() {
