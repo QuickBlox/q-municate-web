@@ -70,7 +70,7 @@ requirejs([
   'backbone',
 ], function ($, QMCONFIG, minEmoji, QM, Backbone) {
   var APP;
-  Backbone.history.start();
+  // Backbone.history.start();
 
   // Application initialization
   $(document).ready(function() {
