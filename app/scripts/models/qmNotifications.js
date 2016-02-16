@@ -43,12 +43,12 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
 		  switch (type) {
 
+		  	// system notifications
         case '1':
         	occupants_ids = _.without(params.current_occupant_ids.split(',').map(Number), contact.id);
 
           for (i = 0, len = occupants_ids.length, user; i < len; i++) {
             user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
-            console.log(user);
             if (user)
               occupants_names = (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
             else if (occupants_ids[i] === User.contact.id)
@@ -61,21 +61,24 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         case '2':
         	break;
 
+        // contacts
         case '4':
         	text = contact.full_name + ' has sent a request to you'
         	break;
 
         case '5':
-
+        	text = 'Your request has been accepted by ' + contact.full_name;
         	break;
 
         case '6':
-
+        	text = 'Your request has been rejected by ' + contact.full_name;
         	break;
 
         case '7':
-
+        	text = 'You have been deleted from the contact list by ' + contact.full_name;
         	break;
+
+        // calls	
         case '8':
 
         	break;
@@ -92,6 +95,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
         	break;
 
+        // messages
         default:
         	text = (chatType === 'groupchat') ? (contact.full_name + ': ' + params.body) : params.body;
         	break;
