@@ -575,10 +575,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
+          audioSignal = $('#newMessageSignal')[0],
           msg, dialog;
 
       msg = Message.create(message);
       msg.sender_id = message.userId;
+      msg.type = 'headline';
 
       // create new group chat
       if (notification_type === '1' && dialogGroupItem.length === 0) {

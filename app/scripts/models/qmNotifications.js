@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
+define(['config'], function(QMCONFIG) {
 
 	function QMNotifications(app) {
     this.app = app;
@@ -28,18 +28,17 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 		  var ContactList = this.app.models.ContactList,
     			DialogView = this.app.views.Dialog,
     			User = this.app.models.User,
+    			chatType = params.type,
     			dialogId = params.dialog_id,
     			userId = params.sender_id,
     			dialog = ContactList.dialogs[dialogId],
     			contacts = ContactList.contacts,
     			contact = contacts[userId],
-		  		photo = dialog.room_photo || contact.avatar_url || null,
+		  		photo = (chatType === 'groupchat' || 'headline') ? (dialog.room_photo || QMCONFIG.defAvatar.group_url) : (contact.avatar_url || QMCONFIG.defAvatar.url),
 		  		name = dialog.room_name || contact.full_name || null,
-    			chatType = params.type,
     			type = params.notification_type,
     			occupants_names = '', occupants_ids,
     			i, len, user, options, text;
-
 
 		  switch (type) {
 
@@ -59,6 +58,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         	break;
 
         case '2':
+        	// groupchat updated
         	break;
 
         // contacts
@@ -118,20 +118,19 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 	    }
 
 			if (text) {
-				options = {body: text, icon: photo};
+				options = {
+					body: text,
+					icon: photo
+				};
 
-			  // Let's check whether notification permissions have already been granted
 			  if (Notification.permission === "granted") {
-			    // If it's okay let's create a notification
 			    var notification = new Notification(name, options);
-			  }
-
-			  // Otherwise, we need to ask the user for permission
-			  else if (Notification.permission !== 'denied') {
+			    setTimeout(notification.close.bind(notification), 4000);
+			  } else if (Notification.permission !== 'denied') {
 			    Notification.requestPermission(function (permission) {
-			      // If the user accepts, let's create a notification
 			      if (permission === "granted") {
 			        var notification = new Notification(name, options);
+			        setTimeout(notification.close.bind(notification), 4000);
 			      }
 			    });
 			  }
