@@ -34,7 +34,7 @@ define(['config'], function(QMCONFIG) {
     			dialog = ContactList.dialogs[dialogId],
     			contacts = ContactList.contacts,
     			contact = contacts[userId],
-		  		photo = (chatType === 'groupchat' || 'headline') ? (dialog.room_photo || QMCONFIG.defAvatar.url_png) : (contact.avatar_url || QMCONFIG.defAvatar.group_url_png),
+		  		photo = (chatType === 'groupchat' || 'headline') ? (dialog.room_photo || QMCONFIG.defAvatar.group_url_png) : (contact.avatar_url || QMCONFIG.defAvatar.url_png),
 		  		name = dialog.room_name || contact.full_name || null,
     			type = params.notification_type,
     			occupants_names = '', occupants_ids,
