@@ -80,19 +80,35 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
         // calls	
         case '8':
-
+        	if (params.caller === User.contact.id) {
+            text = 'Call to ' + contacts[params.callee].full_name+', duration ' + params.duration;
+        	} else {
+            text = 'Call from ' + contacts[params.caller].full_name+', duration ' + params.duration;
+        	}
         	break;
 
         case '9':
-
+        	if (params.caller === User.contact.id) {
+            text = 'Call to ' + contacts[params.callee].full_name + ', no answer';
+        	} else {
+            text = 'Missed call from ' + contacts[params.caller].full_name;
+        	}
         	break;
 
         case '10':
-
+        	if (params.caller === User.contact.id) {
+            text = 'Call to ' + contacts[params.callee].full_name + ', busy';
+        	} else {
+            text = 'Call from ' + contacts[params.caller].full_name + ', busy';
+        	}
         	break;
 
         case '11':
-
+        	if (params.caller === User.contact.id) {
+            text = contacts[params.callee].full_name+' doesn\'t have camera and/or microphone.';
+        	} else {
+            text = 'Camera and/or microphone wasn\'t found.';
+        	}
         	break;
 
         // messages
