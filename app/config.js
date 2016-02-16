@@ -30,6 +30,9 @@ define(function() {
     },
       
     debug: true,
+
+    notifyMe: true,
+
     isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 
     defAvatar: {

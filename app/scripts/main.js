@@ -50,6 +50,7 @@ requirejs.config({
     AttachModule: 'models/attach',
     ContactListModule: 'models/contact_list',
     VideoChatModule: 'models/videochat',
+    QMNotifications: 'models/qmNotifications',
     // views
     UserView: 'views/user',
     DialogView: 'views/dialog',

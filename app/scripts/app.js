@@ -8,13 +8,13 @@
 define([
     'jquery', 'UserModule', 'SessionModule', 'ContactModule',
     'DialogModule', 'MessageModule', 'AttachModule',
-    'ContactListModule', 'VideoChatModule', 'UserView', 'DialogView',
+    'ContactListModule', 'VideoChatModule', 'QMNotifications', 'UserView', 'DialogView',
     'MessageView', 'AttachView', 'ContactListView', 'VideoChatView', 
     'Events', 'QBApiCalls', 'config', 'chromaHash'
   ], function(
     $, User, Session, Contact, Dialog,
-    Message, Attach, ContactList, VideoChat, UserView,
-    DialogView, MessageView, AttachView,
+    Message, Attach, ContactList, VideoChat, QMNotifications,
+    UserView, DialogView, MessageView, AttachView,
     ContactListView, VideoChatView, Events, QBApiCalls, QMCONFIG
   ) {
 
@@ -27,7 +27,8 @@ define([
       Message: new Message(this),
       Attach: new Attach(this),
       ContactList: new ContactList(this),
-      VideoChat: new VideoChat(this)
+      VideoChat: new VideoChat(this),
+      QMNotifications: new QMNotifications(this)
     };
 
     this.views = {
@@ -71,6 +72,7 @@ define([
 
       this.events.init();
 
+      if (QMCONFIG.notifyMe) this.models.QMNotifications.askForPermission();
       if (QMCONFIG.debug) console.log('App init', this);
     },
 

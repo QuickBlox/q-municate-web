@@ -8,7 +8,7 @@
 define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         function($, QMCONFIG, QB, _, minEmoji) {
 
-  var User, Message, ContactList, Dialog;
+  var User, Message, ContactList, Dialog, QMNotifications;
   var clearTyping, typingList = []; // for typing statuses
   var self;
 
@@ -18,6 +18,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     Dialog = this.app.models.Dialog;
     Message = this.app.models.Message;
     ContactList = this.app.models.ContactList;
+    QMNotifications = this.app.models.QMNotifications;
     self = this;
   }
 
@@ -440,7 +441,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
     onMessage: function(id, message) {
       if (message.type === 'error') return true;
-
       var DialogView = self.app.views.Dialog,
           hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
           dialogs = ContactList.dialogs,
@@ -553,6 +553,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
 
+      
+      if (QMCONFIG.notifyMe && (!chat.is(':visible') || !window.isQMAppActive)) QMNotifications.call(msg);
+
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
@@ -575,6 +578,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           msg, dialog;
 
       msg = Message.create(message);
+      msg.sender_id = message.userId;
 
       // create new group chat
       if (notification_type === '1' && dialogGroupItem.length === 0) {
@@ -611,6 +615,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       }
 
       self.addItem(msg, true, true, true);
+
+      if (QMCONFIG.notifyMe && !window.isQMAppActive) {
+        QMNotifications.call(msg);
+        audioSignal.play();
+      }
+
     },
 
     onMessageTyping: function(isTyping, userId, dialogId) {
