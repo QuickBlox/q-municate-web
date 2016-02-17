@@ -34,7 +34,7 @@ define(['config'], function(QMCONFIG) {
     			dialog = ContactList.dialogs[dialogId],
     			contacts = ContactList.contacts,
     			contact = contacts[userId],
-		  		photo = (chatType === 'groupchat' || 'headline') ? (dialog.room_photo || QMCONFIG.defAvatar.group_url_png) : (contact.avatar_url || QMCONFIG.defAvatar.url_png),
+		  		photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (dialog.room_photo || QMCONFIG.defAvatar.group_url_png),
 		  		name = dialog.room_name || contact.full_name || null,
     			type = params.notification_type,
     			occupants_names = '', occupants_ids,
@@ -125,11 +125,19 @@ define(['config'], function(QMCONFIG) {
 
 			  if (Notification.permission === "granted") {
 			    var notification = new Notification(name, options);
+
+			    notification.onclick = function() {
+					  window.open();
+					}
 			    setTimeout(notification.close.bind(notification), 4000);
 			  } else if (Notification.permission !== 'denied') {
 			    Notification.requestPermission(function (permission) {
 			      if (permission === "granted") {
 			        var notification = new Notification(name, options);
+
+					    notification.onclick = function() {
+							  window.open();
+							}
 			        setTimeout(notification.close.bind(notification), 4000);
 			      }
 			    });
