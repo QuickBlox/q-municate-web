@@ -5,13 +5,13 @@
  *
  */
 
-define(['config'], function(QMCONFIG) {
+define(['jquery', 'config'], function($, QMCONFIG) {
 
 	function QMNotifications(app) {
     this.app = app;
   }
 
-  QMNotifications.prototype =  {
+  QMNotifications.prototype = {
   	
   	askForPermission: function() {
   		if (Notification.permission === "default") {
@@ -21,7 +21,7 @@ define(['config'], function(QMCONFIG) {
 
   	call: function(params) {
 		  if (!("Notification" in window)) {
-		    console.error('Notification API not supported.');
+		    console.error('Notification API not supported. Please us a modern version of Chrome, Firefox, Opera or Safari.');
 		    return;
 		  }
 
@@ -124,21 +124,11 @@ define(['config'], function(QMCONFIG) {
 				};
 
 			  if (Notification.permission === "granted") {
-			    var notification = new Notification(name, options);
-
-			    notification.onclick = function() {
-					  window.opener();
-					}
-			    setTimeout(notification.close.bind(notification), 4000);
+			    showLocalNotification(name, options, dialogId);
 			  } else if (Notification.permission !== 'denied') {
 			    Notification.requestPermission(function (permission) {
 			      if (permission === "granted") {
-			        var notification = new Notification(name, options);
-
-					    notification.onclick = function() {
-							  window.opener();
-							}
-			        setTimeout(notification.close.bind(notification), 4000);
+			        showLocalNotification(name, options, dialogId);
 			      }
 			    });
 			  }
@@ -147,6 +137,50 @@ define(['config'], function(QMCONFIG) {
 
   };
 
+  // private
+  function showLocalNotification(name, options, dialogId) {
+  	var notification = new Notification(name, options),
+  			selectDialog = $('.dialog-item[data-dialog="'+dialogId+'"] .contact');
+
+    notification.onclick = function() {
+		  window.focus();
+		  selectDialog.click();
+		}
+
+    setTimeout(notification.close.bind(notification), 5000);
+  }
+
   return QMNotifications;
 
+});
+
+
+define([
+    "requiredModules"
+], function(modules) {
+    "use strict";
+
+    // static public property
+    myModule.prop;
+
+    var myModule = function() {
+
+        // public var
+        this.b = null;
+
+        // pseudo-protected var
+        this._c = null;
+
+    };
+
+    function privateMethod(args) {
+    };
+
+    myModule.staticMethod = function(args) {
+    };
+
+    myModule.prototype.publicMethod = function(args) {
+    };
+
+    return myModule;
 });
