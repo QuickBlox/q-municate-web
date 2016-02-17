@@ -35,7 +35,7 @@ define(['jquery', 'config'], function($, QMCONFIG) {
     			contacts = ContactList.contacts,
     			contact = contacts[userId],
 		  		photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (dialog.room_photo || QMCONFIG.defAvatar.group_url_png),
-		  		name = dialog.room_name || contact.full_name || null,
+		  		name = (dialog && dialog.room_name) || contact.full_name,
     			type = params.notification_type,
     			occupants_names = '', occupants_ids,
     			i, len, user, options, text;
@@ -148,39 +148,8 @@ define(['jquery', 'config'], function($, QMCONFIG) {
 		}
 
     setTimeout(notification.close.bind(notification), 5000);
-  }
+  };
 
   return QMNotifications;
 
-});
-
-
-define([
-    "requiredModules"
-], function(modules) {
-    "use strict";
-
-    // static public property
-    myModule.prop;
-
-    var myModule = function() {
-
-        // public var
-        this.b = null;
-
-        // pseudo-protected var
-        this._c = null;
-
-    };
-
-    function privateMethod(args) {
-    };
-
-    myModule.staticMethod = function(args) {
-    };
-
-    myModule.prototype.publicMethod = function(args) {
-    };
-
-    return myModule;
 });
