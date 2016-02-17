@@ -127,7 +127,7 @@ define(['config'], function(QMCONFIG) {
 			    var notification = new Notification(name, options);
 
 			    notification.onclick = function() {
-					  window.open();
+					  window.opener();
 					}
 			    setTimeout(notification.close.bind(notification), 4000);
 			  } else if (Notification.permission !== 'denied') {
@@ -136,7 +136,7 @@ define(['config'], function(QMCONFIG) {
 			        var notification = new Notification(name, options);
 
 					    notification.onclick = function() {
-							  window.open();
+							  window.opener();
 							}
 			        setTimeout(notification.close.bind(notification), 4000);
 			      }
