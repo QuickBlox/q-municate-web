@@ -69,7 +69,7 @@ define(['quickblox'], function(QB) {
       return message;
     },
 
-    isStack: function(online, msg, prevMsg) {
+    isStack: function(online, curMsg, prevMsg) {
       var sameUser, sameTime,
           stack = false;
 
@@ -78,11 +78,11 @@ define(['quickblox'], function(QB) {
           var lastMessageSender = prevMsg.attr('data-id'),
               lastMessageDateSent = prevMsg.find('.message-time').attr('data-time');
 
-          sameUser = (msg.sender_id == lastMessageSender) ? true : false;
-          sameTime = (Math.floor(msg.date_sent / 60) == Math.floor(lastMessageDateSent / 60)) ? true : false;
+          sameUser = (curMsg.sender_id == lastMessageSender) ? true : false;
+          sameTime = (Math.floor(curMsg.date_sent / 60) == Math.floor(lastMessageDateSent / 60)) ? true : false;
         } else {
-          sameUser = (msg.sender_id == prevMsg.sender_id) ? true : false;
-          sameTime = (Math.floor(msg.date_sent / 60) == Math.floor(prevMsg.date_sent / 60)) ? true : false;
+          sameUser = (curMsg.sender_id == prevMsg.sender_id) ? true : false;
+          sameTime = (Math.floor(curMsg.date_sent / 60) == Math.floor(prevMsg.date_sent / 60)) ? true : false;
         }
         stack = (sameTime && sameUser) ? true : false;
       }

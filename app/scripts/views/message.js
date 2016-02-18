@@ -40,8 +40,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
           i, len, user;
 
-console.info('>>>>>', message.stack);
-
       if (typeof chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) return true;
 
       if (message.sessionID && $('.message[data-session="'+message.sessionID+'"]')[0]) return true;

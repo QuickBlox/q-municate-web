@@ -352,7 +352,7 @@ define([
       // if (QMCONFIG.debug) console.log(dialog);
       // if (QMCONFIG.debug) console.log(user);
 
-      jid = dialog.room_jid || user.user_jid;
+      jid = (dialog && dialog.room_jid) || user.user_jid;
       icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
       name = dialog.room_name || user.full_name;
       status = roster[user_id] ? roster[user_id] : null;
@@ -601,6 +601,7 @@ define([
       for (var i = 0, len = messages.length; i < len; i++) {
         message = Message.create(messages[i]);
         // if (QMCONFIG.debug) console.log(message);
+        message.stack = Message.isStack(false, messages[i], messages[i+1]);
         MessageView.addItem(message, true);
       }
     }, count, 'ajax');
