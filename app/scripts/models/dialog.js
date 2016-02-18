@@ -131,7 +131,9 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
               save_to_history: 1,
               notification_type: '1',
               dialog_id: dialog.id,
+              room_updated_date: Math.floor(Date.now() / 1000),
               current_occupant_ids: res.occupants_ids.join(),
+              added_occupant_ids: params.occupants_ids,
               dialog_update_info: 3
             }
           });

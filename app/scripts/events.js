@@ -1,7 +1,7 @@
 /*
  * Q-municate chat application
  *
- * Routes Module
+ * Events Module
  *
  */
 
@@ -17,7 +17,7 @@ define([
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
   var App;
 
-  function Routes(app) {
+  function Events(app) {
     App = app;
     this.app = app;
 
@@ -30,7 +30,7 @@ define([
     VideoChatView = this.app.views.VideoChat;
   }
 
-  Routes.prototype = {
+  Events.prototype = {
 
     init: function() {
       window.isQMAppActive = true;
@@ -538,6 +538,13 @@ define([
         }
       });
 
+      $('.clean-button').on('click', function() {
+        var form = $(this).parent('form.formSearch');
+
+        form.find('input.form-input-search').val('').focus();
+        return false;
+      });  
+
       /* subscriptions
       ----------------------------------------------------- */
       $('.list_contacts').on('click', 'button.send-request', function() {
@@ -744,7 +751,7 @@ define([
         $('.is-selected').removeClass('is-selected');
       });
 
-      /* temporary routes
+      /* temporary events
       ----------------------------------------------------- */
       $('#share').on('click', function(event) {
         if (checkConnection() === false) return false;
@@ -860,6 +867,6 @@ define([
     }
   }
 
-  return Routes;
+  return Events;
 
 });
