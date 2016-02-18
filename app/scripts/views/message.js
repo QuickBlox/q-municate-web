@@ -40,6 +40,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
           i, len, user;
 
+console.info('>>>>>', message.stack);
+
       if (typeof chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) return true;
 
       if (message.sessionID && $('.message[data-session="'+message.sessionID+'"]')[0]) return true;
@@ -255,17 +257,23 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           break;
 
         default:
-          if (message.sender_id === User.contact.id)
+          if (message.sender_id === User.contact.id) 
             html = '<article id="'+message.id+'" class="message is-own l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
           else
             html = '<article id="'+message.id+'" class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
 
           // html += '<img class="message-avatar avatar contact-avatar_message" src="'+contact.avatar_url+'" alt="avatar">';
-          html += '<div class="message-avatar avatar contact-avatar_message profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id="'+message.sender_id+'"></div>';
+          if (!message.stack) {
+            html += '<div class="message-avatar avatar contact-avatar_message profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id="'+message.sender_id+'"></div>';
+          } else {
+            html += '<div style="width: 68px"></div>';
+          }
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
-          html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span></h4>';
+          if (!message.stack) {
+            html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span></h4>';
+          }
 
           if (attachType && attachType.indexOf('image') > -1) {
 
@@ -273,7 +281,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html += '<div class="preview preview-photo" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'">';
             html += '<img id="attach_'+message.id+'" src="'+attachUrl+'" alt="attach">';
             html += '</div></div>';
-            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '</div><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
             html += '<div class="message-status is-hidden">Not delivered yet</div>';
 
           } else if (attachType && attachType.indexOf('audio') > -1) {
@@ -282,7 +290,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html += message.attachment.name+'<br><br>';
             html += '<audio id="'+message.id+'" src="'+attachUrl+'" controls></audio>';
             html += '</div>';
-            html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
+            html += '</div><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+' ';
             html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
 
           } else if (attachType && attachType.indexOf('video') > -1) {
@@ -291,7 +299,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html += message.attachment.name+'<br><br>';
             html += '<div id="'+message.id+'" class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
             html += '</div>';
-            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '</div><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
             html += '<div class="message-status is-hidden">Not delivered yet</div>';
 
           } else if (attachType) {
@@ -300,12 +308,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
             html += '<a id="'+message.id+'" class="attach-file" href="'+attachUrl+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
             html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
             html += '</div>';
-            html += '</div><time class="message-time">'+getTime(message.date_sent)+' ';
+            html += '</div><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+' ';
             html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
 
           } else {
             html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
-            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '</div><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
             html += '<div class="message-status is-hidden">Not delivered yet</div>';
           }
 
@@ -376,8 +384,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           val = form.find('.textarea').text().trim(),
           time = Math.floor(Date.now() / 1000),
           type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+          chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
           dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
-          copyDialogItem;
+          copyDialogItem, lastMessage;
 
       if (val.length > 0) {
         if (form.find('.textarea > span').length > 0) {
@@ -407,8 +416,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           sender_id: User.contact.id,
           _id: msg.id
         });
+
         if (QMCONFIG.debug) console.log(message);
-        if (type === 'chat') self.addItem(message, true, true);
+
+        if (type === 'chat') {
+          lastMessage = chat.find('article[data-type="message"]').last();   
+          message.stack = Message.isStack(true, message, lastMessage);
+          self.addItem(message, true, true);
+        }
 
         if (dialogItem.length > 0) {
           copyDialogItem = dialogItem.clone();
@@ -460,7 +475,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           audioSignal = $('#newMessageSignal')[0],
           isOfflineStorage = message.delay,
           selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
-          msg, copyDialogItem, dialog, occupant, msgArr, blobObj;
+          msg, copyDialogItem, dialog, occupant, msgArr, blobObj, lastMessage;
 
       typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
       typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
@@ -550,6 +565,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         }
       }
 
+      lastMessage = chat.find('article[data-type="message"]').last();
+      msg.stack = Message.isStack(true, msg, lastMessage);
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
 

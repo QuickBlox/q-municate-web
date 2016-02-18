@@ -58,7 +58,8 @@ define(['quickblox'], function(QB) {
         duration: (params.extension && params.extension.duration) || params.duration || null,
         sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
         read_ids: params.read_ids || [],
-        delivered_ids: params.delivered_ids || []
+        delivered_ids: params.delivered_ids || [],
+        stack: false
       };
 
       if (message.attachment) {
@@ -66,6 +67,27 @@ define(['quickblox'], function(QB) {
       }
 
       return message;
+    },
+
+    isStack: function(online, msg, prevMsg) {
+      var sameUser, sameTime,
+          stack = false;
+
+      if (prevMsg) {
+        if (online) {
+          var lastMessageSender = prevMsg.attr('data-id'),
+              lastMessageDateSent = prevMsg.find('.message-time').attr('data-time');
+
+          sameUser = (msg.sender_id == lastMessageSender) ? true : false;
+          sameTime = (Math.floor(msg.date_sent / 60) == Math.floor(lastMessageDateSent / 60)) ? true : false;
+        } else {
+          sameUser = (msg.sender_id == prevMsg.sender_id) ? true : false;
+          sameTime = (Math.floor(msg.date_sent / 60) == Math.floor(prevMsg.date_sent / 60)) ? true : false;
+        }
+        stack = (sameTime && sameUser) ? true : false;
+      }
+
+      return stack;
     },
 
     update: function(message_ids, dialog_id, user_id) {

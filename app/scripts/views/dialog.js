@@ -446,6 +446,8 @@ define([
               QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
             }
 
+            message.stack = Message.isStack(false, messages[i], messages[i+1]);
+
             MessageView.addItem(message, null, null, message.recipient_id);
           }
 
