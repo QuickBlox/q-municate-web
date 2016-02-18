@@ -45,7 +45,7 @@ define([
         dialog_id = dialogItem[0] && dialogItem.data('dialog');
         dialog = $('.dialog-item[data-dialog="'+dialog_id+'"] .contact');
 
-        if (dialogItem) {
+        if ($('.dialog-item[data-dialog="'+dialog_id+'"]').hasClass('is-selected')) {
           DialogView.htmlBuild(dialog);
         }
         

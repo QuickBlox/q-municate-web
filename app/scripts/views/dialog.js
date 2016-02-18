@@ -352,7 +352,7 @@ define([
       // if (QMCONFIG.debug) console.log(dialog);
       // if (QMCONFIG.debug) console.log(user);
 
-      jid = (dialog && dialog.room_jid) || user.user_jid;
+      jid = dialog.room_jid || user.user_jid;
       icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
       name = dialog.room_name || user.full_name;
       status = roster[user_id] ? roster[user_id] : null;
