@@ -74,6 +74,9 @@ article.message[data-status="typing"] > div {
           .message-body a {
             color: #0d70b3;
           }
+          .message-body.indent {
+            margin-left: 60px;
+          }
       .message-time {
         font-size: 14px;
         line-height: 24px;

@@ -22,6 +22,7 @@ define(['quickblox'], function(QB) {
       if (self.skip[dialog_id] && self.skip[dialog_id] === count) return false;
 
       if (isAjaxDownloading) DialogView.createDataSpinner(null, null, true);
+
       QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50, skip: count || 0}, function(messages) {
         if (isAjaxDownloading) DialogView.removeDataSpinner();
         callback(messages);
@@ -101,10 +102,10 @@ define(['quickblox'], function(QB) {
         unreadMessage = unreadMessages[i];
         QB.chat.sendReadStatus({messageId: unreadMessage, userId: user_id, dialogId: dialog_id});
       }
+      
       dialog.messages = [];
 
       QBApiCalls.updateMessage(message_ids, {chat_dialog_id: dialog_id, read: 1}, function() {});
-
     }
 
   };
