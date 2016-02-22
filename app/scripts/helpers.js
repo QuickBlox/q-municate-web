@@ -11,20 +11,15 @@ define(['jquery', 'config', 'MainModule'], function($, QMCONFIG, QM) {
 
   Helpers.Notifications = {
 
-    getTitle: function(params) {
-      var dialogId = params.dialog_id,
-          userId = params.sender_id,
-          dialog = ContactList.dialogs[dialogId],
-          contacts = ContactList.contacts,
-          contact = contacts[userId],
-          title;
+    getTitle: function(dialog, contact) {
+      var title;
 
       title = (dialog && dialog.room_name) || contact.full_name;
 
       return title;
     },
 
-    getOptions: function(params) {
+    getOptions: function(params, dialog, contact) {
       var chatType = params.type,
           dialogId = params.dialog_id,
           userId = params.sender_id,
@@ -139,8 +134,6 @@ define(['jquery', 'config', 'MainModule'], function($, QMCONFIG, QM) {
 
   };
 
-  function heellio(){}
-
   return Helpers;
-
+  
 });
