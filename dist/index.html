@@ -11,9 +11,9 @@
   <link rel="icon" href="favicon.png">
 
   <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
-  <link rel="stylesheet" href="styles/044b8824.build.css">
+  <link rel="stylesheet" href="styles/419214e3.build.css">
 
-  <script src="vendor/707f4457.modernizr.js"></script>
+  <script src="vendor/8f6a4096.modernizr.js"></script>
 
 </head>
 <body class="is-welcome">
@@ -248,8 +248,9 @@
         <div class="l-content l-flexbox">
 
           <aside class="l-sidebar">
-            <form id="searchContacts" class="l-search localSearch" action="#">
+            <form id="searchContacts" class="l-search localSearch formSearch" action="#">
               <input class="form-input-search" type="search" placeholder="Search">
+              <button class="clean-button" type="reset">✕</button>
             </form>
 
             <div class="l-list-wrap scrollbar">
@@ -389,7 +390,7 @@
       </footer>
     </section>
 
-    <div class="l-app-version">v.1.1.0.26</div>
+    <div class="l-app-version">v.1.2.0.3</div>
   </div>
 
   <div class="popups l-flexbox">
@@ -413,9 +414,9 @@
 
     <section id="popupIncoming" class="popup incoming-calls is-open"></section>
 
-    <section id="popupNoWebRTC" class="popup popup_logout" style="height:80px; width=300px">
-      <div class="sorry-msg" style="height:100%; text-align:center; padding-top: 25px">
-        <span class="alert alert_logout">Coming soon...</span>
+    <section id="popupNoWebRTC" class="popup popup_logout" style="height: auto; width: auto">
+      <div class="sorry-msg" style="padding: 30px 60px; text-align:center">
+        <span class="alert alert_logout">Coming soon...<br>we are still working on it.</span>
       </div>
     </section>
 
@@ -471,8 +472,9 @@
       <header class="popup-header">
         <h3>Global Search</h3>
       </header>
-      <form id="globalSearch" class="popup-form" action="#">
+      <form id="globalSearch" class="popup-form formSearch" action="#">
         <input class="form-input-search" type="search" placeholder="Search" autofocus>
+        <button class="clean-button" type="reset">✕</button>
       </form>
       <ul class="popup-elem list list_contacts"></ul>
       <div class="popup-elem note l-flexbox l-flexbox_column">
@@ -486,8 +488,9 @@
       <header class="popup-header">
         <h3>Contacts</h3>
       </header>
-      <form id="searchFriends" class="popup-form localSearch" action="#">
+      <form id="searchFriends" class="popup-form localSearch formSearch" action="#">
         <input class="form-input-search" type="search" placeholder="Search">
+        <button class="clean-button" type="reset">✕</button>
       </form>
       <div class="popup-content">
         <ul class="list list_contacts scrollbarContacts"></ul>
@@ -545,7 +548,7 @@
     ga('create','UA-26728270-6');ga('send','pageview');
   </script>
 
-  <script src="scripts/d9f79347.build.js"></script>
+  <script src="scripts/dc3add4f.build.js"></script>
 
   <script id="templateProfile" type="text/template">
     <section id="popupProfile" class="popup popup_profile">
