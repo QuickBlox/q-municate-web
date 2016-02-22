@@ -8,7 +8,7 @@
 define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         function($, QMCONFIG, QB, _, minEmoji) {
 
-  var User, Message, ContactList, Dialog, QMNotifications;
+  var User, Message, ContactList, Dialog, Helpers;
   var clearTyping, typingList = []; // for typing statuses
   var self;
 
@@ -18,7 +18,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     Dialog = this.app.models.Dialog;
     Message = this.app.models.Message;
     ContactList = this.app.models.ContactList;
-    QMNotifications = this.app.models.QMNotifications;
+    Helpers = this.app.Helpers;
     self = this;
   }
 

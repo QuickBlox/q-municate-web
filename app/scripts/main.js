@@ -50,7 +50,6 @@ requirejs.config({
     AttachModule: 'models/attach',
     ContactListModule: 'models/contact_list',
     VideoChatModule: 'models/videochat',
-    QMNotifications: 'models/qmNotifications',
     // views
     UserView: 'views/user',
     DialogView: 'views/dialog',
@@ -60,6 +59,8 @@ requirejs.config({
     VideoChatView: 'views/videochat',
     // events
     Events: 'events',
+    // helpers
+    Helpers: 'helpers',
     QBApiCalls: 'qbApiCalls'
   }
 });
@@ -67,10 +68,10 @@ requirejs.config({
 requirejs([
   'jquery', 'config',
   'minEmoji', 'MainModule',
-  'backbone',
-], function ($, QMCONFIG, minEmoji, QM, Backbone) {
+  'backbone', 'Helpers'
+], function ($, QMCONFIG, minEmoji, QM, Backbone, Helpers) {
   var APP;
-
+console.log(Helpers);
   // Application initialization
   $(document).ready(function() {
     $.ajaxSetup({ cache: true });

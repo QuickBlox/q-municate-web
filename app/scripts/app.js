@@ -8,14 +8,14 @@
 define([
     'jquery', 'UserModule', 'SessionModule', 'ContactModule',
     'DialogModule', 'MessageModule', 'AttachModule',
-    'ContactListModule', 'VideoChatModule', 'QMNotifications', 'UserView', 'DialogView',
+    'ContactListModule', 'VideoChatModule', 'UserView', 'DialogView',
     'MessageView', 'AttachView', 'ContactListView', 'VideoChatView', 
-    'Events', 'QBApiCalls', 'config', 'chromaHash'
+    'Events', 'Helpers', 'QBApiCalls', 'config', 'chromaHash'
   ], function(
     $, User, Session, Contact, Dialog,
-    Message, Attach, ContactList, VideoChat, QMNotifications,
-    UserView, DialogView, MessageView, AttachView,
-    ContactListView, VideoChatView, Events, QBApiCalls, QMCONFIG
+    Message, Attach, ContactList, VideoChat, UserView,
+    DialogView, MessageView, AttachView, ContactListView,
+    VideoChatView, Events, Helpers, QBApiCalls, QMCONFIG
   ) {
 
   function QM() {
@@ -27,8 +27,7 @@ define([
       Message: new Message(this),
       Attach: new Attach(this),
       ContactList: new ContactList(this),
-      VideoChat: new VideoChat(this),
-      QMNotifications: new QMNotifications(this)
+      VideoChat: new VideoChat(this)
     };
 
     this.views = {
@@ -43,6 +42,7 @@ define([
     this.events = new Events(this);
     this.service = new QBApiCalls(this);
   }
+  console.log(Helpers);
 
   QM.prototype = {
     init: function() {
