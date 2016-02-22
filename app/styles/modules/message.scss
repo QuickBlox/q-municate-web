@@ -1,10 +1,10 @@
 /* message */
 .message {
-  padding: 20px;
+  padding: 10px 20px 10px 10px;
   border-bottom: 1px solid #f2f2f2;
 }
 .message_service {
-  padding: 13px 20px;
+  padding: 10px 20px 10px 10px;
 }
 .message_service:last-of-type .btn_request_again {
   display: inline-block;
@@ -21,7 +21,7 @@ article.message[data-status="typing"] > div {
   color: #B2B2B2;
 }
 .message_typing {
-  max-width: 475px;
+  max-width: 450px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -39,14 +39,14 @@ article.message[data-status="typing"] > div {
       margin-top: 0;
     }
       .message-content {
-        width: 474px;
-        max-width: 474px;
+        width: 450px;
+        max-width: 450px;
         color: #333;
         word-wrap: break-word;
       }
       .message_attach .message-content {
-        width: 515px;
-        max-width: 515px;
+        width: 450px;
+        max-width: 450px;
       }
         .message-author {
           margin-bottom: 10px;
@@ -74,8 +74,11 @@ article.message[data-status="typing"] > div {
           .message-body a {
             color: #0d70b3;
           }
+          .message-body.indent {
+            margin-left: 60px;
+          }
       .message-time {
-        font-size: 15px;
+        font-size: 14px;
         line-height: 24px;
         color: #999;
         text-align: right;
@@ -88,8 +91,7 @@ article.message[data-status="typing"] > div {
           line-height: 28px;
         }
       .message-status {
-        margin-top: 5px;
-        font-size: 15px;
+        font-size: 14px;
         line-height: 24px;
         color: #999;
         text-align: right;

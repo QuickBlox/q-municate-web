@@ -446,6 +446,8 @@ define([
               QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
             }
 
+            message.stack = Message.isStack(false, messages[i], messages[i+1]);
+
             MessageView.addItem(message, null, null, message.recipient_id);
           }
 
@@ -599,6 +601,7 @@ define([
       for (var i = 0, len = messages.length; i < len; i++) {
         message = Message.create(messages[i]);
         // if (QMCONFIG.debug) console.log(message);
+        message.stack = Message.isStack(false, messages[i], messages[i+1]);
         MessageView.addItem(message, true);
       }
     }, count, 'ajax');
