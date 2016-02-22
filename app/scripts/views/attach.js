@@ -151,7 +151,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           time = Math.floor(Date.now() / 1000),
           type = chat.is('.is-group') ? 'groupchat' : 'chat',
           dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
-          copyDialogItem;
+          copyDialogItem, lastMessage;
 
      var msg = {
         type: type,
@@ -179,7 +179,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
       });
 
       if (QMCONFIG.debug) console.log(message);
-      if (type === 'chat') MessageView.addItem(message, true, true);
+      if (type === 'chat') {
+        lastMessage = chat.find('article[data-type="message"]').last();   
+        message.stack = Message.isStack(true, message, lastMessage);
+        self.addItem(message, true, true);
+      }
 
       if (dialogItem.length > 0) {
         copyDialogItem = dialogItem.clone();

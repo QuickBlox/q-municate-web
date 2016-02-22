@@ -22,6 +22,7 @@ define(['quickblox'], function(QB) {
       if (self.skip[dialog_id] && self.skip[dialog_id] === count) return false;
 
       if (isAjaxDownloading) DialogView.createDataSpinner(null, null, true);
+
       QBApiCalls.listMessages({chat_dialog_id: dialog_id, sort_desc: 'date_sent', limit: 50, skip: count || 0}, function(messages) {
         if (isAjaxDownloading) DialogView.removeDataSpinner();
         callback(messages);
@@ -59,7 +60,8 @@ define(['quickblox'], function(QB) {
         sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
         read_ids: params.read_ids || [],
         delivered_ids: params.delivered_ids || [],
-        type: params.type || null
+        type: params.type || null,
+        stack: false
       };
 
       if (message.attachment) {
@@ -67,6 +69,27 @@ define(['quickblox'], function(QB) {
       }
 
       return message;
+    },
+
+    isStack: function(online, curMsg, prevMsg) {
+      var sameUser, sameTime,
+          stack = false;
+
+      if (prevMsg) {
+        if (online) {
+          var lastMessageSender = +prevMsg.attr('data-id'),
+              lastMessageDateSent = +prevMsg.find('.message-time').attr('data-time');
+
+          sameUser = (curMsg.sender_id === lastMessageSender) ? true : false;
+          sameTime = (Math.floor(curMsg.date_sent / 60) === Math.floor(lastMessageDateSent / 60)) ? true : false;
+        } else {
+          sameUser = (curMsg.sender_id === prevMsg.sender_id) ? true : false;
+          sameTime = (Math.floor(curMsg.date_sent / 60) === Math.floor(prevMsg.date_sent / 60)) ? true : false;
+        }
+        stack = (sameTime && sameUser) ? true : false;
+      }
+
+      return stack;
     },
 
     update: function(message_ids, dialog_id, user_id) {
@@ -80,10 +103,10 @@ define(['quickblox'], function(QB) {
         unreadMessage = unreadMessages[i];
         QB.chat.sendReadStatus({messageId: unreadMessage, userId: user_id, dialogId: dialog_id});
       }
+      
       dialog.messages = [];
 
       QBApiCalls.updateMessage(message_ids, {chat_dialog_id: dialog_id, read: 1}, function() {});
-
     }
 
   };
