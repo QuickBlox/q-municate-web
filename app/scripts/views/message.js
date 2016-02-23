@@ -707,11 +707,11 @@ $(document).find('br').each(function(){
     }
 
     return html;
-  };
+  }
 
   function getFileSize(size) {
     return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
-  };
+  }
 
   function fixScroll(chat) {
     var containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
@@ -721,7 +721,7 @@ $(document).find('br').each(function(){
 
     chat.find('.l-chat-content .mCSB_container').css({top: chatContentHeight - containerHeight + 'px'});
     chat.find('.l-chat-content .mCSB_dragger').css({top: draggerContainerHeight - draggerHeight + 'px'});
-  };
+  }
 
   function getTime(time) {
     var messageDate = new Date(time * 1000),
@@ -736,7 +736,7 @@ $(document).find('br').each(function(){
     } else {
       return messageDate.getDate() + '/' + (messageDate.getMonth() + 1) + '/' + messageDate.getFullYear();
     }
-  };
+  }
 
   function parser(str) {
     var url, url_text;
@@ -759,7 +759,7 @@ $(document).find('br').each(function(){
     function escapeHTML(s) {
       return s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
-  };
+  }
 
   function isSectionEmpty(list) {
     if (list.contents().length === 0) {
@@ -773,7 +773,7 @@ $(document).find('br').each(function(){
     if ($('#requestsList').is('.is-hidden') && $('#recentList').is('.is-hidden') && $('#historyList').is('.is-hidden')) {
       $('#emptyList').removeClass('is-hidden');
     }
-  };
+  }
 
   function stopShowTyping(chat, user) {
     var index = typingList.indexOf(user);
@@ -788,7 +788,7 @@ $(document).find('br').each(function(){
     }
 
     isTypingOrAreTyping(chat);
-  };
+  }
 
   function startShowTyping(chat, user) { 
     var form = $('article.message[data-status="typing"]').length > 0 ? true : false,
@@ -817,7 +817,7 @@ $(document).find('br').each(function(){
     }
 
     isTypingOrAreTyping(chat);
-  };
+  }
 
   function isTypingOrAreTyping(chat) {
     if (typingList.length > 1) {
@@ -825,7 +825,7 @@ $(document).find('br').each(function(){
     } else {
       $('div.is_or_are').text(' is typing');
     }
-  };
+  }
 
   function roomJidVerification(dialog_id) {
     var roomJid = QB.chat.helpers.getRoomJidFromDialogId(dialog_id);
@@ -836,7 +836,7 @@ $(document).find('br').each(function(){
       roomJid = QMCONFIG.qbAccount.appId + roomJid.toString();
     }
     return roomJid;
-  };
+  }
 
   return MessageView;
 

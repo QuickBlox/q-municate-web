@@ -129,12 +129,13 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
             extension: {
               date_sent: Math.floor(Date.now() / 1000),
               save_to_history: 1,
-              notification_type: '1',
+              notification_type: '2',
               dialog_id: dialog.id,
               room_updated_date: Math.floor(Date.now() / 1000),
               current_occupant_ids: res.occupants_ids.join(),
               added_occupant_ids: params.occupants_ids,
-              dialog_update_info: 3
+              dialog_update_info: 3,
+              message_id: msgId
             }
           });
         });
