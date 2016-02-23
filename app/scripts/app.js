@@ -72,7 +72,7 @@ define([
 
       this.events.init();
 
-      if (QMCONFIG.notifyMe) this.models.QMNotifications.askForPermission();
+      // if (QMCONFIG.notifyMe) this.models.QMNotifications.askForPermission();
       if (QMCONFIG.debug) console.log('App init', this);
     },
 
