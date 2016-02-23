@@ -393,11 +393,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           copyDialogItem, lastMessage;
 
-$(document).find('br').each(function(){
-    if($(this).attr('type') === '_moz'){
-        $(this).remove();
-    }
-});
       if (val.length > 0) {
         if (form.find('.textarea > span').length > 0) {
           form.find('.textarea > span').each(function() {
