@@ -386,7 +386,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       var jid = form.parents('.l-chat').data('jid'),
           id = form.parents('.l-chat').data('id'),
           dialog_id = form.parents('.l-chat').data('dialog'),
-          val = form.find('.textarea').text().trim(),
+          val = form.find('.textarea').html().trim(),
           time = Math.floor(Date.now() / 1000),
           type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
           chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
@@ -400,6 +400,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           });
           val = form.find('.textarea').html().trim();
         }
+        if (form.find('.textarea > div').length > 0) {
+          val = form.find('.textarea').text().trim();
+        }
+        val = val.replace(/<br>/gi, '\n');
 
         // send message
         var msg = {

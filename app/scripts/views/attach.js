@@ -182,7 +182,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
       if (type === 'chat') {
         lastMessage = chat.find('article[data-type="message"]').last();   
         message.stack = Message.isStack(true, message, lastMessage);
-        self.addItem(message, true, true);
+        MessageView.addItem(message, true, true);
       }
 
       if (dialogItem.length > 0) {
