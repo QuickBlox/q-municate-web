@@ -5,10 +5,10 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
-        function($, QMCONFIG, QB, _, minEmoji) {
+define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago'],
+        function($, QMCONFIG, QB, _, minEmoji, Helpers) {
 
-  var User, Message, ContactList, Dialog, Helpers;
+  var User, Message, ContactList, Dialog;
   var clearTyping, typingList = []; // for typing statuses
   var self;
 
@@ -18,7 +18,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     Dialog = this.app.models.Dialog;
     Message = this.app.models.Message;
     ContactList = this.app.models.ContactList;
-    Helpers = this.app.Helpers;
     self = this;
   }
 
@@ -526,8 +525,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         // add new people
         if (new_ids) {
           ContactList.add(dialog.occupants_ids, null, function() {
-            var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',').map(Number) : [],
-                contacts = ContactList.contacts;
+            var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',').map(Number) : [];
             
             for (var i = 0, len = new_ids.length; i < len; i++) {
               new_id = new_ids[i].toString();
@@ -578,8 +576,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
 
-      
-      if (QMCONFIG.notifyMe && (!chat.is(':visible') || !window.isQMAppActive)) QMNotifications.call(msg);
+      if (QMCONFIG.notifyMe && (!chat.is(':visible') || !window.isQMAppActive)) createAndShowNotification(msg);
 
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
@@ -643,10 +640,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
       self.addItem(msg, true, true, true);
 
-      if (QMCONFIG.notifyMe && !window.isQMAppActive) {
-        QMNotifications.call(msg);
-        audioSignal.play();
-      }
+      if (QMCONFIG.notifyMe && !window.isQMAppActive) createAndShowNotification(msg);
 
     },
 
@@ -835,6 +829,20 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       roomJid = QMCONFIG.qbAccount.appId + roomJid.toString();
     }
     return roomJid;
+  }
+
+  function createAndShowNotification(msg) {
+    var dialogs = ContactList.dialogs,
+        contacts = ContactList.contacts,
+        title,
+        options,
+        params;
+
+    params = {User, dialogs, contacts};
+    title = Helpers.Notifications.getTitle(msg, params);
+    options = Helpers.Notifications.getOptions(msg, params);
+
+    Helpers.Notifications.show(title, options);
   }
 
   return MessageView;

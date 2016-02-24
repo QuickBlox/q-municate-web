@@ -32,6 +32,7 @@ define(function() {
     debug: true,
 
     notifyMe: true,
+    notifyTimeout: 7,
 
     isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 

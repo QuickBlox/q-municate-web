@@ -26,8 +26,7 @@
     "load-grunt-tasks": "^3.3.0",
     "connect-livereload": "^0.5.4",
     "jshint-stylish": "^2.1.0",
-    "time-grunt": "^1.2.2",
-    "web-notifications": "^1.0.1"
+    "time-grunt": "^1.2.2"
   },
   "engines": {
     "node": ">=5.1.1"

@@ -37,7 +37,7 @@ requirejs.config({
     timeago: '../bower_components/jquery-timeago/jquery.timeago',
     minEmoji: '../vendor/emoji/js/minEmoji',
     chromaHash: '../bower_components/Chroma-Hash/jquery.chroma-hash',
-    notification: 'qbNotification',
+    QBNotification: '../bower_components/web-notifications/qbNotification',
 
     // Q-municate application
     config: '../config',
@@ -69,10 +69,10 @@ requirejs.config({
 requirejs([
   'jquery', 'config',
   'minEmoji', 'MainModule',
-  'backbone',
-], function ($, QMCONFIG, minEmoji, QM, Backbone) {
+  'backbone', 'QBNotification'
+], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification) {
   var APP;
-
+  
   // Application initialization
   $(document).ready(function() {
     $.ajaxSetup({ cache: true });
@@ -88,6 +88,12 @@ requirejs([
         var obj = $(this);
         obj.html(minEmoji(obj.text()));
       });
+
+      if (QMCONFIG.notifyMe) {
+        QBNotification.requestPermission(function(state) {
+          console.log('State is changed: ' + state);
+        });
+      }
 
       APP = new QM();
       APP.init();
