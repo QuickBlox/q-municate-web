@@ -845,15 +845,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
   }
 
   function createAndShowNotification(msg) {
-    var dialogs = ContactList.dialogs,
-        contacts = ContactList.contacts,
-        title,
-        options,
-        params;
+    var params = {
+      'user': User,
+      'dialogs': ContactList.dialogs,
+      'contacts': ContactList.contacts
+    };
 
-    params = {User, dialogs, contacts};
-    title = Helpers.Notifications.getTitle(msg, params);
-    options = Helpers.Notifications.getOptions(msg, params);
+    var title = Helpers.Notifications.getTitle(msg, params),
+        options = Helpers.Notifications.getOptions(msg, params);
 
     Helpers.Notifications.show(title, options);
   }

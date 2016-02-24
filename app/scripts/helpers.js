@@ -24,7 +24,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
     },
 
     getOptions: function(message, params) {
-      var myUser = params.User,
+      var myUser = params.user,
           dialogs = params.dialogs,
           contacts = params.contacts,
           dialog = dialogs[message.dialog_id],
