@@ -72,7 +72,7 @@ requirejs([
   'backbone', 'QBNotification'
 ], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification) {
   var APP;
-  
+
   // Application initialization
   $(document).ready(function() {
     $.ajaxSetup({ cache: true });
@@ -89,10 +89,8 @@ requirejs([
         obj.html(minEmoji(obj.text()));
       });
 
-      if (QMCONFIG.notification.call) {
-        QBNotification.requestPermission(function(state) {
-          console.log('State is changed: ' + state);
-        });
+      if (QMCONFIG.notification) {
+        QBNotification.requestPermission();
       }
 
       APP = new QM();

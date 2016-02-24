@@ -23,16 +23,15 @@ define(function() {
     //   authKey: '2EADMZadWZkCH8x',
     //   authSecret: 'ZvOFxvW4bpRg2Tm'
     // },
-    
+
     fbAccount: {
       appId: '605405446247805',
       scope: 'email,user_friends',
     },
-      
+
     debug: true,
 
     notification: {
-      call: true,
       timeout: 7
     },
 

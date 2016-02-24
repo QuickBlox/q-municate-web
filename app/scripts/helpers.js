@@ -1,21 +1,16 @@
-/*
- *
+/**
  * Helper Module
- *
  */
 
 define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotification) {
-
   var Helpers = {};
 
   Helpers.Notifications = {
-
     show: function(title, options) {
       var notify = new QBNotification(title, options);
 
       notify.show();
     },
-
     getTitle: function(message, params) {
       var dialogs = params.dialogs,
           contacts = params.contacts,
@@ -76,7 +71,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
 
         // contacts
         case '4':
-          text = contact.full_name + ' has sent a request to you'
+          text = contact.full_name + ' has sent a request to you';
           break;
 
         case '5':
@@ -91,7 +86,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           text = 'You have been deleted from the contact list by ' + contact.full_name;
           break;
 
-        // calls    
+        // calls
         case '8':
           if (message.caller === myUser.contact.id) {
           text = 'Call to ' + contacts[message.callee].full_name+', duration ' + message.duration;
@@ -139,22 +134,21 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
             window.focus();
             selectDialog.click();
           },
-          timeout: QMCONFIG.notifyTimeout,
+          timeout: QMCONFIG.notification.timeout,
           closeOnClick: true
         };
       }
 
       return options;
     }
-
   };
 
   Helpers.Messages = {
-
     getOccupantsNames: function(occupants_ids, myUser) {
-      var occupants_names = '';
+      var occupants_names = '',
+          user;
 
-      for (var i = 0, len = occupants_ids.length, user; i < len; i++) {
+      for (var i = 0, len = occupants_ids.length; i < len; i++) {
         user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
         if (user) {
           occupants_names = (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
@@ -165,9 +159,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
 
       return occupants_names;
     }
-
   };
 
   return Helpers;
-  
 });

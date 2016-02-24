@@ -5,8 +5,8 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago'],
-        function($, QMCONFIG, QB, _, minEmoji, Helpers) {
+define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago', 'QBNotification'],
+        function($, QMCONFIG, QB, _, minEmoji, Helpers, timeago, QBNotification) {
 
   var User, Message, ContactList, Dialog;
   var clearTyping, typingList = []; // for typing statuses
@@ -428,7 +428,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         if (QMCONFIG.debug) console.log(message);
 
         if (type === 'chat') {
-          lastMessage = chat.find('article[data-type="message"]').last();   
+          lastMessage = chat.find('article[data-type="message"]').last();
           message.stack = Message.isStack(true, message, lastMessage);
           self.addItem(message, true, true);
         }
@@ -487,7 +487,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
       typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
       typeof occupants_ids === "string" ? occupants_ids = occupants_ids.split(',').map(Number) : null;
-      
+
       msg = Message.create(message);
       msg.sender_id = id;
 
@@ -527,7 +527,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           ContactList.add(dialog.occupants_ids, null, function() {
             var dataIds = chat.find('.addToGroupChat').data('ids'),
                 ids = dataIds ? dataIds.toString().split(',').map(Number) : [];
-            
+
             for (var i = 0, len = new_ids.length; i < len; i++) {
               new_id = new_ids[i].toString();
 
@@ -577,8 +577,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
 
-      if (QMCONFIG.notification.call && (!chat.is(':visible') || !window.isQMAppActive)) {
-        createAndShowNotification(msg);
+      if (QMCONFIG.notification && (!chat.is(':visible') || !window.isQMAppActive)) {
+        if(!QBNotification.needsPermission()) {
+          createAndShowNotification(msg);
+        } else {
+          QBNotification.requestPermission();
+        }
       }
 
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
@@ -643,8 +647,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
       self.addItem(msg, true, true, true);
 
-      if (QMCONFIG.notification.call && !window.isQMAppActive) {
-        createAndShowNotification(msg);
+      if (QMCONFIG.notification && !window.isQMAppActive) {
+        if(!QBNotification.needsPermission()) {
+          createAndShowNotification(msg);
+        } else {
+          QBNotification.requestPermission();
+         }
       }
 
     },
@@ -775,7 +783,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
   function stopShowTyping(chat, user) {
     var index = typingList.indexOf(user);
-    
+
     typingList.splice(index, 1); // removing current user from typing list
 
     // remove typing html or that user from this html
@@ -788,7 +796,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     isTypingOrAreTyping(chat);
   }
 
-  function startShowTyping(chat, user) { 
+  function startShowTyping(chat, user) {
     var form = $('article.message[data-status="typing"]').length > 0 ? true : false,
         html;
 
@@ -806,7 +814,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     $.unique(typingList); // remove duplicates
     typingList.splice(3, Number.MAX_VALUE); // leave the last three users which are typing
 
-    // add a new typing html or use existing for display users which are typing    
+    // add a new typing html or use existing for display users which are typing
     if (form) {
       $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     } else {
