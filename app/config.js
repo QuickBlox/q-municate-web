@@ -31,8 +31,10 @@ define(function() {
       
     debug: true,
 
-    notifyMe: true,
-    notifyTimeout: 7,
+    notification: {
+      call: true,
+      timeout: 7
+    },
 
     isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 

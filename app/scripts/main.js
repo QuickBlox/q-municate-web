@@ -89,7 +89,7 @@ requirejs([
         obj.html(minEmoji(obj.text()));
       });
 
-      if (QMCONFIG.notifyMe) {
+      if (QMCONFIG.notification.call) {
         QBNotification.requestPermission(function(state) {
           console.log('State is changed: ' + state);
         });

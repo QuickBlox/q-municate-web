@@ -1,5 +1,4 @@
 /*
- * Q-municate chat application
  *
  * Helper Module
  *
@@ -38,11 +37,30 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           chatType = message.type,
           photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (dialog.room_photo || QMCONFIG.defAvatar.group_url_png),
           type = message.notification_type,
-          options, text, occupants_ids, occupantsNames = '',
-          selectDialog = $('.dialog-item[data-dialog="'+message.dialog_id+'"] .contact');
+          selectDialog = $('.dialog-item[data-dialog="'+message.dialog_id+'"] .contact'),
+          occupants_ids,
+          occupantsNames = '',
+          options,
+          text;
 
+      /**
+       * [to prepare the text in the notification]
+       * @param  {[type]} type [system notification type]
+       * @return {[text]}      [notification description text]
+       * 1 - groupchat created
+       * 2 - about any changes in groupchat
+       * 3 - not use yet
+       * 4 - incomming contact request
+       * 5 - contact request accepted
+       * 6 - contact request rejected
+       * 7 - about deleting from contact list
+       * 8 - incomming call
+       * 9 - about missed call
+       * 10 - no answer
+       * 11 - сamera and/or microphone wasn't found
+       * default - message
+       */
       switch (type) {
-
         // system notifications
         case '1':
           occupants_ids = _.without(message.current_occupant_ids.split(',').map(Number), contact.id);
@@ -53,6 +71,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
 
         // groupchat updated
         case '2':
+          // for future cases
           break;
 
         // contacts
@@ -133,9 +152,9 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
   Helpers.Messages = {
 
     getOccupantsNames: function(occupants_ids, myUser) {
-      var occupants_names = '', i, len, user;
+      var occupants_names = '';
 
-      for (i = 0, len = occupants_ids.length, user; i < len; i++) {
+      for (var i = 0, len = occupants_ids.length, user; i < len; i++) {
         user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
         if (user) {
           occupants_names = (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
@@ -144,7 +163,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
         }
       }
 
-      return occupants_names
+      return occupants_names;
     }
 
   };
