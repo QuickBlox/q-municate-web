@@ -5,8 +5,8 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
-        function($, QMCONFIG, QB, _, minEmoji) {
+define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago', 'QBNotification'],
+        function($, QMCONFIG, QB, _, minEmoji, Helpers, timeago, QBNotification) {
 
   var User, Message, ContactList, Dialog;
   var clearTyping, typingList = []; // for typing statuses
@@ -397,7 +397,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           form.find('.textarea > span').each(function() {
             $(this).after($(this).find('span').data('unicode')).remove();
           });
-          val = form.find('.textarea').text().trim();
+          val = form.find('.textarea').html().trim();
         }
         if (form.find('.textarea > div').length > 0) {
           val = form.find('.textarea').text().trim();
@@ -428,7 +428,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         if (QMCONFIG.debug) console.log(message);
 
         if (type === 'chat') {
-          lastMessage = chat.find('article[data-type="message"]').last();   
+          lastMessage = chat.find('article[data-type="message"]').last();
           message.stack = Message.isStack(true, message, lastMessage);
           self.addItem(message, true, true);
         }
@@ -463,7 +463,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
     onMessage: function(id, message) {
       if (message.type === 'error') return true;
-
       var DialogView = self.app.views.Dialog,
           hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
           dialogs = ContactList.dialogs,
@@ -488,7 +487,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
       typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
       typeof occupants_ids === "string" ? occupants_ids = occupants_ids.split(',').map(Number) : null;
-      
+
       msg = Message.create(message);
       msg.sender_id = id;
 
@@ -526,9 +525,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
         // add new people
         if (new_ids) {
           ContactList.add(dialog.occupants_ids, null, function() {
-            var ids = chat.find('.addToGroupChat').data('ids') ? chat.find('.addToGroupChat').data('ids').toString().split(',').map(Number) : [],
-                contacts = ContactList.contacts;
-            
+            var dataIds = chat.find('.addToGroupChat').data('ids'),
+                ids = dataIds ? dataIds.toString().split(',').map(Number) : [];
+
             for (var i = 0, len = new_ids.length; i < len; i++) {
               new_id = new_ids[i].toString();
 
@@ -578,6 +577,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
 
+      if (QMCONFIG.notification && (!chat.is(':visible') || !window.isQMAppActive)) {
+        if(!QBNotification.needsPermission()) {
+          createAndShowNotification(msg);
+        } else {
+          QBNotification.requestPermission();
+        }
+      }
+
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
@@ -597,9 +604,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
           dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
+          audioSignal = $('#newMessageSignal')[0],
           msg, dialog;
 
       msg = Message.create(message);
+      msg.sender_id = message.userId;
+      msg.type = 'headline';
 
       // create new group chat
       if (notification_type === '1' && dialogGroupItem.length === 0) {
@@ -636,6 +646,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       }
 
       self.addItem(msg, true, true, true);
+
+      if (QMCONFIG.notification && !window.isQMAppActive) {
+        if(!QBNotification.needsPermission()) {
+          createAndShowNotification(msg);
+        } else {
+          QBNotification.requestPermission();
+         }
+      }
+
     },
 
     onMessageTyping: function(isTyping, userId, dialogId) {
@@ -764,7 +783,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
 
   function stopShowTyping(chat, user) {
     var index = typingList.indexOf(user);
-    
+
     typingList.splice(index, 1); // removing current user from typing list
 
     // remove typing html or that user from this html
@@ -777,7 +796,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     isTypingOrAreTyping(chat);
   }
 
-  function startShowTyping(chat, user) { 
+  function startShowTyping(chat, user) {
     var form = $('article.message[data-status="typing"]').length > 0 ? true : false,
         html;
 
@@ -795,7 +814,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
     $.unique(typingList); // remove duplicates
     typingList.splice(3, Number.MAX_VALUE); // leave the last three users which are typing
 
-    // add a new typing html or use existing for display users which are typing    
+    // add a new typing html or use existing for display users which are typing
     if (form) {
       $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     } else {
@@ -823,6 +842,20 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'timeago'],
       roomJid = QMCONFIG.qbAccount.appId + roomJid.toString();
     }
     return roomJid;
+  }
+
+  function createAndShowNotification(msg) {
+    var dialogs = ContactList.dialogs,
+        contacts = ContactList.contacts,
+        title,
+        options,
+        params;
+
+    params = {User, dialogs, contacts};
+    title = Helpers.Notifications.getTitle(msg, params);
+    options = Helpers.Notifications.getOptions(msg, params);
+
+    Helpers.Notifications.show(title, options);
   }
 
   return MessageView;

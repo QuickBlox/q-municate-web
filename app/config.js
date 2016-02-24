@@ -23,18 +23,25 @@ define(function() {
     //   authKey: '2EADMZadWZkCH8x',
     //   authSecret: 'ZvOFxvW4bpRg2Tm'
     // },
-    
+
     fbAccount: {
       appId: '605405446247805',
       scope: 'email,user_friends',
     },
-      
+
     debug: true,
+
+    notification: {
+      timeout: 7
+    },
+
     isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 
     defAvatar: {
       url: 'images/ava-single.svg',
+      url_png: 'images/ava-single.png',
       group_url: 'images/ava-group.svg',
+      group_url_png: 'images/ava-group.png',
       caption: 'Choose user picture'
     },
 

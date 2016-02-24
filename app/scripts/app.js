@@ -10,12 +10,12 @@ define([
     'DialogModule', 'MessageModule', 'AttachModule',
     'ContactListModule', 'VideoChatModule', 'UserView', 'DialogView',
     'MessageView', 'AttachView', 'ContactListView', 'VideoChatView', 
-    'Events', 'QBApiCalls', 'config', 'chromaHash'
+    'Events', 'Helpers', 'QBApiCalls', 'config', 'chromaHash'
   ], function(
     $, User, Session, Contact, Dialog,
     Message, Attach, ContactList, VideoChat, UserView,
-    DialogView, MessageView, AttachView,
-    ContactListView, VideoChatView, Events, QBApiCalls, QMCONFIG
+    DialogView, MessageView, AttachView, ContactListView,
+    VideoChatView, Events, Helpers, QBApiCalls, QMCONFIG
   ) {
 
   function QM() {

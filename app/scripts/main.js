@@ -37,6 +37,7 @@ requirejs.config({
     timeago: '../bower_components/jquery-timeago/jquery.timeago',
     minEmoji: '../vendor/emoji/js/minEmoji',
     chromaHash: '../bower_components/Chroma-Hash/jquery.chroma-hash',
+    QBNotification: '../bower_components/web-notifications/qbNotification',
 
     // Q-municate application
     config: '../config',
@@ -59,6 +60,8 @@ requirejs.config({
     VideoChatView: 'views/videochat',
     // events
     Events: 'events',
+    // helpers
+    Helpers: 'helpers',
     QBApiCalls: 'qbApiCalls'
   }
 });
@@ -66,8 +69,8 @@ requirejs.config({
 requirejs([
   'jquery', 'config',
   'minEmoji', 'MainModule',
-  'backbone',
-], function ($, QMCONFIG, minEmoji, QM, Backbone) {
+  'backbone', 'QBNotification'
+], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification) {
   var APP;
 
   // Application initialization
@@ -85,6 +88,10 @@ requirejs([
         var obj = $(this);
         obj.html(minEmoji(obj.text()));
       });
+
+      if (QMCONFIG.notification) {
+        QBNotification.requestPermission();
+      }
 
       APP = new QM();
       APP.init();

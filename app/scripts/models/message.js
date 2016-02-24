@@ -60,6 +60,7 @@ define(['quickblox'], function(QB) {
         sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
         read_ids: params.read_ids || [],
         delivered_ids: params.delivered_ids || [],
+        type: params.type || null,
         stack: false
       };
 
