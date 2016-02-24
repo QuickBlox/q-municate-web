@@ -10,12 +10,12 @@ define([
     'DialogModule', 'MessageModule', 'AttachModule',
     'ContactListModule', 'VideoChatModule', 'UserView', 'DialogView',
     'MessageView', 'AttachView', 'ContactListView', 'VideoChatView', 
-    'Events', 'Helpers', 'QBApiCalls', 'config', 'chromaHash'
+    'Events', 'Helpers', 'QBApiCalls', 'config', 'chromaHash', 'notification'
   ], function(
     $, User, Session, Contact, Dialog,
     Message, Attach, ContactList, VideoChat, UserView,
     DialogView, MessageView, AttachView, ContactListView,
-    VideoChatView, Events, Helpers, QBApiCalls, QMCONFIG
+    VideoChatView, Events, Helpers, QBApiCalls, QMCONFIG, notification
   ) {
 
   function QM() {
@@ -42,7 +42,6 @@ define([
     this.events = new Events(this);
     this.service = new QBApiCalls(this);
   }
-  console.log(Helpers);
 
   QM.prototype = {
     init: function() {
@@ -72,7 +71,13 @@ define([
 
       this.events.init();
 
-      // if (QMCONFIG.notifyMe) this.models.QMNotifications.askForPermission();
+      if (QMCONFIG.notifyMe) {
+        console.log(this.notify);
+        this.notify.requestPermission(function(state) {
+          console.log('State is changed: ' + state);
+        });
+      }
+
       if (QMCONFIG.debug) console.log('App init', this);
     },
 

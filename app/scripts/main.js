@@ -37,6 +37,7 @@ requirejs.config({
     timeago: '../bower_components/jquery-timeago/jquery.timeago',
     minEmoji: '../vendor/emoji/js/minEmoji',
     chromaHash: '../bower_components/Chroma-Hash/jquery.chroma-hash',
+    notification: 'qbNotification',
 
     // Q-municate application
     config: '../config',
@@ -68,10 +69,10 @@ requirejs.config({
 requirejs([
   'jquery', 'config',
   'minEmoji', 'MainModule',
-  'backbone', 'Helpers'
-], function ($, QMCONFIG, minEmoji, QM, Backbone, Helpers) {
+  'backbone',
+], function ($, QMCONFIG, minEmoji, QM, Backbone) {
   var APP;
-console.log(Helpers);
+
   // Application initialization
   $(document).ready(function() {
     $.ajaxSetup({ cache: true });

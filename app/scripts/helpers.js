@@ -5,11 +5,15 @@
  *
  */
 
-define(['jquery', 'config', 'MainModule'], function($, QMCONFIG, QM) {
+define(['jquery', 'config', 'MainModule', 'notification'], function($, QMCONFIG, QM, notify) {
 
   var Helpers = {};
 
   Helpers.Notifications = {
+
+    show: function(argument) {
+      
+    },
 
     getTitle: function(dialog, contact) {
       var title;
