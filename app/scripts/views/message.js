@@ -506,13 +506,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         DialogView.getUnreadCounter(dialog_id);
       }
 
-      // subscribe message
-      if (notification_type === '4') {
-        // update hidden dialogs
-        hiddenDialogs[id] = dialog_id;
-        ContactList.saveHiddenDialogs(hiddenDialogs);
-      }
-
       // add new occupants
       if (notification_type === '2') {
         dialog = ContactList.dialogs[dialog_id];
@@ -577,18 +570,36 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
 
-      if (QMCONFIG.notification && QBNotification.isSupported() && (!chat.is(':visible') || !window.isQMAppActive)) {
-        if(!QBNotification.needsPermission()) {
-          createAndShowNotification(msg);
-        } else {
-          QBNotification.requestPermission();
-        }
+      // subscribe message
+      if (notification_type === '4') {
+        var QBApiCalls = self.app.service,
+            Contact = self.app.models.Contact;
+        // update hidden dialogs
+        hiddenDialogs[id] = dialog_id;
+        ContactList.saveHiddenDialogs(hiddenDialogs);
+        // update contact list
+        QBApiCalls.getUser(id, function(user) {
+          console.log(user);
+          ContactList.contacts[id] = Contact.create(user);
+          callQMNotification();
+        });
+      } else {      
+        callQMNotification();
       }
 
       if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
 
+      function callQMNotification() {
+        if (QMCONFIG.notification && QBNotification.isSupported() && (!chat.is(':visible') || !window.isQMAppActive)) {
+          if(!QBNotification.needsPermission()) {
+            createAndShowNotification(msg);
+          } else {
+            QBNotification.requestPermission();
+          }
+        }
+      }
     },
 
     onSystemMessage: function(message) {

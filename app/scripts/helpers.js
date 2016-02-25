@@ -40,6 +40,11 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           options,
           text;
 
+      // hot fix
+      if (photo === 'images/ava-single.svg') {
+        photo = QMCONFIG.defAvatar.url_png;
+      }
+
       /**
        * [to prepare the text in the notification]
        * @param  {[type]} type [system notification type]
