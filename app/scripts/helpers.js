@@ -6,13 +6,11 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
   var Helpers = {};
 
   Helpers.Notifications = {
-
     show: function(title, options) {
       var notify = new QBNotification(title, options);
 
       notify.show();
     },
-    
     getTitle: function(message, params) {
       var dialogs = params.dialogs,
           contacts = params.contacts,
