@@ -577,7 +577,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       if (QMCONFIG.debug) console.log(msg);
       self.addItem(msg, true, true, id);
 
-      if (QMCONFIG.notification && (!chat.is(':visible') || !window.isQMAppActive)) {
+      if (QMCONFIG.notification && QBNotification.isSupported() && (!chat.is(':visible') || !window.isQMAppActive)) {
         if(!QBNotification.needsPermission()) {
           createAndShowNotification(msg);
         } else {
@@ -647,7 +647,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
       self.addItem(msg, true, true, true);
 
-      if (QMCONFIG.notification && !window.isQMAppActive) {
+      if (QMCONFIG.notification && QBNotification.isSupported() && !window.isQMAppActive) {
         if(!QBNotification.needsPermission()) {
           createAndShowNotification(msg);
         } else {
