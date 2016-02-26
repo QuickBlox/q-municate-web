@@ -477,6 +477,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
+          isHiddenChat = !chat.is(':visible'),
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
           roster = ContactList.roster,
           audioSignal = $('#newMessageSignal')[0],
@@ -494,13 +495,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       if (message.markable === 1 && chat.is(':visible') && window.isQMAppActive && msg.sender_id !== User.contact.id) {
         // send read status if message displayed in chat
         Message.update(msg.id, dialog_id, id);
-      } else if ((!chat.is(':visible') || !window.isQMAppActive) && chat.length > 0 && message.markable == 1) {
+      } else if ((isHiddenChat || !window.isQMAppActive) && chat.length > 0 && message.markable == 1) {
         msgArr = dialogs[dialog_id].messages || [];
         msgArr.push(msg.id);
         dialogs[dialog_id].messages = msgArr;
       }
 
-      if (!selected && !chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
+      if (!selected && isHiddenChat && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
         unread++;
         dialogItem.find('.unread').text(unread);
         DialogView.getUnreadCounter(dialog_id);
@@ -581,25 +582,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         QBApiCalls.getUser(id, function(user) {
           console.log(user);
           ContactList.contacts[id] = Contact.create(user);
-          callQMNotification();
+          createAndShowNotification(msg, isHiddenChat);
         });
       } else {      
-        callQMNotification();
+        createAndShowNotification(msg, isHiddenChat);
       }
 
-      if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
+      if ((isHiddenChat || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
 
-      function callQMNotification() {
-        if (QMCONFIG.notification && QBNotification.isSupported() && (!chat.is(':visible') || !window.isQMAppActive)) {
-          if(!QBNotification.needsPermission()) {
-            createAndShowNotification(msg);
-          } else {
-            QBNotification.requestPermission();
-          }
-        }
-      }
     },
 
     onSystemMessage: function(message) {
@@ -658,13 +650,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
       self.addItem(msg, true, true, true);
 
-      if (QMCONFIG.notification && QBNotification.isSupported() && !window.isQMAppActive) {
-        if(!QBNotification.needsPermission()) {
-          createAndShowNotification(msg);
-        } else {
-          QBNotification.requestPermission();
-         }
-      }
+      createAndShowNotification(msg, true);
 
     },
 
@@ -855,7 +841,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     return roomJid;
   }
 
-  function createAndShowNotification(msg) {
+  function createAndShowNotification(msg, isHiddenChat) {
     var params = {
       'user': User,
       'dialogs': ContactList.dialogs,
@@ -865,7 +851,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     var title = Helpers.Notifications.getTitle(msg, params),
         options = Helpers.Notifications.getOptions(msg, params);
 
-    Helpers.Notifications.show(title, options);
+    if (QMCONFIG.notification && QBNotification.isSupported() && (isHiddenChat || !window.isQMAppActive)) {
+      if(!QBNotification.needsPermission()) {
+        Helpers.Notifications.show(title, options);
+      } else {
+        QBNotification.requestPermission();
+      }
+    }
   }
 
   return MessageView;
