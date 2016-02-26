@@ -425,7 +425,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           _id: msg.id
         });
 
-        if (QMCONFIG.debug) console.log(message);
+        if (QMCONFIG.debug) {
+          console.log(message);
+        }
 
         if (type === 'chat') {
           lastMessage = chat.find('article[data-type="message"]').last();
@@ -477,7 +479,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
-          isHiddenChat = !chat.is(':visible'),
+          isHiddenChat = chat.is(':hidden'),
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
           roster = ContactList.roster,
           audioSignal = $('#newMessageSignal')[0],
@@ -492,7 +494,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       msg = Message.create(message);
       msg.sender_id = id;
 
-      if (message.markable === 1 && chat.is(':visible') && window.isQMAppActive && msg.sender_id !== User.contact.id) {
+      if (message.markable === 1 && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
         // send read status if message displayed in chat
         Message.update(msg.id, dialog_id, id);
       } else if ((isHiddenChat || !window.isQMAppActive) && chat.length > 0 && message.markable == 1) {
@@ -568,7 +570,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
       lastMessage = chat.find('article[data-type="message"]').last();
       msg.stack = Message.isStack(true, msg, lastMessage);
-      if (QMCONFIG.debug) console.log(msg);
+      if (QMCONFIG.debug) {
+        console.log(msg);
+      }
       self.addItem(msg, true, true, id);
 
       // subscribe message
@@ -580,7 +584,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         ContactList.saveHiddenDialogs(hiddenDialogs);
         // update contact list
         QBApiCalls.getUser(id, function(user) {
-          console.log(user);
           ContactList.contacts[id] = Contact.create(user);
           createAndShowNotification(msg, isHiddenChat);
         });
@@ -628,7 +631,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         });
 
         ContactList.dialogs[dialog.id] = dialog;
-        if (QMCONFIG.debug) console.log('Dialog', dialog);
+        if (QMCONFIG.debug) {
+          console.log('Dialog', dialog);
+        }
         if (!localStorage['QM.dialog-' + dialog.id]) {
           localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
         }
