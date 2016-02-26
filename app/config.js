@@ -17,13 +17,6 @@ define(function() {
       authSecret: 'JdqsMHCjHVYkVxV'
     },
 
-    // /* Development environment */
-    // qbAccount: {
-    //   appId: 27915,
-    //   authKey: '2EADMZadWZkCH8x',
-    //   authSecret: 'ZvOFxvW4bpRg2Tm'
-    // },
-
     fbAccount: {
       appId: '605405446247805',
       scope: 'email,user_friends',

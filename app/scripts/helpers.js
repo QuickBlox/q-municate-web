@@ -132,6 +132,8 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           break;
         }
 
+      text = text.replace(/&nbsp;/gi, " ");
+
       if (text) {
         options = {
           body: text,
@@ -167,6 +169,26 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
       return occupants_names;
     }
   };
+
+  // smart console (beta)
+  Helpers.showInConsole = function() {
+    if (QMCONFIG.debug) {
+      if (arguments.length <= 1) {
+        console.log(arguments[0]);
+      } else {
+        console.group("[Q-MUNICATE debug mode]:");
+        for (var i = 0; i < arguments.length; i++) {
+          if ((typeof arguments[i] === "string") && (typeof arguments[i+1] !== "string")) {
+            console.log(arguments[i], arguments[i+1]);
+            i = i + 1;
+          } else {
+            console.log(arguments[i]);
+          }
+        }
+        console.groupEnd();
+      }
+    }
+  } 
 
   return Helpers;
 });
