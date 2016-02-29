@@ -841,7 +841,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       if(!QBNotification.needsPermission()) {
         Helpers.Notifications.show(title, options);
       } else {
-        QBNotification.requestPermission();
+        QBNotification.requestPermission(function(state) {
+          if (state === "granted") {
+            Helpers.Notifications.show(title, options);
+          } 
+        });
       }
     }
   }
