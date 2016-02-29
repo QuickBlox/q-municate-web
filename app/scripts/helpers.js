@@ -156,10 +156,9 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
   Helpers.Messages = {
     getOccupantsNames: function(occupants_ids, myUser, contacts) {
       var occupants_names = '',
-          myContact = myUser.contact,
-          user;
+          myContact = myUser.contact;
 
-      for (var i = 0, len = occupants_ids.length; i < len; i++) {
+      for (var i = 0, len = occupants_ids.length, user; i < len; i++) {
         user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
         if (user) {
           occupants_names = (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
