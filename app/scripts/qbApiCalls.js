@@ -253,6 +253,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
               window.location.reload();
             }
           } else {
+            FlurryAgent.logEvent("Connect to chat");
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);

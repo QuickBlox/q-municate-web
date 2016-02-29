@@ -96,6 +96,13 @@ requirejs([
       APP = new QM();
       APP.init();
     });
+    $.getScript('https://cdn.flurry.com/js/flurry.js', function() {
+      FlurryAgent.startSession('ZJQZKGMMMFTWMBRZ7G63');
+      var eventParameters = {};
+      eventParameters['test_initialization'] = 'Flurry';
+      FlurryAgent.logEvent('FlurryAgent_initialized', eventParameters, true);
+      FlurryAgent.setRequestInterval('');
+    });
   });
 
 });
