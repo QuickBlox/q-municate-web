@@ -60,14 +60,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         switch (type) {
         case '1':
           occupants_ids = _.without(message.current_occupant_ids.split(',').map(Number), contact.id);
-
-          for (i = 0, len = occupants_ids.length, user; i < len; i++) {
-            user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
-            if (user)
-              occupants_names = (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
-            else if (occupants_ids[i] === User.contact.id)
-              occupants_names = (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
-          }
+          occupants_names = Helpers.Messages.getOccupantsNames(occupants_ids, User, contacts);
 
           html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
           html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
@@ -88,14 +81,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
           if (message.added_occupant_ids) {
             occupants_ids = message.added_occupant_ids.split(',').map(Number);
-
-            for (i = 0, len = occupants_ids.length, user; i < len; i++) {
-              user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
-              if (user)
-                occupants_names = (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
-              else if (occupants_ids[i] === User.contact.id)
-                occupants_names = (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
-            }
+            occupants_names = Helpers.Messages.getOccupantsNames(occupants_ids, User, contacts);
 
             html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has added '+occupants_names+'</h4>';
           }
@@ -425,7 +411,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           _id: msg.id
         });
 
-        if (QMCONFIG.debug) console.log(message);
+        Helpers.showInConsole('Message send:', message);
 
         if (type === 'chat') {
           lastMessage = chat.find('article[data-type="message"]').last();
@@ -466,6 +452,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       var DialogView = self.app.views.Dialog,
           hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
           dialogs = ContactList.dialogs,
+          contacts = ContactList.contacts,
           notification_type = message.extension && message.extension.notification_type,
           dialog_id = message.extension && message.extension.dialog_id,
           room_jid = roomJidVerification(dialog_id),
@@ -477,6 +464,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
           chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
+          isHiddenChat = chat.is(':hidden'),
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
           roster = ContactList.roster,
           audioSignal = $('#newMessageSignal')[0],
@@ -491,26 +479,19 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       msg = Message.create(message);
       msg.sender_id = id;
 
-      if (message.markable === 1 && chat.is(':visible') && window.isQMAppActive && msg.sender_id !== User.contact.id) {
+      if (message.markable === 1 && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
         // send read status if message displayed in chat
         Message.update(msg.id, dialog_id, id);
-      } else if ((!chat.is(':visible') || !window.isQMAppActive) && chat.length > 0 && message.markable == 1) {
+      } else if ((isHiddenChat || !window.isQMAppActive) && chat.length > 0 && message.markable == 1) {
         msgArr = dialogs[dialog_id].messages || [];
         msgArr.push(msg.id);
         dialogs[dialog_id].messages = msgArr;
       }
 
-      if (!selected && !chat.is(':visible') && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
+      if (!selected && isHiddenChat && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
         unread++;
         dialogItem.find('.unread').text(unread);
         DialogView.getUnreadCounter(dialog_id);
-      }
-
-      // subscribe message
-      if (notification_type === '4') {
-        // update hidden dialogs
-        hiddenDialogs[id] = dialog_id;
-        ContactList.saveHiddenDialogs(hiddenDialogs);
       }
 
       // add new occupants
@@ -574,18 +555,26 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
       lastMessage = chat.find('article[data-type="message"]').last();
       msg.stack = Message.isStack(true, msg, lastMessage);
-      if (QMCONFIG.debug) console.log(msg);
+      Helpers.showInConsole('Message object created:', msg);
       self.addItem(msg, true, true, id);
 
-      if (QMCONFIG.notification && (!chat.is(':visible') || !window.isQMAppActive)) {
-        if(!QBNotification.needsPermission()) {
-          createAndShowNotification(msg);
-        } else {
-          QBNotification.requestPermission();
-        }
+      // subscribe message
+      if (notification_type === '4') {
+        var QBApiCalls = self.app.service,
+            Contact = self.app.models.Contact;
+        // update hidden dialogs
+        hiddenDialogs[id] = dialog_id;
+        ContactList.saveHiddenDialogs(hiddenDialogs);
+        // update contact list
+        QBApiCalls.getUser(id, function(user) {
+          contacts[id] = Contact.create(user);
+          createAndShowNotification(msg, isHiddenChat);
+        });
+      } else {      
+        createAndShowNotification(msg, isHiddenChat);
       }
 
-      if ((!chat.is(':visible') || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
+      if ((isHiddenChat || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
         audioSignal.play();
       }
 
@@ -625,7 +614,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         });
 
         ContactList.dialogs[dialog.id] = dialog;
-        if (QMCONFIG.debug) console.log('Dialog', dialog);
+        Helpers.showInConsole('Dialog', dialog);
         if (!localStorage['QM.dialog-' + dialog.id]) {
           localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
         }
@@ -647,13 +636,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
       self.addItem(msg, true, true, true);
 
-      if (QMCONFIG.notification && !window.isQMAppActive) {
-        if(!QBNotification.needsPermission()) {
-          createAndShowNotification(msg);
-        } else {
-          QBNotification.requestPermission();
-         }
-      }
+      createAndShowNotification(msg, true);
 
     },
 
@@ -844,7 +827,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     return roomJid;
   }
 
-  function createAndShowNotification(msg) {
+  function createAndShowNotification(msg, isHiddenChat) {
     var params = {
       'user': User,
       'dialogs': ContactList.dialogs,
@@ -854,7 +837,17 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     var title = Helpers.Notifications.getTitle(msg, params),
         options = Helpers.Notifications.getOptions(msg, params);
 
-    Helpers.Notifications.show(title, options);
+    if (QMCONFIG.notification && QBNotification.isSupported() && (isHiddenChat || !window.isQMAppActive)) {
+      if(!QBNotification.needsPermission()) {
+        Helpers.Notifications.show(title, options);
+      } else {
+        QBNotification.requestPermission(function(state) {
+          if (state === "granted") {
+            Helpers.Notifications.show(title, options);
+          } 
+        });
+      }
+    }
   }
 
   return MessageView;
