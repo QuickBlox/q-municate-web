@@ -8,9 +8,11 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
   Helpers.Notifications = {
     
     show: function(title, options) {
-      var notify = new QBNotification(title, options);
-
-      notify.show();
+      // show notification if all parametters are is
+      if (title && options) {
+        var notify = new QBNotification(title, options);
+        notify.show();
+      }
     },
 
     getTitle: function(message, params) {
@@ -66,8 +68,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
         // system notifications
         case '1':
           occupants_ids = _.without(message.current_occupant_ids.split(',').map(Number), contact.id);
-
-          occupantsNames = Helpers.Messages.getOccupantsNames(occupants_ids, myUser);
+          occupantsNames = Helpers.Messages.getOccupantsNames(occupants_ids, myUser, contacts);
           text = contact.full_name + ' has added ' + occupantsNames + ' to the group chat';
           break;
 
@@ -132,7 +133,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           break;
         }
 
-      text = text.replace(/&nbsp;/gi, " ");
+      text = text.replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&");
 
       if (text) {
         options = {
@@ -153,16 +154,17 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
   };
 
   Helpers.Messages = {
-    getOccupantsNames: function(occupants_ids, myUser) {
+    getOccupantsNames: function(occupants_ids, myUser, contacts) {
       var occupants_names = '',
+          myContact = myUser.contact,
           user;
 
       for (var i = 0, len = occupants_ids.length; i < len; i++) {
         user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
         if (user) {
           occupants_names = (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
-        } else if (occupants_ids[i] === myUser.contact.id) {
-          occupants_names = (i + 1) === len ? occupants_names.concat(myUser.contact.full_name) : occupants_names.concat(myUser.contact.full_name).concat(', ');
+        } else if (occupants_ids[i] === myContact.id) {
+          occupants_names = (i + 1) === len ? occupants_names.concat(myContact.full_name) : occupants_names.concat(myContact.full_name).concat(', ');
         }
       }
 
@@ -188,7 +190,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
         console.groupEnd();
       }
     }
-  } 
+  };
 
   return Helpers;
 });

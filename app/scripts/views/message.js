@@ -60,14 +60,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         switch (type) {
         case '1':
           occupants_ids = _.without(message.current_occupant_ids.split(',').map(Number), contact.id);
-
-          for (i = 0, len = occupants_ids.length, user; i < len; i++) {
-            user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
-            if (user)
-              occupants_names = (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
-            else if (occupants_ids[i] === User.contact.id)
-              occupants_names = (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
-          }
+          occupants_names = Helpers.Messages.getOccupantsNames(occupants_ids, User, contacts);
 
           html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
           html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
@@ -88,14 +81,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
           if (message.added_occupant_ids) {
             occupants_ids = message.added_occupant_ids.split(',').map(Number);
-
-            for (i = 0, len = occupants_ids.length, user; i < len; i++) {
-              user = contacts[occupants_ids[i]] && contacts[occupants_ids[i]].full_name;
-              if (user)
-                occupants_names = (i + 1) === len ? occupants_names.concat(user) : occupants_names.concat(user).concat(', ');
-              else if (occupants_ids[i] === User.contact.id)
-                occupants_names = (i + 1) === len ? occupants_names.concat(User.contact.full_name) : occupants_names.concat(User.contact.full_name).concat(', ');
-            }
+            occupants_names = Helpers.Messages.getOccupantsNames(occupants_ids, User, contacts);
 
             html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has added '+occupants_names+'</h4>';
           }
@@ -466,6 +452,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       var DialogView = self.app.views.Dialog,
           hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
           dialogs = ContactList.dialogs,
+          contacts = ContactList.contacts,
           notification_type = message.extension && message.extension.notification_type,
           dialog_id = message.extension && message.extension.dialog_id,
           room_jid = roomJidVerification(dialog_id),
@@ -580,7 +567,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         ContactList.saveHiddenDialogs(hiddenDialogs);
         // update contact list
         QBApiCalls.getUser(id, function(user) {
-          ContactList.contacts[id] = Contact.create(user);
+          contacts[id] = Contact.create(user);
           createAndShowNotification(msg, isHiddenChat);
         });
       } else {      

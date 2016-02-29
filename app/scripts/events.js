@@ -150,9 +150,9 @@ define([
 
       $('.em-wrap').on('click', function() {
         var code = $(this).find('.em').data('unicode'),
-            val = $('.l-chat:visible .textarea').html() + '&nbsp;';
+            val = $('.l-chat:visible .textarea').html();
 
-        $('.l-chat:visible .textarea').addClass('contenteditable').html(val + minEmoji(code) + '&nbsp;');
+        $('.l-chat:visible .textarea').addClass('contenteditable').html(val + minEmoji(code));
         setCursorToEnd($('.l-chat:visible .textarea'));
       });
 
