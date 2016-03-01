@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
+define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
 
   var User, ContactList, Contact,
       FBCallback = null;
@@ -98,7 +98,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         FBCallback = null;
 
         FB.getLoginStatus(function(response) {
-          if (QMCONFIG.debug) console.log('FB status response', response);
+          Helpers.showInConsole('FB status response', response);
           if (callback) {
             // situation when you are recovering QB session via FB
             // and FB accessToken has expired
@@ -106,7 +106,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
               callback(response.authResponse.accessToken);
             } else {
               FB.login(function(response) {
-                if (QMCONFIG.debug) console.log('FB authResponse', response);
+                Helpers.showInConsole('FB authResponse', response);
                 if (response.status === 'connected')
                   callback(response.authResponse.accessToken);
               });
@@ -261,7 +261,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         switchOnWelcomePage();
         $('#capBox').removeClass('is-hidden');
         $('.l-chat').remove();
-        if (QMCONFIG.debug) console.log('current User and Session were destroyed');
+        Helpers.showInConsole('current User and Session were destroyed');
         DialogView.logoutWithClearData();
       });
     },
@@ -270,7 +270,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       var val = form.find('input[type="search"]').val().trim().toLowerCase();
 
       if (val.length > 0) {
-        // if (QMCONFIG.debug) console.log('local search =', val);
+        // Helpers.showInConsole('local search =', val);
         $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
         $('#searchList ul').html('').add('#searchList .note').removeClass('is-hidden');
 
