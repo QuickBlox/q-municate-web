@@ -254,18 +254,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
               window.location.reload();
             }
           } else {
-            var currentUser = User.contact;
-            var eventParameters = {           
-              'appID': (QMCONFIG.qbAccount.appId).toString(),
-              'full_name': currentUser.full_name,
-              'email': currentUser.email || '',
-              'facebook_id': currentUser.facebook_id || '',
-              'user_id': (currentUser.id).toString(),
-              'user_tags': currentUser.user_tags || ''
-            }
-
-            FlurryAgent.logEvent("Connect to chat", eventParameters, true);
-
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);
