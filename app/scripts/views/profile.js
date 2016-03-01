@@ -9,8 +9,9 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'config'
-], function($, _, Backbone, QMCONFIG) {
+  'config',
+  'Helpers'
+], function($, _, Backbone, QMCONFIG, Helpers) {
 
   var ProfileView = Backbone.View.extend({
     className: 'profileWrap',
@@ -58,7 +59,7 @@ define([
           avatar: this.$el.find('.btn_userProfile_file')[0].files[0] || null
         };
         this.model.set(params, {validate: true});
-        console.log(this.model);
+        Helpers.showInConsole(this.model);
         if (!this.model.validationError) {
           this.model.update();
           this.remove();

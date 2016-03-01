@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
+define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
 
   var self;
   
@@ -28,7 +28,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     QB.webrtc.getUserMedia(params, function(err, stream) {
       if (err) {
-        console.log(err);
+        Helpers.showInConsole('Error', err);
         if (!options.isCallee) {
           callback(err, null);
         } else {
@@ -36,7 +36,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           callback(err, null);
         }
       } else {
-        console.log(stream);
+        Helpers.showInConsole('Stream', stream);
 
         if (!$('.l-chat[data-dialog="'+options.dialogId+'"]').find('.mediacall')[0]) {
           stream.stop();
@@ -118,7 +118,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       duration: extension.duration || null,
       sessionID: extension.sessionID || null
     });
-    if (QMCONFIG.debug) console.log(message);
+    Helpers.showInConsole(message);
     MessageView.addItem(message, true, true);
 
     if (dialogItem.length > 0) {

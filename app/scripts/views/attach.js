@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function($, QMCONFIG, QB, _, ProgressBar) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar'], function($, QMCONFIG, QB, Helpers, _, ProgressBar) {
 
   var User, Message, Attach;
   var self;
@@ -103,10 +103,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
 
       setPercent();
 
-      console.log(file);
+      Helpers.showInConsole('File:', file);
 
       Attach.upload(file, function(blob) {
-        console.log(blob);
+        Helpers.showInConsole('Blob:', blob);
 
         var chat;
         isUpload = true;
@@ -178,7 +178,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
         _id: msg.id
       });
 
-      if (QMCONFIG.debug) console.log(message);
+      Helpers.showInConsole(message);
       if (type === 'chat') {
         lastMessage = chat.find('article[data-type="message"]').last();   
         message.stack = Message.isStack(true, message, lastMessage);

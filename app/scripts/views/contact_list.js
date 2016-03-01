@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, QB, _) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, QB, Helpers, _) {
 
   var Dialog, Message, ContactList, User;
 
@@ -100,7 +100,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       friends = _.filter(sortedContacts, function(el) {
         return roster[el] && roster[el].subscription !== 'none';
       });
-      if (QMCONFIG.debug) console.log('Friends', friends);
+      Helpers.showInConsole('Friends', friends);
 
       if (friends.length === 0) {
         popup.children(':not(.popup-header)').addClass('is-hidden');
@@ -281,7 +281,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
           unread_count: ''
         });
         ContactList.dialogs[dialog.id] = dialog;
-        if (QMCONFIG.debug) console.log('Dialog', dialog);
+        Helpers.showInConsole('Dialog', dialog);
         if (!localStorage['QM.dialog-' + dialog.id]) {
           localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
         }

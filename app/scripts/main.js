@@ -69,8 +69,9 @@ requirejs.config({
 requirejs([
   'jquery', 'config',
   'minEmoji', 'MainModule',
-  'backbone', 'QBNotification'
-], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification) {
+  'backbone', 'QBNotification',
+  'Helpers'
+], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification, Helpers) {
   var APP;
 
   // Application initialization
@@ -81,7 +82,7 @@ requirejs([
         appId: QMCONFIG.fbAccount.appId,
         version: 'v2.1'
       });
-      if (QMCONFIG.debug) console.log('FB init', FB);
+      Helpers.showInConsole('FB init', FB);
 
       // emoji smiles run
       $('.smiles-group').each(function() {

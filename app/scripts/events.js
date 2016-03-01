@@ -8,10 +8,11 @@
 define([
   'jquery',
   'config',
+  'Helpers',
   'minEmoji',
   'mCustomScrollbar',
   'mousewheel'
-], function($, QMCONFIG, minEmoji) {
+], function($, QMCONFIG, Helpers, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
@@ -38,7 +39,6 @@ define([
       $(window).focus(function() {
         var dialogItem, dialog_id, dialog;
 
-        // console.log('ВКЛАДКА ОТКРЫТА');
         window.isQMAppActive = true;
 
         dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
@@ -48,8 +48,7 @@ define([
         if ($('.dialog-item[data-dialog="'+dialog_id+'"]').hasClass('is-selected')) {
           DialogView.htmlBuild(dialog);
         }
-        
-        // console.log(dialog_id);
+
         if (dialog_id) {
           dialogItem.find('.unread').text('');
           DialogView.decUnreadCounter(dialog_id);
@@ -121,7 +120,7 @@ define([
         btn.prop('disabled', true);
 
         FB.login(function(response) {
-          if (QMCONFIG.debug) console.log('FB authResponse', response);
+          Helpers.showInConsole('FB authResponse', response);
           if (response.status === 'connected') {
             profileView.addFBAccount(response.authResponse.userID);
           } else {
@@ -207,7 +206,7 @@ define([
       $('.l-workspace-wrap').on('click', '.groupTitle .addToGroupChat', function(event) {
         event.stopPropagation();
         var dialog_id = $(this).data('dialog');
-        if (QMCONFIG.debug) console.log('add people to groupchat');
+        Helpers.showInConsole('add people to groupchat');
         ContactListView.addContactsToChat($(this), 'add', dialog_id);
       });
 
@@ -308,13 +307,13 @@ define([
       $('#signupFB, #loginFB').on('click', function(event) {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('connect with FB');
+        Helpers.showInConsole('connect with FB');
         event.preventDefault();
 
         // NOTE!! You should use FB.login method instead FB.getLoginStatus
         // and your browser won't block FB Login popup
         FB.login(function(response) {
-          if (QMCONFIG.debug) console.log('FB authResponse', response);
+          Helpers.showInConsole('FB authResponse', response);
           if (response.status === 'connected') {
             UserView.connectFB(response.authResponse.accessToken);
           }
@@ -322,12 +321,12 @@ define([
       });
 
       $('#signupQB').on('click', function() {
-        if (QMCONFIG.debug) console.log('signup with QB');
+        Helpers.showInConsole('signup with QB');
         UserView.signupQB();
       });
 
       $('#loginQB').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('login wih QB');
+        Helpers.showInConsole('login wih QB');
         event.preventDefault();
         UserView.loginQB();
       });
@@ -349,7 +348,7 @@ define([
       $('#signupForm').on('click submit', function(event) {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('create user');
+        Helpers.showInConsole('create user');
         event.preventDefault();
         UserView.signupForm();
       });
@@ -357,7 +356,7 @@ define([
       /* login page
       ----------------------------------------------------- */
       $('#forgot').on('click', function(event) {
-        if (QMCONFIG.debug) console.log('forgot password');
+        Helpers.showInConsole('forgot password');
         event.preventDefault();
         UserView.forgot();
       });
@@ -365,7 +364,7 @@ define([
       $('#loginForm').on('click submit', function(event) {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('authorize user');
+        Helpers.showInConsole('authorize user');
         event.preventDefault();
         UserView.loginForm();
       });
@@ -375,7 +374,7 @@ define([
       $('#forgotForm').on('click submit', function(event) {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('send letter');
+        Helpers.showInConsole('send letter');
         event.preventDefault();
         UserView.forgotForm();
       });
@@ -383,7 +382,7 @@ define([
       $('#resetForm').on('click submit', function(event) {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('reset password');
+        Helpers.showInConsole('reset password');
         event.preventDefault();
         UserView.resetForm();
       });
@@ -450,14 +449,14 @@ define([
       $('#deleteConfirm').on('click', function() {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('delete contact');
+        Helpers.showInConsole('delete contact');
         ContactListView.sendDelete($(this));
       });
 
       $('#leaveConfirm').on('click', function() {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('leave chat');
+        Helpers.showInConsole('leave chat');
         DialogView.leaveGroupChat($(this));
       });
 
@@ -471,7 +470,7 @@ define([
       });
 
       $('.search').on('click', function() {
-        if (QMCONFIG.debug) console.log('global search');
+        Helpers.showInConsole('global search');
         closePopup();
         ContactListView.globalPopup();
       });
@@ -487,7 +486,7 @@ define([
 
       $('#mainPage').on('click', '.createGroupChat', function(event) {
         event.preventDefault();
-        if (QMCONFIG.debug) console.log('add people to groupchat');
+        Helpers.showInConsole('add people to groupchat');
         var isPrivate = $(this).data('private');
         ContactListView.addContactsToChat($(this), null, null, isPrivate);
       });
@@ -495,7 +494,7 @@ define([
       $('.l-sidebar').on('click', '.addToGroupChat', function(event) {
         event.preventDefault();
         var dialog_id = $(this).data('dialog');
-        if (QMCONFIG.debug) console.log('add people to groupchat');
+        Helpers.showInConsole('add people to groupchat');
         ContactListView.addContactsToChat($(this), 'add', dialog_id);
       });
 
@@ -551,14 +550,14 @@ define([
       $('.list_contacts').on('click', 'button.send-request', function() {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('send subscribe');
+        Helpers.showInConsole('send subscribe');
         ContactListView.sendSubscribe($(this));
       });
 
       $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('send subscribe');
+        Helpers.showInConsole('send subscribe');
         ContactListView.sendSubscribe($(this), true);
       });
 
@@ -566,21 +565,21 @@ define([
         if (checkConnection() === false) return false;
 
         event.preventDefault();
-        if (QMCONFIG.debug) console.log('send subscribe');
+        Helpers.showInConsole('send subscribe');
         ContactListView.sendSubscribe($(this));
       });
 
       $('.list').on('click', '.request-button_ok', function() {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('send confirm');
+        Helpers.showInConsole('send confirm');
         ContactListView.sendConfirm($(this));
       });
 
       $('.list').on('click', '.request-button_cancel', function() {
         if (checkConnection() === false) return false;
 
-        if (QMCONFIG.debug) console.log('send reject');
+        Helpers.showInConsole('send reject');
         ContactListView.sendReject($(this));
       });
 

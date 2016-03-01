@@ -5,7 +5,7 @@
  *
  */
 
-define(['config', 'underscore'], function(QMCONFIG, _) {
+define(['config', 'underscore', 'Helpers'], function(QMCONFIG, _, Helpers) {
 
   var contact_ids;
 
@@ -57,7 +57,7 @@ define(['config', 'underscore'], function(QMCONFIG, _) {
             localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
           });
 
-          if (QMCONFIG.debug) console.log('Contact List is updated', self);
+          Helpers.showInConsole('Contact List is updated', self);
           callback(dialog);
         });
         
@@ -78,7 +78,7 @@ define(['config', 'underscore'], function(QMCONFIG, _) {
         sessionStorage.setItem('QM.search.page', ++page);
         
         contacts = self.getResults(data.items);
-        if (QMCONFIG.debug) console.log('Search results', contacts);
+        Helpers.showInConsole('Search results', contacts);
 
         callback(contacts);
       });
@@ -122,7 +122,7 @@ define(['config', 'underscore'], function(QMCONFIG, _) {
         contact_ids = contact_ids.concat(new_ids);
         localStorage.setItem('QM.contacts', contact_ids.join());
 
-        if (QMCONFIG.debug) console.log('Contact List is updated', self);
+        Helpers.showInConsole('Contact List is updated', self);
         callback(new_ids);
       });
     }
@@ -146,7 +146,7 @@ define(['config', 'underscore'], function(QMCONFIG, _) {
           if (contacts[ids[i]] === true) delete contacts[ids[i]];
         }
       } catch(e) {
-        console.log("Error getting contacts from cache. Clearing...");
+        Helpers.showInConsole("Error getting contacts from cache. Clearing...");
         localStorage.clear();
         contacts = {};
       }
