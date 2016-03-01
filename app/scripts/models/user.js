@@ -110,7 +110,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
       custom_data.is_import = '1';
       custom_data = JSON.stringify(custom_data);
       QBApiCalls.updateUser(user.id, {custom_data: custom_data}, function(res) {
-        //Helpers.showInConsole('update of user', res);
+
       });
     },
 
@@ -178,7 +178,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
           
           custom_data = JSON.stringify({avatar_url: blob.path});
           QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
-            //Helpers.showInConsole('update of user', res);
+
           });
         });
       });
