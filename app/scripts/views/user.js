@@ -270,7 +270,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
       var val = form.find('input[type="search"]').val().trim().toLowerCase();
 
       if (val.length > 0) {
-        // Helpers.showInConsole('local search =', val);
         $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
         $('#searchList ul').html('').add('#searchList .note').removeClass('is-hidden');
 

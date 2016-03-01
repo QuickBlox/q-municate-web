@@ -197,7 +197,6 @@ define([
               dialog = Dialog.create(dialogs[i]);
 
               ContactList.dialogs[dialog.id] = dialog;
-              // Helpers.showInConsole('Dialog', dialog);
 
               if (!localStorage['QM.dialog-' + dialog.id]) {
                 localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
@@ -350,9 +349,6 @@ define([
           html, jid, icon, name, status, message, msgArr, userId, messageId,
           self = this;
 
-      // Helpers.showInConsole(dialog);
-      // Helpers.showInConsole(user);
-
       jid = dialog.room_jid || user.user_jid;
       icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
       name = dialog.room_name || user.full_name;
@@ -442,7 +438,6 @@ define([
         Message.download(dialog_id, function(messages) {
           for (var i = 0, len = messages.length; i < len; i++) {
             message = Message.create(messages[i]);
-            // Helpers.showInConsole(message);
             if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
               QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
             }
@@ -598,7 +593,6 @@ define([
     Message.download(dialog_id, function(messages) {
       for (var i = 0, len = messages.length; i < len; i++) {
         message = Message.create(messages[i]);
-        // Helpers.showInConsole(message);
         message.stack = Message.isStack(false, messages[i], messages[i+1]);
         MessageView.addItem(message, true);
       }
