@@ -99,7 +99,7 @@ requirejs([
     });
     
     $.getScript('https://cdn.flurry.com/js/flurry.js', function() {
-      FlurryAgent.startSession('ZJQZKGMMMFTWMBRZ7G63');
+      FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');
     });
   });
 
