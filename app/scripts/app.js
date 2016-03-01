@@ -10,12 +10,12 @@ define([
     'DialogModule', 'MessageModule', 'AttachModule',
     'ContactListModule', 'VideoChatModule', 'UserView', 'DialogView',
     'MessageView', 'AttachView', 'ContactListView', 'VideoChatView', 
-    'Routes', 'QBApiCalls', 'config', 'chromaHash'
+    'Events', 'Helpers', 'QBApiCalls', 'config', 'chromaHash'
   ], function(
     $, User, Session, Contact, Dialog,
     Message, Attach, ContactList, VideoChat, UserView,
-    DialogView, MessageView, AttachView,
-    ContactListView, VideoChatView, Routes, QBApiCalls, QMCONFIG
+    DialogView, MessageView, AttachView, ContactListView,
+    VideoChatView, Events, Helpers, QBApiCalls, QMCONFIG
   ) {
 
   function QM() {
@@ -39,7 +39,7 @@ define([
       VideoChat: new VideoChatView(this)
     };
 
-    this.routes = new Routes(this);
+    this.events = new Events(this);
     this.service = new QBApiCalls(this);
   }
 
@@ -49,6 +49,7 @@ define([
 
       this.chromaHash();
       this.setHtml5Patterns();
+      this.preloader();
 
       // QB SDK initialization
       // Checking if autologin was chosen
@@ -68,9 +69,16 @@ define([
         this.service.init();
       }
 
-      this.routes.init();
+      this.events.init();
 
       if (QMCONFIG.debug) console.log('App init', this);
+    },
+
+    preloader: function() {
+      var spinner = $('#welcomePage .l-spinner');
+
+      spinner.addClass('is-hidden');
+      spinner.prevAll().removeClass('is-hidden');
     },
 
     chromaHash: function() {

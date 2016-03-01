@@ -12,10 +12,11 @@
   line-height: 22px;
 }
   .text_welcome {
+    color: #3d5b99;
     font-size: 2.2vh;
   }
   .text_error {
-    margin-bottom: 2.2vh;
+    margin-bottom: 0.2vh;
     color: #c03d3d;
     opacity: 0;
   }
@@ -24,11 +25,20 @@
     font-size: 1.4vh;
     line-height: 2vh;
   }
+  .text_back {
+    font-size: 1.8vh;
+    margin-bottom: 2.5vh;
+  }
     .text_signup a {
       color: #999;
     }
+    .text_back a.click_to_back {
+      color: #3d5b99;
+    }
   .text_login {
-    margin-bottom: 3.5vh;
+    color: #3d5b99;
+    font-size: 1.8vh;
+    margin-bottom: 2.5vh;
   }
   .text_forgot {
     margin-bottom: 2vh;
@@ -44,7 +54,7 @@
   padding-top: 25px;
 }
   .text_alert {
-    margin-bottom: 20px;
+    margin: 20px 0 20px 0;
     padding-left: 20px;
     font-size: 32px !important;
   }

@@ -3,10 +3,7 @@
 var SERVER_PORT = 9000;
 
 // # Globbing
-// for performance reasons we're only matching one level down:
-// 'test/spec/{,*/}*.js'
-// use this if you want to match all subfolders:
-// 'test/spec/**/*.js'
+
 
 module.exports = function (grunt) {
   // show elapsed time at the end
@@ -101,10 +98,6 @@ module.exports = function (grunt) {
           '<%= yeoman.app %>/scripts/templates/*.hbs'
         ],
         tasks: ['handlebars']
-      },
-      test: {
-        files: ['test/spec/**/*.js'],
-        tasks: ['test:true']
       }
     },
 
@@ -197,28 +190,11 @@ module.exports = function (grunt) {
           ]
         }
       },
-      test: {
-        options: {
-          port: 9001,
-          open: false,
-          base: [
-            '.tmp',
-            'test',
-            '<%= yeoman.app %>'
-          ]
-        }
-      },
       dist: {
         options: {
           protocol: 'https',
           base: '<%= yeoman.dist %>'
         }
-      }
-    },
-
-    open: {
-      test: {
-        path: 'http://localhost:<%= connect.test.options.port %>'
       }
     },
 
@@ -230,18 +206,8 @@ module.exports = function (grunt) {
       all: [
         'Gruntfile.js',
         '<%= yeoman.app %>/scripts/{,*/}*.js',
-        '!<%= yeoman.app %>/vendor/*',
-        'test/spec/{,*/}*.js'
+        '!<%= yeoman.app %>/vendor/*'
       ]
-    },
-
-    mocha: {
-      all: {
-        options: {
-          run: true,
-          urls: ['http://localhost:<%= connect.test.options.port %>/index.html']
-        }
-      }
     }
   });
 
@@ -270,17 +236,6 @@ module.exports = function (grunt) {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
 
-    if (target === 'test') {
-      return grunt.task.run([
-        'clean:dev',
-        'createDefaultTemplate',
-        'handlebars',
-        'connect:test',
-        'open:test',
-        'watch'
-      ]);
-    }
-
     grunt.task.run([
       'clean:dev',
       'compass',
@@ -291,27 +246,8 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('test', function (isConnected) {
-    isConnected = Boolean(isConnected);
-    var testTasks = [
-        'jshint',
-        'clean:dev',
-        'createDefaultTemplate',
-        'handlebars',
-        'connect:test',
-        'mocha'
-      ];
-
-    if(!isConnected) {
-      return grunt.task.run(testTasks);
-    } else {
-      // already connected so not going to connect again, remove the connect:test task
-      testTasks.splice(testTasks.indexOf('connect:test'), 1);
-      return grunt.task.run(testTasks);
-    }
-  });
-
   grunt.registerTask('build', [
+    'jshint',
     'clean:dist',
     'compass',
     'createDefaultTemplate',
@@ -330,8 +266,6 @@ module.exports = function (grunt) {
     'createTmpScriptTag:rollBack'
   ]);
 
-  grunt.registerTask('default', [
-    'test',
-    'build'
-  ]);
+  grunt.registerTask('default', ['build']);
+
 };

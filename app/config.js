@@ -3,45 +3,38 @@ define(function() {
 
   var QMCONFIG = {
 
-    /* Production environment */
+    // /* Production environment */
+    // qbAccount: {
+    //   appId: 13318,
+    //   authKey: 'WzrAY7vrGmbgFfP',
+    //   authSecret: 'xS2uerEveGHmEun'
+    // },
+
+    /* Test local environment */
     qbAccount: {
-      appId: 13318,
-      authKey: 'WzrAY7vrGmbgFfP',
-      authSecret: 'xS2uerEveGHmEun'
+      appId: 36125,
+      authKey: 'gOGVNO4L9cBwkPE',
+      authSecret: 'JdqsMHCjHVYkVxV'
     },
+
     fbAccount: {
       appId: '605405446247805',
       scope: 'email,user_friends',
     },
 
-    /* Development environment */
-    // qbAccount: {
-    //   appId: 14542,
-    //   authKey: 'rJqAFphrSnpyZW2',
-    //   authSecret: 'tTEB2wK-dU8X3Ra'
-    // },
-    // fbAccount: {
-    //   appId: '605405446247805',
-    //   scope: 'email,user_friends',
-    // },
-
-    /* Test local environment */
-    // qbAccount: {
-    //   appId: 14303,
-    //   authKey: 'gj5Vps4QB-HKJgt',
-    //   authSecret: 'AHpJ6T4L9cVrMxc'
-    // },
-    // fbAccount: {
-    //   appId: '623755094412840',
-    //   scope: 'email,user_friends',
-    // },
-
     debug: true,
+
+    notification: {
+      timeout: 7
+    },
+
     isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 
     defAvatar: {
       url: 'images/ava-single.svg',
+      url_png: 'images/ava-single.png',
       group_url: 'images/ava-group.svg',
+      group_url_png: 'images/ava-group.png',
       caption: 'Choose user picture'
     },
 
@@ -71,6 +64,16 @@ define(function() {
       notFoundEmail: "The email you entered wasn't found",
       crashFBToken: "Sorry, we noticed that you had logged out from Facebook so we need to recreate your FB token now. Please click the Connect with FB button again",
       FBAccountExists: "This FB user already has an account in the Q-municate. You can't combine two Q-municate users"
+    },
+
+    QBconf: {
+      chatProtocol: {
+        active: 2
+      },
+      debug: {
+        mode: 1,
+        file: null
+      }
     }
 
   };

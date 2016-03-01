@@ -32,6 +32,7 @@
         "expect": true,
         "should": true,
         "require": false,
+        "requirejs": false,
         "define": false
     }
 }

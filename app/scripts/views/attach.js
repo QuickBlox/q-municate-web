@@ -88,50 +88,25 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           isUpload = false,
           part, time;
 
-      // TODO: Need to rewrite this part of code
-      if (fileSize < 100 * 1024)
+      if (fileSize <= 5 * 1024 * 1024)
         time = 50;
-      else if (fileSize < 300 * 1024)
-        time = 200;
-      else if (fileSize < 400 * 1024)
-        time = 350;
-      else if (fileSize < 500 * 1024)
-        time = 400;
-      else if (fileSize < 600 * 1024)
-        time = 450;
-      else if (fileSize < 700 * 1024)
-        time = 550;
-      else if (fileSize < 800 * 1024)
-        time = 600;
-      else if (fileSize < 900 * 1024)
-        time = 650;
-      else if (fileSize < 1 * 1024 * 1024)
-        time = 1000;
-      else if (fileSize < 2 * 1024 * 1024)
-        time = 1400;
-      else if (fileSize < 3 * 1024 * 1024)
-        time = 2000;
-      else if (fileSize < 4 * 1024 * 1024)
-        time = 2700;
-      else if (fileSize < 5 * 1024 * 1024)
-        time = 3700;
-      else if (fileSize < 6 * 1024 * 1024)
-        time = 4900;
-      else if (fileSize < 7 * 1024 * 1024)
-        time = 5400;
-      else if (fileSize < 8 * 1024 * 1024)
-        time = 6600;
-      else if (fileSize < 9 * 1024 * 1024)
-        time = 7500;
-      else if (fileSize < 10 * 1024 * 1024)
-        time = 9000;
+      else if (fileSize > 5 * 1024 * 1024)
+        time = 60;
+      else if (fileSize > 6 * 1024 * 1024)
+        time = 70;
+      else if (fileSize > 7 * 1024 * 1024)
+        time = 80;
+      else if (fileSize > 8 * 1024 * 1024)
+        time = 90;
+      else if (fileSize > 9 * 1024 * 1024)
+        time = 100;
 
       setPercent();
 
-      console.log(1111111, file);
+      console.log(file);
 
       Attach.upload(file, function(blob) {
-        console.log(2222222, blob);
+        console.log(blob);
 
         var chat;
         isUpload = true;
@@ -157,7 +132,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           part = (fileSizeCrop * percent / 100).toFixed(1);
           $('.attach-part_'+id).text(part);
           percent += 5;
-          if (percent > 90) return false;
+          if (percent > 95) return false;
           setTimeout(setPercent, time);
         }      
       }  
@@ -176,27 +151,39 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'progressbar'], function(
           time = Math.floor(Date.now() / 1000),
           type = chat.is('.is-group') ? 'groupchat' : 'chat',
           dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
-          copyDialogItem;
-        
-      // send message
-      QB.chat.send(jid, {type: type, body: 'Attachment', extension: {
-        save_to_history: 1,
-        // dialog_id: dialog_id,
-        date_sent: time,
+          copyDialogItem, lastMessage;
 
-        attachments: [
-          attach
-        ]
-      }});
+     var msg = {
+        type: type,
+        body: 'Attachment',
+        extension: {
+          save_to_history: 1,
+          dialog_id: dialog_id,
+          date_sent: time,
+          attachments: [
+            attach
+          ]
+        },
+        markable: 1
+      };
+      
+      // send message
+      QB.chat.send(jid, msg);
 
       message = Message.create({
         chat_dialog_id: dialog_id,
         date_sent: time,
         attachment: attach,
-        sender_id: User.contact.id
+        sender_id: User.contact.id,
+        _id: msg.id
       });
+
       if (QMCONFIG.debug) console.log(message);
-      if (type === 'chat') MessageView.addItem(message, true, true);
+      if (type === 'chat') {
+        lastMessage = chat.find('article[data-type="message"]').last();   
+        message.stack = Message.isStack(true, message, lastMessage);
+        MessageView.addItem(message, true, true);
+      }
 
       if (dialogItem.length > 0) {
         copyDialogItem = dialogItem.clone();

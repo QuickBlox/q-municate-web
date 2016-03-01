@@ -61,16 +61,13 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     },
 
     createSpinner: function() {
-      var spinnerBlock = '<div class="l-spinner"><div class="spinner">';
-      spinnerBlock += '<div class="spinner-dot1"></div><div class="spinner-dot2"></div>';
-      spinnerBlock += '</div></div>';
-
-      $('section:visible form').addClass('is-hidden').after(spinnerBlock);
+      $('section:visible form').addClass('is-hidden').next('.l-spinner').removeClass('is-hidden');
     },
 
     removeSpinner: function() {
-      $('section:visible form').removeClass('is-hidden').next('.l-spinner').remove();
+      $('section:visible form').removeClass('is-hidden').next('.l-spinner').addClass('is-hidden');
     },
+
 
     successFormCallback: function() {
       this.removeSpinner();
@@ -137,24 +134,37 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           html;
 
       html = '<ul class="list-actions list-actions_contacts popover">';
-      
+
       if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription !== 'none') {
         html += '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="'+ids+'" href="#">Video call</a></li>';
         html += '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="'+ids+'" href="#">Audio call</a></li>';
         html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" data-private="1" href="#">Add people</a></li>';
       } else if (dialogs[dialog_id].type !== 3)
         html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" data-dialog="'+dialog_id+'" href="#">Add people</a></li>';
-      
+
       if (dialogs[dialog_id].type === 3) {
         html += '<li class="list-item"><a class="list-actions-action userDetails" data-id="'+ids+'" href="#">Profile</a></li>';
         html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
       } else
         html += '<li class="list-item"><a class="leaveChat list-actions-action" data-group="true" href="#">Leave chat</a></li>';
-      
+
       html += '</ul>';
 
       objDom.after(html).parent().addClass('is-contextmenu');
       appearAnimation();
+
+        var elemPosition       = objDom.offset().top,
+            topListOffset      = $('.mCustomScrollBox').offset().top,
+            listHeigth         = $('.mCustomScrollBox').height(),
+            listViewPort       = $('.mCustomScrollbar').height(),
+            botListOffset      = listHeigth + topListOffset,
+            dropList           = objDom.next(),
+            dropListElemCount  = objDom.next().children().length,
+            botElemPosition    = botListOffset - elemPosition,
+            elemPositionInList = elemPosition - topListOffset;
+
+        if ((botElemPosition <= dropListElemCount*50) && (elemPositionInList > dropListElemCount*40)) dropList.addClass('margin-up');
+        if (listViewPort <= 400) $('#mCSB_8_container')[0].style.paddingBottom = (dropListElemCount*40)+"px";
     },
 
     occupantPopover: function(objDom, e) {
@@ -238,7 +248,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     smilePopover: function(objDom) {
       if (objDom.find('img').length === 1)
         objDom.addClass('is-active').append('<img src="images/icon-smile_active.svg" alt="smile">').find('*:first').addClass('is-hidden');
-      
+
       $('.popover_smile').show(150);
     },
 
@@ -258,7 +268,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
     localSearch: function(form) {
       var val = form.find('input[type="search"]').val().trim().toLowerCase();
-      
+
       if (val.length > 0) {
         // if (QMCONFIG.debug) console.log('local search =', val);
         $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
@@ -272,12 +282,12 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             $('#searchList ul').append(li);
             $('#searchList .note').addClass('is-hidden');
           }
-          
+
         });
 
         if ($('#searchList ul').find('li').length === 0)
           $('#searchList .note').removeClass('is-hidden').siblings('ul').addClass('is-hidden');
-        
+
       } else {
         $('#searchList').addClass('is-hidden');
         $('#recentList, #historyList, #requestsList').each(function() {
@@ -292,7 +302,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     friendsSearch: function(form) {
       var val = form.find('input[type="search"]').val().trim().toLowerCase(),
           result = form.next();
-      
+
       result.find('ul').removeClass('is-hidden').siblings().addClass('is-hidden');
       result.find('ul li').removeClass('is-hidden');
 
