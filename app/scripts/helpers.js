@@ -172,10 +172,12 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
   };
 
   // smart console (beta)
-  Helpers.showInConsole = function() {
+  Helpers.log = function() {
     if (QMCONFIG.debug) {
       if (arguments.length <= 1) {
+        console.group("[Q-MUNICATE debug mode]:");
         console.log(arguments[0]);
+        console.groupEnd();
       } else {
         console.group("[Q-MUNICATE debug mode]:");
         for (var i = 0; i < arguments.length; i++) {

@@ -69,8 +69,9 @@ requirejs.config({
 requirejs([
   'jquery', 'config',
   'minEmoji', 'MainModule',
-  'backbone', 'QBNotification'
-], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification) {
+  'backbone', 'QBNotification',
+  'Helpers'
+], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification, Helpers) {
   var APP;
 
   // Application initialization
@@ -81,7 +82,7 @@ requirejs([
         appId: QMCONFIG.fbAccount.appId,
         version: 'v2.1'
       });
-      if (QMCONFIG.debug) console.log('FB init', FB);
+      Helpers.log('FB init', FB);
 
       // emoji smiles run
       $('.smiles-group').each(function() {
@@ -95,6 +96,10 @@ requirejs([
 
       APP = new QM();
       APP.init();
+    });
+    
+    $.getScript('https://cdn.flurry.com/js/flurry.js', function() {
+      FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');
     });
   });
 

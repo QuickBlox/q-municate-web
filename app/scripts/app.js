@@ -71,7 +71,7 @@ define([
 
       this.events.init();
 
-      if (QMCONFIG.debug) console.log('App init', this);
+      Helpers.log('App init', this);
     },
 
     preloader: function() {
