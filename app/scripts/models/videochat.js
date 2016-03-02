@@ -26,13 +26,15 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       }
     };
 
+    var QB.webrtc.createNewSession([options.isCallee, options.opponentId], QB.webrtc.CallType.VIDEO);
+
     QB.webrtc.getUserMedia(params, function(err, stream) {
       if (err) {
         console.log(err);
         if (!options.isCallee) {
           callback(err, null);
         } else {
-          self.sendMessage(options.opponentId, '4', null, options.dialogId, callType, true);
+          self.sendMessage(c, '4', null, options.dialogId, callType, true);
           callback(err, null);
         }
       } else {
