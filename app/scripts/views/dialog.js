@@ -125,7 +125,7 @@ define([
     },
 
     prepareDownloading: function(roster) {
-      Helpers.showInConsole('QB SDK: Roster has been got', roster);
+      Helpers.log('QB SDK: Roster has been got', roster);
       this.chatCallbacksInit();
       this.createDataSpinner();
       scrollbar();

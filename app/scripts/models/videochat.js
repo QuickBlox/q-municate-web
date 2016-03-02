@@ -28,7 +28,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
 
     QB.webrtc.getUserMedia(params, function(err, stream) {
       if (err) {
-        Helpers.showInConsole('Error', err);
+        Helpers.log('Error', err);
         if (!options.isCallee) {
           callback(err, null);
         } else {
@@ -36,7 +36,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
           callback(err, null);
         }
       } else {
-        Helpers.showInConsole('Stream', stream);
+        Helpers.log('Stream', stream);
 
         if (!$('.l-chat[data-dialog="'+options.dialogId+'"]').find('.mediacall')[0]) {
           stream.stop();
@@ -118,7 +118,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
       duration: extension.duration || null,
       sessionID: extension.sessionID || null
     });
-    Helpers.showInConsole(message);
+    Helpers.log(message);
     MessageView.addItem(message, true, true);
 
     if (dialogItem.length > 0) {

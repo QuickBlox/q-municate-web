@@ -411,7 +411,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           _id: msg.id
         });
 
-        Helpers.showInConsole('Message send:', message);
+        Helpers.log('Message send:', message);
 
         if (type === 'chat') {
           lastMessage = chat.find('article[data-type="message"]').last();
@@ -555,7 +555,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
       lastMessage = chat.find('article[data-type="message"]').last();
       msg.stack = Message.isStack(true, msg, lastMessage);
-      Helpers.showInConsole('Message object created:', msg);
+      Helpers.log('Message object created:', msg);
       self.addItem(msg, true, true, id);
 
       // subscribe message
@@ -614,7 +614,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         });
 
         ContactList.dialogs[dialog.id] = dialog;
-        Helpers.showInConsole('Dialog', dialog);
+        Helpers.log('Dialog', dialog);
         if (!localStorage['QM.dialog-' + dialog.id]) {
           localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
         }

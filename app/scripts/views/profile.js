@@ -59,7 +59,7 @@ define([
           avatar: this.$el.find('.btn_userProfile_file')[0].files[0] || null
         };
         this.model.set(params, {validate: true});
-        Helpers.showInConsole(this.model);
+        Helpers.log(this.model);
         if (!this.model.validationError) {
           this.model.update();
           this.remove();

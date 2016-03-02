@@ -97,7 +97,7 @@ define([
         this.validateError(this.model, "Fields mustn't be empty");
       } else {
         this.model.set({password: params.newPass}, {validate: true});
-        Helpers.showInConsole(this.model);
+        Helpers.log(this.model);
         if (!this.model.validationError) {
           this.model.changeQBPass(params, function(err, res) {
             if (err) {

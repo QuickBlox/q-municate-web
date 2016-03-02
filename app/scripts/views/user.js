@@ -98,7 +98,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         FBCallback = null;
 
         FB.getLoginStatus(function(response) {
-          Helpers.showInConsole('FB status response', response);
+          Helpers.log('FB status response', response);
           if (callback) {
             // situation when you are recovering QB session via FB
             // and FB accessToken has expired
@@ -106,7 +106,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
               callback(response.authResponse.accessToken);
             } else {
               FB.login(function(response) {
-                Helpers.showInConsole('FB authResponse', response);
+                Helpers.log('FB authResponse', response);
                 if (response.status === 'connected')
                   callback(response.authResponse.accessToken);
               });
@@ -261,7 +261,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         switchOnWelcomePage();
         $('#capBox').removeClass('is-hidden');
         $('.l-chat').remove();
-        Helpers.showInConsole('current User and Session were destroyed');
+        Helpers.log('current User and Session were destroyed');
         DialogView.logoutWithClearData();
       });
     },

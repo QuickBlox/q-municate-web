@@ -120,7 +120,7 @@ define([
         btn.prop('disabled', true);
 
         FB.login(function(response) {
-          Helpers.showInConsole('FB authResponse', response);
+          Helpers.log('FB authResponse', response);
           if (response.status === 'connected') {
             profileView.addFBAccount(response.authResponse.userID);
           } else {
@@ -206,7 +206,7 @@ define([
       $('.l-workspace-wrap').on('click', '.groupTitle .addToGroupChat', function(event) {
         event.stopPropagation();
         var dialog_id = $(this).data('dialog');
-        Helpers.showInConsole('add people to groupchat');
+        Helpers.log('add people to groupchat');
         ContactListView.addContactsToChat($(this), 'add', dialog_id);
       });
 
@@ -307,13 +307,13 @@ define([
       $('#signupFB, #loginFB').on('click', function(event) {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('connect with FB');
+        Helpers.log('connect with FB');
         event.preventDefault();
 
         // NOTE!! You should use FB.login method instead FB.getLoginStatus
         // and your browser won't block FB Login popup
         FB.login(function(response) {
-          Helpers.showInConsole('FB authResponse', response);
+          Helpers.log('FB authResponse', response);
           if (response.status === 'connected') {
             UserView.connectFB(response.authResponse.accessToken);
           }
@@ -321,12 +321,12 @@ define([
       });
 
       $('#signupQB').on('click', function() {
-        Helpers.showInConsole('signup with QB');
+        Helpers.log('signup with QB');
         UserView.signupQB();
       });
 
       $('#loginQB').on('click', function(event) {
-        Helpers.showInConsole('login wih QB');
+        Helpers.log('login wih QB');
         event.preventDefault();
         UserView.loginQB();
       });
@@ -348,7 +348,7 @@ define([
       $('#signupForm').on('click submit', function(event) {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('create user');
+        Helpers.log('create user');
         event.preventDefault();
         UserView.signupForm();
       });
@@ -356,7 +356,7 @@ define([
       /* login page
       ----------------------------------------------------- */
       $('#forgot').on('click', function(event) {
-        Helpers.showInConsole('forgot password');
+        Helpers.log('forgot password');
         event.preventDefault();
         UserView.forgot();
       });
@@ -364,7 +364,7 @@ define([
       $('#loginForm').on('click submit', function(event) {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('authorize user');
+        Helpers.log('authorize user');
         event.preventDefault();
         UserView.loginForm();
       });
@@ -374,7 +374,7 @@ define([
       $('#forgotForm').on('click submit', function(event) {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('send letter');
+        Helpers.log('send letter');
         event.preventDefault();
         UserView.forgotForm();
       });
@@ -382,7 +382,7 @@ define([
       $('#resetForm').on('click submit', function(event) {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('reset password');
+        Helpers.log('reset password');
         event.preventDefault();
         UserView.resetForm();
       });
@@ -449,14 +449,14 @@ define([
       $('#deleteConfirm').on('click', function() {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('delete contact');
+        Helpers.log('delete contact');
         ContactListView.sendDelete($(this));
       });
 
       $('#leaveConfirm').on('click', function() {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('leave chat');
+        Helpers.log('leave chat');
         DialogView.leaveGroupChat($(this));
       });
 
@@ -470,7 +470,7 @@ define([
       });
 
       $('.search').on('click', function() {
-        Helpers.showInConsole('global search');
+        Helpers.log('global search');
         closePopup();
         ContactListView.globalPopup();
       });
@@ -486,7 +486,7 @@ define([
 
       $('#mainPage').on('click', '.createGroupChat', function(event) {
         event.preventDefault();
-        Helpers.showInConsole('add people to groupchat');
+        Helpers.log('add people to groupchat');
         var isPrivate = $(this).data('private');
         ContactListView.addContactsToChat($(this), null, null, isPrivate);
       });
@@ -494,7 +494,7 @@ define([
       $('.l-sidebar').on('click', '.addToGroupChat', function(event) {
         event.preventDefault();
         var dialog_id = $(this).data('dialog');
-        Helpers.showInConsole('add people to groupchat');
+        Helpers.log('add people to groupchat');
         ContactListView.addContactsToChat($(this), 'add', dialog_id);
       });
 
@@ -550,14 +550,14 @@ define([
       $('.list_contacts').on('click', 'button.send-request', function() {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('send subscribe');
+        Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this));
       });
 
       $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('send subscribe');
+        Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this), true);
       });
 
@@ -565,21 +565,21 @@ define([
         if (checkConnection() === false) return false;
 
         event.preventDefault();
-        Helpers.showInConsole('send subscribe');
+        Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this));
       });
 
       $('.list').on('click', '.request-button_ok', function() {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('send confirm');
+        Helpers.log('send confirm');
         ContactListView.sendConfirm($(this));
       });
 
       $('.list').on('click', '.request-button_cancel', function() {
         if (checkConnection() === false) return false;
 
-        Helpers.showInConsole('send reject');
+        Helpers.log('send reject');
         ContactListView.sendReject($(this));
       });
 

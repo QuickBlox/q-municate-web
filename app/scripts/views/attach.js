@@ -103,10 +103,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar']
 
       setPercent();
 
-      Helpers.showInConsole('File:', file);
+      Helpers.log('File:', file);
 
       Attach.upload(file, function(blob) {
-        Helpers.showInConsole('Blob:', blob);
+        Helpers.log('Blob:', blob);
 
         var chat;
         isUpload = true;
@@ -178,7 +178,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar']
         _id: msg.id
       });
 
-      Helpers.showInConsole(message);
+      Helpers.log(message);
       if (type === 'chat') {
         lastMessage = chat.find('article[data-type="message"]').last();   
         message.stack = Message.isStack(true, message, lastMessage);

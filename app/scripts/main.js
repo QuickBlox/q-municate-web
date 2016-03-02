@@ -82,7 +82,7 @@ requirejs([
         appId: QMCONFIG.fbAccount.appId,
         version: 'v2.1'
       });
-      Helpers.showInConsole('FB init', FB);
+      Helpers.log('FB init', FB);
 
       // emoji smiles run
       $('.smiles-group').each(function() {

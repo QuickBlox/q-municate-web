@@ -55,7 +55,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
       QBApiCalls.createDialog({type: 3, occupants_ids: id}, function(res) {
         dialog = self.create(res);
         ContactList.dialogs[dialog.id] = dialog;
-        Helpers.showInConsole('Dialog', dialog);
+        Helpers.log('Dialog', dialog);
 
         if (!localStorage['QM.dialog-' + dialog.id]) {
           localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
@@ -91,7 +91,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
       QBApiCalls.createDialog(params, function(res) {
         dialog = self.create(res);
         ContactList.dialogs[dialog.id] = dialog;
-        Helpers.showInConsole('Dialog', dialog);
+        Helpers.log('Dialog', dialog);
 
         if (!localStorage['QM.dialog-' + dialog.id]) {
           localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
@@ -155,7 +155,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
       QBApiCalls.updateDialog(params.dialog_id, {push_all: {occupants_ids: [params.occupants_ids]}}, function(res) {
         dialog = self.create(res);
         ContactList.dialogs[params.dialog_id] = dialog;
-        Helpers.showInConsole('Dialog', dialog);
+        Helpers.log('Dialog', dialog);
 
         var msgId = QB.chat.helpers.getBsonObjectId();
 
@@ -209,7 +209,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
       QBApiCalls.updateDialog(dialog_id, {name: name}, function(res) {
         dialog = self.create(res);
         ContactList.dialogs[dialog_id] = dialog;
-        Helpers.showInConsole('Dialog', dialog);
+        Helpers.log('Dialog', dialog);
 
         // send notification about updating room
         QB.chat.send(dialog.room_jid, {
@@ -243,7 +243,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
           errMsg = QMCONFIG.errors.fileName;
 
         if (errMsg) {
-          Helpers.showInConsole('Error', errMsg);
+          Helpers.log('Error', errMsg);
           callback(false);
         } else {
 
@@ -252,7 +252,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
               QBApiCalls.updateDialog(dialog_id, {photo: blob.path}, function(res) {
                 dialog = self.create(res);
                 ContactList.dialogs[dialog_id] = dialog;
-                Helpers.showInConsole('Dialog', dialog);
+                Helpers.log('Dialog', dialog);
 
                 // send notification about updating room
                 QB.chat.send(dialog.room_jid, {

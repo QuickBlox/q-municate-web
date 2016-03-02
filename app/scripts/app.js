@@ -71,7 +71,7 @@ define([
 
       this.events.init();
 
-      Helpers.showInConsole('App init', this);
+      Helpers.log('App init', this);
     },
 
     preloader: function() {

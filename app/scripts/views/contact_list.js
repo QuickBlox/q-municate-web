@@ -100,7 +100,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
       friends = _.filter(sortedContacts, function(el) {
         return roster[el] && roster[el].subscription !== 'none';
       });
-      Helpers.showInConsole('Friends', friends);
+      Helpers.log('Friends', friends);
 
       if (friends.length === 0) {
         popup.children(':not(.popup-header)').addClass('is-hidden');
@@ -281,7 +281,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
           unread_count: ''
         });
         ContactList.dialogs[dialog.id] = dialog;
-        Helpers.showInConsole('Dialog', dialog);
+        Helpers.log('Dialog', dialog);
         if (!localStorage['QM.dialog-' + dialog.id]) {
           localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
         }
