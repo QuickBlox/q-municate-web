@@ -19,7 +19,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     var params = {
       audio: true,
       video: callType === 'video' ? true : false,
-      elemId: 'localStream',
+      elemId: 'localVideo',
       options: {
         muted: true,
         mirror: true

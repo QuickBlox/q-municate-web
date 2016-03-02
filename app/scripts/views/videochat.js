@@ -31,12 +31,9 @@ define(['jquery', 'quickblox'], function($, QB) {
 
     $('body').on('click', '.videoCall, .audioCall', function(event) {
       event.preventDefault();
-      // var className = $(this).attr('class');
-      // self.cancelCurrentCalls();
-      // self.startCall(className);
-
-      // Comming soon
-      openPopup($('#popupNoWebRTC'));
+      var className = $(this).attr('class');
+      self.cancelCurrentCalls();
+      self.startCall(className);
     });
 
     $('#popupIncoming').on('click', '.btn_decline', function(event) {
