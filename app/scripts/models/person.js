@@ -9,8 +9,9 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'config'
-], function($, _, Backbone, QMCONFIG) {
+  'config',
+  'Helpers'
+], function($, _, Backbone, QMCONFIG, Helpers) {
 
   var App;
 
@@ -131,7 +132,7 @@ define([
           App.models.User.rememberMe();
 
           QBApiCalls.updateUser(currentUser.id, params, function(res) {
-            if (QMCONFIG.debug) console.log('update of user', res);
+            Helpers.log('update of user', res);
           });
         });
       } else {
@@ -139,7 +140,7 @@ define([
         App.models.User.rememberMe();
 
         QBApiCalls.updateUser(currentUser.id, params, function(res) {
-          if (QMCONFIG.debug) console.log('update of user', res);
+          Helpers.log('update of user', res);
         });
       }
     },
@@ -167,7 +168,7 @@ define([
 
       QBApiCalls.updateUser(currentUser.id, params, function(res, err) {
         if (res) {
-          if (QMCONFIG.debug) console.log('update of user', res);
+          Helpers.log('update of user', res);
           Session.update({ authParams: Session.encrypt({email: currentUser.email, password: params.password}) }, true);
           self.set('password', '');
           callback(null, res);
@@ -193,7 +194,7 @@ define([
 
       QBApiCalls.updateUser(currentUser.id, params, function(res, err) {
         if (res) {
-          if (QMCONFIG.debug) console.log('update of user', res);
+          Helpers.log('update of user', res);
 
           if (self.get('avatar_url') === QMCONFIG.defAvatar.url) {
             self.set('avatar_url', custom_data.avatar_url);
@@ -221,7 +222,7 @@ define([
           self = this;
 
       FB.api('/me/permissions', function(response) {
-          if (QMCONFIG.debug) console.log('FB Permissions', response);
+          Helpers.log('FB Permissions', response);
           for (var i = 0, len = response.data.length; i < len; i++) {
             if (response.data[i].permission === 'user_friends' && response.data[i].status === 'granted')
               isFriendsPermission = true;
@@ -231,7 +232,7 @@ define([
 
             // import FB friends
             FB.api('/me/friends', function (res) {
-                if (QMCONFIG.debug) console.log('FB friends', res);
+                Helpers.log('FB friends', res);
                 var ids = [];
 
                 for (var i = 0, len = res.data.length; i < len; i++) {

@@ -33,6 +33,7 @@
         "should": true,
         "require": false,
         "requirejs": false,
-        "define": false
+        "define": false,
+        "FlurryAgent": false
     }
 }

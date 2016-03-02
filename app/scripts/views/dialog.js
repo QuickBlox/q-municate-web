@@ -9,6 +9,7 @@ define([
   'jquery',
   'config',
   'quickblox',
+  'Helpers',
   'underscore',
   'models/person',
   'views/profile',
@@ -17,7 +18,7 @@ define([
   'mCustomScrollbar',
   'nicescroll',
   'mousewheel'
-], function($, QMCONFIG, QB, _, Person, ProfileView, ChangePassView, FBImportView) {
+], function($, QMCONFIG, QB, Helpers, _, Person, ProfileView, ChangePassView, FBImportView) {
 
   var User, Dialog, Message, ContactList;
   var unreadDialogs = {};
@@ -124,7 +125,7 @@ define([
     },
 
     prepareDownloading: function(roster) {
-      if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
+      Helpers.log('QB SDK: Roster has been got', roster);
       this.chatCallbacksInit();
       this.createDataSpinner();
       scrollbar();
@@ -196,7 +197,6 @@ define([
               dialog = Dialog.create(dialogs[i]);
 
               ContactList.dialogs[dialog.id] = dialog;
-              // if (QMCONFIG.debug) console.log('Dialog', dialog);
 
               if (!localStorage['QM.dialog-' + dialog.id]) {
                 localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
@@ -349,9 +349,6 @@ define([
           html, jid, icon, name, status, message, msgArr, userId, messageId,
           self = this;
 
-      // if (QMCONFIG.debug) console.log(dialog);
-      // if (QMCONFIG.debug) console.log(user);
-
       jid = dialog.room_jid || user.user_jid;
       icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
       name = dialog.room_name || user.full_name;
@@ -441,7 +438,6 @@ define([
         Message.download(dialog_id, function(messages) {
           for (var i = 0, len = messages.length; i < len; i++) {
             message = Message.create(messages[i]);
-            // if (QMCONFIG.debug) console.log(message);
             if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
               QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
             }
@@ -460,9 +456,6 @@ define([
         chat.removeClass('is-hidden').siblings().addClass('is-hidden');
         $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
         self.messageScrollbar();
-
-        // console.log(2222222);
-        // console.log(self.app.models.ContactList.dialogs[dialog_id]);
 
         if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 3) {
           Message.update(dialog.messages.join(), dialog_id, user_id);
@@ -600,7 +593,6 @@ define([
     Message.download(dialog_id, function(messages) {
       for (var i = 0, len = messages.length; i < len; i++) {
         message = Message.create(messages[i]);
-        // if (QMCONFIG.debug) console.log(message);
         message.stack = Message.isStack(false, messages[i], messages[i+1]);
         MessageView.addItem(message, true);
       }
