@@ -267,6 +267,7 @@ define(['jquery', 'quickblox'], function($, QB) {
 
       $('#remoteUser').addClass('is-hidden');
       $('#remoteStream').removeClass('is-hidden');
+      
       $('.mediacall-info-duration').removeClass('is-hidden');
       $('.mediacall-remote-duration').addClass('is-hidden');
     } else {

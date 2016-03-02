@@ -16,6 +16,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
   VideoChat.prototype.getUserMedia = function(options, callType, callback) {
     var User = this.app.models.User;
+    var currentSession = QB.webrtc.createNewSession([User.contact.id, options.opponentId], QB.webrtc.CallType.VIDEO);
     var params = {
       audio: true,
       video: callType === 'video' ? true : false,
@@ -26,9 +27,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       }
     };
 
-    var QB.webrtc.createNewSession([options.isCallee, options.opponentId], QB.webrtc.CallType.VIDEO);
-
-    QB.webrtc.getUserMedia(params, function(err, stream) {
+    currentSession.getUserMedia(params, function(err, stream) {
       if (err) {
         console.log(err);
         if (!options.isCallee) {
@@ -46,13 +45,13 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         }
 
         if (options.isCallee) {
-          QB.webrtc.accept(options.opponentId, {
+          currentSession.accept(options.opponentId, {
             dialog_id: options.dialogId
           });
           self.caller = options.opponentId;
           self.callee = User.contact.id;
         } else {
-          QB.webrtc.call(options.opponentId, callType, {
+          currentSession.call(options.opponentId, callType, {
             dialog_id: options.dialogId,
             avatar: User.contact.avatar_url,
             full_name: User.contact.full_name
