@@ -150,11 +150,11 @@ define([
 
       $('.em-wrap').on('click', function() {
         var code = $(this).find('.em').data('unicode'),
-            curTextarea = $('.l-chat:visible .textarea'),
-            val = curTextarea.html();
+            $curTextarea = $('.l-chat:visible .textarea'),
+            val = $curTextarea.html();
 
-        $('.l-chat:visible .textarea').addClass('contenteditable').html(val + minEmoji(code));
-        setCursorToEnd(curTextarea);
+        $curTextarea.addClass('contenteditable').html(val + minEmoji(code));
+        setCursorToEnd($curTextarea);
       });
 
       /* attachments
