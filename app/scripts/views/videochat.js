@@ -7,7 +7,7 @@
 
 var callTimer, win, videoStreamTime, maxHeight;
 
-define(['jquery', 'quickblox', 'Helpers'], function($, QB, Helpers) {
+define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function($, QB, QMCONFIG, Helpers, QBNotification) {
 
   var self;
   var User,
@@ -258,14 +258,30 @@ define(['jquery', 'quickblox', 'Helpers'], function($, QB, Helpers) {
 
     self.app.models.VideoChat.session = session;
     CurrentSession = self.app.models.VideoChat.session;
+
+    createAndShowNotification({
+      'id': id,
+      'dialogId': dialogId,
+      'callState': '5',
+      'callType': callType
+    });
   };
 
   VideoChatView.prototype.onAccept = function(session, id, extension) {
     var audioSignal = $('#callingSignal')[0],
-        chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
+        dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
+        chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
+        callType = extension.call_type || (session.callType == 1 ? 'video' : 'audio');
 
     audioSignal.pause();
     self.sessionID = session.ID;
+
+    createAndShowNotification({
+      'id': id,
+      'dialogId': dialogId,
+      'callState': '6',
+      'callType': callType
+    });
   };
 
   VideoChatView.prototype.onRemoteStream = function(session, id, stream) {
@@ -483,6 +499,38 @@ define(['jquery', 'quickblox', 'Helpers'], function($, QB, Helpers) {
         });
       obj.addClass('off');
       obj.attr('title', msg + ' is off');
+    }
+  }
+
+  function createAndShowNotification(options) {
+    var msg = {
+      'callState': options.callState,
+      'dialog_id': options.dialogId,
+      'sender_id': options.id,
+      'caller': options.id,
+      'type': 'chat',
+      'callType': capitaliseFirstLetter(options.callType)
+    };
+
+    var params = {
+      'user': User,
+      'dialogs': ContactList.dialogs,
+      'contacts': ContactList.contacts
+    };
+
+    var title = Helpers.Notifications.getTitle(msg, params),
+        options = Helpers.Notifications.getOptions(msg, params);
+
+    if (QMCONFIG.notification && QBNotification.isSupported() && !window.isQMAppActive) {
+      if(!QBNotification.needsPermission()) {
+        Helpers.Notifications.show(title, options);
+      } else {
+        QBNotification.requestPermission(function(state) {
+          if (state === "granted") {
+            Helpers.Notifications.show(title, options);
+          } 
+        });
+      }
     }
   }
 

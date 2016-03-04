@@ -35,7 +35,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           contact = contacts[message.sender_id],
           chatType = message.type,
           photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (dialog.room_photo || QMCONFIG.defAvatar.group_url_png),
-          type = message.notification_type,
+          type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
           selectDialog = $('.dialog-item[data-dialog="'+message.dialog_id+'"] .contact'),
           occupants_ids,
           occupantsNames = '',
@@ -62,6 +62,8 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
        * 9 - about missed call
        * 10 - no answer
        * 11 - сamera and/or microphone wasn't found
+       * 12 - incoming call
+       * 13 - call accepted
        * default - message
        */
       switch (type) {
@@ -125,6 +127,14 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           } else {
           text = 'Camera and/or microphone wasn\'t found.';
           }
+          break;
+
+        case '12':
+          text = 'Incomming '+message.callType+' Call from '+contact.full_name;
+          break;
+
+        case '13':
+          text = 'The '+message.callType+' Call accepted by '+contact.full_name;
           break;
 
         // messages
