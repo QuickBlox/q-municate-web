@@ -328,8 +328,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   };
 
   VideoChatView.prototype.onStop = function(session, id, extension) {
-    var chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]'),
-        declineButton = $('.btn_decline[data-dialog="'+extension.dialog_id+'"]'),
+    var dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
+        chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
+        declineButton = $('.btn_decline[data-dialog="'+dialogId+'"]'),
         callingSignal = $('#callingSignal')[0],
         endCallSignal = $('#endCallSignal')[0],
         ringtoneSignal = $('#ringtoneSignal')[0],

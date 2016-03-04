@@ -40,7 +40,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         if (!options.isCallee) {
           callback(err, null);
         } else {
-          self.sendMessage(coptions.opponentId, '4', null, options.dialogId, callType, true);
+          self.sendMessage(options.opponentId, '4', null, options.dialogId, callType, true);
           callback(err, null);
         }
       } else {
