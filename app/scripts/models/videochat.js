@@ -7,37 +7,44 @@
 
 define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
 
-  var self;
+  var CurrentSession, 
+      self;
   
   function VideoChat(app) {
     this.app = app;
+    this.session = {};
     self = this;
   }
 
   VideoChat.prototype.getUserMedia = function(options, callType, callback) {
     var User = this.app.models.User;
-    var currentSession = QB.webrtc.createNewSession([User.contact.id, options.opponentId], QB.webrtc.CallType.VIDEO);
     var params = {
       audio: true,
       video: callType === 'video' ? true : false,
-      elemId: 'localVideo',
+      elemId: 'localStream',
       options: {
         muted: true,
         mirror: true
       }
     };
 
-    currentSession.getUserMedia(params, function(err, stream) {
+    if (!options.isCallee) {
+      self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO);
+    }
+    
+    CurrentSession = self.session;
+
+    CurrentSession.getUserMedia(params, function(err, stream) {
       if (err) {
-        Helpers.log('Error', err);
+        console.log(err);
         if (!options.isCallee) {
           callback(err, null);
         } else {
-          self.sendMessage(c, '4', null, options.dialogId, callType, true);
+          self.sendMessage(coptions.opponentId, '4', null, options.dialogId, callType, true);
           callback(err, null);
         }
       } else {
-        Helpers.log('Stream', stream);
+        console.log(stream);
 
         if (!$('.l-chat[data-dialog="'+options.dialogId+'"]').find('.mediacall')[0]) {
           stream.stop();
@@ -45,16 +52,17 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         }
 
         if (options.isCallee) {
-          currentSession.accept(options.opponentId, {
+          CurrentSession.accept({
             dialog_id: options.dialogId
           });
           self.caller = options.opponentId;
           self.callee = User.contact.id;
         } else {
-          currentSession.call(options.opponentId, callType, {
+          CurrentSession.call({
+            call_type: callType,
             dialog_id: options.dialogId,
-            avatar: User.contact.avatar_url,
-            full_name: User.contact.full_name
+            full_name: User.contact.full_name,
+            avatar: User.contact.avatar_url
           });
           self.caller = User.contact.id;
           self.callee = options.opponentId;

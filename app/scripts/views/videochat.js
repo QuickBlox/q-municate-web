@@ -7,10 +7,13 @@
 
 var callTimer, win, videoStreamTime, maxHeight;
 
-define(['jquery', 'quickblox'], function($, QB) {
+define(['jquery', 'quickblox', 'Helpers'], function($, QB, Helpers) {
 
   var self;
-  var User, ContactList, VideoChat;
+  var User,
+      ContactList,
+      VideoChat,
+      CurrentSession = {};
 
   function VideoChatView(app) {
     this.app = app;
@@ -34,6 +37,8 @@ define(['jquery', 'quickblox'], function($, QB) {
       var className = $(this).attr('class');
       self.cancelCurrentCalls();
       self.startCall(className);
+      
+      CurrentSession = self.app.models.VideoChat.session;
     });
 
     $('#popupIncoming').on('click', '.btn_decline', function(event) {
@@ -44,7 +49,8 @@ define(['jquery', 'quickblox'], function($, QB) {
           callType = $(this).data('calltype'),
           audioSignal = $('#ringtoneSignal')[0];
 
-      QB.webrtc.reject(opponentId, {
+      CurrentSession.reject({
+        opponent_id: opponentId,
         dialog_id: dialogId
       });
 
@@ -118,7 +124,8 @@ define(['jquery', 'quickblox'], function($, QB) {
       endCallSignal.play();
       clearTimeout(callTimer);
       
-      QB.webrtc.stop(opponentId, 'manually', {
+      CurrentSession.stop({
+        opponent_id: opponentId, 
         dialog_id: dialogId
       });
 
@@ -224,38 +231,47 @@ define(['jquery', 'quickblox'], function($, QB) {
 
   };
 
-  VideoChatView.prototype.onCall = function(id, extension) {
+  VideoChatView.prototype.onCall = function(session, extension) {
     var audioSignal = $('#ringtoneSignal')[0],
         incomings = $('#popupIncoming'),
+        id = session.initiatorID,
+        contact = ContactList.contacts[id],
+        callType = extension.call_type || (session.callType == 1 ? 'video' : 'audio'),
+        userName = extension.full_name || contact.full_name,
+        userAvatar = extension.avatar || contact.avatar_url,
+        dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
         html;
 
     html = '<div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween">';
     html += '<div class="incoming-call-info l-flexbox l-flexbox_column">';
-    html += '<div class="message-avatar avatar contact-avatar_message info-avatar" style="background-image:url('+extension.avatar+')"></div>';
-    html += '<span class="info-notice">'+capitaliseFirstLetter(extension.callType)+' Call from '+extension.full_name+'</span>';
+    html += '<div class="message-avatar avatar contact-avatar_message info-avatar" style="background-image:url('+userAvatar+')"></div>';
+    html += '<span class="info-notice">'+capitaliseFirstLetter(callType)+' Call from '+userName+'</span>';
     html += '</div>';
     html += '<div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">';
-    html += '<button class="btn_decline" data-callType="'+extension.callType+'" data-dialog="'+extension.dialog_id+'" data-id="'+id+'">Decline</button>';
-    html += '<button class="btn_accept" data-callType="'+extension.callType+'" data-session="'+extension.sessionID+'" data-dialog="'+extension.dialog_id+'" data-id="'+id+'">Accept</button>';
+    html += '<button class="btn_decline" data-callType="'+callType+'" data-dialog="'+dialogId+'" data-id="'+id+'">Decline</button>';
+    html += '<button class="btn_accept" data-callType="'+callType+'" data-session="'+session.ID+'" data-dialog="'+dialogId+'" data-id="'+id+'">Accept</button>';
     html += '</div></div>';
 
     incomings.find('.mCSB_container').prepend(html);
     openPopup(incomings);
     audioSignal.play();
+
+    self.app.models.VideoChat.session = session;
+    CurrentSession = self.app.models.VideoChat.session;
   };
 
-  VideoChatView.prototype.onAccept = function(id, extension) {
+  VideoChatView.prototype.onAccept = function(session, id, extension) {
     var audioSignal = $('#callingSignal')[0],
         chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
 
     audioSignal.pause();
-    self.sessionID = extension.sessionID;
+    self.sessionID = session.ID;
   };
 
-  VideoChatView.prototype.onRemoteStream = function(stream) {
+  VideoChatView.prototype.onRemoteStream = function(session, id, stream) {
     var video = document.getElementById('remoteStream');
 
-    QB.webrtc.attachMediaStream('remoteStream', stream);
+    CurrentSession.attachMediaStream('remoteStream', stream);
     $('.mediacall .btn_full-mode').prop('disabled', false);
 
     if (self.type === 'video') {
@@ -267,7 +283,6 @@ define(['jquery', 'quickblox'], function($, QB) {
 
       $('#remoteUser').addClass('is-hidden');
       $('#remoteStream').removeClass('is-hidden');
-      
       $('.mediacall-info-duration').removeClass('is-hidden');
       $('.mediacall-remote-duration').addClass('is-hidden');
     } else {
@@ -282,7 +297,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     }
   };
 
-  VideoChatView.prototype.onReject = function(id, extension) {
+  VideoChatView.prototype.onReject = function(session, id, extension) {
     var audioSignal = $('#callingSignal')[0],
         chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
 
@@ -296,7 +311,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
   };
 
-  VideoChatView.prototype.onStop = function(id, extension) {
+  VideoChatView.prototype.onStop = function(session, id, extension) {
     var chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]'),
         declineButton = $('.btn_decline[data-dialog="'+extension.dialog_id+'"]'),
         callingSignal = $('#callingSignal')[0],
@@ -328,7 +343,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     }
   };
 
-  VideoChatView.prototype.onUpdateCall = function(id, extension) {
+  VideoChatView.prototype.onUpdateCall = function(session, id, extension) {
     var chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
     var selector = win ? $(win.document.body) : $(window.document.body);
     if (chat[0] && (chat.find('.mediacall')[0] || win)) {
@@ -376,7 +391,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     var chat = id ? $('.l-chat[data-dialog="'+id+'"]') : $('.l-chat:visible'),
         userId = chat.data('id'),
         dialogId = chat.data('dialog'),
-        contact = ContactList.contacts[userId],        
+        contact = ContactList.contacts[userId],
         html;
 
     maxHeight = screen.height > 768 ? '420px' : '550px';
@@ -417,7 +432,7 @@ define(['jquery', 'quickblox'], function($, QB) {
   };
 
   VideoChatView.prototype.mute = function(callType) {
-    QB.webrtc.mute(callType);
+    CurrentSession.mute(callType);
     if (callType === 'video') {
       $('#localStream').addClass('is-hidden');
       if (win) $(win.document.body).find('#localStream').addClass('is-hidden');
@@ -427,7 +442,7 @@ define(['jquery', 'quickblox'], function($, QB) {
   };
 
   VideoChatView.prototype.unmute = function(callType) {
-    QB.webrtc.unmute(callType);
+    CurrentSession.unmute(callType);
     if (callType === 'video') {
       $('#localStream').removeClass('is-hidden');
       if (win) $(win.document.body).find('#localStream').removeClass('is-hidden');
@@ -453,7 +468,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     if (obj.is('.off')) {
       self.unmute(deviceType);
       if (deviceType === 'video')
-        QB.webrtc.update(opponentId, {
+        CurrentSession.update(opponentId, {
           dialog_id: dialogId,
           unmute: deviceType
         });
@@ -462,7 +477,7 @@ define(['jquery', 'quickblox'], function($, QB) {
     } else {
       self.mute(deviceType);
       if (deviceType === 'video')
-        QB.webrtc.update(opponentId, {
+        CurrentSession.update(opponentId, {
           dialog_id: dialogId,
           mute: deviceType
         });
