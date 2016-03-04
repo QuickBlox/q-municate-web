@@ -254,7 +254,12 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
               window.location.reload();
             }
           } else {
-            FlurryAgent.logEvent("Connect to chat", {'app_id': (QMCONFIG.qbAccount.appId).toString()});
+            var eventParams = {
+              'chat_endpoints': QB.auth.service.qbInst.config.endpoints.chat,
+              'app_id': (QMCONFIG.qbAccount.appId).toString()
+            };
+            FlurryAgent.logEvent("Connect to chat", eventParams);
+            
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);
