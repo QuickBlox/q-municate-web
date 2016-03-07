@@ -107,7 +107,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
         }
 
         self.sessionID = sessionId;
+        addCallTypeIcon(id, callType);
       });
+
     });
 
     $('body').on('click', '.btn_hangup', function(event) {
@@ -143,6 +145,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       chat.find('.mediacall').remove();
       chat.find('.l-chat-header').show();
       chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
+
+      addCallTypeIcon(opponentId, null);
     });
 
     $('body').on('click', '.btn_camera_off, .btn_mic_off', switchOffDevice);
@@ -276,6 +280,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     audioSignal.pause();
     self.sessionID = session.ID;
 
+    addCallTypeIcon(id, self.type);
+
     createAndShowNotification({
       'id': id,
       'dialogId': dialogId,
@@ -358,6 +364,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
           ringtoneSignal.pause();
         }
     }
+
+    addCallTypeIcon(id, null);
   };
 
   VideoChatView.prototype.onUpdateCall = function(session, id, extension) {
@@ -532,6 +540,18 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
           } 
         });
       }
+    }
+  }
+
+  function addCallTypeIcon(id, callType) {
+    var $status = $('li.dialog-item[data-id="'+id+'"]').find('span.status');
+
+    if (callType === 'video') {
+      $status.addClass('icon_videocall');
+    } else if (callType === 'audio') {
+      $status.addClass('icon_audiocall');
+    } else {
+      $status.hasClass('icon_videocall') ? $status.removeClass('icon_videocall') : $status.removeClass('icon_audiocall')
     }
   }
 
