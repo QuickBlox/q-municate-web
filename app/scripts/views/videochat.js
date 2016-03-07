@@ -275,12 +275,12 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     var audioSignal = $('#callingSignal')[0],
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
         chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
-        callType = extension.call_type || (session.callType == 1 ? 'video' : 'audio');
+        callType = self.type;
 
     audioSignal.pause();
     self.sessionID = session.ID;
 
-    addCallTypeIcon(id, self.type);
+    addCallTypeIcon(id, callType);
 
     createAndShowNotification({
       'id': id,
