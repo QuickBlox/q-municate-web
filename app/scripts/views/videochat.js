@@ -411,7 +411,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
         contact = ContactList.contacts[userId],
         html;
 
-    maxHeight = screen.height > 768 ? '420px' : '550px';
+    maxHeight = screen.height > 768 ? '420px' : '50%';
 
     html = '<div class="mediacall l-flexbox" style="max-height:'+maxHeight+'">';
     html += '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>';
