@@ -16,7 +16,8 @@
     "blueimp-canvas-to-blob": "~2.2.2",
     "Chroma-Hash": "https://github.com/mattt/Chroma-Hash.git#~1.0.1",
     "progressbar.js": "https://github.com/bug7a/progressbar.js.git",
-    "web-notifications": "~1.1.4"
+    "web-notifications": "~1.1.4",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {}
 }
