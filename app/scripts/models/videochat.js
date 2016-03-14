@@ -7,7 +7,7 @@
 
 define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
 
-  var CurrentSession, 
+  var curSession, 
       self;
   
   function VideoChat(app) {
@@ -32,11 +32,11 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
       self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO);
     }
     
-    CurrentSession = self.session;
+    curSession = self.session;
 
-    CurrentSession.getUserMedia(params, function(err, stream) {
+    curSession.getUserMedia(params, function(err, stream) {
       if (err) {
-        console.log(err);
+        Helpers.log('Error', err);
         if (!options.isCallee) {
           callback(err, null);
         } else {
@@ -44,7 +44,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
           callback(err, null);
         }
       } else {
-        console.log(stream);
+        Helpers.log('Stream', stream);
 
         if (!$('.l-chat[data-dialog="'+options.dialogId+'"]').find('.mediacall')[0]) {
           stream.stop();
@@ -52,13 +52,13 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         }
 
         if (options.isCallee) {
-          CurrentSession.accept({
+          curSession.accept({
             dialog_id: options.dialogId
           });
           self.caller = options.opponentId;
           self.callee = User.contact.id;
         } else {
-          CurrentSession.call({
+          curSession.call({
             call_type: callType,
             dialog_id: options.dialogId,
             full_name: User.contact.full_name,

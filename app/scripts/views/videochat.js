@@ -5,7 +5,7 @@
  *
  */
 
-var callTimer, win, videoStreamTime, maxHeight;
+var callTimer, win, videoStreamTime;
 
 define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function($, QB, QMCONFIG, Helpers, QBNotification) {
 
@@ -13,7 +13,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   var User,
       ContactList,
       VideoChat,
-      CurrentSession = {};
+      curSession = {};
 
   function VideoChatView(app) {
     this.app = app;
@@ -32,24 +32,25 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   VideoChatView.prototype.init = function() {
     var DialogView = this.app.views.Dialog;
 
-    $('body').on('click', '.videoCall, .audioCall', function(event) {
-      event.preventDefault();
+    $('body').on('click', '.videoCall, .audioCall', function() {
       var className = $(this).attr('class');
+
       self.cancelCurrentCalls();
       self.startCall(className);
       
-      CurrentSession = self.app.models.VideoChat.session;
+      curSession = self.app.models.VideoChat.session;
+
+      return false;
     });
 
-    $('#popupIncoming').on('click', '.btn_decline', function(event) {
-      event.preventDefault();
+    $('#popupIncoming').on('click', '.btn_decline', function() {
       var incomingCall = $(this).parents('.incoming-call'),
           opponentId = $(this).data('id'),
           dialogId = $(this).data('dialog'),
           callType = $(this).data('calltype'),
           audioSignal = $('#ringtoneSignal')[0];
 
-      CurrentSession.reject({
+      curSession.reject({
         opponent_id: opponentId,
         dialog_id: dialogId
       });
@@ -57,14 +58,16 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       VideoChat.sendMessage(opponentId, '3', null, dialogId, callType);
 
       incomingCall.remove();
+
       if ($('#popupIncoming .mCSB_container').children().length === 0) {
         closePopup();
         audioSignal.pause();
       }
+
+      return false;
     });
 
-    $('#popupIncoming').on('click', '.btn_accept', function(event) {
-      event.preventDefault();
+    $('#popupIncoming').on('click', '.btn_accept', function() {
       self.cancelCurrentCalls();
 
       var id = $(this).data('id'),
@@ -110,10 +113,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
         addCallTypeIcon(id, callType);
       });
 
+      return false;
     });
 
-    $('body').on('click', '.btn_hangup', function(event) {
-      event.preventDefault();
+    $('body').on('click', '.btn_hangup', function() {
       var chat = $(this).parents('.l-chat'),
           opponentId = $(this).data('id'),
           dialogId = $(this).data('dialog'),
@@ -126,7 +129,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       endCallSignal.play();
       clearTimeout(callTimer);
       
-      CurrentSession.stop({
+      curSession.stop({
         opponent_id: opponentId, 
         dialog_id: dialogId
       });
@@ -144,9 +147,11 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       self.type = null;
       chat.find('.mediacall').remove();
       chat.find('.l-chat-header').show();
-      chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
+      chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
 
       addCallTypeIcon(opponentId, null);
+
+      return false;
     });
 
     $('body').on('click', '.btn_camera_off, .btn_mic_off', switchOffDevice);
@@ -154,7 +159,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     // full-screen-mode
     $('body').on('click', '.btn_full-mode', function() {
       var mediaScreen = document.getElementsByClassName("mediacall")[0],
-          isFullScreen = undefined;
+          isFullScreen = false;
 
       if (mediaScreen.requestFullscreen) {      
         if (document.fullScreenElement) {
@@ -195,12 +200,14 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       } else {
         $('.btn_full-mode img').attr('src', 'images/icon-full-mode-on.png');
       }
+
+      return false;
     });
 
   };
 
   VideoChatView.prototype.onCall = function(session, extension) {
-    var audioSignal = $('#ringtoneSignal')[0],
+    var audioSignal = document.getElementById('ringtoneSignal'),
         incomings = $('#popupIncoming'),
         id = session.initiatorID,
         contact = ContactList.contacts[id],
@@ -225,7 +232,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     audioSignal.play();
 
     self.app.models.VideoChat.session = session;
-    CurrentSession = self.app.models.VideoChat.session;
+    curSession = self.app.models.VideoChat.session;
 
     createAndShowNotification({
       'id': id,
@@ -236,7 +243,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   };
 
   VideoChatView.prototype.onAccept = function(session, id, extension) {
-    var audioSignal = $('#callingSignal')[0],
+    var audioSignal = document.getElementById('callingSignal'),
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
         chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
         callType = self.type;
@@ -257,7 +264,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   VideoChatView.prototype.onRemoteStream = function(session, id, stream) {
     var video = document.getElementById('remoteStream');
 
-    CurrentSession.attachMediaStream('remoteStream', stream);
+    curSession.attachMediaStream('remoteStream', stream);
     $('.mediacall .btn_full-mode').prop('disabled', false);
 
     if (self.type === 'video') {
@@ -284,7 +291,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   };
 
   VideoChatView.prototype.onReject = function(session, id, extension) {
-    var audioSignal = $('#callingSignal')[0],
+    var audioSignal = document.getElementById('callingSignal'),
         chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
 
     VideoChat.caller = null;
@@ -301,9 +308,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     var dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
         chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
         declineButton = $('.btn_decline[data-dialog="'+dialogId+'"]'),
-        callingSignal = $('#callingSignal')[0],
-        endCallSignal = $('#endCallSignal')[0],
-        ringtoneSignal = $('#ringtoneSignal')[0],
+        callingSignal = document.getElementById('callingSignal'),
+        endCallSignal = document.getElementById('endCallSignal'),
+        ringtoneSignal = document.getElementById('ringtoneSignal'),
         incomingCall;
 
     if (chat[0] && (chat.find('.mediacall')[0] || win)) {
@@ -352,7 +359,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   };
 
   VideoChatView.prototype.startCall = function(className) {
-    var audioSignal = $('#callingSignal')[0],
+    var audioSignal = document.getElementById('callingSignal'),
         params = self.build(),
         chat = $('.l-chat:visible'),
         callType = !!className.match(/audioCall/) ? 'audio' : 'video';
@@ -383,8 +390,6 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
         contact = ContactList.contacts[userId],
         html;
 
-    maxHeight = '50%';
-
     html = '<div class="mediacall l-flexbox">';
     html += '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>';
     html += '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>';
@@ -407,7 +412,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
 
     chat.prepend(html);
     chat.find('.l-chat-header').hide();
-    chat.find('.l-chat-content').css({height: 'calc(100% - '+maxHeight+' - 90px)'});
+    chat.find('.l-chat-content').css({height: 'calc(50% - 90px)'});
     if (screen.height > 768) {
       chat.find('.mediacall-remote-user').css({position: 'absolute', top: '16%', left: '10%', margin: 0});
     }
@@ -421,7 +426,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   };
 
   VideoChatView.prototype.mute = function(callType) {
-    CurrentSession.mute(callType);
+    curSession.mute(callType);
     if (callType === 'video') {
       $('#localStream').addClass('is-hidden');
       if (win) $(win.document.body).find('#localStream').addClass('is-hidden');
@@ -431,7 +436,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   };
 
   VideoChatView.prototype.unmute = function(callType) {
-    CurrentSession.unmute(callType);
+    curSession.unmute(callType);
     if (callType === 'video') {
       $('#localStream').removeClass('is-hidden');
       if (win) $(win.document.body).find('#localStream').removeClass('is-hidden');
@@ -441,7 +446,6 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   };
 
   function switchOffDevice(event) {
-    event.preventDefault();
     var obj = $(event.target).data('id') ? $(event.target) : $(event.target).parent(),
         opponentId = obj.data('id'),
         dialogId = obj.data('dialog'),
@@ -457,7 +461,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     if (obj.is('.off')) {
       self.unmute(deviceType);
       if (deviceType === 'video')
-        CurrentSession.update(opponentId, {
+        curSession.update(opponentId, {
           dialog_id: dialogId,
           unmute: deviceType
         });
@@ -466,13 +470,15 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     } else {
       self.mute(deviceType);
       if (deviceType === 'video')
-        CurrentSession.update(opponentId, {
+        curSession.update(opponentId, {
           dialog_id: dialogId,
           mute: deviceType
         });
       obj.addClass('off');
       obj.attr('title', msg + ' is off');
     }
+
+    return false;
   }
 
   function createAndShowNotification(options) {
