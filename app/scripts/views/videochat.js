@@ -25,18 +25,19 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   }
 
   VideoChatView.prototype.cancelCurrentCalls = function() {
-    if ($('.mediacall').length > 0)
+    if ($('.mediacall').length > 0) {
       $('.mediacall').find('.btn_hangup').click();
+    }
   };
 
   VideoChatView.prototype.init = function() {
     var DialogView = this.app.views.Dialog;
 
     $('body').on('click', '.videoCall, .audioCall', function() {
-      var className = $(this).attr('class');
+      var $className = $(this).attr('class');
 
       self.cancelCurrentCalls();
-      self.startCall(className);
+      self.startCall($className);
       
       curSession = self.app.models.VideoChat.session;
 
@@ -44,7 +45,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     });
 
     $('#popupIncoming').on('click', '.btn_decline', function() {
-      var incomingCall = $(this).parents('.incoming-call'),
+      var $incomingCall = $(this).parents('.incoming-call'),
           opponentId = $(this).data('id'),
           dialogId = $(this).data('dialog'),
           callType = $(this).data('calltype'),
@@ -57,7 +58,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
 
       VideoChat.sendMessage(opponentId, '3', null, dialogId, callType);
 
-      incomingCall.remove();
+      $incomingCall.remove();
 
       if ($('#popupIncoming .mCSB_container').children().length === 0) {
         closePopup();
@@ -71,18 +72,17 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       self.cancelCurrentCalls();
 
       var id = $(this).data('id'),
-          dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
+          $dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
       
-      DialogView.htmlBuild(dialogItem);
+      DialogView.htmlBuild($dialogItem);
 
-      var incomingCall = $(this).parents('.incoming-call'),
-          opponentId = $(this).data('id'),
+      var opponentId = $(this).data('id'),
           dialogId = $(this).data('dialog'),
           sessionId = $(this).data('session'),
           callType = $(this).data('calltype'),
           audioSignal = $('#ringtoneSignal')[0],
           params = self.build(dialogId),
-          chat = $('.l-chat[data-dialog="'+dialogId+'"]');
+          $chat = $('.l-chat[data-dialog="'+dialogId+'"]');
 
       $(this).parents('.incoming-call').remove();
       $('#popupIncoming .mCSB_container').children().each(function() {
@@ -95,8 +95,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
 
       VideoChat.getUserMedia(params, callType, function(err, res) {
         if (err) {
-          chat.find('.mediacall .btn_hangup').data('errorMessage', 1);
-          chat.find('.mediacall .btn_hangup').click();
+          $chat.find('.mediacall .btn_hangup').data('errorMessage', 1);
+          $chat.find('.mediacall .btn_hangup').click();
           fixScroll();
           return true;
         }
@@ -117,7 +117,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     });
 
     $('body').on('click', '.btn_hangup', function() {
-      var chat = $(this).parents('.l-chat'),
+      var $chat = $(this).parents('.l-chat'),
           opponentId = $(this).data('id'),
           dialogId = $(this).data('dialog'),
           duration = $(this).parents('.mediacall').find('.mediacall-info-duration').text(),
@@ -145,9 +145,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       }
 
       self.type = null;
-      chat.find('.mediacall').remove();
-      chat.find('.l-chat-header').show();
-      chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
+      $chat.find('.mediacall').remove();
+      $chat.find('.l-chat-header').show();
+      $chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
 
       addCallTypeIcon(opponentId, null);
 
@@ -196,9 +196,11 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       }
 
       if (isFullScreen) {
-        $('.btn_full-mode img').attr('src', 'images/icon-full-mode-off.png');
+        $('#fullModeOn').hide();
+        $('#fullModeOff').show();
       } else {
-        $('.btn_full-mode img').attr('src', 'images/icon-full-mode-on.png');
+        $('#fullModeOn').show();
+        $('#fullModeOff').hide();
       }
 
       return false;
@@ -208,27 +210,30 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
 
   VideoChatView.prototype.onCall = function(session, extension) {
     var audioSignal = document.getElementById('ringtoneSignal'),
-        incomings = $('#popupIncoming'),
+        $incomings = $('#popupIncoming'),
         id = session.initiatorID,
         contact = ContactList.contacts[id],
         callType = extension.call_type || (session.callType == 1 ? 'video' : 'audio'),
         userName = extension.full_name || contact.full_name,
         userAvatar = extension.avatar || contact.avatar_url,
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
-        html;
+        htmlTemplate,
+        templateParams;
 
-    html = '<div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween">';
-    html += '<div class="incoming-call-info l-flexbox l-flexbox_column">';
-    html += '<div class="message-avatar avatar contact-avatar_message info-avatar" style="background-image:url('+userAvatar+')"></div>';
-    html += '<span class="info-notice">'+capitaliseFirstLetter(callType)+' Call from '+userName+'</span>';
-    html += '</div>';
-    html += '<div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">';
-    html += '<button class="btn_decline" data-callType="'+callType+'" data-dialog="'+dialogId+'" data-id="'+id+'">Decline</button>';
-    html += '<button class="btn_accept" data-callType="'+callType+'" data-session="'+session.ID+'" data-dialog="'+dialogId+'" data-id="'+id+'">Accept</button>';
-    html += '</div></div>';
+    templateParams = {
+      userAvatar: userAvatar,
+      callTypeUС: capitaliseFirstLetter(callType),
+      callType: callType,
+      userName: userName,
+      dialogId: dialogId,
+      sessionId: session.ID,
+      userId: id
+    };
 
-    incomings.find('.mCSB_container').prepend(html);
-    openPopup(incomings);
+    htmlTemplate = onCallTemplate(templateParams);
+
+    $incomings.find('.mCSB_container').prepend(htmlTemplate);
+    openPopup($incomings);
     audioSignal.play();
 
     self.app.models.VideoChat.session = session;
@@ -245,7 +250,6 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   VideoChatView.prototype.onAccept = function(session, id, extension) {
     var audioSignal = document.getElementById('callingSignal'),
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
-        chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
         callType = self.type;
 
     audioSignal.pause();
@@ -292,28 +296,28 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
 
   VideoChatView.prototype.onReject = function(session, id, extension) {
     var audioSignal = document.getElementById('callingSignal'),
-        chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
+        $chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
 
     VideoChat.caller = null;
     VideoChat.callee = null;
     self.type = null;
     audioSignal.pause();
 
-    chat.find('.mediacall').remove();
-    chat.find('.l-chat-header').show();
-    chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
+    $chat.find('.mediacall').remove();
+    $chat.find('.l-chat-header').show();
+    $chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
   };
 
   VideoChatView.prototype.onStop = function(session, id, extension) {
     var dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
-        chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
-        declineButton = $('.btn_decline[data-dialog="'+dialogId+'"]'),
+        $chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
+        $declineButton = $('.btn_decline[data-dialog="'+dialogId+'"]'),
         callingSignal = document.getElementById('callingSignal'),
         endCallSignal = document.getElementById('endCallSignal'),
         ringtoneSignal = document.getElementById('ringtoneSignal'),
         incomingCall;
 
-    if (chat[0] && (chat.find('.mediacall')[0] || win)) {
+    if ($chat[0] && ($chat.find('.mediacall')[0] || win)) {
       if (win) win.close();
       callingSignal.pause();
       endCallSignal.play();
@@ -323,11 +327,11 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       self.type = null;
       videoStreamTime = null;
 
-      chat.find('.mediacall').remove();
-      chat.find('.l-chat-header').show();
-      chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
-    } else if (declineButton[0]) {
-        incomingCall = declineButton.parents('.incoming-call');
+      $chat.find('.mediacall').remove();
+      $chat.find('.l-chat-header').show();
+      $chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
+    } else if ($declineButton[0]) {
+        incomingCall = $declineButton.parents('.incoming-call');
         incomingCall.remove();
 
         if ($('#popupIncoming .mCSB_container').children().length === 0) {
@@ -340,20 +344,20 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   };
 
   VideoChatView.prototype.onUpdateCall = function(session, id, extension) {
-    var chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
-    var selector = win ? $(win.document.body) : $(window.document.body);
-    if (chat[0] && (chat.find('.mediacall')[0] || win)) {
+    var $chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
+    var $selector = win ? $(win.document.body) : $(window.document.body);
+    if ($chat[0] && ($chat.find('.mediacall')[0] || win)) {
       if (extension.mute === 'video') {
-        selector.find('#remoteStream').addClass('is-hidden');
-        selector.find('#remoteUser').removeClass('is-hidden');
-        selector.find('.mediacall-remote-duration').removeClass('is-hidden');
-        selector.find('.mediacall-info-duration').addClass('is-hidden');
+        $selector.find('#remoteStream').addClass('is-hidden');
+        $selector.find('#remoteUser').removeClass('is-hidden');
+        $selector.find('.mediacall-remote-duration').removeClass('is-hidden');
+        $selector.find('.mediacall-info-duration').addClass('is-hidden');
       }
       if (extension.unmute === 'video') {
-        selector.find('#remoteStream').removeClass('is-hidden');
-        selector.find('#remoteUser').addClass('is-hidden');
-        selector.find('.mediacall-info-duration').removeClass('is-hidden');
-        selector.find('.mediacall-remote-duration').addClass('is-hidden');
+        $selector.find('#remoteStream').removeClass('is-hidden');
+        $selector.find('#remoteUser').addClass('is-hidden');
+        $selector.find('.mediacall-info-duration').removeClass('is-hidden');
+        $selector.find('.mediacall-remote-duration').addClass('is-hidden');
       }
     }
   };
@@ -361,13 +365,13 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   VideoChatView.prototype.startCall = function(className) {
     var audioSignal = document.getElementById('callingSignal'),
         params = self.build(),
-        chat = $('.l-chat:visible'),
+        $chat = $('.l-chat:visible'),
         callType = !!className.match(/audioCall/) ? 'audio' : 'video';
 
     VideoChat.getUserMedia(params, callType, function(err, res) {
       if (err) {
-        chat.find('.mediacall .btn_hangup').click();
-        showError(chat);
+        $chat.find('.mediacall .btn_hangup').click();
+        showError($chat);
         fixScroll();
         return true;
       }
@@ -384,37 +388,28 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   };
 
   VideoChatView.prototype.build = function(id) {
-    var chat = id ? $('.l-chat[data-dialog="'+id+'"]') : $('.l-chat:visible'),
-        userId = chat.data('id'),
-        dialogId = chat.data('dialog'),
+    var $chat = id ? $('.l-chat[data-dialog="'+id+'"]') : $('.l-chat:visible'),
+        userId = $chat.data('id'),
+        dialogId = $chat.data('dialog'),
         contact = ContactList.contacts[userId],
-        html;
+        htmlTemplate,
+        templateParams;
 
-    html = '<div class="mediacall l-flexbox">';
-    html += '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>';
-    html += '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>';
-    html += '<img id="localUser" class="mediacall-local mediacall-local-avatar" src="'+User.contact.avatar_url+'" alt="avatar">';
-    html += '<div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">';
-    html += '<img class="mediacall-remote-avatar" src="'+contact.avatar_url+'" alt="avatar">';
-    html += '<span class="mediacall-remote-name">'+contact.full_name+'</span>';
-    html += '<span class="mediacall-remote-duration">connecting...</span>';
-    html += '</div>';
-    html += '<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">';
-    html += '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">';
-    html += '<span class="mediacall-info-duration is-hidden"></span>';
-    html += '</div>';
-    html += '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">';
-    html += '<button class="btn_mediacall btn_full-mode" data-id="'+userId+'" data-dialog="'+dialogId+'" disabled><img class="btn-icon_mediacall" src="images/icon-full-mode-on.png" alt="full mode"></button>';
-    html += '<button class="btn_mediacall btn_camera_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-camera-off.svg" alt="camera"></button>';
-    html += '<button class="btn_mediacall btn_mic_off" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>';
-    html += '<button class="btn_mediacall btn_hangup" data-id="'+userId+'" data-dialog="'+dialogId+'"><img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>';
-    html += '</div></div>';
+    templateParams = {
+      userAvatar: User.contact.avatar_url,
+      contactAvatar: contact.avatar_url,
+      contactName: contact.full_name,
+      dialogId: dialogId,
+      userId: userId
+    };
 
-    chat.prepend(html);
-    chat.find('.l-chat-header').hide();
-    chat.find('.l-chat-content').css({height: 'calc(50% - 90px)'});
+    htmlTemplate = buildTemplate(templateParams);
+
+    $chat.prepend(htmlTemplate);
+    $chat.find('.l-chat-header').hide();
+    $chat.find('.l-chat-content').css({height: 'calc(50% - 90px)'});
     if (screen.height > 768) {
-      chat.find('.mediacall-remote-user').css({position: 'absolute', top: '16%', left: '10%', margin: 0});
+      $chat.find('.mediacall-remote-user').css({position: 'absolute', top: '16%', left: '10%', margin: 0});
     }
 
     $('.dialog-item[data-dialog="'+dialogId+'"]').find('.contact').click();
@@ -446,27 +441,27 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
   };
 
   function switchOffDevice(event) {
-    var obj = $(event.target).data('id') ? $(event.target) : $(event.target).parent(),
-        opponentId = obj.data('id'),
-        dialogId = obj.data('dialog'),
-        deviceType = !!obj.attr('class').match(/btn_camera_off/) ? 'video' : 'audio',
+    var $obj = $(event.target).data('id') ? $(event.target) : $(event.target).parent(),
+        opponentId = $obj.data('id'),
+        dialogId = $obj.data('dialog'),
+        deviceType = !!$obj.attr('class').match(/btn_camera_off/) ? 'video' : 'audio',
         msg = deviceType === 'video' ? 'Camera' : 'Mic';
     
     if (self.type !== deviceType && self.type === 'audio') {
-      obj.addClass('off');
-      obj.attr('title', msg + ' is off');
+      $obj.addClass('off');
+      $obj.attr('title', msg + ' is off');
       return true;
     }
 
-    if (obj.is('.off')) {
+    if ($obj.is('.off')) {
       self.unmute(deviceType);
       if (deviceType === 'video')
         curSession.update(opponentId, {
           dialog_id: dialogId,
           unmute: deviceType
         });
-      obj.removeClass('off');
-      obj.removeAttr('title');
+      $obj.removeClass('off');
+      $obj.removeAttr('title');
     } else {
       self.mute(deviceType);
       if (deviceType === 'video')
@@ -474,8 +469,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
           dialog_id: dialogId,
           mute: deviceType
         });
-      obj.addClass('off');
-      obj.attr('title', msg + ' is off');
+      $obj.addClass('off');
+      $obj.attr('title', msg + ' is off');
     }
 
     return false;
@@ -530,8 +525,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
 
 /* Private
 -------------------------------------------------------------*/
-function openPopup(objDom) {
-  objDom.add('.popups').addClass('is-overlay');
+function openPopup($objDom) {
+  $objDom.add('.popups').addClass('is-overlay');
 }
 
 function closePopup() {
@@ -564,16 +559,12 @@ function getTimer(time) {
 }
 
 function showError(chat) {
-  var html;
-  html = '<article class="message message_service l-flexbox l-flexbox_alignstretch">';
-  html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
-  html += '<div class="message-container-wrap">';
-  html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-  html += '<div class="message-content">';
-  html += '<h4 class="message-author message-error">Devices are not found</h4>';
-  html += '</div>';
-  html += '</div></div></article>';
-  chat.find('.mCSB_container').append(html);
+  var htmlTemplate = _.template('<article class="message message_service l-flexbox l-flexbox_alignstretch">'
+      +'<span class="message-avatar contact-avatar_message request-button_pending"></span>'
+      +'<div class="message-container-wrap"><div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'
+      +'<div class="message-content"><h4 class="message-author message-error">Devices are not found</h4></div></div></div></article>');
+
+  chat.find('.mCSB_container').append(htmlTemplate);
 }
 
 function fixScroll() {
@@ -589,4 +580,46 @@ function fixScroll() {
 
 function capitaliseFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function onCallTemplate(params) {
+  var htmlTemplate = _.template('<div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween">'
+      +'<div class="incoming-call-info l-flexbox l-flexbox_column">'
+      +'<div class="message-avatar avatar contact-avatar_message info-avatar" style="background-image:url(<%= userAvatar %>)"></div>'
+      +'<span class="info-notice"><%= callTypeUС %> Call from <%= userName %></span></div>'
+      +'<div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">'
+      +'<button class="btn_decline" data-callType="<%= callType %>" data-dialog="<%= dialogId %>"'
+      +' data-id="<%= userId %>">Decline</button>'
+      +'<button class="btn_accept" data-callType="<%= callType %>" data-session="<%= sessionId %>"'
+      +' data-dialog="<%= dialogId %>" data-id="<%= userId %>">Accept</button>'
+      +'</div></div>')(params);
+
+  return htmlTemplate;
+}
+
+function buildTemplate(params) {
+  var htmlTemplate = _.template('<div class="mediacall l-flexbox">'
+      +'<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>'
+      +'<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>'
+      +'<img id="localUser" class="mediacall-local mediacall-local-avatar" src="<%=userAvatar%>" alt="avatar">'
+      +'<div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">'
+      +'<img class="mediacall-remote-avatar" src="<%=contactAvatar%>" alt="avatar">'
+      +'<span class="mediacall-remote-name"><%=contactName%></span>'
+      +'<span class="mediacall-remote-duration">connecting...</span></div>'
+      +'<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">'
+      +'<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">'
+      +'<span class="mediacall-info-duration is-hidden"></span></div>'
+      +'<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">'
+      +'<button class="btn_mediacall btn_full-mode" data-id="<%=userId%>" data-dialog="<%=dialogId%>" disabled>'
+      +'<div id="fullModeOn" class="btn-icon_mediacall"></div>'
+      +'<div id="fullModeOff" class="btn-icon_mediacall"></div></button>'
+      +'<button class="btn_mediacall btn_camera_off" data-id="<%=userId%>" data-dialog="<%=dialogId%>">'
+      +'<img class="btn-icon_mediacall" src="images/icon-camera-off.svg" alt="camera"></button>'
+      +'<button class="btn_mediacall btn_mic_off" data-id="<%=userId%>" data-dialog="<%=dialogId%>">'
+      +'<img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>'
+      +'<button class="btn_mediacall btn_hangup" data-id="<%=userId%>" data-dialog="<%=dialogId%>">'
+      +'<img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>'
+      +'</div></div>')(params);
+
+  return htmlTemplate;
 }

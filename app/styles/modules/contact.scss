@@ -93,16 +93,16 @@
   .status_request:after {
     content: '?';
   }
-  .status.status_online.icon_videocall, .status.icon_videocall {
-    width: 27px;
+  .status.status_online.icon_videocall,
+  .status.icon_videocall {
     min-width: 27px;
     height: 15px;
     border-radius: 0;
     opacity: 1;
     background: image-url('icon-videocall-current.svg') no-repeat center;
   }
-  .status.status_online.icon_audiocall, .status.icon_audiocall {
-    width: 19px;
+  .status.status_online.icon_audiocall,
+  .status.icon_audiocall {
     min-width: 19px;
     height: 19px;
     border-radius: 0;

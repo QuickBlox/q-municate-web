@@ -1,5 +1,5 @@
 /* Incomming calls */
-.incoming-calls {
+.incoming-call-popup {
   width: 345px;
   max-height: 538px;
   overflow-y: auto;
@@ -140,6 +140,19 @@
       .btn-icon_mediacall {
         vertical-align: text-bottom;
       }
+    #fullModeOn {
+      width: 21px;
+      height: 21px;
+      margin: 0 auto;
+      background: image-url('icon-full-mode-on.png') no-repeat center;
+    }
+    #fullModeOff {
+      width: 21px;
+      height: 21px;
+      margin: 0 auto;
+      background: image-url('icon-full-mode-off.png') no-repeat center;
+      display: none;
+    }
 
 .mediacall:-webkit-full-screen {
   height: 100% !important;
