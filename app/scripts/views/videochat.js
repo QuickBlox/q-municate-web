@@ -5,7 +5,7 @@
  *
  */
 
-var callTimer, win, videoStreamTime;
+var callTimer, videoStreamTime;
 
 define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function($, QB, QMCONFIG, Helpers, QBNotification) {
 
@@ -317,8 +317,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
         ringtoneSignal = document.getElementById('ringtoneSignal'),
         incomingCall;
 
-    if ($chat[0] && ($chat.find('.mediacall')[0] || win)) {
-      if (win) win.close();
+    if ($chat[0] && ($chat.find('.mediacall')[0])) {
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
@@ -345,8 +344,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
 
   VideoChatView.prototype.onUpdateCall = function(session, id, extension) {
     var $chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
-    var $selector = win ? $(win.document.body) : $(window.document.body);
-    if ($chat[0] && ($chat.find('.mediacall')[0] || win)) {
+    var $selector = $(window.document.body);
+    if ($chat[0] && ($chat.find('.mediacall')[0])) {
       if (extension.mute === 'video') {
         $selector.find('#remoteStream').addClass('is-hidden');
         $selector.find('#remoteUser').removeClass('is-hidden');
@@ -424,9 +423,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     curSession.mute(callType);
     if (callType === 'video') {
       $('#localStream').addClass('is-hidden');
-      if (win) $(win.document.body).find('#localStream').addClass('is-hidden');
       $('#localUser').removeClass('is-hidden');
-      if (win) $(win.document.body).find('#localUser').removeClass('is-hidden');
     }
   };
 
@@ -434,9 +431,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
     curSession.unmute(callType);
     if (callType === 'video') {
       $('#localStream').removeClass('is-hidden');
-      if (win) $(win.document.body).find('#localStream').removeClass('is-hidden');
       $('#localUser').addClass('is-hidden');
-      if (win) $(win.document.body).find('#localUser').addClass('is-hidden');
     }
   };
 
@@ -538,7 +533,6 @@ function closePopup() {
 function setDuration(currentTime) {
   var c = currentTime || 0;
   $('.mediacall-info-duration, .mediacall-remote-duration').text(getTimer(c));
-  if (win) $(win.document.body).find('.mediacall-info-duration, .mediacall-remote-duration').text(getTimer(c));
   callTimer = setTimeout(function() {
     c++;
     setDuration(c);

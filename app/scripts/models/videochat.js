@@ -79,7 +79,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         MessageView = this.app.views.Message,
         VideoChatView = this.app.views.VideoChat,
         time = Math.floor(Date.now() / 1000),
-        dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialogId+'"]'),
+        $dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialogId+'"]'),
         copyDialogItem,
         message,
         extension;
@@ -130,9 +130,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
     Helpers.log(message);
     MessageView.addItem(message, true, true);
 
-    if (dialogItem.length > 0) {
-      copyDialogItem = dialogItem.clone();
-      dialogItem.remove();
+    if ($dialogItem.length > 0) {
+      copyDialogItem = $dialogItem.clone();
+      $dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
       if (!$('#searchList').is(':visible')) {
        $('#recentList').removeClass('is-hidden');
