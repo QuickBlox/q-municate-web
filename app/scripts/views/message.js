@@ -37,10 +37,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     addItem: function(message, isCallback, isMessageListener, recipientId) {
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
-          chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
+          $chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
           i, len, user;
 
-      if (typeof chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) return true;
+      if (typeof $chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) return true;
 
       if (message.sessionID && $('.message[data-session="'+message.sessionID+'"]')[0]) return true;
 
@@ -312,22 +312,18 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
         if (isCallback) {
           if (isMessageListener) {
-            chat.find('.l-chat-content .mCSB_container').append(html);
+            $chat.find('.l-chat-content .mCSB_container').append(html);
+            smartScroll();
           } else {
-            chat.find('.l-chat-content .mCSB_container').prepend(html);
+            $chat.find('.l-chat-content .mCSB_container').prepend(html);
           }
         } else {
-          if (chat.find('.l-chat-content .mCSB_container')[0]) {
-            chat.find('.l-chat-content .mCSB_container').prepend(html);
+          if ($chat.find('.l-chat-content .mCSB_container')[0]) {
+            $chat.find('.l-chat-content .mCSB_container').prepend(html);
           } else {
-            chat.find('.l-chat-content').prepend(html);
+            $chat.find('.l-chat-content').prepend(html);
           }
-        }
-
-        if (attachType) {
-          $('#attach_'+message.id).load(function() { fixScroll(chat); });
-        } else {
-          fixScroll(chat);
+          smartScroll();
         }
 
         if (message.sender_id == User.contact.id && message.delivered_ids.length > 0) {
@@ -335,6 +331,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         }
         if (message.sender_id == User.contact.id && message.read_ids.length > 1) {
           self.addStatusMessages(message.id, message.dialog_id, 'displayed', false);
+        }
+
+        function smartScroll() {
+          if (attachType) {
+            $('#attach_'+message.id).load(function() {
+              fixScroll($chat);
+            });
+          } else {
+            fixScroll($chat);
+          }
         }
 
       });
@@ -701,14 +707,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
   }
 
-  function fixScroll(chat) {
-    var containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
-        chatContentHeight = chat.find('.l-chat-content').height(),
-        draggerContainerHeight = chat.find('.l-chat-content .mCSB_draggerContainer').height(),
-        draggerHeight = chat.find('.l-chat-content .mCSB_dragger').height();
+  function fixScroll($chat) {
+    var containerHeight = $chat.find('.l-chat-content .mCSB_container').height(),
+        chatContentHeight = $chat.find('.l-chat-content').height(),
+        draggerContainerHeight = $chat.find('.l-chat-content .mCSB_draggerContainer').height(),
+        draggerHeight = $chat.find('.l-chat-content .mCSB_dragger').height();
 
-    chat.find('.l-chat-content .mCSB_container').css({top: chatContentHeight - containerHeight + 'px'});
-    chat.find('.l-chat-content .mCSB_dragger').css({top: draggerContainerHeight - draggerHeight + 'px'});
+    $chat.find('.l-chat-content .mCSB_container').css({'top': chatContentHeight - containerHeight + 'px'});
+    $chat.find('.l-chat-content .mCSB_dragger').css({'top': draggerContainerHeight - draggerHeight + 'px'});
   }
 
   function getTime(time) {

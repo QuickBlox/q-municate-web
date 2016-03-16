@@ -42,6 +42,10 @@
   .btn_accept {
     text-transform: uppercase;
   }
+  .btn_decline:hover,
+  .btn_accept:hover {
+    opacity: 1;
+  }
   .btn_decline {
     margin-right: 55px;
     color: #b20001;

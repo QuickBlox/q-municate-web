@@ -526,22 +526,26 @@ define([
       });
 
       $('.localSearch').on('keyup search submit', function(event) {
-        event.preventDefault();
         var type = event.type,
             code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
         if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
-          if (this.id === 'searchContacts')
+          if (this.id === 'searchContacts') {
             UserView.localSearch($(this));
-          else
+          } else {
             UserView.friendsSearch($(this));
+          }
         }
+
+        return false;
       });
 
-      $('.clean-button').on('click', function() {
-        var form = $(this).parent('form.formSearch');
+      $('.clean-button').on('click', function(event) {
+        var $form = $(this).parent('form.formSearch');
 
         form.find('input.form-input-search').val('').focus();
+        UserView.localSearch($form);
+
         return false;
       });  
 

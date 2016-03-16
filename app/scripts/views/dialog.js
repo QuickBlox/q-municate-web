@@ -445,9 +445,12 @@ define([
             message.stack = Message.isStack(false, messages[i], messages[i+1]);
 
             MessageView.addItem(message, null, null, message.recipient_id);
+
+            if ((i+1) === len) {
+              self.removeDataSpinner();
+            }
           }
 
-          self.removeDataSpinner();
           self.messageScrollbar();
         });
 
@@ -584,17 +587,31 @@ define([
   }
 
   // ajax downloading of data through scroll
-  function ajaxDownloading(chat, self) {
+  function ajaxDownloading($chat, self) {
     var MessageView = self.app.views.Message,
-        dialog_id = chat.parents('.l-chat').data('dialog'),
-        count = chat.find('.message').length,
+        dialog_id = $chat.parents('.l-chat').data('dialog'),
+        count = $chat.find('.message').length,
         message;
+
+    var listHeightBefore = $chat.find('.mCSB_container').height(),
+        draggerHeightBefore = $chat.find('.mCSB_dragger').height(),
+        viewPort = $chat.find('.mCustomScrollBox').height();
 
     Message.download(dialog_id, function(messages) {
       for (var i = 0, len = messages.length; i < len; i++) {
         message = Message.create(messages[i]);
         message.stack = Message.isStack(false, messages[i], messages[i+1]);
         MessageView.addItem(message, true);
+
+        if ((i+1) === len) {
+          var listHeightAfter = $chat.find('.mCSB_container').height(),
+              draggerHeightAfter = $chat.find('.mCSB_dragger').height(),
+              thisStopList = listHeightBefore - listHeightAfter,
+              thisStopDragger = (draggerHeightAfter / (draggerHeightBefore + draggerHeightAfter)) * viewPort;
+
+          $('.l-chat-content .mCSB_container').css({top: thisStopList+'px'});
+          $('.l-chat-content .mCSB_dragger').css({top: thisStopDragger+'px'});
+        }
       }
     }, count, 'ajax');
   }

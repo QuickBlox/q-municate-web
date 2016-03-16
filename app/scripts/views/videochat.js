@@ -7,7 +7,7 @@
 
 var callTimer, videoStreamTime;
 
-define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function($, QB, QMCONFIG, Helpers, QBNotification) {
+define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'], function($, QB, QMCONFIG, Helpers, QBNotification, QMHtml) {
 
   var self;
   var User,
@@ -217,10 +217,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
         userName = extension.full_name || contact.full_name,
         userAvatar = extension.avatar || contact.avatar_url,
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
-        htmlTemplate,
-        templateParams;
+        htmlTpl,
+        tplParams;
 
-    templateParams = {
+    tplParams = {
       userAvatar: userAvatar,
       callTypeUС: capitaliseFirstLetter(callType),
       callType: callType,
@@ -230,9 +230,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       userId: id
     };
 
-    htmlTemplate = onCallTemplate(templateParams);
+    htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams);
 
-    $incomings.find('.mCSB_container').prepend(htmlTemplate);
+    $incomings.find('.mCSB_container').prepend(htmlTpl);
     openPopup($incomings);
     audioSignal.play();
 
@@ -391,10 +391,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
         userId = $chat.data('id'),
         dialogId = $chat.data('dialog'),
         contact = ContactList.contacts[userId],
-        htmlTemplate,
-        templateParams;
+        htmlTpl,
+        tplParams;
 
-    templateParams = {
+    tplParams = {
       userAvatar: User.contact.avatar_url,
       contactAvatar: contact.avatar_url,
       contactName: contact.full_name,
@@ -402,9 +402,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification'], function(
       userId: userId
     };
 
-    htmlTemplate = buildTemplate(templateParams);
+    htmlTpl = QMHtml.VideoChat.buildTpl(tplParams);
 
-    $chat.prepend(htmlTemplate);
+    $chat.prepend(htmlTpl);
     $chat.find('.l-chat-header').hide();
     $chat.find('.l-chat-content').css({height: 'calc(50% - 90px)'});
     if (screen.height > 768) {
@@ -574,46 +574,4 @@ function fixScroll() {
 
 function capitaliseFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function onCallTemplate(params) {
-  var htmlTemplate = _.template('<div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween">'
-      +'<div class="incoming-call-info l-flexbox l-flexbox_column">'
-      +'<div class="message-avatar avatar contact-avatar_message info-avatar" style="background-image:url(<%= userAvatar %>)"></div>'
-      +'<span class="info-notice"><%= callTypeUС %> Call from <%= userName %></span></div>'
-      +'<div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">'
-      +'<button class="btn_decline" data-callType="<%= callType %>" data-dialog="<%= dialogId %>"'
-      +' data-id="<%= userId %>">Decline</button>'
-      +'<button class="btn_accept" data-callType="<%= callType %>" data-session="<%= sessionId %>"'
-      +' data-dialog="<%= dialogId %>" data-id="<%= userId %>">Accept</button>'
-      +'</div></div>')(params);
-
-  return htmlTemplate;
-}
-
-function buildTemplate(params) {
-  var htmlTemplate = _.template('<div class="mediacall l-flexbox">'
-      +'<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>'
-      +'<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>'
-      +'<img id="localUser" class="mediacall-local mediacall-local-avatar" src="<%=userAvatar%>" alt="avatar">'
-      +'<div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">'
-      +'<img class="mediacall-remote-avatar" src="<%=contactAvatar%>" alt="avatar">'
-      +'<span class="mediacall-remote-name"><%=contactName%></span>'
-      +'<span class="mediacall-remote-duration">connecting...</span></div>'
-      +'<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">'
-      +'<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">'
-      +'<span class="mediacall-info-duration is-hidden"></span></div>'
-      +'<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">'
-      +'<button class="btn_mediacall btn_full-mode" data-id="<%=userId%>" data-dialog="<%=dialogId%>" disabled>'
-      +'<div id="fullModeOn" class="btn-icon_mediacall"></div>'
-      +'<div id="fullModeOff" class="btn-icon_mediacall"></div></button>'
-      +'<button class="btn_mediacall btn_camera_off" data-id="<%=userId%>" data-dialog="<%=dialogId%>">'
-      +'<img class="btn-icon_mediacall" src="images/icon-camera-off.svg" alt="camera"></button>'
-      +'<button class="btn_mediacall btn_mic_off" data-id="<%=userId%>" data-dialog="<%=dialogId%>">'
-      +'<img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>'
-      +'<button class="btn_mediacall btn_hangup" data-id="<%=userId%>" data-dialog="<%=dialogId%>">'
-      +'<img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>'
-      +'</div></div>')(params);
-
-  return htmlTemplate;
 }
