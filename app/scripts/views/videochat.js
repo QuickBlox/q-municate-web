@@ -45,10 +45,11 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     });
 
     $('#popupIncoming').on('click', '.btn_decline', function() {
-      var $incomingCall = $(this).parents('.incoming-call'),
-          opponentId = $(this).data('id'),
-          dialogId = $(this).data('dialog'),
-          callType = $(this).data('calltype'),
+      var $self = $(this),
+          $incomingCall = $self.parents('.incoming-call'),
+          opponentId = $self.data('id'),
+          dialogId = $self.data('dialog'),
+          callType = $self.data('calltype'),
           audioSignal = $('#ringtoneSignal')[0];
 
       curSession.reject({
@@ -71,22 +72,23 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     $('#popupIncoming').on('click', '.btn_accept', function() {
       self.cancelCurrentCalls();
 
-      var id = $(this).data('id'),
+      var $self = $(this),
+          id = $self.data('id'),
           $dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
       
       DialogView.htmlBuild($dialogItem);
 
-      var opponentId = $(this).data('id'),
-          dialogId = $(this).data('dialog'),
-          sessionId = $(this).data('session'),
-          callType = $(this).data('calltype'),
+      var opponentId = $self.data('id'),
+          dialogId = $self.data('dialog'),
+          sessionId = $self.data('session'),
+          callType = $self.data('calltype'),
           audioSignal = $('#ringtoneSignal')[0],
           params = self.build(dialogId),
           $chat = $('.l-chat[data-dialog="'+dialogId+'"]');
 
-      $(this).parents('.incoming-call').remove();
+      $self.parents('.incoming-call').remove();
       $('#popupIncoming .mCSB_container').children().each(function() {
-        $(this).find('.btn_decline').click();
+        $self.find('.btn_decline').click();
       });
       closePopup();
       audioSignal.pause();
@@ -117,13 +119,14 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     });
 
     $('body').on('click', '.btn_hangup', function() {
-      var $chat = $(this).parents('.l-chat'),
-          opponentId = $(this).data('id'),
-          dialogId = $(this).data('dialog'),
-          duration = $(this).parents('.mediacall').find('.mediacall-info-duration').text(),
+      var $self = $(this),
+          $chat = $self.parents('.l-chat'),
+          opponentId = $self.data('id'),
+          dialogId = $self.data('dialog'),
+          duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
           callingSignal = $('#callingSignal')[0],
           endCallSignal = $('#endCallSignal')[0],
-          isErrorMessage = $(this).data('errorMessage');
+          isErrorMessage = $self.data('errorMessage');
 
       callingSignal.pause();
       endCallSignal.play();
@@ -138,7 +141,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         if (!isErrorMessage) {
           VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
         } else {
-          $(this).removeAttr('data-errorMessage');
+          $self.removeAttr('data-errorMessage');
         }
         VideoChat.caller = null;
         VideoChat.callee = null;
@@ -305,7 +308,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
     $chat.find('.mediacall').remove();
     $chat.find('.l-chat-header').show();
-    $chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
+    $chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
   };
 
   VideoChatView.prototype.onStop = function(session, id, extension) {
@@ -328,7 +331,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
       $chat.find('.mediacall').remove();
       $chat.find('.l-chat-header').show();
-      $chat.find('.l-chat-content').css({height: 'calc(100% - 75px - 90px)'});
+      $chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
     } else if ($declineButton[0]) {
         incomingCall = $declineButton.parents('.incoming-call');
         incomingCall.remove();
@@ -361,6 +364,67 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     }
   };
 
+  VideoChatView.prototype.onCallStatsReport = function(session, userId, stats) {
+    var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    /**
+     * Hack for Firefox
+     * (https://bugzilla.mozilla.org/show_bug.cgi?id=852665)
+     */
+    if(is_firefox) {
+      var inboundrtp = _.findWhere(stats, {type: 'inboundrtp'});
+
+      if(!inboundrtp || !isBytesReceivedChanges(userId, inboundrtp)) {
+
+        console.warn("This is Firefox and user " + userId + " has lost his connection.");
+
+        if(!_.isEmpty(curSession)) {
+          curSession.closeConnection(userId);
+          $('.btn_hangup').click();
+        }
+      }
+    }
+  };
+
+  VideoChatView.prototype.onSessionCloseListener = function(session) {
+    var $self = $(this),
+        $chat = $self.parents('.l-chat'),
+        opponentId = $self.data('id'),
+        dialogId = $self.data('dialog'),
+        duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
+        callingSignal = $('#callingSignal')[0],
+        endCallSignal = $('#endCallSignal')[0],
+        isErrorMessage = $self.data('errorMessage');
+
+    callingSignal.pause();
+    endCallSignal.play();
+    clearTimeout(callTimer);
+
+    if (VideoChat.caller) {
+      if (!isErrorMessage) {
+        VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
+      } else {
+        $self.removeAttr('data-errorMessage');
+      }
+      VideoChat.caller = null;
+      VideoChat.callee = null;
+    }
+
+    self.type = null;
+    $chat.find('.mediacall').remove();
+    $chat.find('.l-chat-header').show();
+    $chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
+
+    addCallTypeIcon(opponentId, null);
+  };
+
+  VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
+    $('.btn_hangup').click();
+  };
+
+  VideoChatView.prototype.onSessionConnectionStateChangedListener = function(session, userID, connectionState) {
+
+  };
+
   VideoChatView.prototype.startCall = function(className) {
     var audioSignal = document.getElementById('callingSignal'),
         params = self.build(),
@@ -370,7 +434,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     VideoChat.getUserMedia(params, callType, function(err, res) {
       if (err) {
         $chat.find('.mediacall .btn_hangup').click();
-        showError($chat);
+        QMHtml.VideoChat.showError($chat);
         fixScroll();
         return true;
       }
@@ -408,7 +472,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     $chat.find('.l-chat-header').hide();
     $chat.find('.l-chat-content').css({height: 'calc(50% - 90px)'});
     if (screen.height > 768) {
-      $chat.find('.mediacall-remote-user').css({position: 'absolute', top: '16%', left: '10%', margin: 0});
+      $chat.find('.mediacall-remote-user').addClass('j-largeScreen');
     }
 
     $('.dialog-item[data-dialog="'+dialogId+'"]').find('.contact').click();
@@ -515,6 +579,30 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     }
   }
 
+  function isBytesReceivedChanges(userId, inboundrtp) {
+    var res = true,
+        inbBytesRec = inboundrtp.bytesReceived,
+        network = {
+          users: {}
+        };
+
+    if(network[userId] === undefined) {
+      network[userId] = {
+        'bytesReceived': inbBytesRec
+      };
+    } else {
+      if(network[userId].bytesReceived === inbBytesRec) {
+        res = false;
+      } else {
+        network[userId] = {
+          'bytesReceived': inbBytesRec
+        };
+      }
+    }
+
+    return res;
+  }
+
   return VideoChatView;
 });
 
@@ -552,24 +640,15 @@ function getTimer(time) {
   return h + ':' + min + ':' + sec;
 }
 
-function showError(chat) {
-  var htmlTemplate = _.template('<article class="message message_service l-flexbox l-flexbox_alignstretch">'
-      +'<span class="message-avatar contact-avatar_message request-button_pending"></span>'
-      +'<div class="message-container-wrap"><div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'
-      +'<div class="message-content"><h4 class="message-author message-error">Devices are not found</h4></div></div></div></article>');
-
-  chat.find('.mCSB_container').append(htmlTemplate);
-}
-
 function fixScroll() {
-  var chat = $('.l-chat:visible'),
-      containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
-      chatContentHeight = chat.find('.l-chat-content').height(),
-      draggerContainerHeight = chat.find('.l-chat-content .mCSB_draggerContainer').height(),
-      draggerHeight = chat.find('.l-chat-content .mCSB_dragger').height();
+  var $chat = $('.l-chat:visible'),
+      containerHeight = $chat.find('.l-chat-content .mCSB_container').height(),
+      chatContentHeight = $chat.find('.l-chat-content').height(),
+      draggerContainerHeight = $chat.find('.l-chat-content .mCSB_draggerContainer').height(),
+      draggerHeight = $chat.find('.l-chat-content .mCSB_dragger').height();
 
-  chat.find('.l-chat-content .mCSB_container').css({top: chatContentHeight - containerHeight + 'px'});
-  chat.find('.l-chat-content .mCSB_dragger').css({top: draggerContainerHeight - draggerHeight + 'px'});
+  $chat.find('.l-chat-content .mCSB_container').css({top: chatContentHeight - containerHeight + 'px'});
+  $chat.find('.l-chat-content .mCSB_dragger').css({top: draggerContainerHeight - draggerHeight + 'px'});
 }
 
 function capitaliseFirstLetter(string) {

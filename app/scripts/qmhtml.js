@@ -5,9 +5,9 @@
  */
 
 define(['jquery', 'underscore', 'MainModule'], function($, _, QM) {
-  var htmlQM = {};
+  var QMHtml = {};
 
-  htmlQM.VideoChat = {
+  QMHtml.VideoChat = {
 
     onCallTpl: function(params) {
       var htmlTemplate = _.template('<div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween">'
@@ -49,9 +49,18 @@ define(['jquery', 'underscore', 'MainModule'], function($, _, QM) {
           +'</div></div>')(params);
 
       return htmlTemplate;
+    },
+
+    showError: function($chat) {
+      var htmlTemplate = _.template('<article class="message message_service l-flexbox l-flexbox_alignstretch">'
+          +'<span class="message-avatar contact-avatar_message request-button_pending"></span>'
+          +'<div class="message-container-wrap"><div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'
+          +'<div class="message-content"><h4 class="message-author message-error">Devices are not found</h4></div></div></div></article>');
+
+      $chat.find('.mCSB_container').append(htmlTemplate);
     }
 
   };
 
-  return htmlQM;
+  return QMHtml;
 });

@@ -42,6 +42,7 @@ define([
     chatCallbacksInit: function() {
       var ContactListView = this.app.views.ContactList,
           MessageView = this.app.views.Message,
+          VideoChat = this.app.models.VideoChat,
           VideoChatView = this.app.views.VideoChat;
 
       QB.chat.onMessageListener = MessageView.onMessage;
@@ -61,6 +62,11 @@ define([
       QB.webrtc.onStopCallListener = VideoChatView.onStop;
       QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
       QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
+      QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
+      QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
+      QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
+      QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
+      // QB.webrtc.onSessionConnectionStateChangedListener = VideoChatView.onSessionConnectionStateChangedListener;
 
       QB.chat.onDisconnectingListener = function() {
         if (localStorage['QM.user']) {
@@ -73,21 +79,6 @@ define([
         window.onLine = true;
         $('.no-connection').addClass('is-hidden');
       };
-
-      currentUser = new Person(_.clone(User.contact), {
-        app: this.app,
-        parse: true
-      });
-      profileView = new ProfileView({
-        model: currentUser
-      });
-      changePassView = new ChangePassView({
-        model: currentUser
-      });
-      fbImportView = new FBImportView();
-      this.app.views.Profile = profileView;
-      this.app.views.ChangePass = changePassView;
-      this.app.views.FBImport = fbImportView;
     },
 
     createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
