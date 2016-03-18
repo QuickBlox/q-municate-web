@@ -564,7 +564,7 @@ define([
       $('.clean-button').on('click', function(event) {
         var $form = $(this).parent('form.formSearch');
 
-        form.find('input.form-input-search').val('').focus();
+        $form.find('input.form-input-search').val('').focus();
         UserView.localSearch($form);
 
         return false;
