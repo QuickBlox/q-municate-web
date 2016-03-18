@@ -408,6 +408,7 @@ define([
         html += '<section class="l-chat-content scrollbar_message"></section>';
         html += '<footer class="l-chat-footer">';
         html += '<div class="l-typing"></div>';
+        html += '<button class="j-toBottom"></button>';
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
         // html += '<textarea class="text-message is-hidden"></textarea>';

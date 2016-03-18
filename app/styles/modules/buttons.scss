@@ -94,7 +94,16 @@
     top: 7px;
     right: 15px;
   }
-
+.j-toBottom {
+  float: right;
+  width: 8%;
+  height: 36px;
+  opacity: 0.5;
+  background-image: image-url('to-bottom-icon.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 50%;
+}
 .btn_request_again {
   display: none;
   margin-left: 20px;
