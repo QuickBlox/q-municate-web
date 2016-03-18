@@ -312,42 +312,14 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
   };
 
   VideoChatView.prototype.onStop = function(session, id, extension) {
-    var dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
-        $chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
-        $declineButton = $('.btn_decline[data-dialog="'+dialogId+'"]'),
-        callingSignal = document.getElementById('callingSignal'),
-        endCallSignal = document.getElementById('endCallSignal'),
-        ringtoneSignal = document.getElementById('ringtoneSignal'),
-        incomingCall;
-
-    if ($chat[0] && ($chat.find('.mediacall')[0])) {
-      callingSignal.pause();
-      endCallSignal.play();
-      clearTimeout(callTimer);
-      VideoChat.caller = null;
-      VideoChat.callee = null;
-      self.type = null;
-      videoStreamTime = null;
-
-      $chat.find('.mediacall').remove();
-      $chat.find('.l-chat-header').show();
-      $chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
-    } else if ($declineButton[0]) {
-        incomingCall = $declineButton.parents('.incoming-call');
-        incomingCall.remove();
-
-        if ($('#popupIncoming .mCSB_container').children().length === 0) {
-          closePopup();
-          ringtoneSignal.pause();
-        }
-    }
-
-    addCallTypeIcon(id, null);
+    closeStreamScreen(id);
   };
 
   VideoChatView.prototype.onUpdateCall = function(session, id, extension) {
-    var $chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
+    var dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
+        $chat = $('.l-chat[data-dialog="'+dialogId+'"]');
     var $selector = $(window.document.body);
+
     if ($chat[0] && ($chat.find('.mediacall')[0])) {
       if (extension.mute === 'video') {
         $selector.find('#remoteStream').addClass('is-hidden');
@@ -386,35 +358,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
   };
 
   VideoChatView.prototype.onSessionCloseListener = function(session) {
-    var $self = $(this),
-        $chat = $self.parents('.l-chat'),
-        opponentId = $self.data('id'),
-        dialogId = $self.data('dialog'),
-        duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
-        callingSignal = $('#callingSignal')[0],
-        endCallSignal = $('#endCallSignal')[0],
-        isErrorMessage = $self.data('errorMessage');
+    var opponentId = User.contact.id === VideoChat.callee ? VideoChat.caller : VideoChat.callee;
 
-    callingSignal.pause();
-    endCallSignal.play();
-    clearTimeout(callTimer);
-
-    if (VideoChat.caller) {
-      if (!isErrorMessage) {
-        VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
-      } else {
-        $self.removeAttr('data-errorMessage');
-      }
-      VideoChat.caller = null;
-      VideoChat.callee = null;
-    }
-
-    self.type = null;
-    $chat.find('.mediacall').remove();
-    $chat.find('.l-chat-header').show();
-    $chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
-
-    addCallTypeIcon(opponentId, null);
+    closeStreamScreen(opponentId);
   };
 
   VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
@@ -498,6 +444,40 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       $('#localUser').addClass('is-hidden');
     }
   };
+
+  function closeStreamScreen(id) {
+    var dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
+        $chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
+        $declineButton = $('.btn_decline[data-dialog="'+dialogId+'"]'),
+        callingSignal = document.getElementById('callingSignal'),
+        endCallSignal = document.getElementById('endCallSignal'),
+        ringtoneSignal = document.getElementById('ringtoneSignal'),
+        incomingCall;
+
+    if ($chat[0] && ($chat.find('.mediacall')[0])) {
+      callingSignal.pause();
+      endCallSignal.play();
+      clearTimeout(callTimer);
+      VideoChat.caller = null;
+      VideoChat.callee = null;
+      self.type = null;
+      videoStreamTime = null;
+
+      $chat.find('.mediacall').remove();
+      $chat.find('.l-chat-header').show();
+      $chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
+    } else if ($declineButton[0]) {
+        incomingCall = $declineButton.parents('.incoming-call');
+        incomingCall.remove();
+
+        if ($('#popupIncoming .mCSB_container').children().length === 0) {
+          closePopup();
+          ringtoneSignal.pause();
+        }
+    }
+
+    addCallTypeIcon(id, null);
+  }
 
   function switchOffDevice(event) {
     var $obj = $(event.target).data('id') ? $(event.target) : $(event.target).parent(),

@@ -66,7 +66,6 @@ define([
       QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
       QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
       QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
-      // QB.webrtc.onSessionConnectionStateChangedListener = VideoChatView.onSessionConnectionStateChangedListener;
 
       QB.chat.onDisconnectingListener = function() {
         if (localStorage['QM.user']) {
