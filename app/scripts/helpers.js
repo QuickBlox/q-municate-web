@@ -141,7 +141,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
         default:
           text = (chatType === 'groupchat') ? (contact.full_name + ': ' + message.body) : message.body;
           break;
-        }
+      }
 
       text = text.replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&");
 

@@ -515,14 +515,14 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     return false;
   }
 
-  function createAndShowNotification(options) {
+  function createAndShowNotification(paramsObg) {
     var msg = {
-      'callState': options.callState,
-      'dialog_id': options.dialogId,
-      'sender_id': options.id,
-      'caller': options.id,
+      'callState': paramsObg.callState,
+      'dialog_id': paramsObg.dialogId,
+      'sender_id': paramsObg.id,
+      'caller': paramsObg.id,
       'type': 'chat',
-      'callType': capitaliseFirstLetter(options.callType)
+      'callType': capitaliseFirstLetter(paramsObg.callType)
     };
 
     var params = {
@@ -555,7 +555,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     } else if (callType === 'audio') {
       $status.addClass('icon_audiocall');
     } else {
-      $status.hasClass('icon_videocall') ? $status.removeClass('icon_videocall') : $status.removeClass('icon_audiocall')
+      $status.hasClass('icon_videocall') ? $status.removeClass('icon_videocall') : $status.removeClass('icon_audiocall');
     }
   }
 
