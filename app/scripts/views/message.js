@@ -317,7 +317,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           } else {
             $chat.find('.l-chat-content .mCSB_container').prepend(html);
           }
-          $('.j-toBottom').fadeIn(250);
+          // $('.j-toBottom').fadeIn(250);
         } else {
           if ($chat.find('.l-chat-content .mCSB_container')[0]) {
             $chat.find('.l-chat-content .mCSB_container').prepend(html);
