@@ -52,18 +52,11 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         }
 
         if (options.isCallee) {
-          curSession.accept({
-            dialog_id: options.dialogId
-          });
+          curSession.accept({});
           self.caller = options.opponentId;
           self.callee = User.contact.id;
         } else {
-          curSession.call({
-            call_type: callType,
-            dialog_id: options.dialogId,
-            full_name: User.contact.full_name,
-            avatar: User.contact.avatar_url
-          });
+          curSession.call({});
           self.caller = User.contact.id;
           self.callee = options.opponentId;
         }

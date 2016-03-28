@@ -52,10 +52,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
           callType = $self.data('calltype'),
           audioSignal = $('#ringtoneSignal')[0];
 
-      curSession.reject({
-        opponent_id: opponentId,
-        dialog_id: dialogId
-      });
+      curSession.reject({});
 
       VideoChat.sendMessage(opponentId, '3', null, dialogId, callType);
 
@@ -132,10 +129,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       endCallSignal.play();
       clearTimeout(callTimer);
       
-      curSession.stop({
-        opponent_id: opponentId, 
-        dialog_id: dialogId
-      });
+      curSession.stop({});
 
       if (VideoChat.caller) {
         if (!isErrorMessage) {
@@ -216,9 +210,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         $incomings = $('#popupIncoming'),
         id = session.initiatorID,
         contact = ContactList.contacts[id],
-        callType = extension.call_type || (session.callType == 1 ? 'video' : 'audio'),
-        userName = extension.full_name || contact.full_name,
-        userAvatar = extension.avatar || contact.avatar_url,
+        callType = (session.callType == 1 ? 'video' : 'audio') || extension.call_type,
+        userName = contact.full_name || extension.full_name,
+        userAvatar = contact.avatar_url || extension.avatar,
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
         htmlTpl,
         tplParams;
@@ -299,7 +293,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
   VideoChatView.prototype.onReject = function(session, id, extension) {
     var audioSignal = document.getElementById('callingSignal'),
-        $chat = $('.l-chat[data-dialog="'+extension.dialog_id+'"]');
+        dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
+        $chat = $('.l-chat[data-dialog="'+dialogId+'"]');
 
     VideoChat.caller = null;
     VideoChat.callee = null;
@@ -365,10 +360,6 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
   VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
     $('.btn_hangup').click();
-  };
-
-  VideoChatView.prototype.onSessionConnectionStateChangedListener = function(session, userID, connectionState) {
-
   };
 
   VideoChatView.prototype.startCall = function(className) {
