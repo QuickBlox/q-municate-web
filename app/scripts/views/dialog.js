@@ -476,18 +476,35 @@ define([
 
       objDom.mCustomScrollbar({
         theme: 'minimal-dark',
-        scrollInertia: 0,
+        scrollInertia: 300,
         mouseWheel: {
-          scrollAmount: QMCONFIG.isMac || 90,
-          deltaFactor: -1
+          scrollAmount: QMCONFIG.isMac || 'auto',
+          deltaFactor: 'auto'
         },
         setTop: height + 'px',
         callbacks: {
           onTotalScrollBack: function() {
             ajaxDownloading(objDom, self);
+          },
+          onScrollStart: function() {
+            var isBottom = Helpers.isBottomForScroll();
+            if (!isBottom) {
+              $('.j-toBottom').show();
+            }
+          },
+          onTotalScroll: function() {
+            var isBottom = Helpers.isBottomForScroll();
+            if (isBottom) {
+              $('.j-toBottom').hide();
+            }
           }
         },
         live: true
+      });
+
+      $(document).on('click', 'button.j-toBottom', function() {
+        objDom.mCustomScrollbar("scrollTo", "bottom");
+        $('.j-toBottom').hide();
       });
     },
 
@@ -568,10 +585,10 @@ define([
   function scrollbar() {
     $('.l-sidebar .scrollbar').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 60,
-        deltaFactor: -1
+        scrollAmount: QMCONFIG.isMac || 'auto',
+        deltaFactor: 'auto'
       },
       live: true
     });

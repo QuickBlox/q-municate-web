@@ -142,10 +142,10 @@ define([
 
       $('.smiles-group').mCustomScrollbar({
         theme: 'minimal-dark',
-        scrollInertia: 0,
+        scrollInertia: 500,
         mouseWheel: {
-          scrollAmount: QMCONFIG.isMac || 30,
-          deltaFactor: -1
+          scrollAmount: QMCONFIG.isMac || 'auto',
+          deltaFactor: 'auto'
         }
       });
 
@@ -700,20 +700,6 @@ define([
         }
       });
 
-      // button for scroll chat to new messages
-      $(document).on('click', 'button.j-toBottom', function() {
-        var $chat = $('.l-chat:visible');
-            containerHeight = $chat.find('.l-chat-content .mCSB_container').height(),
-            chatContentHeight = $chat.find('.l-chat-content').height(),
-            draggerContainerHeight = $chat.find('.l-chat-content .mCSB_draggerContainer').height(),
-            draggerHeight = $chat.find('.l-chat-content .mCSB_dragger').height();
-
-        $chat.find('.l-chat-content .mCSB_container').css({'top': chatContentHeight - containerHeight + 'px'});
-        $chat.find('.l-chat-content .mCSB_dragger').css({'top': draggerContainerHeight - draggerHeight + 'px'});
-
-        $('.j-toBottom').fadeOut(250);
-      });
-
       // show message status on hover event
       $('body').on('mouseenter', 'article.message.is-own', function() {
         var $self = $(this),
@@ -812,10 +798,10 @@ define([
   function occupantScrollbar() {
     $('.chat-occupants, #popupIncoming').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 28,
-        deltaFactor: -1
+        scrollAmount: QMCONFIG.isMac || 'auto',
+        deltaFactor: 'auto'
       },
       live: true
     });
@@ -833,7 +819,7 @@ define([
   }
 
   function changeInputFile(objDom) {
-    var URL = window.URL,
+    var URL = window.URL || window.webkitURL,
         file = objDom[0].files[0],
         src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
         fileName = file ? file.name : QMCONFIG.defAvatar.caption;

@@ -38,7 +38,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
           $chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
-          i, len, user;
+          isBottom = Helpers.isBottomForScroll();
 
       if (typeof $chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) return true;
 
@@ -313,18 +313,19 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         if (isCallback) {
           if (isMessageListener) {
             $chat.find('.l-chat-content .mCSB_container').append(html);
-            smartScroll();
+            if (isBottom) {
+              smartScroll(message.id, attachType);
+            }
           } else {
             $chat.find('.l-chat-content .mCSB_container').prepend(html);
           }
-          // $('.j-toBottom').fadeIn(250);
         } else {
           if ($chat.find('.l-chat-content .mCSB_container')[0]) {
             $chat.find('.l-chat-content .mCSB_container').prepend(html);
           } else {
             $chat.find('.l-chat-content').prepend(html);
           }
-          smartScroll();
+          smartScroll(message.id, attachType);
         }
 
         if (message.sender_id == User.contact.id && message.delivered_ids.length > 0) {
@@ -334,26 +335,18 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           self.addStatusMessages(message.id, message.dialog_id, 'displayed', false);
         }
 
-        function smartScroll() {
-          if (attachType) {
-            $('#attach_'+message.id).load(function() {
-              fixScroll($chat);
-            });
-          } else {
-            fixScroll($chat);
-          }
-        }
-
       });
 
     },
 
+
+
     addStatusMessages: function(messageId, dialogId, messageStatus, isListener) {
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
-          chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
-          time = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-time'),
-          statusHtml = chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status');
+          $chat = $('.l-chat[data-dialog="'+dialogId+'"]'),
+          time = $chat.find('article#'+messageId+' .message-container-wrap .message-container .message-time'),
+          statusHtml = $chat.find('article#'+messageId+' .message-container-wrap .message-container .message-status');
 
       if (messageStatus === 'displayed') {
         statusHtml.hasClass('delivered') ? statusHtml.removeClass('delivered').addClass('displayed').html('Seen') : statusHtml.addClass('displayed').html('Seen');
@@ -380,7 +373,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           val = form.find('.textarea').html().trim(),
           time = Math.floor(Date.now() / 1000),
           type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
-          chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
+          $chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
           dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           copyDialogItem, lastMessage;
 
@@ -420,7 +413,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         Helpers.log('Message send:', message);
 
         if (type === 'chat') {
-          lastMessage = chat.find('article[data-type="message"]').last();
+          lastMessage = $chat.find('article[data-type="message"]').last();
           message.stack = Message.isStack(true, message, lastMessage);
           self.addItem(message, true, true);
         }
@@ -447,10 +440,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
     // claer the list typing when switch to another chat
     claerTheListTyping: function(dialogId) {
-      var chat = $('.l-chat[data-dialog="'+dialogId+'"]');
+      var $chat = $('.l-chat[data-dialog="'+dialogId+'"]');
 
       typingList = [];
-      chat.find('article.message[data-status="typing"]').remove();
+      $chat.find('article.message[data-status="typing"]').remove();
     },
 
     onMessage: function(id, message) {
@@ -469,8 +462,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           occupants_ids = message.extension && message.extension.current_occupant_ids,
           dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]'),
-          chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
-          isHiddenChat = chat.is(':hidden'),
+          $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="'+dialog_id+'"]') : $('.l-chat[data-id="'+id+'"]'),
+          isHiddenChat = $chat.is(':hidden'),
           unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
           roster = ContactList.roster,
           audioSignal = $('#newMessageSignal')[0],
@@ -488,7 +481,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       if (message.markable === 1 && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
         // send read status if message displayed in chat
         Message.update(msg.id, dialog_id, id);
-      } else if ((isHiddenChat || !window.isQMAppActive) && chat.length > 0 && message.markable == 1) {
+      } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length > 0 && message.markable == 1) {
         msgArr = dialogs[dialog_id].messages || [];
         msgArr.push(msg.id);
         dialogs[dialog_id].messages = msgArr;
@@ -512,7 +505,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         // add new people
         if (new_ids) {
           ContactList.add(dialog.occupants_ids, null, function() {
-            var dataIds = chat.find('.addToGroupChat').data('ids'),
+            var dataIds = $chat.find('.addToGroupChat').data('ids'),
                 ids = dataIds ? dataIds.toString().split(',').map(Number) : [];
 
             for (var i = 0, len = new_ids.length; i < len; i++) {
@@ -526,25 +519,25 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
               }
             }
 
-            chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+            $chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
           });
         }
 
         // delete occupant
         if (deleted_id && msg.sender_id !== User.contact.id) {
-          chat.find('.occupant[data-id="'+id+'"]').remove();
-          chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+          $chat.find('.occupant[data-id="'+id+'"]').remove();
+          $chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
         }
 
         // change name
         if (room_name) {
-          chat.find('.name_chat').text(room_name).attr('title', room_name);
+          $chat.find('.name_chat').text(room_name).attr('title', room_name);
           dialogItem.find('.name').text(room_name);
         }
 
         // change photo
         if (room_photo) {
-          chat.find('.avatar_chat').css('background-image', 'url('+room_photo+')');
+          $chat.find('.avatar_chat').css('background-image', 'url('+room_photo+')');
           dialogItem.find('.avatar').css('background-image', 'url('+room_photo+')');
         }
       }
@@ -559,7 +552,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         }
       }
 
-      lastMessage = chat.find('article[data-type="message"]').last();
+      lastMessage = $chat.find('article[data-type="message"]').last();
       msg.stack = Message.isStack(true, msg, lastMessage);
       Helpers.log('Message object created:', msg);
       self.addItem(msg, true, true, id);
@@ -650,9 +643,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       var ContactListMsg = self.app.models.ContactList,
           contacts = ContactListMsg.contacts,
           contact = contacts[userId],
-          chat = dialogId === null ? $('.l-chat[data-id="'+userId+'"]') : $('.l-chat[data-dialog="'+dialogId+'"]'),
+          $chat = dialogId === null ? $('.l-chat[data-id="'+userId+'"]') : $('.l-chat[data-dialog="'+dialogId+'"]'),
           recipient = userId !== User.contact.id ? true : false,
-          visible = chat.is(':visible') ? true : false;
+          visible = $chat.is(':visible') ? true : false;
 
       if (recipient && visible) {
 
@@ -660,22 +653,22 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         if (clearTyping === undefined) {
           clearTyping = setTimeout(function(){
             typingList = [];
-            stopShowTyping(chat, contact.full_name);
+            stopShowTyping($chat, contact.full_name);
           }, 6000);
         } else {
           clearTimeout(clearTyping);
           clearTyping = setTimeout(function(){
             typingList = [];
-            stopShowTyping(chat, contact.full_name);
+            stopShowTyping($chat, contact.full_name);
           }, 6000);
         }
 
         if (isTyping) {
           // display start typing status
-          startShowTyping(chat, contact.full_name);
+          startShowTyping($chat, contact.full_name);
         } else {
           // stop display typing status
-          stopShowTyping(chat, contact.full_name);
+          stopShowTyping($chat, contact.full_name);
         }
       }
     },
@@ -708,14 +701,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
   }
 
-  function fixScroll($chat) {
-    var containerHeight = $chat.find('.l-chat-content .mCSB_container').height(),
-        chatContentHeight = $chat.find('.l-chat-content').height(),
-        draggerContainerHeight = $chat.find('.l-chat-content .mCSB_draggerContainer').height(),
-        draggerHeight = $chat.find('.l-chat-content .mCSB_dragger').height();
+  function smartScroll(messageId, attachType) {
+    var $objDom = $('.l-chat:visible .scrollbar_message');
 
-    $chat.find('.l-chat-content .mCSB_container').css({'top': chatContentHeight - containerHeight + 'px'});
-    $chat.find('.l-chat-content .mCSB_dragger').css({'top': draggerContainerHeight - draggerHeight + 'px'});
+    if (attachType) {
+      $('#attach_'+messageId).load(function() {
+        $objDom.mCustomScrollbar("scrollTo", "bottom");
+      });
+    } else {
+      $objDom.mCustomScrollbar("scrollTo", "bottom");
+    }
   }
 
   function getTime(time) {

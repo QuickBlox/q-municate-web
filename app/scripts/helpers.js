@@ -203,5 +203,24 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
     }
   };
 
+  Helpers.isBottomForScroll = function() {
+    if ($('.l-chat:visible .mCustomScrollBox .mCSB_container').last().offset() !== undefined) {
+      var lastMessageHeight = $('.l-chat:visible .mCSB_container article').last().outerHeight(),
+          viewPortPosition = $('.l-chat:visible .mCustomScrollBox').last().offset().top,
+          viewPortHeight = $('.l-chat:visible .mCustomScrollBox').last().outerHeight(),
+          msgListPosition = $('.l-chat:visible .mCustomScrollBox .mCSB_container').last().offset().top,
+          msgListHeight = $('.l-chat:visible .mCustomScrollBox .mCSB_container').last().outerHeight(),
+          viewPortBottom = viewPortPosition + viewPortHeight,
+          msgListBottom = msgListPosition + msgListHeight,
+          bottom = false;
+
+      if ((lastMessageHeight + viewPortBottom + 75) >= msgListBottom) {
+        bottom = true;
+      }
+
+      return bottom;
+    }
+  }
+
   return Helpers;
 });
