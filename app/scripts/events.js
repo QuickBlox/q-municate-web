@@ -135,8 +135,12 @@ define([
         var $self = $(this),
             group = $self.data('group');
 
-        $self.addClass('is-actived').siblings().removeClass('is-actived');
-        $('.smiles-group_'+group).removeClass('is-hidden').siblings().addClass('is-hidden');
+        $self.addClass('is-actived')
+             .siblings().removeClass('is-actived');
+
+        $('.smiles-group_'+group).removeClass('is-hidden')
+                                 .siblings().addClass('is-hidden');
+
         setCursorToEnd($('.l-chat:visible .textarea'));
       });
 
@@ -287,13 +291,15 @@ define([
       /* change the chat avatar
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('mouseenter', '.groupTitle .avatar', function() {
-        var chat = $('.l-chat:visible');
-        chat.find('.pencil_active').removeClass('is-hidden');
+        var $chat = $('.l-chat:visible');
+
+        $chat.find('.pencil_active').removeClass('is-hidden');
       });
 
       $('.l-workspace-wrap').on('mouseleave', '.groupTitle .avatar', function() {
-        var chat = $('.l-chat:visible');
-        chat.find('.pencil_active').addClass('is-hidden');
+        var $chat = $('.l-chat:visible');
+
+        $chat.find('.pencil_active').addClass('is-hidden');
       });
 
       $('.l-workspace-wrap').on('click', '.groupTitle .pencil_active', function() {
@@ -302,11 +308,11 @@ define([
       });
 
       $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
-        var chat = $('.l-chat:visible');
+        var $chat = $('.l-chat:visible');
 
         Dialog.changeAvatar(chat.data('dialog'), $(this), function(avatar) {
           if (!avatar) return false;
-          chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
+          $chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
         });
       });
 
@@ -478,6 +484,7 @@ define([
 
       $('.popup-control-button, .btn_popup_private').on('click', function(event) {
         event.preventDefault();
+
         var $self = $(this),
             isProfile = $self.data('isprofile');
 
@@ -495,6 +502,7 @@ define([
 
       $('.btn_search').on('click', function(event) {
         event.preventDefault();
+
         var localSearch = $('#searchContacts input'),
             globalSearch = $('#globalSearch input');
 
@@ -504,14 +512,18 @@ define([
 
       $('#mainPage').on('click', '.createGroupChat', function(event) {
         event.preventDefault();
+        
         Helpers.log('add people to groupchat');
+
         var $self = $(this),
             isPrivate = $self.data('private');
+
         ContactListView.addContactsToChat($self, null, null, isPrivate);
       });
 
       $('.l-sidebar').on('click', '.addToGroupChat', function(event) {
         event.preventDefault();
+
         var $self = $(this),
             dialog_id = $self.data('dialog');
         Helpers.log('add people to groupchat');

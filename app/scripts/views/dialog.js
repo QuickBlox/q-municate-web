@@ -415,7 +415,7 @@ define([
 
         html += '<section class="l-chat-content scrollbar_message"></section>';
         html += '<footer class="l-chat-footer">';
-        html += '<button class="j-toBottom"></button>';
+        html += '<button class="j-toBottom btn_to_bottom"></button>';
         html += '<div class="l-typing"></div>';
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
@@ -494,7 +494,7 @@ define([
             ajaxDownloading(objDom, self);
           },
           onTotalScroll: function() {
-            var isBottom = Helpers.isBottomForScroll(),
+            var isBottom = Helpers.isBeginOfChat(),
                 $currentDialog = $('.dialog-item.is-selected'),
                 dialogId = $currentDialog.data('dialog');
 
@@ -505,7 +505,7 @@ define([
             }
           },
           onScroll: function() {
-            var isBottom = Helpers.isBottomForScroll();
+            var isBottom = Helpers.isBeginOfChat();
             if (!isBottom) {
               $('.j-toBottom').show();
             }
@@ -514,8 +514,8 @@ define([
         live: true
       });
 
-      $(document).on('click', 'button.j-toBottom', function() {
-        objDom.mCustomScrollbar("scrollTo", "bottom");
+      $(document).on('click', '.j-toBottom', function() {
+        objDom.mCustomScrollbar('scrollTo', 'bottom');
         $('.j-toBottom').hide();
       });
     },

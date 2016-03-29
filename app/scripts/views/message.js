@@ -38,7 +38,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
           $chat = $('.l-chat[data-dialog="'+message.dialog_id+'"]'),
-          isBottom = Helpers.isBottomForScroll();
+          isBottom = Helpers.isBeginOfChat();
 
       if (typeof $chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) return true;
 
@@ -339,8 +339,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
     },
 
-
-
     addStatusMessages: function(messageId, dialogId, messageStatus, isListener) {
       var DialogView = this.app.views.Dialog,
           ContactListMsg = this.app.models.ContactList,
@@ -362,6 +360,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           statusHtml.addClass('is-hidden');
         }, 1000);
         time.addClass('is-hidden');
+
         statusHtml.removeClass('is-hidden');
       }
     },
@@ -469,7 +468,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           audioSignal = $('#newMessageSignal')[0],
           isOfflineStorage = message.delay,
           selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
-          isBottom = Helpers.isBottomForScroll(),
+          isBottom = Helpers.isBeginOfChat(),
           otherChat = !selected && isHiddenChat && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat'),
           isNotMyUser = id !== User.contact.id,
           copyDialogItem,
@@ -505,11 +504,22 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
       // add new occupants
       if (notification_type === '2') {
         dialog = ContactList.dialogs[dialog_id];
-        if (occupants_ids && msg.sender_id !== User.contact.id) dialog.occupants_ids = dialog.occupants_ids.concat(new_ids);
-        if (dialog && deleted_id) dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(',')).map(Number);
-        if (room_name) dialog.room_name = room_name;
-        if (room_photo) dialog.room_photo = room_photo;
-        if (dialog) ContactList.dialogs[dialog_id] = dialog;
+
+        if (occupants_ids && msg.sender_id !== User.contact.id) {
+          dialog.occupants_ids = dialog.occupants_ids.concat(new_ids);
+        }
+        if (dialog && deleted_id) {
+          dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(',')).map(Number);
+        }
+        if (room_name) {
+          dialog.room_name = room_name;
+        }
+        if (room_photo) {
+          dialog.room_photo = room_photo;
+        }
+        if (dialog) {
+          ContactList.dialogs[dialog_id] = dialog;
+        }
 
         // add new people
         if (new_ids) {
@@ -524,7 +534,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
                 occupant = '<a class="occupant l-flexbox_inline presence-listener" data-id="'+new_id+'" href="#">';
                 occupant = getStatus(roster[new_id], occupant);
                 occupant += '<span class="name name_occupant">'+contacts[new_id].full_name+'</span></a>';
-                chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
+                $chat.find('.chat-occupants-wrap .mCSB_container').append(occupant);
               }
             }
 

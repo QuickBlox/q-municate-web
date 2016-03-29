@@ -143,9 +143,8 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           break;
       }
 
-      text = text.replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&");
-
       if (text) {
+        text = text.replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&");
         options = {
           body: text,
           icon: photo,
@@ -203,11 +202,11 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
     }
   };
 
-  Helpers.isBottomForScroll = function() {
+  Helpers.isBeginOfChat = function() {
     var $viewPort = $('.l-chat:visible .scrollbar_message .mCustomScrollBox'),
-        $msgList = $('.l-chat:visible .scrollbar_message .mCustomScrollBox .mCSB_container');
+        $msgList = $viewPort.find('.mCSB_container');
 
-    if ($msgList.offset() !== undefined) {
+    if ($msgList.offset()) {
       var lastMessageHeight = $('.l-chat:visible .mCSB_container article').last().outerHeight(),
           viewPortPosition = $viewPort.offset().top,
           viewPortHeight = $viewPort.outerHeight(),
