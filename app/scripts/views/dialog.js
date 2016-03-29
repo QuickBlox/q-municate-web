@@ -407,11 +407,10 @@ define([
 
         html += '<section class="l-chat-content scrollbar_message"></section>';
         html += '<footer class="l-chat-footer">';
-        html += '<div class="l-typing"></div>';
         html += '<button class="j-toBottom"></button>';
+        html += '<div class="l-typing"></div>';
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
-        // html += '<textarea class="text-message is-hidden"></textarea>';
         html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.svg" alt="smile"></button>';
         html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.svg" alt="attach"></button>';
         html += '<input class="attachment" type="file" accept="image/*">';
@@ -486,16 +485,16 @@ define([
           onTotalScrollBack: function() {
             ajaxDownloading(objDom, self);
           },
-          onScrollStart: function() {
-            var isBottom = Helpers.isBottomForScroll();
-            if (!isBottom) {
-              $('.j-toBottom').show();
-            }
-          },
           onTotalScroll: function() {
             var isBottom = Helpers.isBottomForScroll();
             if (isBottom) {
               $('.j-toBottom').hide();
+            }
+          },
+          onScroll: function() {
+            var isBottom = Helpers.isBottomForScroll();
+            if (!isBottom) {
+              $('.j-toBottom').show();
             }
           }
         },

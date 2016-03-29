@@ -204,12 +204,15 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
   };
 
   Helpers.isBottomForScroll = function() {
-    if ($('.l-chat:visible .mCustomScrollBox .mCSB_container').last().offset() !== undefined) {
+    var $viewPort = $('.l-chat:visible .scrollbar_message .mCustomScrollBox'),
+        $msgList = $('.l-chat:visible .scrollbar_message .mCustomScrollBox .mCSB_container');
+
+    if ($msgList.offset() !== undefined) {
       var lastMessageHeight = $('.l-chat:visible .mCSB_container article').last().outerHeight(),
-          viewPortPosition = $('.l-chat:visible .mCustomScrollBox').last().offset().top,
-          viewPortHeight = $('.l-chat:visible .mCustomScrollBox').last().outerHeight(),
-          msgListPosition = $('.l-chat:visible .mCustomScrollBox .mCSB_container').last().offset().top,
-          msgListHeight = $('.l-chat:visible .mCustomScrollBox .mCSB_container').last().outerHeight(),
+          viewPortPosition = $viewPort.offset().top,
+          viewPortHeight = $viewPort.outerHeight(),
+          msgListPosition = $msgList.offset().top,
+          msgListHeight = $msgList.outerHeight(),
           viewPortBottom = viewPortPosition + viewPortHeight,
           msgListBottom = msgListPosition + msgListHeight,
           bottom = false;

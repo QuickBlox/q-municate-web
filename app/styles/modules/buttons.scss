@@ -95,10 +95,17 @@
     right: 15px;
   }
 .j-toBottom {
-  float: right;
-  width: 7%;
-  height: 36px;
-  opacity: 0.5;
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  opacity: 0.4;
   background-image: image-url('to-bottom-icon.png');
   background-repeat: no-repeat;
   background-size: contain;

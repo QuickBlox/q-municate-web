@@ -201,13 +201,14 @@
     height: 90px;
     padding: 0px 5px 5px 5px;
     border-top: 1px solid #f2f2f2;
+    position: relative;
+    z-index: 999;
   }
     .l-message {
       position: relative;
       height: 48px;
     }
     .l-typing {
-      display: inline-block;
       height: 36px;
-      width: 90%;
+      width: 100%;
     }
