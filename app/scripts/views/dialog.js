@@ -335,16 +335,24 @@ define([
           user_id = parent.data('id'),
           dialog = dialogs[dialog_id],
           user = contacts[user_id],
-          chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
-          html, jid, icon, name, status, message, msgArr, userId, messageId,
-          self = this;
+          $chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
+          self = this,
+          html,
+          jid,
+          icon,
+          name,
+          status,
+          message,
+          msgArr,
+          userId,
+          messageId;
 
       jid = dialog.room_jid || user.user_jid;
       icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
       name = dialog.room_name || user.full_name;
       status = roster[user_id] ? roster[user_id] : null;
 
-      if (chat.length === 0) {
+      if ($chat.length === 0) {
         if (dialog.type === 3) {
           html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="'+dialog_id+'" data-id="'+user_id+'" data-jid="'+jid+'">';
           html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
@@ -446,7 +454,7 @@ define([
 
       } else {
 
-        chat.removeClass('is-hidden').siblings().addClass('is-hidden');
+        $chat.removeClass('is-hidden').siblings().addClass('is-hidden');
         $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
         self.messageScrollbar();
 
@@ -486,9 +494,14 @@ define([
             ajaxDownloading(objDom, self);
           },
           onTotalScroll: function() {
-            var isBottom = Helpers.isBottomForScroll();
+            var isBottom = Helpers.isBottomForScroll(),
+                $currentDialog = $('.dialog-item.is-selected'),
+                dialogId = $currentDialog.data('dialog');
+
             if (isBottom) {
               $('.j-toBottom').hide();
+              $currentDialog.find('.unread').text('');
+              self.decUnreadCounter(dialogId);
             }
           },
           onScroll: function() {

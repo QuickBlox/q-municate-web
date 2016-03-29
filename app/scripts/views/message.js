@@ -469,7 +469,16 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           audioSignal = $('#newMessageSignal')[0],
           isOfflineStorage = message.delay,
           selected = $('[data-dialog = '+dialog_id+']').is('.is-selected'),
-          msg, copyDialogItem, dialog, occupant, msgArr, blobObj, lastMessage;
+          isBottom = Helpers.isBottomForScroll(),
+          otherChat = !selected && isHiddenChat && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat'),
+          isNotMyUser = id !== User.contact.id,
+          copyDialogItem,
+          lastMessage,
+          dialog,
+          occupant,
+          msgArr,
+          blobObj,
+          msg;
 
       typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
       typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
@@ -487,7 +496,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         dialogs[dialog_id].messages = msgArr;
       }
 
-      if (!selected && isHiddenChat && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat')) {
+      if (otherChat || (!otherChat && !isBottom && isNotMyUser)) {
         unread++;
         dialogItem.find('.unread').text(unread);
         DialogView.getUnreadCounter(dialog_id);
