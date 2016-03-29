@@ -223,7 +223,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
 
       return bottom;
     }
-  }
+  };
 
   return Helpers;
 });
