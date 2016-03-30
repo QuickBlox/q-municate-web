@@ -166,14 +166,6 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
           mediaScreen.requestFullscreen();
           isFullScreen = true;
         }
-      } else if (mediaScreen.msRequestFullscreen) {
-        if (document.msFullscreenElement) {
-            document.msExitFullscreen();
-            isFullScreen = false;
-          } else {
-          mediaScreen.msRequestFullscreen();
-          isFullScreen = true;
-        }
       } else if (mediaScreen.mozRequestFullScreen) {      
         if (document.mozFullScreenElement) {
             document.mozCancelFullScreen();
