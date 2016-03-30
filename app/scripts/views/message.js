@@ -509,7 +509,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           dialog.occupants_ids = dialog.occupants_ids.concat(new_ids);
         }
         if (dialog && deleted_id) {
-          dialog.occupants_ids = _.compact(dialog.occupants_ids.join().replace(deleted_id, '').split(',')).map(Number);
+          dialog.occupants_ids = _.without(_.compact(dialog.occupants_ids), deleted_id[0]);
         }
         if (room_name) {
           dialog.room_name = room_name;
