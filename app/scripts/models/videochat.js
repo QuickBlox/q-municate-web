@@ -29,7 +29,11 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
     };
 
     if (!options.isCallee) {
-      self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO);
+      if (callType === 'video') {
+        self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO);
+      } else {
+        self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.AUDIO);
+      }
     }
     
     curSession = self.session;
