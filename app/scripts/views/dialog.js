@@ -63,7 +63,6 @@ define([
       QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
       QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
       QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
-      QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
       QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
       QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
 

@@ -13,7 +13,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
   var User,
       ContactList,
       VideoChat,
-      curSession = {};
+      curSession = {},
+      network = {},
+      stopStreamFF = undefined,
+      is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
   function VideoChatView(app) {
     this.app = app;
@@ -324,7 +327,6 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
   };
 
   VideoChatView.prototype.onCallStatsReport = function(session, userId, stats) {
-    var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     /**
      * Hack for Firefox
      * (https://bugzilla.mozilla.org/show_bug.cgi?id=852665)
@@ -332,14 +334,20 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     if(is_firefox) {
       var inboundrtp = _.findWhere(stats, {type: 'inboundrtp'});
 
-      if(!inboundrtp || !isBytesReceivedChanges(userId, inboundrtp)) {
+      if (!inboundrtp || !isBytesReceivedChanges(userId, inboundrtp)) {
+        if (!stopStreamFF) {      
+          stopStreamFF = setTimeout(function() {
+            console.warn("This is Firefox and user " + userId + " has lost his connection.");
 
-        console.warn("This is Firefox and user " + userId + " has lost his connection.");
-
-        if(!_.isEmpty(curSession)) {
-          curSession.closeConnection(userId);
-          $('.btn_hangup').click();
+            if(!_.isEmpty(curSession)) {
+              curSession.closeConnection(userId);
+              $('.btn_hangup').click();
+            }
+          }, 30000);
         }
+      } else {
+        clearTimeout(stopStreamFF);
+        stopStreamFF = undefined;
       }
     }
   };
@@ -544,10 +552,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
   function isBytesReceivedChanges(userId, inboundrtp) {
     var res = true,
-        inbBytesRec = inboundrtp.bytesReceived,
-        network = {
-          users: {}
-        };
+        inbBytesRec = inboundrtp.bytesReceived;
 
     if(network[userId] === undefined) {
       network[userId] = {
