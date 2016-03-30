@@ -15,7 +15,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       VideoChat,
       curSession = {},
       network = {},
-      stopStreamFF = undefined,
+      stopStreamFF,
       is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
   function VideoChatView(app) {
