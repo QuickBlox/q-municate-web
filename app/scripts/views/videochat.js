@@ -15,7 +15,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       VideoChat,
       curSession = {},
       network = {},
-      stopStreamFF = undefined;
+      stopStreamFF = undefined,
+      is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
   function VideoChatView(app) {
     this.app = app;
@@ -330,8 +331,6 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
      * Hack for Firefox
      * (https://bugzilla.mozilla.org/show_bug.cgi?id=852665)
      */
-    var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-
     if(is_firefox) {
       var inboundrtp = _.findWhere(stats, {type: 'inboundrtp'});
 
