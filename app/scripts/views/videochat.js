@@ -14,7 +14,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       ContactList,
       VideoChat,
       curSession = {},
-      network = {};
+      network = {},
+      stopStreamFF = undefined;
 
   function VideoChatView(app) {
     this.app = app;
@@ -332,21 +333,22 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
     if(is_firefox) {
-      var inboundrtp = _.findWhere(stats, {type: 'inboundrtp'}),
-          stopStream = undefined;
+      var inboundrtp = _.findWhere(stats, {type: 'inboundrtp'});
 
       if (!inboundrtp || !isBytesReceivedChanges(userId, inboundrtp)) {
-        stopStream = setTimeout(function() {
-          console.warn("This is Firefox and user " + userId + " has lost his connection.");
+        if (!stopStreamFF) {      
+          stopStreamFF = setTimeout(function() {
+            console.warn("This is Firefox and user " + userId + " has lost his connection.");
 
-          if(!_.isEmpty(curSession)) {
-            curSession.closeConnection(userId);
-            $('.btn_hangup').click();
-          }
-        }, 30000);
+            if(!_.isEmpty(curSession)) {
+              curSession.closeConnection(userId);
+              $('.btn_hangup').click();
+            }
+          }, 30000);
+        }
       } else {
-        clearTimeout(stopStream);
-        stopStream = undefined;
+        clearTimeout(stopStreamFF);
+        stopStreamFF = undefined;
       }
     }
   };
