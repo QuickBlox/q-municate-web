@@ -495,10 +495,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
   function scrollbarContacts() {
     $('.scrollbarContacts').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 60,
-        deltaFactor: -1
+        scrollAmount: QMCONFIG.isMac || 'auto',
+        deltaFactor: 'auto'
       },
       live: true
     });
@@ -507,10 +507,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
   function scrollbar(list, self) {
     list.mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 60,
-        deltaFactor: -1
+        scrollAmount: QMCONFIG.isMac || 'auto',
+        deltaFactor: 'auto'
       },
       callbacks: {
         onTotalScroll: function() {

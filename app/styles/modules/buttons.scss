@@ -94,7 +94,24 @@
     top: 7px;
     right: 15px;
   }
-
+.btn_to_bottom {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%);
+  -webkit-transform: translate(-50%);
+  -moz-transform: translate(-50%);
+  -o-transform: translate(-50%);
+  -ms-transform: translate(-50%);
+  opacity: 0.4;
+  background-image: image-url('to-bottom-icon.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 50%;
+  display: none;
+}
 .btn_request_again {
   display: none;
   margin-left: 20px;

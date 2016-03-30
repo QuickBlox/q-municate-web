@@ -132,28 +132,34 @@ define([
       /* smiles
       ----------------------------------------------------- */
       $('.smiles-tab').on('click', function() {
-        var group = $(this).data('group');
-        $(this).addClass('is-actived').siblings().removeClass('is-actived');
-        $('.smiles-group_'+group).removeClass('is-hidden').siblings().addClass('is-hidden');
+        var $self = $(this),
+            group = $self.data('group');
+
+        $self.addClass('is-actived')
+             .siblings().removeClass('is-actived');
+
+        $('.smiles-group_'+group).removeClass('is-hidden')
+                                 .siblings().addClass('is-hidden');
+
         setCursorToEnd($('.l-chat:visible .textarea'));
       });
 
       $('.smiles-group').mCustomScrollbar({
         theme: 'minimal-dark',
-        scrollInertia: 0,
+        scrollInertia: 500,
         mouseWheel: {
-          scrollAmount: QMCONFIG.isMac || 30,
-          deltaFactor: -1
+          scrollAmount: QMCONFIG.isMac || 'auto',
+          deltaFactor: 'auto'
         }
       });
 
       $('.em-wrap').on('click', function() {
         var code = $(this).find('.em').data('unicode'),
-            curTextarea = $('.l-chat:visible .textarea'),
-            val = curTextarea.html();
+            $curTextarea = $('.l-chat:visible .textarea'),
+            val = $curTextarea.html();
 
-        $('.l-chat:visible .textarea').addClass('contenteditable').html(val + minEmoji(code));
-        setCursorToEnd(curTextarea);
+        $curTextarea.addClass('contenteditable').html(val + minEmoji(code));
+        setCursorToEnd($curTextarea);
       });
 
       /* attachments
@@ -174,11 +180,12 @@ define([
       $('.l-workspace-wrap').on('click', '.preview', function() {
         if (checkConnection() === false) return false;
 
-        var name = $(this).data('name'),
-            url = $(this).data('url'),
+        var $self = $(this),
+            name = $self.data('name'),
+            url = $self.data('url'),
             attachType;
 
-        if ($(this).is('.preview-photo')) {
+        if ($self.is('.preview-photo')) {
           $('.attach-photo').removeClass('is-hidden').siblings('.attach-video').addClass('is-hidden');
           attachType = 'photo';
         } else {
@@ -205,9 +212,11 @@ define([
 
       $('.l-workspace-wrap').on('click', '.groupTitle .addToGroupChat', function(event) {
         event.stopPropagation();
-        var dialog_id = $(this).data('dialog');
+        var $self = $(this),
+            dialog_id = $self.data('dialog');
+
         Helpers.log('add people to groupchat');
-        ContactListView.addContactsToChat($(this), 'add', dialog_id);
+        ContactListView.addContactsToChat($self, 'add', dialog_id);
       });
 
       $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
@@ -223,8 +232,10 @@ define([
 
       $('.l-workspace-wrap').on('mouseleave', '.groupTitle .name_chat', function() {
         var chat = $('.l-chat:visible');
-        if (!$(this).is('.is-focus'))
+
+        if (!$(this).is('.is-focus')) {
           chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+        }
       });
 
       $(document.body).on('click', function() {
@@ -248,41 +259,47 @@ define([
 
       $('body').on('click', '.groupTitle .name_chat', function(event) {
         event.stopPropagation();
-        $(this).addClass('is-focus');
+        var $self = $(this);
+
+        $self.addClass('is-focus');
         chatName = {
-          name: $(this).text().trim(),
+          name: $self.text().trim(),
           created_at: Date.now()
         };
         removePopover();
       });
 
       $('body').on('keyup', '.groupTitle .name_chat', function(event) {
-        var code = event.keyCode;
+        var $self = $(this),
+            code = event.keyCode;
+
         editedChatName = {
-          name: $(this).text().trim(),
+          name: $self.text().trim(),
           created_at: Date.now()
         };
         if (code === 13) {
           $(document.body).click();
-          $(this).blur();
+          $self.blur();
         } else if (code === 27) {
           editedChatName = null;
-          $(this).text(chatName.name);
+          $self.text(chatName.name);
           $(document.body).click();
-          $(this).blur();
+          $self.blur();
         }
       });
 
       /* change the chat avatar
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('mouseenter', '.groupTitle .avatar', function() {
-        var chat = $('.l-chat:visible');
-        chat.find('.pencil_active').removeClass('is-hidden');
+        var $chat = $('.l-chat:visible');
+
+        $chat.find('.pencil_active').removeClass('is-hidden');
       });
 
       $('.l-workspace-wrap').on('mouseleave', '.groupTitle .avatar', function() {
-        var chat = $('.l-chat:visible');
-        chat.find('.pencil_active').addClass('is-hidden');
+        var $chat = $('.l-chat:visible');
+
+        $chat.find('.pencil_active').addClass('is-hidden');
       });
 
       $('.l-workspace-wrap').on('click', '.groupTitle .pencil_active', function() {
@@ -291,10 +308,11 @@ define([
       });
 
       $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
-        var chat = $('.l-chat:visible');
+        var $chat = $('.l-chat:visible');
+
         Dialog.changeAvatar(chat.data('dialog'), $(this), function(avatar) {
           if (!avatar) return false;
-          chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
+          $chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
         });
       });
 
@@ -408,10 +426,12 @@ define([
       });
 
       $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
-        var bool = $(this).is('.is-active');
+        var $self = $(this),
+            bool = $self.is('.is-active');
+
         removePopover();
         if (bool === false)
-          UserView.smilePopover($(this));
+          UserView.smilePopover($self);
         setCursorToEnd($('.l-chat:visible .textarea'));
       });
 
@@ -435,8 +455,10 @@ define([
 
       $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {
         event.preventDefault();
-        var parent = $(this).parents('.presence-listener')[0] ? $(this).parents('.presence-listener') : $(this).parents('.is-group');
-        var dialog_id = parent.data('dialog');
+        var $self = $(this),
+            parent = $self.parents('.presence-listener')[0] ? $self.parents('.presence-listener') : $self.parents('.is-group'),
+            dialog_id = parent.data('dialog');
+
         openPopup($('#popupLeave'), null, dialog_id);
       });
 
@@ -462,8 +484,11 @@ define([
 
       $('.popup-control-button, .btn_popup_private').on('click', function(event) {
         event.preventDefault();
-        var isProfile = $(this).data('isprofile');
-        if (!$(this).is('.returnBackToPopup'))
+
+        var $self = $(this),
+            isProfile = $self.data('isprofile');
+
+        if (!$self.is('.returnBackToPopup'))
           closePopup();
         if (isProfile)
           openPopup($('#popupDetails'));
@@ -477,6 +502,7 @@ define([
 
       $('.btn_search').on('click', function(event) {
         event.preventDefault();
+
         var localSearch = $('#searchContacts input'),
             globalSearch = $('#globalSearch input');
 
@@ -486,16 +512,22 @@ define([
 
       $('#mainPage').on('click', '.createGroupChat', function(event) {
         event.preventDefault();
+        
         Helpers.log('add people to groupchat');
-        var isPrivate = $(this).data('private');
-        ContactListView.addContactsToChat($(this), null, null, isPrivate);
+
+        var $self = $(this),
+            isPrivate = $self.data('private');
+
+        ContactListView.addContactsToChat($self, null, null, isPrivate);
       });
 
       $('.l-sidebar').on('click', '.addToGroupChat', function(event) {
         event.preventDefault();
-        var dialog_id = $(this).data('dialog');
+
+        var $self = $(this),
+            dialog_id = $self.data('dialog');
         Helpers.log('add people to groupchat');
-        ContactListView.addContactsToChat($(this), 'add', dialog_id);
+        ContactListView.addContactsToChat($self, 'add', dialog_id);
       });
 
       /* search
@@ -526,22 +558,27 @@ define([
       });
 
       $('.localSearch').on('keyup search submit', function(event) {
-        event.preventDefault();
-        var type = event.type,
+        var $self = $(this),
+            type = event.type,
             code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
         if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
-          if (this.id === 'searchContacts')
-            UserView.localSearch($(this));
-          else
-            UserView.friendsSearch($(this));
+          if (this.id === 'searchContacts') {
+            UserView.localSearch($self);
+          } else {
+            UserView.friendsSearch($self);
+          }
         }
+
+        return false;
       });
 
-      $('.clean-button').on('click', function() {
-        var form = $(this).parent('form.formSearch');
+      $('.clean-button').on('click', function(event) {
+        var $form = $(this).parent('form.formSearch');
 
-        form.find('input.form-input-search').val('').focus();
+        $form.find('input.form-input-search').val('').focus();
+        UserView.localSearch($form);
+
         return false;
       });  
 
@@ -661,31 +698,34 @@ define([
       });
 
       $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
-        var jid = $(this).parents('.l-chat').data('jid'),
-            type = $(this).parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+        var $self = $(this),
+            jid = $self.parents('.l-chat').data('jid'),
+            type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
             shiftKey = event.shiftKey,
             code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
             val = $('.l-chat:visible .textarea').html().trim();
 
         if (code === 13 && !shiftKey) {
-          MessageView.sendMessage($(this));
-          $(this).find('.textarea').empty();
+          MessageView.sendMessage($self);
+          $self.find('.textarea').empty();
           removePopover();
         }
       });
 
       // show message status on hover event
       $('body').on('mouseenter', 'article.message.is-own', function() {
-        var time = $(this).find('.message-time'),
-            status = $(this).find('.message-status');
+        var $self = $(this),
+            time = $self .find('.message-time'),
+            status = $self .find('.message-status');
 
         time.addClass('is-hidden');
         status.removeClass('is-hidden');
       });
 
       $('body').on('mouseleave', 'article.message.is-own', function() {
-        var time = $(this).find('.message-time'),
-            status = $(this).find('.message-status');
+        var $self = $(this),
+            time = $self.find('.message-time'),
+            status = $self.find('.message-status');
 
         status.addClass('is-hidden');
         time.removeClass('is-hidden');
@@ -693,8 +733,9 @@ define([
 
       // send typing statuses with keyup event
       $('.l-workspace-wrap').on('keyup', '.l-message', function(event) {
-        var jid = $(this).parents('.l-chat').data('jid'),
-            type = $(this).parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+        var $self = $(this),
+            jid = $self.parents('.l-chat').data('jid'),
+            type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
             shiftKey = event.shiftKey,
             code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
@@ -769,10 +810,10 @@ define([
   function occupantScrollbar() {
     $('.chat-occupants, #popupIncoming').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 28,
-        deltaFactor: -1
+        scrollAmount: QMCONFIG.isMac || 'auto',
+        deltaFactor: 'auto'
       },
       live: true
     });
@@ -790,7 +831,7 @@ define([
   }
 
   function changeInputFile(objDom) {
-    var URL = window.webkitURL || window.URL,
+    var URL = window.URL || window.webkitURL,
         file = objDom[0].files[0],
         src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
         fileName = file ? file.name : QMCONFIG.defAvatar.caption;

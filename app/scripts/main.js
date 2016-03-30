@@ -58,11 +58,14 @@ requirejs.config({
     AttachView: 'views/attach',
     ContactListView: 'views/contact_list',
     VideoChatView: 'views/videochat',
+    // apiCalls
+    QBApiCalls: 'qbApiCalls',
     // events
     Events: 'events',
     // helpers
     Helpers: 'helpers',
-    QBApiCalls: 'qbApiCalls'
+    // templates
+    QMHtml: 'qmhtml'
   }
 });
 

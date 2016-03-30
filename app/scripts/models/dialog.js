@@ -296,7 +296,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
           current_occupant_ids: dialog.occupants_ids.join(),
           deleted_occupant_ids: User.contact.id,
           dialog_id: dialog.id,
-          room_updated_date: dialog.room_updated_date,
+          room_updated_date: '',
           dialog_update_info: 3
         }
       });
