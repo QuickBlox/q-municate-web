@@ -37,12 +37,16 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     var DialogView = this.app.views.Dialog;
 
     $('body').on('click', '.videoCall, .audioCall', function() {
-      var $className = $(this).attr('class');
+      if (QB.webrtc) {
+        var $className = $(this).attr('class');
 
-      self.cancelCurrentCalls();
-      self.startCall($className);
-      
-      curSession = self.app.models.VideoChat.session;
+        self.cancelCurrentCalls();
+        self.startCall($className);
+        
+        curSession = self.app.models.VideoChat.session;
+      } else {
+        console.warn('Audio and Video calls aren\'t supported by your browser. Please use Google Chrome, Opera or Firefox.')
+      }
 
       return false;
     });
@@ -114,7 +118,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         self.sessionID = sessionId;
         addCallTypeIcon(id, callType);
       });
-      
+
       return false;
     });
 

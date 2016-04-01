@@ -56,16 +56,18 @@ define([
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
       QB.chat.onRejectSubscribeListener = ContactListView.onReject;
 
-      QB.webrtc.onCallListener = VideoChatView.onCall;
-      QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
-      QB.webrtc.onRejectCallListener = VideoChatView.onReject;
-      QB.webrtc.onStopCallListener = VideoChatView.onStop;
-      QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
-      QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
-      QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
-      QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
-      QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
-
+      // if (QB.webrtc) {
+        QB.webrtc.onCallListener = VideoChatView.onCall;
+        QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
+        QB.webrtc.onRejectCallListener = VideoChatView.onReject;
+        QB.webrtc.onStopCallListener = VideoChatView.onStop;
+        QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
+        QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
+        QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
+        QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
+        QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
+      // }
+      
       QB.chat.onDisconnectingListener = function() {
         if (localStorage['QM.user']) {
           window.onLine = false;
@@ -77,7 +79,7 @@ define([
         window.onLine = true;
         $('.no-connection').addClass('is-hidden');
       };
-      
+
       currentUser = new Person(_.clone(User.contact), {
         app: this.app,
         parse: true
