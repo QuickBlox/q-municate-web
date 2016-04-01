@@ -114,7 +114,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         self.sessionID = sessionId;
         addCallTypeIcon(id, callType);
       });
-
+      
       return false;
     });
 
