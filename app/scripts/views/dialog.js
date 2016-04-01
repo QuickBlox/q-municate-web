@@ -77,6 +77,21 @@ define([
         window.onLine = true;
         $('.no-connection').addClass('is-hidden');
       };
+      
+      currentUser = new Person(_.clone(User.contact), {
+        app: this.app,
+        parse: true
+      });
+      profileView = new ProfileView({
+        model: currentUser
+      });
+      changePassView = new ChangePassView({
+        model: currentUser
+      });
+      fbImportView = new FBImportView();
+      this.app.views.Profile = profileView;
+      this.app.views.ChangePass = changePassView;
+      this.app.views.FBImport = fbImportView;
     },
 
     createDataSpinner: function(chat, groupchat, isAjaxDownloading) {

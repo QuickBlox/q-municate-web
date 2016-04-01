@@ -35,7 +35,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.AUDIO);
       }
     }
-    
+
     curSession = self.session;
 
     curSession.getUserMedia(params, function(err, stream) {
