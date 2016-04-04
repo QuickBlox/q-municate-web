@@ -38,10 +38,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
     $('body').on('click', '.videoCall, .audioCall', function() {
       if (QB.webrtc) {
-        var $className = $(this).attr('class');
+        var className = $(this).attr('class');
 
         self.cancelCurrentCalls();
-        self.startCall($className);
+        self.startCall(className);
         
         curSession = self.app.models.VideoChat.session;
       } else {

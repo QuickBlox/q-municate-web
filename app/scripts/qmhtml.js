@@ -62,7 +62,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
       $chat.find('.mCSB_container').append(htmlTemplate);
 
       if (isBottom) {
-        $('.l-chat:visible .scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+        $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
       }
     },
 
@@ -78,7 +78,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
       $chat.find('.mCSB_container').append(htmlTemplate);
 
       if (isBottom) {
-        $('.l-chat:visible .scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+        $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
       }
     }
 

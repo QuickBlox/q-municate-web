@@ -725,10 +725,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
     if (attachType) {
       $('#attach_'+messageId).load(function() {
-        $objDom.mCustomScrollbar("scrollTo", "bottom");
+        $objDom.mCustomScrollbar('scrollTo', 'bottom');
       });
     } else {
-      $objDom.mCustomScrollbar("scrollTo", "bottom");
+      $objDom.mCustomScrollbar('scrollTo', 'bottom');
     }
   }
 
