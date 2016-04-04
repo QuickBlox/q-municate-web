@@ -447,10 +447,11 @@ define([
         closePopup();
         var parents = $(this).parents('.presence-listener');
         var id = parents.data('id');
-        if (parents.is('.popup_details'))
+        if (parents.is('.popup_details')) {
           openPopup($('#popupDelete'), id, null, true);
-        else
+        } else {
           openPopup($('#popupDelete'), id);
+        }
       });
 
       $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {

@@ -68,16 +68,16 @@ define([
         QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
       }
       
-      QB.chat.onDisconnectingListener = function() {
+      QB.chat.onDisconnectedListener = function() {
         if (localStorage['QM.user']) {
           window.onLine = false;
-          $('.no-connection').removeClass('is-hidden');
+          $('.j-disconnect').addClass('is-overlay');
         }
       };
 
       QB.chat.onReconnectListener = function() {
         window.onLine = true;
-        $('.no-connection').addClass('is-hidden');
+        $('.j-disconnect').removeClass('is-overlay');
       };
 
       currentUser = new Person(_.clone(User.contact), {
