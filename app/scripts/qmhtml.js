@@ -52,7 +52,8 @@ define(['jquery', 'underscore', 'MainModule', 'config', 'Helpers'], function($, 
     },
 
     showError: function() {
-      var $chat = $('.l-chat:visible'),
+      var isBottom = Helpers.isBeginOfChat(),
+          $chat = $('.l-chat:visible'),
           htmlTemplate = _.template('<article class="message message_service l-flexbox l-flexbox_alignstretch">'+
                         '<span class="message-avatar contact-avatar_message request-button_pending"></span>'+
                         '<div class="message-container-wrap"><div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'+
@@ -60,11 +61,14 @@ define(['jquery', 'underscore', 'MainModule', 'config', 'Helpers'], function($, 
 
       $chat.find('.mCSB_container').append(htmlTemplate);
 
-      $('.l-chat:visible .scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+      if (isBottom) {
+        $('.l-chat:visible .scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+      }
     },
 
     noWebRTC: function() {
-      var $chat = $('.l-chat:visible'),
+      var isBottom = Helpers.isBeginOfChat(),
+          $chat = $('.l-chat:visible'),
           htmlTemplate = _.template('<article class="message message_service l-flexbox l-flexbox_alignstretch">'+
                         '<span class="message-avatar contact-avatar_message request-button_pending"></span>'+
                         '<div class="message-container-wrap"><div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'+
@@ -73,7 +77,9 @@ define(['jquery', 'underscore', 'MainModule', 'config', 'Helpers'], function($, 
 
       $chat.find('.mCSB_container').append(htmlTemplate);
 
-      $('.l-chat:visible .scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+      if (isBottom) {
+        $('.l-chat:visible .scrollbar_message').mCustomScrollbar("scrollTo", "bottom");
+      }
     }
 
   };
