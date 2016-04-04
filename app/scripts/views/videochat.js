@@ -45,7 +45,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         
         curSession = self.app.models.VideoChat.session;
       } else {
-        console.warn('Audio and Video calls aren\'t supported by your browser. Please use Google Chrome, Opera or Firefox.')
+        QMHtml.VideoChat.noWebRTC();
       }
 
       return false;
@@ -131,22 +131,19 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
           callingSignal = $('#callingSignal')[0],
           endCallSignal = $('#endCallSignal')[0],
           isErrorMessage = $self.data('errorMessage');
-
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
       
-      curSession.stop({});
-
       if (VideoChat.caller) {
         if (!isErrorMessage) {
           VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
         } else {
           $self.removeAttr('data-errorMessage');
         }
-        VideoChat.caller = null;
-        VideoChat.callee = null;
       }
+
+      curSession.stop({});
 
       self.type = null;
       $chat.find('.mediacall').remove();
@@ -375,7 +372,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     VideoChat.getUserMedia(params, callType, function(err, res) {
       if (err) {
         $chat.find('.mediacall .btn_hangup').click();
-        QMHtml.VideoChat.showError($chat);
+        QMHtml.VideoChat.showError();
         fixScroll();
         return true;
       }

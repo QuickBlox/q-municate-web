@@ -56,7 +56,7 @@ define([
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
       QB.chat.onRejectSubscribeListener = ContactListView.onReject;
 
-      // if (QB.webrtc) {
+      if (QB.webrtc) {
         QB.webrtc.onCallListener = VideoChatView.onCall;
         QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
         QB.webrtc.onRejectCallListener = VideoChatView.onReject;
@@ -66,7 +66,7 @@ define([
         QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
         QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
         QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
-      // }
+      }
       
       QB.chat.onDisconnectingListener = function() {
         if (localStorage['QM.user']) {

@@ -328,6 +328,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           smartScroll(message.id, attachType);
         }
 
+        if(!arguments) {
+          smartScroll();
+        }
+
         if (message.sender_id == User.contact.id && message.delivered_ids.length > 0) {
           self.addStatusMessages(message.id, message.dialog_id, 'delivered', false);
         }
