@@ -4,7 +4,7 @@
  * 
  */
 
-define(['jquery', 'underscore', 'MainModule', 'config', 'Helpers'], function($, _, QM, QMCONFIG, Helpers) {
+define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Helpers) {
   var QMHtml = {};
 
   QMHtml.VideoChat = {
