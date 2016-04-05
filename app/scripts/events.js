@@ -832,7 +832,7 @@ define([
   }
 
   function changeInputFile(objDom) {
-    var URL = window.URL || window.webkitURL,
+    var URL = window.URL,
         file = objDom[0].files[0],
         src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
         fileName = file ? file.name : QMCONFIG.defAvatar.caption;
