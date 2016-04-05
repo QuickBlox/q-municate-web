@@ -57,10 +57,6 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
         ContactList.dialogs[dialog.id] = dialog;
         Helpers.log('Dialog', dialog);
 
-        if (!localStorage['QM.dialog-' + dialog.id]) {
-          localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-        }
-
         // send notification about subscribe
         QB.chat.send(jid, {
           type: 'chat',
@@ -92,10 +88,6 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
         dialog = self.create(res);
         ContactList.dialogs[dialog.id] = dialog;
         Helpers.log('Dialog', dialog);
-
-        if (!localStorage['QM.dialog-' + dialog.id]) {
-          localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-        }
 
         QB.chat.muc.join(dialog.room_jid, function() {
           var msgId = QB.chat.helpers.getBsonObjectId();

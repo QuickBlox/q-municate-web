@@ -204,10 +204,6 @@ define([
 
               ContactList.dialogs[dialog.id] = dialog;
 
-              if (!localStorage['QM.dialog-' + dialog.id]) {
-                localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-              }
-
               // don't create a duplicate dialog in contact list
               chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
               if (chat[0] && dialog.unread_count) {
@@ -594,9 +590,6 @@ define([
       Dialog.leaveChat(dialog, function() {
         li.remove();
         isSectionEmpty(list);
-
-        // delete dialog messages
-        localStorage.removeItem('QM.dialog-' + dialog_id);
 
         // delete chat section
         if (chat.length > 0) chat.remove();

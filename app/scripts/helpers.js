@@ -207,8 +207,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
         $msgList = $viewPort.find('.mCSB_container');
 
     if ($msgList.offset()) {
-      var lastMessageHeight = $('.l-chat:visible .mCSB_container article').last().outerHeight(),
-          viewPortPosition = $viewPort.offset().top,
+      var viewPortPosition = $viewPort.offset().top,
           viewPortHeight = $viewPort.outerHeight(),
           msgListPosition = $msgList.offset().top,
           msgListHeight = $msgList.outerHeight(),
@@ -216,7 +215,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           msgListBottom = msgListPosition + msgListHeight,
           bottom = false;
 
-      if ((lastMessageHeight + viewPortBottom + 75) >= msgListBottom) {
+      if ((viewPortBottom + viewPortHeight / 2) >= msgListBottom) {
         bottom = true;
       }
 

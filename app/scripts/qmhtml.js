@@ -54,31 +54,35 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
     showError: function() {
       var isBottom = Helpers.isBeginOfChat(),
           $chat = $('.l-chat:visible'),
-          htmlTemplate = _.template('<article class="message message_service l-flexbox l-flexbox_alignstretch">'+
-                        '<span class="message-avatar contact-avatar_message request-button_pending"></span>'+
-                        '<div class="message-container-wrap"><div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'+
-                        '<div class="message-content"><h4 class="message-author message-error">Devices are not found</h4></div></div></div></article>');
+          $html = $('<article class="message message_service l-flexbox l-flexbox_alignstretch">'+
+                    '<span class="message-avatar contact-avatar_message request-button_pending"></span>'+
+                    '<div class="message-container-wrap">'+
+                    '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'+
+                    '<div class="message-content"><h4 class="message-author message-error">Devices are not found'+
+                    '</h4></div></div></div></article>');
 
-      $chat.find('.mCSB_container').append(htmlTemplate);
+      $chat.find('.mCSB_container').append($html);
 
       if (isBottom) {
-        $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+        $chat.find('.scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
       }
     },
 
     noWebRTC: function() {
       var isBottom = Helpers.isBeginOfChat(),
           $chat = $('.l-chat:visible'),
-          htmlTemplate = _.template('<article class="message message_service l-flexbox l-flexbox_alignstretch">'+
-                        '<span class="message-avatar contact-avatar_message request-button_pending"></span>'+
-                        '<div class="message-container-wrap"><div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'+
-                        '<div class="message-content"><h4 class="message-author message-error">'+
-                        'Audio and Video calls aren\'t supported by your browser. Please use Google Chrome, Opera or Firefox.</h4></div></div></div></article>');
+          $html = $('<article class="message message_service l-flexbox l-flexbox_alignstretch">'+
+                    '<span class="message-avatar contact-avatar_message request-button_pending"></span>'+
+                    '<div class="message-container-wrap">'+
+                    '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'+
+                    '<div class="message-content"><h4 class="message-author message-error">'+
+                    'Audio and Video calls aren\'t supported by your browser. Please use Google Chrome, Opera or Firefox.'+
+                    '</h4></div></div></div></article>');
 
-      $chat.find('.mCSB_container').append(htmlTemplate);
+      $chat.find('.mCSB_container').append($html);
 
       if (isBottom) {
-        $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+        $chat.find('.scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
       }
     }
 
