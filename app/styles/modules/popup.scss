@@ -49,6 +49,14 @@
     height: 195px;
     border: 1px solid #f2f2f2;
   }
+  .popup_discon {
+    width: 400px;
+    height: 80px;
+    border: 1px solid #f2f2f2;
+  }
+  .popup_discon .popup-alert {
+    height: 100%;
+  }
   .popup_search,
   .popup_contacts,
   .popup_profile,
@@ -125,7 +133,8 @@
   font-size: 18px;
   line-height: 24px;
 }
-.alert_delete {
+.alert_delete,
+.alert_discon {
   font-size: 26px;
   line-height: 32px;
 }
@@ -147,7 +156,7 @@
 }
 .attach-upload {
   display: inline-block;
-  width: 60%;
+  width: 100%;
   font-size: 13px;
   font-weight: normal;
 }

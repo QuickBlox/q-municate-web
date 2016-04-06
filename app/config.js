@@ -73,6 +73,9 @@ define(function() {
       debug: {
         mode: 1,
         file: null
+      },
+      webrtc: {
+        answerTimeInterval: 45
       }
     }
 

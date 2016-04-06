@@ -447,10 +447,11 @@ define([
         closePopup();
         var parents = $(this).parents('.presence-listener');
         var id = parents.data('id');
-        if (parents.is('.popup_details'))
+        if (parents.is('.popup_details')) {
           openPopup($('#popupDelete'), id, null, true);
-        else
+        } else {
           openPopup($('#popupDelete'), id);
+        }
       });
 
       $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {
@@ -831,7 +832,7 @@ define([
   }
 
   function changeInputFile(objDom) {
-    var URL = window.URL || window.webkitURL,
+    var URL = window.URL,
         file = objDom[0].files[0],
         src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
         fileName = file ? file.name : QMCONFIG.defAvatar.caption;

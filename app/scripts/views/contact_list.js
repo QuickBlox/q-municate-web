@@ -358,9 +358,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
       delete roster[id];
       ContactList.saveRoster(roster);
 
-      // delete dialog messages
-      localStorage.removeItem('QM.dialog-' + dialog_id);
-
       // send notification about reject
       QB.chat.send(jid, {
         type: 'chat',

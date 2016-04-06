@@ -56,28 +56,30 @@ define([
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
       QB.chat.onRejectSubscribeListener = ContactListView.onReject;
 
-      QB.webrtc.onCallListener = VideoChatView.onCall;
-      QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
-      QB.webrtc.onRejectCallListener = VideoChatView.onReject;
-      QB.webrtc.onStopCallListener = VideoChatView.onStop;
-      QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
-      QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
-      QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
-      QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
-      QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
-
-      QB.chat.onDisconnectingListener = function() {
+      if (QB.webrtc) {
+        QB.webrtc.onCallListener = VideoChatView.onCall;
+        QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
+        QB.webrtc.onRejectCallListener = VideoChatView.onReject;
+        QB.webrtc.onStopCallListener = VideoChatView.onStop;
+        QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
+        QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
+        QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
+        QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
+        QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
+      }
+      
+      QB.chat.onDisconnectedListener = function() {
         if (localStorage['QM.user']) {
           window.onLine = false;
-          $('.no-connection').removeClass('is-hidden');
+          $('.j-disconnect').addClass('is-overlay');
         }
       };
 
       QB.chat.onReconnectListener = function() {
         window.onLine = true;
-        $('.no-connection').addClass('is-hidden');
+        $('.j-disconnect').removeClass('is-overlay');
       };
-      
+
       currentUser = new Person(_.clone(User.contact), {
         app: this.app,
         parse: true
@@ -201,10 +203,6 @@ define([
               dialog = Dialog.create(dialogs[i]);
 
               ContactList.dialogs[dialog.id] = dialog;
-
-              if (!localStorage['QM.dialog-' + dialog.id]) {
-                localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-              }
 
               // don't create a duplicate dialog in contact list
               chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
@@ -592,9 +590,6 @@ define([
       Dialog.leaveChat(dialog, function() {
         li.remove();
         isSectionEmpty(list);
-
-        // delete dialog messages
-        localStorage.removeItem('QM.dialog-' + dialog_id);
 
         // delete chat section
         if (chat.length > 0) chat.remove();

@@ -633,9 +633,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
         ContactList.dialogs[dialog.id] = dialog;
         Helpers.log('Dialog', dialog);
-        if (!localStorage['QM.dialog-' + dialog.id]) {
-          localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-        }
 
         ContactList.add(dialog.occupants_ids, null, function() {
           // don't create a duplicate dialog in contact list
@@ -725,10 +722,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
     if (attachType) {
       $('#attach_'+messageId).load(function() {
-        $objDom.mCustomScrollbar("scrollTo", "bottom");
+        $objDom.mCustomScrollbar('scrollTo', 'bottom');
       });
     } else {
-      $objDom.mCustomScrollbar("scrollTo", "bottom");
+      $objDom.mCustomScrollbar('scrollTo', 'bottom');
     }
   }
 

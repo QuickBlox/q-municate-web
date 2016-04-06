@@ -251,7 +251,6 @@
               <a id="profile" href="#"><div class="avatar"></div></a>
             </li>
           </ul>
-          <div class="no-connection is-hidden"><b>Not Connected.</b> Connecting...</div>
         </header>
         <div class="l-content l-flexbox">
 
@@ -401,7 +400,14 @@
     <div class="l-app-version">v.1.2.2</div>
   </div>
 
-  <div class="popups l-flexbox">
+  <div class="popups l-flexbox j-disconnect">
+
+    <section id="popupDisconnect" class="popup popup_discon is-open j-disconnect">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <span class="alert alert_discon"><b>Not Connected.</b> Connecting...</span>
+      </div>
+    </section>
+
     <section id="popupDetails" class="popup popup_details presence-listener">
       <div class="userDetails-preview">
         <div class="userDetails-avatar profileUserAvatar"></div>
