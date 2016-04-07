@@ -132,7 +132,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
       return $html.append(_.template(htmlStr)(params));
     }
 
-  }
+  };
 
   return QMHtml;
 });
