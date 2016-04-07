@@ -445,8 +445,11 @@ define([
       $('body').on('click', '.deleteContact', function(event) {
         event.preventDefault();
         closePopup();
-        var parents = $(this).parents('.presence-listener');
-        var id = parents.data('id');
+        
+        var $this = $(this),
+            parents = $this.parents('.presence-listener'),
+            id = parents.data('id') || $this.data('id');
+
         if (parents.is('.popup_details')) {
           openPopup($('#popupDelete'), id, null, true);
         } else {
