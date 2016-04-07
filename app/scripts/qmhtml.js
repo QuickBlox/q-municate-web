@@ -58,7 +58,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
                     '<span class="message-avatar contact-avatar_message request-button_pending"></span>'+
                     '<div class="message-container-wrap">'+
                     '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'+
-                    '<div class="message-content"><h4 class="message-author message-error">Devices are not found'+
+                    '<div class="message-content"><h4 class="message-author message-error">Camera and/or microphone wasn\'t found.'+
                     '</h4></div></div></div></article>');
 
       $chat.find('.mCSB_container').append($html);
@@ -84,6 +84,52 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
       if (isBottom) {
         $chat.find('.scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
       }
+    }
+
+  };
+
+  QMHtml.User = {
+
+    contactPopover: function(params, roster) {
+      var $html = $('<ul class="list-actions list-actions_contacts popover"></ul>'),
+          htmlStr = '';
+
+      if (params.dialogType === 3 && roster && roster.subscription !== 'none') {
+        htmlStr = '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="<%=ids%>" href="#">Video call</a></li>'+
+                  '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="<%=ids%>" href="#">Audio call</a></li>'+
+                  '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="<%=ids%>" data-private="1" href="#">Add people</a></li>';
+      } else if (params.dialogType !== 3) {
+        htmlStr = '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="<%=occupantsIds%>" '+
+                  'data-dialog="<%=dialogId%>" href="#">Add people</a></li>';
+      }
+
+      if (params.dialogType === 3) {
+        htmlStr += '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=ids%>" href="#">Profile</a></li>'+
+                   '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
+      } else {
+        htmlStr += '<li class="list-item"><a class="leaveChat list-actions-action" data-group="true" href="#">Leave chat</a></li>';
+      }
+
+      return $html.append(_.template(htmlStr)(params));
+    },
+
+    occupantPopover: function(params, roster) {
+      var $html = $('<ul class="list-actions list-actions_occupants popover"></ul>'),
+          htmlStr = '';
+
+      if (!roster || (roster.subscription === 'none' && !roster.ask)) {
+        htmlStr = '<li class="list-item" data-jid="<%=jid%>"><a class="list-actions-action requestAction" data-id="<%=id%>" href="#">Send request</a></li>';
+      } else if (roster.ask === 'subscribe' && !roster.status) {
+        htmlStr = '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>'+
+                  '<li class="list-item"><a class="deleteContact list-actions-action" data-id="<%=id%>" href="#">Delete contact</a></li>';
+      } else {
+        htmlStr = '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Video call</a></li>'+
+                  '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Audio call</a></li>'+
+                  '<li class="list-item"><a class="list-actions-action writeMessage" data-id="<%=id%>" href="#">Write message</a></li>'+
+                  '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>';
+      }
+
+      return $html.append(_.template(htmlStr)(params));
     }
 
   };
