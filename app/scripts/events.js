@@ -186,27 +186,40 @@ define([
             attachType;
 
         if ($self.is('.preview-photo')) {
-          $('.attach-photo').removeClass('is-hidden').siblings('.attach-video').addClass('is-hidden');
-          attachType = 'photo';
+          setAttachType('photo');
         } else {
-          $('.attach-video').removeClass('is-hidden').siblings('.attach-photo').addClass('is-hidden');
-          attachType = 'video';
+          setAttachType('video');
         }
+
         openAttachPopup($('#popupAttach'), name, url, attachType);
+
+        function setAttachType(type) {
+          var otherType = type === 'photo' ? 'video' : 'photo';
+
+          $('.attach-'+type).removeClass('is-hidden')
+                            .siblings('.attach-'+otherType).addClass('is-hidden');
+
+          attachType = type;
+        }
       });
 
       /* group chats
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('click', '.groupTitle', function() {
-        var $chat = $('.l-chat:visible');
-        if ($chat.find('.triangle_up').is('.is-hidden')) {
-          $chat.find('.triangle_up').removeClass('is-hidden')
-                                    .siblings('.triangle').addClass('is-hidden');
-          $chat.find('.chat-occupants-wrap').addClass('is-overlay');
-          $chat.find('.l-chat-content').addClass('l-chat-content_min');
+        var $chat = $('.l-chat:visible'),
+            $triangleUp,
+            $triangleDown;
+
+        if ($triangleUp.is('.is-hidden')) {
+          setTriagle($triangleUp);
         } else {
-          $chat.find('.triangle_down').removeClass('is-hidden')
-                                      .siblings('.triangle').addClass('is-hidden');
+          setTriagle($triangleDown);
+        }
+
+        function setTriagle($triangle) {
+          $triangle.removeClass('is-hidden')
+                   .siblings('.triangle').addClass('is-hidden');
+
           $chat.find('.chat-occupants-wrap').removeClass('is-overlay');
           $chat.find('.l-chat-content').removeClass('l-chat-content_min');
         }
@@ -230,7 +243,7 @@ define([
       $('.l-workspace-wrap').on('mouseenter focus', '.groupTitle .name_chat', function() {
         var $chat = $('.l-chat:visible');
         $chat.find('.triangle:visible').addClass('is-hover')
-                                       .siblings('.pencil').removeClass('is-hidden');
+             .siblings('.pencil').removeClass('is-hidden');
       });
 
       $('.l-workspace-wrap').on('mouseleave', '.groupTitle .name_chat', function() {
@@ -238,7 +251,7 @@ define([
 
         if (!$(this).is('.is-focus')) {
           $chat.find('.triangle.is-hover').removeClass('is-hover')
-                                          .siblings('.pencil').addClass('is-hidden');
+               .siblings('.pencil').addClass('is-hidden');
         }
       });
 
@@ -249,7 +262,7 @@ define([
           $chat.find('.groupTitle .name_chat').removeClass('is-focus');
           $chat.find('.groupTitle .name_chat')[0].scrollLeft = 0;
           $chat.find('.triangle.is-hover').removeClass('is-hover')
-                                          .siblings('.pencil').addClass('is-hidden');
+               .siblings('.pencil').addClass('is-hidden');
 
           if (editedChatName && !editedChatName.name) {
             $chat.find('.name_chat').text(chatName.name);
