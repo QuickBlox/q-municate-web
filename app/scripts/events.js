@@ -198,15 +198,17 @@ define([
       /* group chats
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('click', '.groupTitle', function() {
-        var chat = $('.l-chat:visible');
-        if (chat.find('.triangle_up').is('.is-hidden')) {
-          chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-          chat.find('.chat-occupants-wrap').addClass('is-overlay');
-          chat.find('.l-chat-content').addClass('l-chat-content_min');
+        var $chat = $('.l-chat:visible');
+        if ($chat.find('.triangle_up').is('.is-hidden')) {
+          $chat.find('.triangle_up').removeClass('is-hidden')
+                                    .siblings('.triangle').addClass('is-hidden');
+          $chat.find('.chat-occupants-wrap').addClass('is-overlay');
+          $chat.find('.l-chat-content').addClass('l-chat-content_min');
         } else {
-          chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-          chat.find('.chat-occupants-wrap').removeClass('is-overlay');
-          chat.find('.l-chat-content').removeClass('l-chat-content_min');
+          $chat.find('.triangle_down').removeClass('is-hidden')
+                                      .siblings('.triangle').addClass('is-hidden');
+          $chat.find('.chat-occupants-wrap').removeClass('is-overlay');
+          $chat.find('.l-chat-content').removeClass('l-chat-content_min');
         }
       });
 
@@ -226,33 +228,36 @@ define([
       /* change the chat name
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('mouseenter focus', '.groupTitle .name_chat', function() {
-        var chat = $('.l-chat:visible');
-        chat.find('.triangle:visible').addClass('is-hover').siblings('.pencil').removeClass('is-hidden');
+        var $chat = $('.l-chat:visible');
+        $chat.find('.triangle:visible').addClass('is-hover')
+                                       .siblings('.pencil').removeClass('is-hidden');
       });
 
       $('.l-workspace-wrap').on('mouseleave', '.groupTitle .name_chat', function() {
-        var chat = $('.l-chat:visible');
+        var $chat = $('.l-chat:visible');
 
         if (!$(this).is('.is-focus')) {
-          chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+          $chat.find('.triangle.is-hover').removeClass('is-hover')
+                                          .siblings('.pencil').addClass('is-hidden');
         }
       });
 
       $(document.body).on('click', function() {
-        var chat = $('.l-chat:visible');
+        var $chat = $('.l-chat:visible');
 
-        if (chat.find('.groupTitle .name_chat').is('.is-focus')) {
-          chat.find('.groupTitle .name_chat').removeClass('is-focus');
-          chat.find('.groupTitle .name_chat')[0].scrollLeft = 0;
-          chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+        if ($chat.find('.groupTitle .name_chat').is('.is-focus')) {
+          $chat.find('.groupTitle .name_chat').removeClass('is-focus');
+          $chat.find('.groupTitle .name_chat')[0].scrollLeft = 0;
+          $chat.find('.triangle.is-hover').removeClass('is-hover')
+                                          .siblings('.pencil').addClass('is-hidden');
 
           if (editedChatName && !editedChatName.name) {
-            chat.find('.name_chat').text(chatName.name);
+            $chat.find('.name_chat').text(chatName.name);
           } else if (editedChatName && (editedChatName.name !== chatName.name) && (editedChatName.created_at > chatName.created_at)) {
-            chat.find('.name_chat').text(editedChatName.name).attr('title', editedChatName.name);
-            Dialog.changeName(chat.data('dialog'), editedChatName.name);
+            $chat.find('.name_chat').text(editedChatName.name).attr('title', editedChatName.name);
+            Dialog.changeName($chat.data('dialog'), editedChatName.name);
           } else {
-            chat.find('.name_chat').text(chat.find('.name_chat').text().trim());
+            $chat.find('.name_chat').text($chat.find('.name_chat').text().trim());
           }
         }
       });
@@ -310,7 +315,7 @@ define([
       $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
         var $chat = $('.l-chat:visible');
 
-        Dialog.changeAvatar(chat.data('dialog'), $(this), function(avatar) {
+        Dialog.changeAvatar($chat.data('dialog'), $(this), function(avatar) {
           if (!avatar) return false;
           $chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
         });
@@ -446,9 +451,9 @@ define([
         event.preventDefault();
         closePopup();
         
-        var $this = $(this),
-            parents = $this.parents('.presence-listener'),
-            id = parents.data('id') || $this.data('id');
+        var $that = $(this),
+            parents = $that.parents('.presence-listener'),
+            id = parents.data('id') || $that.data('id');
 
         if (parents.is('.popup_details')) {
           openPopup($('#popupDelete'), id, null, true);
