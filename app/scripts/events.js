@@ -186,42 +186,23 @@ define([
             attachType;
 
         if ($self.is('.preview-photo')) {
-          setAttachType('photo');
+          attachType = 'photo';
+          setAttachType(attachType);
         } else {
-          setAttachType('video');
+          attachType = 'video';
+          setAttachType(attachType);
         }
 
         openAttachPopup($('#popupAttach'), name, url, attachType);
-
-        function setAttachType(type) {
-          var otherType = type === 'photo' ? 'video' : 'photo';
-
-          $('.attach-'+type).removeClass('is-hidden')
-                            .siblings('.attach-'+otherType).addClass('is-hidden');
-
-          attachType = type;
-        }
       });
 
       /* group chats
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('click', '.groupTitle', function() {
-        var $chat = $('.l-chat:visible'),
-            $triangleUp,
-            $triangleDown;
-
-        if ($triangleUp.is('.is-hidden')) {
-          setTriagle($triangleUp);
+        if ($('.l-chat:visible').find('.triangle_up').is('.is-hidden')) {
+          setTriagle('up');
         } else {
-          setTriagle($triangleDown);
-        }
-
-        function setTriagle($triangle) {
-          $triangle.removeClass('is-hidden')
-                   .siblings('.triangle').addClass('is-hidden');
-
-          $chat.find('.chat-occupants-wrap').removeClass('is-overlay');
-          $chat.find('.l-chat-content').removeClass('l-chat-content_min');
+          setTriagle('down');
         }
       });
 
@@ -928,6 +909,24 @@ define([
     } else {
       return true;
     }
+  }
+
+  function setAttachType(type) {
+    var otherType = type === 'photo' ? 'video' : 'photo';
+
+    $('.attach-'+type).removeClass('is-hidden')
+                      .siblings('.attach-'+otherType).addClass('is-hidden');
+  }
+
+  function setTriagle(UpOrDown) {
+    var $chat = $('.l-chat:visible'),
+        $triangle = $chat.find('.triangle_'+UpOrDown);
+
+    $triangle.removeClass('is-hidden')
+             .siblings('.triangle').addClass('is-hidden');
+
+    $chat.find('.chat-occupants-wrap').toggleClass('is-overlay');
+    $chat.find('.l-chat-content').toggleClass('l-chat-content_min');
   }
 
   return Events;

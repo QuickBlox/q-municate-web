@@ -92,15 +92,15 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
 
     contactPopover: function(params, roster) {
       var $html = $('<ul class="list-actions list-actions_contacts popover"></ul>'),
-          htmlStr;
+          htmlStr = '';
 
       if (params.dialogType === 3 && roster && roster.subscription !== 'none') {
         htmlStr = '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="<%=ids%>" href="#">Video call</a></li>'+
-                   '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="<%=ids%>" href="#">Audio call</a></li>'+
-                   '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="<%=ids%>" data-private="1" href="#">Add people</a></li>';
+                  '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="<%=ids%>" href="#">Audio call</a></li>'+
+                  '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="<%=ids%>" data-private="1" href="#">Add people</a></li>';
       } else if (params.dialogType !== 3) {
         htmlStr = '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="<%=occupantsIds%>" '+
-                   'data-dialog="<%=dialogId%>" href="#">Add people</a></li>';
+                  'data-dialog="<%=dialogId%>" href="#">Add people</a></li>';
       }
 
       if (params.dialogType === 3) {
@@ -115,7 +115,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
 
     occupantPopover: function(params, roster) {
       var $html = $('<ul class="list-actions list-actions_occupants popover"></ul>'),
-          htmlStr;
+          htmlStr = '';
 
       if (!roster || (roster.subscription === 'none' && !roster.ask)) {
         htmlStr = '<li class="list-item" data-jid="<%=jid%>"><a class="list-actions-action requestAction" data-id="<%=id%>" href="#">Send request</a></li>';
