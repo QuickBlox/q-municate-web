@@ -69,14 +69,16 @@ define([
       }
       
       QB.chat.onDisconnectedListener = function() {
+        window.onLine = false;
+
         if (localStorage['QM.user']) {
-          window.onLine = false;
           $('.j-disconnect').addClass('is-overlay');
         }
       };
 
       QB.chat.onReconnectListener = function() {
         window.onLine = true;
+        
         $('.j-disconnect').removeClass('is-overlay');
       };
 
