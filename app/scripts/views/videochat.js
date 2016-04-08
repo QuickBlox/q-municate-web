@@ -202,6 +202,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
   };
 
   VideoChatView.prototype.onCall = function(session, extension) {
+    if ('div.popups.is-overlay') {
+      $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
+    }
+
     var audioSignal = document.getElementById('ringtoneSignal'),
         $incomings = $('#popupIncoming'),
         id = session.initiatorID,
