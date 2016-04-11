@@ -131,6 +131,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
           callingSignal = $('#callingSignal')[0],
           endCallSignal = $('#endCallSignal')[0],
           isErrorMessage = $self.data('errorMessage');
+
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
@@ -199,9 +200,17 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       return false;
     });
 
+    $(window).on('resize', function() {
+      setScreenStyle();
+    });
+
   };
 
   VideoChatView.prototype.onCall = function(session, extension) {
+    if ('div.popups.is-overlay') {
+      $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
+    }
+
     var audioSignal = document.getElementById('ringtoneSignal'),
         $incomings = $('#popupIncoming'),
         id = session.initiatorID,
@@ -268,21 +277,17 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       video.addEventListener('timeupdate', function() {
         videoStreamTime = video.currentTime;
         var duration = getTimer(Math.floor(video.currentTime));
-        $('.mediacall-info-duration, .mediacall-remote-duration').text(duration);
+        $('.mediacall-info-duration').text(duration);
       });
 
       $('#remoteUser').addClass('is-hidden');
       $('#remoteStream').removeClass('is-hidden');
-      $('.mediacall-info-duration').removeClass('is-hidden');
-      $('.mediacall-remote-duration').addClass('is-hidden');
     } else {
       setTimeout(function () {
         setDuration();
 
         $('#remoteStream').addClass('is-hidden');
         $('#remoteUser').removeClass('is-hidden');
-        $('.mediacall-remote-duration').removeClass('is-hidden');
-        $('.mediacall-info-duration').addClass('is-hidden');
       }, 2700);
     }
   };
@@ -315,14 +320,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       if (extension.mute === 'video') {
         $selector.find('#remoteStream').addClass('is-hidden');
         $selector.find('#remoteUser').removeClass('is-hidden');
-        $selector.find('.mediacall-remote-duration').removeClass('is-hidden');
-        $selector.find('.mediacall-info-duration').addClass('is-hidden');
       }
       if (extension.unmute === 'video') {
         $selector.find('#remoteStream').removeClass('is-hidden');
         $selector.find('#remoteUser').addClass('is-hidden');
-        $selector.find('.mediacall-info-duration').removeClass('is-hidden');
-        $selector.find('.mediacall-remote-duration').addClass('is-hidden');
       }
     }
   };
@@ -409,9 +410,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     $chat.prepend(htmlTpl);
     $chat.find('.l-chat-header').hide();
     $chat.find('.l-chat-content').css({height: 'calc(50% - 90px)'});
-    if (screen.height > 768) {
-      $chat.find('.mediacall-remote-user').addClass('j-largeScreen');
-    }
+
+    setScreenStyle();
 
     $('.dialog-item[data-dialog="'+dialogId+'"]').find('.contact').click();
 
@@ -589,7 +589,7 @@ function closePopup() {
 
 function setDuration(currentTime) {
   var c = currentTime || 0;
-  $('.mediacall-info-duration, .mediacall-remote-duration').text(getTimer(c));
+  $('.mediacall-info-duration').text(getTimer(c));
   callTimer = setTimeout(function() {
     c++;
     setDuration(c);
@@ -622,4 +622,12 @@ function fixScroll() {
 
 function capitaliseFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function setScreenStyle() {
+  if ($('.mediacall').outerHeight() <= 260) {
+    $('.mediacall').addClass('small_screen');
+  } else {
+    $('.mediacall').removeClass('small_screen');
+  }
 }

@@ -59,6 +59,7 @@
   position: relative;
   width: 100%;
   height: 100%;
+  min-height: 185px;
   max-height: 50%;
   background: #262626;
   text-align: center;
@@ -71,20 +72,27 @@
 
   .mediacall-remote-user {
     width: 80%;
+    height: 100%;
+    max-height: 326px;
     margin: auto;
   }
-  .mediacall-remote-user.j-largeScreen {
-    position: absolute;
-    top: 16%;
-    left: 10%;
-    margin: 0;
-  }
     .mediacall-remote-avatar {
-      width: 146px;
-      height: 146px;
-      margin-bottom: 20px;
+      height: 50%;
+      max-width: 146px;
+      max-height: 146px;
+      margin: 10px 0 10px 0;
       border-radius: 50%;
     }
+      .mediacall.small_screen .mediacall-remote-avatar {
+        margin: 5px 0 5px 0;
+      }
+      .mediacall.small_screen .mediacall-remote-name {
+        font-size: 18px;
+        line-height: 18px;
+      }
+      .mediacall.small_screen .mediacall-controls {
+        bottom: 0;
+      }
     .mediacall-remote-name,
     .mediacall-remote-duration {
       font-size: 22px;
