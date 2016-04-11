@@ -31,11 +31,10 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
           '<img id="localUser" class="mediacall-local mediacall-local-avatar" src="<%=userAvatar%>" alt="avatar">'+
           '<div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">'+
           '<img class="mediacall-remote-avatar" src="<%=contactAvatar%>" alt="avatar">'+
-          '<span class="mediacall-remote-name"><%=contactName%></span>'+
-          '<span class="mediacall-remote-duration">connecting...</span></div>'+
+          '<span class="mediacall-remote-name"><%=contactName%></span></div>'+
           '<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">'+
           '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">'+
-          '<span class="mediacall-info-duration is-hidden"></span></div>'+
+          '<span class="mediacall-info-duration">connect...</span></div>'+
           '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">'+
           '<button class="btn_mediacall btn_full-mode" data-id="<%=userId%>" data-dialog="<%=dialogId%>" disabled>'+
           '<div id="fullModeOn" class="btn-icon_mediacall"></div>'+
