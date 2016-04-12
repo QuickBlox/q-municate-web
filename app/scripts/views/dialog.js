@@ -30,6 +30,7 @@ define([
 
   function DialogView(app) {
     this.app = app;
+
     User = this.app.models.User;
     Dialog = this.app.models.Dialog;
     Message = this.app.models.Message;
@@ -43,7 +44,8 @@ define([
       var ContactListView = this.app.views.ContactList,
           MessageView = this.app.views.Message,
           VideoChat = this.app.models.VideoChat,
-          VideoChatView = this.app.views.VideoChat;
+          VideoChatView = this.app.views.VideoChat,
+          QBApiCalls = this.app.service
 
       QB.chat.onMessageListener = MessageView.onMessage;
       QB.chat.onMessageTypingListener = MessageView.onMessageTyping;
@@ -67,18 +69,12 @@ define([
         QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
         QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
       }
-      
-      QB.chat.onDisconnectedListener = function() {
-        window.onLine = false;
 
-        if (localStorage['QM.user']) {
-          $('.j-disconnect').addClass('is-overlay');
-        }
+      QB.chat.onDisconnectedListener = function() {
+        $('.j-disconnect').addClass('is-overlay');
       };
 
       QB.chat.onReconnectListener = function() {
-        window.onLine = true;
-        
         $('.j-disconnect').removeClass('is-overlay');
       };
 
