@@ -44,8 +44,7 @@ define([
       var ContactListView = this.app.views.ContactList,
           MessageView = this.app.views.Message,
           VideoChat = this.app.models.VideoChat,
-          VideoChatView = this.app.views.VideoChat,
-          QBApiCalls = this.app.service
+          VideoChatView = this.app.views.VideoChat;
 
       QB.chat.onMessageListener = MessageView.onMessage;
       QB.chat.onMessageTypingListener = MessageView.onMessageTyping;
