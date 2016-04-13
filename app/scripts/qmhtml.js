@@ -129,9 +129,29 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
       }
 
       return $html.append(_.template(htmlStr)(params));
-    }
+    },
 
-  };
+    popupDetails: function(roster) {
+      var $html = $('#popupDetails').find('.userDetails-controls'),
+          htmlStr = '',
+          params = {
+            roster: 'ask_subscription'
+          };
+
+      if (roster.subscription !== 'none' && roster.ask === null) {
+        params.roster = '';
+        htmlStr = '<button class="btn_userDetails writeMessage videoCall"><img src="images/icon-videocall.svg" alt="videocall">Video Call</button>'+
+                  '<button class="btn_userDetails writeMessage audioCall"><img src="images/icon-audiocall.svg" alt="videocall">Call</button>';
+      }
+
+      htmlStr += '<button class="btn_userDetails <%=roster%> writeMessage"><img src="images/icon-message.png" alt="videocall">Message</button>'+
+                 '<button class="btn_userDetails <%=roster%> deleteContact"><img src="images/icon-delete.svg" alt="videocall">Delete</button>';
+
+      $html.empty();
+      $html.append(_.template(htmlStr)(params));
+    } 
+
+   };
 
   return QMHtml;
 });
