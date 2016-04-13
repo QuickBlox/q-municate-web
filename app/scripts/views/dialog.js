@@ -69,6 +69,7 @@ define([
       }
       
       QB.chat.onDisconnectedListener = function() {
+        console.info("DISCONNECTED")
         window.onLine = false;
 
         if (localStorage['QM.user']) {
