@@ -30,6 +30,7 @@ define([
 
   function DialogView(app) {
     this.app = app;
+
     User = this.app.models.User;
     Dialog = this.app.models.Dialog;
     Message = this.app.models.Message;
@@ -67,19 +68,12 @@ define([
         QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
         QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
       }
-      
-      QB.chat.onDisconnectedListener = function() {
-        console.info("DISCONNECTED")
-        window.onLine = false;
 
-        if (localStorage['QM.user']) {
-          $('.j-disconnect').addClass('is-overlay');
-        }
+      QB.chat.onDisconnectedListener = function() {
+        $('.j-disconnect').addClass('is-overlay');
       };
 
       QB.chat.onReconnectListener = function() {
-        window.onLine = true;
-        
         $('.j-disconnect').removeClass('is-overlay');
       };
 

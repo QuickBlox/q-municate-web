@@ -9,10 +9,11 @@ define([
   'jquery',
   'config',
   'Helpers',
+  'QMHtml',
   'minEmoji',
   'mCustomScrollbar',
   'mousewheel'
-], function($, QMCONFIG, Helpers, minEmoji) {
+], function($, QMCONFIG, Helpers, QMHtml, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
@@ -24,6 +25,7 @@ define([
 
     Dialog = this.app.models.Dialog;
     UserView = this.app.views.User;
+    ContactList = this.app.models.ContactList;
     ContactListView = this.app.views.ContactList;
     DialogView = this.app.views.Dialog;
     MessageView = this.app.views.Message;
@@ -77,12 +79,17 @@ define([
 
       /* User Profile
       ----------------------------------------------------- */
-      $('body').on('click', '.userDetails', function(event) {
-        event.preventDefault();
+      $('body').on('click', '.userDetails', function() {
         removePopover();
-        var id = $(this).data('id');
+
+        var id = $(this).data('id'),
+            roster = ContactList.roster[id];
+
+        QMHtml.User.getControlButtonsForPopupDetails(roster);
         openPopup($('#popupDetails'), id);
         UserView.buildDetails(id);
+
+        return false;
       });
 
       $('body').on('click', '#userProfile', function(event) {
@@ -102,8 +109,6 @@ define([
       });
 
       $('body').on('click', '.btn_popup_changepass', function(event) {
-        if (checkConnection() === false) return false;
-
         var profileView = App.views.Profile,
             changePassView = App.views.ChangePass;
 
@@ -111,9 +116,7 @@ define([
         changePassView.submitForm();
       });
 
-      $('body').on('click', '.btn_userProfile_connect', function() {
-        if (checkConnection() === false) return false;
-
+      $('body').on('click', '.btn_userProfile_connect', function() {     
         var profileView = App.views.Profile,
             btn = $(this);
 
@@ -177,9 +180,7 @@ define([
         AttachView.cancel($(this));
       });
 
-      $('.l-workspace-wrap').on('click', '.preview', function() {
-        if (checkConnection() === false) return false;
-
+      $('.l-workspace-wrap').on('click', '.preview', function() {        
         var $self = $(this),
             name = $self.data('name'),
             url = $self.data('url'),
@@ -321,9 +322,7 @@ define([
 
       /* welcome page
       ----------------------------------------------------- */
-      $('#signupFB, #loginFB').on('click', function(event) {
-        if (checkConnection() === false) return false;
-
+      $('#signupFB, #loginFB').on('click', function(event) {      
         Helpers.log('connect with FB');
         event.preventDefault();
 
@@ -351,20 +350,16 @@ define([
       /* button "back"
       ----------------------------------------------------- */
       $('.back_to_welcome_page').on('click', function() {
-        if (checkConnection() === false) return false;
         UserView.logout();
       });
 
       $('.back_to_login_page').on('click', function() {
-        if (checkConnection() === false) return false;
         UserView.loginQB();
       });
 
       /* signup page
       ----------------------------------------------------- */
       $('#signupForm').on('click submit', function(event) {
-        if (checkConnection() === false) return false;
-
         Helpers.log('create user');
         event.preventDefault();
         UserView.signupForm();
@@ -378,9 +373,7 @@ define([
         UserView.forgot();
       });
 
-      $('#loginForm').on('click submit', function(event) {
-        if (checkConnection() === false) return false;
-
+      $('#loginForm').on('click submit', function(event) {     
         Helpers.log('authorize user');
         event.preventDefault();
         UserView.loginForm();
@@ -388,17 +381,13 @@ define([
 
       /* forgot and reset page
       ----------------------------------------------------- */
-      $('#forgotForm').on('click submit', function(event) {
-        if (checkConnection() === false) return false;
-
+      $('#forgotForm').on('click submit', function(event) {    
         Helpers.log('send letter');
         event.preventDefault();
         UserView.forgotForm();
       });
 
       $('#resetForm').on('click submit', function(event) {
-        if (checkConnection() === false) return false;
-
         Helpers.log('reset password');
         event.preventDefault();
         UserView.resetForm();
@@ -465,22 +454,16 @@ define([
         openPopup($('#popupLeave'), null, dialog_id);
       });
 
-      $('#logoutConfirm').on('click', function() {
-        if (checkConnection() === false) return false;
-
+      $('#logoutConfirm').on('click', function() {  
         UserView.logout();
       });
 
       $('#deleteConfirm').on('click', function() {
-        if (checkConnection() === false) return false;
-
         Helpers.log('delete contact');
         ContactListView.sendDelete($(this));
       });
 
       $('#leaveConfirm').on('click', function() {
-        if (checkConnection() === false) return false;
-
         Helpers.log('leave chat');
         DialogView.leaveGroupChat($(this));
       });
@@ -536,8 +519,6 @@ define([
       /* search
       ----------------------------------------------------- */
       $('#globalSearch').on('keyup search submit', function(event) {
-        if (checkConnection() === false) return false;
-
         event.preventDefault();
         var code = event.keyCode;
             form = $(this);
@@ -588,37 +569,27 @@ define([
       /* subscriptions
       ----------------------------------------------------- */
       $('.list_contacts').on('click', 'button.send-request', function() {
-        if (checkConnection() === false) return false;
-
         Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this));
       });
 
       $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
-        if (checkConnection() === false) return false;
-
         Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this), true);
       });
 
       $('body').on('click', '.requestAction', function(event) {
-        if (checkConnection() === false) return false;
-
         event.preventDefault();
         Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this));
       });
 
       $('.list').on('click', '.request-button_ok', function() {
-        if (checkConnection() === false) return false;
-
         Helpers.log('send confirm');
         ContactListView.sendConfirm($(this));
       });
 
       $('.list').on('click', '.request-button_cancel', function() {
-        if (checkConnection() === false) return false;
-
         Helpers.log('send reject');
         ContactListView.sendReject($(this));
       });
@@ -688,14 +659,10 @@ define([
       });
 
       $('#popupContacts .btn_popup_group').on('click', function() {
-        if (checkConnection() === false) return false;
-
         DialogView.createGroupChat();
       });
 
       $('#popupContacts .btn_popup_add').on('click', function() {
-        if (checkConnection() === false) return false;
-
         var dialog_id = $(this).parents('.popup').data('dialog');
         DialogView.createGroupChat('add', dialog_id);
       });
@@ -798,8 +765,6 @@ define([
       /* temporary events
       ----------------------------------------------------- */
       $('#share').on('click', function(event) {
-        if (checkConnection() === false) return false;
-
         event.preventDefault();
       });
 
@@ -899,15 +864,6 @@ define([
       textRange.moveToElementText(el.get(0));
       textRange.collapse(false);
       textRange.select();
-    }
-  }
-
-  function checkConnection() {
-    if (window.onLine === false) {
-      alert('Sorry. You need to recover your Internet connection');
-      return false;
-    } else {
-      return true;
     }
   }
 

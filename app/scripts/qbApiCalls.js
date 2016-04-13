@@ -31,7 +31,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         Session.create(JSON.parse(localStorage['QM.session']), true);
         UserView.autologin();
       }
-
+      
       Helpers.log('QB init', this);
     },
 
