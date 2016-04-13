@@ -135,14 +135,6 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
-      
-      if (VideoChat.caller) {
-        if (!isErrorMessage) {
-          VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
-        } else {
-          $self.removeAttr('data-errorMessage');
-        }
-      }
 
       curSession.stop({});
 
@@ -152,6 +144,14 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       $chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
 
       addCallTypeIcon(opponentId, null);
+      
+      if (VideoChat.caller) {
+        if (!isErrorMessage) {
+          VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
+        } else {
+          $self.removeAttr('data-errorMessage');
+        }
+      }
 
       return false;
     });

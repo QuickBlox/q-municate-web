@@ -9,10 +9,11 @@ define([
   'jquery',
   'config',
   'Helpers',
+  'QMHtml',
   'minEmoji',
   'mCustomScrollbar',
   'mousewheel'
-], function($, QMCONFIG, Helpers, minEmoji) {
+], function($, QMCONFIG, Helpers, QMHtml, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
@@ -24,6 +25,7 @@ define([
 
     Dialog = this.app.models.Dialog;
     UserView = this.app.views.User;
+    ContactList = this.app.models.ContactList;
     ContactListView = this.app.views.ContactList;
     DialogView = this.app.views.Dialog;
     MessageView = this.app.views.Message;
@@ -77,12 +79,17 @@ define([
 
       /* User Profile
       ----------------------------------------------------- */
-      $('body').on('click', '.userDetails', function(event) {
-        event.preventDefault();
+      $('body').on('click', '.userDetails', function() {
         removePopover();
-        var id = $(this).data('id');
+
+        var id = $(this).data('id'),
+            roster = ContactList.roster[id];
+
+        QMHtml.User.getControlButtonsForPopupDetails(roster);
         openPopup($('#popupDetails'), id);
         UserView.buildDetails(id);
+
+        return false;
       });
 
       $('body').on('click', '#userProfile', function(event) {
