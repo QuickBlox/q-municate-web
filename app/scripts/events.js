@@ -85,7 +85,7 @@ define([
         var id = $(this).data('id'),
             roster = ContactList.roster[id];
 
-        QMHtml.User.popupDetails(roster);
+        QMHtml.User.getControlButtonsForPopupDetails(roster);
         openPopup($('#popupDetails'), id);
         UserView.buildDetails(id);
 

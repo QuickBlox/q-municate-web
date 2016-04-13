@@ -131,7 +131,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
       return $html.append(_.template(htmlStr)(params));
     },
 
-    popupDetails: function(roster) {
+    getControlButtonsForPopupDetails: function(roster) {
       var $html = $('#popupDetails').find('.userDetails-controls'),
           htmlStr = '',
           params = {
