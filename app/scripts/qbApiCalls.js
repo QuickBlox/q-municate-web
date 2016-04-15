@@ -38,27 +38,30 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
     checkSession: function(callback) {
       var self = this;
 
-      if ((new Date()).toISOString() > Session.expirationTime) {
-        // reset QuickBlox JS SDK after autologin via an existing token
-        self.init();
+      QB.getSession(function(err, res) {
+        if (((new Date()).toISOString() > Session.expirationTime) || !res) {
+          // reset QuickBlox JS SDK after autologin via an existing token
+          self.init();
 
-        // recovery session
-        if (Session.authParams.provider) {
-          UserView.getFBStatus(function(token) {
-            Session.authParams.keys.token = token;
-            self.createSession(Session.authParams, callback, Session._remember);
-          });
+          // recovery session
+          if (Session.authParams.provider) {
+            UserView.getFBStatus(function(token) {
+              Session.authParams.keys.token = token;
+              self.createSession(Session.authParams, callback, Session._remember);
+            });
+          } else {
+            self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
+            Session.encrypt(Session.authParams);
+          }
         } else {
-          self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
-          Session.encrypt(Session.authParams);
+          callback();
         }
-        
-      } else {
-        callback();
-      }
+      });
     },
 
     createSession: function(params, callback, isRemember) {
+      var self = this;
+
       QB.createSession(params, function(err, res) {
         if (err) {
           Helpers.log(err.detail);
@@ -98,6 +101,25 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
             Session.update({ token: res.token });
           } else {
             Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
+          }
+
+          if (User.contact) {
+            $('.j-chatConnecting').addClass('is-overlay');
+            QB.chat.disconnect();
+
+            self.connectChat(User.contact.user_jid, function(roster) {
+              var dialogs = self.app.models.ContactList.dialogs;
+
+              for (var key in dialogs) {
+                if (dialogs[key].type === 2) {
+                  QB.chat.muc.join(dialogs[key].room_jid);
+                }
+              }
+
+              $('.j-chatConnecting').removeClass('is-overlay');
+
+              self.app.init();
+            });
           }
 
           Session.update({ date: new Date() });
@@ -239,20 +261,15 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
 
     connectChat: function(jid, callback) {
       this.checkSession(function(res) {
-        // var password = Session.authParams.provider ? Session.token :
-        //                Session.decrypt(Session.authParams).password;
-
-        // Session.encrypt(Session.authParams);
         var password = Session.token;
+
         QB.chat.connect({jid: jid, password: password}, function(err, res) {
           if (err) {
             Helpers.log(err.detail);
 
-            if (err.detail.indexOf('Status.ERROR') >= 0 || err.detail.indexOf('Status.AUTHFAIL') >= 0) {
-              fail(err.detail);
-              UserView.logout();
-              window.location.reload();
-            }
+            fail(err.detail);
+            UserView.logout();
+            window.location.reload();
           } else {
             var eventParams = {
               'chat_endpoints': QB.auth.service.qbInst.config.endpoints.chat,

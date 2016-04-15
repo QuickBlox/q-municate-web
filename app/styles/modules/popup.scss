@@ -54,6 +54,14 @@
     height: 80px;
     border: 1px solid #f2f2f2;
   }
+  .popup_connect {
+    width: 100px;
+    height: 100px;
+  }
+    #chatConnecting.popup {
+      transition: none;
+      background: none;
+    }
   .popup_discon .popup-alert {
     height: 100%;
   }

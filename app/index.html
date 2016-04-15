@@ -397,14 +397,23 @@
       </footer>
     </section>
 
-    <div class="l-app-version">v.1.2.2.1</div>
+    <div class="l-app-version">v.1.2.2.2</div>
   </div>
 
-  <div class="popups l-flexbox j-disconnect">
+  <div class="popups l-flexbox j-disconnect j-chatConnecting">
 
     <section id="popupDisconnect" class="popup popup_discon is-open j-disconnect">
       <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
         <span class="alert alert_discon"><b>Not Connected.</b> Connecting...</span>
+      </div>
+    </section>
+
+    <section id="chatConnecting" class="popup popup_connect is-open j-chatConnecting">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <div class="spinner">
+          <div class="spinner-dot1"></div>
+          <div class="spinner-dot2"></div>
+        </div>
       </div>
     </section>
 
