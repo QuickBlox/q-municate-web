@@ -118,7 +118,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
 
               $('.j-chatConnecting').removeClass('is-overlay');
 
-              self.app.init();
+              window.location.reload();
             });
           }
 
