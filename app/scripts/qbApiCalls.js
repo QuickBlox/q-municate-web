@@ -54,7 +54,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
             Session.encrypt(Session.authParams);
           }
         } else {
-          callback();
+          callback(res);
         }
       });
     },
@@ -118,7 +118,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
 
               $('.j-chatConnecting').removeClass('is-overlay');
 
-              window.location.reload();
+              self.app.views.Dialog.chatCallbacksInit();
+              self.add.views.VideoChat.init();
+              // window.location.reload();
             });
           }
 
