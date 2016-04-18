@@ -39,7 +39,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
           self.contact = Contact.create(user);
           self._is_import = getImport(user);
 
-          Helpers.showInConsole('User', self);
+          Helpers.log('User', self);
 
           QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
             self.rememberMe();
@@ -64,7 +64,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
           self = this;
 
       FB.api('/me/permissions', function (response) {
-          Helpers.showInConsole('FB Permissions', response);
+          Helpers.log('FB Permissions', response);
           for (var i = 0, len = response.data.length; i < len; i++) {
             if (response.data[i].permission === 'user_friends' && response.data[i].status === 'granted')
               isFriendsPermission = true;
@@ -74,7 +74,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
 
             // import FB friends
             FB.api('/me/friends', function (res) {
-                Helpers.showInConsole('FB friends', res);
+                Helpers.log('FB friends', res);
                 var ids = [];
 
                 for (var i = 0, len = res.data.length; i < len; i++) {
@@ -110,7 +110,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
       custom_data.is_import = '1';
       custom_data = JSON.stringify(custom_data);
       QBApiCalls.updateUser(user.id, {custom_data: custom_data}, function(res) {
-        //Helpers.showInConsole('update of user', res);
+
       });
     },
 
@@ -141,7 +141,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
             QBApiCalls.loginUser(params, function(user) {
               self.contact = Contact.create(user);
 
-              Helpers.showInConsole('User', self);
+              Helpers.log('User', self);
 
               QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
                 if (tempParams.blob) {
@@ -178,7 +178,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
           
           custom_data = JSON.stringify({avatar_url: blob.path});
           QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
-            //Helpers.showInConsole('update of user', res);
+
           });
         });
       });
@@ -205,7 +205,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
           QBApiCalls.getUser(session.user_id, function(user) {
             self.contact = Contact.create(user);
 
-            Helpers.showInConsole('User', self);
+            Helpers.log('User', self);
 
             QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
               if (self._remember) {
@@ -274,7 +274,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
       UserView.createSpinner();
       this.contact = Contact.create(storage);
 
-      Helpers.showInConsole('User', self);
+      Helpers.log('User', self);
 
       QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
         UserView.successFormCallback();

@@ -29,11 +29,11 @@ define(['loadImage', 'canvasToBlob', 'quickblox'], function(loadImage, dataURLto
                  'photo';
 
       return {
-        type: type,
-        url: QB.content.publicUrl(blob.uid) || null,
-        id: blob.uid,
-        name: blob.name,
-        size: size,
+        'type': type,
+        'url': QB.content.publicUrl(blob.uid) || null,
+        'id': blob.uid,
+        'name': blob.name,
+        'size': size,
         'content-type': blob.content_type
       };
     },

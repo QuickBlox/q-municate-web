@@ -1,21 +1,22 @@
+# Q-municate
 
-# Q-municate 
-Q-municate is an open source code chat application with wide range of communication features available (such as one-to-one messaging, group chat messaging, file transfers, Facebook signup and audio/video calls). http://q-municate.com/
+[Q-municate](http://q-municate.com)  is an open source code chat application with wide range of communication features available (such as one-to-one messaging, group chat messaging, file transfers, notifications, Facebook signup and audio/video calls).
 
-We are please to present you with an out of the box chat application. You can customize this application depending of your needs. QuickBlox is used for the backend http://quickblox.com
+We are please to present you with an out of the box chat application. You can customize this application depending of your needs.
+[QuickBlox](http://quickblox.com) is used for the backend.
 
 Find the source code and more information about Q-municate in our Developers section: http://quickblox.com/developers/q-municate
 
 # Q-municate Web
 This description was written by the QuickBlox Web team in order to fully explain how you can build a communication javascript app with the Quickblox API.
 
-Q-municate is designed for all developers, including beginners, as we move from simple to more complex implementation. 
+Q-municate is designed for all developers, including beginners, as we move from simple to more complex implementation.
 Enjoy and please get in touch if you need any assistance.
 
 ## Software Environment
-*	The web component is based on the QuickBlox platform
-*	The user interface is in English
-*	No crashes or exceptions are allowed
+* The web component is based on the QuickBlox platform
+* The user interface is in English
+* No crashes or exceptions are allowed
 * The app immediately reacts to any user action or give notifications about each action which requires time to be processed
 * User information is kept safely and securely.
 * User's password is encoded and kept in the local storage.
@@ -31,9 +32,8 @@ Q-municate is a fully fledged chat application using the Quickblox API.
 ## Q-municate application uses the following QuickBlox modules:
 * [Chat (v 2.0.)](http://quickblox.com/modules/chat)
 * [Users](http://quickblox.com/modules/users/)
-* [Content](http://quickblox.com/modules/content/) 
+* [Content](http://quickblox.com/modules/content/)
 * [WebRTC calling](http://quickblox.com/modules/video-calling/)
-
 
 Please note, in order to start using Chat 2.0, you should read the [following.](http://quickblox.com/developers/Chat#Pre-Requirements)
 
@@ -57,61 +57,9 @@ Please note, in order to start using Chat 2.0, you should read the [following.](
 16. [Chat emojes](#16-chat-emojes)
 17. [Icons and sound on a browser's tab](#17-icons-and-sound-on-a-browsers-tab)
 18. [Full screen mode for audio and video calls](#18-full-screen-mode-for-audio-and-video-calls)
+19. [Notifications](#19-notifications)
 
 Please note all these features are available in the code, so you can customize your app depending on your needs.
-
-## Changelog
-
-### v. 1.0.0 – February 12, 2015
-* [Full screen mode for audio and video calls](#18-full-screen-mode-for-audio-and-video-calls)
-* Improvements of calls 
-* Bug  fixes of the chat session expiration
-
-### v. 0.9 – January 19, 2014
-* [My profile page](#11-my-profile-page)
-* [Сontact profile page](#12-contact-profile-page)
-* Retina icons
-* Improvements
-* Bug fixes
-
-### v. 0.8 – December 19, 2014
-* [Video calls (WebRTC)](#10-video-calls-webrtc)
-* [Audio calls (WebRTC)](#9-audio-calls-webrtc)
-* Call history
-* [Icons and sound on a browser's tab](#17-icons-and-sound-on-a-browsers-tab)
-* Bug fixes
-
-### v. 0.7 – November 7, 2014
-* Backbone (Core and QB wrapper)
-* Backbone (Session, User, Contact modules)
-* Backbone (Contact List, Dialog modules)
-* Backbone (Message, Attach modules)
-* Bug fixes 
-
-### v. 0.6 – September 30, 2014
-* Optimization of emoji upload
-* Fixed FB SDK asynchronous uploading 
-* Fixed cache data uploading from the Local Storage 
-* Optimization of css files import 
-* Integration of current features with mobile versions 
-* Bug fixes 
-
-### v. 0.5 – August 26, 2014
-* [Welcome page](#1-welcome-page)
-* [Log in page (with QM account)](#4-log-in-page-with-qm-account)
-* Forgot password 
-* [Sign up with Facebook](#3-sign-up-with-facebook)
-* [Log in page (with QM account)](#4-log-in-page-with-qm-account)
-* Import friends from Facebook 
-* [Main page](#5-main-page)
-* [Local Search](#13-local-search)  
-* [Global Search](#14-global-search)
-* [Contact list](#6-contact-list)
-* [Chat page](#7-chat-page)
-* [Group chat page](#8-group-chat-page)
-* [File transfer via chat](#15-file-transfer-via-chat)
-* [Chat emojes](#16-chat-emojes)
-
 
 ## Features list
 
@@ -140,8 +88,8 @@ Sign up page allows to create a new QM user.
 * Choose user picture avatar icon- will be auto filled with selected image, if image is chosen.
 
 ##### Buttons:
-* Choose user picture – all area and button is clickable. After clicking, user chooses image from the computer, not mandatory; 
-* Sign Up: 
+* Choose user picture – all area and button is clickable. After clicking, user chooses image from the computer, not mandatory;
+* Sign Up:
   - If all fields are populated correctly, user receives a welcome email and is redirected to the main page.
   - If some fields aren't populated correctly, the user sees the Sign Up Page with the appropriate alert and password field is cleared. The alert depends on what field user has filled in incorrectly;
 * User Agreement opens the page http://q-municate.com/agreement/ in a new tab;
@@ -194,16 +142,15 @@ QB.content.createAndUpload({file: file, 'public': true}, function(err, blob) {
 
 ```
 
-
 ### 3. Sign up with Facebook
 Sign Up with Facebook allows to create QM user with the help of Facebook credentials.
 
 <img src="http://files.quickblox.com/Facebook_request.png" height="400" />&nbsp;
 
 #### Available features:
-Sign Up with Facebook feature creates a QM user with Facebook credentials. 
+Sign Up with Facebook feature creates a QM user with Facebook credentials.
 <br>
-If the user signs up via Facebook, they can’t log in using QM login form. 
+If the user signs up via Facebook, they can’t log in using QM login form.
 <br>
 If the user signs up with Facebook - the app will download FB avatar image, full name, and email. Friends who use the App will be imported from the FB account.
 
@@ -288,15 +235,15 @@ User can log in the app as a QM user.
 #### Available features:
 * Email – text/numeric/symbolic fields 3 chars min - no border, mandatory (email symbols validation included). The user can able to paste their email address in this field if it is currently in clipboard;
 * Password – text/numeric/symbolic field 8-40 chars (should contain alphanumeric and punctuation characters only) , mandatory Input symbols are replaced with *, so that the user's password is not visible. The user should be able to paste their password in this field if it is currently in the clipboard;
-* Remember me – checkbox is checked by default. Allows the user to save their login data so that he/she doesn't have to enter them again if the user leaves and returns, or refreshes the page. If this checkbox is unchecked, then the user returns to the Main page of the App after refreshing the page or after closing. Login Page is shown again if the user logs out. 
+* Remember me – checkbox is checked by default. Allows the user to save their login data so that he/she doesn't have to enter them again if the user leaves and returns, or refreshes the page. If this checkbox is unchecked, then the user returns to the Main page of the App after refreshing the page or after closing. Login Page is shown again if the user logs out.
 
 ##### Buttons:
 * Connect with Facebook button allows the user to sign up with Facebook credentials;
 * Log in button allows the user to enter the App:
- - If the user provides valid login credentials, they're is redirected to Main page; 
+ - If the user provides valid login credentials, they're is redirected to Main page;
  - If the user provides incorrect/invalid login credentials (email and password), the App shows Log in page with alert message;
 * Forgot password? link redirects the user to the Forgot password page.
- 
+
 ##### The code
 ```javascript
 User.prototype.login = function(params) {
@@ -332,7 +279,7 @@ The Main page is displayed a list of user’s contact chats.
 * All user contacts (online/offline/pending contact request) are displayed in the left panel in 2 sections – Recent and History (the same as in the Chats page). For each contact are shown full name, avatar image and online/offline status. The icons for statuses:
   - Green icon – user is online;
   - Question icon -  pending contact request;
-  - No icon -  user is offline. 
+  - No icon -  user is offline.
 * Contacts shown as a scrollable table view;
 * Contact is highlighted when hovering;
 * The user can click on a contact to open a chat;
@@ -356,7 +303,7 @@ The Main page is displayed a list of user’s contact chats.
   -	Profile – open a details page;
   -	Delete contact – delete from contacts.
 
-If there is no connection to the internet, an alert message is displayed on the top section. 
+If there is no connection to the internet, an alert message is displayed on the top section.
 <br>
 When connection in recovered, the alert message disappears.
 
@@ -421,7 +368,7 @@ After receiving a request, the user sees the following page:
 <img src="http://files.quickblox.com/Contact_request.png" height="400" />&nbsp;
 
 ##### Buttons:
-   - Tick icon adds new contact to user’s contact list; 
+   - Tick icon adds new contact to user’s contact list;
    - Cross icon rejects the contact request.
 
 ##### The code
@@ -527,11 +474,11 @@ Users can create a group chat with any or all of the contacts in their contact l
 ##### Available features:
 * Change a group chat name
 * Change a group chat avatar
-* Add new contacts to a chat. 
-* Leave a chat. 
-* Show/hide chat’s members. 
+* Add new contacts to a chat.
+* Leave a chat.
+* Show/hide chat’s members.
 * Start a video/audio call, write a message or open a profile page of any contact in a group chat if this contact is in the contact list. If no - user can send a request to him.
- 
+
 ##### The code
 ```javascript
 /* on creator side
@@ -554,7 +501,7 @@ QB.chat.dialog.create({type: 2, occupants_ids: params.ids, name: params.name}, f
       for (var i = 0, len = dialog.occupants_ids.length, id, jid; i < len; i++) {
         id = dialog.occupants_ids[i];
         jid = QB.chat.helpers.getUserJid(id, appId); // appId - your QB application ID
- 
+
         QB.chat.send(jid, {type: 'chat', extension: {
           notification_type: '1',
           dialog_id: dialog._id,
@@ -565,7 +512,7 @@ QB.chat.dialog.create({type: 2, occupants_ids: params.ids, name: params.name}, f
       }
     });
   }
-}); 
+});
 
 /* on recipient side
 ---------------------------------------*/
@@ -573,12 +520,12 @@ QB.chat.dialog.create({type: 2, occupants_ids: params.ids, name: params.name}, f
 QB.chat.onMessageListener = function(senderId, message) {
   // check if this message is a notification about new room
   if (message.extension && message.extension.notification_type === '1') {
- 
+
     // join to created room
     QB.chat.muc.join(message.extension.room_jid, function() {
       // callback
     })
-  } 
+  }
 };
 
 /* leave a room
@@ -598,7 +545,7 @@ QB.chat.dialog.update(dialog.id, {pull_all: {occupants_ids: [User.id]}}, functio
 
 
 ### 9. Audio calls (WebRTC)
-Any user with a microphone can start an audio call by clicking audio call icon in the chat section. 
+Any user with a microphone can start an audio call by clicking audio call icon in the chat section.
 <br>
 A call is started after allowing the application to use the microphone, and is displayed in the chat section.
 
@@ -661,7 +608,7 @@ QB.webrtc.stop(params.opponent_id, 'manually', {
 
 #### Available features:
 
-Any user with a webcam and a microphone can start a video call by clicking the video call icon in the chat section. 
+Any user with a webcam and a microphone can start a video call by clicking the video call icon in the chat section.
  <br>
  A call is started after allowing the application to use the camera and microphone, and is displayed in the chat section.
  <br>
@@ -722,7 +669,7 @@ The profile page allows the user view and edit their profile info.
 #### Fields set:
 -	Name – allows everything except '<', '>' and ';', 3-50 characters; mandatory;
 -	Email – if the user has a long email, only beginning of an email is displayed (the remaining is hidden by ellipsis);
--	User picture field is filled with the user's current profile photo if an image was chosen while signing up; 
+-	User picture field is filled with the user's current profile photo if an image was chosen while signing up;
 -	Status – text/numeric/symbolic field; 0-80 characters;
 -	Phone – numeric/symbolic field; 0-20 characters.
 
@@ -731,7 +678,7 @@ The profile page allows the user view and edit their profile info.
 * Change password – after clicking, the user can change their password;
 * Add/ Edit status – the user can add or change their status (changes are saved immediately).
 * Edit User name – the user can change their user name (changes are saved immediately).
-* Connect - allows the user connect their QM account with Facebook account. 
+* Connect - allows the user connect their QM account with Facebook account.
 
 ##### The code
 ```javascript
@@ -754,8 +701,8 @@ The details page is used for contacts profile information.
 
 Contact profile page shows the user’s information:
 * Full name. If a name is very long, extra characters are hidden by ellipsis;  
-* Status (short text message). The full status is always displayed; 
-* Presence (online/offline); 
+* Status (short text message). The full status is always displayed;
+* Presence (online/offline);
 * Tel. number (if filled). If a number is very long, extra characters are hidden by ellipsis.
 
 #### Buttons:
@@ -777,12 +724,12 @@ User.prototype.getContactProfile = function(contactId) {
 ```
 
 
-### 13. Local Search 
+### 13. Local Search
 User can use the local search field to find contacts in their contact list.
 
  <img src="http://files.quickblox.com/Chats_page_with_search.png" height="400" />&nbsp;
 
-The search is started automatically upon inputting characters. Contacts matching the search are displayed in the original order that they were located in, in the contacts list. 
+The search is started automatically upon inputting characters. Contacts matching the search are displayed in the original order that they were located in, in the contacts list.
 
 #### Buttons:
 * Global Search  - opens the Global search pop-up to find users across the whole app.
@@ -795,7 +742,7 @@ User can use the global search to find all users of Q-municate.
 
 ##### Buttons:
 * The search field – allows the user input different search criteria;
-* “Add” icons – allows the user send a request to any QM user. 
+* “Add” icons – allows the user send a request to any QM user.
 
 ##### The code
 ```javascript
@@ -811,7 +758,7 @@ User.prototype.getContactProfile = function(userName, page) {
 
 
 ### 15. File transfer via chat
-After clicking the 'attach' icon, the user can choose a file from their computer to send. 
+After clicking the 'attach' icon, the user can choose a file from their computer to send.
 User can upload any file type. An attachment is sent automatically after selecting it in the file selection dialog.
 
 <img src="http://files.quickblox.com/File_transfer.png" height="400" />&nbsp;
@@ -832,7 +779,7 @@ Message.prototype.attach = function(file) {
 var attachment;
 
 QB.content.createAndUpload({file: file, 'public': true}, function(err, blob) {
-  if (blob) { 
+  if (blob) {
     attachment = {
         type: type,
         url: blob.path,
@@ -882,6 +829,18 @@ During the audio or video call user can click Extend icon to open a call in a se
 * Mute voice – clicking this icon, user can turn on/off his microphone (for both audio and video calls);
 * End call – ends current call and redirects user to the Chats Page.
 
+### 19. Notifications
+Implemented notifications if the following events:
+ * a new chat;
+ * a new message;
+ * an incoming request to add a friend;
+
+You can configure time of show a notification in config.js file.
+```javascript
+notification: {
+  timeout: 7 // time in sec.
+}
+```
 
 ### Important - how to build your own Chat app</h3>
 
@@ -901,15 +860,15 @@ If you want to build your own app using Q-municate as a base, please do the foll
  11. Create Facebook Application for ability connecting via Facebook
  12. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID into your Q-municate project code in <code>config.js</code><br />
  13. Run <code>grunt build</code> in your terminal to build Q-municate
- 14. Run <code>grunt serve</code> in your terminal to run Q-municate 
+ 14. Run <code>grunt serve</code> in your terminal to run Q-municate
 
 
 ### Additional: how to build desktop version
- 
+
  1. Download nw.js dependent to your system(Win, OS X, Linux) [NW.js](http://nwjs.io/).
  2. Add in 'package.json' after 'engines' section next lines:
 
- ```javascript 
+ ```javascript
    "window": {
      "toolbar": false,
      "width": 1000,
@@ -918,7 +877,7 @@ If you want to build your own app using Q-municate as a base, please do the foll
    "main": "app/index.html"
    ```
  3. Run: $ /path/to/nw .  (suppose the current directory contains 'package.json'). Read more https://github.com/nwjs/nw.js#quick-start about OS X and Windows
- 4. [How to package app](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps). 
+ 4. [How to package app](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps).
 
 
 # License

@@ -6,6 +6,7 @@ app/.css
 app/bower_components
 node_modules
 npm-debug.log
+debug.log
 
 # builded QM
 dist/*

@@ -33,7 +33,7 @@ define(['quickblox'], function(QB) {
     create: function(params) {
       var User = this.app.models.User,
           message;
-
+          
       message = {
         id: (params.extension && params.extension.message_id) || params._id || null,
         dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,

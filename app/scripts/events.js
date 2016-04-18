@@ -9,10 +9,11 @@ define([
   'jquery',
   'config',
   'Helpers',
+  'QMHtml',
   'minEmoji',
   'mCustomScrollbar',
   'mousewheel'
-], function($, QMCONFIG, Helpers, minEmoji) {
+], function($, QMCONFIG, Helpers, QMHtml, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
@@ -24,6 +25,7 @@ define([
 
     Dialog = this.app.models.Dialog;
     UserView = this.app.views.User;
+    ContactList = this.app.models.ContactList;
     ContactListView = this.app.views.ContactList;
     DialogView = this.app.views.Dialog;
     MessageView = this.app.views.Message;
@@ -77,12 +79,17 @@ define([
 
       /* User Profile
       ----------------------------------------------------- */
-      $('body').on('click', '.userDetails', function(event) {
-        event.preventDefault();
+      $('body').on('click', '.userDetails', function() {
         removePopover();
-        var id = $(this).data('id');
+
+        var id = $(this).data('id'),
+            roster = ContactList.roster[id];
+
+        QMHtml.User.getControlButtonsForPopupDetails(roster);
         openPopup($('#popupDetails'), id);
         UserView.buildDetails(id);
+
+        return false;
       });
 
       $('body').on('click', '#userProfile', function(event) {
@@ -102,8 +109,6 @@ define([
       });
 
       $('body').on('click', '.btn_popup_changepass', function(event) {
-        if (checkConnection() === false) return false;
-
         var profileView = App.views.Profile,
             changePassView = App.views.ChangePass;
 
@@ -111,16 +116,14 @@ define([
         changePassView.submitForm();
       });
 
-      $('body').on('click', '.btn_userProfile_connect', function() {
-        if (checkConnection() === false) return false;
-
+      $('body').on('click', '.btn_userProfile_connect', function() {     
         var profileView = App.views.Profile,
             btn = $(this);
 
         btn.prop('disabled', true);
 
         FB.login(function(response) {
-          Helpers.showInConsole('FB authResponse', response);
+          Helpers.log('FB authResponse', response);
           if (response.status === 'connected') {
             profileView.addFBAccount(response.authResponse.userID);
           } else {
@@ -132,28 +135,34 @@ define([
       /* smiles
       ----------------------------------------------------- */
       $('.smiles-tab').on('click', function() {
-        var group = $(this).data('group');
-        $(this).addClass('is-actived').siblings().removeClass('is-actived');
-        $('.smiles-group_'+group).removeClass('is-hidden').siblings().addClass('is-hidden');
+        var $self = $(this),
+            group = $self.data('group');
+
+        $self.addClass('is-actived')
+             .siblings().removeClass('is-actived');
+
+        $('.smiles-group_'+group).removeClass('is-hidden')
+                                 .siblings().addClass('is-hidden');
+
         setCursorToEnd($('.l-chat:visible .textarea'));
       });
 
       $('.smiles-group').mCustomScrollbar({
         theme: 'minimal-dark',
-        scrollInertia: 0,
+        scrollInertia: 500,
         mouseWheel: {
-          scrollAmount: QMCONFIG.isMac || 30,
-          deltaFactor: -1
+          scrollAmount: QMCONFIG.isMac || 'auto',
+          deltaFactor: 'auto'
         }
       });
 
       $('.em-wrap').on('click', function() {
         var code = $(this).find('.em').data('unicode'),
-            curTextarea = $('.l-chat:visible .textarea'),
-            val = curTextarea.html();
+            $curTextarea = $('.l-chat:visible .textarea'),
+            val = $curTextarea.html();
 
-        $('.l-chat:visible .textarea').addClass('contenteditable').html(val + minEmoji(code));
-        setCursorToEnd(curTextarea);
+        $curTextarea.addClass('contenteditable').html(val + minEmoji(code));
+        setCursorToEnd($curTextarea);
       });
 
       /* attachments
@@ -171,43 +180,40 @@ define([
         AttachView.cancel($(this));
       });
 
-      $('.l-workspace-wrap').on('click', '.preview', function() {
-        if (checkConnection() === false) return false;
-
-        var name = $(this).data('name'),
-            url = $(this).data('url'),
+      $('.l-workspace-wrap').on('click', '.preview', function() {        
+        var $self = $(this),
+            name = $self.data('name'),
+            url = $self.data('url'),
             attachType;
 
-        if ($(this).is('.preview-photo')) {
-          $('.attach-photo').removeClass('is-hidden').siblings('.attach-video').addClass('is-hidden');
+        if ($self.is('.preview-photo')) {
           attachType = 'photo';
+          setAttachType(attachType);
         } else {
-          $('.attach-video').removeClass('is-hidden').siblings('.attach-photo').addClass('is-hidden');
           attachType = 'video';
+          setAttachType(attachType);
         }
+
         openAttachPopup($('#popupAttach'), name, url, attachType);
       });
 
       /* group chats
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('click', '.groupTitle', function() {
-        var chat = $('.l-chat:visible');
-        if (chat.find('.triangle_up').is('.is-hidden')) {
-          chat.find('.triangle_up').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-          chat.find('.chat-occupants-wrap').addClass('is-overlay');
-          chat.find('.l-chat-content').addClass('l-chat-content_min');
+        if ($('.l-chat:visible').find('.triangle_up').is('.is-hidden')) {
+          setTriagle('up');
         } else {
-          chat.find('.triangle_down').removeClass('is-hidden').siblings('.triangle').addClass('is-hidden');
-          chat.find('.chat-occupants-wrap').removeClass('is-overlay');
-          chat.find('.l-chat-content').removeClass('l-chat-content_min');
+          setTriagle('down');
         }
       });
 
       $('.l-workspace-wrap').on('click', '.groupTitle .addToGroupChat', function(event) {
         event.stopPropagation();
-        var dialog_id = $(this).data('dialog');
-        Helpers.showInConsole('add people to groupchat');
-        ContactListView.addContactsToChat($(this), 'add', dialog_id);
+        var $self = $(this),
+            dialog_id = $self.data('dialog');
+
+        Helpers.log('add people to groupchat');
+        ContactListView.addContactsToChat($self, 'add', dialog_id);
       });
 
       $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
@@ -217,72 +223,83 @@ define([
       /* change the chat name
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('mouseenter focus', '.groupTitle .name_chat', function() {
-        var chat = $('.l-chat:visible');
-        chat.find('.triangle:visible').addClass('is-hover').siblings('.pencil').removeClass('is-hidden');
+        var $chat = $('.l-chat:visible');
+        $chat.find('.triangle:visible').addClass('is-hover')
+             .siblings('.pencil').removeClass('is-hidden');
       });
 
       $('.l-workspace-wrap').on('mouseleave', '.groupTitle .name_chat', function() {
-        var chat = $('.l-chat:visible');
-        if (!$(this).is('.is-focus'))
-          chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+        var $chat = $('.l-chat:visible');
+
+        if (!$(this).is('.is-focus')) {
+          $chat.find('.triangle.is-hover').removeClass('is-hover')
+               .siblings('.pencil').addClass('is-hidden');
+        }
       });
 
       $(document.body).on('click', function() {
-        var chat = $('.l-chat:visible');
+        var $chat = $('.l-chat:visible');
 
-        if (chat.find('.groupTitle .name_chat').is('.is-focus')) {
-          chat.find('.groupTitle .name_chat').removeClass('is-focus');
-          chat.find('.groupTitle .name_chat')[0].scrollLeft = 0;
-          chat.find('.triangle.is-hover').removeClass('is-hover').siblings('.pencil').addClass('is-hidden');
+        if ($chat.find('.groupTitle .name_chat').is('.is-focus')) {
+          $chat.find('.groupTitle .name_chat').removeClass('is-focus');
+          $chat.find('.groupTitle .name_chat')[0].scrollLeft = 0;
+          $chat.find('.triangle.is-hover').removeClass('is-hover')
+               .siblings('.pencil').addClass('is-hidden');
 
           if (editedChatName && !editedChatName.name) {
-            chat.find('.name_chat').text(chatName.name);
+            $chat.find('.name_chat').text(chatName.name);
           } else if (editedChatName && (editedChatName.name !== chatName.name) && (editedChatName.created_at > chatName.created_at)) {
-            chat.find('.name_chat').text(editedChatName.name).attr('title', editedChatName.name);
-            Dialog.changeName(chat.data('dialog'), editedChatName.name);
+            $chat.find('.name_chat').text(editedChatName.name).attr('title', editedChatName.name);
+            Dialog.changeName($chat.data('dialog'), editedChatName.name);
           } else {
-            chat.find('.name_chat').text(chat.find('.name_chat').text().trim());
+            $chat.find('.name_chat').text($chat.find('.name_chat').text().trim());
           }
         }
       });
 
       $('body').on('click', '.groupTitle .name_chat', function(event) {
         event.stopPropagation();
-        $(this).addClass('is-focus');
+        var $self = $(this);
+
+        $self.addClass('is-focus');
         chatName = {
-          name: $(this).text().trim(),
+          name: $self.text().trim(),
           created_at: Date.now()
         };
         removePopover();
       });
 
       $('body').on('keyup', '.groupTitle .name_chat', function(event) {
-        var code = event.keyCode;
+        var $self = $(this),
+            code = event.keyCode;
+
         editedChatName = {
-          name: $(this).text().trim(),
+          name: $self.text().trim(),
           created_at: Date.now()
         };
         if (code === 13) {
           $(document.body).click();
-          $(this).blur();
+          $self.blur();
         } else if (code === 27) {
           editedChatName = null;
-          $(this).text(chatName.name);
+          $self.text(chatName.name);
           $(document.body).click();
-          $(this).blur();
+          $self.blur();
         }
       });
 
       /* change the chat avatar
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('mouseenter', '.groupTitle .avatar', function() {
-        var chat = $('.l-chat:visible');
-        chat.find('.pencil_active').removeClass('is-hidden');
+        var $chat = $('.l-chat:visible');
+
+        $chat.find('.pencil_active').removeClass('is-hidden');
       });
 
       $('.l-workspace-wrap').on('mouseleave', '.groupTitle .avatar', function() {
-        var chat = $('.l-chat:visible');
-        chat.find('.pencil_active').addClass('is-hidden');
+        var $chat = $('.l-chat:visible');
+
+        $chat.find('.pencil_active').addClass('is-hidden');
       });
 
       $('.l-workspace-wrap').on('click', '.groupTitle .pencil_active', function() {
@@ -291,10 +308,11 @@ define([
       });
 
       $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
-        var chat = $('.l-chat:visible');
-        Dialog.changeAvatar(chat.data('dialog'), $(this), function(avatar) {
+        var $chat = $('.l-chat:visible');
+
+        Dialog.changeAvatar($chat.data('dialog'), $(this), function(avatar) {
           if (!avatar) return false;
-          chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
+          $chat.find('.avatar_chat').css('background-image', 'url('+avatar+')');
         });
       });
 
@@ -304,16 +322,14 @@ define([
 
       /* welcome page
       ----------------------------------------------------- */
-      $('#signupFB, #loginFB').on('click', function(event) {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('connect with FB');
+      $('#signupFB, #loginFB').on('click', function(event) {      
+        Helpers.log('connect with FB');
         event.preventDefault();
 
         // NOTE!! You should use FB.login method instead FB.getLoginStatus
         // and your browser won't block FB Login popup
         FB.login(function(response) {
-          Helpers.showInConsole('FB authResponse', response);
+          Helpers.log('FB authResponse', response);
           if (response.status === 'connected') {
             UserView.connectFB(response.authResponse.accessToken);
           }
@@ -321,12 +337,12 @@ define([
       });
 
       $('#signupQB').on('click', function() {
-        Helpers.showInConsole('signup with QB');
+        Helpers.log('signup with QB');
         UserView.signupQB();
       });
 
       $('#loginQB').on('click', function(event) {
-        Helpers.showInConsole('login wih QB');
+        Helpers.log('login wih QB');
         event.preventDefault();
         UserView.loginQB();
       });
@@ -334,21 +350,17 @@ define([
       /* button "back"
       ----------------------------------------------------- */
       $('.back_to_welcome_page').on('click', function() {
-        if (checkConnection() === false) return false;
         UserView.logout();
       });
 
       $('.back_to_login_page').on('click', function() {
-        if (checkConnection() === false) return false;
         UserView.loginQB();
       });
 
       /* signup page
       ----------------------------------------------------- */
       $('#signupForm').on('click submit', function(event) {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('create user');
+        Helpers.log('create user');
         event.preventDefault();
         UserView.signupForm();
       });
@@ -356,33 +368,27 @@ define([
       /* login page
       ----------------------------------------------------- */
       $('#forgot').on('click', function(event) {
-        Helpers.showInConsole('forgot password');
+        Helpers.log('forgot password');
         event.preventDefault();
         UserView.forgot();
       });
 
-      $('#loginForm').on('click submit', function(event) {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('authorize user');
+      $('#loginForm').on('click submit', function(event) {     
+        Helpers.log('authorize user');
         event.preventDefault();
         UserView.loginForm();
       });
 
       /* forgot and reset page
       ----------------------------------------------------- */
-      $('#forgotForm').on('click submit', function(event) {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('send letter');
+      $('#forgotForm').on('click submit', function(event) {    
+        Helpers.log('send letter');
         event.preventDefault();
         UserView.forgotForm();
       });
 
       $('#resetForm').on('click submit', function(event) {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('reset password');
+        Helpers.log('reset password');
         event.preventDefault();
         UserView.resetForm();
       });
@@ -408,10 +414,12 @@ define([
       });
 
       $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
-        var bool = $(this).is('.is-active');
+        var $self = $(this),
+            bool = $self.is('.is-active');
+
         removePopover();
         if (bool === false)
-          UserView.smilePopover($(this));
+          UserView.smilePopover($self);
         setCursorToEnd($('.l-chat:visible .textarea'));
       });
 
@@ -425,58 +433,62 @@ define([
       $('body').on('click', '.deleteContact', function(event) {
         event.preventDefault();
         closePopup();
-        var parents = $(this).parents('.presence-listener');
-        var id = parents.data('id');
-        if (parents.is('.popup_details'))
+        
+        var $that = $(this),
+            parents = $that.parents('.presence-listener'),
+            id = parents.data('id') || $that.data('id');
+
+        if (parents.is('.popup_details')) {
           openPopup($('#popupDelete'), id, null, true);
-        else
+        } else {
           openPopup($('#popupDelete'), id);
+        }
       });
 
       $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {
         event.preventDefault();
-        var parent = $(this).parents('.presence-listener')[0] ? $(this).parents('.presence-listener') : $(this).parents('.is-group');
-        var dialog_id = parent.data('dialog');
+        var $self = $(this),
+            parent = $self.parents('.presence-listener')[0] ? $self.parents('.presence-listener') : $self.parents('.is-group'),
+            dialog_id = parent.data('dialog');
+
         openPopup($('#popupLeave'), null, dialog_id);
       });
 
-      $('#logoutConfirm').on('click', function() {
-        if (checkConnection() === false) return false;
-
+      $('#logoutConfirm').on('click', function() {  
         UserView.logout();
       });
 
       $('#deleteConfirm').on('click', function() {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('delete contact');
+        Helpers.log('delete contact');
         ContactListView.sendDelete($(this));
       });
 
       $('#leaveConfirm').on('click', function() {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('leave chat');
+        Helpers.log('leave chat');
         DialogView.leaveGroupChat($(this));
       });
 
       $('.popup-control-button, .btn_popup_private').on('click', function(event) {
         event.preventDefault();
-        var isProfile = $(this).data('isprofile');
-        if (!$(this).is('.returnBackToPopup'))
+
+        var $self = $(this),
+            isProfile = $self.data('isprofile');
+
+        if (!$self.is('.returnBackToPopup'))
           closePopup();
         if (isProfile)
           openPopup($('#popupDetails'));
       });
 
       $('.search').on('click', function() {
-        Helpers.showInConsole('global search');
+        Helpers.log('global search');
         closePopup();
         ContactListView.globalPopup();
       });
 
       $('.btn_search').on('click', function(event) {
         event.preventDefault();
+
         var localSearch = $('#searchContacts input'),
             globalSearch = $('#globalSearch input');
 
@@ -486,23 +498,27 @@ define([
 
       $('#mainPage').on('click', '.createGroupChat', function(event) {
         event.preventDefault();
-        Helpers.showInConsole('add people to groupchat');
-        var isPrivate = $(this).data('private');
-        ContactListView.addContactsToChat($(this), null, null, isPrivate);
+        
+        Helpers.log('add people to groupchat');
+
+        var $self = $(this),
+            isPrivate = $self.data('private');
+
+        ContactListView.addContactsToChat($self, null, null, isPrivate);
       });
 
       $('.l-sidebar').on('click', '.addToGroupChat', function(event) {
         event.preventDefault();
-        var dialog_id = $(this).data('dialog');
-        Helpers.showInConsole('add people to groupchat');
-        ContactListView.addContactsToChat($(this), 'add', dialog_id);
+
+        var $self = $(this),
+            dialog_id = $self.data('dialog');
+        Helpers.log('add people to groupchat');
+        ContactListView.addContactsToChat($self, 'add', dialog_id);
       });
 
       /* search
       ----------------------------------------------------- */
       $('#globalSearch').on('keyup search submit', function(event) {
-        if (checkConnection() === false) return false;
-
         event.preventDefault();
         var code = event.keyCode;
             form = $(this);
@@ -526,60 +542,55 @@ define([
       });
 
       $('.localSearch').on('keyup search submit', function(event) {
-        event.preventDefault();
-        var type = event.type,
+        var $self = $(this),
+            type = event.type,
             code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
         if ((type === 'keyup' && code !== 27 && code !== 13) || (type === 'search')) {
-          if (this.id === 'searchContacts')
-            UserView.localSearch($(this));
-          else
-            UserView.friendsSearch($(this));
+          if (this.id === 'searchContacts') {
+            UserView.localSearch($self);
+          } else {
+            UserView.friendsSearch($self);
+          }
         }
+
+        return false;
       });
 
-      $('.clean-button').on('click', function() {
-        var form = $(this).parent('form.formSearch');
+      $('.clean-button').on('click', function(event) {
+        var $form = $(this).parent('form.formSearch');
 
-        form.find('input.form-input-search').val('').focus();
+        $form.find('input.form-input-search').val('').focus();
+        UserView.localSearch($form);
+
         return false;
       });  
 
       /* subscriptions
       ----------------------------------------------------- */
       $('.list_contacts').on('click', 'button.send-request', function() {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('send subscribe');
+        Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this));
       });
 
       $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('send subscribe');
+        Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this), true);
       });
 
       $('body').on('click', '.requestAction', function(event) {
-        if (checkConnection() === false) return false;
-
         event.preventDefault();
-        Helpers.showInConsole('send subscribe');
+        Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this));
       });
 
       $('.list').on('click', '.request-button_ok', function() {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('send confirm');
+        Helpers.log('send confirm');
         ContactListView.sendConfirm($(this));
       });
 
       $('.list').on('click', '.request-button_cancel', function() {
-        if (checkConnection() === false) return false;
-
-        Helpers.showInConsole('send reject');
+        Helpers.log('send reject');
         ContactListView.sendReject($(this));
       });
 
@@ -648,44 +659,43 @@ define([
       });
 
       $('#popupContacts .btn_popup_group').on('click', function() {
-        if (checkConnection() === false) return false;
-
         DialogView.createGroupChat();
       });
 
       $('#popupContacts .btn_popup_add').on('click', function() {
-        if (checkConnection() === false) return false;
-
         var dialog_id = $(this).parents('.popup').data('dialog');
         DialogView.createGroupChat('add', dialog_id);
       });
 
       $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
-        var jid = $(this).parents('.l-chat').data('jid'),
-            type = $(this).parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+        var $self = $(this),
+            jid = $self.parents('.l-chat').data('jid'),
+            type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
             shiftKey = event.shiftKey,
             code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
             val = $('.l-chat:visible .textarea').html().trim();
 
         if (code === 13 && !shiftKey) {
-          MessageView.sendMessage($(this));
-          $(this).find('.textarea').empty();
+          MessageView.sendMessage($self);
+          $self.find('.textarea').empty();
           removePopover();
         }
       });
 
       // show message status on hover event
       $('body').on('mouseenter', 'article.message.is-own', function() {
-        var time = $(this).find('.message-time'),
-            status = $(this).find('.message-status');
+        var $self = $(this),
+            time = $self .find('.message-time'),
+            status = $self .find('.message-status');
 
         time.addClass('is-hidden');
         status.removeClass('is-hidden');
       });
 
       $('body').on('mouseleave', 'article.message.is-own', function() {
-        var time = $(this).find('.message-time'),
-            status = $(this).find('.message-status');
+        var $self = $(this),
+            time = $self.find('.message-time'),
+            status = $self.find('.message-status');
 
         status.addClass('is-hidden');
         time.removeClass('is-hidden');
@@ -693,8 +703,9 @@ define([
 
       // send typing statuses with keyup event
       $('.l-workspace-wrap').on('keyup', '.l-message', function(event) {
-        var jid = $(this).parents('.l-chat').data('jid'),
-            type = $(this).parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+        var $self = $(this),
+            jid = $self.parents('.l-chat').data('jid'),
+            type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
             shiftKey = event.shiftKey,
             code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
@@ -754,8 +765,6 @@ define([
       /* temporary events
       ----------------------------------------------------- */
       $('#share').on('click', function(event) {
-        if (checkConnection() === false) return false;
-
         event.preventDefault();
       });
 
@@ -769,10 +778,10 @@ define([
   function occupantScrollbar() {
     $('.chat-occupants, #popupIncoming').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 28,
-        deltaFactor: -1
+        scrollAmount: QMCONFIG.isMac || 'auto',
+        deltaFactor: 'auto'
       },
       live: true
     });
@@ -790,7 +799,7 @@ define([
   }
 
   function changeInputFile(objDom) {
-    var URL = window.webkitURL || window.URL,
+    var URL = window.URL,
         file = objDom[0].files[0],
         src = file ? URL.createObjectURL(file) : QMCONFIG.defAvatar.url,
         fileName = file ? file.name : QMCONFIG.defAvatar.caption;
@@ -858,13 +867,22 @@ define([
     }
   }
 
-  function checkConnection() {
-    if (window.onLine === false) {
-      alert('Sorry. You need to recover your Internet connection');
-      return false;
-    } else {
-      return true;
-    }
+  function setAttachType(type) {
+    var otherType = type === 'photo' ? 'video' : 'photo';
+
+    $('.attach-'+type).removeClass('is-hidden')
+                      .siblings('.attach-'+otherType).addClass('is-hidden');
+  }
+
+  function setTriagle(UpOrDown) {
+    var $chat = $('.l-chat:visible'),
+        $triangle = $chat.find('.triangle_'+UpOrDown);
+
+    $triangle.removeClass('is-hidden')
+             .siblings('.triangle').addClass('is-hidden');
+
+    $chat.find('.chat-occupants-wrap').toggleClass('is-overlay');
+    $chat.find('.l-chat-content').toggleClass('l-chat-content_min');
   }
 
   return Events;

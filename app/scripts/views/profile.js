@@ -59,7 +59,7 @@ define([
           avatar: this.$el.find('.btn_userProfile_file')[0].files[0] || null
         };
         this.model.set(params, {validate: true});
-        Helpers.showInConsole(this.model);
+        Helpers.log(this.model);
         if (!this.model.validationError) {
           this.model.update();
           this.remove();
@@ -76,7 +76,7 @@ define([
     },
 
     chooseAvatar: function() {
-      var URL = window.webkitURL || window.URL,
+      var URL = window.URL,
           avatar = this.$el.find('.btn_userProfile_file')[0].files[0],
           src = avatar ? URL.createObjectURL(avatar) : (this.model.get('avatar_url') === QMCONFIG.defAvatar.url) ? QMCONFIG.defAvatar.url : this.model.get('avatar_url');
   

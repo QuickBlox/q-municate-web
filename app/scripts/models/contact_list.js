@@ -57,7 +57,7 @@ define(['config', 'underscore', 'Helpers'], function(QMCONFIG, _, Helpers) {
             localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
           });
 
-          Helpers.showInConsole('Contact List is updated', self);
+          Helpers.log('Contact List is updated', self);
           callback(dialog);
         });
         
@@ -78,7 +78,7 @@ define(['config', 'underscore', 'Helpers'], function(QMCONFIG, _, Helpers) {
         sessionStorage.setItem('QM.search.page', ++page);
         
         contacts = self.getResults(data.items);
-        Helpers.showInConsole('Search results', contacts);
+        Helpers.log('Search results', contacts);
 
         callback(contacts);
       });
@@ -122,7 +122,7 @@ define(['config', 'underscore', 'Helpers'], function(QMCONFIG, _, Helpers) {
         contact_ids = contact_ids.concat(new_ids);
         localStorage.setItem('QM.contacts', contact_ids.join());
 
-        Helpers.showInConsole('Contact List is updated', self);
+        Helpers.log('Contact List is updated', self);
         callback(new_ids);
       });
     }
@@ -146,7 +146,7 @@ define(['config', 'underscore', 'Helpers'], function(QMCONFIG, _, Helpers) {
           if (contacts[ids[i]] === true) delete contacts[ids[i]];
         }
       } catch(e) {
-        Helpers.showInConsole("Error getting contacts from cache. Clearing...");
+        Helpers.log("Error getting contacts from cache. Clearing...");
         localStorage.clear();
         contacts = {};
       }

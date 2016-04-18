@@ -35,7 +35,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           contact = contacts[message.sender_id],
           chatType = message.type,
           photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (dialog.room_photo || QMCONFIG.defAvatar.group_url_png),
-          type = message.notification_type,
+          type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
           selectDialog = $('.dialog-item[data-dialog="'+message.dialog_id+'"] .contact'),
           occupants_ids,
           occupantsNames = '',
@@ -62,6 +62,8 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
        * 9 - about missed call
        * 10 - no answer
        * 11 - сamera and/or microphone wasn't found
+       * 12 - incoming call
+       * 13 - call accepted
        * default - message
        */
       switch (type) {
@@ -127,15 +129,22 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
           }
           break;
 
+        case '12':
+          text = 'Incomming '+message.callType+' Call from '+contact.full_name;
+          break;
+
+        case '13':
+          text = 'The '+message.callType+' Call accepted by '+contact.full_name;
+          break;
+
         // messages
         default:
           text = (chatType === 'groupchat') ? (contact.full_name + ': ' + message.body) : message.body;
           break;
-        }
-
-      text = text.replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&");
+      }
 
       if (text) {
+        text = text.replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&amp;/gi, "&");
         options = {
           body: text,
           icon: photo,
@@ -172,7 +181,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
   };
 
   // smart console (beta)
-  Helpers.showInConsole = function() {
+  Helpers.log = function() {
     if (QMCONFIG.debug) {
       if (arguments.length <= 1) {
         console.group("[Q-MUNICATE debug mode]:");
@@ -190,6 +199,27 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
         }
         console.groupEnd();
       }
+    }
+  };
+
+  Helpers.isBeginOfChat = function() {
+    var $viewPort = $('.l-chat:visible .scrollbar_message .mCustomScrollBox'),
+        $msgList = $viewPort.find('.mCSB_container');
+
+    if ($msgList.offset()) {
+      var viewPortPosition = $viewPort.offset().top,
+          viewPortHeight = $viewPort.outerHeight(),
+          msgListPosition = $msgList.offset().top,
+          msgListHeight = $msgList.outerHeight(),
+          viewPortBottom = viewPortPosition + viewPortHeight,
+          msgListBottom = msgListPosition + msgListHeight,
+          bottom = false;
+
+      if ((viewPortBottom + viewPortHeight / 2) >= msgListBottom) {
+        bottom = true;
+      }
+
+      return bottom;
     }
   };
 
