@@ -5,9 +5,9 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
+define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
 
-  var Session, UserView, ContactListView;
+  var Session, UserView, ContactListView, User;
   var timer;
 
   function QBApiCalls(app) {
@@ -16,6 +16,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     Session = this.app.models.Session;
     UserView = this.app.views.User;
     ContactListView = this.app.views.ContactList;
+    User = this.app.models.User;
   }
 
   QBApiCalls.prototype = {
@@ -30,8 +31,8 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         Session.create(JSON.parse(localStorage['QM.session']), true);
         UserView.autologin();
       }
-
-      if (QMCONFIG.debug) console.log('QB init', this);
+      
+      Helpers.log('QB init', this);
     },
 
     checkSession: function(callback) {
@@ -60,7 +61,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     createSession: function(params, callback, isRemember) {
       QB.createSession(params, function(err, res) {
         if (err) {
-          if (QMCONFIG.debug) console.log(err.detail);
+          Helpers.log(err.detail);
 
           var errMsg,
               parseErr = JSON.parse(err.detail);
@@ -91,7 +92,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
 
           fail(errMsg);
         } else {
-          if (QMCONFIG.debug) console.log('QB SDK: Session is created', res);
+          Helpers.log('QB SDK: Session is created', res);
 
           if (Session.token) {
             Session.update({ token: res.token });
@@ -109,10 +110,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.login(params, function(err, res) {
           if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+            Helpers.log(err.detail);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: User has logged', res);
+            Helpers.log('QB SDK: User has logged', res);
 
             Session.update({ date: new Date(), authParams: Session.encrypt(params) });
             callback(res);
@@ -122,7 +123,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     },
 
     logoutUser: function(callback) {
-      if (QMCONFIG.debug) console.log('QB SDK: User has exited');
+      Helpers.log('QB SDK: User has exited');
       // reset QuickBlox JS SDK after autologin via an existing token
       this.init();
       clearTimeout(timer);
@@ -134,11 +135,11 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.users.resetPassword(email, function(response) {
           if (response.code === 404) {
-            if (QMCONFIG.debug) console.log(response.message);
+            Helpers.log(response.message);
 
             failForgot();
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Instructions have been sent');
+            Helpers.log('QB SDK: Instructions have been sent');
 
             Session.destroy();
             callback();
@@ -151,10 +152,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.users.listUsers(params, function(err, res) {
           if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+            Helpers.log(err.detail);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
+            Helpers.log('QB SDK: Users is found', res);
 
             Session.update({ date: new Date() });
             callback(res);
@@ -167,11 +168,11 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.users.get(params, function(err, res) {
           if (err && err.code === 404) {
-            if (QMCONFIG.debug) console.log(err.message);
+            Helpers.log(err.message);
 
             failSearch();
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Users is found', res);
+            Helpers.log('QB SDK: Users is found', res);
 
             Session.update({ date: new Date() });
             callback(res);
@@ -184,12 +185,12 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.users.create(params, function(err, res) {
           if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+            Helpers.log(err.detail);
 
             var parseErr = JSON.parse(err.detail).errors.email[0];
             failUser(parseErr);
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: User is created', res);
+            Helpers.log('QB SDK: User is created', res);
 
             Session.update({ date: new Date() });
             callback(res);
@@ -202,7 +203,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.users.update(id, params, function(err, res) {
           if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+            Helpers.log(err.detail);
 
             var parseErr = JSON.parse(err.detail).errors.email;
             if (parseErr) {
@@ -211,7 +212,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
               callback(null, err);
             }
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: User is updated', res);
+            Helpers.log('QB SDK: User is updated', res);
 
             Session.update({ date: new Date() });
             callback(res);
@@ -224,10 +225,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.content.createAndUpload(params, function(err, res) {
           if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+            Helpers.log(err.detail);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Blob is uploaded', res);
+            Helpers.log('QB SDK: Blob is uploaded', res);
 
             Session.update({ date: new Date() });
             callback(res);
@@ -245,7 +246,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         var password = Session.token;
         QB.chat.connect({jid: jid, password: password}, function(err, res) {
           if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+            Helpers.log(err.detail);
 
             if (err.detail.indexOf('Status.ERROR') >= 0 || err.detail.indexOf('Status.AUTHFAIL') >= 0) {
               fail(err.detail);
@@ -253,6 +254,12 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
               window.location.reload();
             }
           } else {
+            var eventParams = {
+              'chat_endpoints': QB.auth.service.qbInst.config.endpoints.chat,
+              'app_id': (QMCONFIG.qbAccount.appId).toString()
+            };
+            FlurryAgent.logEvent("Connect to chat", eventParams);
+            
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);
@@ -265,10 +272,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.chat.dialog.list(params, function(err, res) {
           if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+            Helpers.log(err.detail);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Dialogs is found', res);
+            Helpers.log('QB SDK: Dialogs is found', res);
 
             Session.update({ date: new Date() });
             callback(res.items);
@@ -281,10 +288,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.chat.dialog.create(params, function(err, res) {
           if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+            Helpers.log(err.detail);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Dialog is created', res);
+            Helpers.log('QB SDK: Dialog is created', res);
 
             Session.update({ date: new Date() });
             callback(res);
@@ -297,10 +304,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.chat.dialog.update(id, params, function(err, res) {
           if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+            Helpers.log(err.detail);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Dialog is updated', res);
+            Helpers.log('QB SDK: Dialog is updated', res);
 
             Session.update({ date: new Date() });
             callback(res);
@@ -313,10 +320,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.chat.message.list(params, function(err, res) {
           if (err) {
-            if (QMCONFIG.debug) console.log(err.detail);
+            Helpers.log(err.detail);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Messages is found', res);
+            Helpers.log('QB SDK: Messages is found', res);
 
             Session.update({ date: new Date() });
             callback(res.items);
@@ -329,10 +336,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.chat.message.update(id, params, function(response) {
           if (response.code === 404) {
-            if (QMCONFIG.debug) console.log(response.message);
+            Helpers.log(response.message);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Message is updated');
+            Helpers.log('QB SDK: Message is updated');
 
             Session.update({ date: new Date() });
             callback();
@@ -345,10 +352,10 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       this.checkSession(function(res) {
         QB.chat.message.delete(params, function(response) {
           if (response.code === 404) {
-            if (QMCONFIG.debug) console.log(response.message);
+            Helpers.log(response.message);
 
           } else {
-            if (QMCONFIG.debug) console.log('QB SDK: Message is deleted');
+            Helpers.log('QB SDK: Message is deleted');
 
             Session.update({ date: new Date() });
             callback();
@@ -366,7 +373,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
     timer = setTimeout(function() {
       QB.getSession(function(err, session) {
         if (err) {
-          return console.log('recovery session error', err);
+          return Helpers.log('recovery session error', err);
         } else {
           Session.update({ date: new Date() });
           setRecoverySessionInterval();

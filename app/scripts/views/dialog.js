@@ -9,6 +9,7 @@ define([
   'jquery',
   'config',
   'quickblox',
+  'Helpers',
   'underscore',
   'models/person',
   'views/profile',
@@ -17,7 +18,7 @@ define([
   'mCustomScrollbar',
   'nicescroll',
   'mousewheel'
-], function($, QMCONFIG, QB, _, Person, ProfileView, ChangePassView, FBImportView) {
+], function($, QMCONFIG, QB, Helpers, _, Person, ProfileView, ChangePassView, FBImportView) {
 
   var User, Dialog, Message, ContactList;
   var unreadDialogs = {};
@@ -29,6 +30,7 @@ define([
 
   function DialogView(app) {
     this.app = app;
+
     User = this.app.models.User;
     Dialog = this.app.models.Dialog;
     Message = this.app.models.Message;
@@ -41,6 +43,7 @@ define([
     chatCallbacksInit: function() {
       var ContactListView = this.app.views.ContactList,
           MessageView = this.app.views.Message,
+          VideoChat = this.app.models.VideoChat,
           VideoChatView = this.app.views.VideoChat;
 
       QB.chat.onMessageListener = MessageView.onMessage;
@@ -54,23 +57,24 @@ define([
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
       QB.chat.onRejectSubscribeListener = ContactListView.onReject;
 
-      // QB.webrtc.onCallListener = VideoChatView.onCall;
-      // QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
-      // QB.webrtc.onRejectCallListener = VideoChatView.onReject;
-      // QB.webrtc.onStopCallListener = VideoChatView.onStop;
-      // QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
-      // QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
+      if (QB.webrtc) {
+        QB.webrtc.onCallListener = VideoChatView.onCall;
+        QB.webrtc.onAcceptCallListener = VideoChatView.onAccept;
+        QB.webrtc.onRejectCallListener = VideoChatView.onReject;
+        QB.webrtc.onStopCallListener = VideoChatView.onStop;
+        QB.webrtc.onUpdateCallListener = VideoChatView.onUpdateCall;
+        QB.webrtc.onRemoteStreamListener = VideoChatView.onRemoteStream;
+        QB.webrtc.onCallStatsReport = VideoChatView.onCallStatsReport;
+        QB.webrtc.onSessionCloseListener = VideoChatView.onSessionCloseListener;
+        QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
+      }
 
-      QB.chat.onDisconnectingListener = function() {
-        if (localStorage['QM.user']) {
-          window.onLine = false;
-          $('.no-connection').removeClass('is-hidden');
-        }
+      QB.chat.onDisconnectedListener = function() {
+        $('.j-disconnect').addClass('is-overlay');
       };
 
       QB.chat.onReconnectListener = function() {
-        window.onLine = true;
-        $('.no-connection').addClass('is-hidden');
+        $('.j-disconnect').removeClass('is-overlay');
       };
 
       currentUser = new Person(_.clone(User.contact), {
@@ -124,7 +128,7 @@ define([
     },
 
     prepareDownloading: function(roster) {
-      if (QMCONFIG.debug) console.log('QB SDK: Roster has been got', roster);
+      Helpers.log('QB SDK: Roster has been got', roster);
       this.chatCallbacksInit();
       this.createDataSpinner();
       scrollbar();
@@ -196,11 +200,6 @@ define([
               dialog = Dialog.create(dialogs[i]);
 
               ContactList.dialogs[dialog.id] = dialog;
-              // if (QMCONFIG.debug) console.log('Dialog', dialog);
-
-              if (!localStorage['QM.dialog-' + dialog.id]) {
-                localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-              }
 
               // don't create a duplicate dialog in contact list
               chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog.id+'"]');
@@ -345,19 +344,24 @@ define([
           user_id = parent.data('id'),
           dialog = dialogs[dialog_id],
           user = contacts[user_id],
-          chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
-          html, jid, icon, name, status, message, msgArr, userId, messageId,
-          self = this;
-
-      // if (QMCONFIG.debug) console.log(dialog);
-      // if (QMCONFIG.debug) console.log(user);
+          $chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
+          self = this,
+          html,
+          jid,
+          icon,
+          name,
+          status,
+          message,
+          msgArr,
+          userId,
+          messageId;
 
       jid = dialog.room_jid || user.user_jid;
       icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
       name = dialog.room_name || user.full_name;
       status = roster[user_id] ? roster[user_id] : null;
 
-      if (chat.length === 0) {
+      if ($chat.length === 0) {
         if (dialog.type === 3) {
           html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="'+dialog_id+'" data-id="'+user_id+'" data-jid="'+jid+'">';
           html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
@@ -420,10 +424,10 @@ define([
 
         html += '<section class="l-chat-content scrollbar_message"></section>';
         html += '<footer class="l-chat-footer">';
+        html += '<button class="j-toBottom btn_to_bottom"></button>';
         html += '<div class="l-typing"></div>';
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
-        // html += '<textarea class="text-message is-hidden"></textarea>';
         html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.svg" alt="smile"></button>';
         html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.svg" alt="attach"></button>';
         html += '<input class="attachment" type="file" accept="image/*">';
@@ -441,7 +445,6 @@ define([
         Message.download(dialog_id, function(messages) {
           for (var i = 0, len = messages.length; i < len; i++) {
             message = Message.create(messages[i]);
-            // if (QMCONFIG.debug) console.log(message);
             if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
               QB.chat.sendReadStatus({messageId: message.id, userId: message.sender_id, dialogId: message.dialog_id});
             }
@@ -449,20 +452,20 @@ define([
             message.stack = Message.isStack(false, messages[i], messages[i+1]);
 
             MessageView.addItem(message, null, null, message.recipient_id);
+
+            if ((i+1) === len) {
+              self.removeDataSpinner();
+            }
           }
 
-          self.removeDataSpinner();
           self.messageScrollbar();
         });
 
       } else {
 
-        chat.removeClass('is-hidden').siblings().addClass('is-hidden');
+        $chat.removeClass('is-hidden').siblings().addClass('is-hidden');
         $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
         self.messageScrollbar();
-
-        // console.log(2222222);
-        // console.log(self.app.models.ContactList.dialogs[dialog_id]);
 
         if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 3) {
           Message.update(dialog.messages.join(), dialog_id, user_id);
@@ -489,18 +492,40 @@ define([
 
       objDom.mCustomScrollbar({
         theme: 'minimal-dark',
-        scrollInertia: 0,
+        scrollInertia: 300,
         mouseWheel: {
-          scrollAmount: QMCONFIG.isMac || 90,
-          deltaFactor: -1
+          scrollAmount: QMCONFIG.isMac || 'auto',
+          deltaFactor: 'auto'
         },
         setTop: height + 'px',
         callbacks: {
           onTotalScrollBack: function() {
             ajaxDownloading(objDom, self);
+          },
+          onTotalScroll: function() {
+            var isBottom = Helpers.isBeginOfChat(),
+                $currentDialog = $('.dialog-item.is-selected'),
+                dialogId = $currentDialog.data('dialog');
+
+            if (isBottom) {
+              $('.j-toBottom').hide();
+              $currentDialog.find('.unread').text('');
+              self.decUnreadCounter(dialogId);
+            }
+          },
+          onScroll: function() {
+            var isBottom = Helpers.isBeginOfChat();
+            if (!isBottom) {
+              $('.j-toBottom').show();
+            }
           }
         },
         live: true
+      });
+
+      $(document).on('click', '.j-toBottom', function() {
+        objDom.mCustomScrollbar('scrollTo', 'bottom');
+        $('.j-toBottom').hide();
       });
     },
 
@@ -563,9 +588,6 @@ define([
         li.remove();
         isSectionEmpty(list);
 
-        // delete dialog messages
-        localStorage.removeItem('QM.dialog-' + dialog_id);
-
         // delete chat section
         if (chat.length > 0) chat.remove();
         $('#capBox').removeClass('is-hidden');
@@ -581,28 +603,41 @@ define([
   function scrollbar() {
     $('.l-sidebar .scrollbar').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 60,
-        deltaFactor: -1
+        scrollAmount: QMCONFIG.isMac || 'auto',
+        deltaFactor: 'auto'
       },
       live: true
     });
   }
 
   // ajax downloading of data through scroll
-  function ajaxDownloading(chat, self) {
+  function ajaxDownloading($chat, self) {
     var MessageView = self.app.views.Message,
-        dialog_id = chat.parents('.l-chat').data('dialog'),
-        count = chat.find('.message').length,
+        dialog_id = $chat.parents('.l-chat').data('dialog'),
+        count = $chat.find('.message').length,
         message;
+
+    var listHeightBefore = $chat.find('.mCSB_container').height(),
+        draggerHeightBefore = $chat.find('.mCSB_dragger').height(),
+        viewPort = $chat.find('.mCustomScrollBox').height();
 
     Message.download(dialog_id, function(messages) {
       for (var i = 0, len = messages.length; i < len; i++) {
         message = Message.create(messages[i]);
-        // if (QMCONFIG.debug) console.log(message);
         message.stack = Message.isStack(false, messages[i], messages[i+1]);
         MessageView.addItem(message, true);
+
+        if ((i+1) === len) {
+          var listHeightAfter = $chat.find('.mCSB_container').height(),
+              draggerHeightAfter = $chat.find('.mCSB_dragger').height(),
+              thisStopList = listHeightBefore - listHeightAfter,
+              thisStopDragger = (draggerHeightAfter / (draggerHeightBefore + draggerHeightAfter)) * viewPort;
+
+          $('.l-chat-content .mCSB_container').css({top: thisStopList+'px'});
+          $('.l-chat-content .mCSB_dragger').css({top: thisStopDragger+'px'});
+        }
       }
     }, count, 'ajax');
   }

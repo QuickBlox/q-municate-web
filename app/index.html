@@ -251,12 +251,11 @@
               <a id="profile" href="#"><div class="avatar"></div></a>
             </li>
           </ul>
-          <div class="no-connection is-hidden"><b>Not Connected.</b> Connecting...</div>
         </header>
         <div class="l-content l-flexbox">
 
           <aside class="l-sidebar">
-            <form id="searchContacts" class="l-search localSearch formSearch" action="#">
+            <form id="searchContacts" class="l-search localSearch formSearch">
               <input class="form-input-search" type="search" placeholder="Search">
               <button class="clean-button" type="reset">✕</button>
             </form>
@@ -398,10 +397,17 @@
       </footer>
     </section>
 
-    <div class="l-app-version">v.1.2.1</div>
+    <div class="l-app-version">v.1.2.2.1</div>
   </div>
 
-  <div class="popups l-flexbox">
+  <div class="popups l-flexbox j-disconnect">
+
+    <section id="popupDisconnect" class="popup popup_discon is-open j-disconnect">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <span class="alert alert_discon"><b>Not Connected.</b> Connecting...</span>
+      </div>
+    </section>
+
     <section id="popupDetails" class="popup popup_details presence-listener">
       <div class="userDetails-preview">
         <div class="userDetails-avatar profileUserAvatar"></div>
@@ -411,22 +417,11 @@
         </div>
       </div>
       <div class="userDetails-chatStatus"></div>
-      <div class="userDetails-controls l-flexbox">
-        <button class="btn_userDetails writeMessage videoCall"><img src="images/icon-videocall.svg" alt="videocall">Video Call</button>
-        <button class="btn_userDetails writeMessage audioCall"><img src="images/icon-audiocall.svg" alt="videocall">Call</button>
-        <button class="btn_userDetails writeMessage"><img src="images/icon-message.png" alt="videocall">Message</button>
-        <button class="btn_userDetails deleteContact"><img src="images/icon-delete.svg" alt="videocall">Delete</button>
-      </div>
+      <div class="userDetails-controls l-flexbox"></div>
       <div class="userDetails-field profileUserPhone"></div>
     </section>
 
-    <section id="popupIncoming" class="popup incoming-calls is-open"></section>
-
-    <section id="popupNoWebRTC" class="popup popup_logout" style="height: auto; width: auto;">
-      <div class="sorry-msg" style="padding: 30px 60px; text-align:center;">
-        <span class="alert alert_logout">Coming soon...<br>we are still working on it.</span>
-      </div>
-    </section>
+    <section id="popupIncoming" class="popup incoming-call-popup is-open"></section>
 
     <section id="popupAttach" class="popup popup_attach">
       <img class="attach-photo" src="" alt="attach">

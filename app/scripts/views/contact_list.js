@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, QB, _) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, QB, Helpers, _) {
 
   var Dialog, Message, ContactList, User;
 
@@ -100,7 +100,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       friends = _.filter(sortedContacts, function(el) {
         return roster[el] && roster[el].subscription !== 'none';
       });
-      if (QMCONFIG.debug) console.log('Friends', friends);
+      Helpers.log('Friends', friends);
 
       if (friends.length === 0) {
         popup.children(':not(.popup-header)').addClass('is-hidden');
@@ -281,7 +281,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
           unread_count: ''
         });
         ContactList.dialogs[dialog.id] = dialog;
-        if (QMCONFIG.debug) console.log('Dialog', dialog);
+        Helpers.log('Dialog', dialog);
         if (!localStorage['QM.dialog-' + dialog.id]) {
           localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
         }
@@ -358,9 +358,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
       delete roster[id];
       ContactList.saveRoster(roster);
 
-      // delete dialog messages
-      localStorage.removeItem('QM.dialog-' + dialog_id);
-
       // send notification about reject
       QB.chat.send(jid, {
         type: 'chat',
@@ -378,8 +375,12 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
         isSectionEmpty(list);
 
         // delete chat section
-        if (chat.length > 0) chat.remove();
-        $('#capBox').removeClass('is-hidden');
+        if (chat.is(':visible')) {
+          $('#capBox').removeClass('is-hidden');
+        }
+        if (chat.length > 0) {
+          chat.remove();
+        }
         delete dialogs[dialog_id];
       });
 
@@ -495,10 +496,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
   function scrollbarContacts() {
     $('.scrollbarContacts').mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 60,
-        deltaFactor: -1
+        scrollAmount: QMCONFIG.isMac || 'auto',
+        deltaFactor: 'auto'
       },
       live: true
     });
@@ -507,10 +508,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'mCustomScrollbar', 'mous
   function scrollbar(list, self) {
     list.mCustomScrollbar({
       theme: 'minimal-dark',
-      scrollInertia: 0,
+      scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 60,
-        deltaFactor: -1
+        scrollAmount: QMCONFIG.isMac || 'auto',
+        deltaFactor: 'auto'
       },
       callbacks: {
         onTotalScroll: function() {

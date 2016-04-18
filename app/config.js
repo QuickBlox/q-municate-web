@@ -19,7 +19,7 @@ define(function() {
 
     fbAccount: {
       appId: '605405446247805',
-      scope: 'email,user_friends',
+      scope: 'email,user_friends'
     },
 
     debug: true,
@@ -73,6 +73,9 @@ define(function() {
       debug: {
         mode: 1,
         file: null
+      },
+      webrtc: {
+        answerTimeInterval: 45
       }
     }
 

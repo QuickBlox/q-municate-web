@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml'], function($, QMCONFIG, QB, Helpers, QMHtml) {
 
   var User, ContactList, Contact,
       FBCallback = null;
@@ -98,7 +98,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         FBCallback = null;
 
         FB.getLoginStatus(function(response) {
-          if (QMCONFIG.debug) console.log('FB status response', response);
+          Helpers.log('FB status response', response);
           if (callback) {
             // situation when you are recovering QB session via FB
             // and FB accessToken has expired
@@ -106,7 +106,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
               callback(response.authResponse.accessToken);
             } else {
               FB.login(function(response) {
-                if (QMCONFIG.debug) console.log('FB authResponse', response);
+                Helpers.log('FB authResponse', response);
                 if (response.status === 'connected')
                   callback(response.authResponse.accessToken);
               });
@@ -131,26 +131,18 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           dialog_id = objDom.parent().data('dialog'),
           roster = ContactList.roster,
           dialogs = ContactList.dialogs,
-          html;
+          htmlTpl;
 
-      html = '<ul class="list-actions list-actions_contacts popover">';
+      htmlTpl = QMHtml.User.contactPopover({
+        'dialogId': dialog_id,
+        'dialogType': dialogs[dialog_id].type,
+        'occupantsIds': dialogs[dialog_id].occupants_ids,
+        'ids': ids
+      }, roster[ids]);
 
-      if (dialogs[dialog_id].type === 3 && roster[ids] && roster[ids].subscription !== 'none') {
-        html += '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="'+ids+'" href="#">Video call</a></li>';
-        html += '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="'+ids+'" href="#">Audio call</a></li>';
-        html += '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="'+ids+'" data-private="1" href="#">Add people</a></li>';
-      } else if (dialogs[dialog_id].type !== 3)
-        html += '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="'+dialogs[dialog_id].occupants_ids+'" data-dialog="'+dialog_id+'" href="#">Add people</a></li>';
+      objDom.after(htmlTpl)
+            .parent().addClass('is-contextmenu');
 
-      if (dialogs[dialog_id].type === 3) {
-        html += '<li class="list-item"><a class="list-actions-action userDetails" data-id="'+ids+'" href="#">Profile</a></li>';
-        html += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
-      } else
-        html += '<li class="list-item"><a class="leaveChat list-actions-action" data-group="true" href="#">Leave chat</a></li>';
-
-      html += '</ul>';
-
-      objDom.after(html).parent().addClass('is-contextmenu');
       appearAnimation();
 
         var elemPosition       = objDom.offset().top,
@@ -163,29 +155,23 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
             botElemPosition    = botListOffset - elemPosition,
             elemPositionInList = elemPosition - topListOffset;
 
-        if ((botElemPosition <= dropListElemCount*50) && (elemPositionInList > dropListElemCount*40)) dropList.addClass('margin-up');
-        if (listViewPort <= 400) $('#mCSB_8_container')[0].style.paddingBottom = (dropListElemCount*40)+"px";
+        if ((botElemPosition <= dropListElemCount*50) && (elemPositionInList > dropListElemCount*40)) {
+          dropList.addClass('margin-up');
+        }
+        if (listViewPort <= 400) {
+          $('#mCSB_8_container')[0].style.paddingBottom = (dropListElemCount*40)+"px";
+        }
     },
 
     occupantPopover: function(objDom, e) {
-      var html,
-          id = objDom.data('id'),
+      var id = objDom.data('id'),
           jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
           roster = ContactList.roster,
-          position = e.currentTarget.getBoundingClientRect();
+          position = e.currentTarget.getBoundingClientRect(),
+          htmlTpl = QMHtml.User.occupantPopover({'id': id, 'jid': jid}, roster[id]);
 
-      html = '<ul class="list-actions list-actions_occupants popover">';
-      if (!roster[id] || (roster[id].subscription === 'none' && !roster[id].ask)) {
-        html += '<li class="list-item" data-jid="'+jid+'"><a class="list-actions-action requestAction" data-id="'+id+'" href="#">Send request</a></li>';
-      } else {
-        html += '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="'+id+'" href="#">Video call</a></li>';
-        html += '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="'+id+'" href="#">Audio call</a></li>';
-        html += '<li class="list-item"><a class="list-actions-action writeMessage" data-id="'+id+'" href="#">Write message</a></li>';
-        html += '<li class="list-item"><a class="list-actions-action userDetails" data-id="'+id+'" href="#">Profile</a></li>';
-      }
-      html += '</ul>';
+      $('body').append(htmlTpl);
 
-      $('body').append(html);
       appearAnimation();
 
       objDom.addClass('is-active');
@@ -261,7 +247,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         switchOnWelcomePage();
         $('#capBox').removeClass('is-hidden');
         $('.l-chat').remove();
-        if (QMCONFIG.debug) console.log('current User and Session were destroyed');
+        Helpers.log('current User and Session were destroyed');
         DialogView.logoutWithClearData();
       });
     },
@@ -270,7 +256,6 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       var val = form.find('input[type="search"]').val().trim().toLowerCase();
 
       if (val.length > 0) {
-        // if (QMCONFIG.debug) console.log('local search =', val);
         $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
         $('#searchList ul').html('').add('#searchList .note').removeClass('is-hidden');
 

@@ -5,7 +5,7 @@
  *
  */
 
-define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
+define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, _, Helpers) {
 
   function Dialog(app) {
     this.app = app;
@@ -55,11 +55,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       QBApiCalls.createDialog({type: 3, occupants_ids: id}, function(res) {
         dialog = self.create(res);
         ContactList.dialogs[dialog.id] = dialog;
-        if (QMCONFIG.debug) console.log('Dialog', dialog);
-
-        if (!localStorage['QM.dialog-' + dialog.id]) {
-          localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-        }
+        Helpers.log('Dialog', dialog);
 
         // send notification about subscribe
         QB.chat.send(jid, {
@@ -91,11 +87,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       QBApiCalls.createDialog(params, function(res) {
         dialog = self.create(res);
         ContactList.dialogs[dialog.id] = dialog;
-        if (QMCONFIG.debug) console.log('Dialog', dialog);
-
-        if (!localStorage['QM.dialog-' + dialog.id]) {
-          localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-        }
+        Helpers.log('Dialog', dialog);
 
         QB.chat.muc.join(dialog.room_jid, function() {
           var msgId = QB.chat.helpers.getBsonObjectId();
@@ -155,7 +147,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       QBApiCalls.updateDialog(params.dialog_id, {push_all: {occupants_ids: [params.occupants_ids]}}, function(res) {
         dialog = self.create(res);
         ContactList.dialogs[params.dialog_id] = dialog;
-        if (QMCONFIG.debug) console.log('Dialog', dialog);
+        Helpers.log('Dialog', dialog);
 
         var msgId = QB.chat.helpers.getBsonObjectId();
 
@@ -209,7 +201,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
       QBApiCalls.updateDialog(dialog_id, {name: name}, function(res) {
         dialog = self.create(res);
         ContactList.dialogs[dialog_id] = dialog;
-        if (QMCONFIG.debug) console.log('Dialog', dialog);
+        Helpers.log('Dialog', dialog);
 
         // send notification about updating room
         QB.chat.send(dialog.room_jid, {
@@ -243,7 +235,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           errMsg = QMCONFIG.errors.fileName;
 
         if (errMsg) {
-          console.log(errMsg);
+          Helpers.log('Error', errMsg);
           callback(false);
         } else {
 
@@ -252,7 +244,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
               QBApiCalls.updateDialog(dialog_id, {photo: blob.path}, function(res) {
                 dialog = self.create(res);
                 ContactList.dialogs[dialog_id] = dialog;
-                if (QMCONFIG.debug) console.log('Dialog', dialog);
+                Helpers.log('Dialog', dialog);
 
                 // send notification about updating room
                 QB.chat.send(dialog.room_jid, {
@@ -296,7 +288,7 @@ define(['config', 'quickblox', 'underscore'], function(QMCONFIG, QB, _) {
           current_occupant_ids: dialog.occupants_ids.join(),
           deleted_occupant_ids: User.contact.id,
           dialog_id: dialog.id,
-          room_updated_date: dialog.room_updated_date,
+          room_updated_date: '',
           dialog_update_info: 3
         }
       });

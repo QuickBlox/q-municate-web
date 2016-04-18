@@ -5,12 +5,14 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
+define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
 
-  var self;
+  var curSession, 
+      self;
   
   function VideoChat(app) {
     this.app = app;
+    this.session = {};
     self = this;
   }
 
@@ -26,9 +28,19 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       }
     };
 
-    QB.webrtc.getUserMedia(params, function(err, stream) {
+    if (!options.isCallee) {
+      if (callType === 'video') {
+        self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO);
+      } else {
+        self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.AUDIO);
+      }
+    }
+
+    curSession = self.session;
+
+    curSession.getUserMedia(params, function(err, stream) {
       if (err) {
-        console.log(err);
+        Helpers.log('Error', err);
         if (!options.isCallee) {
           callback(err, null);
         } else {
@@ -36,7 +48,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
           callback(err, null);
         }
       } else {
-        console.log(stream);
+        Helpers.log('Stream', stream);
 
         if (!$('.l-chat[data-dialog="'+options.dialogId+'"]').find('.mediacall')[0]) {
           stream.stop();
@@ -44,17 +56,11 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         }
 
         if (options.isCallee) {
-          QB.webrtc.accept(options.opponentId, {
-            dialog_id: options.dialogId
-          });
+          curSession.accept({});
           self.caller = options.opponentId;
           self.callee = User.contact.id;
         } else {
-          QB.webrtc.call(options.opponentId, callType, {
-            dialog_id: options.dialogId,
-            avatar: User.contact.avatar_url,
-            full_name: User.contact.full_name
-          });
+          curSession.call({});
           self.caller = User.contact.id;
           self.callee = options.opponentId;
         }
@@ -70,7 +76,7 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
         MessageView = this.app.views.Message,
         VideoChatView = this.app.views.VideoChat,
         time = Math.floor(Date.now() / 1000),
-        dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialogId+'"]'),
+        $dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialogId+'"]'),
         copyDialogItem,
         message,
         extension;
@@ -118,12 +124,12 @@ define(['jquery', 'config', 'quickblox'], function($, QMCONFIG, QB) {
       duration: extension.duration || null,
       sessionID: extension.sessionID || null
     });
-    if (QMCONFIG.debug) console.log(message);
+    Helpers.log(message);
     MessageView.addItem(message, true, true);
 
-    if (dialogItem.length > 0) {
-      copyDialogItem = dialogItem.clone();
-      dialogItem.remove();
+    if ($dialogItem.length > 0) {
+      copyDialogItem = $dialogItem.clone();
+      $dialogItem.remove();
       $('#recentList ul').prepend(copyDialogItem);
       if (!$('#searchList').is(':visible')) {
        $('#recentList').removeClass('is-hidden');
