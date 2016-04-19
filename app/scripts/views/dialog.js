@@ -70,6 +70,9 @@ define([
       }
 
       QB.chat.onDisconnectedListener = function() {
+        if ('div.popups.is-overlay') {
+          $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
+        }
         $('.j-disconnect').addClass('is-overlay');
       };
 
