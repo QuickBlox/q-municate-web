@@ -14,11 +14,10 @@ Q-municate is designed for all developers, including beginners, as we move from 
 Enjoy and please get in touch if you need any assistance.
 
 ## Live demo
-
-*Web - [Live app](https://qm.quickblox.com/)
-*iOS - [App Store](https://itunes.apple.com/us/app/q-municate/id909698517?mt=8)
-*Android - [Google Play](https://play.google.com/store/apps/details?id=com.quickblox.q_municate)
-*WP - [Microsoft Store](https://www.microsoft.com/en-us/store/apps/q-municate-messenger/9nblggh5jqnb)
+* Web - [Live app](https://qm.quickblox.com/)
+* iOS - [App Store](https://itunes.apple.com/us/app/q-municate/id909698517?mt=8)
+* Android - [Google Play](https://play.google.com/store/apps/details?id=com.quickblox.q_municate)
+* WP - [Microsoft Store](https://www.microsoft.com/en-us/store/apps/q-municate-messenger/9nblggh5jqnb)
 
 ## Software Environment
 * The web component is based on the QuickBlox platform
@@ -71,53 +70,13 @@ If you want to build your own app using Q-municate as a base, please do the foll
 6. Run <code>bower install</code> to install all additional packages in your terminal.
 7. Run <code>npm install</code> to install all additional packages in your terminal as an administrator.
 8. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID ([How to generate and save Facebook application ID](https://quickblox.com/developers/How_to_generate_and_save_Facebook_application_ID)) into your Q-municate project code in ```config.js```.
-
-[Js qm project](https://quickblox.com/developers//images/9/95/Js_qm_project.png)
+[Js qm project](http://quickblox.com/developers//images/9/95/Js_qm_project.png)
 
 ## Build and run
 1. Run <code>grunt build</code> or <code>grunt</code> (build with jshint verification) in your terminal to build Q-municate (q-municate-web/dist).
 2. Run <code>grunt serve</code> in your terminal to open Q-municate in a browser window (https://localhost:9000).
+[Gruntserve](http://quickblox.com/developers//images/7/7b/Gruntserve.jpg)
 
-[Gruntserve](https://quickblox.com/developers//images/7/7b/Gruntserve.jpg)
-
-<!-- ### Important - how to build your own Chat app</h3>
-
-If you want to build your own app using Q-municate as a base, please do the following:
-
- 1. Download the project from here (GitHub)
- 2. Run <code>sudo npm install -g bower</code> in your terminal
- 3. Run <code>sudo gem install compass</code> in your terminal
- 4. Run <code>sudo npm install -g grunt-cli</code> in your terminal
- 5. Run <code>bower install</code> to install all additional packages in your terminal
- 6. Run <code>sudo npm install</code> to install all additional packages in your terminal
- 7. [Register a QuickBlox account](http://admin.quickblox.com/register) (if you don't have one yet).
- 8. Login to the [QuickBlox admin panel](http://admin.quickblox.com/signin)
- 9. Create a new app
- 10. Click on the app title in the list to reveal the app's credentials:
-   ![App credentials](http://files.quickblox.com/app_credentials.png)
- 11. Create Facebook Application for ability connecting via Facebook
- 12. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID into your Q-municate project code in <code>config.js</code><br />
- 13. Run <code>grunt build</code> in your terminal to build Q-municate
- 14. Run <code>grunt serve</code> in your terminal to run Q-municate
-
-
-### Additional: how to build desktop version
-
- 1. Download nw.js dependent to your system(Win, OS X, Linux) [NW.js](http://nwjs.io/).
- 2. Add in 'package.json' after 'engines' section next lines:
-
- ```javascript
-   "window": {
-     "toolbar": false,
-     "width": 1000,
-     "height": 800
-   },
-   "main": "app/index.html"
-   ```
- 3. Run: $ /path/to/nw .  (suppose the current directory contains 'package.json'). Read more https://github.com/nwjs/nw.js#quick-start about OS X and Windows
- 4. [How to package app](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps).
-
- -->
 # License
 Apache License
 Version 2.0
