@@ -54,7 +54,7 @@ If you don't have an app yet, you can follow a detailed guide about app creation
 
 #### 4. Get app credentials
 Click on the app title in the list to reveal the app details. You are going to need App ID, Authorization key and Authorization secret later in our Q-municate source code.
-[Info about app](https://quickblox.com/developers//images/e/e3/Info_about_app.jpg)
+&nbsp;<img src="https://quickblox.com/developers//images/e/e3/Info_about_app.jpg" height="400" />&nbsp;
 
 #### 5. Launch the Q-municate app
 Just follow our platform-based guide [below.](https://quickblox.com/developers/Q-municate#Get_the_source)
@@ -70,12 +70,12 @@ If you want to build your own app using Q-municate as a base, please do the foll
 6. Run <code>bower install</code> to install all additional packages in your terminal.
 7. Run <code>npm install</code> to install all additional packages in your terminal as an administrator.
 8. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID ([How to generate and save Facebook application ID](https://quickblox.com/developers/How_to_generate_and_save_Facebook_application_ID)) into your Q-municate project code in ```config.js```.
-<img src="http://quickblox.com/developers//images/9/95/Js_qm_project.png" height="400" />&nbsp;
+&nbsp;<img src="http://quickblox.com/developers//images/9/95/Js_qm_project.png" />&nbsp;
 
 ## Build and run
 1. Run <code>grunt build</code> or <code>grunt</code> (build with jshint verification) in your terminal to build Q-municate (q-municate-web/dist).
 2. Run <code>grunt serve</code> in your terminal to open Q-municate in a browser window (https://localhost:9000).
-<img src="http://quickblox.com/developers//images/7/7b/Gruntserve.jpg" height="400" />&nbsp;
+&nbsp;<img src="http://quickblox.com/developers//images/7/7b/Gruntserve.jpg" />&nbsp;
 
 # License
 Apache License
