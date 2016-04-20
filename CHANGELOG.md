@@ -2,7 +2,7 @@
 
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
 
-### v. 1.2.2 - April 18, 2016
+### v. 1.3.0 - April 20, 2016
 * Updated QuickBlox JS SDK to 2.1.1
 * Audio/video calls restored (WebRTC)
 * Added local notifications for calls
