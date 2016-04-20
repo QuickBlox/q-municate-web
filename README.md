@@ -39,29 +39,30 @@ Q-municate is a fully fledged chat application using the Quickblox API.
 ## How to build your own Chat app
 You can build your own chat app using Q-municate as a basis in just 5 minutes! All you need is to:
 
-### 1. Register a QuickBlox account
+#### 1. Register a QuickBlox account
 If you don't have one yet, just register your account at [https://admin.quickblox.com/register](https://admin.quickblox.com/register)
 
 ![Register your account](http://quickblox.com/developers//images/7/70/Register_your_account.jpg)
 
 You can read more about how to create an account [here.](https://quickblox.com/developers/5_Minute_Guide#Create_your_QuickBlox_account)
 
-### 2. Login to QuickBlox admin panel
+#### 2. Login to QuickBlox admin panel
 Login into admin panel at [https://admin.quickblox.com/signin](https://admin.quickblox.com/signin)
 You can read more about how to sign in to admin panel [here.](https://quickblox.com/developers/5_Minute_Guide#Sign_in_to_the_admin_panel)
 
-### 3. Create a new app.
+#### 3. Create a new app.
 If you don't have an app yet, you can follow a detailed guide about app creation at [here.](https://quickblox.com/developers/5_Minute_Guide#Create_an_app_in_the_admin_panel)
 
-### 4. Get app credentials
+#### 4. Get app credentials
 Click on the app title in the list to reveal the app details. You are going to need App ID, Authorization key and Authorization secret later in our Q-municate source code.
 [Info about app](https://quickblox.com/developers//images/e/e3/Info_about_app.jpg)
 
-### 5. Launch the Q-municate app ====
+#### 5. Launch the Q-municate app
 Just follow our platform-based guide [below.](https://quickblox.com/developers/Q-municate#Get_the_source)
 
 ## Setup environment
 If you want to build your own app using Q-municate as a base, please do the following:
+
 1. Install [nodeJS](https://nodejs.org/en/download/) and [Ruby](https://www.ruby-lang.org/en/downloads) before start.
 2. Download the project from [GitHub](https://github.com/QuickBlox/q-municate-web/archive/master.zip).
 3. Run <code>npm install -g bower</code> in your terminal as an administrator.
@@ -70,14 +71,16 @@ If you want to build your own app using Q-municate as a base, please do the foll
 6. Run <code>bower install</code> to install all additional packages in your terminal.
 7. Run <code>npm install</code> to install all additional packages in your terminal as an administrator.
 8. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID ([How to generate and save Facebook application ID](https://quickblox.com/developers/How_to_generate_and_save_Facebook_application_ID)) into your Q-municate project code in ```config.js```.
+
 [Js_qm_project](https://quickblox.com/developers//images/9/95/Js_qm_project.png)
 
 ## Build and run
 1. Run <code>grunt build</code> or <code>grunt</code> (build with jshint verification) in your terminal to build Q-municate (q-municate-web/dist).
 2. Run <code>grunt serve</code> in your terminal to open Q-municate in a browser window (https://localhost:9000).
+
 [Gruntserve](https://quickblox.com/developers//images/7/7b/Gruntserve.jpg)
 
-### Important - how to build your own Chat app</h3>
+<!-- ### Important - how to build your own Chat app</h3>
 
 If you want to build your own app using Q-municate as a base, please do the following:
 
@@ -114,7 +117,7 @@ If you want to build your own app using Q-municate as a base, please do the foll
  3. Run: $ /path/to/nw .  (suppose the current directory contains 'package.json'). Read more https://github.com/nwjs/nw.js#quick-start about OS X and Windows
  4. [How to package app](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps).
 
-
+ -->
 # License
 Apache License
 Version 2.0
