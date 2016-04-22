@@ -76,7 +76,6 @@ define([
           $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         }
         $('.j-disconnect').addClass('is-overlay');
-        console.info('< < <   D I S C O N N E C T E D . . .  > > >');
       };
 
       QB.chat.onReconnectListener = function(error) {
@@ -84,9 +83,9 @@ define([
           Helpers.log('Error: ', error);
           self.app.service.checkSession(function (res) {
             Helpers.log('Check session: ', res);
-          });
+          }, 'reconnected');
         }
-        console.info('> > >   R E C O N N E C T E D ! ! !  < < <');
+
         $('.j-disconnect').removeClass('is-overlay');
       };
 

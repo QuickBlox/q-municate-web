@@ -8,7 +8,7 @@
 define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
 
   var Session, UserView, ContactListView, User;
-  var timer;
+  var timer, initListeners;
 
   function QBApiCalls(app) {
     this.app = app;
@@ -35,11 +35,12 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
       Helpers.log('QB init', this);
     },
 
-    checkSession: function(callback) {
+    checkSession: function(callback, reconnected) {
       var self = this;
 
       QB.getSession(function(err, res) {
         if (((new Date()).toISOString() > Session.expirationTime) || !res) {
+          initListeners = reconnected ? true : false;
           // reset QuickBlox JS SDK after autologin via an existing token
           self.init();
 
@@ -104,24 +105,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
           }
 
           if (User.contact) {
-            $('.j-chatConnecting').addClass('is-overlay');
-            QB.chat.disconnect();
-
-            self.connectChat(User.contact.user_jid, function(roster) {
-              var dialogs = self.app.models.ContactList.dialogs;
-
-              for (var key in dialogs) {
-                if (dialogs[key].type === 2) {
-                  QB.chat.muc.join(dialogs[key].room_jid);
-                }
-              }
-
-              $('.j-chatConnecting').removeClass('is-overlay');
-
-              self.app.views.Dialog.chatCallbacksInit();
-              self.add.views.VideoChat.init();
-              // window.location.reload();
-            });
+            self.reconnectChat();
           }
 
           Session.update({ date: new Date() });
@@ -284,6 +268,29 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
             callback(res);
           }
         });
+      });
+    },
+
+    reconnectChat: function() {
+      var self = this;
+      
+      $('.j-chatConnecting').addClass('is-overlay');
+      QB.chat.disconnect();
+
+      self.connectChat(User.contact.user_jid, function(roster) {
+        var dialogs = self.app.models.ContactList.dialogs;
+
+        for (var key in dialogs) {
+          if (dialogs[key].type === 2) {
+            QB.chat.muc.join(dialogs[key].room_jid);
+          }
+        }
+
+        if (initListeners) {
+          self.app.views.Dialog.prepareDownloading(roster);
+        }
+
+        $('.j-chatConnecting').removeClass('is-overlay');
       });
     },
 
