@@ -7,7 +7,7 @@ We are please to present you with an out of the box chat application. You can cu
 
 Find the source code and more information about Q-municate in our Developers section: http://quickblox.com/developers/q-municate
 
-# Q-municate Web
+## Q-municate Web
 This description was written by the QuickBlox Web team in order to fully explain how you can build a communication javascript app with the Quickblox API.
 
 Q-municate is designed for all developers, including beginners, as we move from simple to more complex implementation.
@@ -57,10 +57,7 @@ Click on the app title in the list to reveal the app details. You are going to n
 
 <img src="https://quickblox.com/developers//images/e/e3/Info_about_app.jpg" />&nbsp;
 
-#### 5. Launch the Q-municate app
-Just follow our platform-based guide [below.](https://quickblox.com/developers/Q-municate#Get_the_source)
-
-## Setup environment
+#### 5. Setup environment
 If you want to build your own app using Q-municate as a base, please do the following:
 
 1. Install [nodeJS](https://nodejs.org/en/download/) and [Ruby](https://www.ruby-lang.org/en/downloads) before start.
@@ -74,7 +71,7 @@ If you want to build your own app using Q-municate as a base, please do the foll
 
 <img src="http://quickblox.com/developers//images/9/95/Js_qm_project.png" />&nbsp;
 
-## Build and run
+#### 5. Build and run
 1. Run <code>grunt build</code> or <code>grunt</code> (build with jshint verification) in your terminal to build Q-municate (q-municate-web/dist).
 2. Run <code>grunt serve</code> in your terminal to open Q-municate in a browser window (https://localhost:9000).
 
