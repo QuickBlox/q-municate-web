@@ -71,7 +71,7 @@ If you want to build your own app using Q-municate as a base, please do the foll
 
 <img src="http://quickblox.com/developers//images/9/95/Js_qm_project.png" />&nbsp;
 
-#### 5. Build and run
+#### 6. Build and run
 1. Run <code>grunt build</code> or <code>grunt</code> (build with jshint verification) in your terminal to build Q-municate (q-municate-web/dist).
 2. Run <code>grunt serve</code> in your terminal to open Q-municate in a browser window (https://localhost:9000).
 
