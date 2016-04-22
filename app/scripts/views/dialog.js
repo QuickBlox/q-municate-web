@@ -72,6 +72,9 @@ define([
       }
 
       QB.chat.onDisconnectedListener = function() {
+        if ('div.popups.is-overlay') {
+          $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
+        }
         $('.j-disconnect').addClass('is-overlay');
         console.info('< < <   D I S C O N N E C T E D . . .  > > >');
       };

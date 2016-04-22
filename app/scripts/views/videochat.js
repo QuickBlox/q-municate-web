@@ -132,6 +132,14 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
           endCallSignal = $('#endCallSignal')[0],
           isErrorMessage = $self.data('errorMessage');
 
+      if (VideoChat.caller) {
+        if (!isErrorMessage && duration !== 'connect...') {
+          VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
+        } else {
+          $self.removeAttr('data-errorMessage');
+        }
+      }
+
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
@@ -145,14 +153,6 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
       addCallTypeIcon(opponentId, null);
       
-      if (VideoChat.caller) {
-        if (!isErrorMessage) {
-          VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
-        } else {
-          $self.removeAttr('data-errorMessage');
-        }
-      }
-
       return false;
     });
 

@@ -2,56 +2,68 @@
 
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
 
-### v. 1.2.2 - April 18, 2016
-* Update QuickBlox JS SDK to 2.1.1
+### v. 1.3.0 - April 20, 2016
+* Updated QuickBlox JS SDK to 2.1.1
 * Audio/video calls restored (WebRTC)
 * Added local notifications for calls
 * Added full screen mode for audio and video calls (Fullscreen API)
 * Added smart scrolling chat
-* Bug fixes
+* Fixed bugs
 
 ### v. 1.2.1 - March 1, 2016
 * Added local notifications for chat
 * Closed calls (Not working with QuickBlox JS SDK 2.0.3)
-* Bug fixes
+* Fixed bugs
 
 ### v. 1.2.0 - January 29, 2016
 * Update QuickBlox JS SDK to 2.0.2
 * Added system notification for chat
 * Added typing statuses
 * Added read/delivered statuses
-* Bug fixes
+* Fixed bugs
 
 ### v. 1.1.0 - December 15, 2016
 * Update all dependencies
 * Update QuickBlox JS SDK to 1.17.1
-* Bug fixes
+* Fixed bugs
+
+### v. 1.2.0 - January 29, 2016
+* Updated QuickBlox JS SDK to 2.0.2
+* Added system notification for chat
+* Added typing statuses
+* Added read/delivered statuses
+* Fixed bugs
+
+### v. 1.1.0 - December 15, 2016
+* Updated all dependencies
+* Updated QuickBlox JS SDK to 1.17.1
+* Fixed bugs
 
 ### v. 1.0.0 – February 12, 2015
 * [Full screen mode for audio and video calls](#18-full-screen-mode-for-audio-and-video-calls)
 * Improvements of calls
-* Bug  fixes of the chat session expiration
+* Bugs fixes of the chat session expiration
 
 ### v. 0.9 – January 19, 2014
 * [My profile page](#11-my-profile-page)
 * [Сontact profile page](#12-contact-profile-page)
 * Retina icons
 * Improvements
-* Bug fixes
+* Fixed bugs
 
 ### v. 0.8 – December 19, 2014
 * [Video calls (WebRTC)](#10-video-calls-webrtc)
 * [Audio calls (WebRTC)](#9-audio-calls-webrtc)
 * Call history
 * [Icons and sound on a browser's tab](#17-icons-and-sound-on-a-browsers-tab)
-* Bug fixes
+* Fixed bugs
 
 ### v. 0.7 – November 7, 2014
 * Backbone (Core and QB wrapper)
 * Backbone (Session, User, Contact modules)
 * Backbone (Contact List, Dialog modules)
 * Backbone (Message, Attach modules)
-* Bug fixes
+* Fixed bugs
 
 ### v. 0.6 – September 30, 2014
 * Optimization of emoji upload
@@ -59,7 +71,7 @@ See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases)
 * Fixed cache data uploading from the Local Storage
 * Optimization of css files import
 * Integration of current features with mobile versions
-* Bug fixes
+* Fixed bugs
 
 ### v. 0.5 – August 26, 2014
 * [Welcome page](#1-welcome-page)
