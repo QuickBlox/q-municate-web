@@ -19,6 +19,7 @@ Enjoy and please get in touch if you need any assistance.
 * No crashes or exceptions are allowed
 * The app immediately reacts to any user action or give notifications about each action which requires time to be processed
 * User information is kept safely and securely.
+
 * User's password is encoded and kept in the local storage.
 * The App should work correctly in the following browsers:
    - Chrome 13+
