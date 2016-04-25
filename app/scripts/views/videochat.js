@@ -123,7 +123,6 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     });
 
     $('body').on('click', '.btn_hangup', function() {
-      console.info(curSession);
       var $self = $(this),
           $chat = $self.parents('.l-chat'),
           opponentId = $self.data('id'),
