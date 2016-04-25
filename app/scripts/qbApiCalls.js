@@ -9,14 +9,15 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
 
   var Session, UserView, ContactListView, User;
   var timer, initListeners;
+  var self;
 
   function QBApiCalls(app) {
     this.app = app;
-
     Session = this.app.models.Session;
     UserView = this.app.views.User;
     ContactListView = this.app.views.ContactList;
     User = this.app.models.User;
+    self = this;
   }
 
   QBApiCalls.prototype = {
@@ -36,8 +37,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
     },
 
     checkSession: function(callback, reconnected) {
-      var self = this;
-
       QB.getSession(function(err, res) {
         if (((new Date()).toISOString() > Session.expirationTime) || !res) {
           initListeners = reconnected ? true : false;
@@ -61,8 +60,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
     },
 
     createSession: function(params, callback, isRemember) {
-      var self = this;
-
       QB.createSession(params, function(err, res) {
         if (err) {
           Helpers.log(err.detail);
@@ -272,8 +269,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
     },
 
     reconnectChat: function() {
-      var self = this;
-      
       $('.j-chatConnecting').addClass('is-overlay');
       QB.chat.disconnect();
 
