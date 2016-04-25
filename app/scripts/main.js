@@ -47,7 +47,7 @@ requirejs.config({
     SessionModule: 'models/session',
     ContactModule: 'models/contact',
     DialogModule: 'models/dialog',
-    LocationModule: 'models/location'
+    LocationModule: 'models/location',
     MessageModule: 'models/message',
     AttachModule: 'models/attach',
     ContactListModule: 'models/contact_list',

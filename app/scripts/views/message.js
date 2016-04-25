@@ -5,8 +5,8 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago', 'QBNotification'],
-        function($, QMCONFIG, QB, _, minEmoji, Helpers, timeago, QBNotification) {
+define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago', 'QBNotification', 'LocationModule'],
+        function($, QMCONFIG, QB, _, minEmoji, Helpers, timeago, QBNotification, Location) {
 
   var User, Message, ContactList, Dialog;
   var clearTyping, typingList = []; // for typing statuses
@@ -426,6 +426,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
            isSectionEmpty($('#recentList ul'));
           }
         }
+
+        Location.getGeoCoordinates();
       }
     },
 
