@@ -86,13 +86,30 @@
 .btn_message {
   position: absolute;
 }
-  .btn_message_smile {
-    top: 8px;
-    left: 12px;
-  }
-  .btn_message_attach {
-    top: 7px;
+  .btn_message_with_location {
+    top: 10px;
     right: 15px;
+  }
+  .btn_input_smile {
+    position: relative;
+    top: 2px;
+  }
+  .btn_input_location {
+    position: relative;
+    top: 2px;
+  }
+  .btn_input_attach {
+    position: relative;
+    top: -2px;
+  }
+  .btn_input_send {
+    position: relative;
+    top: -2px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: uppercase;
+    color: #007de3;
   }
 .btn_to_bottom {
   position: absolute;

@@ -205,9 +205,24 @@
   }
     .l-message {
       position: relative;
-      height: 48px;
+      height: 55px;
     }
     .l-typing {
-      height: 36px;
-      width: 100%;
+      display: inline-block;
+      height: 29px;
+      width: 77%;
     }
+    .l-input-menu {
+      display: inline-block;
+      height: 33px;
+      position: relative;
+      top: -5px;
+    }
+      .l-input-menu .l-input-buttons {
+        display: inline-block;
+        margin-right: 15px;
+        height: 100%;
+      }
+      .l-input-menu .l-input-buttons:last-child {
+        margin-right: 0;
+      }

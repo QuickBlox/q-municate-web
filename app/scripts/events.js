@@ -167,8 +167,8 @@ define([
 
       /* attachments
       ----------------------------------------------------- */
-      $('.l-workspace-wrap').on('click', '.btn_message_attach', function() {
-        $(this).next().click();
+      $('.l-workspace-wrap').on('click', '.btn_input_attach', function() {
+        $('input.attachment').click();
       });
 
       $('.l-workspace-wrap').on('change', '.attachment', function() {
@@ -196,6 +196,23 @@ define([
 
         openAttachPopup($('#popupAttach'), name, url, attachType);
       });
+
+      /* location
+      ----------------------------------------------------- */
+      $('.l-workspace-wrap').on('click', '.btn_message_with_location', function() {
+        var $self = $(this),
+            bool = $self.is('.is-active');
+
+        $('.btn_message_with_location .is-hidden').removeClass('is-hidden')
+                                                  .siblings().remove();
+
+        if (bool === false) {
+          if ($self.find('img').length === 1) {
+            $self.addClass('is-active').append('<img src="images/ic_location_on.svg" alt="location">')
+                 .find('*:first').addClass('is-hidden');
+          }
+        }
+      });   
 
       /* group chats
       ----------------------------------------------------- */
@@ -413,7 +430,7 @@ define([
         UserView.occupantPopover($(this), event);
       });
 
-      $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
+      $('.l-workspace-wrap').on('click', '.btn_input_smile', function() {
         var $self = $(this),
             bool = $self.is('.is-active');
 
@@ -791,7 +808,7 @@ define([
   function clickBehaviour(e) {
     var objDom = $(e.target);
 
-    if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
+    if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_input_smile, .btn_input_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
       return false;
     } else {
       removePopover();
@@ -811,9 +828,9 @@ define([
   function removePopover() {
     $('.is-contextmenu').removeClass('is-contextmenu');
     $('.is-active').removeClass('is-active');
-    $('.btn_message_smile .is-hidden').removeClass('is-hidden').siblings().remove();
+    $('.btn_input_smile .is-hidden').removeClass('is-hidden').siblings().remove();
     $('.popover:not(.popover_smile)').remove();
-    $('.popover_smile').hide();
+    $('.popover_smile').fadeOut(150);
     if ($('#mCSB_8_container').is(':visible')) $('#mCSB_8_container')[0].style.paddingBottom = "0px";
   }
 

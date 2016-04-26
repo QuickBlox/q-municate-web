@@ -426,8 +426,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
            isSectionEmpty($('#recentList ul'));
           }
         }
-
-        Location.getGeoCoordinates();
       }
     },
 
