@@ -10,10 +10,11 @@ define([
   'config',
   'Helpers',
   'QMHtml',
+  'LocationModule',
   'minEmoji',
   'mCustomScrollbar',
   'mousewheel'
-], function($, QMCONFIG, Helpers, QMHtml, minEmoji) {
+], function($, QMCONFIG, Helpers, QMHtml, Location, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
@@ -199,18 +200,17 @@ define([
 
       /* location
       ----------------------------------------------------- */
-      $('.l-workspace-wrap').on('click', '.btn_message_with_location', function() {
-        var $self = $(this),
-            bool = $self.is('.is-active');
+      $('.l-workspace-wrap').on('click', '.j-sendlocation', function() {
+        var $button = $('.j-sendlocation');
 
-        $('.btn_message_with_location .is-hidden').removeClass('is-hidden')
-                                                  .siblings().remove();
+        $button.toggleClass('btn_active');
 
-        if (bool === false) {
-          if ($self.find('img').length === 1) {
-            $self.addClass('is-active').append('<img src="images/ic_location_on.svg" alt="location">')
-                 .find('*:first').addClass('is-hidden');
-          }
+        if ($button.hasClass('btn_active')) {
+          Location.getGeoCoordinates(function(geoObj) {
+            localStorage.setItem('QM.location', JSON.stringify(geoObj));
+          })
+        } else {
+          localStorage.removeItem('QM.location');
         }
       });   
 
@@ -697,6 +697,15 @@ define([
           $self.find('.textarea').empty();
           removePopover();
         }
+      });
+
+      $('.l-workspace-wrap').on('click', '.btn_input_send', function() {
+        var $msg = $('.l-message:visible');
+
+        MessageView.sendMessage($msg);
+        $msg.find('.textarea').empty();
+        removePopover();
+        setCursorToEnd($('.l-chat:visible .textarea'));
       });
 
       // show message status on hover event

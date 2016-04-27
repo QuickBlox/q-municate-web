@@ -374,7 +374,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
           $chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
           dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
-          copyDialogItem, lastMessage;
+          copyDialogItem,
+          lastMessage,
+          geolocation;
 
       if (val.length > 0) {
         if (form.find('.textarea > span').length > 0) {
@@ -388,6 +390,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         }
         val = val.replace(/<br>/gi, '\n');
 
+
+        // new geodata
+        if(localStorage['QM.location']) {
+          Location.getGeoCoordinates(function(geoObj) {
+            localStorage.setItem('QM.location', JSON.stringify(geoObj));
+            geolocation = geoObj;
+          });
+        }
+
         // send message
         var msg = {
           type: type,
@@ -399,6 +410,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           },
           markable: 1
         };
+
+        msg.extension.geolocation = geolocation;
+
         QB.chat.send(jid, msg);
 
         message = Message.create({
@@ -406,7 +420,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           body: val,
           date_sent: time,
           sender_id: User.contact.id,
-          _id: msg.id
+          _id: msg.id,
+          geolocation: [geolocation]
         });
 
         Helpers.log('Message send:', message);

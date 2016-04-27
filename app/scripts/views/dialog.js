@@ -430,7 +430,7 @@ define([
         html += '<button class="j-toBottom btn_to_bottom"></button>';
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
-        html += '<button class="btn_message btn_message_with_location"><img src="images/ic_location_off.svg" alt="location"></button>';
+        html += '<button class="j-sendlocation btn_sendlocation'+(localStorage['QM.location'] ? ' btn_active' : '')+'"></button>';
         html += '<input class="attachment" type="file" accept="image/*"></form>';
         html += '<div class="l-typing"></div><div class="l-input-menu">';
         html += '<button class="l-input-buttons btn_input_smile"><img src="images/ic_smile.svg" alt="smile"></button>';
@@ -440,7 +440,7 @@ define([
 
         html += '</section>';
 
-        $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append(html);
+        $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append($(html));
         textAreaScrollbar();
 
         if (dialog.type === 3 && (!status || status.subscription === 'none'))

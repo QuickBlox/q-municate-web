@@ -13,8 +13,8 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
   		navigator.geolocation.getCurrentPosition(function(position) {
         var geoCoords = {};
 
-        geoCoords.lat = position.coords.latitude;
-        geoCoords.lng = position.coords.longitude;
+        geoCoords.latitude = position.coords.latitude;
+        geoCoords.longitude = position.coords.longitude;
 
         callback(geoCoords);
       });
@@ -23,17 +23,17 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
     getStaticMapUrl: function(geoCoords) {
       var params = {
         size: [300, 300],
-        lat: geoCoords.lat,
-        lng: geoCoords.lng,
+        lat: geoCoords.latitude,
+        lng: geoCoords.longitude,
         zoom: 16,
-        markers: [{lat: geoCoords.lat, lng: geoCoords.lng}]
+        markers: [{lat: geoCoords.latitude, lng: geoCoords.longitude}]
       };
 
       return GMaps.staticMapURL(params);
     },
 
     getMapUrl: function(geoCoords) {
-      return mapUrl = 'https://www.google.com/maps?q='+geoCoords.lat+','+geoCoords.lng;
+      return mapUrl = 'https://www.google.com/maps?q='+geoCoords.latitude+','+geoCoords.longitude;
     }
 
   }

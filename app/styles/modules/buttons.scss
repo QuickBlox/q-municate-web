@@ -83,12 +83,28 @@
     top: -2px;
   }
 
-.btn_message {
+.btn_sendlocation {
   position: absolute;
+  top: 10px;
+  right: 15px;
+  display: block;
+  width: 34px;
+  height: 34px;
+  background-image: image-url('ic_location_off.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 50%;
 }
-  .btn_message_with_location {
+  .btn_sendlocation.btn_active {
+    background-image: image-url('ic_location_on.svg');
+  }
+  .btn_message {
+    position: absolute;
     top: 10px;
     right: 15px;
+    display: block;
+    width: 34px;
+    height: 34px;
   }
   .btn_input_smile {
     position: relative;
