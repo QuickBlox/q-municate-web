@@ -25,10 +25,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
     init: function(token) {
       if (typeof token === 'undefined') {
         QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, QMCONFIG.QBconf);
-        console.info('init without token');
       } else {
         QB.init(token, QMCONFIG.qbAccount.appId, null, QMCONFIG.QBconf);
-        console.info('init with token');
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
 
         Session.create(JSON.parse(localStorage['QM.session']), true);
