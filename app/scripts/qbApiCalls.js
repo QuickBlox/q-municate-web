@@ -24,8 +24,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
     init: function(token) {
       if (typeof token === 'undefined') {
         QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, QMCONFIG.QBconf);
+        console.info('init without token');
       } else {
         QB.init(token, QMCONFIG.qbAccount.appId, null, QMCONFIG.QBconf);
+        console.info('init with token');
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
 
         Session.create(JSON.parse(localStorage['QM.session']), true);
@@ -37,7 +39,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
 
     checkSession: function(callback) {
       var self = this;
-
       if ((new Date()).toISOString() > Session.expirationTime) {
         // reset QuickBlox JS SDK after autologin via an existing token
         self.init();
@@ -51,9 +52,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         } else {
           self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
           Session.encrypt(Session.authParams);
-        }
-        
-      } else {
+        }    
+      } else {     
         callback();
       }
     },
@@ -111,10 +111,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         QB.login(params, function(err, res) {
           if (err) {
             Helpers.log(err.detail);
-
           } else {
             Helpers.log('QB SDK: User has logged', res);
-
             Session.update({ date: new Date(), authParams: Session.encrypt(params) });
             callback(res);
           }
@@ -239,20 +237,14 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
 
     connectChat: function(jid, callback) {
       this.checkSession(function(res) {
-        // var password = Session.authParams.provider ? Session.token :
-        //                Session.decrypt(Session.authParams).password;
-
-        // Session.encrypt(Session.authParams);
         var password = Session.token;
+
         QB.chat.connect({jid: jid, password: password}, function(err, res) {
           if (err) {
             Helpers.log(err.detail);
-
-            if (err.detail.indexOf('Status.ERROR') >= 0 || err.detail.indexOf('Status.AUTHFAIL') >= 0) {
-              fail(err.detail);
-              UserView.logout();
-              window.location.reload();
-            }
+            fail(err.detail);
+            UserView.logout();
+            window.location.reload();
           } else {
             var eventParams = {
               'chat_endpoints': QB.auth.service.qbInst.config.endpoints.chat,
