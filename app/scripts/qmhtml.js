@@ -160,7 +160,9 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
                                     '<image class="static_map" src="<%=imgUrl%>"></a><div class="coner"><i class="icon_coner">'+
                                     '</i></div></div>')(params);
                                     
-      $('article#'+params.id).find('.message-geo').addClass('with-geo').append(htmlTemplate);
+      $('article#'+params.id).find('.message-geo')
+       .addClass('with-geo')
+       .append(htmlTemplate);
     }
 
   };

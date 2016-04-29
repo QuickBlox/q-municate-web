@@ -168,8 +168,10 @@ define([
 
       /* attachments
       ----------------------------------------------------- */
-      $('.l-workspace-wrap').on('click', '.btn_input_attach', function() {
-        $('input.attachment').click();
+      $('.l-workspace-wrap').on('click', '.j-btn_input_attach', function() {
+        $(this).parent()
+         .parent()
+         .find('.attachment').click();
       });
 
       $('.l-workspace-wrap').on('change', '.attachment', function() {
@@ -200,16 +202,20 @@ define([
 
       /* location
       ----------------------------------------------------- */
-      $('.l-workspace-wrap').on('click', '.j-sendlocation', function() {
-        var $button = $('.j-sendlocation');
+      $('.l-workspace-wrap').on('click', '.j-send_location', function() {
+        var $button = $('.j-send_location');
 
         $button.toggleClass('btn_active');
 
         if ($button.hasClass('btn_active')) {
-          Location.getGeoCoordinates(function(geoObj) {
-            localStorage.setItem('QM.latitude', geoObj.latitude);
-            localStorage.setItem('QM.longitude', geoObj.longitude);
-          })
+          Location.getGeoCoordinates(function(geoObj, err) {
+            if (err) {
+              Helpers.log('Error: ',err);
+            } else {
+              localStorage.setItem('QM.latitude', geoObj.latitude);
+              localStorage.setItem('QM.longitude', geoObj.longitude);
+            }
+          });
         } else {
           localStorage.removeItem('QM.latitude');
           localStorage.removeItem('QM.longitude');
@@ -440,7 +446,7 @@ define([
         UserView.occupantPopover($(this), event);
       });
 
-      $('.l-workspace-wrap').on('click', '.btn_input_smile', function() {
+      $('.l-workspace-wrap').on('click', '.j-btn_input_smile', function() {
         var $self = $(this),
             bool = $self.is('.is-active');
 
@@ -709,7 +715,7 @@ define([
         }
       });
 
-      $('.l-workspace-wrap').on('click', '.btn_input_send', function() {
+      $('.l-workspace-wrap').on('click', '.j-btn_input_send', function() {
         var $msg = $('.l-message:visible');
 
         MessageView.sendMessage($msg);
@@ -827,7 +833,7 @@ define([
   function clickBehaviour(e) {
     var objDom = $(e.target);
 
-    if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_input_smile, .btn_input_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
+    if (objDom.is('#profile, #profile *, .occupant, .occupant *, .j-btn_input_smile, .j-btn_input_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
       return false;
     } else {
       removePopover();
@@ -847,7 +853,7 @@ define([
   function removePopover() {
     $('.is-contextmenu').removeClass('is-contextmenu');
     $('.is-active').removeClass('is-active');
-    $('.btn_input_smile .is-hidden').removeClass('is-hidden').siblings().remove();
+    $('.j-btn_input_smile .is-hidden').removeClass('is-hidden').siblings().remove();
     $('.popover:not(.popover_smile)').remove();
     $('.popover_smile').fadeOut(150);
     if ($('#mCSB_8_container').is(':visible')) $('#mCSB_8_container')[0].style.paddingBottom = "0px";

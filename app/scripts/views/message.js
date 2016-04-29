@@ -51,7 +51,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
             attachType = message.attachment && message.attachment['content-type'] || message.attachment && message.attachment.type || null,
             attachUrl = message.attachment && (QB.content.privateUrl(message.attachment.id) || message.attachment.url || null),
-            geolocation = (message.latitude && message.longitude) ? {latitude: message.latitude, longitude: message.longitude} : null,
+            geolocation = (message.latitude && message.longitude) ? {'latitude': message.latitude, 'longitude': message.longitude} : null,
             recipient = contacts[recipientId] || null,
             occupants_names = '',
             occupants_ids,
@@ -406,23 +406,19 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
         // send message
         var msg = {
-          type: type,
-          body: val,
-          extension: {
-            save_to_history: 1,
-            dialog_id: dialog_id,
-            date_sent: time
+          'type': type,
+          'body': val,
+          'extension': {
+            'save_to_history': 1,
+            'dialog_id': dialog_id,
+            'date_sent': time
           },
-          markable: 1
+          'markable': 1
         };
 
-        // update geodata in localStorage
         if(localStorage['QM.latitude'] && localStorage['QM.longitude']) {
-          Location.getGeoCoordinates(function(geoObj) {
-            localStorage.setItem('QM.latitude', geoObj.latitude);
-            localStorage.setItem('QM.longitude', geoObj.longitude);
-          });
-
+          Location.setGeoCoordinatesToLocalStorage(true);
+          
           msg.extension.latitude = localStorage['QM.latitude'];
           msg.extension.longitude = localStorage['QM.longitude'];
         }
@@ -430,13 +426,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         QB.chat.send(jid, msg);
 
         message = Message.create({
-          chat_dialog_id: dialog_id,
-          body: val,
-          date_sent: time,
-          sender_id: User.contact.id,
-          latitude: localStorage['QM.latitude'] || null,
-          longitude: localStorage['QM.longitude'] || null,
-          _id: msg.id
+          'chat_dialog_id': dialog_id,
+          'body': val,
+          'date_sent': time,
+          'sender_id': User.contact.id,
+          'latitude': localStorage['QM.latitude'] || null,
+          'longitude': localStorage['QM.longitude'] || null,
+          '_id': msg.id
         });
 
         Helpers.log('Message send:', message);

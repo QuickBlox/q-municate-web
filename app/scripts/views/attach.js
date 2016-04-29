@@ -154,26 +154,22 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule', 'underscor
           copyDialogItem, lastMessage;
 
       var msg = {
-        type: type,
-        body: 'Attachment',
-        extension: {
-          save_to_history: 1,
-          dialog_id: dialog_id,
-          date_sent: time,
-          attachments: [
+        'type': type,
+        'body': 'Attachment',
+        'extension': {
+          'save_to_history': 1,
+          'dialog_id': dialog_id,
+          'date_sent': time,
+          'attachments': [
             attach
           ]
         },
-        markable: 1
+        'markable': 1
       };
       
-      // update geodata in localStorage
       if(localStorage['QM.latitude'] && localStorage['QM.longitude']) {
-        Location.getGeoCoordinates(function(geoObj) {
-          localStorage.setItem('QM.latitude', geoObj.latitude);
-          localStorage.setItem('QM.longitude', geoObj.longitude);
-        });
-
+        Location.setGeoCoordinatesToLocalStorage(true);
+        
         msg.extension.latitude = localStorage['QM.latitude'];
         msg.extension.longitude = localStorage['QM.longitude'];
       }
@@ -181,13 +177,13 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule', 'underscor
       QB.chat.send(jid, msg);
 
       message = Message.create({
-        chat_dialog_id: dialog_id,
-        date_sent: time,
-        attachment: attach,
-        sender_id: User.contact.id,
-        latitude: localStorage['QM.latitude'] || null,
-        longitude: localStorage['QM.longitude'] || null,
-        _id: msg.id
+        'chat_dialog_id': dialog_id,
+        'date_sent': time,
+        'attachment': attach,
+        'sender_id': User.contact.id,
+        'latitude': localStorage['QM.latitude'] || null,
+        'longitude': localStorage['QM.longitude'] || null,
+        '_id': msg.id
       });
 
       Helpers.log(message);

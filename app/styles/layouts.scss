@@ -209,14 +209,16 @@
     }
     .l-typing {
       display: inline-block;
-      height: 29px;
+      vertical-align: top;
+      font-size: 15px;
+      height: 34px;
       width: 77%;
     }
     .l-input-menu {
       display: inline-block;
+      vertical-align: top;
       height: 33px;
       position: relative;
-      top: -5px;
     }
       .l-input-menu .l-input-buttons {
         display: inline-block;

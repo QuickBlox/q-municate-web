@@ -12,7 +12,7 @@
 article.message[data-status="typing"] {
   height: 100%;
   line-height: 100%;
-  padding: 10px;
+  padding: 9px;
   border-bottom: none;
 }
 article.message[data-status="typing"] > div {
@@ -123,13 +123,13 @@ article.message[data-status="typing"] > div {
           cursor: pointer;
         }
       .message-avatar.request-button_pending {
-        margin: 5px 30px 0 10px;
+        margin: 5px 10px 0 10px;
       }
       .message-avatar.request-button_cancel {
-        margin: 6px 30px 0 10px;
+        margin: 6px 10px 0 10px;
       }
       .message-avatar.request-button_ok {
-        margin: 3px 30px 0 10px;
+        margin: 3px 10px 0 10px;
       }
 
 /* preview */
