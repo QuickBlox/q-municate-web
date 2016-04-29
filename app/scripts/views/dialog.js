@@ -41,6 +41,8 @@ define([
 
     // QBChat handlers
     chatCallbacksInit: function() {
+      var self = this;
+
       var ContactListView = this.app.views.ContactList,
           MessageView = this.app.views.Message,
           VideoChat = this.app.models.VideoChat,
@@ -76,7 +78,14 @@ define([
         $('.j-disconnect').addClass('is-overlay');
       };
 
-      QB.chat.onReconnectListener = function() {
+      QB.chat.onReconnectListener = function(error) {
+        if (error) {
+          Helpers.log('Error: ', error);
+          self.app.service.checkSession(function (res) {
+            Helpers.log('Check session: ', res);
+          }, 'reconnected');
+        }
+
         $('.j-disconnect').removeClass('is-overlay');
       };
 
