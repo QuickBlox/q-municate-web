@@ -282,9 +282,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
         });
         ContactList.dialogs[dialog.id] = dialog;
         Helpers.log('Dialog', dialog);
-        if (!localStorage['QM.dialog-' + dialog.id]) {
-          localStorage.setItem('QM.dialog-' + dialog.id, JSON.stringify({ messages: [] }));
-        }
 
         DialogView.addDialogItem(dialog);
 
