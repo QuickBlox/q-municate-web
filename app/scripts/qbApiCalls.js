@@ -8,15 +8,16 @@
 define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
 
   var Session, UserView, ContactListView, User;
-  var timer;
+  var timer, initListeners;
+  var self;
 
   function QBApiCalls(app) {
     this.app = app;
-
     Session = this.app.models.Session;
     UserView = this.app.views.User;
     ContactListView = this.app.views.ContactList;
     User = this.app.models.User;
+    self = this;
   }
 
   QBApiCalls.prototype = {
@@ -98,6 +99,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
             Session.update({ token: res.token });
           } else {
             Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
+          }
+
+          if (User.contact) {
+            self.reconnectChat();
           }
 
           Session.update({ date: new Date() });
@@ -242,6 +247,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         QB.chat.connect({jid: jid, password: password}, function(err, res) {
           if (err) {
             Helpers.log(err.detail);
+
             fail(err.detail);
             UserView.logout();
             window.location.reload();
@@ -257,6 +263,27 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
             callback(res);
           }
         });
+      });
+    },
+
+    reconnectChat: function() {
+      $('.j-chatConnecting').addClass('is-overlay');
+      QB.chat.disconnect();
+
+      self.connectChat(User.contact.user_jid, function(roster) {
+        var dialogs = self.app.models.ContactList.dialogs;
+
+        for (var key in dialogs) {
+          if (dialogs[key].type === 2) {
+            QB.chat.muc.join(dialogs[key].room_jid);
+          }
+        }
+
+        if (initListeners) {
+          self.app.views.Dialog.prepareDownloading(roster);
+        }
+
+        $('.j-chatConnecting').removeClass('is-overlay');
       });
     },
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="34px" height="34px" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch -->
+    <title>ic_location_on</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Components" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-359.000000, -114.000000)">
+            <g id="ic_location_on" transform="translate(359.000000, 114.000000)">
+                <circle id="Oval-28" fill="#EEEEEE" cx="17" cy="17" r="17"></circle>
+                <g id="ic_near_me" transform="translate(6.000000, 8.000000)">
+                    <polygon id="Bounds" points="0 0 20 0 20 20 0 20"></polygon>
+                    <polygon id="Icon" fill="#057FE3" points="17.5 2.5 2.5 8.775 2.5 9.59166667 8.2 11.8 10.4 17.5 11.2166667 17.5"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

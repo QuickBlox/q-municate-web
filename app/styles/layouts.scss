@@ -159,9 +159,8 @@
 }
 
 .l-app-version {
-  position: absolute;
-  right: 0;
-  bottom: 22px;
+  height: 60px;
+  line-height: 60px;
   font-size: 14px;
   color: #999;
 }
@@ -206,9 +205,26 @@
   }
     .l-message {
       position: relative;
-      height: 48px;
+      height: 55px;
     }
     .l-typing {
-      height: 36px;
-      width: 100%;
+      display: inline-block;
+      vertical-align: top;
+      font-size: 15px;
+      height: 34px;
+      width: 77%;
     }
+    .l-input-menu {
+      display: inline-block;
+      vertical-align: top;
+      height: 33px;
+      position: relative;
+    }
+      .l-input-menu .l-input-buttons {
+        display: inline-block;
+        margin-right: 15px;
+        height: 100%;
+      }
+      .l-input-menu .l-input-buttons:last-child {
+        margin-right: 0;
+      }

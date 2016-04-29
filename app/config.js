@@ -75,7 +75,8 @@ define(function() {
         file: null
       },
       webrtc: {
-        answerTimeInterval: 45
+        answerTimeInterval: 45,
+        statsReportTimeInterval: 5
       }
     }
 

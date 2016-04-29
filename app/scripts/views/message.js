@@ -5,8 +5,8 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago', 'QBNotification'],
-        function($, QMCONFIG, QB, _, minEmoji, Helpers, timeago, QBNotification) {
+define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago', 'QBNotification', 'LocationModule', 'QMHtml'],
+        function($, QMCONFIG, QB, _, minEmoji, Helpers, timeago, QBNotification, Location, QMHtml) {
 
   var User, Message, ContactList, Dialog;
   var clearTyping, typingList = []; // for typing statuses
@@ -51,6 +51,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
             attachType = message.attachment && message.attachment['content-type'] || message.attachment && message.attachment.type || null,
             attachUrl = message.attachment && (QB.content.privateUrl(message.attachment.id) || message.attachment.url || null),
+            geolocation = (message.latitude && message.longitude) ? {'latitude': message.latitude, 'longitude': message.longitude} : null,
             recipient = contacts[recipientId] || null,
             occupants_names = '',
             occupants_ids,
@@ -62,18 +63,18 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           occupants_names = Helpers.Messages.getOccupantsNames(occupants_ids, User, contacts);
 
           html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-          html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+          html += '<span class="message-avatar request-button_pending"></span>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
           html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has added '+occupants_names+' to the group chat</h4>';
-          html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-          html += '</div></div></article>';
+          html += '</div><div class="message-info"><time class="message-time">'+getTime(message.date_sent)+'</time>';
+          html += '<div class="info_indent"></div></div></div></div></article>';
           break;
 
         case '2':
           html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-          html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+          html += '<span class="message-avatar request-button_pending"></span>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
@@ -97,13 +98,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has changed the chat picture</h4>';
           }
 
-          html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-          html += '</div></div></article>';
+          html += '</div><div class="message-info"><time class="message-time">'+getTime(message.date_sent)+'</time>';
+          html += '<div class="info_indent"></div></div></div></div></article>';
           break;
 
         case '4':
           html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-          html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+          html += '<span class="message-avatar request-button_pending"></span>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
@@ -114,13 +115,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             html += '<h4 class="message-author"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span> has sent a request to you</h4>';
           }
 
-          html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-          html += '</div></div></article>';
+          html += '</div><div class="message-info"><time class="message-time">'+getTime(message.date_sent)+'</time>';
+          html += '<div class="info_indent"></div></div></div></div></article>';
           break;
 
         case '5':
           html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-          html += '<span class="message-avatar contact-avatar_message request-button_ok">&#10003;</span>';
+          html += '<span class="message-avatar request-button_ok">&#10003;</span>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
@@ -131,13 +132,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             html += '<h4 class="message-author">Your request has been accepted</h4>';
           }
 
-          html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-          html += '</div></div></article>';
+          html += '</div><div class="message-info"><time class="message-time">'+getTime(message.date_sent)+'</time>';
+          html += '<div class="info_indent"></div></div></div></div></article>';
           break;
 
         case '6':
           html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-          html += '<span class="message-avatar contact-avatar_message request-button_cancel">&#10005;</span>';
+          html += '<span class="message-avatar request-button_cancel">&#10005;</span>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
@@ -148,13 +149,13 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
           }
 
-          html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-          html += '</div></div></article>';
+          html += '</div><div class="message-info"><time class="message-time">'+getTime(message.date_sent)+'</time>';
+          html += '<div class="info_indent"></div></div></div></div></article>';
           break;
 
         case '7':
           html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-          html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+          html += '<span class="message-avatar request-button_pending"></span>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
@@ -165,8 +166,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again btn_request_again_delete"><img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
           }
 
-          html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-          html += '</div></div></article>';
+          html += '</div><div class="message-info"><time class="message-time">'+getTime(message.date_sent)+'</time>';
+          html += '<div class="info_indent"></div></div></div></div></article>';
           break;
 
         // calls messages
@@ -175,9 +176,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'" data-session="'+message.sessionID+'">';
 
             if (message.caller === User.contact.id) {
-              html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_outgoing' : 'request-audio_outgoing')+'"></span>';
+              html += '<span class="message-avatar request-call '+(message.callType === '1' ? 'request-video_outgoing' : 'request-audio_outgoing')+'"></span>';
             } else {
-              html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_incoming' : 'request-audio_incoming')+'"></span>';
+              html += '<span class="message-avatar request-call '+(message.callType === '1' ? 'request-video_incoming' : 'request-audio_incoming')+'"></span>';
             }
 
             html += '<div class="message-container-wrap">';
@@ -190,8 +191,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
               html += '<h4 class="message-author">Call from '+contacts[message.caller].full_name+', duration '+message.duration;
             }
 
-            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-            html += '</div></div></article>';
+            html += '</div><div class="message-info"><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '<div class="info_indent"></div></div></div></div></article>';
           }
           break;
 
@@ -200,9 +201,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
 
             if (message.caller === User.contact.id) {
-              html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_ended' : 'request-audio_ended')+'"></span>';
+              html += '<span class="message-avatar request-call '+(message.callType === '1' ? 'request-video_ended' : 'request-audio_ended')+'"></span>';
             } else {
-              html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_missed' : 'request-audio_missed')+'"></span>';
+              html += '<span class="message-avatar request-call '+(message.callType === '1' ? 'request-video_missed' : 'request-audio_missed')+'"></span>';
             }
 
             html += '<div class="message-container-wrap">';
@@ -215,15 +216,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
               html += '<h4 class="message-author">Missed call from '+contacts[message.caller].full_name;
             }
 
-            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-            html += '</div></div></article>';
+            html += '</div><div class="message-info"><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '<div class="info_indent"></div></div></div></div></article>';
           }
           break;
 
         case '10':
           if (message.caller) {
             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-            html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_ended' : 'request-audio_ended')+'"></span>';
+            html += '<span class="message-avatar request-call '+(message.callType === '1' ? 'request-video_ended' : 'request-audio_ended')+'"></span>';
             html += '<div class="message-container-wrap">';
             html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
             html += '<div class="message-content">';
@@ -234,15 +235,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
               html += '<h4 class="message-author">Call from '+contacts[message.caller].full_name+', busy';
             }
 
-            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-            html += '</div></div></article>';
+            html += '</div><div class="message-info"><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '<div class="info_indent"></div></div></div></div></article>';
           }
           break;
 
         case '11':
           if (message.caller) {
             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
-            html += '<span class="message-avatar contact-avatar_message request-call '+(message.callType === '1' ? 'request-video_ended' : 'request-audio_ended')+'"></span>';
+            html += '<span class="message-avatar request-call '+(message.callType === '1' ? 'request-video_ended' : 'request-audio_ended')+'"></span>';
             html += '<div class="message-container-wrap">';
             html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
             html += '<div class="message-content">';
@@ -253,8 +254,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
               html += '<h4 class="message-author">Camera and/or microphone wasn\'t found.';
             }
 
-            html += '</div><time class="message-time">'+getTime(message.date_sent)+'</time>';
-            html += '</div></div></article>';
+            html += '</div><div class="message-info"><time class="message-time">'+getTime(message.date_sent)+'</time>';
+            html += '<div class="info_indent"></div></div></div></div></article>';
           }
           break;
 
@@ -265,45 +266,48 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             html = '<article id="'+message.id+'" class="message l-flexbox l-flexbox_alignstretch" data-id="'+message.sender_id+'" data-type="'+type+'">';
           }
 
-          html += '<div class="message-avatar avatar contact-avatar_message profileUserAvatar'+(message.stack ? ' is-hidden' : '')+
+          html += '<div class="message-avatar avatar profileUserAvatar'+(message.stack ? ' is-hidden' : '')+
                   '" style="background-image:url('+contact.avatar_url+')" data-id="'+message.sender_id+'"></div>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-          html += '<div class="message-content">';
+          html += '<div class="message-content'+(message.stack ? ' indent' : '')+'">';
           html += '<h4 class="message-author'+(message.stack ? ' is-hidden' : '')+'"><span class="profileUserName" data-id="'+message.sender_id+'">'+contact.full_name+'</span></h4>';
 
           if (attachType && attachType.indexOf('image') > -1) {
-            html += '<div class="message-body'+(message.stack ? ' indent' : '')+'">';
+            html += '<div class="message-body">';
             html += '<div class="preview preview-photo" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'">';
             html += '<img id="attach_'+message.id+'" src="'+attachUrl+'" alt="attach">';
             html += '</div></div>';
-            html += '</div><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
+            html += '</div><div class="message-info"><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
             html += '<div class="message-status is-hidden">Not delivered yet</div>';
+            html += '<div class="message-geo j-showlocation"></div></div>';
           } else if (attachType && attachType.indexOf('audio') > -1) {
-            html += '<div class="message-body'+(message.stack ? ' indent' : '')+'">';
+            html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
             html += '<audio id="'+message.id+'" src="'+attachUrl+'" controls></audio>';
             html += '</div>';
             html += '</div><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+' ';
             html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
           } else if (attachType && attachType.indexOf('video') > -1) {
-            html += '<div class="message-body'+(message.stack ? ' indent' : '')+'">';
+            html += '<div class="message-body">';
             html += message.attachment.name+'<br><br>';
             html += '<div id="'+message.id+'" class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
             html += '</div>';
-            html += '</div><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
+            html += '</div><div class="message-info"><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
             html += '<div class="message-status is-hidden">Not delivered yet</div>';
+            html += '<div class="message-geo j-showlocation"></div></div>';
           } else if (attachType) {
-            html += '<div class="message-body'+(message.stack ? ' indent' : '')+'">';
+            html += '<div class="message-body">';
             html += '<a id="'+message.id+'" class="attach-file" href="'+attachUrl+'" download="'+message.attachment.name+'">'+message.attachment.name+'</a>';
             html += '<span class="attach-size">'+getFileSize(message.attachment.size)+'</span>';
             html += '</div>';
             html += '</div><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+' ';
             html += '<a href="'+attachUrl+'" download="'+message.attachment.name+'">Download</a></time>';
           } else {
-            html += '<div class="message-body'+(message.stack ? ' indent' : '')+'">'+minEmoji(parser(message.body))+'</div>';
-            html += '</div><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
+            html += '<div class="message-body">'+minEmoji(parser(message.body))+'</div>';
+            html += '</div><div class="message-info"><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
             html += '<div class="message-status is-hidden">Not delivered yet</div>';
+            html += '<div class="message-geo j-showlocation"></div></div>';
           }
 
           html += '</div></div></article>';
@@ -326,6 +330,17 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             $chat.find('.l-chat-content').prepend(html);
           }
           smartScroll(message.id, attachType);
+        }
+
+        if (geolocation) {
+          var mapLink = Location.getMapUrl(geolocation),
+              imgUrl = Location.getStaticMapUrl(geolocation);
+
+          QMHtml.message.setMap({
+            id: message.id,
+            mapLink: mapLink,
+            imgUrl: imgUrl
+          });
         }
 
         if (message.sender_id == User.contact.id && message.delivered_ids.length > 0) {
@@ -374,7 +389,8 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
           $chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
           dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
-          copyDialogItem, lastMessage;
+          copyDialogItem,
+          lastMessage;
 
       if (val.length > 0) {
         if (form.find('.textarea > span').length > 0) {
@@ -390,23 +406,33 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
         // send message
         var msg = {
-          type: type,
-          body: val,
-          extension: {
-            save_to_history: 1,
-            dialog_id: dialog_id,
-            date_sent: time
+          'type': type,
+          'body': val,
+          'extension': {
+            'save_to_history': 1,
+            'dialog_id': dialog_id,
+            'date_sent': time
           },
-          markable: 1
+          'markable': 1
         };
+
+        if(localStorage['QM.latitude'] && localStorage['QM.longitude']) {
+          Location.toggleGeoCoordinatesToLocalStorage(true);
+          
+          msg.extension.latitude = localStorage['QM.latitude'];
+          msg.extension.longitude = localStorage['QM.longitude'];
+        }
+  
         QB.chat.send(jid, msg);
 
         message = Message.create({
-          chat_dialog_id: dialog_id,
-          body: val,
-          date_sent: time,
-          sender_id: User.contact.id,
-          _id: msg.id
+          'chat_dialog_id': dialog_id,
+          'body': val,
+          'date_sent': time,
+          'sender_id': User.contact.id,
+          'latitude': localStorage['QM.latitude'] || null,
+          'longitude': localStorage['QM.longitude'] || null,
+          '_id': msg.id
         });
 
         Helpers.log('Message send:', message);
