@@ -168,7 +168,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule', 'underscor
       };
       
       if(localStorage['QM.latitude'] && localStorage['QM.longitude']) {
-        Location.setGeoCoordinatesToLocalStorage(true);
+        Location.toggleGeoCoordinatesToLocalStorage(true);
         
         msg.extension.latitude = localStorage['QM.latitude'];
         msg.extension.longitude = localStorage['QM.longitude'];

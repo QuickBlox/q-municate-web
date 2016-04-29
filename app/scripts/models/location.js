@@ -44,7 +44,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       return mapUrl = 'https://www.google.com/maps?q='+geoCoords.latitude+','+geoCoords.longitude;
     },
 
-    setGeoCoordinatesToLocalStorage: function(saveLocation) {
+    toggleGeoCoordinatesToLocalStorage: function(saveLocation) {
       if (saveLocation) {  
         this.getGeoCoordinates(function(res, err) {
           if (err) {

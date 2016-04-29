@@ -169,9 +169,9 @@ define([
       /* attachments
       ----------------------------------------------------- */
       $('.l-workspace-wrap').on('click', '.j-btn_input_attach', function() {
-        $(this).parent()
-         .parent()
-         .find('.attachment').click();
+        $(this).parents('.l-chat-footer')
+         .find('.attachment')
+         .click();
       });
 
       $('.l-workspace-wrap').on('change', '.attachment', function() {
@@ -208,9 +208,9 @@ define([
         $button.toggleClass('btn_active');
 
         if ($button.hasClass('btn_active')) {
-          Location.setGeoCoordinatesToLocalStorage(true);
+          Location.toggleGeoCoordinatesToLocalStorage(true);
         } else {
-          Location.setGeoCoordinatesToLocalStorage(false);
+          Location.toggleGeoCoordinatesToLocalStorage(false);
         }
       });
 
