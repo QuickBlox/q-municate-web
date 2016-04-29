@@ -50,8 +50,8 @@ Login into admin panel at [https://admin.quickblox.com/signin](https://admin.qui
 You can read more about how to sign in to admin panel [here.](https://quickblox.com/developers/5_Minute_Guide#Sign_in_to_the_admin_panel)
 
 #### 3. Create a new app.
-If you don't have an app yet, you can follow a detailed guide about app creation at [here.](https://quickblox.com/developers/5_Minute_Guide#Create_an_app_in_the_admin_panel)
 Click on the "Add new application" button after "Log in": [https://admin.quickblox.com](https://admin.quickblox.com) and fill an application form. If you don't have an app yet, you can follow a detailed guide about app creation at [here.](https://quickblox.com/developers/5_Minute_Guide#Create_an_app_in_the_admin_panel).
+
 #### 4. Get app credentials
 Click on the app title in the list to reveal the app details. You are going to need App ID, Authorization key and Authorization secret later in our Q-municate source code.
 
