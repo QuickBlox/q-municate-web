@@ -12,7 +12,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
     onCallTpl: function(params) {
       var htmlTemplate = _.template('<div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween">'+
           '<div class="incoming-call-info l-flexbox l-flexbox_column">'+
-          '<div class="message-avatar avatar contact-avatar_message info-avatar" style="background-image:url(<%= userAvatar %>)"></div>'+
+          '<div class="message-avatar avatar info-avatar" style="background-image:url(<%= userAvatar %>)"></div>'+
           '<span class="info-notice"><%= callTypeUС %> Call from <%= userName %></span></div>'+
           '<div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">'+
           '<button class="btn_decline" data-callType="<%= callType %>" data-dialog="<%= dialogId %>"'+
@@ -54,7 +54,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
       var isBottom = Helpers.isBeginOfChat(),
           $chat = $('.l-chat:visible'),
           $html = $('<article class="message message_service l-flexbox l-flexbox_alignstretch">'+
-                    '<span class="message-avatar contact-avatar_message request-button_pending"></span>'+
+                    '<span class="message-avatar request-button_pending"></span>'+
                     '<div class="message-container-wrap">'+
                     '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'+
                     '<div class="message-content"><h4 class="message-author message-error">Camera and/or microphone wasn\'t found.'+
@@ -71,7 +71,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
       var isBottom = Helpers.isBeginOfChat(),
           $chat = $('.l-chat:visible'),
           $html = $('<article class="message message_service l-flexbox l-flexbox_alignstretch">'+
-                    '<span class="message-avatar contact-avatar_message request-button_pending"></span>'+
+                    '<span class="message-avatar request-button_pending"></span>'+
                     '<div class="message-container-wrap">'+
                     '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'+
                     '<div class="message-content"><h4 class="message-author message-error">'+
@@ -125,7 +125,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
         htmlStr = '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Video call</a></li>'+
                   '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Audio call</a></li>'+
                   '<li class="list-item"><a class="list-actions-action writeMessage" data-id="<%=id%>" href="#">Write message</a></li>'+
-                  '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>';
+                  '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id" href="#">Profile</a></li>';
       }
 
       return $html.append(_.template(htmlStr)(params));
@@ -151,7 +151,19 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
       $html.append(_.template(htmlStr)(params));
     } 
 
-   };
+  };
+
+  QMHtml.message = {
+
+    setMap: function(params) {
+      var htmlTemplate = _.template('<div class="popover_map"><a class="open_map" href="<%=mapLink%>" target="_blank">'+
+                                    '<image class="static_map" src="<%=imgUrl%>"></a><div class="coner"><i class="icon_coner">'+
+                                    '</i></div></div>')(params);
+                                    
+      $('article#'+params.id).find('.message-geo').addClass('with-geo').append(htmlTemplate);
+    }
+
+  };
 
   return QMHtml;
 });

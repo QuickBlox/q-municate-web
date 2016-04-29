@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar'], function($, QMCONFIG, QB, Helpers, _, ProgressBar) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule', 'underscore', 'progressbar'], function($, QMCONFIG, QB, Helpers, Location, _, ProgressBar) {
 
   var User, Message, Attach;
   var self;
@@ -38,7 +38,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar']
 
         if (errMsg) {
           html = '<article class="message message_service l-flexbox l-flexbox_alignstretch">';
-          html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+          html += '<span class="message-avatar request-button_pending"></span>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
@@ -55,7 +55,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar']
           html = '<article class="message message_service message_attach message_attach_row l-flexbox l-flexbox_alignstretch">';
         else
           html = '<article class="message message_service message_attach l-flexbox l-flexbox_alignstretch">';
-        html += '<span class="message-avatar contact-avatar_message request-button_attach">';
+        html += '<span class="message-avatar request-button_attach">';
         html += '<img src="images/icon-attach.svg" alt="attach"></span>';
         html += '<div class="message-container-wrap">';
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -153,7 +153,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar']
           dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           copyDialogItem, lastMessage;
 
-     var msg = {
+      var msg = {
         type: type,
         body: 'Attachment',
         extension: {
@@ -167,7 +167,17 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar']
         markable: 1
       };
       
-      // send message
+      // update geodata in localStorage
+      if(localStorage['QM.latitude'] && localStorage['QM.longitude']) {
+        Location.getGeoCoordinates(function(geoObj) {
+          localStorage.setItem('QM.latitude', geoObj.latitude);
+          localStorage.setItem('QM.longitude', geoObj.longitude);
+        });
+
+        msg.extension.latitude = localStorage['QM.latitude'];
+        msg.extension.longitude = localStorage['QM.longitude'];
+      }
+       
       QB.chat.send(jid, msg);
 
       message = Message.create({
@@ -175,6 +185,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar']
         date_sent: time,
         attachment: attach,
         sender_id: User.contact.id,
+        latitude: localStorage['QM.latitude'] || null,
+        longitude: localStorage['QM.longitude'] || null,
         _id: msg.id
       });
 

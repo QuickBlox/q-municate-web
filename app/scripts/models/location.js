@@ -22,10 +22,10 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
 
     getStaticMapUrl: function(geoCoords) {
       var params = {
-        size: [300, 300],
+        size: [200, 200],
         lat: geoCoords.latitude,
         lng: geoCoords.longitude,
-        zoom: 16,
+        zoom: 15,
         markers: [{lat: geoCoords.latitude, lng: geoCoords.longitude}]
       };
 

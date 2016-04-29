@@ -207,12 +207,22 @@ define([
 
         if ($button.hasClass('btn_active')) {
           Location.getGeoCoordinates(function(geoObj) {
-            localStorage.setItem('QM.location', JSON.stringify(geoObj));
+            localStorage.setItem('QM.latitude', geoObj.latitude);
+            localStorage.setItem('QM.longitude', geoObj.longitude);
           })
         } else {
-          localStorage.removeItem('QM.location');
+          localStorage.removeItem('QM.latitude');
+          localStorage.removeItem('QM.longitude');
         }
-      });   
+      });
+
+      $('.l-workspace-wrap').on('mouseenter', '.j-showlocation', function() {
+        $(this).find('.popover_map').fadeIn(150);
+      });
+
+      $('.l-workspace-wrap').on('mouseleave', '.j-showlocation', function() {
+        $(this).find('.popover_map').fadeOut(150);
+      });
 
       /* group chats
       ----------------------------------------------------- */

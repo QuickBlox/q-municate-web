@@ -62,7 +62,8 @@ define(['quickblox'], function(QB) {
         delivered_ids: params.delivered_ids || [],
         type: params.type || null,
         stack: false,
-        geolocation: (params.extension && params.extension.geolocation && params.extension.geolocation[0]) || (params.geolocation && params.geolocation[0]) || params.geolocation || null
+        latitude: (params.extension && params.extension.latitude) || params.latitude || null,
+        longitude: (params.extension && params.extension.longitude) || params.longitude || null
       };
 
       if (message.attachment) {

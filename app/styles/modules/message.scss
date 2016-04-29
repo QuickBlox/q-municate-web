@@ -39,6 +39,7 @@ article.message[data-status="typing"] > div {
       margin-top: 0;
     }
       .message-content {
+        padding-left: 20px;
         width: 450px;
         max-width: 450px;
         color: #333;
@@ -74,14 +75,22 @@ article.message[data-status="typing"] > div {
           .message-body a {
             color: #0d70b3;
           }
-          .message-body.indent {
-            margin-left: 60px;
+          .message-content.indent {
+            padding-left: 60px;
           }
+    .message-info {
+      width: 140px;
+      height: 24px;
+      text-align: right;
+    }
       .message-time {
-        font-size: 14px;
+        display: inline-block;
+        vertical-align: top;
+        width: 115px;
+        font-size: 13px;
         line-height: 24px;
-        color: #999;
         text-align: right;
+        color: #999;
       }
         .message-time a {
           font-size: 14px;
@@ -91,11 +100,28 @@ article.message[data-status="typing"] > div {
           line-height: 28px;
         }
       .message-status {
-        font-size: 14px;
+        display: inline-block;
+        vertical-align: top;
+        width: 115px;
+        font-size: 13px;
         line-height: 24px;
+        text-align: right;
         color: #999;
+      }
+      .message-geo, .info_indent {
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        width: 24px;
+        height: 28px;
         text-align: right;
       }
+        .message-geo.with-geo {
+          background-image: image-url('ic_location_sm.svg');
+          background-repeat: no-repeat;
+          background-position: 50% 25%;
+          cursor: pointer;
+        }
       .message-avatar.request-button_pending {
         margin: 5px 30px 0 10px;
       }
