@@ -108,7 +108,8 @@ article.message[data-status="typing"] > div {
         text-align: right;
         color: #999;
       }
-      .message-geo, .info_indent {
+      .message-geo,
+      .info_indent {
         position: relative;
         display: inline-block;
         vertical-align: top;
@@ -117,9 +118,7 @@ article.message[data-status="typing"] > div {
         text-align: right;
       }
         .message-geo.with-geo {
-          background-image: image-url('ic_location_sm.svg');
-          background-repeat: no-repeat;
-          background-position: 50% 25%;
+          background: image-url('ic_location_sm.svg') 50% 25% no-repeat;
           cursor: pointer;
         }
       .message-avatar.request-button_pending {

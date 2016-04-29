@@ -208,17 +208,9 @@ define([
         $button.toggleClass('btn_active');
 
         if ($button.hasClass('btn_active')) {
-          Location.getGeoCoordinates(function(geoObj, err) {
-            if (err) {
-              Helpers.log('Error: ',err);
-            } else {
-              localStorage.setItem('QM.latitude', geoObj.latitude);
-              localStorage.setItem('QM.longitude', geoObj.longitude);
-            }
-          });
+          Location.setGeoCoordinatesToLocalStorage(true);
         } else {
-          localStorage.removeItem('QM.latitude');
-          localStorage.removeItem('QM.longitude');
+          Location.setGeoCoordinatesToLocalStorage(false);
         }
       });
 

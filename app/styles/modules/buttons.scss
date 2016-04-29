@@ -90,13 +90,11 @@
   display: block;
   width: 34px;
   height: 34px;
-  background-image: image-url('ic_location_off.svg');
-  background-repeat: no-repeat;
+  background: image-url('ic_location_off.svg') 50% no-repeat;
   background-size: contain;
-  background-position: 50%;
 }
   .btn_sendlocation.btn_active {
-    background-image: image-url('ic_location_on.svg');
+    background: image-url('ic_location_on.svg');
   }
   .btn_message {
     position: absolute;
