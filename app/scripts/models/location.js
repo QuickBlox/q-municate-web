@@ -44,19 +44,25 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       return 'https://www.google.com/maps?q='+geoCoords.latitude+','+geoCoords.longitude;
     },
 
-    toggleGeoCoordinatesToLocalStorage: function(saveLocation) {
+    toggleGeoCoordinatesToLocalStorage: function(saveLocation, callback) {
       if (saveLocation) {  
         this.getGeoCoordinates(function(res, err) {
           if (err) {
-            Helpers.log('Error: ',err);
+            Helpers.log('Error: ', err);
+
+            callback(null, err);
           } else {
             localStorage.setItem('QM.latitude', res.latitude);
             localStorage.setItem('QM.longitude', res.longitude);
+
+            callback('Added coordinates to localStorage: latitude('+res.latitude+'), longitude('+res.longitude+')');
           }
         });
       } else {
         localStorage.removeItem('QM.latitude');
         localStorage.removeItem('QM.longitude');
+
+        callback('Removed coordinates from localStorage');
       }
     }
 
