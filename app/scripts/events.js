@@ -210,7 +210,7 @@ define([
         if ($button.hasClass('btn_active')) {
           Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
             if (err) {
-              Helpers.log('Error: ', err);
+              Helpers.log(err);
             } else {
               Helpers.log(res);
             }
@@ -218,7 +218,7 @@ define([
         } else {
           Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
             if (err) {
-              Helpers.log('Error: ', err);
+              Helpers.log(err);
             } else {
               Helpers.log(res);
             }

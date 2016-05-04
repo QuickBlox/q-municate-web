@@ -20,7 +20,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       }
 
       function fail(err) {
-        var error= 'ERROR('+err.code + '): '+err.message;
+        var error= 'ERROR('+err.code+'): '+err.message;
 
         callback(null, error);
       }
@@ -48,8 +48,11 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       if (saveLocation) {  
         this.getGeoCoordinates(function(res, err) {
           if (err) {
-            Helpers.log('Error: ', err);
-
+            Helpers.log(err);
+            $('.j-send_location').removeClass('btn_active');
+            localStorage.removeItem('QM.latitude');
+            localStorage.removeItem('QM.longitude');
+            
             callback(null, err);
           } else {
             localStorage.setItem('QM.latitude', res.latitude);
