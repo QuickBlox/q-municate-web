@@ -603,8 +603,12 @@ define([
         isSectionEmpty(list);
 
         // delete chat section
-        if (chat.length > 0) chat.remove();
-        $('#capBox').removeClass('is-hidden');
+        if (chat.is(':visible')) {
+          $('#capBox').removeClass('is-hidden');
+        }
+        if (chat.length > 0) {
+          chat.remove();
+        }
         delete dialogs[dialog_id];
       });
 
