@@ -212,12 +212,15 @@
       vertical-align: top;
       font-size: 15px;
       height: 34px;
-      width: 77%;
+      width: 75%;
     }
     .l-input-menu {
       display: inline-block;
       vertical-align: top;
+      text-align: -moz-left;
+      text-align: center;
       height: 33px;
+      width: 25%;
       position: relative;
     }
       .l-input-menu .l-input-buttons {
