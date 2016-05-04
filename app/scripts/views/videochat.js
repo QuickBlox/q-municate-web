@@ -238,8 +238,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     openPopup($incomings);
     audioSignal.play();
 
-    self.app.models.VideoChat.session = session;
-    curSession = self.app.models.VideoChat.session;
+    VideoChat.session = session;
+    curSession = VideoChat.session;
 
     createAndShowNotification({
       'id': id,
@@ -297,6 +297,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
         $chat = $('.l-chat[data-dialog="'+dialogId+'"]');
 
+    curSession = {};
+    VideoChat.session = null;
     VideoChat.caller = null;
     VideoChat.callee = null;
     self.type = null;
@@ -450,6 +452,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
+      curSession = {};
+      VideoChat.session = null;
       VideoChat.caller = null;
       VideoChat.callee = null;
       self.type = null;

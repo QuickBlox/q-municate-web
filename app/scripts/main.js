@@ -2,8 +2,18 @@
 'use strict';
 
 requirejs.config({
+  googlemaps: {
+    params: {
+      key: 'AIzaSyAhduIkJbVdtRm0Hz6XpkihGt8h_R8cZds',
+      libraries: 'geometry'
+    }
+  },
   baseUrl: 'scripts',
   shim: {
+    gmaps: {
+      deps: ['googlemaps'],
+      exports: "GMaps"
+    },
     handlebars: {
       exports: 'Handlebars'
     },
@@ -20,6 +30,9 @@ requirejs.config({
   },
   paths: {
     // libs
+    googlemaps: '../bower_components/googlemaps-amd/src/googlemaps',
+    async: '../bower_components/requirejs-plugins/src/async',
+    gmaps: 'https://rawgit.com/HPNeo/gmaps/master/gmaps',
     cryptojs: 'https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes',
     videojs: '//vjs.zencdn.net/4.6/video',
     jquery: '../bower_components/jquery/dist/jquery',
@@ -47,6 +60,7 @@ requirejs.config({
     SessionModule: 'models/session',
     ContactModule: 'models/contact',
     DialogModule: 'models/dialog',
+    LocationModule: 'models/location',
     MessageModule: 'models/message',
     AttachModule: 'models/attach',
     ContactListModule: 'models/contact_list',

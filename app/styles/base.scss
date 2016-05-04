@@ -77,6 +77,9 @@ div[contenteditable="true"]:empty:before {
   line-height: 32px;
   color: #aaa;
 }
+div[contenteditable="true"]:focus {
+  box-shadow: none;
+}
 div[contenteditable="true"]:focus:empty:before {
   content: "";
 }

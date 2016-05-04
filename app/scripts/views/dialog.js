@@ -41,6 +41,8 @@ define([
 
     // QBChat handlers
     chatCallbacksInit: function() {
+      var self = this;
+
       var ContactListView = this.app.views.ContactList,
           MessageView = this.app.views.Message,
           VideoChat = this.app.models.VideoChat,
@@ -76,7 +78,14 @@ define([
         $('.j-disconnect').addClass('is-overlay');
       };
 
-      QB.chat.onReconnectListener = function() {
+      QB.chat.onReconnectListener = function(error) {
+        if (error) {
+          Helpers.log('Error: ', error);
+          self.app.service.checkSession(function (res) {
+            Helpers.log('Check session: ', res);
+          }, 'reconnected');
+        }
+
         $('.j-disconnect').removeClass('is-overlay');
       };
 
@@ -428,17 +437,19 @@ define([
         html += '<section class="l-chat-content scrollbar_message"></section>';
         html += '<footer class="l-chat-footer">';
         html += '<button class="j-toBottom btn_to_bottom"></button>';
-        html += '<div class="l-typing"></div>';
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
-        html += '<button class="btn_message btn_message_smile"><img src="images/icon-smile.svg" alt="smile"></button>';
-        html += '<button class="btn_message btn_message_attach"><img src="images/icon-attach.svg" alt="attach"></button>';
-        html += '<input class="attachment" type="file" accept="image/*">';
-        html += '</form></footer>';
+        html += '<button class="j-send_location btn_sendlocation'+((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '')+'"></button>';
+        html += '<input class="attachment" type="file" accept="image/*"></form>';
+        html += '<div class="l-typing"></div><div class="l-input-menu">';
+        html += '<button class="l-input-buttons btn_input_smile j-btn_input_smile"><img src="images/ic_smile.svg" alt="smile"></button>';
+        html += '<button class="l-input-buttons btn_input_location j-btn_input_location"><img src="images/ic_send_location.svg" alt="smile"></button>';
+        html += '<button class="l-input-buttons btn_input_attach j-btn_input_attach"><img src="images/ic_attach.svg" alt="smile"></button>';
+        html += '<button class="l-input-buttons btn_input_send j-btn_input_send">SEND</button></div></footer>';
 
         html += '</section>';
 
-        $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append(html);
+        $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append($(html));
         textAreaScrollbar();
 
         if (dialog.type === 3 && (!status || status.subscription === 'none'))

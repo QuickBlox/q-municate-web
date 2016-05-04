@@ -10,10 +10,11 @@ define([
   'config',
   'Helpers',
   'QMHtml',
+  'LocationModule',
   'minEmoji',
   'mCustomScrollbar',
   'mousewheel'
-], function($, QMCONFIG, Helpers, QMHtml, minEmoji) {
+], function($, QMCONFIG, Helpers, QMHtml, Location, minEmoji) {
 
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
@@ -167,8 +168,10 @@ define([
 
       /* attachments
       ----------------------------------------------------- */
-      $('.l-workspace-wrap').on('click', '.btn_message_attach', function() {
-        $(this).next().click();
+      $('.l-workspace-wrap').on('click', '.j-btn_input_attach', function() {
+        $(this).parents('.l-chat-footer')
+         .find('.attachment')
+         .click();
       });
 
       $('.l-workspace-wrap').on('change', '.attachment', function() {
@@ -195,6 +198,40 @@ define([
         }
 
         openAttachPopup($('#popupAttach'), name, url, attachType);
+      });
+
+      /* location
+      ----------------------------------------------------- */
+      $('.l-workspace-wrap').on('click', '.j-send_location', function() {
+        var $button = $('.j-send_location');
+
+        $button.toggleClass('btn_active');
+
+        if ($button.hasClass('btn_active')) {
+          Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
+            if (err) {
+              Helpers.log('Error: ', err);
+            } else {
+              Helpers.log(res);
+            }
+          });
+        } else {
+          Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
+            if (err) {
+              Helpers.log('Error: ', err);
+            } else {
+              Helpers.log(res);
+            }
+          });
+        }
+      });
+
+      $('.l-workspace-wrap').on('mouseenter', '.j-showlocation', function() {
+        $(this).find('.popover_map').fadeIn(150);
+      });
+
+      $('.l-workspace-wrap').on('mouseleave', '.j-showlocation', function() {
+        $(this).find('.popover_map').fadeOut(150);
       });
 
       /* group chats
@@ -413,7 +450,7 @@ define([
         UserView.occupantPopover($(this), event);
       });
 
-      $('.l-workspace-wrap').on('click', '.btn_message_smile', function() {
+      $('.l-workspace-wrap').on('click', '.j-btn_input_smile', function() {
         var $self = $(this),
             bool = $self.is('.is-active');
 
@@ -682,6 +719,15 @@ define([
         }
       });
 
+      $('.l-workspace-wrap').on('click', '.j-btn_input_send', function() {
+        var $msg = $('.l-message:visible');
+
+        MessageView.sendMessage($msg);
+        $msg.find('.textarea').empty();
+        removePopover();
+        setCursorToEnd($('.l-chat:visible .textarea'));
+      });
+
       // show message status on hover event
       $('body').on('mouseenter', 'article.message.is-own', function() {
         var $self = $(this),
@@ -791,7 +837,7 @@ define([
   function clickBehaviour(e) {
     var objDom = $(e.target);
 
-    if (objDom.is('#profile, #profile *, .occupant, .occupant *, .btn_message_smile, .btn_message_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
+    if (objDom.is('#profile, #profile *, .occupant, .occupant *, .j-btn_input_smile, .j-btn_input_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
       return false;
     } else {
       removePopover();
@@ -811,9 +857,9 @@ define([
   function removePopover() {
     $('.is-contextmenu').removeClass('is-contextmenu');
     $('.is-active').removeClass('is-active');
-    $('.btn_message_smile .is-hidden').removeClass('is-hidden').siblings().remove();
+    $('.j-btn_input_smile .is-hidden').removeClass('is-hidden').siblings().remove();
     $('.popover:not(.popover_smile)').remove();
-    $('.popover_smile').hide();
+    $('.popover_smile').fadeOut(150);
     if ($('#mCSB_8_container').is(':visible')) $('#mCSB_8_container')[0].style.paddingBottom = "0px";
   }
 
