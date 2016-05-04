@@ -208,9 +208,21 @@ define([
         $button.toggleClass('btn_active');
 
         if ($button.hasClass('btn_active')) {
-          Location.toggleGeoCoordinatesToLocalStorage(true);
+          Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
+            if (err) {
+              Helpers.log('Error: ', err);
+            } else {
+              Helpers.log(res);
+            }
+          });
         } else {
-          Location.toggleGeoCoordinatesToLocalStorage(false);
+          Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
+            if (err) {
+              Helpers.log('Error: ', err);
+            } else {
+              Helpers.log(res);
+            }
+          });
         }
       });
 

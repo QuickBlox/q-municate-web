@@ -389,6 +389,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
           $chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
           dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
+          locationIsActive = $('.j-send_location').hasClass('btn_active'),
           copyDialogItem,
           lastMessage;
 
@@ -416,11 +417,15 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           'markable': 1
         };
 
-        if(localStorage['QM.latitude'] && localStorage['QM.longitude']) {
-          Location.toggleGeoCoordinatesToLocalStorage(true);
-          
-          msg.extension.latitude = localStorage['QM.latitude'];
-          msg.extension.longitude = localStorage['QM.longitude'];
+        if(locationIsActive) {
+          Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
+            if (err) {
+              Helpers.log('Error: ', err);
+            } else {
+              msg.extension.latitude = localStorage['QM.latitude'];
+              msg.extension.longitude = localStorage['QM.longitude'];
+            }
+          });
         }
   
         QB.chat.send(jid, msg);
