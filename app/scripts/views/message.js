@@ -391,43 +391,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
           locationIsActive = $('.j-send_location').hasClass('btn_active'),
           copyDialogItem,
-          lastMessage;
+          lastMessage,
+          message,
+          msg;
 
-      if (val.length > 0) {
-        if (form.find('.textarea > span').length > 0) {
-          form.find('.textarea > span').each(function() {
-            $(this).after($(this).find('span').data('unicode')).remove();
-          });
-          val = form.find('.textarea').html().trim();
-        }
-        if (form.find('.textarea > div').length > 0) {
-          val = form.find('.textarea').text().trim();
-        }
-        val = val.replace(/<br>/gi, '\n');
-
-        // send message
-        var msg = {
-          'type': type,
-          'body': val,
-          'extension': {
-            'save_to_history': 1,
-            'dialog_id': dialog_id,
-            'date_sent': time
-          },
-          'markable': 1
-        };
-
-        if(locationIsActive) {
-          Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
-            if (err) {
-              Helpers.log('Error: ', err);
-            } else {
-              msg.extension.latitude = localStorage['QM.latitude'];
-              msg.extension.longitude = localStorage['QM.longitude'];
-            }
-          });
-        }
-  
+      function _sendMessage() {
         QB.chat.send(jid, msg);
 
         message = Message.create({
@@ -447,6 +415,45 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           message.stack = Message.isStack(true, message, lastMessage);
           self.addItem(message, true, true);
         }
+      }
+      
+      if (val.length > 0) {
+        if (form.find('.textarea > span').length > 0) {
+          form.find('.textarea > span').each(function() {
+            $(this).after($(this).find('span').data('unicode')).remove();
+          });
+          val = form.find('.textarea').html().trim();
+        }
+        if (form.find('.textarea > div').length > 0) {
+          val = form.find('.textarea').text().trim();
+        }
+        val = val.replace(/<br>/gi, '\n');
+
+        // send message
+        msg = {
+          'type': type,
+          'body': val,
+          'extension': {
+            'save_to_history': 1,
+            'dialog_id': dialog_id,
+            'date_sent': time
+          },
+          'markable': 1
+        };
+
+        if(locationIsActive) {
+          Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
+            if (err) {
+              Helpers.log('Error: ', err);
+            } else {
+              msg.extension.latitude = localStorage['QM.latitude'];
+              msg.extension.longitude = localStorage['QM.longitude'];
+              _sendMessage();
+            }
+          });
+        } else {
+          _sendMessage();
+        }
 
         if (dialogItem.length > 0) {
           copyDialogItem = dialogItem.clone();
@@ -457,6 +464,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
            isSectionEmpty($('#recentList ul'));
           }
         }
+
       }
     },
 
