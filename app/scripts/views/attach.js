@@ -176,11 +176,27 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule', 'underscor
           } else {
             msg.extension.latitude = localStorage['QM.latitude'];
             msg.extension.longitude = localStorage['QM.longitude'];
-            sendMessage();
           }
         });
-      } else {
-        sendMessage();
+      }
+       
+      QB.chat.send(jid, msg);
+
+      message = Message.create({
+        'chat_dialog_id': dialog_id,
+        'date_sent': time,
+        'attachment': attach,
+        'sender_id': User.contact.id,
+        'latitude': localStorage['QM.latitude'] || null,
+        'longitude': localStorage['QM.longitude'] || null,
+        '_id': msg.id
+      });
+
+      Helpers.log(message);
+      if (type === 'chat') {
+        lastMessage = chat.find('article[data-type="message"]').last();   
+        message.stack = Message.isStack(true, message, lastMessage);
+        MessageView.addItem(message, true, true);
       }
 
       if (dialogItem.length > 0) {
@@ -191,28 +207,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule', 'underscor
           $('#recentList').removeClass('is-hidden');
           isSectionEmpty($('#recentList ul'));
         }
-      }
-
-      function sendMessage() {
-        QB.chat.send(jid, msg);
-
-        message = Message.create({
-          'chat_dialog_id': dialog_id,
-          'date_sent': time,
-          'attachment': attach,
-          'sender_id': User.contact.id,
-          'latitude': localStorage['QM.latitude'] || null,
-          'longitude': localStorage['QM.longitude'] || null,
-          '_id': msg.id
-        });
-
-        Helpers.log(message);
-
-        if (type === 'chat') {
-          lastMessage = chat.find('article[data-type="message"]').last();   
-          message.stack = Message.isStack(true, message, lastMessage);
-          MessageView.addItem(message, true, true);
-        }   
       }
     }
 
