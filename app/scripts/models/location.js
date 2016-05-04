@@ -17,15 +17,15 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
         };
 
         callback(geoCoords);
-      };
+      }
 
-      function error(err) {
+      function fail(err) {
         var error= 'ERROR('+err.code + '): '+err.message;
 
         callback(null, error);
-      };
+      }
 
-  		navigator.geolocation.getCurrentPosition(success, error);
+  		navigator.geolocation.getCurrentPosition(success, fail);
     },
 
     getStaticMapUrl: function(geoCoords) {
@@ -41,7 +41,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
     },
 
     getMapUrl: function(geoCoords) {
-      return mapUrl = 'https://www.google.com/maps?q='+geoCoords.latitude+','+geoCoords.longitude;
+      return 'https://www.google.com/maps?q='+geoCoords.latitude+','+geoCoords.longitude;
     },
 
     toggleGeoCoordinatesToLocalStorage: function(saveLocation) {
@@ -60,7 +60,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       }
     }
 
-  }
+  };
     
   return Location;
 });
