@@ -36,27 +36,25 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
       Helpers.log('QB init', this);
     },
 
-    checkSession: function(callback, reconnected) {
-      QB.getSession(function(err, res) {
-        if (((new Date()).toISOString() > Session.expirationTime) || !res) {
-          initListeners = reconnected ? true : false;
-          // reset QuickBlox JS SDK after autologin via an existing token
-          self.init();
+    checkSession: function(callback) {
+      var self = this;
+      if ((new Date()).toISOString() > Session.expirationTime) {
+        // reset QuickBlox JS SDK after autologin via an existing token
+        self.init();
 
-          // recovery session
-          if (Session.authParams.provider) {
-            UserView.getFBStatus(function(token) {
-              Session.authParams.keys.token = token;
-              self.createSession(Session.authParams, callback, Session._remember);
-            });
-          } else {
-            self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
-            Session.encrypt(Session.authParams);
-          }
+        // recovery session
+        if (Session.authParams.provider) {
+          UserView.getFBStatus(function(token) {
+            Session.authParams.keys.token = token;
+            self.createSession(Session.authParams, callback, Session._remember);
+          });
         } else {
-          callback(res);
-        }
-      });
+          self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
+          Session.encrypt(Session.authParams);
+        }    
+      } else {     
+        callback();
+      }
     },
 
     createSession: function(params, callback, isRemember) {
@@ -116,10 +114,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         QB.login(params, function(err, res) {
           if (err) {
             Helpers.log(err.detail);
-
           } else {
             Helpers.log('QB SDK: User has logged', res);
-
             Session.update({ date: new Date(), authParams: Session.encrypt(params) });
             callback(res);
           }
