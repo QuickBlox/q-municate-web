@@ -439,7 +439,8 @@ define([
         html += '<button class="j-toBottom btn_to_bottom"></button>';
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
-        html += '<button class="j-send_location btn_sendlocation'+((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '')+'"></button>';
+        html += '<button class="j-send_location btn_sendlocation'+((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '')+'"';
+        html += 'data-balloon-length="small" data-balloon="Send you location with messages" data-balloon-pos="up"></button>';
         html += '<input class="attachment" type="file" accept="image/*"></form>';
         html += '<div class="l-typing"></div><div class="l-input-menu">';
         html += '<button class="l-input-buttons btn_input_smile j-btn_input_smile"><img src="images/ic_smile.svg" alt="smile"></button>';
