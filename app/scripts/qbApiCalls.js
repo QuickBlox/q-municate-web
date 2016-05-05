@@ -53,15 +53,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule'], function(
             self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
             Session.encrypt(Session.authParams);
           }
-
-          //           
-          Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
-            if (err) {
-              Helpers.log(err);
-            } else {
-              Helpers.log(res);
-            }
-          });
         } else {
           callback(res);
         }
@@ -69,6 +60,15 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule'], function(
     },
 
     createSession: function(params, callback, isRemember) {
+      // Remove coordinates from localStorage
+      Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
+        if (err) {
+          Helpers.log(err);
+        } else {
+          Helpers.log(res);
+        }
+      });
+
       QB.createSession(params, function(err, res) {
         if (err) {
           Helpers.log(err.detail);
