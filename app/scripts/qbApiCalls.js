@@ -62,11 +62,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule'], function(
     createSession: function(params, callback, isRemember) {
       // Remove coordinates from localStorage
       Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
-        if (err) {
-          Helpers.log(err);
-        } else {
-          Helpers.log(res);
-        }
+        Helpers.log(err ? err : res);
       });
 
       QB.createSession(params, function(err, res) {
