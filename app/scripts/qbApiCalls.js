@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule'], function($, QMCONFIG, QB, Helpers, Location) {
 
   var Session, UserView, ContactListView, User;
   var timer, initListeners;
@@ -53,6 +53,15 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
             self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
             Session.encrypt(Session.authParams);
           }
+
+          //           
+          Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
+            if (err) {
+              Helpers.log(err);
+            } else {
+              Helpers.log(res);
+            }
+          });
         } else {
           callback(res);
         }
