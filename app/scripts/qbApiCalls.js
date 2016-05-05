@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule'], function($, QMCONFIG, QB, Helpers, Location) {
 
   var Session, UserView, ContactListView, User;
   var timer, initListeners;
@@ -60,6 +60,11 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
     },
 
     createSession: function(params, callback, isRemember) {
+      // Remove coordinates from localStorage
+      Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
+        Helpers.log(err ? err : res);
+      });
+
       QB.createSession(params, function(err, res) {
         if (err) {
           Helpers.log(err.detail);

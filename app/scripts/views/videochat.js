@@ -16,6 +16,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       curSession = {},
       network = {},
       stopStreamFF,
+      sendAutoReject,
       is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
   function VideoChatView(app) {
@@ -75,6 +76,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
     $('#popupIncoming').on('click', '.btn_accept', function() {
       self.cancelCurrentCalls();
+
+      clearTimeout(sendAutoReject);
+      sendAutoReject = undefined;
 
       var $self = $(this),
           id = $self.data('id'),
@@ -219,6 +223,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         userName = contact.full_name || extension.full_name,
         userAvatar = contact.avatar_url || extension.avatar,
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
+        autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
         htmlTpl,
         tplParams;
 
@@ -247,6 +252,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       'callState': '5',
       'callType': callType
     });
+
+    sendAutoReject = setTimeout(function() {
+      $('.btn_decline').click();
+    }, autoReject);
   };
 
   VideoChatView.prototype.onAccept = function(session, id, extension) {
