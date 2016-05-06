@@ -49,9 +49,15 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
         this.getGeoCoordinates(function(res, err) {
           if (err) {
             Helpers.log(err);
+
             $('.j-send_location').removeClass('btn_active');
+            
             localStorage.removeItem('QM.latitude');
             localStorage.removeItem('QM.longitude');
+
+            if (err.indexOf('User denied Geolocation') > -1) {
+              $('.j-geoInfo').addClass('is-overlay');
+            }
             
             callback(null, err);
           } else {
