@@ -53,8 +53,9 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
             if (err.indexOf('ERROR(1):') > -1) {
               $('.j-geoInfo').addClass('is-overlay')
                .parent('.j-overlay').addClass('is-overlay');
-              $('.j-send_location').removeClass('btn_active');
             }
+            
+            $('.j-send_location').removeClass('btn_active');
             
             localStorage.removeItem('QM.latitude');
             localStorage.removeItem('QM.longitude');
