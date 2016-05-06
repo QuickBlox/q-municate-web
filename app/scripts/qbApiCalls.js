@@ -274,7 +274,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule'], function(
     },
 
     reconnectChat: function() {
-      $('.j-chatConnecting').addClass('is-overlay');
+      $('.j-chatConnecting').addClass('is-overlay')
+       .parent('.j-overlay').addClass('is-overlay');
       QB.chat.disconnect();
 
       self.connectChat(User.contact.user_jid, function(roster) {
@@ -290,7 +291,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule'], function(
           self.app.views.Dialog.prepareDownloading(roster);
         }
 
-        $('.j-chatConnecting').removeClass('is-overlay');
+        $('.j-chatConnecting').removeClass('is-overlay')
+         .parent('.j-overlay').removeClass('is-overlay');
       });
     },
 

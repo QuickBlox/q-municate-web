@@ -50,13 +50,6 @@
         <div class="l-welcome-footer-logo">
           <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox.svg" alt="QuickBlox"></a>
         </div>
-        <!-- <nav class="footer-links footer-links_welcome">
-          <ul>
-            <li class="footer-links-item"><a href="#">Support</a></li>
-            <li class="footer-links-item"><a href="#">FAQ</a></li>
-            <li class="footer-links-item"><a href="#">Help</a></li>
-          </ul>
-        </nav> -->
       </footer>
       <div class="l-spinner">
         <div class="spinner">
@@ -389,14 +382,14 @@
           <a href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/icon-android.svg" alt="download Q-municate Android"></a>
         </div>
 
-        <div class="l-app-version">v.1.3.0.6</div>
+        <div class="l-app-version">v.1.3.0.7</div>
 
       </footer>
     </section>
 
   </div>
 
-  <div class="popups l-flexbox j-disconnect j-chatConnecting">
+  <div class="popups l-flexbox j-overlay">
 
     <section id="popupDisconnect" class="popup popup_discon is-open j-disconnect">
       <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
@@ -411,6 +404,13 @@
           <div class="spinner-dot2"></div>
         </div>
       </div>
+    </section>
+
+    <section id="popupGeoInfo" class="popup popup_geo_info j-geoInfo">
+      <span class="alert alert_geo_info">
+        <b>Your location can't be detected.</b>
+        <br/>Please enable your location in browser settings and refresh current page after that.
+      </span>
     </section>
 
     <section id="popupDetails" class="popup popup_details presence-listener">

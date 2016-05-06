@@ -94,6 +94,13 @@
     width: 100px;
     height: 100px;
   }
+  .popup_geo_info {
+    width: 550px;
+    height: 140px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #f2f2f2;
+  }
     #chatConnecting.popup {
       transition: none;
       background: none;
@@ -178,7 +185,8 @@
   line-height: 24px;
 }
 .alert_delete,
-.alert_discon {
+.alert_discon,
+.alert_geo_info {
   font-size: 26px;
   line-height: 32px;
 }

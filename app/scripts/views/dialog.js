@@ -75,7 +75,8 @@ define([
         if ('div.popups.is-overlay') {
           $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         }
-        $('.j-disconnect').addClass('is-overlay');
+        $('.j-disconnect').addClass('is-overlay')
+         .parent('.j-overlay').addClass('is-overlay');
       };
 
       QB.chat.onReconnectListener = function(error) {
@@ -86,7 +87,8 @@ define([
           }, 'reconnected');
         }
 
-        $('.j-disconnect').removeClass('is-overlay');
+        $('.j-disconnect').removeClass('is-overlay')
+         .parent('.j-overlay').removeClass('is-overlay');
       };
 
       currentUser = new Person(_.clone(User.contact), {

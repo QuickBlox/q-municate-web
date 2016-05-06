@@ -49,10 +49,16 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
         this.getGeoCoordinates(function(res, err) {
           if (err) {
             Helpers.log(err);
-            $('.j-send_location').removeClass('btn_active');
+
+            if (err.indexOf('ERROR(1):') > -1) {
+              $('.j-geoInfo').addClass('is-overlay')
+               .parent('.j-overlay').addClass('is-overlay');
+              $('.j-send_location').removeClass('btn_active');
+            }
+            
             localStorage.removeItem('QM.latitude');
             localStorage.removeItem('QM.longitude');
-            
+
             callback(null, err);
           } else {
             localStorage.setItem('QM.latitude', res.latitude);
