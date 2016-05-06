@@ -231,7 +231,11 @@ define([
       });
 
       $('.l-workspace-wrap').on('mouseleave', '.j-showlocation', function() {
-        $(this).find('.popover_map').fadeOut(150);
+        $(this).find('.popover_map').fadeOut(100);
+      });
+
+      $('.l-workspace-wrap').on('click', '.j-btn_input_location', function() {
+        Location.addMap();
       });
 
       /* group chats
@@ -865,7 +869,7 @@ define([
     $('.is-contextmenu').removeClass('is-contextmenu');
     $('.is-active').removeClass('is-active');
     $('.j-btn_input_smile .is-hidden').removeClass('is-hidden').siblings().remove();
-    $('.popover:not(.popover_smile)').remove();
+    $('.popover:not(.popover_const)').remove();
     $('.popover_smile').fadeOut(150);
     if ($('#mCSB_8_container').is(':visible')) $('#mCSB_8_container')[0].style.paddingBottom = "0px";
   }

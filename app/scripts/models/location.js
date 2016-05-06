@@ -54,7 +54,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
               $('.j-geoInfo').addClass('is-overlay')
                .parent('.j-overlay').addClass('is-overlay');
             }
-            
+
             $('.j-send_location').removeClass('btn_active');
             
             localStorage.removeItem('QM.latitude');
@@ -74,6 +74,16 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
 
         callback('Removed coordinates from localStorage');
       }
+    },
+
+    addMap: function(){
+      // prettyPrint();
+      var map;
+      map = new GMaps({
+        div: '#map',
+        lat: localStorage['QM.latitude'],
+        lng: localStorage['QM.longitude']
+      });
     }
 
   };

@@ -77,6 +77,10 @@
         transform: rotate(45deg);
         box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
       }
+  .open_map {
+    width: 278px;
+    height: 240px;
+  }
   .popup_logout,
   .popup_import,
   .popup_delete,
@@ -95,9 +99,9 @@
     height: 100px;
   }
   .popup_geo_info {
-    width: 550px;
-    height: 140px;
-    padding: 20px;
+    width: 400px;
+    height: 98px;
+    padding: 10px;
     text-align: center;
     border: 1px solid #f2f2f2;
   }
@@ -185,10 +189,13 @@
   line-height: 24px;
 }
 .alert_delete,
-.alert_discon,
-.alert_geo_info {
+.alert_discon {
   font-size: 26px;
   line-height: 32px;
+}
+.alert_geo_info {
+  font-size: 18px;
+  line-height: 24px;
 }
 
 /* attach message */
