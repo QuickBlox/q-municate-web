@@ -747,6 +747,13 @@ define([
         time.removeClass('is-hidden');
       });
 
+      /* Button for scroll chat to bottom
+      ------------------------------------------------------ */
+      $('.l-workspace-wrap').on('click', '.j-toBottom', function() {
+        $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+        $(this).hide();
+      });
+
       // send typing statuses with keyup event
       $('.l-workspace-wrap').on('keyup', '.l-message', function(event) {
         var $self = $(this),
