@@ -96,6 +96,9 @@
   .btn_sendlocation.btn_active {
     background: image-url('ic_location_on.svg');
   }
+  .btn_sendlocation[data-balloon-length="small"]:after {
+    width: 100px;
+  }
   .btn_message {
     position: absolute;
     top: 10px;
