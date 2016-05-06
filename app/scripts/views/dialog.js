@@ -538,10 +538,6 @@ define([
         live: true
       });
 
-      $(document).on('click', '.j-toBottom', function() {
-        objDom.mCustomScrollbar('scrollTo', 'bottom');
-        $('.j-toBottom').hide();
-      });
     },
 
     createGroupChat: function(type, dialog_id) {
