@@ -502,7 +502,6 @@ define([
     messageScrollbar: function() {
       var objDom = $('.l-chat:visible .scrollbar_message'),
           height = objDom[0].scrollHeight,
-          bottom,
           self = this;
 
       objDom.mCustomScrollbar({
@@ -533,9 +532,6 @@ define([
             if (!isBottom) {
               $('.j-toBottom').show();
             }
-          },
-          onUpdate: function() {
-            bottom = objDom.find('.mCSB_container')[0].offsetHeight;
           }
         },
         live: true
