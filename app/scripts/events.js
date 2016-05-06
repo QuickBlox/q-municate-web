@@ -747,7 +747,7 @@ define([
         time.removeClass('is-hidden');
       });
 
-      /* Button for scroll chat to bottom
+      /* A button for the scroll to the bottom of chat
       ------------------------------------------------------ */
       $('.l-workspace-wrap').on('click', '.j-toBottom', function() {
         $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
