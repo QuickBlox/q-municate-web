@@ -231,13 +231,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml'], function($, QMCON
       });
     },
 
-    smilePopover: function(objDom) {
-      if (objDom.find('img').length === 1)
-        objDom.addClass('is-active').append('<img src="images/ic_smile_active.svg" alt="smile">').find('*:first').addClass('is-hidden');
-
-      $('.popover_smile').fadeIn(150);
-    },
-
     logout: function() {
       var DialogView = this.app.views.Dialog;
 

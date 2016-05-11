@@ -173,7 +173,7 @@
 }
   .popover_smile {
     position: absolute;
-    right: 31px;
+    right: 19px;
     bottom: 40px;
     width: 230px;
     height: 240px;
@@ -182,7 +182,7 @@
     .popover_smile .coner {
       position: absolute;
       bottom: -12px;
-      right: 103px;
+      right: 115px;
       overflow: hidden;
       width: 24px;
       height: 12px;
@@ -202,19 +202,18 @@
         box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
       }
   .popover_gmap {
-    display: block;
     position: absolute;
-    width: 300px;
-    height: 300px;
+    width: 462px;
+    height: 350px;
     background: #fff;
     bottom: 40px;
-    right: -36px;
-    padding: 10px;
+    right: 18px;
+    padding: 5px;
   }
     .popover_gmap .coner {
       position: absolute;
       bottom: -12px;
-      right: 138px;
+      right: 83px;
       overflow: hidden;
       width: 24px;
       height: 12px;

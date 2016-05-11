@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule'], function($, QMCONFIG, QB, Helpers, Location) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($, QMCONFIG, QB, Helpers, Location) {
 
   var Session, UserView, ContactListView, User;
   var timer, initListeners;

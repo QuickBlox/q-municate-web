@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago', 'QBNotification', 'LocationModule', 'QMHtml'],
+define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago', 'QBNotification', 'LocationView', 'QMHtml'],
         function($, QMCONFIG, QB, _, minEmoji, Helpers, timeago, QBNotification, Location, QMHtml) {
 
   var User, Message, ContactList, Dialog;
@@ -52,6 +52,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             attachType = message.attachment && message.attachment['content-type'] || message.attachment && message.attachment.type || null,
             attachUrl = message.attachment && (QB.content.privateUrl(message.attachment.id) || message.attachment.url || null),
             geolocation = (message.latitude && message.longitude) ? {'latitude': message.latitude, 'longitude': message.longitude} : null,
+            geoCoords = (message.attachment && message.attachment.type === 'location') ? {'latitude': message.attachment['lat'], 'longitude': message.attachment['lng']} : null,
+            mapImage = geoCoords ? Location.getStaticMapUrl(geoCoords, {'size': [380, 200]}) : null,
+            mapLink = geoCoords ? Location.getMapUrl(geoCoords) : null,
             recipient = contacts[recipientId] || null,
             occupants_names = '',
             occupants_ids,
@@ -293,6 +296,14 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
             html += message.attachment.name+'<br><br>';
             html += '<div id="'+message.id+'" class="preview preview-video" data-url="'+attachUrl+'" data-name="'+message.attachment.name+'"></div>';
             html += '</div>';
+            html += '</div><div class="message-info"><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
+            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+            html += '<div class="message-geo j-showlocation"></div></div>';
+          } else if (attachType && attachType.indexOf('location') > -1) {
+            html += '<div class="message-body">';
+            html += '<a class="open_googlemaps" href="'+mapLink+'" target="_blank">';
+            html += '<img id="attach_'+message.id+'" src="'+mapImage+'" alt="attach">';
+            html += '</a></div>';
             html += '</div><div class="message-info"><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
             html += '<div class="message-status is-hidden">Not delivered yet</div>';
             html += '<div class="message-geo j-showlocation"></div></div>';

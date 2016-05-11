@@ -10,7 +10,7 @@ define([
   'config',
   'Helpers',
   'QMHtml',
-  'LocationModule',
+  'LocationView',
   'minEmoji',
   'mCustomScrollbar',
   'mousewheel'
@@ -235,7 +235,30 @@ define([
       });
 
       $('.l-workspace-wrap').on('click', '.j-btn_input_location', function() {
+        var $self = $(this),
+            bool = $self.is('.is-active');
+
+        removePopover();
+        
+        if (bool === false) {
+          $self.addClass('is-active');
+          $('.popover_gmap').fadeIn(150);
+        }
+
         Location.addMap();
+      });
+
+      $('.l-workspace-wrap').on('click', '.j-send_map', function() {
+        var localData = localStorage['QM.locationAttach'],
+            mapCoords;
+
+        if (localData) {
+          mapCoords = JSON.parse(localData);
+
+          AttachView.sendMessage($('.l-chat:visible'), null, null, mapCoords);
+          localStorage.removeItem('QM.locationAttach');
+          $('.j-btn_input_location').click();
+        }
       });
 
       /* group chats
@@ -459,8 +482,12 @@ define([
             bool = $self.is('.is-active');
 
         removePopover();
-        if (bool === false)
-          UserView.smilePopover($self);
+
+        if (bool === false) {
+          $self.addClass('is-active');
+          $('.popover_smile').fadeIn(150);
+        }
+
         setCursorToEnd($('.l-chat:visible .textarea'));
       });
 
@@ -846,9 +873,12 @@ define([
 
   // Checking if the target is not an object run popover
   function clickBehaviour(e) {
-    var objDom = $(e.target);
+    var objDom = $(e.target),
+        selectors = '#profile, #profile *, .occupant, .occupant *, .j-btn_input_smile, .j-btn_input_smile *, '+
+                    '.popover_smile, .popover_smile *, .popover_gmap, .popover_gmap *, .j-btn_input_location, .j-btn_input_location *',
+        googleImage = objDom.context.src && objDom.context.src.indexOf('/maps.gstatic.com/mapfiles/api-3/images/mapcnt6.png') || null;
 
-    if (objDom.is('#profile, #profile *, .occupant, .occupant *, .j-btn_input_smile, .j-btn_input_smile *, .popover_smile, .popover_smile *') || e.which === 3) {
+    if (objDom.is(selectors) || e.which === 3 || googleImage === 7) {
       return false;
     } else {
       removePopover();
@@ -870,7 +900,7 @@ define([
     $('.is-active').removeClass('is-active');
     $('.j-btn_input_smile .is-hidden').removeClass('is-hidden').siblings().remove();
     $('.popover:not(.popover_const)').remove();
-    $('.popover_smile').fadeOut(150);
+    $('.popover_smile, .popover_gmap').fadeOut(150);
     if ($('#mCSB_8_container').is(':visible')) $('#mCSB_8_container')[0].style.paddingBottom = "0px";
   }
 

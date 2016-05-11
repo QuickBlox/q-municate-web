@@ -445,9 +445,9 @@ define([
         html += 'data-balloon-length="small" data-balloon="Send you location with messages" data-balloon-pos="up"></button>';
         html += '<input class="attachment" type="file" accept="image/*"></form>';
         html += '<div class="l-typing"></div><div class="l-input-menu">';
-        html += '<button class="l-input-buttons btn_input_smile j-btn_input_smile"><img src="images/ic_smile.svg" alt="smile"></button>';
-        html += '<button class="l-input-buttons btn_input_location j-btn_input_location"><img src="images/ic_send_location.svg" alt="smile"></button>';
-        html += '<button class="l-input-buttons btn_input_attach j-btn_input_attach"><img src="images/ic_attach.svg" alt="smile"></button>';
+        html += '<button class="l-input-buttons btn_input_smile j-btn_input_smile"></button>';
+        html += '<button class="l-input-buttons btn_input_location j-btn_input_location"></button>';
+        html += '<button class="l-input-buttons btn_input_attach j-btn_input_attach"></button>';
         html += '<button class="l-input-buttons btn_input_send j-btn_input_send">SEND</button></div></footer>';
 
         html += '</section>';

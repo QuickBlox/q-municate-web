@@ -60,7 +60,6 @@ requirejs.config({
     SessionModule: 'models/session',
     ContactModule: 'models/contact',
     DialogModule: 'models/dialog',
-    LocationModule: 'models/location',
     MessageModule: 'models/message',
     AttachModule: 'models/attach',
     ContactListModule: 'models/contact_list',
@@ -72,6 +71,7 @@ requirejs.config({
     AttachView: 'views/attach',
     ContactListView: 'views/contact_list',
     VideoChatView: 'views/videochat',
+    LocationView: 'views/location',
     // apiCalls
     QBApiCalls: 'qbApiCalls',
     // events
