@@ -1,5 +1,5 @@
 /**
- * Helper Module
+ * Location
  */
 
 define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers) {
@@ -28,12 +28,12 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
   		navigator.geolocation.getCurrentPosition(success, fail);
     },
 
-    getStaticMapUrl: function(geoCoords) {
+    getStaticMapUrl: function(geoCoords, options) {
       var params = {
-        'size': [200, 200],
+        'size': options && options.size || [200, 200],
         'lat': geoCoords.latitude,
         'lng': geoCoords.longitude,
-        'zoom': 15,
+        'zoom': options && options.zoom || 15,
         'markers': [{lat: geoCoords.latitude, lng: geoCoords.longitude}]
       };
 
@@ -54,7 +54,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
               $('.j-geoInfo').addClass('is-overlay')
                .parent('.j-overlay').addClass('is-overlay');
             }
-            
+
             $('.j-send_location').removeClass('btn_active');
             
             localStorage.removeItem('QM.latitude');
@@ -74,6 +74,38 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
 
         callback('Removed coordinates from localStorage');
       }
+    },
+
+    addMap: function(){
+      this.getGeoCoordinates(function(res, err) {
+        if (err) {
+          Helpers.log(err);
+        } else {
+          var mapCoords = {};
+          var map = new GMaps({
+            div: '#map',
+            lat: res.latitude,
+            lng: res.longitude
+          });
+
+          $('#map img').addClass('gooImg');
+
+          GMaps.on('click', map.map, function(event) {
+            mapCoords.lat = event.latLng.lat(),
+            mapCoords.lng = event.latLng.lng();
+
+            localStorage.setItem('QM.locationAttach', JSON.stringify(mapCoords));
+
+            map.removeMarkers();
+
+            map.addMarker({
+              lat: mapCoords.lat,
+              lng: mapCoords.lng,
+              title: 'Marker'
+            });
+          });
+        }
+      });
     }
 
   };

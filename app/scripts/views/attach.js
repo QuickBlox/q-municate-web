@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule', 'underscore', 'progressbar'], function($, QMCONFIG, QB, Helpers, Location, _, ProgressBar) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore', 'progressbar'], function($, QMCONFIG, QB, Helpers, Location, _, ProgressBar) {
 
   var User, Message, Attach;
   var self;
@@ -142,9 +142,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule', 'underscor
       objDom.parents('article').remove();
     },
 
-    sendMessage: function(chat, blob, size) {
+    sendMessage: function(chat, blob, size, mapCoords) {
       var MessageView = this.app.views.Message,
-          attach = Attach.create(blob, size),
           jid = chat.data('jid'),
           id = chat.data('id'),
           dialog_id = chat.data('dialog'),
@@ -155,7 +154,18 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationModule', 'underscor
           copyDialogItem,
           lastMessage,
           message,
+          attach,
           msg;
+
+      if (mapCoords) {
+        attach = {
+          'type': 'location',
+          'lat' : mapCoords.lat,
+          'lng' : mapCoords.lng
+        };
+      } else {
+        attach = Attach.create(blob, size);
+      }
 
       function _sendMessage() {
         QB.chat.send(jid, msg);
