@@ -19,7 +19,7 @@ define([
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
   var App;
-  var $workspaces = $('.l-workspace-wrap');
+  var $workspace = $('.l-workspace-wrap');
 
   function Events(app) {
     App = app;
