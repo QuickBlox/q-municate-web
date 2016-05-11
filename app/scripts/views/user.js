@@ -328,7 +328,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml'], function($, QMCON
   };
 
   var appearAnimation = function() {
-    $('.popover:not(.popover_smile)').fadeIn(150);
+    $('.popover:not(.j-popover_const)').fadeIn(150);
   };
 
   return UserView;

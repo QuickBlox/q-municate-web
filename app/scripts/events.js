@@ -19,6 +19,7 @@ define([
   var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
   var App;
+  var $workspaces = $('.l-workspace-wrap');
 
   function Events(app) {
     App = app;
@@ -168,22 +169,22 @@ define([
 
       /* attachments
       ----------------------------------------------------- */
-      $('.l-workspace-wrap').on('click', '.j-btn_input_attach', function() {
+      $workspaces.on('click', '.j-btn_input_attach', function() {
         $(this).parents('.l-chat-footer')
          .find('.attachment')
          .click();
       });
 
-      $('.l-workspace-wrap').on('change', '.attachment', function() {
+      $workspaces.on('change', '.attachment', function() {
         AttachView.changeInput($(this));
       });
 
-      $('.l-workspace-wrap').on('click', '.attach-cancel', function(event) {
+      $workspaces.on('click', '.attach-cancel', function(event) {
         event.preventDefault();
         AttachView.cancel($(this));
       });
 
-      $('.l-workspace-wrap').on('click', '.preview', function() {        
+      $workspaces.on('click', '.preview', function() {        
         var $self = $(this),
             name = $self.data('name'),
             url = $self.data('url'),
@@ -202,7 +203,7 @@ define([
 
       /* location
       ----------------------------------------------------- */
-      $('.l-workspace-wrap').on('click', '.j-send_location', function() {
+      $workspaces.on('click', '.j-send_location', function() {
         var $button = $('.j-send_location');
 
         $button.toggleClass('btn_active');
@@ -226,29 +227,29 @@ define([
         }
       });
 
-      $('.l-workspace-wrap').on('mouseenter', '.j-showlocation', function() {
+      $workspaces.on('mouseenter', '.j-showlocation', function() {
         $(this).find('.popover_map').fadeIn(150);
       });
 
-      $('.l-workspace-wrap').on('mouseleave', '.j-showlocation', function() {
+      $workspaces.on('mouseleave', '.j-showlocation', function() {
         $(this).find('.popover_map').fadeOut(100);
       });
 
-      $('.l-workspace-wrap').on('click', '.j-btn_input_location', function() {
+      $workspaces.on('click', '.j-btn_input_location', function() {
         var $self = $(this),
             bool = $self.is('.is-active');
 
         removePopover();
         
-        if (bool === false) {
+        if (!bool) {
           $self.addClass('is-active');
-          $('.popover_gmap').fadeIn(150);
+          $('.j-popover_gmap').fadeIn(150);
         }
 
         Location.addMap();
       });
 
-      $('.l-workspace-wrap').on('click', '.j-send_map', function() {
+      $workspaces.on('click', '.j-send_map', function() {
         var localData = localStorage['QM.locationAttach'],
             mapCoords;
 
@@ -263,7 +264,7 @@ define([
 
       /* group chats
       ----------------------------------------------------- */
-      $('.l-workspace-wrap').on('click', '.groupTitle', function() {
+      $workspaces.on('click', '.groupTitle', function() {
         if ($('.l-chat:visible').find('.triangle_up').is('.is-hidden')) {
           setTriagle('up');
         } else {
@@ -271,7 +272,7 @@ define([
         }
       });
 
-      $('.l-workspace-wrap').on('click', '.groupTitle .addToGroupChat', function(event) {
+      $workspaces.on('click', '.groupTitle .addToGroupChat', function(event) {
         event.stopPropagation();
         var $self = $(this),
             dialog_id = $self.data('dialog');
@@ -280,19 +281,19 @@ define([
         ContactListView.addContactsToChat($self, 'add', dialog_id);
       });
 
-      $('.l-workspace-wrap').on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
+      $workspaces.on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
         event.stopPropagation();
       });
 
       /* change the chat name
       ----------------------------------------------------- */
-      $('.l-workspace-wrap').on('mouseenter focus', '.groupTitle .name_chat', function() {
+      $workspaces.on('mouseenter focus', '.groupTitle .name_chat', function() {
         var $chat = $('.l-chat:visible');
         $chat.find('.triangle:visible').addClass('is-hover')
              .siblings('.pencil').removeClass('is-hidden');
       });
 
-      $('.l-workspace-wrap').on('mouseleave', '.groupTitle .name_chat', function() {
+      $workspaces.on('mouseleave', '.groupTitle .name_chat', function() {
         var $chat = $('.l-chat:visible');
 
         if (!$(this).is('.is-focus')) {
@@ -354,24 +355,24 @@ define([
 
       /* change the chat avatar
       ----------------------------------------------------- */
-      $('.l-workspace-wrap').on('mouseenter', '.groupTitle .avatar', function() {
+      $workspaces.on('mouseenter', '.groupTitle .avatar', function() {
         var $chat = $('.l-chat:visible');
 
         $chat.find('.pencil_active').removeClass('is-hidden');
       });
 
-      $('.l-workspace-wrap').on('mouseleave', '.groupTitle .avatar', function() {
+      $workspaces.on('mouseleave', '.groupTitle .avatar', function() {
         var $chat = $('.l-chat:visible');
 
         $chat.find('.pencil_active').addClass('is-hidden');
       });
 
-      $('.l-workspace-wrap').on('click', '.groupTitle .pencil_active', function() {
+      $workspaces.on('click', '.groupTitle .pencil_active', function() {
         $(this).siblings('input:file').click();
         removePopover();
       });
 
-      $('.l-workspace-wrap').on('change', '.groupTitle .avatar_file', function() {
+      $workspaces.on('change', '.groupTitle .avatar_file', function() {
         var $chat = $('.l-chat:visible');
 
         Dialog.changeAvatar($chat.data('dialog'), $(this), function(avatar) {
@@ -471,21 +472,21 @@ define([
         UserView.contactPopover($(this));
       });
 
-      $('.l-workspace-wrap').on('click', '.occupant', function(event) {
+      $workspaces.on('click', '.occupant', function(event) {
         event.preventDefault();
         removePopover();
         UserView.occupantPopover($(this), event);
       });
 
-      $('.l-workspace-wrap').on('click', '.j-btn_input_smile', function() {
+      $workspaces.on('click', '.j-btn_input_smile', function() {
         var $self = $(this),
             bool = $self.is('.is-active');
 
         removePopover();
 
-        if (bool === false) {
+        if (!bool) {
           $self.addClass('is-active');
-          $('.popover_smile').fadeIn(150);
+          $('.j-popover_smile').fadeIn(150);
         }
 
         setCursorToEnd($('.l-chat:visible .textarea'));
@@ -641,7 +642,7 @@ define([
         ContactListView.sendSubscribe($(this));
       });
 
-      $('.l-workspace-wrap').on('click', '.btn_request_again', function() {
+      $workspaces.on('click', '.btn_request_again', function() {
         Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this), true);
       });
@@ -735,7 +736,7 @@ define([
         DialogView.createGroupChat('add', dialog_id);
       });
 
-      $('.l-workspace-wrap').on('keydown', '.l-message', function(event) {
+      $workspaces.on('keydown', '.l-message', function(event) {
         var $self = $(this),
             jid = $self.parents('.l-chat').data('jid'),
             type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
@@ -750,7 +751,7 @@ define([
         }
       });
 
-      $('.l-workspace-wrap').on('click', '.j-btn_input_send', function() {
+      $workspaces.on('click', '.j-btn_input_send', function() {
         var $msg = $('.l-message:visible');
 
         MessageView.sendMessage($msg);
@@ -780,13 +781,13 @@ define([
 
       /* A button for the scroll to the bottom of chat
       ------------------------------------------------------ */
-      $('.l-workspace-wrap').on('click', '.j-toBottom', function() {
+      $workspaces.on('click', '.j-toBottom', function() {
         $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
         $(this).hide();
       });
 
       // send typing statuses with keyup event
-      $('.l-workspace-wrap').on('keyup', '.l-message', function(event) {
+      $workspaces.on('keyup', '.l-message', function(event) {
         var $self = $(this),
             jid = $self.parents('.l-chat').data('jid'),
             type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
@@ -819,7 +820,7 @@ define([
         }
       });
 
-      $('.l-workspace-wrap').on('keyup', '.l-message', function() {
+      $workspaces.on('keyup', '.l-message', function() {
         var val = $('.l-chat:visible .textarea').text().trim();
 
         if (val.length > 0)
@@ -828,7 +829,7 @@ define([
           $('.l-chat:visible .textarea').removeClass('contenteditable').empty();
       });
 
-      $('.l-workspace-wrap').on('submit', '.l-message', function(event) {
+      $workspaces.on('submit', '.l-message', function(event) {
         event.preventDefault();
       });
 
@@ -875,7 +876,7 @@ define([
   function clickBehaviour(e) {
     var objDom = $(e.target),
         selectors = '#profile, #profile *, .occupant, .occupant *, .j-btn_input_smile, .j-btn_input_smile *, '+
-                    '.popover_smile, .popover_smile *, .popover_gmap, .popover_gmap *, .j-btn_input_location, .j-btn_input_location *',
+                    '.j-popover_smile, .j-popover_smile *, .j-popover_gmap, .j-popover_gmap *, .j-btn_input_location, .j-btn_input_location *',
         googleImage = objDom.context.src && objDom.context.src.indexOf('/maps.gstatic.com/mapfiles/api-3/images/mapcnt6.png') || null;
 
     if (objDom.is(selectors) || e.which === 3 || googleImage === 7) {
@@ -899,8 +900,8 @@ define([
     $('.is-contextmenu').removeClass('is-contextmenu');
     $('.is-active').removeClass('is-active');
     $('.j-btn_input_smile .is-hidden').removeClass('is-hidden').siblings().remove();
-    $('.popover:not(.popover_const)').remove();
-    $('.popover_smile, .popover_gmap').fadeOut(150);
+    $('.popover:not(.j-popover_const)').remove();
+    $('.j-popover_smile, .j-popover_gmap').fadeOut(150);
     if ($('#mCSB_8_container').is(':visible')) $('#mCSB_8_container')[0].style.paddingBottom = "0px";
   }
 

@@ -33,7 +33,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
         'size': options && options.size || [200, 200],
         'lat': geoCoords.latitude,
         'lng': geoCoords.longitude,
-        'zoom': options && options. zoom || 15,
+        'zoom': options && options.zoom || 15,
         'markers': [{lat: geoCoords.latitude, lng: geoCoords.longitude}]
       };
 
