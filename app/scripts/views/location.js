@@ -77,33 +77,40 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
     },
 
     addMap: function(){
+      $('.j-popover_gmap').prepend('<div id="map" class="open_map j-open_map"></div>');
+      
+      function _addMap(res) {
+        var mapCoords = {};
+        var map = new GMaps({
+          div: '#map',
+          lat: res ? res.latitude : 0,
+          lng: res ? res.longitude : 0,
+          zoom: res ? 15 : 1
+        });
+
+        $('#map img').addClass('gooImg');
+
+        GMaps.on('click', map.map, function(event) {
+          mapCoords.lat = event.latLng.lat(),
+          mapCoords.lng = event.latLng.lng();
+
+          localStorage.setItem('QM.locationAttach', JSON.stringify(mapCoords));
+
+          map.removeMarkers();
+
+          map.addMarker({
+            lat: mapCoords.lat,
+            lng: mapCoords.lng,
+            title: 'Marker'
+          });
+        });
+      }
+
       this.getGeoCoordinates(function(res, err) {
         if (err) {
-          Helpers.log(err);
+          _addMap();
         } else {
-          var mapCoords = {};
-          var map = new GMaps({
-            div: '#map',
-            lat: res.latitude,
-            lng: res.longitude
-          });
-
-          $('#map img').addClass('gooImg');
-
-          GMaps.on('click', map.map, function(event) {
-            mapCoords.lat = event.latLng.lat(),
-            mapCoords.lng = event.latLng.lng();
-
-            localStorage.setItem('QM.locationAttach', JSON.stringify(mapCoords));
-
-            map.removeMarkers();
-
-            map.addMarker({
-              lat: mapCoords.lat,
-              lng: mapCoords.lng,
-              title: 'Marker'
-            });
-          });
+          _addMap(res);
         }
       });
     }
