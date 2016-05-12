@@ -169,22 +169,22 @@ define([
 
       /* attachments
       ----------------------------------------------------- */
-      $workspaces.on('click', '.j-btn_input_attach', function() {
+      $workspace.on('click', '.j-btn_input_attach', function() {
         $(this).parents('.l-chat-footer')
          .find('.attachment')
          .click();
       });
 
-      $workspaces.on('change', '.attachment', function() {
+      $workspace.on('change', '.attachment', function() {
         AttachView.changeInput($(this));
       });
 
-      $workspaces.on('click', '.attach-cancel', function(event) {
+      $workspace.on('click', '.attach-cancel', function(event) {
         event.preventDefault();
         AttachView.cancel($(this));
       });
 
-      $workspaces.on('click', '.preview', function() {        
+      $workspace.on('click', '.preview', function() {        
         var $self = $(this),
             name = $self.data('name'),
             url = $self.data('url'),
@@ -203,7 +203,7 @@ define([
 
       /* location
       ----------------------------------------------------- */
-      $workspaces.on('click', '.j-send_location', function() {
+      $workspace.on('click', '.j-send_location', function() {
         var $button = $('.j-send_location');
 
         $button.toggleClass('btn_active');
@@ -227,15 +227,15 @@ define([
         }
       });
 
-      $workspaces.on('mouseenter', '.j-showlocation', function() {
+      $workspace.on('mouseenter', '.j-showlocation', function() {
         $(this).find('.popover_map').fadeIn(150);
       });
 
-      $workspaces.on('mouseleave', '.j-showlocation', function() {
+      $workspace.on('mouseleave', '.j-showlocation', function() {
         $(this).find('.popover_map').fadeOut(100);
       });
 
-      $workspaces.on('click', '.j-btn_input_location', function() {
+      $workspace.on('click', '.j-btn_input_location', function() {
         var $self = $(this),
             bool = $self.is('.is-active');
 
@@ -249,7 +249,7 @@ define([
         Location.addMap();
       });
 
-      $workspaces.on('click', '.j-send_map', function() {
+      $workspace.on('click', '.j-send_map', function() {
         var localData = localStorage['QM.locationAttach'],
             mapCoords;
 
@@ -264,7 +264,7 @@ define([
 
       /* group chats
       ----------------------------------------------------- */
-      $workspaces.on('click', '.groupTitle', function() {
+      $workspace.on('click', '.groupTitle', function() {
         if ($('.l-chat:visible').find('.triangle_up').is('.is-hidden')) {
           setTriagle('up');
         } else {
@@ -272,7 +272,7 @@ define([
         }
       });
 
-      $workspaces.on('click', '.groupTitle .addToGroupChat', function(event) {
+      $workspace.on('click', '.groupTitle .addToGroupChat', function(event) {
         event.stopPropagation();
         var $self = $(this),
             dialog_id = $self.data('dialog');
@@ -281,19 +281,19 @@ define([
         ContactListView.addContactsToChat($self, 'add', dialog_id);
       });
 
-      $workspaces.on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
+      $workspace.on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
         event.stopPropagation();
       });
 
       /* change the chat name
       ----------------------------------------------------- */
-      $workspaces.on('mouseenter focus', '.groupTitle .name_chat', function() {
+      $workspace.on('mouseenter focus', '.groupTitle .name_chat', function() {
         var $chat = $('.l-chat:visible');
         $chat.find('.triangle:visible').addClass('is-hover')
              .siblings('.pencil').removeClass('is-hidden');
       });
 
-      $workspaces.on('mouseleave', '.groupTitle .name_chat', function() {
+      $workspace.on('mouseleave', '.groupTitle .name_chat', function() {
         var $chat = $('.l-chat:visible');
 
         if (!$(this).is('.is-focus')) {
@@ -355,24 +355,24 @@ define([
 
       /* change the chat avatar
       ----------------------------------------------------- */
-      $workspaces.on('mouseenter', '.groupTitle .avatar', function() {
+      $workspace.on('mouseenter', '.groupTitle .avatar', function() {
         var $chat = $('.l-chat:visible');
 
         $chat.find('.pencil_active').removeClass('is-hidden');
       });
 
-      $workspaces.on('mouseleave', '.groupTitle .avatar', function() {
+      $workspace.on('mouseleave', '.groupTitle .avatar', function() {
         var $chat = $('.l-chat:visible');
 
         $chat.find('.pencil_active').addClass('is-hidden');
       });
 
-      $workspaces.on('click', '.groupTitle .pencil_active', function() {
+      $workspace.on('click', '.groupTitle .pencil_active', function() {
         $(this).siblings('input:file').click();
         removePopover();
       });
 
-      $workspaces.on('change', '.groupTitle .avatar_file', function() {
+      $workspace.on('change', '.groupTitle .avatar_file', function() {
         var $chat = $('.l-chat:visible');
 
         Dialog.changeAvatar($chat.data('dialog'), $(this), function(avatar) {
@@ -472,13 +472,13 @@ define([
         UserView.contactPopover($(this));
       });
 
-      $workspaces.on('click', '.occupant', function(event) {
+      $workspace.on('click', '.occupant', function(event) {
         event.preventDefault();
         removePopover();
         UserView.occupantPopover($(this), event);
       });
 
-      $workspaces.on('click', '.j-btn_input_smile', function() {
+      $workspace.on('click', '.j-btn_input_smile', function() {
         var $self = $(this),
             bool = $self.is('.is-active');
 
@@ -642,7 +642,7 @@ define([
         ContactListView.sendSubscribe($(this));
       });
 
-      $workspaces.on('click', '.btn_request_again', function() {
+      $workspace.on('click', '.btn_request_again', function() {
         Helpers.log('send subscribe');
         ContactListView.sendSubscribe($(this), true);
       });
@@ -736,7 +736,7 @@ define([
         DialogView.createGroupChat('add', dialog_id);
       });
 
-      $workspaces.on('keydown', '.l-message', function(event) {
+      $workspace.on('keydown', '.l-message', function(event) {
         var $self = $(this),
             jid = $self.parents('.l-chat').data('jid'),
             type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
@@ -751,7 +751,7 @@ define([
         }
       });
 
-      $workspaces.on('click', '.j-btn_input_send', function() {
+      $workspace.on('click', '.j-btn_input_send', function() {
         var $msg = $('.l-message:visible');
 
         MessageView.sendMessage($msg);
@@ -781,13 +781,13 @@ define([
 
       /* A button for the scroll to the bottom of chat
       ------------------------------------------------------ */
-      $workspaces.on('click', '.j-toBottom', function() {
+      $workspace.on('click', '.j-toBottom', function() {
         $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
         $(this).hide();
       });
 
       // send typing statuses with keyup event
-      $workspaces.on('keyup', '.l-message', function(event) {
+      $workspace.on('keyup', '.l-message', function(event) {
         var $self = $(this),
             jid = $self.parents('.l-chat').data('jid'),
             type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
@@ -820,7 +820,7 @@ define([
         }
       });
 
-      $workspaces.on('keyup', '.l-message', function() {
+      $workspace.on('keyup', '.l-message', function() {
         var val = $('.l-chat:visible .textarea').text().trim();
 
         if (val.length > 0)
@@ -829,7 +829,7 @@ define([
           $('.l-chat:visible .textarea').removeClass('contenteditable').empty();
       });
 
-      $workspaces.on('submit', '.l-message', function(event) {
+      $workspace.on('submit', '.l-message', function(event) {
         event.preventDefault();
       });
 
