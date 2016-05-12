@@ -248,12 +248,13 @@ define([
           Location.addMap();
         }
 
-        $('body').on('keydown', function(event) {
-          event.preventDefault;
-          var code = event.keyCode;
-        
-          if (code === 13) $('.j-send_map').click();
-        });
+      });
+
+      $('body').on('keydown', function(event) {
+        if ((event.keyCode === 13) && $('div').is('.j-open_map')) {
+          $('.j-send_map').click();
+        }
+        return false;
       });
 
       $workspace.on('click', '.j-send_map', function() {
