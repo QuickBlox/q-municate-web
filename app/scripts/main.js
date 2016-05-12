@@ -20,7 +20,7 @@ requirejs.config({
   },
   paths: {
     // libs
-    cryptojs: 'https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes',
+    cryptojs: '../bower_components/crypto-js-lib/rollups/aes',
     videojs: '//vjs.zencdn.net/4.6/video',
     jquery: '../bower_components/jquery/dist/jquery',
     underscore: '../bower_components/underscore/underscore',
