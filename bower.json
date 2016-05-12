@@ -19,7 +19,8 @@
     "web-notifications": "~1.1.4",
     "underscore": "^1.8.3",
     "googlemaps-amd": "^1.0.2",
-    "balloon-css": "*"
+    "balloon-css": "*",
+    "crypto-js-lib": "^3.1.2"
   },
   "devDependencies": {}
 }
