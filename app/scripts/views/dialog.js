@@ -438,17 +438,17 @@ define([
 
         html += '<section class="l-chat-content scrollbar_message"></section>';
         html += '<footer class="l-chat-footer">';
-        html += '<button class="j-toBottom btn_to_bottom"></button>';
+        html += '<div class="footer_btn j-toBottom btn_to_bottom"></div>';
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
-        html += '<button class="j-send_location btn_sendlocation'+((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '')+'"';
-        html += 'data-balloon-length="small" data-balloon="Send you location with messages" data-balloon-pos="up"></button>';
+        html += '<div class="footer_btn j-send_location btn_sendlocation'+((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '')+'"';
+        html += 'data-balloon-length="small" data-balloon="Send you location with messages" data-balloon-pos="up"></div>';
         html += '<input class="attachment" type="file" accept="image/*"></form>';
         html += '<div class="l-typing"></div><div class="l-input-menu">';
-        html += '<button class="l-input-buttons btn_input_smile j-btn_input_smile"></button>';
-        html += '<button class="l-input-buttons btn_input_location j-btn_input_location"></button>';
-        html += '<button class="l-input-buttons btn_input_attach j-btn_input_attach"></button>';
-        html += '<button class="l-input-buttons btn_input_send j-btn_input_send">SEND</button></div></footer>';
+        html += '<div class="footer_btn l-input-buttons btn_input_smile j-btn_input_smile" data-balloon="Add smiles" data-balloon-pos="up"></div>';
+        html += '<div class="footer_btn l-input-buttons btn_input_location j-btn_input_location" data-balloon="Send location" data-balloon-pos="up"></div>';
+        html += '<div class="footer_btn l-input-buttons btn_input_attach j-btn_input_attach" data-balloon="Send attachment file" data-balloon-pos="up"></div>';
+        html += '<button class="footer_btn l-input-buttons btn_input_send j-btn_input_send" data-balloon="Send message" data-balloon-pos="up">SEND</button></div></footer>';
 
         html += '</section>';
 

@@ -82,7 +82,9 @@
     position: relative;
     top: -2px;
   }
-
+.footer_btn {
+  cursor: pointer;
+}
 .btn_sendlocation {
   position: absolute;
   top: 10px;
@@ -133,7 +135,6 @@
     font-family: 'Open Sans', sans-serif;
     font-weight: 600;
     font-size: 15px;
-    text-transform: uppercase;
     color: #007de3;
   }
 .btn_to_bottom {
