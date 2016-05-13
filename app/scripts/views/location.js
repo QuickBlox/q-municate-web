@@ -30,7 +30,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
 
     getStaticMapUrl: function(geoCoords, options) {
       var params = {
-        'size': options && options.size || [200, 200],
+        'size': options && options.size || [200, 150],
         'lat': geoCoords.latitude,
         'lng': geoCoords.longitude,
         'zoom': options && options.zoom || 15,
@@ -103,6 +103,8 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
             lng: mapCoords.lng,
             title: 'Marker'
           });
+
+          $('.j-send_map').addClass('is-active');
         });
       }
 

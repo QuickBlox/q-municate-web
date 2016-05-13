@@ -102,6 +102,8 @@
 }
 
 .l-header {
+  z-index: 2;
+  background-color: #fff;
   position: relative;
   height: 80px;
   padding-left: 20px;
@@ -118,6 +120,8 @@
   border-right: 2px solid #f2f2f2;
 }
   .l-search {
+    z-index: 1;
+    background-color: #fff;
     height: 60px;
     padding: 15px;
   }
@@ -154,6 +158,9 @@
     }
 
 .l-footer {
+  z-index: 2;
+  background-color: #fff;
+  position: relative;
   height: 60px;
   padding: 0 5px;
 }
@@ -171,6 +178,8 @@
   position: relative;
 }
   .l-chat-header {
+    z-index: 1;
+    background-color: #fff;
     position: relative;
     height: 75px;
     padding: 0 20px;
@@ -198,6 +207,8 @@
     }
 
   .l-chat-footer {
+    z-index: 1;
+    background-color: #fff;
     height: 90px;
     padding: 0px 5px 5px 5px;
     border-top: 1px solid #f2f2f2;

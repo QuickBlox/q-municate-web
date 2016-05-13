@@ -49,7 +49,7 @@
     right: -17px;
     padding: 5px;
     width: 212px;
-    height: 212px;
+    height: 162px;
     background: #fff;
     border: 1px solid #f2f2f2;
     box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
@@ -81,7 +81,8 @@
     width: 450px;
     height: 300px;
   }
-  .send_map {
+  .send_map, .send_map:hover {
+    opacity: 1;
     margin: 10px auto 0;
     display: block;
     width: 140px;
@@ -90,10 +91,13 @@
     font-weight: 600;
     font-size: 15px;
     text-transform: uppercase;
-    color: #007de3;
+    color: #bebebe;
     text-align: center;
     vertical-align: middle;
   }
+    .send_map.is-active {
+      color: #007de3;
+    }
   .popup_logout,
   .popup_import,
   .popup_delete,
