@@ -3,7 +3,7 @@
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
 
 ### v. 1.4.0 - May 13, 2016
-* Added ability to send messages ehith geotag
+* Added ability to send messages whith geotag
 * Added ability to send map with location
 * Added tooltips for footer's buttons
 * Fixed bugs
