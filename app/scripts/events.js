@@ -237,24 +237,18 @@ define([
 
       $workspace.on('click', '.j-btn_input_location', function() {
         var $self = $(this),
+            $gmap = $('.j-popover_gmap'),
             bool = $self.is('.is-active');
 
         removePopover();
         
         if (!bool) {
           $self.addClass('is-active');
-          $('.j-popover_gmap').fadeIn(150);
+          $gmap.fadeIn(150);
 
-          Location.addMap();
+          Location.addMap($gmap);
         }
 
-      });
-
-      $('body').on('keydown', function(event) {
-        if ((event.keyCode === 13) && $('div').is('.j-open_map')) {
-          $('.j-send_map').click();
-        }
-        return false;
       });
 
       $workspace.on('click', '.j-send_map', function() {
@@ -267,6 +261,12 @@ define([
           AttachView.sendMessage($('.l-chat:visible'), null, null, mapCoords);
           localStorage.removeItem('QM.locationAttach');
           $('.j-btn_input_location').click();
+        }
+      });
+
+      $('body').on('keydown', function(e) {
+        if ((e.keyCode === 13) && $('.j-open_map').length) {
+          $('.j-send_map').click();
         }
       });
 
@@ -909,8 +909,14 @@ define([
     $('.is-active').removeClass('is-active');
     $('.popover:not(.j-popover_const)').remove();
     $('.j-popover_smile, .j-popover_gmap').fadeOut(150);
-    if ($('.j-open_map')) $('.j-open_map').remove();
-    if ($('#mCSB_8_container').is(':visible')) $('#mCSB_8_container')[0].style.paddingBottom = "0px";
+
+    if ($('.j-open_map')) {
+      $('.j-open_map').remove();
+    }
+
+    if ($('#mCSB_8_container').is(':visible')) {
+      $('#mCSB_8_container')[0].style.paddingBottom = "0px";
+    }
   }
 
   function openPopup(objDom, id, dialog_id, isProfile) {

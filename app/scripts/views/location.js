@@ -76,9 +76,9 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       }
     },
 
-    addMap: function(){
-      $('.j-popover_gmap').prepend('<div id="map" class="open_map j-open_map"></div>');
-      
+    addMap: function($gmap){
+      $gmap.prepend('<div id="map" class="open_map j-open_map"></div>');
+
       function _addMap(res) {
         var mapCoords = {};
         var map = new GMaps({
