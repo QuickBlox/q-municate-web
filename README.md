@@ -44,7 +44,7 @@ If you don't have one yet, just register your account at [https://admin.quickblo
 
 <img src="http://quickblox.com/developers//images/7/70/Register_your_account.jpg" />&nbsp;
 
-You can read more about how to create an account [here.](https://quickblox.com/developers/5_Minute_Guide#Create_your_QuickBlox_account)
+You can read more about how to create an account [here](https://quickblox.com/developers/5_Minute_Guide#Create_your_QuickBlox_account).
 
 #### 2. Login to QuickBlox admin panel
 Login into admin panel at [https://admin.quickblox.com/signin](https://admin.quickblox.com/signin)
