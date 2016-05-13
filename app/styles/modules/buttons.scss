@@ -82,17 +82,60 @@
     position: relative;
     top: -2px;
   }
-
-.btn_message {
-  position: absolute;
+.footer_btn {
+  cursor: pointer;
 }
-  .btn_message_smile {
-    top: 8px;
-    left: 12px;
+.btn_sendlocation {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  display: block;
+  width: 34px;
+  height: 34px;
+  background: image-url('ic_location_off.svg') 50% no-repeat;
+  background-size: contain;
+}
+  .btn_sendlocation.btn_active {
+    background: image-url('ic_location_on.svg');
   }
-  .btn_message_attach {
-    top: 7px;
+  .btn_sendlocation[data-balloon-length="small"]:after {
+    width: 100px;
+  }
+  .btn_message {
+    position: absolute;
+    top: 10px;
     right: 15px;
+    display: block;
+    width: 34px;
+    height: 34px;
+  }
+  .btn_input_smile {
+    position: relative;
+    width: 20px;
+    background: image-url('ic_smile.svg') 50% no-repeat;
+  }
+    .btn_input_smile.is-active {
+      background: image-url('ic_smile_active.svg') 50% no-repeat;
+    }
+  .btn_input_location {
+    position: relative;
+    width: 14px;
+    background: image-url('ic_send_location.svg') 50% no-repeat;
+  }
+    .btn_input_location.is-active {
+    background: image-url('ic_send_location_active.svg') 50% no-repeat;
+  }
+  .btn_input_attach {
+    position: relative;
+    width: 20px;
+    background: image-url('ic_attach.svg') 50% no-repeat;
+  }
+  .btn_input_send {
+    vertical-align: inherit;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: #007de3;
   }
 .btn_to_bottom {
   position: absolute;

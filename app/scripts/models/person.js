@@ -25,7 +25,7 @@ define([
       avatar: null,
       avatar_url: QMCONFIG.defAvatar.url,
       status: '',
-      tag: null
+      user_tags: null
     },
 
     validate: function(attrs) {
