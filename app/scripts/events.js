@@ -260,7 +260,7 @@ define([
 
           AttachView.sendMessage($('.l-chat:visible'), null, null, mapCoords);
           localStorage.removeItem('QM.locationAttach');
-          $('.j-btn_input_location').click();
+          removePopover();
         }
       });
 
@@ -905,17 +905,19 @@ define([
   }
 
   function removePopover() {
+    var $openMap = $('.j-open_map');
+
     $('.is-contextmenu').removeClass('is-contextmenu');
     $('.is-active').removeClass('is-active');
     $('.popover:not(.j-popover_const)').remove();
     $('.j-popover_smile, .j-popover_gmap').fadeOut(150);
 
-    if ($('.j-open_map')) {
-      $('.j-open_map').remove();
+    if ($openMap.length) {
+      $openMap.remove();
     }
 
     if ($('#mCSB_8_container').is(':visible')) {
-      $('#mCSB_8_container')[0].style.paddingBottom = "0px";
+      $('#mCSB_8_container')[0].style.paddingBottom = '0';
     }
   }
 
