@@ -125,7 +125,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
         htmlStr = '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Video call</a></li>'+
                   '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Audio call</a></li>'+
                   '<li class="list-item"><a class="list-actions-action writeMessage" data-id="<%=id%>" href="#">Write message</a></li>'+
-                  '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id" href="#">Profile</a></li>';
+                  '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>';
       }
 
       return $html.append(_.template(htmlStr)(params));
