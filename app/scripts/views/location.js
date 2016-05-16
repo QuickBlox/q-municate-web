@@ -5,7 +5,8 @@
 define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers) {
   google.maps === googleMaps;
 
-  var Location = {};
+  var Location = {},
+      watchId;
 
   Location = {
 
@@ -16,7 +17,9 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
           'longitude': pos.coords.longitude
         };
 
+        console.info(geoCoords);
         callback(geoCoords);
+        console.info(watchId);
       }
 
       function fail(err) {
@@ -25,7 +28,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
         callback(null, error);
       }
 
-  		navigator.geolocation.getCurrentPosition(success, fail);
+  		watchId = navigator.geolocation.watchPosition(success, fail);
     },
 
     getStaticMapUrl: function(geoCoords, options) {
@@ -36,6 +39,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
         'zoom': options && options.zoom || 15,
         'markers': [{lat: geoCoords.latitude, lng: geoCoords.longitude}]
       };
+      
 
       return GMaps.staticMapURL(params);
     },
@@ -59,7 +63,8 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
             
             localStorage.removeItem('QM.latitude');
             localStorage.removeItem('QM.longitude');
-
+            navigator.geolocation.clearWatch(watchId);
+            console.info(watchId);
             callback(null, err);
           } else {
             localStorage.setItem('QM.latitude', res.latitude);
@@ -71,7 +76,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       } else {
         localStorage.removeItem('QM.latitude');
         localStorage.removeItem('QM.longitude');
-
+        navigator.geolocation.clearWatch(watchId);
         callback('Removed coordinates from localStorage');
       }
     },
@@ -79,41 +84,33 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
     addMap: function($gmap){
       $gmap.prepend('<div id="map" class="open_map j-open_map"></div>');
 
-      function _addMap(res) {
-        var mapCoords = {};
-        var map = new GMaps({
-          div: '#map',
-          lat: res ? res.latitude : 0,
-          lng: res ? res.longitude : 0,
-          zoom: res ? 15 : 1
+      var isCurrentCoords = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? true : false,
+          mapCoords = {};
+
+      var map = new GMaps({
+        'div': '#map',
+        'lat': isCurrentCoords ? localStorage['QM.latitude'] : 0,
+        'lng': isCurrentCoords ? localStorage['QM.longitude'] : 0,
+        'zoom': isCurrentCoords ? 15 : 1
+      });
+
+      $('#map img').addClass('gooImg');
+
+      GMaps.on('click', map.map, function(event) {
+        mapCoords.lat = event.latLng.lat(),
+        mapCoords.lng = event.latLng.lng();
+
+        localStorage.setItem('QM.locationAttach', JSON.stringify(mapCoords));
+
+        map.removeMarkers();
+
+        map.addMarker({
+          'lat': mapCoords.lat,
+          'lng': mapCoords.lng,
+          'title': 'Marker'
         });
 
-        $('#map img').addClass('gooImg');
-
-        GMaps.on('click', map.map, function(event) {
-          mapCoords.lat = event.latLng.lat(),
-          mapCoords.lng = event.latLng.lng();
-
-          localStorage.setItem('QM.locationAttach', JSON.stringify(mapCoords));
-
-          map.removeMarkers();
-
-          map.addMarker({
-            lat: mapCoords.lat,
-            lng: mapCoords.lng,
-            title: 'Marker'
-          });
-
-          $('.j-send_map').addClass('is-active');
-        });
-      }
-
-      this.getGeoCoordinates(function(res, err) {
-        if (err) {
-          _addMap();
-        } else {
-          _addMap(res);
-        }
+        $('.j-send_map').addClass('is-active');
       });
     }
 

@@ -168,24 +168,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
       }
 
       function _sendMessage() {
-        QB.chat.send(jid, msg);
 
-        message = Message.create({
-          'chat_dialog_id': dialog_id,
-          'date_sent': time,
-          'attachment': attach,
-          'sender_id': User.contact.id,
-          'latitude': localStorage['QM.latitude'] || null,
-          'longitude': localStorage['QM.longitude'] || null,
-          '_id': msg.id
-        });
-
-        Helpers.log(message);
-        if (type === 'chat') {
-          lastMessage = chat.find('article[data-type="message"]').last();   
-          message.stack = Message.isStack(true, message, lastMessage);
-          MessageView.addItem(message, true, true);
-        }
       }
 
       msg = {
@@ -203,17 +186,27 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
       };
       
       if(locationIsActive) {
-        Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
-          if (err) {
-            Helpers.log('Error: ', err);
-          } else {
-            msg.extension.latitude = localStorage['QM.latitude'];
-            msg.extension.longitude = localStorage['QM.longitude'];
-            _sendMessage();
-          }
-        });
-      } else {
-        _sendMessage();
+        msg.extension.latitude = localStorage['QM.latitude'];
+        msg.extension.longitude = localStorage['QM.longitude'];
+      }
+
+      QB.chat.send(jid, msg);
+
+      message = Message.create({
+        'chat_dialog_id': dialog_id,
+        'date_sent': time,
+        'attachment': attach,
+        'sender_id': User.contact.id,
+        'latitude': localStorage['QM.latitude'] || null,
+        'longitude': localStorage['QM.longitude'] || null,
+        '_id': msg.id
+      });
+
+      Helpers.log(message);
+      if (type === 'chat') {
+        lastMessage = chat.find('article[data-type="message"]').last();   
+        message.stack = Message.isStack(true, message, lastMessage);
+        MessageView.addItem(message, true, true);
       }
 
       if (dialogItem.length > 0) {
