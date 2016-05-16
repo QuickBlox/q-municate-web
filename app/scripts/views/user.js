@@ -175,7 +175,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml'], function($, QMCON
       appearAnimation();
 
       objDom.addClass('is-active');
-      $('.list-actions_occupants').offset({top: position.top, left: position.left});
+      $('.list-actions_occupants').offset({top: (29 + position.top), left: position.left});
     },
 
     buildDetails: function(userId) {
