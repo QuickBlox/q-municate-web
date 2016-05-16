@@ -471,6 +471,9 @@ define([
       $('#profile').on('click', function(event) {
         event.preventDefault();
         removePopover();
+        if ($('.l-chat:visible').find('.triangle_down').is('.is-hidden')) {
+          setTriagle('down');
+        }
         UserView.profilePopover($(this));
       });
 
