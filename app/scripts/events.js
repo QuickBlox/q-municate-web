@@ -204,12 +204,8 @@ define([
       /* location
       ----------------------------------------------------- */
       $workspace.on('click', '.j-send_location', function() {
-        var $button = $('.j-send_location');
-
-        $button.toggleClass('btn_active');
-
-        if ($button.hasClass('btn_active')) {
-          Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
+        if (localStorage['QM.latitude'] && localStorage['QM.longitude']) {
+          Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
             if (err) {
               Helpers.log(err);
             } else {
@@ -217,7 +213,7 @@ define([
             }
           });
         } else {
-          Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
+          Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
             if (err) {
               Helpers.log(err);
             } else {
