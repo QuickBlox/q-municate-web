@@ -12,14 +12,12 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
 
   	getGeoCoordinates: function(callback) {
       function success(pos) {
-        var geoCoords = {
-          'latitude': pos.coords.latitude,
-          'longitude': pos.coords.longitude
-        };
+        var geoCoords = {};
+        
+        geoCoords.latitude = pos.coords.latitude;
+        geoCoords.longitude = pos.coords.longitude;
 
-        console.info(geoCoords);
         callback(geoCoords);
-        console.info(watchId);
       }
 
       function fail(err) {
