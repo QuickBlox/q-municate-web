@@ -322,7 +322,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml', 'LocationView'], f
 
       // start watch location if the option is enabled
       if (localStorage['QM.latitude'] && localStorage['QM.longitude']) {
-        Location.getGeoCoordinates(true, function(res, err) {
+        localStorage.removeItem('QM.latitude');
+        localStorage.removeItem('QM.longitude');
+
+        Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
           if (err) {
             Helpers.log('Location: ', err);
           } else {
