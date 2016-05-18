@@ -21,7 +21,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       }
 
       function fail(err) {
-        var error= 'ERROR('+err.code+'): '+err.message;
+        var error = 'ERROR('+err.code+'): '+err.message;
 
         callback(null, error);
       }
