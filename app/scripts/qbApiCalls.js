@@ -36,10 +36,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
       Helpers.log('QB init', this);
     },
 
-    checkSession: function(callback, reconnected) {
+    checkSession: function(callback, outdated) {
       QB.getSession(function(err, res) {
         if (((new Date()).toISOString() > Session.expirationTime) || !res) {
-          initListeners = reconnected ? true : false;
+          initListeners = outdated ? true : false;
           // reset QuickBlox JS SDK after autologin via an existing token
           self.init();
 
@@ -106,7 +106,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
           }
 
-          if (User.contact) {
+          if (initListeners) {
             self.reconnectChat();
           }
 
@@ -287,9 +287,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           }
         }
 
-        if (initListeners) {
-          self.app.views.Dialog.prepareDownloading(roster);
-        }
+        self.app.views.Dialog.prepareDownloading(roster);
 
         $('.j-chatConnecting').removeClass('is-overlay')
          .parent('.j-overlay').removeClass('is-overlay');

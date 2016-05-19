@@ -477,11 +477,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     },
 
     // claer the list typing when switch to another chat
-    claerTheListTyping: function(dialogId) {
-      var $chat = $('.l-chat[data-dialog="'+dialogId+'"]');
-
+    claerTheListTyping: function() {
+      $('.j-typing').empty();
       typingList = [];
-      $chat.find('article.message[data-status="typing"]').remove();
     },
 
     onMessage: function(id, message) {
@@ -857,7 +855,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     if (form) {
       $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     } else {
-      $('.l-typing').append(html);
+      $('.j-typing').append(html);
       $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     }
 
