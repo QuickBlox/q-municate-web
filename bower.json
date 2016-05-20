@@ -1,6 +1,6 @@
 {
   "name": "q-municate",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "dependencies": {
     "jquery": "~2.1.4",
     "lodash": "~3.10.1",
