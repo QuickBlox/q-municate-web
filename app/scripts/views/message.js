@@ -302,7 +302,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           } else if (attachType && attachType.indexOf('location') > -1) {
             html += '<div class="message-body">';
             html += '<a class="open_googlemaps" href="'+mapAttachLink+'" target="_blank">';
-            html += '<img id="attach_'+message.id+'" src="'+mapAttachImage+'" alt="attach" class="static_map">';
+            html += '<img id="attach_'+message.id+'" src="'+mapAttachImage+'" alt="attach" class="attach_map">';
             html += '</a></div>';
             html += '</div><div class="message-info"><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
             html += '<div class="message-status is-hidden">Not delivered yet</div>';

@@ -216,8 +216,13 @@
 }
 
 /* location */
+.attach_map {
+  max-width: 380px;
+  max-height: 200px;
+}
 .static_map {
-  width: 100%;
+  max-width: 200px;
+  max-height: 150px;
 }
 
 /* attach message */
