@@ -302,7 +302,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           } else if (attachType && attachType.indexOf('location') > -1) {
             html += '<div class="message-body">';
             html += '<a class="open_googlemaps" href="'+mapAttachLink+'" target="_blank">';
-            html += '<img id="attach_'+message.id+'" src="'+mapAttachImage+'" alt="attach">';
+            html += '<img id="attach_'+message.id+'" src="'+mapAttachImage+'" alt="attach" class="static_map">';
             html += '</a></div>';
             html += '</div><div class="message-info"><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
             html += '<div class="message-status is-hidden">Not delivered yet</div>';
@@ -477,11 +477,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     },
 
     // claer the list typing when switch to another chat
-    claerTheListTyping: function(dialogId) {
-      var $chat = $('.l-chat[data-dialog="'+dialogId+'"]');
-
+    clearTheListTyping: function() {
+      $('.j-typing').empty();
       typingList = [];
-      $chat.find('article.message[data-status="typing"]').remove();
     },
 
     onMessage: function(id, message) {
@@ -857,7 +855,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     if (form) {
       $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     } else {
-      $('.l-typing').append(html);
+      $('.j-typing').append(html);
       $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     }
 
