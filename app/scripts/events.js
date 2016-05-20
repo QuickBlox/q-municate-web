@@ -712,7 +712,7 @@ define([
         var dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog"),
             dataId = $('.l-list .list-item.is-selected').attr("data-id");
 
-        MessageView.claerTheListTyping();
+        MessageView.clearTheListTyping();
 
         DialogView.htmlBuild($(this));
       });
