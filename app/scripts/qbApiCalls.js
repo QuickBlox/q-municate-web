@@ -8,7 +8,7 @@
 define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($, QMCONFIG, QB, Helpers, Location) {
 
   var Session, UserView, ContactListView, User;
-  var timer, initListeners;
+  var timer, needReconnect;
   var self;
 
   function QBApiCalls(app) {
@@ -38,8 +38,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
 
     checkSession: function(callback, outdated) {
       QB.getSession(function(err, res) {
-        if (((new Date()).toISOString() > Session.expirationTime) || !res) {
-          initListeners = outdated ? true : false;
+        if (((new Date()).toISOString() > Session.expirationTime) || err) {
+          needReconnect = outdated ? true : false;
           // reset QuickBlox JS SDK after autologin via an existing token
           self.init();
 
@@ -54,6 +54,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             Session.encrypt(Session.authParams);
           }
         } else {
+          needReconnect = false;
           callback(res);
         }
       });
@@ -106,7 +107,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
           }
 
-          if (initListeners) {
+          if (needReconnect) {
             self.reconnectChat();
           }
 
@@ -274,10 +275,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
     },
 
     reconnectChat: function() {
-      $('.j-chatConnecting').addClass('is-overlay')
-       .parent('.j-overlay').addClass('is-overlay');
-      QB.chat.disconnect();
-
       self.connectChat(User.contact.user_jid, function(roster) {
         var dialogs = self.app.models.ContactList.dialogs;
 
@@ -289,7 +286,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
 
         self.app.views.Dialog.prepareDownloading(roster);
 
-        $('.j-chatConnecting').removeClass('is-overlay')
+        $('.j-disconnect').removeClass('is-overlay')
          .parent('.j-overlay').removeClass('is-overlay');
       });
     },
