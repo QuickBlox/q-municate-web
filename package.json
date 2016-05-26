@@ -1,6 +1,6 @@
 {
   "name": "q-municate",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "dependencies": {},
   "devDependencies": {
     "bower": "^1.7.0",
@@ -29,6 +29,6 @@
     "time-grunt": "^1.2.2"
   },
   "engines": {
-    "node": ">=5.1.1"
+    "node": ">=4.4.4"
   }
 }

@@ -8,7 +8,7 @@
 define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($, QMCONFIG, QB, Helpers, Location) {
 
   var Session, UserView, ContactListView, User;
-  var timer, needReconnect;
+  var timer;
   var self;
 
   function QBApiCalls(app) {
@@ -28,7 +28,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
       } else {
         QB.init(token, QMCONFIG.qbAccount.appId, null, QMCONFIG.QBconf);
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
-
+        QB.service.qbInst.config.creds = QMCONFIG.qbAccount;
         Session.create(JSON.parse(localStorage['QM.session']), true);
         UserView.autologin();
       }
@@ -36,12 +36,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
       Helpers.log('QB init', this);
     },
 
-    checkSession: function(callback, outdated) {
+    checkSession: function(callback) {
       QB.getSession(function(err, res) {
         if (((new Date()).toISOString() > Session.expirationTime) || err) {
-          needReconnect = outdated ? true : false;
-          // reset QuickBlox JS SDK after autologin via an existing token
-          self.init();
 
           // recovery session
           if (Session.authParams.provider) {
@@ -54,7 +51,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             Session.encrypt(Session.authParams);
           }
         } else {
-          needReconnect = false;
           callback(res);
         }
       });
@@ -107,10 +103,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
           }
 
-          if (needReconnect) {
-            self.reconnectChat();
-          }
-
           Session.update({ date: new Date() });
           callback(res);
         }
@@ -136,7 +128,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
     logoutUser: function(callback) {
       Helpers.log('QB SDK: User has exited');
       // reset QuickBlox JS SDK after autologin via an existing token
-      this.init();
+      QB.service.qbInst.config.creds = QMCONFIG.qbAccount;
       clearTimeout(timer);
       Session.destroy();
       callback();

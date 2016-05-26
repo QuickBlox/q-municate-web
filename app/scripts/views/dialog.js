@@ -86,12 +86,9 @@ define([
 
       QB.chat.onReconnectFailedListener = function(error) {
         if (error) {
-          QB.chat.disconnect();
-
           Helpers.log('Error: ', error);
-          self.app.service.checkSession(function (res) {
-            Helpers.log('Check session: ', res);
-          }, true);
+          
+          self.app.service.reconnectChat();
         }
       };
 
