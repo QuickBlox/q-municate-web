@@ -276,7 +276,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           }
         }
 
-        self.app.views.Dialog.prepareDownloading(roster);
+        self.app.views.Dialog.chatCallbacksInit();
+        self.app.models.ContactList.saveRoster(roster);
 
         $('.j-disconnect').removeClass('is-overlay')
          .parent('.j-overlay').removeClass('is-overlay');
