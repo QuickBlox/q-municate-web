@@ -1,21 +1,19 @@
 /* Configuration your application */
 define(function() {
 
+  /**
+  * Production environment (PROD = true);
+  * Test local environment (PROD = false);
+  */
+  var PROD = false;
+
   var QMCONFIG = {
 
-    /* Production environment */
     qbAccount: {
-      appId: 13318,
-      authKey: 'WzrAY7vrGmbgFfP',
-      authSecret: 'xS2uerEveGHmEun'
+      appId: PROD ? 13318 : 36125,
+      authKey: PROD ? 'WzrAY7vrGmbgFfP' : 'gOGVNO4L9cBwkPE',
+      authSecret: PROD ? 'xS2uerEveGHmEun': 'JdqsMHCjHVYkVxV'
     },
-
-    // /* Test local environment */
-    // qbAccount: {
-    //   appId: 36125,
-    //   authKey: 'gOGVNO4L9cBwkPE',
-    //   authSecret: 'JdqsMHCjHVYkVxV'
-    // },
 
     fbAccount: {
       appId: '605405446247805',

@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml'], function($, QMCONFIG, QB, Helpers, QMHtml) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml', 'LocationView'], function($, QMCONFIG, QB, Helpers, QMHtml, Location) {
 
   var User, ContactList, Contact,
       FBCallback = null;
@@ -319,6 +319,20 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml'], function($, QMCON
       // page.find('input:file').prev().find('img').attr('src', QMCONFIG.defAvatar.url).siblings('span').text(QMCONFIG.defAvatar.caption);
       page.find('input:file').prev().find('.avatar').css('background-image', "url("+QMCONFIG.defAvatar.url+")").siblings('span').text(QMCONFIG.defAvatar.caption);
       page.find('input:checkbox').prop('checked', false);
+
+      // start watch location if the option is enabled
+      if (localStorage['QM.latitude'] && localStorage['QM.longitude']) {
+        localStorage.removeItem('QM.latitude');
+        localStorage.removeItem('QM.longitude');
+
+        Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
+          if (err) {
+            Helpers.log('Location: ', err);
+          } else {
+            Helpers.log('Location: ', res);
+          }
+        });
+      }
     }
   };
 

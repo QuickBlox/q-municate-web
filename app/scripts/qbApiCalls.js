@@ -8,7 +8,7 @@
 define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($, QMCONFIG, QB, Helpers, Location) {
 
   var Session, UserView, ContactListView, User;
-  var timer, initListeners;
+  var timer;
   var self;
 
   function QBApiCalls(app) {
@@ -28,7 +28,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
       } else {
         QB.init(token, QMCONFIG.qbAccount.appId, null, QMCONFIG.QBconf);
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
-
+        QB.service.qbInst.config.creds = QMCONFIG.qbAccount;
         Session.create(JSON.parse(localStorage['QM.session']), true);
         UserView.autologin();
       }
@@ -36,13 +36,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
       Helpers.log('QB init', this);
     },
 
-    checkSession: function(callback, reconnected) {
+    checkSession: function(callback) {
       QB.getSession(function(err, res) {
-        if (((new Date()).toISOString() > Session.expirationTime) || !res) {
-          initListeners = reconnected ? true : false;
-          // reset QuickBlox JS SDK after autologin via an existing token
-          self.init();
-
+        if (((new Date()).toISOString() > Session.expirationTime) || err) {
           // recovery session
           if (Session.authParams.provider) {
             UserView.getFBStatus(function(token) {
@@ -135,7 +131,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
     logoutUser: function(callback) {
       Helpers.log('QB SDK: User has exited');
       // reset QuickBlox JS SDK after autologin via an existing token
-      this.init();
+      QB.service.qbInst.config.creds = QMCONFIG.qbAccount;
       clearTimeout(timer);
       Session.destroy();
       callback();
@@ -274,10 +270,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
     },
 
     reconnectChat: function() {
-      $('.j-chatConnecting').addClass('is-overlay')
-       .parent('.j-overlay').addClass('is-overlay');
-      QB.chat.disconnect();
-
       self.connectChat(User.contact.user_jid, function(roster) {
         var dialogs = self.app.models.ContactList.dialogs;
 
@@ -287,11 +279,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           }
         }
 
-        if (initListeners) {
-          self.app.views.Dialog.prepareDownloading(roster);
-        }
+        self.app.views.Dialog.chatCallbacksInit();
+        self.app.models.ContactList.saveRoster(roster);
 
-        $('.j-chatConnecting').removeClass('is-overlay')
+        $('.j-disconnect').removeClass('is-overlay')
          .parent('.j-overlay').removeClass('is-overlay');
       });
     },

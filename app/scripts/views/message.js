@@ -302,7 +302,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           } else if (attachType && attachType.indexOf('location') > -1) {
             html += '<div class="message-body">';
             html += '<a class="open_googlemaps" href="'+mapAttachLink+'" target="_blank">';
-            html += '<img id="attach_'+message.id+'" src="'+mapAttachImage+'" alt="attach">';
+            html += '<img id="attach_'+message.id+'" src="'+mapAttachImage+'" alt="attach" class="attach_map">';
             html += '</a></div>';
             html += '</div><div class="message-info"><time class="message-time" data-time="'+message.date_sent+'">'+getTime(message.date_sent)+'</time>';
             html += '<div class="message-status is-hidden">Not delivered yet</div>';
@@ -400,33 +400,11 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
           $chat = $('.l-chat[data-dialog="'+dialog_id+'"]'),
           dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
-          locationIsActive = $('.j-send_location').hasClass('btn_active'),
+          locationIsActive = ($('.j-send_location').hasClass('btn_active') && localStorage['QM.latitude'] && localStorage['QM.longitude']),
           copyDialogItem,
           lastMessage,
           message,
           msg;
-
-      function _sendMessage() {
-        QB.chat.send(jid, msg);
-
-        message = Message.create({
-          'chat_dialog_id': dialog_id,
-          'body': val,
-          'date_sent': time,
-          'sender_id': User.contact.id,
-          'latitude': localStorage['QM.latitude'] || null,
-          'longitude': localStorage['QM.longitude'] || null,
-          '_id': msg.id
-        });
-
-        Helpers.log('Message send:', message);
-
-        if (type === 'chat') {
-          lastMessage = $chat.find('article[data-type="message"]').last();
-          message.stack = Message.isStack(true, message, lastMessage);
-          self.addItem(message, true, true);
-        }
-      }
       
       if (val.length > 0) {
         if (form.find('.textarea > span').length > 0) {
@@ -453,17 +431,28 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         };
 
         if(locationIsActive) {
-          Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
-            if (err) {
-              Helpers.log('Error: ', err);
-            } else {
-              msg.extension.latitude = localStorage['QM.latitude'];
-              msg.extension.longitude = localStorage['QM.longitude'];
-              _sendMessage();
-            }
-          });
-        } else {
-          _sendMessage();
+          msg.extension.latitude = localStorage['QM.latitude'];
+          msg.extension.longitude = localStorage['QM.longitude'];
+        }
+
+        QB.chat.send(jid, msg);
+
+        message = Message.create({
+          'chat_dialog_id': dialog_id,
+          'body': val,
+          'date_sent': time,
+          'sender_id': User.contact.id,
+          'latitude': localStorage['QM.latitude'] || null,
+          'longitude': localStorage['QM.longitude'] || null,
+          '_id': msg.id
+        });
+
+        Helpers.log('Message send:', message);
+
+        if (type === 'chat') {
+          lastMessage = $chat.find('article[data-type="message"]').last();
+          message.stack = Message.isStack(true, message, lastMessage);
+          self.addItem(message, true, true);
         }
 
         if (dialogItem.length > 0) {
@@ -488,11 +477,9 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     },
 
     // claer the list typing when switch to another chat
-    claerTheListTyping: function(dialogId) {
-      var $chat = $('.l-chat[data-dialog="'+dialogId+'"]');
-
+    clearTheListTyping: function() {
+      $('.j-typing').empty();
       typingList = [];
-      $chat.find('article.message[data-status="typing"]').remove();
     },
 
     onMessage: function(id, message) {
@@ -868,7 +855,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
     if (form) {
       $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     } else {
-      $('.l-typing').append(html);
+      $('.j-typing').append(html);
       $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
     }
 

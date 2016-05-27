@@ -204,12 +204,17 @@ define([
       /* location
       ----------------------------------------------------- */
       $workspace.on('click', '.j-send_location', function() {
+<<<<<<< HEAD
         var $button = $('.j-send_location');
 
         $button.toggleClass('btn_active');
 
         if ($button.hasClass('btn_active')) {
           Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
+=======
+        if (localStorage['QM.latitude'] && localStorage['QM.longitude']) {
+          Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
+>>>>>>> 160967a1f476e4dd55b017c1a128ae84dba20840
             if (err) {
               Helpers.log(err);
             } else {
@@ -217,7 +222,11 @@ define([
             }
           });
         } else {
+<<<<<<< HEAD
           Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
+=======
+          Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
+>>>>>>> 160967a1f476e4dd55b017c1a128ae84dba20840
             if (err) {
               Helpers.log(err);
             } else {
@@ -716,7 +725,7 @@ define([
         var dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog"),
             dataId = $('.l-list .list-item.is-selected').attr("data-id");
 
-        MessageView.claerTheListTyping(dataDialog);
+        MessageView.clearTheListTyping();
 
         DialogView.htmlBuild($(this));
       });
