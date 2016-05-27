@@ -34,7 +34,7 @@
   },
   "config": {
     "ghooks": {
-      "pre-push": "grunt-contrib-jshint"
+      "pre-push": "grunt test"
     }
   }
 }
