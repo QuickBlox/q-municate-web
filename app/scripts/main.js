@@ -54,7 +54,7 @@ requirejs.config({
     QBNotification: '../bower_components/web-notifications/qbNotification',
 
     // Q-municate application
-    config: '../config',
+    config: '../configs/main_config',
     MainModule: 'app',
     // models
     UserModule: 'models/user',

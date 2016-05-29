@@ -74,11 +74,11 @@ module.exports = function (grunt) {
           name: 'main',
           optimize: 'none',
           out: "<%= yeoman.app %>/scripts/.build.js",
-          
+
           paths: {
             'templates': '.tmp/scripts/templates'
           },
-          
+
           almond: false,
           preserveLicenseComments: false
         }
@@ -213,7 +213,7 @@ module.exports = function (grunt) {
 
     includereplace: {
       prod: {
-        options: { 
+        options: {
           globals: {
             appId: '13318',
             authKey: 'WzrAY7vrGmbgFfP',
@@ -221,7 +221,7 @@ module.exports = function (grunt) {
           }
         },
         src: '<%= yeoman.app %>/configs/environment.js',
-        dest: '<%= yeoman.app %>/config.js'
+        dest: '<%= yeoman.app %>/configs/main_config.js'
       },
       dev: {
         options: {
@@ -232,11 +232,11 @@ module.exports = function (grunt) {
           }
         },
         src: '<%= yeoman.app %>/configs/environment.js',
-        dest: '<%= yeoman.app %>/config.js'
+        dest: '<%= yeoman.app %>/configs/main_config.js'
       },
       local: {
-        src: '<%= yeoman.app %>/configs/development.js',
-        dest: '<%= yeoman.app %>/config.js'
+        src: '<%= yeoman.app %>/config.js',
+        dest: '<%= yeoman.app %>/configs/main_config.js'
       }
     }
   });
