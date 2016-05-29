@@ -11,10 +11,12 @@
   <link rel="icon" href="favicon.png">
 
   <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
   <!-- build:css styles/build.css -->
   <link rel="stylesheet" href="bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
   <link rel="stylesheet" href="bower_components/progressbar.js/css/lib/control/progressbar.css">
   <link rel="stylesheet" href="vendor/emoji/css/minEmoji.css">
+  <link rel="stylesheet" href="bower_components/balloon-css/balloon.min.css">
 
   <link rel="stylesheet" href=".css/main.css">
   <!-- endbuild -->
@@ -48,13 +50,6 @@
         <div class="l-welcome-footer-logo">
           <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox.svg" alt="QuickBlox"></a>
         </div>
-        <!-- <nav class="footer-links footer-links_welcome">
-          <ul>
-            <li class="footer-links-item"><a href="#">Support</a></li>
-            <li class="footer-links-item"><a href="#">FAQ</a></li>
-            <li class="footer-links-item"><a href="#">Help</a></li>
-          </ul>
-        </nav> -->
       </footer>
       <div class="l-spinner">
         <div class="spinner">
@@ -312,8 +307,12 @@
               </div>
             </section>
 
+            <div class="popover j-popover_const popover_gmap j-popover_gmap">
+              <button class="send_map j-send_map">SEND LOCATION</button>
+              <div class="coner"><i class="icon_coner"></i></div>
+            </div>
 
-            <div class="popover popover_smile">
+            <div class="popover j-popover_const popover_smile j-popover_smile">
               <div class="smiles-tabs">
                 <button class="smiles-tab smiles-tab_people is-actived" data-group="people"></button>
                 <button class="smiles-tab smiles-tab_nature" data-group="nature"></button>
@@ -374,6 +373,7 @@
                   ◼️◻️◾️◽️▪️▫️🔺🔲🔳⚫️⚪️🔴🔵🔻⬜️⬛️🔶🔷🔸🔹
                 </div>
               </div>
+              <div class="coner"><i class="icon_coner"></i></div>
             </div>
           </div>
 
@@ -387,18 +387,36 @@
           <a class="footer-apps-ios" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank"><img src="images/icon-ios.svg" alt="download Q-municate iOS"></a>
           <a href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/icon-android.svg" alt="download Q-municate Android"></a>
         </div>
-        <div class="l-app-version">v.1.3.0</div>
+
+        <div class="l-app-version">v.1.4.3</div>
+
       </footer>
     </section>
 
   </div>
 
-  <div class="popups l-flexbox j-disconnect">
+  <div class="popups l-flexbox j-overlay">
 
     <section id="popupDisconnect" class="popup popup_discon is-open j-disconnect">
       <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
         <span class="alert alert_discon"><b>Not Connected.</b> Connecting...</span>
       </div>
+    </section>
+
+    <!-- <section id="chatConnecting" class="popup popup_connect is-open j-chatConnecting">
+      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+        <div class="spinner">
+          <div class="spinner-dot1"></div>
+          <div class="spinner-dot2"></div>
+        </div>
+      </div>
+    </section> -->
+
+    <section id="popupGeoInfo" class="popup popup_geo_info j-geoInfo">
+      <span class="alert alert_geo_info">
+        <b>Your location can't be detected.</b>
+        <br/>Please enable your location in browser settings and refresh current page after that.
+      </span>
     </section>
 
     <section id="popupDetails" class="popup popup_details presence-listener">
@@ -534,16 +552,6 @@
 
   <div id="fb-root"></div>
 
-  <!-- Google Analytics -->
-  <script>
-    (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-    function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-    e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-    e.src='//www.google-analytics.com/analytics.js';
-    r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-    ga('create','UA-26728270-6');ga('send','pageview');
-  </script>
-
   <!-- build:js scripts/build.js -->
   <script src="bower_components/requirejs/require.js"></script>
   <script src="scripts/main.js"></script>
@@ -560,7 +568,7 @@
           </div>
           <div style="clear:both"></div>
           <button class="btn_userProfile btn_userProfile_photo">Set Profile Photo</button>
-          <% if (tag) { %>
+          <% if (user_tags) { %>
             <button class="btn_userProfile btn_changePassword">Change password</button>
           <% } %>
           <input class="btn_userProfile_file" type="file" accept="image/jpeg,image/png,image/svg">

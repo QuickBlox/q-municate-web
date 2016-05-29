@@ -58,12 +58,13 @@
       }
 
 .form-input-message {
-  width: 100%;
+  width: 96%;
   height: 100%;
-  padding: 7px 40px 7px 60px;
+  margin: 0 auto;
+  padding: 5px 40px 5px 5px;
   font-size: 15px;
   line-height: 20px;
-  border: 1px solid #bebebe;
+  border-bottom: 1px solid #bebebe;
   resize: none;
 }
 

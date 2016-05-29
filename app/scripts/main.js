@@ -2,8 +2,18 @@
 'use strict';
 
 requirejs.config({
+  googlemaps: {
+    params: {
+      key: 'AIzaSyAhduIkJbVdtRm0Hz6XpkihGt8h_R8cZds',
+      libraries: 'geometry'
+    }
+  },
   baseUrl: 'scripts',
   shim: {
+    gmaps: {
+      deps: ['googlemaps'],
+      exports: "GMaps"
+    },
     handlebars: {
       exports: 'Handlebars'
     },
@@ -20,14 +30,18 @@ requirejs.config({
   },
   paths: {
     // libs
-    cryptojs: 'https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes',
+    googlemaps: '../bower_components/googlemaps-amd/src/googlemaps',
+    async: '../bower_components/requirejs-plugins/src/async',
+    gmaps: 'https://rawgit.com/HPNeo/gmaps/master/gmaps',
+    cryptojs: '../bower_components/crypto-js-lib/rollups/aes',
     videojs: '//vjs.zencdn.net/4.6/video',
     jquery: '../bower_components/jquery/dist/jquery',
     underscore: '../bower_components/underscore/underscore',
     // lodash: '../bower_components/lodash/dist/lodash',
     backbone: '../bower_components/backbone/backbone',
     handlebars: '../bower_components/handlebars/handlebars',
-    quickblox: '../bower_components/quickblox/quickblox.min',
+    // quickblox: '../bower_components/quickblox/quickblox.min',
+    quickblox: 'https://rawgit.com/QuickBlox/quickblox-javascript-sdk/develop/quickblox.min',
     progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
     loadImage: '../bower_components/blueimp-load-image/js/load-image',
     canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
@@ -58,6 +72,7 @@ requirejs.config({
     AttachView: 'views/attach',
     ContactListView: 'views/contact_list',
     VideoChatView: 'views/videochat',
+    LocationView: 'views/location',
     // apiCalls
     QBApiCalls: 'qbApiCalls',
     // events
@@ -100,7 +115,7 @@ requirejs([
       APP = new QM();
       APP.init();
     });
-    
+
     $.getScript('https://cdn.flurry.com/js/flurry.js', function() {
       FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');
     });

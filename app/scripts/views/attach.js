@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar'], function($, QMCONFIG, QB, Helpers, _, ProgressBar) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore', 'progressbar'], function($, QMCONFIG, QB, Helpers, Location, _, ProgressBar) {
 
   var User, Message, Attach;
   var self;
@@ -38,7 +38,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar']
 
         if (errMsg) {
           html = '<article class="message message_service l-flexbox l-flexbox_alignstretch">';
-          html += '<span class="message-avatar contact-avatar_message request-button_pending"></span>';
+          html += '<span class="message-avatar request-button_pending"></span>';
           html += '<div class="message-container-wrap">';
           html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
           html += '<div class="message-content">';
@@ -55,7 +55,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar']
           html = '<article class="message message_service message_attach message_attach_row l-flexbox l-flexbox_alignstretch">';
         else
           html = '<article class="message message_service message_attach l-flexbox l-flexbox_alignstretch">';
-        html += '<span class="message-avatar contact-avatar_message request-button_attach">';
+        html += '<span class="message-avatar request-button_attach">';
         html += '<img src="images/icon-attach.svg" alt="attach"></span>';
         html += '<div class="message-container-wrap">';
         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -142,40 +142,64 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'progressbar']
       objDom.parents('article').remove();
     },
 
-    sendMessage: function(chat, blob, size) {
+    sendMessage: function(chat, blob, size, mapCoords) {
       var MessageView = this.app.views.Message,
-          attach = Attach.create(blob, size),
           jid = chat.data('jid'),
           id = chat.data('id'),
           dialog_id = chat.data('dialog'),
           time = Math.floor(Date.now() / 1000),
           type = chat.is('.is-group') ? 'groupchat' : 'chat',
           dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="'+dialog_id+'"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="'+id+'"]'),
-          copyDialogItem, lastMessage;
+          locationIsActive = $('.j-send_location').hasClass('btn_active'),
+          copyDialogItem,
+          lastMessage,
+          message,
+          attach,
+          msg;
 
-     var msg = {
-        type: type,
-        body: 'Attachment',
-        extension: {
-          save_to_history: 1,
-          dialog_id: dialog_id,
-          date_sent: time,
-          attachments: [
+      if (mapCoords) {
+        attach = {
+          'type': 'location',
+          'lat' : mapCoords.lat,
+          'lng' : mapCoords.lng
+        };
+      } else {
+        attach = Attach.create(blob, size);
+      }
+
+      function _sendMessage() {
+
+      }
+
+      msg = {
+        'type': type,
+        'body': 'Attachment',
+        'extension': {
+          'save_to_history': 1,
+          'dialog_id': dialog_id,
+          'date_sent': time,
+          'attachments': [
             attach
           ]
         },
-        markable: 1
+        'markable': 1
       };
       
-      // send message
+      if(locationIsActive) {
+        msg.extension.latitude = localStorage['QM.latitude'];
+        msg.extension.longitude = localStorage['QM.longitude'];
+      }
+
       QB.chat.send(jid, msg);
 
       message = Message.create({
-        chat_dialog_id: dialog_id,
-        date_sent: time,
-        attachment: attach,
-        sender_id: User.contact.id,
-        _id: msg.id
+        'chat_dialog_id': dialog_id,
+        'date_sent': time,
+        'attachment': attach,
+        'sender_id': User.contact.id,
+        'latitude': localStorage['QM.latitude'] || null,
+        'longitude': localStorage['QM.longitude'] || null,
+        '_id': msg.id
       });
 
       Helpers.log(message);

@@ -41,6 +41,63 @@
   .popup_attach {
     padding: 20px 20px 25px;
   }
+  .popover_map {
+    z-index: 2;
+    display: none;
+    position: absolute;
+    bottom: 36px;
+    right: -17px;
+    padding: 5px;
+    width: 212px;
+    height: 162px;
+    background: #fff;
+    border: 1px solid #f2f2f2;
+    box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
+  }
+    .popover_map .coner {
+      position: absolute;
+      bottom: -14px;
+      right: 15px;
+      margin-left: -13px;
+      overflow: hidden;
+      width: 26px;
+      height: 14px;
+    }
+      .popover_map i.icon_coner {
+        background: #fff;
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+        border: 1px solid #f2f2f2;
+        border-width: 0 1px 1px 0;
+        border-radius: 2px;
+        position: relative;
+        top: -9px;
+        left: -4px;
+        transform: rotate(45deg);
+        box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
+      }
+  .open_map {
+    width: 450px;
+    height: 300px;
+  }
+  .send_map, .send_map:hover {
+    opacity: 1;
+    margin: 10px auto 0;
+    display: block;
+    width: 140px;
+    height: 20px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: uppercase;
+    color: #bebebe;
+    text-align: center;
+    vertical-align: middle;
+  }
+    .send_map.is-active {
+      color: #007de3;
+    }
   .popup_logout,
   .popup_import,
   .popup_delete,
@@ -54,6 +111,21 @@
     height: 80px;
     border: 1px solid #f2f2f2;
   }
+  .popup_connect {
+    width: 100px;
+    height: 100px;
+  }
+  .popup_geo_info {
+    width: 400px;
+    height: 98px;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #f2f2f2;
+  }
+    #chatConnecting.popup {
+      transition: none;
+      background: none;
+    }
   .popup_discon .popup-alert {
     height: 100%;
   }
@@ -137,6 +209,20 @@
 .alert_discon {
   font-size: 26px;
   line-height: 32px;
+}
+.alert_geo_info {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+/* location */
+.attach_map {
+  max-width: 380px;
+  max-height: 200px;
+}
+.static_map {
+  max-width: 200px;
+  max-height: 150px;
 }
 
 /* attach message */

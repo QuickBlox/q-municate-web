@@ -51,7 +51,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         Helpers.log('Stream', stream);
 
         if (!$('.l-chat[data-dialog="'+options.dialogId+'"]').find('.mediacall')[0]) {
-          stream.stop();
+          stream.stop({});
           return true;
         }
 
@@ -97,7 +97,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
       extension = {
         save_to_history: 1,
         date_sent: time,
-
         callType: callType === 'video' ? '1' : '2',
         callState: state,
         caller: userId,

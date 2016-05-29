@@ -16,6 +16,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       curSession = {},
       network = {},
       stopStreamFF,
+      sendAutoReject,
       is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
   function VideoChatView(app) {
@@ -75,6 +76,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
     $('#popupIncoming').on('click', '.btn_accept', function() {
       self.cancelCurrentCalls();
+
+      clearTimeout(sendAutoReject);
+      sendAutoReject = undefined;
 
       var $self = $(this),
           id = $self.data('id'),
@@ -219,6 +223,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         userName = contact.full_name || extension.full_name,
         userAvatar = contact.avatar_url || extension.avatar,
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
+        autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
         htmlTpl,
         tplParams;
 
@@ -238,8 +243,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     openPopup($incomings);
     audioSignal.play();
 
-    self.app.models.VideoChat.session = session;
-    curSession = self.app.models.VideoChat.session;
+    VideoChat.session = session;
+    curSession = VideoChat.session;
 
     createAndShowNotification({
       'id': id,
@@ -247,6 +252,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       'callState': '5',
       'callType': callType
     });
+
+    sendAutoReject = setTimeout(function() {
+      $('.btn_decline').click();
+    }, autoReject);
   };
 
   VideoChatView.prototype.onAccept = function(session, id, extension) {
@@ -297,6 +306,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
         $chat = $('.l-chat[data-dialog="'+dialogId+'"]');
 
+    curSession = {};
+    VideoChat.session = null;
     VideoChat.caller = null;
     VideoChat.callee = null;
     self.type = null;
@@ -450,6 +461,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       callingSignal.pause();
       endCallSignal.play();
       clearTimeout(callTimer);
+      curSession = {};
+      VideoChat.session = null;
       VideoChat.caller = null;
       VideoChat.callee = null;
       self.type = null;

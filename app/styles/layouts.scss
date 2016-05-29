@@ -102,6 +102,8 @@
 }
 
 .l-header {
+  z-index: 2;
+  background-color: #fff;
   position: relative;
   height: 80px;
   padding-left: 20px;
@@ -118,6 +120,8 @@
   border-right: 2px solid #f2f2f2;
 }
   .l-search {
+    z-index: 1;
+    background-color: #fff;
     height: 60px;
     padding: 15px;
   }
@@ -143,7 +147,7 @@
 }
   .l-workspace {
     height: 100%;
-    overflow: hidden;
+    overflow: visible;
   }
     .l-cap {
       height: 63vh;
@@ -154,6 +158,9 @@
     }
 
 .l-footer {
+  z-index: 2;
+  background-color: #fff;
+  position: relative;
   height: 60px;
   padding: 0 5px;
 }
@@ -171,6 +178,8 @@
   position: relative;
 }
   .l-chat-header {
+    z-index: 1;
+    background-color: #fff;
     position: relative;
     height: 75px;
     padding: 0 20px;
@@ -198,6 +207,8 @@
     }
 
   .l-chat-footer {
+    z-index: 1;
+    background-color: #fff;
     height: 90px;
     padding: 0px 5px 5px 5px;
     border-top: 1px solid #f2f2f2;
@@ -205,9 +216,29 @@
   }
     .l-message {
       position: relative;
-      height: 48px;
+      height: 55px;
     }
     .l-typing {
-      height: 36px;
-      width: 100%;
+      display: inline-block;
+      vertical-align: top;
+      font-size: 15px;
+      height: 34px;
+      width: 75%;
     }
+    .l-input-menu {
+      display: inline-block;
+      vertical-align: top;
+      text-align: -moz-left;
+      text-align: center;
+      height: 33px;
+      width: 25%;
+      position: relative;
+    }
+      .l-input-menu .l-input-buttons {
+        display: inline-block;
+        margin-right: 15px;
+        height: 100%;
+      }
+      .l-input-menu .l-input-buttons:last-child {
+        margin-right: 0;
+      }
