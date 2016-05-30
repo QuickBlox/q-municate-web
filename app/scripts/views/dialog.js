@@ -443,15 +443,9 @@ define([
         html += '<form class="l-message" action="#">';
         html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
         html += '<div class="footer_btn j-send_location btn_sendlocation'+((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '')+'"';
-<<<<<<< HEAD
         html += 'data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>';
         html += '<input class="attachment" type="file" accept="image/*"></form>';
         html += '<div class="j-typing l-typing"></div><div class="l-input-menu">';
-=======
-        html += 'data-balloon-length="small" data-balloon="Send you location with messages" data-balloon-pos="up"></div>';
-        html += '<input class="attachment" type="file" accept="image/*"></form>';
-        html += '<div class="l-typing"></div><div class="l-input-menu">';
->>>>>>> f9fef8e14f70a6e1a5b17d908ef1a079ec6c8c82
         html += '<div class="footer_btn l-input-buttons btn_input_smile j-btn_input_smile" data-balloon="Add smiles" data-balloon-pos="up"></div>';
         html += '<div class="footer_btn l-input-buttons btn_input_location j-btn_input_location" data-balloon="Send location" data-balloon-pos="up"></div>';
         html += '<div class="footer_btn l-input-buttons btn_input_attach j-btn_input_attach" data-balloon="Send attachment file" data-balloon-pos="up"></div>';
