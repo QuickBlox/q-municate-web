@@ -54,7 +54,7 @@ requirejs.config({
     QBNotification: '../bower_components/web-notifications/qbNotification',
 
     // Q-municate application
-    config: '../config',
+    config: '../configs/main_config',
     MainModule: 'app',
     // models
     UserModule: 'models/user',
@@ -115,7 +115,7 @@ requirejs([
       APP = new QM();
       APP.init();
     });
-    
+
     $.getScript('https://cdn.flurry.com/js/flurry.js', function() {
       FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');
     });

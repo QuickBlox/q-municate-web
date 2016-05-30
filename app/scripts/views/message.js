@@ -405,7 +405,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           lastMessage,
           message,
           msg;
-      
+
       if (val.length > 0) {
         if (form.find('.textarea > span').length > 0) {
           form.find('.textarea > span').each(function() {
@@ -625,7 +625,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
           contacts[id] = Contact.create(user);
           createAndShowNotification(msg, isHiddenChat);
         });
-      } else {      
+      } else {
         createAndShowNotification(msg, isHiddenChat);
       }
 
@@ -898,7 +898,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         QBNotification.requestPermission(function(state) {
           if (state === "granted") {
             Helpers.Notifications.show(title, options);
-          } 
+          }
         });
       }
     }

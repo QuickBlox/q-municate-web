@@ -1,12 +1,6 @@
 /* Configuration your application */
 define(function() {
 
-  /**
-  * Production environment (PROD = true);
-  * Test local environment (PROD = false);
-  */
-  var PROD = false;
-
   var QMCONFIG = {
 
     qbAccount: {

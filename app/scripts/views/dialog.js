@@ -53,7 +53,7 @@ define([
       QB.chat.onSystemMessageListener = MessageView.onSystemMessage;
       QB.chat.onDeliveredStatusListener = MessageView.onDeliveredStatus;
       QB.chat.onReadStatusListener = MessageView.onReadStatus;
-      
+
       QB.chat.onContactListListener = ContactListView.onPresence;
       QB.chat.onSubscribeListener = ContactListView.onSubscribe;
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
@@ -87,7 +87,7 @@ define([
       QB.chat.onReconnectFailedListener = function(error) {
         if (error) {
           Helpers.log('Error: ', error);
-          
+
           self.app.service.reconnectChat();
         }
       };
