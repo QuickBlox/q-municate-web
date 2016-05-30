@@ -53,7 +53,7 @@ define([
       QB.chat.onSystemMessageListener = MessageView.onSystemMessage;
       QB.chat.onDeliveredStatusListener = MessageView.onDeliveredStatus;
       QB.chat.onReadStatusListener = MessageView.onReadStatus;
-      
+
       QB.chat.onContactListListener = ContactListView.onPresence;
       QB.chat.onSubscribeListener = ContactListView.onSubscribe;
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
@@ -79,7 +79,6 @@ define([
          .parent('.j-overlay').addClass('is-overlay');
       };
 
-<<<<<<< HEAD
       QB.chat.onReconnectListener = function() {
         $('.j-disconnect').removeClass('is-overlay')
          .parent('.j-overlay').removeClass('is-overlay');
@@ -88,21 +87,9 @@ define([
       QB.chat.onReconnectFailedListener = function(error) {
         if (error) {
           Helpers.log('Error: ', error);
-          
+
           self.app.service.reconnectChat();
         }
-=======
-      QB.chat.onReconnectListener = function(error) {
-        if (error) {
-          Helpers.log('Error: ', error);
-          self.app.service.checkSession(function (res) {
-            Helpers.log('Check session: ', res);
-          }, 'reconnected');
-        }
-
-        $('.j-disconnect').removeClass('is-overlay')
-         .parent('.j-overlay').removeClass('is-overlay');
->>>>>>> f9fef8e14f70a6e1a5b17d908ef1a079ec6c8c82
       };
 
       currentUser = new Person(_.clone(User.contact), {
