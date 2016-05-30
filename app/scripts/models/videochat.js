@@ -51,7 +51,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         Helpers.log('Stream', stream);
 
         if (!$('.l-chat[data-dialog="'+options.dialogId+'"]').find('.mediacall')[0]) {
-          stream.stop();
+          stream.stop({});
           return true;
         }
 

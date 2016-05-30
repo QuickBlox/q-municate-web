@@ -74,11 +74,11 @@ module.exports = function (grunt) {
           name: 'main',
           optimize: 'none',
           out: "<%= yeoman.app %>/scripts/.build.js",
-          
+
           paths: {
             'templates': '.tmp/scripts/templates'
           },
-          
+
           almond: false,
           preserveLicenseComments: false
         }
@@ -209,8 +209,39 @@ module.exports = function (grunt) {
         '<%= yeoman.app %>/scripts/{,*/}*.js',
         '!<%= yeoman.app %>/vendor/*'
       ]
+    },
+
+    includereplace: {
+      prod: {
+        options: {
+          globals: {
+            appId: '13318',
+            authKey: 'WzrAY7vrGmbgFfP',
+            authSecret: 'xS2uerEveGHmEun'
+          }
+        },
+        src: '<%= yeoman.app %>/configs/environment.js',
+        dest: '<%= yeoman.app %>/configs/main_config.js'
+      },
+      dev: {
+        options: {
+          globals: {
+            appId: '36125',
+            authKey: 'gOGVNO4L9cBwkPE',
+            authSecret: 'JdqsMHCjHVYkVxV'
+          }
+        },
+        src: '<%= yeoman.app %>/configs/environment.js',
+        dest: '<%= yeoman.app %>/configs/main_config.js'
+      },
+      local: {
+        src: '<%= yeoman.app %>/config.js',
+        dest: '<%= yeoman.app %>/configs/main_config.js'
+      }
     }
   });
+
+  var envTarget = grunt.option('env') || 'local';
 
   grunt.registerTask('createDefaultTemplate', function () {
     grunt.file.write('.tmp/scripts/templates.js', 'this.JST = this.JST || {};');
@@ -238,6 +269,7 @@ module.exports = function (grunt) {
     }
 
     grunt.task.run([
+      'includereplace:' + envTarget,
       'clean:dev',
       'compass',
       'createDefaultTemplate',
@@ -249,6 +281,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'jshint',
+    'includereplace:' + envTarget,
     'clean:dist',
     'compass',
     'createDefaultTemplate',
@@ -268,5 +301,6 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('default', ['build']);
+  grunt.registerTask('test', ['jshint']);
 
 };

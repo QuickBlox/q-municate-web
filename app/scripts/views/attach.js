@@ -68,7 +68,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
         html += '</div></h4></div>';
         html += '<time class="message-time"><a class="attach-cancel" href="#">Cancel</a></time>';
         html += '</div></div></article>';
-        
+
         chat.append(html);
         objDom.val('');
         fixScroll();
@@ -134,8 +134,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
           percent += 5;
           if (percent > 95) return false;
           setTimeout(setPercent, time);
-        }      
-      }  
+        }
+      }
     },
 
     cancel: function(objDom) {
@@ -167,27 +167,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
         attach = Attach.create(blob, size);
       }
 
-      function _sendMessage() {
-        QB.chat.send(jid, msg);
-
-        message = Message.create({
-          'chat_dialog_id': dialog_id,
-          'date_sent': time,
-          'attachment': attach,
-          'sender_id': User.contact.id,
-          'latitude': localStorage['QM.latitude'] || null,
-          'longitude': localStorage['QM.longitude'] || null,
-          '_id': msg.id
-        });
-
-        Helpers.log(message);
-        if (type === 'chat') {
-          lastMessage = chat.find('article[data-type="message"]').last();   
-          message.stack = Message.isStack(true, message, lastMessage);
-          MessageView.addItem(message, true, true);
-        }
-      }
-
       msg = {
         'type': type,
         'body': 'Attachment',
@@ -201,19 +180,29 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
         },
         'markable': 1
       };
-      
+
       if(locationIsActive) {
-        Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
-          if (err) {
-            Helpers.log('Error: ', err);
-          } else {
-            msg.extension.latitude = localStorage['QM.latitude'];
-            msg.extension.longitude = localStorage['QM.longitude'];
-            _sendMessage();
-          }
-        });
-      } else {
-        _sendMessage();
+        msg.extension.latitude = localStorage['QM.latitude'];
+        msg.extension.longitude = localStorage['QM.longitude'];
+      }
+
+      QB.chat.send(jid, msg);
+
+      message = Message.create({
+        'chat_dialog_id': dialog_id,
+        'date_sent': time,
+        'attachment': attach,
+        'sender_id': User.contact.id,
+        'latitude': localStorage['QM.latitude'] || null,
+        'longitude': localStorage['QM.longitude'] || null,
+        '_id': msg.id
+      });
+
+      Helpers.log(message);
+      if (type === 'chat') {
+        lastMessage = chat.find('article[data-type="message"]').last();
+        message.stack = Message.isStack(true, message, lastMessage);
+        MessageView.addItem(message, true, true);
       }
 
       if (dialogItem.length > 0) {
@@ -227,7 +216,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
       }
     }
 
-  };  
+  };
 
   /* Private
   ---------------------------------------------------------------------- */
@@ -252,7 +241,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
     if ($('#requestsList').is('.is-hidden') &&
         $('#recentList').is('.is-hidden') &&
         $('#historyList').is('.is-hidden')) {
-      
+
       $('#emptyList').removeClass('is-hidden');
     }
   }

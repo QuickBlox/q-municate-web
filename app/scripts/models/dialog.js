@@ -276,7 +276,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
       var QBApiCalls = this.app.service,
           User = this.app.models.User,
           self = this;
-          
+
       // send notification about leave
       QB.chat.send(dialog.room_jid, {
         type: 'groupchat',
