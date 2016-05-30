@@ -86,7 +86,10 @@
   cursor: pointer;
 }
 .btn_sendlocation {
+<<<<<<< HEAD
   text-align: center;
+=======
+>>>>>>> f9fef8e14f70a6e1a5b17d908ef1a079ec6c8c82
   position: absolute;
   top: 10px;
   right: 15px;
@@ -98,10 +101,17 @@
 }
   .btn_sendlocation.btn_active {
     background: image-url('ic_location_on.svg');
+<<<<<<< HEAD
   }
   .btn_sendlocation[data-balloon-length="small"]:after {
     width: 110px;
   }
+=======
+  }
+  .btn_sendlocation[data-balloon-length="small"]:after {
+    width: 100px;
+  }
+>>>>>>> f9fef8e14f70a6e1a5b17d908ef1a079ec6c8c82
   .btn_message {
     position: absolute;
     top: 10px;

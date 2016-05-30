@@ -77,6 +77,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
           } else {
             localStorage.setItem('QM.latitude', res.latitude);
             localStorage.setItem('QM.longitude', res.longitude);
+
             $button.addClass('btn_active');
 
             callback('Added coordinates to localStorage: latitude(' + res.latitude + '), longitude(' + res.longitude + ')');
@@ -85,6 +86,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       } else {
         localStorage.removeItem('QM.latitude');
         localStorage.removeItem('QM.longitude');
+
         $button.removeClass('btn_active');
 
         navigator.geolocation.clearWatch(watchId);

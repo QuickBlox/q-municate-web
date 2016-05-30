@@ -206,19 +206,11 @@ define([
       $workspace.on('click', '.j-send_location', function() {
         if (localStorage['QM.latitude'] && localStorage['QM.longitude']) {
           Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
-            if (err) {
-              Helpers.log(err);
-            } else {
-              Helpers.log(res);
-            }
+            Helpers.log(err ? err : res);
           });
         } else {
           Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
-            if (err) {
-              Helpers.log(err);
-            } else {
-              Helpers.log(res);
-            }
+            Helpers.log(err ? err : res);
           });
         }
       });

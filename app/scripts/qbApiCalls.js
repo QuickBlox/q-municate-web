@@ -32,14 +32,13 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
         Session.create(JSON.parse(localStorage['QM.session']), true);
         UserView.autologin();
       }
-      
+
       Helpers.log('QB init', this);
     },
 
     checkSession: function(callback) {
       QB.getSession(function(err, res) {
         if (((new Date()).toISOString() > Session.expirationTime) || err) {
-
           // recovery session
           if (Session.authParams.provider) {
             UserView.getFBStatus(function(token) {
@@ -82,9 +81,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             if (errMsg.indexOf('Authentication') >= 0) {
               errMsg = QMCONFIG.errors.crashFBToken;
               UserView.getFBStatus();
-            
+
             // This checking is needed when you trying to connect via FB
-            // and your primary email has already been taken on the project 
+            // and your primary email has already been taken on the project
             } else if (errMsg.indexOf('already') >= 0) {
               errMsg = QMCONFIG.errors.emailExists;
               UserView.getFBStatus();
@@ -101,6 +100,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             Session.update({ token: res.token });
           } else {
             Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
+          }
+
+          if (User.contact) {
+            self.reconnectChat();
           }
 
           Session.update({ date: new Date() });
@@ -257,7 +260,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
               'app_id': (QMCONFIG.qbAccount.appId).toString()
             };
             FlurryAgent.logEvent("Connect to chat", eventParams);
-            
+
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);
