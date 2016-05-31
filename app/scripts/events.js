@@ -802,7 +802,7 @@ define([
           stopTyping = undefined;
 
           clearInterval(retryTyping);
-          retryTyping === undefined;
+          retryTyping = undefined;
 
           MessageView.sendTypingStatus(jid, false);
         }
