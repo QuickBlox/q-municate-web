@@ -201,7 +201,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
       Helpers.log(message);
       if (type === 'chat') {
         lastMessage = chat.find('article[data-type="message"]').last();
-
+        
         message.stack = Message.isStack(true, message, lastMessage);
         MessageView.addItem(message, true, true);
       }

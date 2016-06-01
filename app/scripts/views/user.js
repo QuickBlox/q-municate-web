@@ -326,11 +326,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml', 'LocationView'], f
         localStorage.removeItem('QM.longitude');
 
         Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
-          if (err) {
-            Helpers.log('Location: ', err);
-          } else {
-            Helpers.log('Location: ', res);
-          }
+          Helpers.log('Location: ', err ? err : res);
         });
       }
     }

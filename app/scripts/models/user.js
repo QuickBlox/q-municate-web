@@ -51,7 +51,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
             } else {
               DialogView.downloadDialogs(roster);
             }
-            
+
           });
 
         });
@@ -175,7 +175,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
           UserView.successFormCallback();
           DialogView.prepareDownloading(roster);
           DialogView.downloadDialogs(roster);
-          
+
           custom_data = JSON.stringify({avatar_url: blob.path});
           QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
 
@@ -230,7 +230,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         if (prop !== 'app')
           storage[prop] = self.contact[prop];
       });
-      
+
       localStorage.setItem('QM.user', JSON.stringify(storage));
     },
 
@@ -387,7 +387,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
 
   function getImport(user) {
     var isImport;
-    
+
     try {
       isImport = JSON.parse(user.custom_data).is_import || null;
     } catch(err) {

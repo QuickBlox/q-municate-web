@@ -86,8 +86,6 @@ define([
 
       QB.chat.onReconnectFailedListener = function(error) {
         if (error) {
-          Helpers.log('Error: ', error);
-
           self.app.service.reconnectChat();
         }
       };

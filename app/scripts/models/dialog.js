@@ -239,7 +239,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
           callback(false);
         } else {
 
-          Attach.crop(file, {w: 40, h: 40}, function(avatar) {
+          Attach.crop(file, {w: 240, h: 240}, function(avatar) {
             Attach.upload(avatar, function(blob) {
               QBApiCalls.updateDialog(dialog_id, {photo: blob.path}, function(res) {
                 dialog = self.create(res);

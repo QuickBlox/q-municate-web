@@ -54,7 +54,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
 
     toggleGeoCoordinatesToLocalStorage: function(saveLocation, callback) {
       var isCoords = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? true : false,
-        $button = $('.j-send_location');
+          $button = $('.j-send_location');
 
       if (saveLocation) {
         this.getGeoCoordinates(true, function(res, err) {
@@ -77,7 +77,6 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
           } else {
             localStorage.setItem('QM.latitude', res.latitude);
             localStorage.setItem('QM.longitude', res.longitude);
-            $button.addClass('btn_active');
 
             $button.addClass('btn_active');
 
@@ -87,9 +86,6 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       } else {
         localStorage.removeItem('QM.latitude');
         localStorage.removeItem('QM.longitude');
-        $button.removeClass('btn_active');
-
-        navigator.geolocation.clearWatch(watchId);
 
         $button.removeClass('btn_active');
 
@@ -125,7 +121,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
 
       GMaps.on('click', map.map, function(event) {
         mapCoords.lat = event.latLng.lat(),
-          mapCoords.lng = event.latLng.lng();
+        mapCoords.lng = event.latLng.lng();
 
         localStorage.setItem('QM.locationAttach', JSON.stringify(mapCoords));
 

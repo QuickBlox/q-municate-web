@@ -29,6 +29,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
         QB.init(token, QMCONFIG.qbAccount.appId, null, QMCONFIG.QBconf);
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
         QB.service.qbInst.config.creds = QMCONFIG.qbAccount;
+
         Session.create(JSON.parse(localStorage['QM.session']), true);
         UserView.autologin();
       }
@@ -100,10 +101,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             Session.update({ token: res.token });
           } else {
             Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
-          }
-
-          if (User.contact) {
-            self.reconnectChat();
           }
 
           Session.update({ date: new Date() });
