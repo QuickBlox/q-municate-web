@@ -6,7 +6,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
   google.maps === googleMaps;
 
   var Location = {},
-    watchId;
+      watchId;
 
   Location = {
 
@@ -54,7 +54,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
 
     toggleGeoCoordinatesToLocalStorage: function(saveLocation, callback) {
       var isCoords = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? true : false,
-        $button = $('.j-send_location');
+          $button = $('.j-send_location');
 
       if (saveLocation) {
         this.getGeoCoordinates(true, function(res, err) {
@@ -99,7 +99,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
       $gmap.prepend('<div id="map" class="open_map j-open_map"></div>');
 
       var isCoords = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? true : false,
-        mapCoords = {};
+          mapCoords = {};
 
       var map = new GMaps({
         'div': '#map',
