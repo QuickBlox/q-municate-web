@@ -121,7 +121,7 @@ define(['googlemaps!', 'gmaps', 'Helpers'], function(googleMaps, GMaps, Helpers)
 
       GMaps.on('click', map.map, function(event) {
         mapCoords.lat = event.latLng.lat(),
-          mapCoords.lng = event.latLng.lng();
+        mapCoords.lng = event.latLng.lng();
 
         localStorage.setItem('QM.locationAttach', JSON.stringify(mapCoords));
 
