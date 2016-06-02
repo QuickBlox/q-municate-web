@@ -8,7 +8,7 @@
 define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($, QMCONFIG, QB, Helpers, Location) {
 
   var Session, UserView, ContactListView, User;
-  var timer, needReconnect;
+  var timer;
   var self;
 
   function QBApiCalls(app) {
@@ -28,21 +28,18 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
       } else {
         QB.init(token, QMCONFIG.qbAccount.appId, null, QMCONFIG.QBconf);
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
+        QB.service.qbInst.config.creds = QMCONFIG.qbAccount;
 
         Session.create(JSON.parse(localStorage['QM.session']), true);
         UserView.autologin();
       }
-      
+
       Helpers.log('QB init', this);
     },
 
-    checkSession: function(callback, outdated) {
+    checkSession: function(callback) {
       QB.getSession(function(err, res) {
         if (((new Date()).toISOString() > Session.expirationTime) || err) {
-          needReconnect = outdated ? true : false;
-          // reset QuickBlox JS SDK after autologin via an existing token
-          self.init();
-
           // recovery session
           if (Session.authParams.provider) {
             UserView.getFBStatus(function(token) {
@@ -54,7 +51,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             Session.encrypt(Session.authParams);
           }
         } else {
-          needReconnect = false;
           callback(res);
         }
       });
@@ -86,9 +82,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             if (errMsg.indexOf('Authentication') >= 0) {
               errMsg = QMCONFIG.errors.crashFBToken;
               UserView.getFBStatus();
-            
+
             // This checking is needed when you trying to connect via FB
-            // and your primary email has already been taken on the project 
+            // and your primary email has already been taken on the project
             } else if (errMsg.indexOf('already') >= 0) {
               errMsg = QMCONFIG.errors.emailExists;
               UserView.getFBStatus();
@@ -105,10 +101,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             Session.update({ token: res.token });
           } else {
             Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
-          }
-
-          if (needReconnect) {
-            self.reconnectChat();
           }
 
           Session.update({ date: new Date() });
@@ -136,7 +128,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
     logoutUser: function(callback) {
       Helpers.log('QB SDK: User has exited');
       // reset QuickBlox JS SDK after autologin via an existing token
-      this.init();
+      QB.service.qbInst.config.creds = QMCONFIG.qbAccount;
       clearTimeout(timer);
       Session.destroy();
       callback();
@@ -265,7 +257,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
               'app_id': (QMCONFIG.qbAccount.appId).toString()
             };
             FlurryAgent.logEvent("Connect to chat", eventParams);
-            
+
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);
@@ -284,7 +276,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           }
         }
 
-        self.app.views.Dialog.prepareDownloading(roster);
+        self.app.views.Dialog.chatCallbacksInit();
+        self.app.models.ContactList.saveRoster(roster);
 
         $('.j-disconnect').removeClass('is-overlay')
          .parent('.j-overlay').removeClass('is-overlay');

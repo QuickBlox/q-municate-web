@@ -118,7 +118,7 @@ define([
         changePassView.submitForm();
       });
 
-      $('body').on('click', '.btn_userProfile_connect', function() {     
+      $('body').on('click', '.btn_userProfile_connect', function() {
         var profileView = App.views.Profile,
             btn = $(this);
 
@@ -184,7 +184,7 @@ define([
         AttachView.cancel($(this));
       });
 
-      $workspace.on('click', '.preview', function() {        
+      $workspace.on('click', '.preview', function() {
         var $self = $(this),
             name = $self.data('name'),
             url = $self.data('url'),
@@ -206,19 +206,11 @@ define([
       $workspace.on('click', '.j-send_location', function() {
         if (localStorage['QM.latitude'] && localStorage['QM.longitude']) {
           Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
-            if (err) {
-              Helpers.log(err);
-            } else {
-              Helpers.log(res);
-            }
+            Helpers.log(err ? err : res);
           });
         } else {
           Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
-            if (err) {
-              Helpers.log(err);
-            } else {
-              Helpers.log(res);
-            }
+            Helpers.log(err ? err : res);
           });
         }
       });
@@ -237,7 +229,7 @@ define([
             bool = $self.is('.is-active');
 
         removePopover();
-        
+
         if (!bool) {
           $self.addClass('is-active');
           $gmap.fadeIn(150);
@@ -391,7 +383,7 @@ define([
 
       /* welcome page
       ----------------------------------------------------- */
-      $('#signupFB, #loginFB').on('click', function(event) {      
+      $('#signupFB, #loginFB').on('click', function(event) {
         Helpers.log('connect with FB');
         event.preventDefault();
 
@@ -442,7 +434,7 @@ define([
         UserView.forgot();
       });
 
-      $('#loginForm').on('click submit', function(event) {     
+      $('#loginForm').on('click submit', function(event) {
         Helpers.log('authorize user');
         event.preventDefault();
         UserView.loginForm();
@@ -450,7 +442,7 @@ define([
 
       /* forgot and reset page
       ----------------------------------------------------- */
-      $('#forgotForm').on('click submit', function(event) {    
+      $('#forgotForm').on('click submit', function(event) {
         Helpers.log('send letter');
         event.preventDefault();
         UserView.forgotForm();
@@ -509,7 +501,7 @@ define([
       $('body').on('click', '.deleteContact', function(event) {
         event.preventDefault();
         closePopup();
-        
+
         var $that = $(this),
             parents = $that.parents('.presence-listener'),
             id = parents.data('id') || $that.data('id');
@@ -530,7 +522,7 @@ define([
         openPopup($('#popupLeave'), null, dialog_id);
       });
 
-      $('#logoutConfirm').on('click', function() {  
+      $('#logoutConfirm').on('click', function() {
         UserView.logout();
       });
 
@@ -574,7 +566,7 @@ define([
 
       $('#mainPage').on('click', '.createGroupChat', function(event) {
         event.preventDefault();
-        
+
         Helpers.log('add people to groupchat');
 
         var $self = $(this),
@@ -640,7 +632,7 @@ define([
         UserView.localSearch($form);
 
         return false;
-      });  
+      });
 
       /* subscriptions
       ----------------------------------------------------- */
@@ -810,7 +802,7 @@ define([
           stopTyping = undefined;
 
           clearInterval(retryTyping);
-          retryTyping === undefined;
+          retryTyping = undefined;
 
           MessageView.sendTypingStatus(jid, false);
         }
