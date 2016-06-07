@@ -9,7 +9,7 @@ define([
     'jquery', 'UserModule', 'SessionModule', 'ContactModule',
     'DialogModule', 'MessageModule', 'AttachModule',
     'ContactListModule', 'VideoChatModule', 'UserView', 'DialogView',
-    'MessageView', 'AttachView', 'ContactListView', 'VideoChatView', 
+    'MessageView', 'AttachView', 'ContactListView', 'VideoChatView',
     'Events', 'Helpers', 'QBApiCalls', 'config', 'chromaHash'
   ], function(
     $, User, Session, Contact, Dialog,
@@ -56,7 +56,7 @@ define([
       if (localStorage['QM.session'] && localStorage['QM.user'] &&
           // new QB release account (13.02.2015)
           localStorage['QM.isReleaseQBAccount']) {
-        
+
         token = JSON.parse(localStorage['QM.session']).token;
         this.service.init(token);
 

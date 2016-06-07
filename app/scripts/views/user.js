@@ -5,7 +5,15 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml', 'LocationView'], function($, QMCONFIG, QB, Helpers, QMHtml, Location) {
+define([
+  'jquery',
+  'config',
+  'quickblox',
+  'Helpers',
+  'QMHtml',
+  'LocationView',
+  'digits'
+], function($, QMCONFIG, QB, Helpers, QMHtml, Location, Digits) {
 
   var User, ContactList, Contact,
       FBCallback = null;
@@ -29,6 +37,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml', 'LocationView'], f
 
     forgot: function() {
       switchPage($('#forgotPage'));
+    },
+
+    connectTwitterDigits: function() {
+      User.connectTwitterDigits();
     },
 
     connectFB: function(token) {

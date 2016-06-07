@@ -41,7 +41,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
       QB.getSession(function(err, res) {
         if (((new Date()).toISOString() > Session.expirationTime) || err) {
           // recovery session
-          if (Session.authParams.provider) {
+          if (Session.authParams.provider === 'facebook') {
             UserView.getFBStatus(function(token) {
               Session.authParams.keys.token = token;
               self.createSession(Session.authParams, callback, Session._remember);
@@ -106,6 +106,14 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           Session.update({ date: new Date() });
           callback(res);
         }
+      });
+    },
+
+    updateSession: function(params) {
+      console.info(params);
+      QB.getSession(function(err, res) {
+        Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
+        Session.update({ date: new Date() });
       });
     },
 
@@ -248,9 +256,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           if (err) {
             Helpers.log(err.detail);
 
-            fail(err.detail);
-            UserView.logout();
-            window.location.reload();
+            // fail(err.detail);
+            // UserView.logout();
+            // window.location.reload();
           } else {
             var eventParams = {
               'chat_endpoints': QB.auth.service.qbInst.config.endpoints.chat,

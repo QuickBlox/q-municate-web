@@ -32,13 +32,10 @@
   },
   "engines": {
     "node": ">=4.4.4"
-<<<<<<< HEAD
-=======
   },
   "config": {
     "ghooks": {
       "pre-push": "grunt test"
     }
->>>>>>> 703a1d8de8b3f69baae18106db617d671255a1c1
   }
 }
