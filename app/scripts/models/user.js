@@ -38,13 +38,11 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'digits'], function($, QMCON
             'twitter_digits': onLogin.oauth_echo_headers
           };
           QBApiCalls.createSession({}, function(session) {
-            QB.login(params, function(err, user) {
-              QBApiCalls.updateSession(user);
+            QBApiCalls.loginUser(params, function(user) {
               self.contact = Contact.create(user);
               self._is_import = getImport(user);
 
               Helpers.log('User', self);
-
 
               QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
                 self.rememberMe();

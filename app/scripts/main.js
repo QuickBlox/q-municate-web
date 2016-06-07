@@ -93,8 +93,8 @@ requirejs([
     'backbone',
     'QBNotification',
     'Helpers',
-    'digits', 'quickblox'
-], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification, Helpers, Digits, QB) {
+    'digits'
+], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification, Helpers, Digits) {
 
     var APP;
 
@@ -110,13 +110,12 @@ requirejs([
         });
 
         // twitter digits sdk
-        Digits.init({ consumerKey: 'KCcPaHrIgJ44gs3kwJuIbLaad' }).done(function() {
-            window.Digits = Digits;
-            window.QB = QB;
-            Helpers.log('Digits initialized.');
-        }).fail(function(error) {
-            Helpers.log('Digits failed to initialize: ', error);
-        });
+        Digits.init({ consumerKey: 'KCcPaHrIgJ44gs3kwJuIbLaad' })
+              .done(function() {
+                Helpers.log('Digits initialized.');
+              }).fail(function(error) {
+                Helpers.log('Digits failed to initialize: ', error);
+              });
 
         // emoji smiles run
         $('.smiles-group').each(function() {
