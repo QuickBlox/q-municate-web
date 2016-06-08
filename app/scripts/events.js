@@ -397,9 +397,9 @@ define([
         }, {scope: QMCONFIG.fbAccount.scope});
       });
 
-      $('#twitterDigitsSignUp, #twitterDigitsLogin').on('click', function(event) {
+      $('.j-twitterDigits').on('click', function() {
         UserView.connectTwitterDigits();
-        Helpers.log('connect with twitterDigits');
+        Helpers.log('connecting with twitterDigits');
 
         return false;
       });
@@ -417,10 +417,6 @@ define([
 
       /* button "back"
       ----------------------------------------------------- */
-      $('.back_to_welcome_page').on('click', function() {
-        UserView.logout();
-      });
-
       $('.back_to_login_page').on('click', function() {
         UserView.loginQB();
       });

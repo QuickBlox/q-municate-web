@@ -39,7 +39,7 @@ define([
       switchPage($('#forgotPage'));
     },
 
-    connectTwitterDigits: function() {
+    connectTwitterDigits: function(loginPage) {
       User.connectTwitterDigits();
     },
 

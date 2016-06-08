@@ -48,17 +48,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
               self.createSession(Session.authParams, callback, Session._remember);
             });
           } else if (Session.authParams.provider === 'twitter_digits') {
-            self.createSession({}, function(session) {
-              QB.login(Session.authParams, function(err, res) {
-                if (err) {
-                  Helpers.log(err.detail);
-                } else {
-                  Helpers.log('QB SDK: User has logged', res);
-                  Session.update({ date: new Date(), authParams: Session.encrypt(Session.authParams) });
-                  callback(res);
-                }
-              });
-            }, Session._remember);
+            self.getTwitterDigits();
           } else {
             self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
             Session.encrypt(Session.authParams);
@@ -136,6 +126,20 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           }
         });
       });
+    },
+
+    getTwitterDigits: function() {
+      self.createSession({}, function(session) {
+        QB.login(Session.authParams, function(err, res) {
+          if (err) {
+            Helpers.log(err.detail);
+          } else {
+            Helpers.log('QB SDK: User has logged', res);
+            Session.update({ date: new Date(), authParams: Session.encrypt(Session.authParams) });
+            callback(res);
+          }
+        });
+      }, Session._remember);
     },
 
     logoutUser: function(callback) {
@@ -274,6 +278,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);
+
+            if (!User.contact.full_name) {
+              self.app.views.Profile.render().openPopup();
+            }
           }
         });
       });
