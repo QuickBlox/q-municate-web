@@ -22,6 +22,7 @@ define([
       password: '',
       phone: '',
       facebook_id: null,
+      twitter_digits_id: null,
       avatar: null,
       avatar_url: QMCONFIG.defAvatar.url,
       status: '',
@@ -75,7 +76,7 @@ define([
           return QMCONFIG.errors.fileName;
         }
       }
-      
+
     },
 
     parse: function(data, options) {
@@ -96,7 +97,7 @@ define([
     },
 
     initialize: function() {
-      
+
     },
 
     update: function() {
@@ -108,7 +109,7 @@ define([
           self = this;
 
       if (Object.keys(data).length === 0 || (Object.keys(data).length === 1 && Object.keys(data)[0] === 'avatar' && !data.avatar)) return;
-      
+
       if (data.full_name) {
         params.full_name = currentUser.full_name = data.full_name;
       }
@@ -162,7 +163,7 @@ define([
           QBApiCalls = App.service,
           params = {},
           self = this;
-      
+
       params.old_password = data.oldPass;
       params.password = data.newPass;
 
@@ -184,7 +185,7 @@ define([
           custom_data = currentUser.custom_data && JSON.parse(currentUser.custom_data) || {},
           params = {},
           self = this;
-      
+
       if (self.get('avatar_url') === QMCONFIG.defAvatar.url) {
         custom_data.avatar_url = 'https://graph.facebook.com/v2.2/' + fbId + '/picture?width=146&height=146';
       }
@@ -209,7 +210,7 @@ define([
 
           // import friends
           self.getFBFriends();
-          
+
           callback(null, res);
         } else {
           callback(err, null);

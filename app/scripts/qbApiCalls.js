@@ -15,6 +15,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
     this.app = app;
     Session = this.app.models.Session;
     UserView = this.app.views.User;
+    DialogView = this.app.views.Dialog;
     ContactListView = this.app.views.ContactList;
     User = this.app.models.User;
     self = this;
@@ -41,11 +42,23 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
       QB.getSession(function(err, res) {
         if (((new Date()).toISOString() > Session.expirationTime) || err) {
           // recovery session
-          if (Session.authParams.provider) {
+          if (Session.authParams.provider === 'facebook') {
             UserView.getFBStatus(function(token) {
               Session.authParams.keys.token = token;
               self.createSession(Session.authParams, callback, Session._remember);
             });
+          } else if (Session.authParams.provider === 'twitter_digits') {
+            self.createSession({}, function(session) {
+              QB.login(Session.authParams, function(err, res) {
+                if (err) {
+                  Helpers.log(err.detail);
+                } else {
+                  Helpers.log('QB SDK: User has logged', res);
+                  Session.update({ date: new Date(), authParams: Session.encrypt(Session.authParams) });
+                  callback(res);
+                }
+              });
+            }, Session._remember);
           } else {
             self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
             Session.encrypt(Session.authParams);
@@ -276,8 +289,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           }
         }
 
-        self.app.views.Dialog.chatCallbacksInit();
-        self.app.models.ContactList.saveRoster(roster);
+        DialogView.chatCallbacksInit();
 
         $('.j-disconnect').removeClass('is-overlay')
          .parent('.j-overlay').removeClass('is-overlay');

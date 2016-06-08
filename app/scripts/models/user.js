@@ -5,7 +5,7 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
+define(['jquery', 'config', 'quickblox', 'Helpers', 'digits'], function($, QMCONFIG, QB, Helpers, Digits) {
 
   var tempParams;
 
@@ -17,6 +17,51 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
   }
 
   User.prototype = {
+
+    connectTwitterDigits: function() {
+      var QBApiCalls = this.app.service,
+          UserView = this.app.views.User,
+          DialogView = this.app.views.Dialog,
+          Contact = this.app.models.Contact,
+          profileView = this.app.views.Profile,
+          self = this,
+          params;
+
+      UserView.loginQB();
+      UserView.createSpinner();
+
+      Digits.logIn()
+        .done(function(onLogin) {
+          // get twitter_digits params
+          params = {
+            'provider': 'twitter_digits',
+            'twitter_digits': onLogin.oauth_echo_headers
+          };
+          QBApiCalls.createSession({}, function(session) {
+            QBApiCalls.loginUser(params, function(user) {
+              self.contact = Contact.create(user);
+              self._is_import = getImport(user);
+
+              Helpers.log('User', self);
+
+              QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
+                self.rememberMe();
+                UserView.successFormCallback();
+                DialogView.prepareDownloading(roster);
+                DialogView.downloadDialogs(roster);
+
+                if (!user.full_name) {
+                  profileView.render().openPopup();
+                }
+              });
+            });
+          }, true);
+        })
+        .fail(function(error) {
+          Helpers.log('Digits failed to login: ', error);
+        });
+
+    },
 
     connectFB: function(token) {
       var QBApiCalls = this.app.service,

@@ -397,6 +397,13 @@ define([
         }, {scope: QMCONFIG.fbAccount.scope});
       });
 
+      $('#twitterDigitsSignUp, #twitterDigitsLogin').on('click', function(event) {
+        UserView.connectTwitterDigits();
+        Helpers.log('connect with twitterDigits');
+
+        return false;
+      });
+
       $('#signupQB').on('click', function() {
         Helpers.log('signup with QB');
         UserView.signupQB();
