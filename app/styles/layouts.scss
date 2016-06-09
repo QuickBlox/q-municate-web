@@ -62,7 +62,7 @@
   min-height: 520px;
 }
 
-.l-welcome-container {
+.l-welcome_container {
   width: 416px;
   height: 488px;
   border-radius: 4px;
@@ -79,18 +79,18 @@
   width: 100%;
   height: 40vh;
 }
-.l-welcome-block {
+.l-welcome_block {
   text-align: center;
   vertical-align: middle;
   position: relative;
 }
-  .l-welcome-logo {
+  .l-welcome_logo {
     width: 80px;
     height: 80px;
     margin: 79px auto 0;
     background: image-url('qm-logo.svg') 50% no-repeat;
   }
-    .l-welcome-text-logo {
+    .l-welcome_text_logo {
       width: 283px;
       height: 49px;
       margin: 35px auto 0;
@@ -101,7 +101,7 @@
       letter-spacing: 3.7px;
       color: #6e6e6e;
     }
-    .l-welcome-text-description {
+    .l-welcome_text_description {
       margin: 6px auto 0;
       width: 109px;
       height: 19px;
