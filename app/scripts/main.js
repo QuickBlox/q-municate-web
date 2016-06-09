@@ -99,7 +99,7 @@ requirejs([
     var APP;
 
     // Application initialization
-    $(document).ready(function() {
+    $(function() {
         $.ajaxSetup({ cache: true });
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
             FB.init({

@@ -176,10 +176,13 @@
   margin-right: 2vh;
   vertical-align: text-bottom;
 }
-  .btn-icon.btn-icon_fb {
+  .btn-icon.i-btn-icon_fb {
     width: 3.4vh;
+    height: 3.4vh;
+    display: inline-block;
     margin: 0vh 2vh .6vh 0vh;
     vertical-align: middle;
+    background: image-url('icon-fb.svg') 50% no-repeat;
   }
   .btn-icon_fb_header {
     width: 19px;
