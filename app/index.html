@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="bower_components/progressbar.js/css/lib/control/progressbar.css">
   <link rel="stylesheet" href="vendor/emoji/css/minEmoji.css">
   <link rel="stylesheet" href="bower_components/balloon-css/balloon.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
 
   <link rel="stylesheet" href=".css/main.css">
   <!-- endbuild -->
@@ -33,8 +34,16 @@
 
   <div class="l-wrapper">
     <section id="welcomePage" class="l-page l-flexbox l-flexbox_column l-flexbox_flexbetween">
-      <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
-        <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.svg" alt="Q-municate">
+      <div class="l-welcome_container">
+        <div class="l-welcome_block l-welcome_logo"></div>
+        <div class="l-welcome-block l-welcome-text-logo">q-municate</div>
+        <div class="l-welcome-block l-welcome-text-description">Your own Chat!</div>
+        <button id="twitterDigitsSignUp" class="l-welcome-btn l-welcome-btn-green j-twitterDigits">
+          connect with phone number
+        </button>
+      </div>
+      <!-- <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
+        <img class="l-welcome-header-logo" src="images/qm-logo.svg" alt="Q-municate">
         <img class="l-welcome-header-text" src="images/logo-qmunicate-text.svg" alt="Q-municate">
         <div class="download">
           <a class="download-app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/app-android.svg" alt="download Q-municate Android"></a>
@@ -55,7 +64,7 @@
           <div class="spinner-dot1"></div>
           <div class="spinner-dot2"></div>
         </div>
-      </div>
+      </div> -->
     </section>
 
     <section id="loginPage" class="l-page is-hidden">
@@ -498,6 +507,7 @@
   <!-- build:js scripts/build.js -->
   <script src="bower_components/requirejs/require.js"></script>
   <script src="scripts/main.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script> -->
   <!-- endbuild -->
 
   <script id="templateProfile" type="text/template">
