@@ -5,23 +5,23 @@
 }
   .btn_form {
     width: 100%;
-    font-size: 2.8vh;
+    font-size: 2.3vh;
     line-height: 6.5vh;
-    border-radius: .8vh;
+    border-radius: .3vh;
     font-weight: 300;
   }
-    .btn_welcome {
+    .twitterDigits {
       margin-bottom: 3vh;
       line-height: 8vh;
     }
-    .btn_welcome:last-of-type {
+    .twitterDigits:last-of-type {
       margin-bottom: 3.5vh;
     }
     .btn_signup {
       margin-bottom: 4vh;
     }
     .btn_login {
-      margin-bottom: 2vh;
+      margin-bottom: 1.5vh;
     }
     .btn_login:last-of-type {
       margin-bottom: 3.5vh;
@@ -176,8 +176,13 @@
   margin-right: 2vh;
   vertical-align: text-bottom;
 }
-  .btn-icon_fb {
+  .btn-icon.i-btn-icon_fb {
     width: 3.4vh;
+    height: 3.4vh;
+    display: inline-block;
+    margin: 0vh 2vh .6vh 0vh;
+    vertical-align: middle;
+    background: image-url('icon-fb.svg') 50% no-repeat;
   }
   .btn-icon_fb_header {
     width: 19px;
