@@ -6,25 +6,20 @@
   .btn_form {
     width: 100%;
     font-size: 2.3vh;
-    line-height: 6.5vh;
+    line-height: 6vh;
     border-radius: .3vh;
     font-weight: 300;
+    text-transform: uppercase;
   }
     .twitterDigits {
       margin-bottom: 3vh;
       line-height: 8vh;
-    }
-    .twitterDigits:last-of-type {
-      margin-bottom: 3.5vh;
     }
     .btn_signup {
       margin-bottom: 4vh;
     }
     .btn_login {
       margin-bottom: 1.5vh;
-    }
-    .btn_login:last-of-type {
-      margin-bottom: 3.5vh;
     }
     .btn_reset {
       margin-top: 5vh;
