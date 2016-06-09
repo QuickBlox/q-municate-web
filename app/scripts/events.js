@@ -397,6 +397,13 @@ define([
         }, {scope: QMCONFIG.fbAccount.scope});
       });
 
+      $('.j-twitterDigits').on('click', function() {
+        UserView.connectTwitterDigits();
+        Helpers.log('connecting with twitterDigits');
+
+        return false;
+      });
+
       $('#signupQB').on('click', function() {
         Helpers.log('signup with QB');
         UserView.signupQB();
@@ -410,10 +417,6 @@ define([
 
       /* button "back"
       ----------------------------------------------------- */
-      $('.back_to_welcome_page').on('click', function() {
-        UserView.logout();
-      });
-
       $('.back_to_login_page').on('click', function() {
         UserView.loginQB();
       });
