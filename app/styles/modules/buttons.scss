@@ -1,8 +1,16 @@
 /* buttons */
-.btn {
+.btn,
+.btn:hover,
+.btn:focus {
   color: #fff;
   text-align: center;
+  box-shadow: none;
 }
+  button:hover,
+  button:focus {
+    background-color: initial;
+  }
+
   .btn_form {
     width: 100%;
     font-size: 2.3vh;
@@ -11,33 +19,116 @@
     font-weight: 300;
     text-transform: uppercase;
   }
-    .twitterDigits {
-      margin-bottom: 3vh;
-      line-height: 8vh;
+  .l-welcome_btn {
+    width: 304px;
+    height: 40px;
+    display: block;
+    position: relative;
+    margin: 0 auto;
+    border-radius: 2px;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .l-welcome_btn_green,
+  .l-welcome_btn_green:hover,
+  .l-welcome_btn_green:focus {
+    margin-top: 76px;
+    background-color: #28c849;
+    color: #ffffff;
+  }
+  .l-welcome_btn_white,
+  .l-welcome_btn_white:hover,
+  .l-welcome_btn_white:focus {
+    margin-top: 16px;
+    background-color: #ffffff;
+    color: #6e6e6e;
+  }
+  .l-btn_login,
+  .l-btn_login:hover,
+  .l-btn_login:focus {
+    margin: 20px 0 9px 0;
+    background-color: #28c849;
+    color: #ffffff;
+  }
+  .l-btn_login_fb,
+  .l-btn_login_fb:hover,
+  .l-btn_login_fb:focus {
+    margin: 9px 0 35px 0;
+    background-color: #4e70a8;
+    color: #ffffff;
+  }
+  .l-btn_reset,
+  .l-btn_reset:hover,
+  .l-btn_reset:focus  {
+    margin-top: 24px;
+    background-color: #28c849;
+    color: #ffffff;
+  }
+    .i-btn_icon_fb {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      background: image-url('fb-logo.svg') no-repeat center;
+      margin-right: 7px;
+      vertical-align: middle;
     }
-    .btn_signup {
-      margin-bottom: 4vh;
+  .l-welcome_footer_logo a {
+    display: inline-block;
+    text-align: left;
+  }
+    .i-mini_logo {
+      width: 22px;
+      height: 22px;
+      background: image-url('qmweb-lounch-qblogo.svg') no-repeat center;
     }
-    .btn_login {
-      margin-bottom: 1.5vh;
-    }
-    .btn_reset {
-      margin-top: 5vh;
-      margin-bottom: 3.5vh;
-    }
-      .btn_fb {
-        background: #3d5b99;
+      .by_QB {
+        margin-left: 6px;
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: normal;
+        color: #959595;
       }
-      .btn_qb {
-        background: #00c72d;
+  .l-welcome_download {
+    display: inline-block;
+    text-align: right;
+    float: right;
+  }
+    .l-welcome_download_app {
+      margin-left: 16px;
+    }
+      .i-appstore {
+        width: 24px;
+        height: 24px;
+        background: image-url('ic-appstore.svg') no-repeat center;
       }
-  .btn_add {
+      .i-android {
+        width: 24px;
+        height: 24px;
+        background: image-url('ic-android.svg') no-repeat center;
+      }
+
+  .i-back_login {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: image-url('ic-arrow-back.svg') no-repeat center;
+    margin-right: 7px;
+  }
+
+  button.btn.btn_add,
+  button.btn.btn_add:hover,
+  button.btn.btn_add:focus  {
     width: 33vh;
     font-size: 2.4vh;
     line-height: 5.8vh;
     border-radius: 3.2vh;
   }
-    .btn_invite {
+    button.btn_invite,
+    button.btn_invite:hover,
+    button.btn_invite:focus {
       margin-bottom: 2vh;
       background: #ff4945;
     }
@@ -51,7 +142,9 @@
     .btn_share {
       background: #3b5998;
     }
-  .btn_search {
+  button.btn.btn_search,
+  button.btn.btn_search:hover,
+  button.btn.btn_search:focus {
     display: block;
     width: 285px;
     margin: 20px auto 0;
@@ -60,11 +153,23 @@
     background: #0d70b3;
     border-radius: 7px;
   }
+    // .btn_search:hover {
+    //   background-color: #0d70b3;
+    // }
   .btn_popup {
     width: 100%;
     font-size: 24px;
     line-height: 60px;
     background: #0d70b3;
+  }
+  .btn.btn_popup.btn_popup_changepass.without_M,
+  .btn.btn_popup.btn_popup_changepass.without_M:hover,
+  .btn.btn_popup.btn_popup_changepass.without_M:focus {
+    display: block;
+    width: 420px;
+    height: 42px;
+    background: #0d70b3;
+    margin: 0 auto;
   }
 
 .btn_chat {
@@ -200,3 +305,23 @@
     margin-right: 8px;
     vertical-align: text-top;
   }
+
+.btn.without_M,
+.btn-flat.without_M,
+.btn-large.without_M,
+.btn.without_M:hover,
+.btn-large.without_M:hover,
+.btn-flat.without_M:hover,
+.btn.without_M:focus,
+.btn-large.without_M:focus,
+.btn-flat.without_M:focus {
+  border: none;
+  border-radius: initial;
+  height: auto;
+  line-height: initial;
+  outline: 0;
+  padding: initial;
+  text-transform: initial;
+  vertical-align: initial;
+  -webkit-tap-highlight-color: initial;
+}

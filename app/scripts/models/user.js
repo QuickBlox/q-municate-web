@@ -33,7 +33,7 @@ define([
             'provider': 'twitter_digits',
             'twitter_digits': onLogin.oauth_echo_headers
           };
-          
+
           that.providerConnect(params);
         })
         .fail(function(error) {
@@ -245,17 +245,14 @@ define([
             Helpers.log('User', self);
 
             QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
-              if (self._remember) {
-                self.rememberMe();
-              }
-
+              self.rememberMe();
               UserView.successFormCallback();
               DialogView.prepareDownloading(roster);
               DialogView.downloadDialogs(roster);
             });
 
           });
-        }, self._remember);
+        }, true);
       }
     },
 

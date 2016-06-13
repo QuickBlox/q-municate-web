@@ -136,7 +136,13 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           if (err) {
             Helpers.log(err.detail);
           } else {
-            Session.update({ date: new Date(), authParams: Session.encrypt(Session.authParams) });
+            if (Session.token) {
+              Session.update({ token: res.token });
+            } else {
+              Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
+            }
+
+            Session.update({ date: new Date() });
             callback(user);
           }
         });
