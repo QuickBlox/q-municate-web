@@ -419,6 +419,7 @@ define([
       ----------------------------------------------------- */
       $('.j-back_to_login_page').on('click', function() {
         UserView.loginQB();
+        $('.j-success_callback').remove();
       });
 
       /* signup page
