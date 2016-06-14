@@ -48,9 +48,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
               self.createSession(Session.authParams, callback, Session._remember);
             });
           } else if (Session.authParams.provider === 'twitter_digits') {
-            self.getTwitterDigits(function(user) {
-              Helpers.log('QB SDK: User has logged', user);
-            });
+            self.getTwitterDigits(callback);
           } else {
             self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
             Session.encrypt(Session.authParams);
@@ -136,14 +134,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           if (err) {
             Helpers.log(err.detail);
           } else {
-            if (Session.token) {
-              Session.update({ token: res.token });
-            } else {
-              Session.create({ token: res.token, authParams: Session.encrypt(params) }, isRemember);
-            }
-
-            Session.update({ date: new Date() });
-            callback(user);
+            Session.update({ date: new Date(), authParams: Session.encrypt(Session.authParams) });
+            callback(session);
           }
         });
       }, Session._remember);
