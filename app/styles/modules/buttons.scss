@@ -26,7 +26,7 @@
     position: relative;
     margin: 0 auto;
     border-radius: 2px;
-    font-family: Roboto;
+    font-family: "Roboto", sans-serif;
     font-size: 14px;
     font-weight: 500;
     text-align: center;
@@ -75,6 +75,7 @@
       margin-right: 7px;
       vertical-align: middle;
     }
+
   .l-welcome_footer_logo a {
     display: inline-block;
     text-align: left;
@@ -82,11 +83,11 @@
     .i-mini_logo {
       width: 22px;
       height: 22px;
-      background: image-url('qmweb-lounch-qblogo.svg') no-repeat center;
+      background: image-url('qmweb-launch-qblogo.svg') no-repeat center;
     }
       .by_QB {
         margin-left: 6px;
-        font-family: Roboto;
+        font-family: "Roboto", sans-serif;
         font-size: 13px;
         font-weight: normal;
         color: #959595;
@@ -290,11 +291,14 @@
     vertical-align: text-top;
   }
   .btn-icon_invite {
-    width: 2.5vh;
+    display: inline-block;
+    width: 25px;
+    height: 29px;
+    margin-right: 20px;
+    background: image-url('icon-invite.svg') no-repeat center;
   }
   .btn-icon_invite_contacts {
     width: 25px;
-    margin-right: 20px;
   }
   .btn-icon_share {
     width: 2.4vh;

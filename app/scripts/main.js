@@ -101,7 +101,12 @@ requirejs([
     // Application initialization
     $(function() {
         $.ajaxSetup({ cache: true });
-        // Materialize sdk
+
+        /* Materialize sdk
+         *
+         * Not included in requirejs dependencies as required hammer.js,
+         * which often creates problems when loading
+         */
         $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js', function() {
           Helpers.log('Materialize connected');
         });

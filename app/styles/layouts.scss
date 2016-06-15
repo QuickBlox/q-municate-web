@@ -72,6 +72,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
 }
 
 .l-welcome_container.reset_pas {
@@ -97,7 +98,7 @@
       width: 283px;
       height: 49px;
       margin: 35px auto 0;
-      font-family: Roboto;
+      font-family: "Roboto", sans-serif;
       text-transform: uppercase;
       font-size: 42px;
       font-weight: 300;
@@ -108,7 +109,7 @@
       margin: 6px auto 0;
       width: 109px;
       height: 19px;
-      font-family: Roboto;
+      font-family: "Roboto", sans-serif;
       font-size: 16px;
       font-weight: normal;
       color: #00bf28;
@@ -128,7 +129,7 @@
       position: absolute;
       top: 51px;
       left: 118px;
-      font-family: Roboto;
+      font-family: "Roboto", sans-serif;
       text-transform: uppercase;
       font-size: 22px;
       font-weight: 300;
@@ -141,7 +142,7 @@
       position: absolute;
       top: 80px;
       left: 118px;
-      font-family: Roboto;
+      font-family: "Roboto", sans-serif;
       font-size: 14px;
       font-weight: normal;
       color: #959595;
@@ -164,6 +165,7 @@
   top: 75%;
   left: 50%;
   transform: translate(-50%,-50%);
+  -webkit-transform: translate(-50%, -50%);
 }
 
 .l-welcome_links {
@@ -181,7 +183,7 @@
 }
 
 .l-container {
-  height: calc(100% - 60px);
+  height: 100%;
   background: #fff;
   border: 1px solid #f2f2f2;
   border-top: 0;
