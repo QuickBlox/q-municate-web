@@ -27,12 +27,11 @@
   <!-- endbuild -->
 
 </head>
-<body class="is-welcome">
-  <!--[if lt IE 10]>
+  <body class="is-welcome">
+    <!--[if lt IE 10]>
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-  <![endif]-->
+    <![endif]-->
 
-  <div class="l-wrapper">
     <section id="welcomePage" class="l-page">
       <div class="l-welcome_container">
         <div class="l-welcome_main_logo">
@@ -76,11 +75,11 @@
         <div class="l-welcome_block l-welcome_text_login">Log In</div>
         <form class="l-form l-form_login" action="#">
           <span class="text_error">Error</span>
-          <div class="input-field login_email">
+          <div class="input-field">
             <input id="login-email" class="form-input input_email" type="email" required>
             <label for="login-email">Email</label>
           </div>
-          <div class="input-field login_password">
+          <div class="input-field">
             <input id="login-password" class="form-input pattern-pass input_pass" type="password" required>
             <label for="login-password">Password</label>
           </div>
@@ -130,8 +129,8 @@
               Enter the email you registered with Q-municate</br>and we’ll send you a link to reset your password.
             </span>
             <span class="text text_error text_error_reset">Error</span>
-            <div class="input-field login_email">
-              <input id="forgot-emaill" class="form-input input_email" type="email" required>
+            <div class="input-field">
+              <input id="forgot-email" class="form-input input_email" type="email" required>
               <label for="login-email">Email</label>
             </div>
             <button id="forgotForm" class="btn l-welcome_btn l-btn_reset">continue</button>
@@ -162,39 +161,7 @@
       </div>
     </section>
 
-    <section id="resetPage" class="l-page is-hidden">
-      <div class="l-container l-flexbox l-flexbox_column">
-        <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
-          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.svg" alt="Q-municate">
-          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.svg" alt="Q-municate">
-          <div class="download">
-            <a class="download-app" href="#"><img src="images/app-android.svg" alt="download Q-municate Android"></a>
-            <a class="download-app" href="#"><img src="images/app-ios.svg" alt="download Q-municate iOS"></a>
-          </div>
-        </header>
-        <form class="l-form l-flexbox l-flexbox_column" action="#" autocomplete="off">
-          <h3 class="form-header">Reset your password</h3>
-          <span class="text text_error">Error</span>
-          <div class="chroma-hash">
-            <input id="reset-password" class="form-input pattern-pass" type="password" placeholder="New password" required>
-          </div>
-          <button id="resetForm" class="btn btn_form btn_reset btn_qb">Reset password</button>
-        </form>
-      </div>
-      <footer class="l-footer l-flexbox l-flexbox_flexbetween">
-        <div class="footer-logo">
-          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
-        </div>
-        <nav class="footer-links">
-          <ul>
-            <li class="footer-links-item"><a href="#">Support</a></li>
-            <li class="footer-links-item"><a href="#">FAQ</a></li>
-            <li class="footer-links-item"><a href="#">Help</a></li>
-          </ul>
-        </nav>
-      </footer>
-    </section>
-
+    <div class="l-wrapper">
     <section id="mainPage" class="l-page is-hidden">
       <div class="l-container">
         <header class="l-header l-flexbox l-flexbox_flexbetween">
@@ -272,7 +239,7 @@
               <div class="l-cap l-flexbox l-flexbox_column">
                 <span class="cap-text">Is anybody here?</span>
                 <img class="cap-anybody" src="images/anybody.png" alt="QuickBlox anybody">
-                <button class="search btn btn_add btn_invite without_M"><img class="btn-icon btn-icon_invite" src="images/icon-invite.svg" alt="invite">Search for Friends</button>
+                <button class="search btn btn_add btn_invite without_M"><div class="btn-icon btn-icon_invite"></div>Search for Friends</button>
                 <!-- <button class="btn btn_add btn_share"><img class="btn-icon btn-icon_share" src="images/icon-fb.svg" alt="fb">Share on Facebook</button> -->
               </div>
             </section>
