@@ -1,332 +1,332 @@
 /* Flexbox
 --------------------------------------------------*/
 .l-flexbox {
-  display: -webkit-flex; /* For Safari 6.1+ */
-  display: -ms-flexbox; /* For IE10 */
-  display: flex;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
+    display: -webkit-flex; /* For Safari 6.1+ */
+    display: -ms-flexbox; /* For IE10 */
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
 }
 .l-flexbox_inline {
-  display: -webkit-inline-flex; /* For Safari 6.1+ */
-  display: -ms-inline-flexbox; /* For IE10 */
-  display: inline-flex;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
-  width: 100%;
+    display: -webkit-inline-flex; /* For Safari 6.1+ */
+    display: -ms-inline-flexbox; /* For IE10 */
+    display: inline-flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 100%;
 }
 .l-flexbox_column {
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
 }
 .l-flexbox_flexcenter {
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
 }
 .l-flexbox_flexend {
-  -webkit-justify-content: flex-end;
-  -ms-flex-pack: end;
-  justify-content: flex-end;
+    -webkit-justify-content: flex-end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
 }
 .l-flexbox_flexbetween {
-  -webkit-justify-content: space-between;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
 }
 .l-flexbox_flexwrap {
-  -webkit-flex-wrap: wrap;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
 }
 .l-flexbox_alignstretch {
-  -webkit-align-items: stretch;
-  -ms-flex-align: stretch;
-  align-items: stretch;
+    -webkit-align-items: stretch;
+    -ms-flex-align: stretch;
+    align-items: stretch;
 }
 
 /* Layouts
 --------------------------------------------------*/
 .l-wrapper {
-  position: relative;
-  width: 1000px;
-  height: 100%;
-  margin: 0 auto;
+    position: relative;
+    width: 1000px;
+    height: 100%;
+    margin: 0 auto;
 }
 
 .l-page {
-  height: 100%;
-  min-height: 520px;
+    height: 100%;
+    min-height: 520px;
 }
 
 .l-welcome_container {
-  width: 416px;
-  height: 488px;
-  border-radius: 4px;
-  background-color: #fff;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .2);
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
+    width: 416px;
+    height: 488px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .2);
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
 }
 
 .l-welcome_container.reset_pas {
-  height: 318px;
+    height: 318px;
 }
 
 .l-welcome_main_logo {
-  padding-top: 79px;
+    padding-top: 79px;
 }
 
 .l-welcome_block {
-  text-align: center;
-  vertical-align: middle;
-  position: relative;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
 }
-  .l-welcome_logo {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto;
-    background: image-url('qm-logo.svg') 50% no-repeat;
-  }
-    .l-welcome_text_logo {
-      width: 283px;
-      height: 49px;
-      margin: 35px auto 0;
-      font-family: "Roboto", sans-serif;
-      text-transform: uppercase;
-      font-size: 42px;
-      font-weight: 300;
-      letter-spacing: 3.7px;
-      color: #6e6e6e;
+    .l-welcome_logo {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+        background: image-url('qm-logo.svg') 50% no-repeat;
     }
-    .l-welcome_text_description {
-      margin: 6px auto 0;
-      width: 109px;
-      height: 19px;
-      font-family: "Roboto", sans-serif;
-      font-size: 16px;
-      font-weight: normal;
-      color: #00bf28;
+        .l-welcome_text_logo {
+            width: 283px;
+            height: 49px;
+            margin: 35px auto 0;
+            font-family: "Roboto", sans-serif;
+            text-transform: uppercase;
+            font-size: 42px;
+            font-weight: 300;
+            letter-spacing: 3.7px;
+            color: #6e6e6e;
+        }
+        .l-welcome_text_description {
+            margin: 6px auto 0;
+            width: 109px;
+            height: 19px;
+            font-family: "Roboto", sans-serif;
+            font-size: 16px;
+            font-weight: normal;
+            color: #00bf28;
+        }
+    .l-welcome_logo_login {
+        width: 46px;
+        height: 46px;
+        position: absolute;
+        top: 50px;
+        left: 56px;
+        background: image-url('qm-logo.svg') 50% no-repeat;
+        background-size: cover;
     }
-  .l-welcome_logo_login {
-    width: 46px;
-    height: 46px;
-    position: absolute;
-    top: 50px;
-    left: 56px;
-    background: image-url('qm-logo.svg') 50% no-repeat;
-    background-size: cover;
-  }
-    .l-welcome_text_logo_login {
-      width: 150px;
-      height: 25px;
-      position: absolute;
-      top: 51px;
-      left: 118px;
-      font-family: "Roboto", sans-serif;
-      text-transform: uppercase;
-      font-size: 22px;
-      font-weight: 300;
-      letter-spacing: 2px;
-      color: #6e6e6e;
+        .l-welcome_text_logo_login {
+            width: 150px;
+            height: 25px;
+            position: absolute;
+            top: 51px;
+            left: 118px;
+            font-family: "Roboto", sans-serif;
+            text-transform: uppercase;
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #6e6e6e;
+        }
+        .l-welcome_text_login {
+            width: 40px;
+            height: 16px;
+            position: absolute;
+            top: 80px;
+            left: 118px;
+            font-family: "Roboto", sans-serif;
+            font-size: 14px;
+            font-weight: normal;
+            color: #959595;
+        }
+
+    .l-form {
+        position: relative;
+        left: 56px;
+        width: 304px;
     }
-    .l-welcome_text_login {
-      width: 40px;
-      height: 16px;
-      position: absolute;
-      top: 80px;
-      left: 118px;
-      font-family: "Roboto", sans-serif;
-      font-size: 14px;
-      font-weight: normal;
-      color: #959595;
+        .l-form_login {
+            top: 120px;
+        }
+        .l-form_reset {
+            top: 18px;
+        }
+
+    .l-spinner {
+        position: absolute;
+        top: 75%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        -webkit-transform: translate(-50%, -50%);
     }
 
-.l-form {
-  position: relative;
-  left: 56px;
-  width: 304px;
-}
-  .l-form_login {
-    top: 120px;
-  }
-  .l-form_reset {
-    top: 18px;
-  }
-
-.l-spinner {
-  position: absolute;
-  top: 75%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  -webkit-transform: translate(-50%, -50%);
-}
-
-.l-welcome_links {
-  position: absolute;;
-  width: 416px;
-  height: 24px;
-  bottom: -40px;
-}
-.l-welcome_links * {
-  display: inline-block;
-  vertical-align: middle;
-}
-.l-welcome_header_forgot {
-  padding: 50px 0 0 53px;
-}
-
-.l-container {
-  height: 100%;
-  background: #fff;
-  border: 1px solid #f2f2f2;
-  border-top: 0;
-}
-
-.l-header {
-  z-index: 2;
-  background-color: #fff;
-  position: relative;
-  height: 80px;
-  padding-left: 20px;
-  border-bottom: 2px solid #00bf28;
-}
-
-.l-content {
-  height: calc(100% - 80px);
-}
-
-.l-sidebar {
-  width: 330px;
-  height: 100%;
-  border-right: 2px solid #f2f2f2;
-}
-  .l-search {
-    z-index: 1;
-    background-color: #fff;
-    height: 60px;
-    padding: 15px;
-  }
-  .l-list-wrap {
-    height: calc(100% - 60px);
-    padding-bottom: 20px;
-  }
-    .l-list-header {
-      padding: 0 20px;
-      background: #f2f2f2;
+    .l-welcome_links {
+        position: absolute;;
+        width: 416px;
+        height: 24px;
+        bottom: -40px;
     }
-      .l-list-header-title {
-        font-size: 15px;
-        line-height: 30px;
-        color: #999;
-        text-transform: uppercase;
-      }
+    .l-welcome_links * {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .l-welcome_header_forgot {
+        padding: 50px 0 0 53px;
+    }
+
+    .l-container {
+        height: 100%;
+        background: #fff;
+        border: 1px solid #f2f2f2;
+        border-top: 0;
+    }
+
+    .l-header {
+        z-index: 2;
+        background-color: #fff;
+        position: relative;
+        height: 80px;
+        padding-left: 20px;
+        border-bottom: 2px solid #00bf28;
+    }
+
+    .l-content {
+        height: calc(100% - 80px);
+    }
+
+    .l-sidebar {
+        width: 330px;
+        height: 100%;
+        border-right: 2px solid #f2f2f2;
+    }
+    .l-search {
+        z-index: 1;
+        background-color: #fff;
+        height: 60px;
+        padding: 15px;
+    }
+        .l-list-wrap {
+            height: calc(100% - 60px);
+            padding-bottom: 20px;
+        }
+        .l-list-header {
+            padding: 0 20px;
+            background: #f2f2f2;
+        }
+            .l-list-header-title {
+                font-size: 15px;
+                line-height: 30px;
+                color: #999;
+                text-transform: uppercase;
+            }
 
 .l-workspace-wrap {
-  position: relative;
-  width: calc(100% - 330px);
-  height: 100%;
-}
-  .l-workspace {
+    position: relative;
+    width: calc(100% - 330px);
     height: 100%;
-    overflow: visible;
-  }
-    .l-cap {
-      height: 63vh;
-      margin: auto;
+}
+    .l-workspace {
+        height: 100%;
+        overflow: visible;
     }
-    .l-cap_contacts {
-      height: auto;
-    }
+        .l-cap {
+            height: 63vh;
+            margin: auto;
+        }
+        .l-cap_contacts {
+            height: auto;
+        }
 
 .l-footer {
-  z-index: 2;
-  background-color: #fff;
-  position: relative;
-  height: 60px;
-  padding: 0 5px;
+    z-index: 2;
+    background-color: #fff;
+    position: relative;
+    height: 60px;
+    padding: 0 5px;
 }
 
 .l-app-version {
-  height: 60px;
-  line-height: 60px;
-  font-size: 14px;
-  color: #999;
+    height: 60px;
+    line-height: 60px;
+    font-size: 14px;
+    color: #999;
 }
 
 /* Chats
 --------------------------------------------------*/
 .l-chat_group {
-  position: relative;
+    position: relative;
 }
-  .l-chat-header {
-    z-index: 1;
-    background-color: #fff;
-    position: relative;
-    height: 75px;
-    padding: 0 20px;
-    background: #f8f8f8;
-    border-bottom: 1px solid #f2f2f2;
-  }
-  .l-chat_group .l-chat-header {
-    height: 55px;
-  }
-
-  .l-chat-content {
-    position: relative;
-    height: calc(100% - 75px - 90px);
-    overflow-y: auto;
-  }
-  .l-chat_group .l-chat-content {
-    height: calc(100% - 55px - 90px);
-  }
-    .is-request .l-chat-content {
-      height: calc(100% - 75px);
+    .l-chat-header {
+        z-index: 1;
+        background-color: #fff;
+        position: relative;
+        height: 75px;
+        padding: 0 20px;
+        background: #f8f8f8;
+        border-bottom: 1px solid #f2f2f2;
     }
-    .l-chat_group .l-chat-content_min {
-      margin-top: 83px;
-      height: calc(100% - 55px - 90px - 83px);
+    .l-chat_group .l-chat-header {
+        height: 55px;
     }
 
-  .l-chat-footer {
-    z-index: 1;
-    background-color: #fff;
-    height: 90px;
-    padding: 0px 5px 5px 5px;
-    border-top: 1px solid #f2f2f2;
-    position: relative;
-  }
-    .l-message {
-      position: relative;
-      height: 55px;
+    .l-chat-content {
+        position: relative;
+        height: calc(100% - 75px - 90px);
+        overflow-y: auto;
     }
-    .l-typing {
-      display: inline-block;
-      vertical-align: top;
-      font-size: 15px;
-      height: 34px;
-      width: 75%;
+    .l-chat_group .l-chat-content {
+        height: calc(100% - 55px - 90px);
     }
-    .l-input-menu {
-      display: inline-block;
-      vertical-align: top;
-      text-align: -moz-left;
-      text-align: center;
-      height: 33px;
-      width: 25%;
-      position: relative;
+        .is-request .l-chat-content {
+            height: calc(100% - 75px);
+        }
+        .l-chat_group .l-chat-content_min {
+            margin-top: 83px;
+            height: calc(100% - 55px - 90px - 83px);
+        }
+
+    .l-chat-footer {
+        z-index: 1;
+        background-color: #fff;
+        height: 90px;
+        padding: 0px 5px 5px 5px;
+        border-top: 1px solid #f2f2f2;
+        position: relative;
     }
-      .l-input-menu .l-input-buttons {
-        display: inline-block;
-        margin-right: 15px;
-        height: 100%;
-      }
-      .l-input-menu .l-input-buttons:last-child {
-        margin-right: 0;
-      }
+        .l-message {
+            position: relative;
+            height: 55px;
+        }
+        .l-typing {
+            display: inline-block;
+            vertical-align: top;
+            font-size: 15px;
+            height: 34px;
+            width: 75%;
+        }
+        .l-input-menu {
+            display: inline-block;
+            vertical-align: top;
+            text-align: -moz-left;
+            text-align: center;
+            height: 33px;
+            width: 25%;
+            position: relative;
+        }
+            .l-input-menu .l-input-buttons {
+                display: inline-block;
+                margin-right: 15px;
+                height: 100%;
+            }
+            .l-input-menu .l-input-buttons:last-child {
+                margin-right: 0;
+            }
