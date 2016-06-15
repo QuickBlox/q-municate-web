@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>D4CCDAF9-A495-4F85-8AC5-0F57B669745A</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="Settings" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(-514.000000, -467.000000)" id="Group-5">
+            <g transform="translate(488.000000, 201.000000)">
+                <g id="Group-8">
+                    <g id="Group-4-Copy-3" transform="translate(24.000000, 256.000000)">
+                        <g id="ic_feedback" transform="translate(0.000000, 8.000000)">
+                            <polygon id="Bounds" points="0 0 24 0 24 24 0 24"></polygon>
+                            <path d="M20,2 L4,2 C2.9,2 2.01,2.9 2.01,4 L2,22 L6,18 L20,18 C21.1,18 22,17.1 22,16 L22,4 C22,2.9 21.1,2 20,2 L20,2 Z M13,14 L11,14 L11,12 L13,12 L13,14 L13,14 Z M13,10 L11,10 L11,6 L13,6 L13,10 L13,10 Z" id="Icon" fill="#6E6E6E"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
