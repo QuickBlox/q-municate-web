@@ -1,3 +1,4 @@
+// settings popup
 //
 .popup_settings {
     width: 464px;
@@ -5,7 +6,9 @@
     border-radius: 4px;
     background-color: #ffffff;
 }
-
+//
+//
+// Settings title
 //
 .header_settings {
     width: 100%;
@@ -33,7 +36,9 @@
         background: image-url('ic-close.svg') no-repeat center;
         cursor: pointer;
     }
-
+//
+//
+// Users settings
 //
 .body_settings {
     padding: 16px 24px;
@@ -69,7 +74,9 @@
         label.settings_label {
             display: inline-block;
         }
-
+//
+//
+// footer links
 //
 .footer_settings_menu {
     width: 100%;
@@ -80,12 +87,7 @@
     width: 100%;
     height: 40px;
     line-height: 40px;
-    font-family: 'Roboto', sans-serif;
-    font-size: 13px;
-    font-weight: normal;
-    color: #1f1f1f;
     vertical-align: middle;
-    cursor: pointer;
     position: relative;
 }
     .i-footer_settings {
@@ -94,24 +96,32 @@
         width: 24px;
         height: 24px;
     }
-        .i-feedback_settings {
-            background: image-url('ic-feedback.svg') no-repeat center;
+        .footer_settings_label {
+            display: inline-block;
+            padding-left: 40px;
         }
-        .i-help_settings {
-            left: 1px;
-            background: image-url('ic-help-outline.svg') no-repeat center;
-        }
-    .footer_settings_label {
-        display: inline-block;
-        padding-left: 40px;
-    }
+            .footer_settings_link {
+                text-decoration: none;
+                font-family: 'Roboto', sans-serif;
+                font-size: 13px;
+                font-weight: normal;
+                color: #1f1f1f;
+            }
+                .footer_settings_link:hover,
+                .toogle_settings:hover .settings_label {
+                    color: #238339;
+                }
+            .i-feedback_settings {
+                background: image-url('ic-feedback.svg') no-repeat center;
+            }
+            .i-help_settings {
+                background: image-url('ic-help-outline.svg') no-repeat center;
+            }
 
 //
-.body_settings label:hover {
-    color: #238339;
-}
-
+//
 // switches for users settings
+//
 .switch label .lever {
     width: 36px;
     height: 14px;

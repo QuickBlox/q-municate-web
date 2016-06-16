@@ -340,10 +340,11 @@
       </div>
     </section>
 
+    <!-- Popup with users settings (on/off sounds and local notification for calls or messages) -->
     <section id="popupSettings" class="popup popup_settings is-open j-settings">
         <header class="header_settings">
-          <span class="header_settings_label">Settings</span>
-          <div class="i-close_settings j-close_settings"></div>
+            <span class="header_settings_label">Settings</span>
+            <div class="i-close_settings j-close_settings"></div>
         </header>
         <div class="body_settings">
             <ul class="container_settings">
@@ -382,13 +383,18 @@
                 </li>
             </ul>
             <footer class="footer_settings_menu">
+                <!-- Disabled, because fitch send feedback must be added in future -->
                 <label class="footer_settings">
-                    <div class="i-feedback_settings i-footer_settings"></div>
-                    <span class="footer_settings_label">Write Feedback</span>
+                    <a class="footer_settings_link" href="https://github.com/QuickBlox/q-municate-web/issues/new" target="_blank">
+                        <div class="i-feedback_settings i-footer_settings"></div>
+                        <span class="footer_settings_label">Write Feedback</span>
+                    </a>
                 </label>
                 <label class="footer_settings">
-                    <div class="i-help_settings i-footer_settings"></div>
-                    <span class="footer_settings_label">About</span>
+                    <a class="footer_settings_link" href="http://q-municate.com/" target="_blank">
+                        <div class="i-help_settings i-footer_settings"></div>
+                        <span class="footer_settings_label">About</span>
+                    </a>
                 </label>
             </footer>
         </div>
