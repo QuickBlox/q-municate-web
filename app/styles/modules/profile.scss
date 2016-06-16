@@ -110,12 +110,16 @@
   margin-bottom: 10px;
   line-height: 30px;
 }
-  .userProfile-filename {
+  input.userProfile-filename.without_M[type=text],
+  input.userProfile-filename.without_M[type=text]:focus:not([readonly]) {
     width: 285px;
     padding: 5px 0;
     color: #333;
     border: 0;
   }
+    input.userProfile-filename.without_M[type=text]:focus:not([readonly]) {
+      border-color: #66afe9;
+    }
   .userProfile-header-pencil {
     display: none;
     width: 30px;
@@ -132,11 +136,15 @@
     display: none !important;
   }
 
-.userProfile-phone {
+input.userProfile-phone.without_M[type=text],
+input.userProfile-phone.without_M[type=text]:focus:not([readonly]) {
   width: 330px;
   padding: 5px 0;
   border: 0;
 }
+  input.userProfile-phone.without_M[type=text]:focus:not([readonly]) {
+    border-color: #66afe9;
+  }
 
 .btn_userProfile {
   font-size: 14px;
@@ -222,6 +230,14 @@
   position: relative;
   top: -40px;
   color: green;
+}
+
+input.form-input-password[type=password] {
+  border-bottom: 2px solid #959595;
+}
+input.form-input-password[type=password]:focus:not([readonly]) {
+  border-bottom: 2px solid #28ca4a;
+  box-shadow: none;
 }
 
 /* Editable */

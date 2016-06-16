@@ -101,6 +101,17 @@ requirejs([
     // Application initialization
     $(function() {
         $.ajaxSetup({ cache: true });
+
+        /* Materialize sdk
+         *
+         * Not included in requirejs dependencies as required hammer.js,
+         * which often creates problems when loading
+         */
+        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js', function() {
+          Helpers.log('Materialize connected');
+        });
+
+        // facebook sdk
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
             FB.init({
                 appId: QMCONFIG.fbAccount.appId,

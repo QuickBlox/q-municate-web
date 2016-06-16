@@ -90,7 +90,7 @@ define([
     },
 
     successSendEmailCallback: function() {
-      var alert = '<div class="note l-form l-flexbox l-flexbox_column">';
+      var alert = '<div class="j-success_callback note l-form l-flexbox l-flexbox_column">';
       alert += '<span class="text text_alert text_alert_success">Success!</span>';
       alert += '<span class="text">Please check your email and click a link in the letter in order to reset your password</span>';
       alert += '</div>';

@@ -7,18 +7,14 @@
   visibility: hidden;
 }
 
-body.is-welcome {
-  background: image-url('bg.jpg') no-repeat;
-  background-size: 100% 100%;
+body.is-welcome .l-wrapper {
+  border-left: 1px solid #f2f2f2;
+  border-right: 1px solid #f2f2f2;
+  background: rgba(255, 255, 255, .6);
 }
-  body.is-welcome .l-wrapper {
-    border-left: 1px solid #f2f2f2;
-    border-right: 1px solid #f2f2f2;
-    background: rgba(255, 255, 255, .6);
-  }
-  body.is-welcome .l-app-version {
-    right: 25px;
-  }
+body.is-welcome .l-app-version {
+  right: 25px;
+}
 
 span.is-error {
   opacity: 1;

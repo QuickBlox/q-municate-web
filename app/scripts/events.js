@@ -409,7 +409,7 @@ define([
         UserView.signupQB();
       });
 
-      $('#loginQB').on('click', function(event) {
+      $('.j-login_QB').on('click', function(event) {
         Helpers.log('login wih QB');
         event.preventDefault();
         UserView.loginQB();
@@ -417,8 +417,9 @@ define([
 
       /* button "back"
       ----------------------------------------------------- */
-      $('.back_to_login_page').on('click', function() {
+      $('.j-back_to_login_page').on('click', function() {
         UserView.loginQB();
+        $('.j-success_callback').remove();
       });
 
       /* signup page
