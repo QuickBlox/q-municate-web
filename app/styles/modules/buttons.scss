@@ -122,10 +122,13 @@
     button.btn.btn_add,
     button.btn.btn_add:hover,
     button.btn.btn_add:focus  {
-        width: 33vh;
-        font-size: 2.4vh;
+        width: 325px;
+        font-size: 18px;
         line-height: 5.8vh;
-        border-radius: 3.2vh;
+        border-radius: 56px;
+        height: 56px;
+        line-height: 56px;
+        vertical-align: middle;
     }
         button.btn_invite,
         button.btn_invite:hover,
@@ -289,10 +292,13 @@
     }
     .btn-icon_invite {
         display: inline-block;
-        width: 25px;
-        height: 29px;
-        margin-right: 20px;
-        background: image-url('icon-invite.svg') no-repeat center;
+        width: 27px;
+        height: 33px;
+        position: relative;
+        top: -3px;
+        margin-right: 12px;
+        background: url('../images/icon-invite.svg?1464359307') no-repeat center;
+        vertical-align: middle;
     }
     .btn-icon_invite_contacts {
         width: 25px;

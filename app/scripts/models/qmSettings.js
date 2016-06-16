@@ -13,7 +13,7 @@ define([
         defaults: {
             massages_notify: true,
             calls_notify: true,
-            sounds: null
+            sounds: true
         },
 
         init: {
