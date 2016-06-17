@@ -101,6 +101,20 @@ define([
         profileView.render().openPopup();
       });
 
+        $('body').on('click', '#userSettings', function() {
+            removePopover();
+            $('.j-settings').addClass('is-overlay')
+                            .parent('.j-overlay').addClass('is-overlay');
+
+            return false;
+        });
+
+        $('body').on('click', '.j-close_settings', function() {
+            closePopup();
+
+            return false;
+        });
+
       $('body').on('click', '.btn_changePassword', function(event) {
         var changePassView = App.views.ChangePass,
             profileView = App.views.Profile;
@@ -409,10 +423,14 @@ define([
         UserView.signupQB();
       });
 
-      $('.j-login_QB').on('click', function(event) {
+      $('.j-login_QB').on('click', function() {
         Helpers.log('login wih QB');
-        event.preventDefault();
+
+        // removed class "active" (hotfix for input on qmdev.quickblox.com/qm.quickblox.com)
+        $('#loginPage .j-prepare_inputs').removeClass('active');
         UserView.loginQB();
+
+        return false;
       });
 
       /* button "back"
