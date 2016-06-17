@@ -423,10 +423,14 @@ define([
         UserView.signupQB();
       });
 
-      $('.j-login_QB').on('click', function(event) {
+      $('.j-login_QB').on('click', function() {
         Helpers.log('login wih QB');
-        event.preventDefault();
+
+        // removed class "active" (hotfix for input on qmdev.quickblox.com/qm.quickblox.com)
+        $('#loginPage .j-prepare_inputs').removeClass('active');
         UserView.loginQB();
+
+        return false;
       });
 
       /* button "back"
