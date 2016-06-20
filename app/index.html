@@ -169,7 +169,7 @@
           <div class="header-logo">
             <a id="home" href="#"><img src="images/logo-qmunicate.svg" alt="Q-municate"></a>
           </div>
-          <ul class="header-links l-flexbox">
+          <ol class="header-links l-flexbox">
             <li class="header-links-item is-hidden">
               <a id="share" href="#">
                 <img class="btn-icon btn-icon_fb_header icon-normal" src="images/icon-fb_header.svg" alt="fb">
@@ -183,7 +183,7 @@
             <li class="header-links-item">
               <a id="profile" href="#"><div class="avatar"></div></a>
             </li>
-          </ul>
+          </ol>
         </header>
         <div class="l-content l-flexbox">
 
@@ -357,34 +357,33 @@
                 </li>
                 <li class="messages_settings switch_settings">
                     <div class="switch">
-                        <label class="toogle_settings">
+                        <label class="toogle_settings j-toogle_settings">
                             <span class="settings_label">Messages Notifications</span>
-                            <input type="checkbox" class="j-messages_settings" checked>
+                            <input id="messages_notify" class="j-setings_notify" type="checkbox" checked>
                             <span class="lever"></span>
                         </label>
                     </div>
                 </li>
                 <li class="calls_settings switch_settings">
                     <div class="switch">
-                        <label class="toogle_settings">
+                        <label class="toogle_settings j-toogle_settings">
                             <span class="settings_label">Calls Notification</span>
-                            <input type="checkbox" class="j-calls_settings" checked>
+                            <input id="calls_notify" class="j-setings_notify" type="checkbox" checked>
                             <span class="lever"></span>
                         </label>
                     </div>
                 </li>
                 <li class="sound_settings switch_settings">
                     <div class="switch">
-                        <label class="toogle_settings">
+                        <label class="toogle_settings j-toogle_settings">
                             <span class="settings_label">Sounds</span>
-                            <input type="checkbox" class="j-sounds_settings" checked>
+                            <input id="sounds_notify" class="j-setings_notify" type="checkbox" checked>
                             <span class="lever"></span>
                         </label>
                     </div>
                 </li>
             </ul>
             <footer class="footer_settings_menu">
-                <!-- Disabled, because fitch send feedback must be added in future -->
                 <label class="footer_settings">
                     <a class="footer_settings_link" href="https://github.com/QuickBlox/q-municate-web/issues/new" target="_blank">
                         <div class="i-feedback_settings i-footer_settings"></div>
@@ -505,7 +504,7 @@
       <div class="popup-nofriends l-flexbox is-hidden">
         <div class="l-cap l-cap_contacts l-flexbox l-flexbox_column">
           <span class="cap-text cap-text_contacts">It's a little lonely<br>over here</span>
-          <button class="search btn btn_invite btn_invite_contacts">
+          <button class="search btn btn_invite btn_invite_contacts btn_add">
             <img class="btn-icon btn-icon_invite btn-icon_invite_contacts" src="images/icon-invite.svg" alt="invite">
             Search for Friends
           </button>

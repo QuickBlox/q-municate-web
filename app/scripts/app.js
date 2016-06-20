@@ -6,13 +6,13 @@
  */
 
 define([
-    'jquery', 'UserModule', 'SessionModule', 'ContactModule',
-    'DialogModule', 'MessageModule', 'AttachModule',
+    'jquery', 'UserModule', 'SessionModule', 'SettingsModule',
+    'ContactModule', 'DialogModule', 'MessageModule', 'AttachModule',
     'ContactListModule', 'VideoChatModule', 'UserView', 'DialogView',
     'MessageView', 'AttachView', 'ContactListView', 'VideoChatView',
     'Events', 'Helpers', 'QBApiCalls', 'config'
   ], function(
-    $, User, Session, Contact, Dialog,
+    $, User, Session, Settings, Contact, Dialog,
     Message, Attach, ContactList, VideoChat, UserView,
     DialogView, MessageView, AttachView, ContactListView,
     VideoChatView, Events, Helpers, QBApiCalls, QMCONFIG
@@ -22,6 +22,7 @@ define([
     this.models = {
       User: new User(this),
       Session: new Session(this),
+      Settings: new Settings(this),
       Contact: new Contact(this),
       Dialog: new Dialog(this),
       Message: new Message(this),
@@ -69,6 +70,7 @@ define([
       }
 
       this.events.init();
+      this.models.Settings.setUp();
 
       Helpers.log('App init', this);
     },

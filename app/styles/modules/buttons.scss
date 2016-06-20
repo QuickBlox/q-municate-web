@@ -122,9 +122,8 @@
     button.btn.btn_add,
     button.btn.btn_add:hover,
     button.btn.btn_add:focus  {
-        width: 325px;
-        font-size: 18px;
-        line-height: 5.8vh;
+        width: 300px;
+        font-size: 20px;
         border-radius: 56px;
         height: 56px;
         line-height: 56px;
@@ -136,12 +135,15 @@
             margin-bottom: 2vh;
             background: #ff4945;
         }
-        .btn_invite_contacts {
-            width: 330px;
-            font-size: 24px;
-            line-height: 58px;
-            border-radius: 32px;
-            margin-bottom: 20px;
+        button.btn.btn_invite_contacts {
+            width: 300px;
+            font-size: 20px;
+            border-radius: 56px;
+            height: 56px;
+            line-height: 56px;
+            transition: initial;
+            vertical-align: middle;
+            text-transform: none;
         }
         .btn_share {
             background: #3b5998;
@@ -328,7 +330,7 @@
     line-height: initial;
     outline: 0;
     padding: initial;
-    text-transform: initial;
+    text-transform: none;
     vertical-align: initial;
     -webkit-tap-highlight-color: initial;
 }
