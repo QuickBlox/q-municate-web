@@ -9,16 +9,15 @@ define([
 ], function($, Backbone, QMCONFIG) {
     'use strict';
 
-    var qmSettings;
+    var globalSettings;
 
     function Settings(app) {
         this.app = app;
-        qmSettings = this;
-
-        qmSettings = {
-            'messages_notify': false,
-            'calls_notify':    false,
-            'sounds_notify':   false
+        globalSettings = this;
+        globalSettings = {
+            'messages_notify': true,
+            'calls_notify':    true,
+            'sounds_notify':   true
         };
     }
 
@@ -26,35 +25,26 @@ define([
 
         setUp: function() {
             if (!localStorage['QM.settings']) {
-                localStorage.setItem('QM.settings', JSON.stringify(qmSettings));
+                localStorage.setItem('QM.settings', JSON.stringify(globalSettings));
 
                 return false;
             }
 
-            var storageObj = JSON.parse(localStorage['QM.settings']);
+            var storageSettings = JSON.parse(localStorage['QM.settings']);
 
-            // qmSettings = {
-            //     'messages_notify': storageObj.massages_notify || true,
-            //     'calls_notify':    storageObj.calls_notify    || true,
-            //     'sounds_notify':   storageObj.sounds_notify   || true
-            // };
+            globalSettings.messages_notify = storageSettings.massages_notify;
+            globalSettings.calls_notify    = storageSettings.calls_notify;
+            globalSettings.sounds_notify   = storageSettings.sounds_notify;
 
-            // qmSettings.messages_notify = storageObj.massages_notify || true;
-            // qmSettings.calls_notify    = storageObj.calls_notify    || false;
-            // qmSettings.sounds_notify   = storageObj.sounds_notify   || true;
-
-            for (var key in storageObj) {
+            for (var key in storageSettings) {
+                $('#' + key)[0].checked = storageSettings[key];
                 console.info(key, $('#' + key)[0].checked);
-                $('#' + key)[0].checked = storageObj[key];
             }
         },
 
         update: function(newStatus) {
-            qmSettings[newStatus.id] = newStatus.checked;
-
-console.info(newStatus.id, newStatus.checked);
-console.info(qmSettings);
-// localStorage.setItem('QM.settings', JSON.stringify(qmSettings));
+            globalSettings[newStatus.id] = newStatus.checked;
+            localStorage.setItem('QM.settings', JSON.stringify(globalSettings));
         },
 
     };
