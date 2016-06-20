@@ -884,7 +884,6 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
 
   function createAndShowNotification(msg, isHiddenChat) {
     if (!Settings.messages_notify) {
-        console.info(Settings.messages_notify);
         return false;
     }
 

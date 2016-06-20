@@ -1,7 +1,7 @@
 /**
- * 
+ *
  * htmlQM Module
- * 
+ *
  */
 
 define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Helpers) {
@@ -149,7 +149,16 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
 
       $html.empty();
       $html.append(_.template(htmlStr)(params));
-    } 
+    },
+
+    profilePopover: function() {
+        var html = $('<ul class="list-actions list-actions_profile popover">'+
+                     '<li class="list-item"><a id="userProfile" class="list-actions-action" href="#">Profile</a></li>'+
+                     '<li class="list-item"><a id="userSettings" class="list-actions-action" href="#">Settings</a></li>'+
+                     '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Log Out</a></li></ul>');
+
+        return html;
+    }
 
   };
 
@@ -159,7 +168,7 @@ define(['jquery', 'underscore', 'MainModule', 'Helpers'], function($, _, QM, Hel
       var htmlTemplate = _.template('<div class="popover_map"><a class="open_map" href="<%=mapLink%>" target="_blank">'+
                                     '<image class="static_map" src="<%=imgUrl%>"></a><div class="coner"><i class="icon_coner">'+
                                     '</i></div></div>')(params);
-                                    
+
       $('article#'+params.id).find('.message-geo')
        .addClass('with-geo')
        .append(htmlTemplate);
