@@ -70,7 +70,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
       if ($('#popupIncoming .mCSB_container').children().length === 0) {
         closePopup();
-        if (Settings.sounds_notify) {
+        if (Settings.userSettings.sounds_notify) {
             audioSignal.pause();
         }
       }
@@ -104,7 +104,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       });
       closePopup();
 
-      if (Settings.sounds_notify) {
+      if (Settings.userSettings.sounds_notify) {
         audioSignal.pause();
       }
 
@@ -151,7 +151,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         }
       }
 
-      if (Settings.sounds_notify) {
+      if (Settings.userSettings.sounds_notify) {
           callingSignal.pause();
           endCallSignal.play();
       }
@@ -252,7 +252,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     $incomings.find('.mCSB_container').prepend(htmlTpl);
     openPopup($incomings);
 
-    if (Settings.messages_notify) {
+    if (Settings.userSettings.messages_notify) {
         audioSignal.play();
     }
 
@@ -276,7 +276,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
         callType = self.type;
 
-    if (Settings.sounds_notify) {
+    if (Settings.userSettings.sounds_notify) {
         audioSignal.pause();
     }
 
@@ -327,8 +327,8 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     VideoChat.caller = null;
     VideoChat.callee = null;
     self.type = null;
-    
-    if (Settings.sounds_notify) {
+
+    if (Settings.userSettings.sounds_notify) {
         audioSignal.pause();
     }
 
@@ -408,7 +408,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         return true;
       }
 
-      if (Settings.messages_notify) {
+      if (Settings.userSettings.messages_notify) {
           audioSignal.play();
       }
 
@@ -480,7 +480,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         incomingCall;
 
     if ($chat[0] && ($chat.find('.mediacall')[0])) {
-      if (Settings.sounds_notify) {
+      if (Settings.userSettings.sounds_notify) {
           callingSignal.pause();
           endCallSignal.play();
       }
@@ -501,7 +501,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
         if ($('#popupIncoming .mCSB_container').children().length === 0) {
           closePopup();
-          if (Settings.sounds_notify) {
+          if (Settings.userSettings.sounds_notify) {
               ringtoneSignal.pause();
           }
         }
@@ -547,7 +547,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
   }
 
   function createAndShowNotification(paramsObg) {
-    if (!Settings.calls_notify) {
+    if (!Settings.userSettings.calls_notify) {
         return false;
     }
 
