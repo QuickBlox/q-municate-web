@@ -15,6 +15,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
     this.app = app;
     Session = this.app.models.Session;
     UserView = this.app.views.User;
+    DialogView = this.app.views.Dialog;
     ContactListView = this.app.views.ContactList;
     User = this.app.models.User;
     self = this;
@@ -29,23 +30,25 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
         QB.init(token, QMCONFIG.qbAccount.appId, null, QMCONFIG.QBconf);
         QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
         QB.service.qbInst.config.creds = QMCONFIG.qbAccount;
+
         Session.create(JSON.parse(localStorage['QM.session']), true);
         UserView.autologin();
       }
-      
+
       Helpers.log('QB init', this);
     },
 
     checkSession: function(callback) {
       QB.getSession(function(err, res) {
         if (((new Date()).toISOString() > Session.expirationTime) || err) {
-
           // recovery session
-          if (Session.authParams.provider) {
+          if (Session.authParams.provider === 'facebook') {
             UserView.getFBStatus(function(token) {
               Session.authParams.keys.token = token;
               self.createSession(Session.authParams, callback, Session._remember);
             });
+          } else if (Session.authParams.provider === 'twitter_digits') {
+            self.getTwitterDigits(callback);
           } else {
             self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
             Session.encrypt(Session.authParams);
@@ -82,9 +85,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
             if (errMsg.indexOf('Authentication') >= 0) {
               errMsg = QMCONFIG.errors.crashFBToken;
               UserView.getFBStatus();
-            
+
             // This checking is needed when you trying to connect via FB
-            // and your primary email has already been taken on the project 
+            // and your primary email has already been taken on the project
             } else if (errMsg.indexOf('already') >= 0) {
               errMsg = QMCONFIG.errors.emailExists;
               UserView.getFBStatus();
@@ -123,6 +126,19 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           }
         });
       });
+    },
+
+    getTwitterDigits: function(callback) {
+      self.createSession({}, function(session) {
+        QB.login(Session.authParams, function(err, user) {
+          if (err) {
+            Helpers.log(err.detail);
+          } else {
+            Session.update({ date: new Date(), authParams: Session.encrypt(Session.authParams) });
+            callback(session);
+          }
+        });
+      }, Session._remember);
     },
 
     logoutUser: function(callback) {
@@ -257,10 +273,14 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
               'app_id': (QMCONFIG.qbAccount.appId).toString()
             };
             FlurryAgent.logEvent("Connect to chat", eventParams);
-            
+
             Session.update({ date: new Date() });
             setRecoverySessionInterval();
             callback(res);
+
+            if (!User.contact.full_name) {
+              self.app.views.Profile.render().openPopup();
+            }
           }
         });
       });
@@ -276,8 +296,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           }
         }
 
-        self.app.views.Dialog.chatCallbacksInit();
-        self.app.models.ContactList.saveRoster(roster);
+        DialogView.chatCallbacksInit();
 
         $('.j-disconnect').removeClass('is-overlay')
          .parent('.j-overlay').removeClass('is-overlay');

@@ -1,18 +1,12 @@
 /* Configuration your application */
 define(function() {
 
-  /**
-  * Production environment (PROD = true);
-  * Test local environment (PROD = false);
-  */
-  var PROD = false;
-
   var QMCONFIG = {
 
     qbAccount: {
-      appId: PROD ? 13318 : 36125,
-      authKey: PROD ? 'WzrAY7vrGmbgFfP' : 'gOGVNO4L9cBwkPE',
-      authSecret: PROD ? 'xS2uerEveGHmEun': 'JdqsMHCjHVYkVxV'
+      appId: 36125,
+      authKey: 'gOGVNO4L9cBwkPE',
+      authSecret: 'JdqsMHCjHVYkVxV'
     },
 
     fbAccount: {

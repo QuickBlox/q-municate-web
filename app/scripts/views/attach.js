@@ -68,7 +68,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
         html += '</div></h4></div>';
         html += '<time class="message-time"><a class="attach-cancel" href="#">Cancel</a></time>';
         html += '</div></div></article>';
-        
+
         chat.append(html);
         objDom.val('');
         fixScroll();
@@ -134,8 +134,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
           percent += 5;
           if (percent > 95) return false;
           setTimeout(setPercent, time);
-        }      
-      }  
+        }
+      }
     },
 
     cancel: function(objDom) {
@@ -167,10 +167,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
         attach = Attach.create(blob, size);
       }
 
-      function _sendMessage() {
-
-      }
-
       msg = {
         'type': type,
         'body': 'Attachment',
@@ -184,7 +180,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
         },
         'markable': 1
       };
-      
+
       if(locationIsActive) {
         msg.extension.latitude = localStorage['QM.latitude'];
         msg.extension.longitude = localStorage['QM.longitude'];
@@ -204,7 +200,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
 
       Helpers.log(message);
       if (type === 'chat') {
-        lastMessage = chat.find('article[data-type="message"]').last();   
+        lastMessage = chat.find('article[data-type="message"]').last();
+        
         message.stack = Message.isStack(true, message, lastMessage);
         MessageView.addItem(message, true, true);
       }
@@ -220,7 +217,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
       }
     }
 
-  };  
+  };
 
   /* Private
   ---------------------------------------------------------------------- */
@@ -245,7 +242,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView', 'underscore'
     if ($('#requestsList').is('.is-hidden') &&
         $('#recentList').is('.is-hidden') &&
         $('#historyList').is('.is-hidden')) {
-      
+
       $('#emptyList').removeClass('is-hidden');
     }
   }

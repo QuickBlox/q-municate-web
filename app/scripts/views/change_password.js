@@ -10,8 +10,7 @@ define([
   'underscore',
   'backbone',
   'config',
-  'Helpers',
-  'chromaHash'
+  'Helpers'
 ], function($, _, Backbone, QMCONFIG, Helpers) {
 
   var ChangePassView = Backbone.View.extend({
@@ -36,7 +35,6 @@ define([
 
     openPopup: function() {
       this.$el.find('.popup').add('.popups').addClass('is-overlay');
-      this.$el.find('input:password').chromaHash({bars: 4});
     },
 
     validateError: function(model, error) {
@@ -55,7 +53,7 @@ define([
     cancelChange: function(event) {
       var obj = $(event.target),
           params;
-      
+
       if (obj.is('.' + this.className)) {
         this.remove();
         $('.profileWrap .userProfile-errors, .profileWrap .userProfile-success').text('');

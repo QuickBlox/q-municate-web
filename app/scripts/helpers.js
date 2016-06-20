@@ -6,7 +6,7 @@ define(['jquery', 'config', 'QBNotification'], function($, QMCONFIG, QBNotificat
   var Helpers = {};
 
   Helpers.Notifications = {
-    
+
     show: function(title, options) {
       // show notification if all parametters are is
       if (title && options) {

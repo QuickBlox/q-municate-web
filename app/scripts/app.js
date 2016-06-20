@@ -9,8 +9,8 @@ define([
     'jquery', 'UserModule', 'SessionModule', 'ContactModule',
     'DialogModule', 'MessageModule', 'AttachModule',
     'ContactListModule', 'VideoChatModule', 'UserView', 'DialogView',
-    'MessageView', 'AttachView', 'ContactListView', 'VideoChatView', 
-    'Events', 'Helpers', 'QBApiCalls', 'config', 'chromaHash'
+    'MessageView', 'AttachView', 'ContactListView', 'VideoChatView',
+    'Events', 'Helpers', 'QBApiCalls', 'config'
   ], function(
     $, User, Session, Contact, Dialog,
     Message, Attach, ContactList, VideoChat, UserView,
@@ -47,7 +47,6 @@ define([
     init: function() {
       var token;
 
-      this.chromaHash();
       this.setHtml5Patterns();
       this.preloader();
 
@@ -56,7 +55,7 @@ define([
       if (localStorage['QM.session'] && localStorage['QM.user'] &&
           // new QB release account (13.02.2015)
           localStorage['QM.isReleaseQBAccount']) {
-        
+
         token = JSON.parse(localStorage['QM.session']).token;
         this.service.init(token);
 
@@ -79,10 +78,6 @@ define([
 
       spinner.addClass('is-hidden');
       spinner.prevAll().removeClass('is-hidden');
-    },
-
-    chromaHash: function() {
-      $('input:password').chromaHash({bars: 4});
     },
 
     setHtml5Patterns: function() {
