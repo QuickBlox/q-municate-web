@@ -16,7 +16,7 @@ define([
   'mousewheel'
 ], function($, QMCONFIG, Helpers, QMHtml, Location, minEmoji) {
 
-  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
+  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView, Settings;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
   var App;
   var $workspace = $('.l-workspace-wrap');
@@ -33,6 +33,7 @@ define([
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
     VideoChatView = this.app.views.VideoChat;
+    Settings = this.app.models.Settings;
   }
 
   Events.prototype = {
@@ -257,6 +258,31 @@ define([
           $('.j-send_map').click();
         }
       });
+
+        /* user settings
+        ----------------------------------------------------- */
+        $('body').on('click', '#userSettings', function() {
+            removePopover();
+            $('.j-settings').addClass('is-overlay')
+             .parent('.j-overlay').addClass('is-overlay');
+
+            return false;
+        });
+
+        $('body').on('click', '.j-close_settings', function() {
+            closePopup();
+
+            return false;
+        });
+
+        $('.j-toogle_settings').click(function(e) {
+            var $target = $(this).find('.j-setings_notify')[0];
+
+            $target.checked = $target.checked === true ? false : true;
+            Settings.update($target);
+
+            return false;
+        });
 
       /* group chats
       ----------------------------------------------------- */

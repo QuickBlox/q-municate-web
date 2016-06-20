@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16px" height="20px" viewBox="0 0 16 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>5E848C27-D8FC-4B17-BF9C-12703D7E2BDA</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="Settings" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(-517.000000, -282.000000)" id="Group-5">
+            <g transform="translate(488.000000, 201.000000)">
+                <g id="Group-8">
+                    <g id="ic_notifications" transform="translate(25.000000, 79.000000)">
+                        <polygon id="Bounds" points="0 0 24 0 24 24 0 24"></polygon>
+                        <path d="M12,22 C12.14,22 12.27,21.99 12.4,21.96 C13.05,21.82 13.58,21.38 13.84,20.78 C13.94,20.54 13.99,20.28 13.99,20 L9.99,20 C10,21.1 10.89,22 12,22 L12,22 Z M18,11 C18,7.93 16.36,5.36 13.5,4.68 L13.5,4 C13.5,3.17 12.83,2.5 12,2.5 C11.17,2.5 10.5,3.17 10.5,4 L10.5,4.68 C7.63,5.36 6,7.92 6,11 L6,16 L4,18 L4,19 L20,19 L20,18 L18,16 L18,11 L18,11 Z" id="Icon" fill="#6E6E6E"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -22,6 +22,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
   ContactListView.prototype = {
 
     createDataSpinner: function(list) {
+      this.removeDataSpinner();
+
       var spinnerBlock = '<div class="popup-elem spinner_bounce">';
       spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
       spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';

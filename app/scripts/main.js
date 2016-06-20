@@ -60,6 +60,7 @@ requirejs.config({
         // models
         UserModule: 'models/user',
         SessionModule: 'models/session',
+        SettingsModule: 'models/settings',
         ContactModule: 'models/contact',
         DialogModule: 'models/dialog',
         MessageModule: 'models/message',
@@ -97,7 +98,6 @@ requirejs([
 ], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification, Helpers, Digits) {
 
     var APP;
-
     // Application initialization
     $(function() {
         $.ajaxSetup({ cache: true });

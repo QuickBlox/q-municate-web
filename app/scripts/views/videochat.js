@@ -10,7 +10,8 @@ var callTimer, videoStreamTime;
 define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'], function($, QB, QMCONFIG, Helpers, QBNotification, QMHtml) {
 
   var self;
-  var User,
+  var Settings,
+      User,
       ContactList,
       VideoChat,
       curSession = {},
@@ -23,6 +24,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     this.app = app;
 
     self = this;
+    Settings = this.app.models.Settings;
     User = this.app.models.User;
     ContactList = this.app.models.ContactList;
     VideoChat = this.app.models.VideoChat;
@@ -43,7 +45,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
         self.cancelCurrentCalls();
         self.startCall(className);
-        
+
         curSession = self.app.models.VideoChat.session;
       } else {
         QMHtml.VideoChat.noWebRTC();
@@ -68,7 +70,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
       if ($('#popupIncoming .mCSB_container').children().length === 0) {
         closePopup();
-        audioSignal.pause();
+        if (Settings.sounds_notify) {
+            audioSignal.pause();
+        }
       }
 
       return false;
@@ -83,7 +87,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       var $self = $(this),
           id = $self.data('id'),
           $dialogItem = $('.dialog-item[data-id="'+id+'"]').find('.contact');
-      
+
       DialogView.htmlBuild($dialogItem);
 
       var opponentId = $self.data('id'),
@@ -99,7 +103,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         $self.find('.btn_decline').click();
       });
       closePopup();
-      audioSignal.pause();
+
+      if (Settings.sounds_notify) {
+        audioSignal.pause();
+      }
 
       params.isCallee = true;
 
@@ -144,8 +151,11 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         }
       }
 
-      callingSignal.pause();
-      endCallSignal.play();
+      if (Settings.sounds_notify) {
+          callingSignal.pause();
+          endCallSignal.play();
+      }
+
       clearTimeout(callTimer);
 
       curSession.stop({});
@@ -156,7 +166,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       $chat.find('.l-chat-content').css({height: 'calc(100% - 165px)'});
 
       addCallTypeIcon(opponentId, null);
-      
+
       return false;
     });
 
@@ -167,7 +177,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       var mediaScreen = document.getElementsByClassName("mediacall")[0],
           isFullScreen = false;
 
-      if (mediaScreen.requestFullscreen) {      
+      if (mediaScreen.requestFullscreen) {
         if (document.fullScreenElement) {
             document.cancelFullScreen();
             isFullScreen = false;
@@ -175,7 +185,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
           mediaScreen.requestFullscreen();
           isFullScreen = true;
         }
-      } else if (mediaScreen.mozRequestFullScreen) {      
+      } else if (mediaScreen.mozRequestFullScreen) {
         if (document.mozFullScreenElement) {
             document.mozCancelFullScreen();
             isFullScreen = false;
@@ -241,7 +251,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
     $incomings.find('.mCSB_container').prepend(htmlTpl);
     openPopup($incomings);
-    audioSignal.play();
+
+    if (Settings.messages_notify) {
+        audioSignal.play();
+    }
 
     VideoChat.session = session;
     curSession = VideoChat.session;
@@ -263,7 +276,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
         callType = self.type;
 
-    audioSignal.pause();
+    if (Settings.sounds_notify) {
+        audioSignal.pause();
+    }
+
     self.sessionID = session.ID;
 
     addCallTypeIcon(id, callType);
@@ -311,7 +327,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     VideoChat.caller = null;
     VideoChat.callee = null;
     self.type = null;
-    audioSignal.pause();
+    
+    if (Settings.sounds_notify) {
+        audioSignal.pause();
+    }
 
     $chat.find('.mediacall').remove();
     $chat.find('.l-chat-header').show();
@@ -348,7 +367,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
       var inboundrtp = _.findWhere(stats, {type: 'inboundrtp'});
 
       if (!inboundrtp || !isBytesReceivedChanges(userId, inboundrtp)) {
-        if (!stopStreamFF) {      
+        if (!stopStreamFF) {
           stopStreamFF = setTimeout(function() {
             console.warn("This is Firefox and user " + userId + " has lost his connection.");
 
@@ -389,7 +408,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         return true;
       }
 
-      audioSignal.play();
+      if (Settings.messages_notify) {
+          audioSignal.play();
+      }
+
       if (callType === 'audio') {
         self.type = 'audio';
         $('.btn_camera_off').click();
@@ -458,8 +480,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         incomingCall;
 
     if ($chat[0] && ($chat.find('.mediacall')[0])) {
-      callingSignal.pause();
-      endCallSignal.play();
+      if (Settings.sounds_notify) {
+          callingSignal.pause();
+          endCallSignal.play();
+      }
       clearTimeout(callTimer);
       curSession = {};
       VideoChat.session = null;
@@ -477,7 +501,9 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
 
         if ($('#popupIncoming .mCSB_container').children().length === 0) {
           closePopup();
-          ringtoneSignal.pause();
+          if (Settings.sounds_notify) {
+              ringtoneSignal.pause();
+          }
         }
     }
 
@@ -490,7 +516,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         dialogId = $obj.data('dialog'),
         deviceType = !!$obj.attr('class').match(/btn_camera_off/) ? 'video' : 'audio',
         msg = deviceType === 'video' ? 'Camera' : 'Mic';
-    
+
     if (self.type !== deviceType && self.type === 'audio') {
       $obj.addClass('off');
       $obj.attr('title', msg + ' is off');
@@ -521,6 +547,10 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
   }
 
   function createAndShowNotification(paramsObg) {
+    if (!Settings.calls_notify) {
+        return false;
+    }
+
     var msg = {
       'callState': paramsObg.callState,
       'dialog_id': paramsObg.dialogId,
@@ -546,7 +576,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         QBNotification.requestPermission(function(state) {
           if (state === "granted") {
             Helpers.Notifications.show(title, options);
-          } 
+          }
         });
       }
     }
@@ -607,7 +637,7 @@ function setDuration(currentTime) {
     c++;
     setDuration(c);
   }, 1000);
-}      
+}
 
 function getTimer(time) {
   var h, min, sec;

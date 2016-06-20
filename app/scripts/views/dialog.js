@@ -107,6 +107,8 @@ define([
     },
 
     createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
+      this.removeDataSpinner();
+      
       var spinnerBlock;
       if (isAjaxDownloading) {
         spinnerBlock = '<div class="message message_service"><div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
