@@ -252,7 +252,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     $incomings.find('.mCSB_container').prepend(htmlTpl);
     openPopup($incomings);
 
-    if (Settings.userSettings.messages_notify) {
+    if (Settings.userSettings.sounds_notify) {
         audioSignal.play();
     }
 
@@ -408,7 +408,7 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
         return true;
       }
 
-      if (Settings.userSettings.messages_notify) {
+      if (Settings.userSettings.sounds_notify) {
           audioSignal.play();
       }
 
