@@ -126,7 +126,7 @@
         font-size: 20px;
         border-radius: 56px;
         height: 56px;
-        line-height: 56px;
+        line-height: 100%;
         vertical-align: middle;
     }
         button.btn_invite,
@@ -295,7 +295,7 @@
     .btn-icon_invite {
         display: inline-block;
         width: 27px;
-        height: 33px;
+        height: 100%;
         position: relative;
         top: -3px;
         margin-right: 12px;
