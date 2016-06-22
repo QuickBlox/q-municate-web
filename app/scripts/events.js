@@ -16,7 +16,7 @@ define([
   'mousewheel'
 ], function($, QMCONFIG, Helpers, QMHtml, Location, minEmoji) {
 
-  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView, Settings;
+  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView, SettingsView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
   var App;
   var $workspace = $('.l-workspace-wrap');
@@ -33,7 +33,7 @@ define([
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
     VideoChatView = this.app.views.VideoChat;
-    Settings = this.app.models.Settings;
+    SettingsView = this.app.views.Settings;
   }
 
   Events.prototype = {
@@ -275,11 +275,14 @@ define([
             return false;
         });
 
-        $('.j-toogle_settings').click(function(e) {
-            var $target = $(this).find('.j-setings_notify')[0];
+        $('.j-toogle_settings').click(function() {
+            var $target = $(this).find('.j-setings_notify')[0],
+                obj = {};
 
             $target.checked = $target.checked === true ? false : true;
-            Settings.update($target);
+            obj[$target.id] = $target.checked;
+
+            SettingsView.update(obj);
 
             return false;
         });
@@ -621,7 +624,6 @@ define([
       /* search
       ----------------------------------------------------- */
       $('#globalSearch').on('keyup search submit', function(event) {
-        event.preventDefault();
         var code = event.keyCode;
             form = $(this);
 
@@ -641,6 +643,8 @@ define([
             ContactListView.globalSearch(form);
           }, 1000);
         }
+
+        return false;
       });
 
       $('.localSearch').on('keyup search submit', function(event) {
