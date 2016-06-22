@@ -543,10 +543,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
       results.forEach(function(contact) {
         var rosterItem = roster[contact.id];
 
-        item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
+        item =  '<li class="list-item" data-jid="'+contact.user_jid+'">';
         item += '<a class="contact l-flexbox" href="#">';
         item += '<div class="l-flexbox_inline">';
-        // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
         item += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id="'+contact.id+'"></div>';
         item += '<span class="name profileUserName" data-id="'+contact.id+'">'+contact.full_name+'</span>';
         item += '</div>';

@@ -69,6 +69,7 @@ requirejs.config({
         VideoChatModule: 'models/videochat',
         // views
         UserView: 'views/user',
+        SettingsView: 'views/settings',
         DialogView: 'views/dialog',
         MessageView: 'views/message',
         AttachView: 'views/attach',

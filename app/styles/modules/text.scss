@@ -55,12 +55,22 @@
         .text_digits a.twitterDigits {
             color: #2c74c7;
         }
+            a.twitterDigits:hover,
+            a.twitterDigits:focus {
+                text-decoration: underline;
+                opacity: 1;
+            }
     .text_login {
         font-family: "Roboto", sans-serif;
         font-size: 11px;
         font-weight: normal;
         color: #959595;
     }
+        .text_login:hover,
+        .text_login:focus {
+            text-decoration: underline;
+            opacity: 1;
+        }
     .text_forgot_black {
         display: inline-block;
         height: 25px;

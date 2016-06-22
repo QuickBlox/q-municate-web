@@ -1,54 +1,53 @@
 /*
  *
- * Q-MUNICATE settings Module
+ * Q-MUNICATE settings models Module
  *
  */
-define([
-    'jquery',
-    'config'
-], function($, Backbone, QMCONFIG) {
+define([], function() {
     'use strict';
 
-    var globalSettings;
+    var self;
 
     function Settings(app) {
         this.app = app;
-        this.userSettings = {};
-        globalSettings = this.userSettings;
-        globalSettings.messages_notify = true;
-        globalSettings.calls_notify    = true;
-        globalSettings.sounds_notify   = true;
+        self = this;
     }
 
     Settings.prototype = {
 
-        // set users settings from localStorage or create default (default - all is ON)
-        setUp: function() {
-            // sets default settings if they are not there in the localStorage
+        init: function() {
+            self.settingsParams = {
+                'messages_notify': true,
+                'calls_notify': true,
+                'sounds_notify': true
+            };
+
+            self.sync();
+        },
+
+        set: function(params) {
+            for (var key in params) {
+                self.settingsParams[key] = params[key];
+            }
+        },
+
+        save: function() {
+            localStorage.setItem('QM.settings', JSON.stringify(self.settingsParams));
+        },
+
+        get: function() {
+            return JSON.parse(localStorage['QM.settings']);
+        },
+
+        sync: function() {
             if (!localStorage['QM.settings']) {
-                localStorage.setItem('QM.settings', JSON.stringify(globalSettings));
+                self.save();
 
                 return false;
+            } else {
+                self.settingsParams = self.get();
             }
-
-            var storageSettings = JSON.parse(localStorage['QM.settings']);
-
-            // copy settings from the localStorage['QM.settings']
-            globalSettings.messages_notify = storageSettings.messages_notify;
-            globalSettings.calls_notify    = storageSettings.calls_notify;
-            globalSettings.sounds_notify   = storageSettings.sounds_notify;
-
-            // set checkbox position
-            for (var key in storageSettings) {
-                $('#' + key)[0].checked = storageSettings[key];
-            }
-        },
-
-        // update users settings
-        update: function(newStatus) {
-            globalSettings[newStatus.id] = newStatus.checked;
-            localStorage.setItem('QM.settings', JSON.stringify(globalSettings));
-        },
+        }
 
     };
 
