@@ -7,7 +7,14 @@
 
 var callTimer, videoStreamTime;
 
-define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'], function($, QB, QMCONFIG, Helpers, QBNotification, QMHtml) {
+define([
+    'jquery',
+    'quickblox',
+    'config',
+    'Helpers',
+    'QBNotification',
+    'QMHtml'
+], function($, QB, QMCONFIG, Helpers, QBNotification, QMHtml) {
 
   var self;
   var Settings,
@@ -394,33 +401,39 @@ define(['jquery', 'quickblox', 'config', 'Helpers', 'QBNotification', 'QMHtml'],
     $('.btn_hangup').click();
   };
 
-  VideoChatView.prototype.startCall = function(className) {
-    var audioSignal = document.getElementById('callingSignal'),
-        params = self.build(),
-        $chat = $('.l-chat:visible'),
-        callType = !!className.match(/audioCall/) ? 'audio' : 'video';
+    VideoChatView.prototype.startCall = function(className) {
+        var audioSignal = document.getElementById('callingSignal'),
+            params = self.build(),
+            $chat = $('.l-chat:visible'),
+            callType = !!className.match(/audioCall/) ? 'audio' : 'video',
+            QBApiCalls = this.app.service,
+            calleeId = params.opponentId,
+            fullName = User.contact.full_name;
 
-    VideoChat.getUserMedia(params, callType, function(err, res) {
-      if (err) {
-        $chat.find('.mediacall .btn_hangup').click();
-        QMHtml.VideoChat.showError();
-        fixScroll();
-        return true;
-      }
+        VideoChat.getUserMedia(params, callType, function(err, res) {
+            if (err) {
+                $chat.find('.mediacall .btn_hangup').click();
+                QMHtml.VideoChat.showError();
+                fixScroll();
+                return true;
+            } else {
+                QBApiCalls.sendPushNotification(calleeId, fullName);
+            }
 
-      if (Settings.userSettings.sounds_notify) {
-          audioSignal.play();
-      }
+            if (Settings.userSettings.sounds_notify) {
+                audioSignal.play();
+            }
 
-      if (callType === 'audio') {
-        self.type = 'audio';
-        $('.btn_camera_off').click();
-      } else {
-        self.type = 'video';
-        self.unmute('video');
-      }
-    });
-  };
+            if (callType === 'audio') {
+                self.type = 'audio';
+                $('.btn_camera_off').click();
+            } else {
+                self.type = 'video';
+                self.unmute('video');
+            }
+
+        });
+    };
 
   VideoChatView.prototype.build = function(id) {
     var $chat = id ? $('.l-chat[data-dialog="'+id+'"]') : $('.l-chat:visible'),

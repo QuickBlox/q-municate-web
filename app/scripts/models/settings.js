@@ -24,7 +24,6 @@ define([
 
         // set users settings from localStorage or create default (default - all is ON)
         setUp: function() {
-            console.info(this);
             // sets default settings if they are not there in the localStorage
             if (!localStorage['QM.settings']) {
                 localStorage.setItem('QM.settings', JSON.stringify(globalSettings));
