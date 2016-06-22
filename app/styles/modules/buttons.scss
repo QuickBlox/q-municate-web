@@ -32,34 +32,44 @@
         text-align: center;
         vertical-align: middle;
     }
-    .l-welcome_btn_green,
-    .l-welcome_btn_green:hover,
-    .l-welcome_btn_green:focus {
+    .l-welcome_btn_green {
         margin-top: 76px;
         background-color: #28c849;
         color: #ffffff;
     }
-    .l-welcome_btn_white,
-    .l-welcome_btn_white:hover,
-    .l-welcome_btn_white:focus {
+    .l-welcome_btn_white {
         margin-top: 16px;
         background-color: #ffffff;
         color: #6e6e6e;
     }
-    .l-btn_login,
-    .l-btn_login:hover,
-    .l-btn_login:focus {
+        .l-welcome_btn_white:hover,
+        .l-welcome_btn_white:focus {
+            background-color: #eeeeee;
+            color: #6e6e6e;
+            opacity: 1;
+        }
+    .l-btn_login {
         margin: 20px 0 9px 0;
         background-color: #28c849;
         color: #ffffff;
     }
-    .l-btn_login_fb,
-    .l-btn_login_fb:hover,
-    .l-btn_login_fb:focus {
+        .l-welcome_btn_green:hover,
+        .l-welcome_btn_green:focus,
+        .l-btn_login:hover,
+        .l-btn_login:focus {
+            background-color: #26a640;
+            opacity: 1;
+        }
+    .l-btn_login_fb {
         margin: 9px 0 35px 0;
         background-color: #4e70a8;
         color: #ffffff;
     }
+        .l-btn_login_fb:hover,
+        .l-btn_login_fb:focus {
+            background-color: #445f8c;
+            opacity: 1;
+        }
     .l-btn_reset,
     .l-btn_reset:hover,
     .l-btn_reset:focus  {

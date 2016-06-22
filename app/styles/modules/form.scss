@@ -71,14 +71,13 @@ input.form-input-search.without_M[type=search]:focus:not([readonly]) {
         display: block;
         width: 21px;
         height: 21px;
-        top: 21px;
-        right: 25px;
+        top: 20px;
+        right: 27px;
         color: #fff;
         cursor: text;
     }
         #searchContacts .clean-button {
             right: 23px;
-            top: 19px;
         }
     .form-input-search:focus ~ .clean-button {
         color: #ccc;
