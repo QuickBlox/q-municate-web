@@ -7,10 +7,7 @@
 
 define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, QB, Helpers, _) {
 
-  var Dialog,
-      Message,
-      ContactList,
-      User;
+  var Dialog, Message, ContactList, User;
 
   function ContactListView(app) {
     this.app = app;
