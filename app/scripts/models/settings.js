@@ -6,39 +6,34 @@
 define([], function() {
     'use strict';
 
-    var options = {};
-
     function Settings(app) {
-        this.app = app;
-    }
+        var options;
 
-    Settings.prototype = {
-
-        init: function() {
+        this.init = function() {
             options = {
                 'messages_notify': true,
                 'calls_notify':    true,
                 'sounds_notify':   true
             };
 
-            this.sync();
-        },
+            sync();
+        };
 
-        set: function(params) {
+        this.set = function(params) {
             for (var key in params) {
                 options[key] = params[key];
             }
-        },
+        };
 
-        get: function(option) {
-            return options[option];
-        },
+        this.get = function(prop) {
+            return options[prop];
+        };
 
-        save: function() {
+        this.save = function() {
             localStorage.setItem('QM.settings', JSON.stringify(options));
-        },
+        }
 
-        sync: function() {
+        function sync() {
             if (!localStorage['QM.settings']) {
                 this.save();
 
@@ -47,8 +42,7 @@ define([], function() {
                 options = JSON.parse(localStorage['QM.settings']);
             }
         }
-
-    };
+    }
 
     return Settings;
 });
