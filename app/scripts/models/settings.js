@@ -31,7 +31,7 @@ define([], function() {
 
         this.save = function() {
             localStorage.setItem('QM.settings', JSON.stringify(options));
-        }
+        };
 
         function sync() {
             if (!localStorage['QM.settings']) {
