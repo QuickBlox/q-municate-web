@@ -6,46 +6,45 @@
 define([], function() {
     'use strict';
 
-    var self;
+    var options = {};
 
     function Settings(app) {
         this.app = app;
-        self = this;
     }
 
     Settings.prototype = {
 
         init: function() {
-            self.settingsParams = {
+            options = {
                 'messages_notify': true,
-                'calls_notify': true,
-                'sounds_notify': true
+                'calls_notify':    true,
+                'sounds_notify':   true
             };
 
-            self.sync();
+            this.sync();
         },
 
         set: function(params) {
             for (var key in params) {
-                self.settingsParams[key] = params[key];
+                options[key] = params[key];
             }
         },
 
-        save: function() {
-            localStorage.setItem('QM.settings', JSON.stringify(self.settingsParams));
+        get: function(option) {
+            return options[option];
         },
 
-        get: function() {
-            return JSON.parse(localStorage['QM.settings']);
+        save: function() {
+            localStorage.setItem('QM.settings', JSON.stringify(options));
         },
 
         sync: function() {
             if (!localStorage['QM.settings']) {
-                self.save();
+                this.save();
 
                 return false;
             } else {
-                self.settingsParams = self.get();
+                options = JSON.parse(localStorage['QM.settings']);
             }
         }
 

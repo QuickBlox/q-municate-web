@@ -77,7 +77,7 @@ define([
 
       if ($('#popupIncoming .mCSB_container').children().length === 0) {
         closePopup();
-        if (Settings.settingsParams.sounds_notify) {
+        if (Settings.get('sounds_notify')) {
             audioSignal.pause();
         }
       }
@@ -111,7 +111,7 @@ define([
       });
       closePopup();
 
-      if (Settings.settingsParams.sounds_notify) {
+      if (Settings.get('sounds_notify')) {
         audioSignal.pause();
       }
 
@@ -158,7 +158,7 @@ define([
         }
       }
 
-      if (Settings.settingsParams.sounds_notify) {
+      if (Settings.get('sounds_notify')) {
           callingSignal.pause();
           endCallSignal.play();
       }
@@ -259,7 +259,7 @@ define([
     $incomings.find('.mCSB_container').prepend(htmlTpl);
     openPopup($incomings);
 
-    if (Settings.settingsParams.sounds_notify) {
+    if (Settings.get('sounds_notify')) {
         audioSignal.play();
     }
 
@@ -283,7 +283,7 @@ define([
         dialogId = $('li.list-item.dialog-item[data-id="'+id+'"]').data('dialog'),
         callType = self.type;
 
-    if (Settings.settingsParams.sounds_notify) {
+    if (Settings.get('sounds_notify')) {
         audioSignal.pause();
     }
 
@@ -335,7 +335,7 @@ define([
     VideoChat.callee = null;
     self.type = null;
 
-    if (Settings.settingsParams.sounds_notify) {
+    if (Settings.get('sounds_notify')) {
         audioSignal.pause();
     }
 
@@ -420,7 +420,7 @@ define([
                 QBApiCalls.sendPushNotification(calleeId, fullName);
             }
 
-            if (Settings.settingsParams.sounds_notify) {
+            if (Settings.get('sounds_notify')) {
                 audioSignal.play();
             }
 
@@ -493,7 +493,7 @@ define([
         incomingCall;
 
     if ($chat[0] && ($chat.find('.mediacall')[0])) {
-      if (Settings.settingsParams.sounds_notify) {
+      if (Settings.get('sounds_notify')) {
           callingSignal.pause();
           endCallSignal.play();
       }
@@ -514,7 +514,7 @@ define([
 
         if ($('#popupIncoming .mCSB_container').children().length === 0) {
           closePopup();
-          if (Settings.settingsParams.sounds_notify) {
+          if (Settings.get('sounds_notify')) {
               ringtoneSignal.pause();
           }
         }
@@ -560,7 +560,7 @@ define([
   }
 
   function createAndShowNotification(paramsObg) {
-    if (!Settings.settingsParams.calls_notify) {
+    if (!Settings.get('calls_notify')) {
         return false;
     }
 

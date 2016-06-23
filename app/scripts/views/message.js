@@ -630,7 +630,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         createAndShowNotification(msg, isHiddenChat);
       }
 
-      if ((isHiddenChat || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) && Settings.settingsParams.sounds_notify) {
+      if ((isHiddenChat || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) && Settings.get('sounds_notify')) {
         audioSignal.play();
       }
 
@@ -883,7 +883,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
   }
 
   function createAndShowNotification(msg, isHiddenChat) {
-    if (!Settings.settingsParams.messages_notify) {
+    if (!Settings.get('messages_notify')) {
         return false;
     }
 

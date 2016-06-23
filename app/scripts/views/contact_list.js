@@ -10,8 +10,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
   var Dialog,
       Message,
       ContactList,
-      User,
-      isReadyForRequest = true;
+      User;
 
   function ContactListView(app) {
     this.app = app;
@@ -79,13 +78,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
           sessionStorage.setItem('QM.search.value', val);
           sessionStorage.setItem('QM.search.page', 1);
 
-          if (isReadyForRequest) {
-            isReadyForRequest = false;
-            ContactList.globalSearch(function(results) {
-                createListResults(list, results, self);
-                isReadyForRequest = true;
-            });
-          }
+          ContactList.globalSearch(function(results) {
+            createListResults(list, results, self);
+          });
       }
     },
 
