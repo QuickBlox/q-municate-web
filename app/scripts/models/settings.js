@@ -7,7 +7,8 @@ define([], function() {
     'use strict';
 
     function Settings(app) {
-        var options;
+        var options,
+            self = this;
 
         this.init = function() {
             options = {
@@ -35,7 +36,7 @@ define([], function() {
 
         function sync() {
             if (!localStorage['QM.settings']) {
-                this.save();
+                self.save();
 
                 return false;
             } else {
