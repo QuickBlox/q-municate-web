@@ -29,13 +29,13 @@ define([], function() {
             return options[prop];
         };
 
-        function save() {
+        this.save = function() {
             localStorage.setItem('QM.settings', JSON.stringify(options));
         }
 
         function sync() {
             if (!localStorage['QM.settings']) {
-                save();
+                this.save();
 
                 return false;
             } else {
