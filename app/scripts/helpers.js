@@ -14,7 +14,7 @@ define([
     Helpers.Notifications = {
 
         show: function(title, options) {
-          // show notification if all parametters are is
+          // show notification if all parameters are is
           if (title && options) {
             var notify = new QBNotification(title, options);
             notify.show();
@@ -48,7 +48,7 @@ define([
                 options,
                 text;
 
-            // hot fix
+            // hot fix (local notifications can't shows image.svg)
             if (photo === 'images/ava-single.svg') {
                 photo = QMCONFIG.defAvatar.url_png;
             }
