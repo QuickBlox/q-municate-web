@@ -8,7 +8,7 @@
   <title>Q-municate</title>
   <meta name="description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox">
 
-  <link rel="icon" href="favicon.png">
+  <link rel="icon" href="images/favicon.png">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
   <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
@@ -129,7 +129,7 @@
             </div>
             <form class="l-form l-form_reset" action="#" autocomplete="off">
                 <span class="text text_forgot">
-                    Enter the email you registered with Q-municate</br>and we’ll send you a link to reset your password.
+                    Enter the email you registered with Q-municate</br> and we’ll send you a link to reset your password.
                 </span>
                 <span class="text text_error text_error_reset">Error</span>
                 <div class="input-field">
@@ -169,7 +169,7 @@
           <div class="header-logo">
             <a id="home" href="#"><img src="images/logo-qmunicate.svg" alt="Q-municate"></a>
           </div>
-          <ul class="header-links l-flexbox">
+          <ol class="header-links l-flexbox">
             <li class="header-links-item is-hidden">
               <a id="share" href="#">
                 <img class="btn-icon btn-icon_fb_header icon-normal" src="images/icon-fb_header.svg" alt="fb">
@@ -183,7 +183,7 @@
             <li class="header-links-item">
               <a id="profile" href="#"><div class="avatar"></div></a>
             </li>
-          </ul>
+          </ol>
         </header>
         <div class="l-content l-flexbox">
 
@@ -326,7 +326,7 @@
           <a href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/icon-android.svg" alt="download Q-municate Android"></a>
         </div>
 
-        <div class="l-app-version">v.1.6.0</div>
+        <div class="l-app-version">v.1.8.3</div>
 
       </footer>
     </section>
@@ -339,6 +339,65 @@
       <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
         <span class="alert alert_discon"><b>Not Connected.</b> Connecting...</span>
       </div>
+    </section>
+
+    <!-- Popup with users settings (on/off sounds and local notification for calls or messages) -->
+    <section id="popupSettings" class="popup popup_settings is-open j-settings">
+        <header class="header_settings">
+            <span class="header_settings_label">Settings</span>
+            <div class="i-close_settings j-close_settings"></div>
+        </header>
+        <div class="body_settings">
+            <ul class="container_settings">
+                <li class="switch_settings">
+                    <div class="switch_label_block">
+                        <div class="i-notifications_settings"></div>
+                        <span class="settings_label">Desktop Notifications</span>
+                    </div>
+                </li>
+                <li class="messages_settings switch_settings">
+                    <div class="switch">
+                        <label class="toogle_settings j-toogle_settings">
+                            <span class="settings_label">Messages Notifications</span>
+                            <input id="messages_notify" class="j-setings_notify" type="checkbox" checked>
+                            <span class="lever"></span>
+                        </label>
+                    </div>
+                </li>
+                <li class="calls_settings switch_settings">
+                    <div class="switch">
+                        <label class="toogle_settings j-toogle_settings">
+                            <span class="settings_label">Calls Notification</span>
+                            <input id="calls_notify" class="j-setings_notify" type="checkbox" checked>
+                            <span class="lever"></span>
+                        </label>
+                    </div>
+                </li>
+                <li class="sound_settings switch_settings">
+                    <div class="switch">
+                        <label class="toogle_settings j-toogle_settings">
+                            <span class="settings_label">Sounds</span>
+                            <input id="sounds_notify" class="j-setings_notify" type="checkbox" checked>
+                            <span class="lever"></span>
+                        </label>
+                    </div>
+                </li>
+            </ul>
+            <footer class="footer_settings_menu">
+                <label class="footer_settings">
+                    <a class="footer_settings_link" href="https://github.com/QuickBlox/q-municate-web/issues/new" target="_blank">
+                        <div class="i-feedback_settings i-footer_settings"></div>
+                        <span class="footer_settings_label">Write Feedback</span>
+                    </a>
+                </label>
+                <label class="footer_settings">
+                    <a class="footer_settings_link" href="http://q-municate.com/" target="_blank">
+                        <div class="i-help_settings i-footer_settings"></div>
+                        <span class="footer_settings_label">About</span>
+                    </a>
+                </label>
+            </footer>
+        </div>
     </section>
 
     <section id="popupGeoInfo" class="popup popup_geo_info j-geoInfo">
@@ -445,7 +504,7 @@
       <div class="popup-nofriends l-flexbox is-hidden">
         <div class="l-cap l-cap_contacts l-flexbox l-flexbox_column">
           <span class="cap-text cap-text_contacts">It's a little lonely<br>over here</span>
-          <button class="search btn btn_invite btn_invite_contacts">
+          <button class="search btn btn_invite btn_invite_contacts btn_add">
             <img class="btn-icon btn-icon_invite btn-icon_invite_contacts" src="images/icon-invite.svg" alt="invite">
             Search for Friends
           </button>

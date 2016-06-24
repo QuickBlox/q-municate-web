@@ -60,6 +60,7 @@ requirejs.config({
         // models
         UserModule: 'models/user',
         SessionModule: 'models/session',
+        SettingsModule: 'models/settings',
         ContactModule: 'models/contact',
         DialogModule: 'models/dialog',
         MessageModule: 'models/message',
@@ -68,6 +69,7 @@ requirejs.config({
         VideoChatModule: 'models/videochat',
         // views
         UserView: 'views/user',
+        SettingsView: 'views/settings',
         DialogView: 'views/dialog',
         MessageView: 'views/message',
         AttachView: 'views/attach',
@@ -97,7 +99,6 @@ requirejs([
 ], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification, Helpers, Digits) {
 
     var APP;
-
     // Application initialization
     $(function() {
         $.ajaxSetup({ cache: true });

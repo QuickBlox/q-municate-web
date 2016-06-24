@@ -16,7 +16,7 @@ define([
   'mousewheel'
 ], function($, QMCONFIG, Helpers, QMHtml, Location, minEmoji) {
 
-  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
+  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView, SettingsView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
   var App;
   var $workspace = $('.l-workspace-wrap');
@@ -33,6 +33,7 @@ define([
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
     VideoChatView = this.app.views.VideoChat;
+    SettingsView = this.app.views.Settings;
   }
 
   Events.prototype = {
@@ -257,6 +258,34 @@ define([
           $('.j-send_map').click();
         }
       });
+
+        /* user settings
+        ----------------------------------------------------- */
+        $('body').on('click', '#userSettings', function() {
+            removePopover();
+            $('.j-settings').addClass('is-overlay')
+             .parent('.j-overlay').addClass('is-overlay');
+
+            return false;
+        });
+
+        $('body').on('click', '.j-close_settings', function() {
+            closePopup();
+
+            return false;
+        });
+
+        $('.j-toogle_settings').click(function() {
+            var $target = $(this).find('.j-setings_notify')[0],
+                obj = {};
+
+            $target.checked = $target.checked === true ? false : true;
+            obj[$target.id] = $target.checked;
+
+            SettingsView.update(obj);
+
+            return false;
+        });
 
       /* group chats
       ----------------------------------------------------- */
@@ -595,7 +624,6 @@ define([
       /* search
       ----------------------------------------------------- */
       $('#globalSearch').on('keyup search submit', function(event) {
-        event.preventDefault();
         var code = event.keyCode;
             form = $(this);
 
@@ -615,6 +643,8 @@ define([
             ContactListView.globalSearch(form);
           }, 1000);
         }
+
+        return false;
       });
 
       $('.localSearch').on('keyup search submit', function(event) {

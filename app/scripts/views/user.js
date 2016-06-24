@@ -129,10 +129,7 @@ define([
     },
 
     profilePopover: function(objDom) {
-      var html = '<ul class="list-actions list-actions_profile popover">';
-      html += '<li class="list-item"><a id="userProfile" class="list-actions-action" href="#">Profile</a></li>';
-      html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Log Out</a></li>';
-      html += '</ul>';
+      var html = QMHtml.User.profilePopover();
 
       objDom.after(html);
       appearAnimation();

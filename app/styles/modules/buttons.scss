@@ -32,34 +32,44 @@
         text-align: center;
         vertical-align: middle;
     }
-    .l-welcome_btn_green,
-    .l-welcome_btn_green:hover,
-    .l-welcome_btn_green:focus {
+    .l-welcome_btn_green {
         margin-top: 76px;
         background-color: #28c849;
         color: #ffffff;
     }
-    .l-welcome_btn_white,
-    .l-welcome_btn_white:hover,
-    .l-welcome_btn_white:focus {
+    .l-welcome_btn_white {
         margin-top: 16px;
         background-color: #ffffff;
         color: #6e6e6e;
     }
-    .l-btn_login,
-    .l-btn_login:hover,
-    .l-btn_login:focus {
+        .l-welcome_btn_white:hover,
+        .l-welcome_btn_white:focus {
+            background-color: #eeeeee;
+            color: #6e6e6e;
+            opacity: 1;
+        }
+    .l-btn_login {
         margin: 20px 0 9px 0;
         background-color: #28c849;
         color: #ffffff;
     }
-    .l-btn_login_fb,
-    .l-btn_login_fb:hover,
-    .l-btn_login_fb:focus {
+        .l-welcome_btn_green:hover,
+        .l-welcome_btn_green:focus,
+        .l-btn_login:hover,
+        .l-btn_login:focus {
+            background-color: #26a640;
+            opacity: 1;
+        }
+    .l-btn_login_fb {
         margin: 9px 0 35px 0;
         background-color: #4e70a8;
         color: #ffffff;
     }
+        .l-btn_login_fb:hover,
+        .l-btn_login_fb:focus {
+            background-color: #445f8c;
+            opacity: 1;
+        }
     .l-btn_reset,
     .l-btn_reset:hover,
     .l-btn_reset:focus  {
@@ -122,10 +132,12 @@
     button.btn.btn_add,
     button.btn.btn_add:hover,
     button.btn.btn_add:focus  {
-        width: 33vh;
-        font-size: 2.4vh;
-        line-height: 5.8vh;
-        border-radius: 3.2vh;
+        width: 300px;
+        font-size: 20px;
+        border-radius: 56px;
+        height: 56px;
+        line-height: 100%;
+        vertical-align: middle;
     }
         button.btn_invite,
         button.btn_invite:hover,
@@ -133,12 +145,15 @@
             margin-bottom: 2vh;
             background: #ff4945;
         }
-        .btn_invite_contacts {
-            width: 330px;
-            font-size: 24px;
-            line-height: 58px;
-            border-radius: 32px;
-            margin-bottom: 20px;
+        button.btn.btn_invite_contacts {
+            width: 300px;
+            font-size: 20px;
+            border-radius: 56px;
+            height: 56px;
+            line-height: 56px;
+            transition: initial;
+            vertical-align: middle;
+            text-transform: none;
         }
         .btn_share {
             background: #3b5998;
@@ -157,9 +172,17 @@
     .btn_popup {
         width: 100%;
         font-size: 24px;
-        line-height: 60px;
+        height: 60px;
+        line-height: 100%;
         background: #0d70b3;
+        text-transform: none;
+        border-radius: 0;
     }
+        .btn_popup:hover,
+        .btn_popup:active {
+            background-color: #445f8c;
+            opacity: 1;
+        }
     .btn.btn_popup.btn_popup_changepass.without_M,
     .btn.btn_popup.btn_popup_changepass.without_M:hover,
     .btn.btn_popup.btn_popup_changepass.without_M:focus {
@@ -289,10 +312,13 @@
     }
     .btn-icon_invite {
         display: inline-block;
-        width: 25px;
-        height: 29px;
-        margin-right: 20px;
-        background: image-url('icon-invite.svg') no-repeat center;
+        width: 27px;
+        height: 100%;
+        position: relative;
+        top: -3px;
+        margin-right: 12px;
+        background: url('../images/icon-invite.svg?1464359307') no-repeat center;
+        vertical-align: middle;
     }
     .btn-icon_invite_contacts {
         width: 25px;
@@ -322,7 +348,7 @@
     line-height: initial;
     outline: 0;
     padding: initial;
-    text-transform: initial;
+    text-transform: none;
     vertical-align: initial;
     -webkit-tap-highlight-color: initial;
 }

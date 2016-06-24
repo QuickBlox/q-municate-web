@@ -25,8 +25,8 @@ define([
   var currentUser, profileView, changePassView, fbImportView;
 
   var TITLE_NAME = 'Q-municate',
-      FAVICON_COUNTER = 'favicon_counter.png',
-      FAVICON = 'favicon.png';
+      FAVICON_COUNTER = 'images/favicon_counter.png',
+      FAVICON = 'images/favicon.png';
 
   function DialogView(app) {
     this.app = app;
@@ -107,6 +107,8 @@ define([
     },
 
     createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
+      this.removeDataSpinner();
+
       var spinnerBlock;
       if (isAjaxDownloading) {
         spinnerBlock = '<div class="message message_service"><div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
