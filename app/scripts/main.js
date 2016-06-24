@@ -116,7 +116,7 @@ requirejs([
         $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
             FB.init({
                 appId: QMCONFIG.fbAccount.appId,
-                version: 'v2.1'
+                version: 'v2.6'
             });
             Helpers.log('FB init', FB);
         });
