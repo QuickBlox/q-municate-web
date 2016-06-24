@@ -70,13 +70,16 @@
             background-color: #445f8c;
             opacity: 1;
         }
-    .l-btn_reset,
-    .l-btn_reset:hover,
-    .l-btn_reset:focus  {
+    .l-btn_reset  {
         margin-top: 24px;
         background-color: #28c849;
         color: #ffffff;
     }
+        .l-btn_reset:hover,
+        .l-btn_reset:focus {
+            background-color: #445f8c;
+            opacity: 1;
+        }
     .i-btn_icon_fb {
         display: inline-block;
         width: 18px;
