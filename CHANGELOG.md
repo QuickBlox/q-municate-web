@@ -2,6 +2,14 @@
 
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
 
+### v. 1.8.5 - June (..), 2016
+* Stable version
+* Added authorization by Twitter Digits
+* Redesign for welcome pages
+* Added ability to send push notification about incoming call to mobile
+* Added user's settings (switches for sounds, messages and calls notifications)
+* Fixed bugs
+
 ### v. 1.4.3 - May 13, 2016
 * Stable version
 * Fixed bug with calls

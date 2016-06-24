@@ -510,9 +510,9 @@ define([
 
       objDom.mCustomScrollbar({
         theme: 'minimal-dark',
-        scrollInertia: 100,
+        scrollInertia: 200,
         mouseWheel: {
-          scrollAmount: QMCONFIG.isMac || 'auto',
+          scrollAmount: 'auto',
           deltaFactor: 'auto'
         },
         setTop: height + 'px',

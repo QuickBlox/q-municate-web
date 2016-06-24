@@ -497,7 +497,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
       theme: 'minimal-dark',
       scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 'auto',
+        scrollAmount: 'auto',
         deltaFactor: 'auto'
       },
       live: true
@@ -509,7 +509,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
       theme: 'minimal-dark',
       scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 'auto',
+        scrollAmount: 'auto',
         deltaFactor: 'auto'
       },
       callbacks: {
