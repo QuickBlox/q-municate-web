@@ -42,19 +42,7 @@ See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases)
 * Added read/delivered statuses
 * Fixed bugs
 
-### v. 1.1.0 - December 15, 2016
-* Update all dependencies
-* Update QuickBlox JS SDK to 1.17.1
-* Fixed bugs
-
-### v. 1.2.0 - January 29, 2016
-* Updated QuickBlox JS SDK to 2.0.2
-* Added system notification for chat
-* Added typing statuses
-* Added read/delivered statuses
-* Fixed bugs
-
-### v. 1.1.0 - December 15, 2016
+### v. 1.1.0 - December 15, 2015
 * Updated all dependencies
 * Updated QuickBlox JS SDK to 1.17.1
 * Fixed bugs
