@@ -14,7 +14,8 @@ define([
 ], function($, QMCONFIG, QB, Helpers, Digits) {
 
   var tempParams,
-      that;
+      that,
+      isSecondTab;
 
   function User(app) {
     this.app = app;
@@ -27,18 +28,26 @@ define([
   User.prototype = {
 
     connectTwitterDigits: function() {
-      Digits.logIn()
-        .done(function(onLogin) {
-          var params = {
-            'provider': 'twitter_digits',
-            'twitter_digits': onLogin.oauth_echo_headers
-          };
+        if (isSecondTab) {
+            return false;console.info(isSecondTab);
+        }
 
-          that.providerConnect(params);
-        })
-        .fail(function(error) {
-          Helpers.log('Digits failed to login: ', error);
-        });
+        isSecondTab = true;
+
+        Digits.logIn()
+            .done(function(onLogin) {
+                isSecondTab = false;
+                var params = {
+                    'provider': 'twitter_digits',
+                    'twitter_digits': onLogin.oauth_echo_headers
+                };
+
+                that.providerConnect(params);
+            })
+            .fail(function(error) {
+                isSecondTab = false;
+                Helpers.log('Digits failed to login: ', error);
+            });
     },
 
     connectFB: function(token) {

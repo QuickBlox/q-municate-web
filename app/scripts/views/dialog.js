@@ -30,7 +30,6 @@ define([
 
   function DialogView(app) {
     this.app = app;
-
     User = this.app.models.User;
     Dialog = this.app.models.Dialog;
     Message = this.app.models.Message;
@@ -144,6 +143,7 @@ define([
 
     prepareDownloading: function(roster) {
       Helpers.log('QB SDK: Roster has been got', roster);
+      this.app.views.Settings.setUp(User.contact.id);
       this.chatCallbacksInit();
       this.createDataSpinner();
       scrollbar();
