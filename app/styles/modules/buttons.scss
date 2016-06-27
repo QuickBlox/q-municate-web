@@ -290,7 +290,13 @@
     background: #f2f2f2;
     border: 1px solid #f2f2f2;
     border-radius: 5px;
+    text-transform: none;
 }
+    .btn_request_again:hover,
+    .btn_request_again:focus {
+        background: #f2f2f2;
+        color: #333;
+    }
 .btn_request_again_delete {
     margin-left: 0;
 }
