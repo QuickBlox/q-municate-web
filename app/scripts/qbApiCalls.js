@@ -296,12 +296,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'LocationView'], function($,
           }
         }
 
-<<<<<<< HEAD
-        self.app.views.Dialog.chatCallbacksInit();
-        self.app.models.ContactList.saveRoster(roster);
-=======
         DialogView.chatCallbacksInit();
->>>>>>> 7aa97ea28992d73d40c717592b9caceedbf60724
 
         $('.j-disconnect').removeClass('is-overlay')
          .parent('.j-overlay').removeClass('is-overlay');
