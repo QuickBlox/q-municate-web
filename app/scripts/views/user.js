@@ -5,7 +5,15 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml', 'LocationView'], function($, QMCONFIG, QB, Helpers, QMHtml, Location) {
+define([
+  'jquery',
+  'config',
+  'quickblox',
+  'Helpers',
+  'QMHtml',
+  'LocationView',
+  'digits'
+], function($, QMCONFIG, QB, Helpers, QMHtml, Location, Digits) {
 
   var User, ContactList, Contact,
       FBCallback = null;
@@ -29,6 +37,10 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml', 'LocationView'], f
 
     forgot: function() {
       switchPage($('#forgotPage'));
+    },
+
+    connectTwitterDigits: function(loginPage) {
+      User.connectTwitterDigits();
     },
 
     connectFB: function(token) {
@@ -78,7 +90,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml', 'LocationView'], f
     },
 
     successSendEmailCallback: function() {
-      var alert = '<div class="note l-form l-flexbox l-flexbox_column">';
+      var alert = '<div class="j-success_callback note l-form l-flexbox l-flexbox_column">';
       alert += '<span class="text text_alert text_alert_success">Success!</span>';
       alert += '<span class="text">Please check your email and click a link in the letter in order to reset your password</span>';
       alert += '</div>';
@@ -117,10 +129,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml', 'LocationView'], f
     },
 
     profilePopover: function(objDom) {
-      var html = '<ul class="list-actions list-actions_profile popover">';
-      html += '<li class="list-item"><a id="userProfile" class="list-actions-action" href="#">Profile</a></li>';
-      html += '<li class="list-item"><a id="logout" class="list-actions-action" href="#">Log Out</a></li>';
-      html += '</ul>';
+      var html = QMHtml.User.profilePopover();
 
       objDom.after(html);
       appearAnimation();
@@ -326,11 +335,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'QMHtml', 'LocationView'], f
         localStorage.removeItem('QM.longitude');
 
         Location.toggleGeoCoordinatesToLocalStorage(true, function(res, err) {
-          if (err) {
-            Helpers.log('Location: ', err);
-          } else {
-            Helpers.log('Location: ', res);
-          }
+          Helpers.log('Location: ', err ? err : res);
         });
       }
     }

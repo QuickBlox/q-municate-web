@@ -239,7 +239,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
           callback(false);
         } else {
 
-          Attach.crop(file, {w: 40, h: 40}, function(avatar) {
+          Attach.crop(file, {w: 240, h: 240}, function(avatar) {
             Attach.upload(avatar, function(blob) {
               QBApiCalls.updateDialog(dialog_id, {photo: blob.path}, function(res) {
                 dialog = self.create(res);
@@ -276,7 +276,7 @@ define(['config', 'quickblox', 'underscore', 'Helpers'], function(QMCONFIG, QB, 
       var QBApiCalls = this.app.service,
           User = this.app.models.User,
           self = this;
-          
+
       // send notification about leave
       QB.chat.send(dialog.room_jid, {
         type: 'groupchat',

@@ -8,8 +8,9 @@
   <title>Q-municate</title>
   <meta name="description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox">
 
-  <link rel="icon" href="favicon.png">
+  <link rel="icon" href="images/favicon.png">
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
   <link rel="stylesheet" href="https://vjs.zencdn.net/4.6/video-js.css">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
   <!-- build:css styles/build.css -->
@@ -26,211 +27,149 @@
   <!-- endbuild -->
 
 </head>
-<body class="is-welcome">
-  <!--[if lt IE 10]>
+  <body class="is-welcome">
+    <!--[if lt IE 10]>
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-  <![endif]-->
+    <![endif]-->
+    <div class="l-wrapper">
 
-  <div class="l-wrapper">
-    <section id="welcomePage" class="l-page l-flexbox l-flexbox_column l-flexbox_flexbetween">
-      <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
-        <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.svg" alt="Q-municate">
-        <img class="l-welcome-header-text" src="images/logo-qmunicate-text.svg" alt="Q-municate">
-        <div class="download">
-          <a class="download-app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/app-android.svg" alt="download Q-municate Android"></a>
-          <a class="download-app" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank"><img src="images/app-ios.svg" alt="download Q-municate iOS"></a>
-        </div>
-      </header>
-      <div class="l-form l-flexbox l-flexbox_column is-hidden">
-        <button id="signupFB" class="btn btn_form btn_welcome btn_fb"><img class="btn-icon btn-icon_fb" src="images/icon-fb.svg" alt="fb">Connect with Facebook</button>
-        <button id="signupQB" class="btn btn_form btn_welcome btn_qb">Sign Up with Email</button>
-        <a id="loginQB" class="text text_welcome" href="#">Already have an account?</a>
-      </div>
-      <footer class="l-welcome-footer l-flexbox l-flexbox_column l-flexbox_flexbetween is-hidden">
-        <div class="l-welcome-footer-logo">
-          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox.svg" alt="QuickBlox"></a>
-        </div>
-      </footer>
-      <div class="l-spinner">
-        <div class="spinner">
-          <div class="spinner-dot1"></div>
-          <div class="spinner-dot2"></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="signUpPage" class="l-page is-hidden">
-      <div class="l-container l-flexbox l-flexbox_column l-flexbox_flexbetween">
-        <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
-          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.svg" alt="Q-municate">
-          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.svg" alt="Q-municate">
-          <div class="download">
-            <a class="download-app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/app-android.svg" alt="download Q-municate Android"></a>
-            <a class="download-app" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank"><img src="images/app-ios.svg" alt="download Q-municate iOS"></a>
-          </div>
-        </header>
-        <form class="l-form l-flexbox l-flexbox_column" action="#" autocomplete="off">
-          <span class="text text_error">Error</span>
-          <input id="signup-full_name" class="form-input pattern-name" type="text" placeholder="Name" required>
-          <input id="signup-email" class="form-input" type="email" placeholder="Email" required>
-          <div class="chroma-hash">
-            <input id="signup-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
-          </div>
-          <div class="form-file">
-            <div class="form-file-custom l-flexbox_inline l-flexbox_flexcenter">
-              <!-- <img class="contact-avatar_signup avatar avatar_signup" src="" alt="user"> -->
-              <div class="contact-avatar_signup avatar avatar_signup"></div>
-              <span class="name name_signup"></span>
+    <section id="welcomePage" class="l-page">
+        <div class="l-welcome_container">
+            <div class="l-welcome_main_logo">
+                <div class="l-welcome_block l-welcome_logo"></div>
+                <div class="l-welcome_block l-welcome_text_logo">q-municate</div>
+                <div class="l-welcome_block l-welcome_text_description">Your own Chat!</div>
             </div>
-            <input id="signup-avatar" class="form-file-default" type="file" accept="image/jpeg,image/png,image/svg">
-          </div>
-          <button id="signupForm" class="btn btn_form btn_signup btn_qb">Sign Up</button>
-          <span class="text text_back">Already have account? <a id="backFromSignUp" class="click_to_back back_to_welcome_page" href="#">Login!</a></span>
-          <span class="text text_signup">
-            By clicking Sign Up, you agree to<br>
-            Q-MUNICATE <a href="http://q-municate.com/agreement/" target="_blank"><b>User Agreement</b></a>, <a href="https://quickblox.com/privacy/" target="_blank"><b>Privacy Policy</b></a>.
-          </span>
-        </form>
-      </div>
-      <footer class="l-footer l-flexbox l-flexbox_flexbetween">
-        <div class="footer-logo">
-          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
+            <footer class="l-welcome-footer l-flexbox l-flexbox_column l-flexbox_flexbetween is-hidden">
+                <button class="btn l-welcome_btn l-welcome_btn_green j-twitterDigits">connect with phone number</button>
+                <button id="loginQB" class="btn l-welcome_btn l-welcome_btn_white j-login_QB">login by email or social</button>
+            </footer>
+            <div class="l-spinner">
+                <div class="spinner">
+                    <div class="spinner-dot1"></div>
+                    <div class="spinner-dot2"></div>
+                </div>
+            </div>
+            <div class="l-welcome_links">
+                <div class="l-welcome_footer_logo">
+                    <a href="https://quickblox.com" target="_blank">
+                        <div class="i-mini_logo"></div>
+                        <span class="by_QB">by QuickBlox</span>
+                    </a>
+                </div>
+                <div class="l-welcome_download">
+                    <a class="l-welcome_download_app" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank">
+                        <div class="i-appstore"></div>
+                    </a>
+                    <a class="l-welcome_download_app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank">
+                        <div class="i-android"></div>
+                    </a>
+                </div>
+            </div>
         </div>
-        <nav class="footer-links is-notVisible">
-          <ul>
-            <li class="footer-links-item"><a href="#">Support</a></li>
-            <li class="footer-links-item"><a href="#">FAQ</a></li>
-            <li class="footer-links-item"><a href="#">Help</a></li>
-          </ul>
-        </nav>
-      </footer>
     </section>
 
     <section id="loginPage" class="l-page is-hidden">
-      <div class="l-container l-flexbox l-flexbox_column l-flexbox_flexbetween">
-        <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
-          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.svg" alt="Q-municate">
-          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.svg" alt="Q-municate">
-          <div class="download">
-            <a class="download-app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/app-android.svg" alt="download Q-municate Android"></a>
-            <a class="download-app" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank"><img src="images/app-ios.svg" alt="download Q-municate iOS"></a>
-          </div>
-        </header>
-        <form class="l-form l-flexbox l-flexbox_column" action="#">
-          <span class="text text_error">Error</span>
-          <input id="login-email" class="form-input" type="email" placeholder="Email" required>
-          <div class="chroma-hash">
-            <input id="login-password" class="form-input pattern-pass" type="password" placeholder="Password" required>
-          </div>
-          <label class="form-label" for="login-remember">
-            Remember me
-            <input id="login-remember" class="form-checkbox" type="checkbox">
-          </label>
-          <button id="loginForm" class="btn btn_form btn_login btn_qb">Log In</button>
-          <button id="loginFB" class="btn btn_form btn_login btn_fb"><img class="btn-icon btn-icon_fb" src="images/icon-fb.svg" alt="fb">Connect with Facebook</button>
-          <a id="forgot" class="text text_login" href="#">Forgot password?</a>
-          <span class="text text_back">Looking to create an account? <a id="backFromLogin" class="click_to_back back_to_welcome_page" href="#">Sign Up!</a></span>
-        </form>
-        <div class="l-spinner is-hidden">
-          <div class="spinner">
-            <div class="spinner-dot1"></div>
-            <div class="spinner-dot2"></div>
-          </div>
+        <div class="l-welcome_container">
+            <div class="l-welcome_block_login l-welcome_logo_login"></div>
+            <div class="l-welcome_block l-welcome_text_logo_login">q-municate</div>
+            <div class="l-welcome_block l-welcome_text_login">Log In</div>
+            <form class="l-form l-form_login" action="#">
+                <span class="text_error">Error</span>
+                <div class="input-field">
+                    <input id="login-email" class="form-input input_email" type="email" required>
+                    <label for="login-email" class="j-prepare_inputs">Email</label>
+                </div>
+                <div class="input-field">
+                    <input id="login-password" class="form-input pattern-pass input_pass" type="password" required>
+                    <label for="login-password" class="j-prepare_inputs">Password</label>
+                </div>
+                <button id="loginForm" class="btn l-welcome_btn l-btn_login">log in</button>
+                <span class="text_mid">or</span>
+                <button id="loginFB" class="btn l-welcome_btn l-btn_login_fb">
+                    <div class="i-btn_icon_fb"></div>
+                    log in with facebook
+                </button>
+                <span class="text text_digits">
+                    New user?
+                    <a id="twitterDigitsLogin" class="twitterDigits j-twitterDigits" href="#">Connect with phone number!</a>
+                </span>
+                <a id="forgot" class="text text_login" href="#">Forgot password?</a>
+            </form>
+            <div class="l-spinner is-hidden">
+                <div class="spinner">
+                    <div class="spinner-dot1"></div>
+                    <div class="spinner-dot2"></div>
+                </div>
+            </div>
+            <div class="l-welcome_links">
+                <div class="l-welcome_footer_logo">
+                    <a href="https://quickblox.com" target="_blank">
+                        <div class="i-mini_logo"></div>
+                        <span class="by_QB">by QuickBlox</span>
+                    </a>
+                </div>
+                <div class="l-welcome_download">
+                    <a class="l-welcome_download_app" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank">
+                        <div class="i-appstore"></div>
+                    </a>
+                    <a class="l-welcome_download_app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank">
+                        <div class="i-android"></div>
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
-      <footer class="l-footer l-flexbox l-flexbox_flexbetween">
-        <div class="footer-logo">
-          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
-        </div>
-        <nav class="footer-links is-notVisible">
-          <ul>
-            <li class="footer-links-item"><a href="#">Support</a></li>
-            <li class="footer-links-item"><a href="#">FAQ</a></li>
-            <li class="footer-links-item"><a href="#">Help</a></li>
-          </ul>
-        </nav>
-      </footer>
     </section>
 
     <section id="forgotPage" class="l-page is-hidden">
-      <div class="l-container l-flexbox l-flexbox_column">
-        <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
-          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.svg" alt="Q-municate">
-          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.svg" alt="Q-municate">
-          <div class="download">
-            <a class="download-app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/app-android.svg" alt="download Q-municate Android"></a>
-            <a class="download-app" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank"><img src="images/app-ios.svg" alt="download Q-municate iOS"></a>
-          </div>
-        </header>
-        <form class="l-form l-flexbox l-flexbox_column" action="#" autocomplete="off">
-          <span class="text text_forgot text_forgot_black">
-            Did you forget your password?<br>
-            No worries, it happens to the best of us!
-          </span>
-          <span class="text text_forgot">
-            Please enter your email address below<br>
-            and we will send you a link to reset your password.
-          </span>
-          <span class="text text_error">Error</span>
-          <input id="forgot-email" class="form-input" type="email" placeholder="Email" required>
-          <button id="forgotForm" class="btn btn_form btn_reset btn_qb">Send Verification Email</button>
-          <span class="text text_back">Back to login form? <a id="backFromForgot" class="click_to_back back_to_login_page" href="#">Back!</a></span>
-        </form>
-      </div>
-      <footer class="l-footer l-flexbox l-flexbox_flexbetween">
-        <div class="footer-logo">
-          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
+        <div class="l-welcome_container reset_pas">
+            <div class="l-welcome_header_forgot">
+                <a id="backFromForgot" class="j-back_to_login_page i-back_login" href="#"></a>
+                <span class="text text_forgot_black">Forgot Password</span>
+            </div>
+            <form class="l-form l-form_reset" action="#" autocomplete="off">
+                <span class="text text_forgot">
+                    Enter the email you registered with Q-municate</br> and we’ll send you a link to reset your password.
+                </span>
+                <span class="text text_error text_error_reset">Error</span>
+                <div class="input-field">
+                    <input id="forgot-email" class="form-input input_email" type="email" required>
+                    <label for="login-email">Email</label>
+                </div>
+                <button id="forgotForm" class="btn l-welcome_btn l-btn_reset">continue</button>
+            </form>
+            <div class="l-spinner is-hidden">
+                <div class="spinner">
+                    <div class="spinner-dot1"></div>
+                    <div class="spinner-dot2"></div>
+                </div>
+            </div>
+            <div class="l-welcome_links">
+                <div class="l-welcome_footer_logo">
+                    <a href="https://quickblox.com" target="_blank">
+                        <div class="i-mini_logo"></div>
+                        <span class="by_QB">by QuickBlox</span>
+                    </a>
+                </div>
+                <div class="l-welcome_download">
+                    <a class="l-welcome_download_app" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank">
+                        <div class="i-appstore"></div>
+                    </a>
+                    <a class="l-welcome_download_app" href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank">
+                        <div class="i-android"></div>
+                    </a>
+                </div>
+            </div>
         </div>
-        <nav class="footer-links is-notVisible">
-          <ul>
-            <li class="footer-links-item"><a href="#">Support</a></li>
-            <li class="footer-links-item"><a href="#">FAQ</a></li>
-            <li class="footer-links-item"><a href="#">Help</a></li>
-          </ul>
-        </nav>
-      </footer>
     </section>
 
-    <section id="resetPage" class="l-page is-hidden">
-      <div class="l-container l-flexbox l-flexbox_column">
-        <header class="l-welcome-header l-flexbox l-flexbox_column l-flexbox_flexbetween">
-          <img class="l-welcome-header-logo" src="images/logo-qmunicate-big.svg" alt="Q-municate">
-          <img class="l-welcome-header-text" src="images/logo-qmunicate-text.svg" alt="Q-municate">
-          <div class="download">
-            <a class="download-app" href="#"><img src="images/app-android.svg" alt="download Q-municate Android"></a>
-            <a class="download-app" href="#"><img src="images/app-ios.svg" alt="download Q-municate iOS"></a>
-          </div>
-        </header>
-        <form class="l-form l-flexbox l-flexbox_column" action="#" autocomplete="off">
-          <h3 class="form-header">Reset your password</h3>
-          <span class="text text_error">Error</span>
-          <div class="chroma-hash">
-            <input id="reset-password" class="form-input pattern-pass" type="password" placeholder="New password" required>
-          </div>
-          <button id="resetForm" class="btn btn_form btn_reset btn_qb">Reset password</button>
-        </form>
-      </div>
-      <footer class="l-footer l-flexbox l-flexbox_flexbetween">
-        <div class="footer-logo">
-          <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
-        </div>
-        <nav class="footer-links">
-          <ul>
-            <li class="footer-links-item"><a href="#">Support</a></li>
-            <li class="footer-links-item"><a href="#">FAQ</a></li>
-            <li class="footer-links-item"><a href="#">Help</a></li>
-          </ul>
-        </nav>
-      </footer>
-    </section>
-
-    <section id="mainPage" class="l-page is-hidden">
+    <section id="mainPage" class="l-page l-chat_wrapper is-hidden">
       <div class="l-container">
         <header class="l-header l-flexbox l-flexbox_flexbetween">
           <div class="header-logo">
             <a id="home" href="#"><img src="images/logo-qmunicate.svg" alt="Q-municate"></a>
           </div>
-          <ul class="header-links l-flexbox">
+          <ol class="header-links l-flexbox">
             <li class="header-links-item is-hidden">
               <a id="share" href="#">
                 <img class="btn-icon btn-icon_fb_header icon-normal" src="images/icon-fb_header.svg" alt="fb">
@@ -242,16 +181,15 @@
               <a id="contacts" class="createGroupChat" href="#">Contacts</a>
             </li>
             <li class="header-links-item">
-              <!-- <a id="profile" href="#"><img class="avatar" src="" alt="user"></a> -->
               <a id="profile" href="#"><div class="avatar"></div></a>
             </li>
-          </ul>
+          </ol>
         </header>
         <div class="l-content l-flexbox">
 
           <aside class="l-sidebar">
             <form id="searchContacts" class="l-search localSearch formSearch">
-              <input class="form-input-search" type="search" placeholder="Search">
+              <input class="form-input-search without_M" type="search" placeholder="Search">
               <button class="clean-button" type="reset">✕</button>
             </form>
 
@@ -287,7 +225,7 @@
                   <span class="text text_alert">Sorry...</span>
                   <span class="text">No results found</span>
                 </div>
-                <button class="search btn btn_search">Global Search</button>
+                <button class="search btn btn_search without_M">Global Search</button>
               </section>
 
               <section id="emptyList" class="l-list note l-flexbox l-flexbox_column is-hidden">
@@ -302,7 +240,7 @@
               <div class="l-cap l-flexbox l-flexbox_column">
                 <span class="cap-text">Is anybody here?</span>
                 <img class="cap-anybody" src="images/anybody.png" alt="QuickBlox anybody">
-                <button class="search btn btn_add btn_invite"><img class="btn-icon btn-icon_invite" src="images/icon-invite.svg" alt="invite">Search for Friends</button>
+                <button class="search btn btn_add btn_invite without_M"><div class="btn-icon btn-icon_invite"></div>Search for Friends</button>
                 <!-- <button class="btn btn_add btn_share"><img class="btn-icon btn-icon_share" src="images/icon-fb.svg" alt="fb">Share on Facebook</button> -->
               </div>
             </section>
@@ -388,7 +326,7 @@
           <a href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/icon-android.svg" alt="download Q-municate Android"></a>
         </div>
 
-        <div class="l-app-version">v.1.4.2</div>
+        <div class="l-app-version">v.1.8.5</div>
 
       </footer>
     </section>
@@ -403,14 +341,64 @@
       </div>
     </section>
 
-    <!-- <section id="chatConnecting" class="popup popup_connect is-open j-chatConnecting">
-      <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-        <div class="spinner">
-          <div class="spinner-dot1"></div>
-          <div class="spinner-dot2"></div>
+    <!-- Popup with users settings (on/off sounds and local notification for calls or messages) -->
+    <section id="popupSettings" class="popup popup_settings is-open j-settings">
+        <header class="header_settings">
+            <span class="header_settings_label">Settings</span>
+            <div class="i-close_settings j-close_settings"></div>
+        </header>
+        <div class="body_settings">
+            <ul class="container_settings">
+                <li class="switch_settings">
+                    <div class="switch_label_block">
+                        <div class="i-notifications_settings"></div>
+                        <span class="settings_label">Desktop Notifications</span>
+                    </div>
+                </li>
+                <li class="messages_settings switch_settings">
+                    <div class="switch">
+                        <label class="toogle_settings j-toogle_settings">
+                            <span class="settings_label">Messages Notifications</span>
+                            <input id="messages_notify" class="j-setings_notify" type="checkbox" checked>
+                            <span class="lever"></span>
+                        </label>
+                    </div>
+                </li>
+                <li class="calls_settings switch_settings">
+                    <div class="switch">
+                        <label class="toogle_settings j-toogle_settings">
+                            <span class="settings_label">Calls Notification</span>
+                            <input id="calls_notify" class="j-setings_notify" type="checkbox" checked>
+                            <span class="lever"></span>
+                        </label>
+                    </div>
+                </li>
+                <li class="sound_settings switch_settings">
+                    <div class="switch">
+                        <label class="toogle_settings j-toogle_settings">
+                            <span class="settings_label">Sounds</span>
+                            <input id="sounds_notify" class="j-setings_notify" type="checkbox" checked>
+                            <span class="lever"></span>
+                        </label>
+                    </div>
+                </li>
+            </ul>
+            <footer class="footer_settings_menu">
+                <label class="footer_settings">
+                    <a class="footer_settings_link" href="https://github.com/QuickBlox/q-municate-web/issues/new" target="_blank">
+                        <div class="i-feedback_settings i-footer_settings"></div>
+                        <span class="footer_settings_label">Write Feedback</span>
+                    </a>
+                </label>
+                <label class="footer_settings">
+                    <a class="footer_settings_link" href="http://q-municate.com/" target="_blank">
+                        <div class="i-help_settings i-footer_settings"></div>
+                        <span class="footer_settings_label">About</span>
+                    </a>
+                </label>
+            </footer>
         </div>
-      </div>
-    </section> -->
+    </section>
 
     <section id="popupGeoInfo" class="popup popup_geo_info j-geoInfo">
       <span class="alert alert_geo_info">
@@ -439,7 +427,7 @@
       <video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls autoplay preload="auto" data-setup="{}"></video>
       <div class="attach-description l-flexbox l-flexbox_flexbetween">
         <span class="attach-name"></span>
-        <a class="attach-download" href="" download="">Download</a>
+        <a class="attach-download" href="" target="_blank" download="">Download</a>
       </div>
     </section>
 
@@ -487,7 +475,7 @@
         <h3>Global Search</h3>
       </header>
       <form id="globalSearch" class="popup-form formSearch" action="#">
-        <input class="form-input-search" type="search" placeholder="Search" autofocus>
+        <input class="form-input-search without_M" type="search" placeholder="Search" autofocus>
         <button class="clean-button" type="reset">✕</button>
       </form>
       <ul class="popup-elem list list_contacts"></ul>
@@ -503,7 +491,7 @@
         <h3>Contacts</h3>
       </header>
       <form id="searchFriends" class="popup-form localSearch formSearch" action="#">
-        <input class="form-input-search" type="search" placeholder="Search">
+        <input class="form-input-search without_M" type="search" placeholder="Search">
         <button class="clean-button" type="reset">✕</button>
       </form>
       <div class="popup-content">
@@ -516,7 +504,7 @@
       <div class="popup-nofriends l-flexbox is-hidden">
         <div class="l-cap l-cap_contacts l-flexbox l-flexbox_column">
           <span class="cap-text cap-text_contacts">It's a little lonely<br>over here</span>
-          <button class="search btn btn_invite btn_invite_contacts">
+          <button class="search btn btn_invite btn_invite_contacts btn_add">
             <img class="btn-icon btn-icon_invite btn-icon_invite_contacts" src="images/icon-invite.svg" alt="invite">
             Search for Friends
           </button>
@@ -552,16 +540,6 @@
 
   <div id="fb-root"></div>
 
-  <!-- Google Analytics -->
-  <script>
-    (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-    function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-    e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-    e.src='//www.google-analytics.com/analytics.js';
-    r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-    ga('create','UA-26728270-6');ga('send','pageview');
-  </script>
-
   <!-- build:js scripts/build.js -->
   <script src="bower_components/requirejs/require.js"></script>
   <script src="scripts/main.js"></script>
@@ -573,7 +551,7 @@
         <div class="userDetails-avatar profileUserAvatar" style="background-image: url(<%= avatar_url %>)" data-id="<%= id %>"></div>
         <div class="userProfile-info">
           <div class="userProfile-filename-wrap">
-            <input class="userProfile-filename editable-profile" type="text" value="<%= full_name %>" maxlength="50">
+            <input class="userProfile-filename editable-profile without_M" type="text" placeholder="Your name" value="<%= full_name %>" maxlength="50">
             <span class="userProfile-header-pencil"></span>
           </div>
           <div style="clear:both"></div>
@@ -592,7 +570,7 @@
       </div>
       <div class="userProfile-field userProfile-field_phone userProfile-edit">
         <span class="userDetails-label">Phone:</span>
-        <input class="userProfile-phone editable-profile" type="text" value="<%= phone %>" maxlength="20">
+        <input class="userProfile-phone editable-profile without_M" type="text" value="<%= phone %>" maxlength="20">
       </div>
       <div class="userProfile-field userProfile-field-facebook">
         <% if (facebook_id) { %>
@@ -621,7 +599,7 @@
         </div>
       </div>
       <footer class="popup-footer popup-footer_changepass">
-        <button class="btn btn_popup btn_popup_changepass">Change</button>
+        <button class="btn btn_popup btn_popup_changepass without_M">Change</button>
       </footer>
     </section>
   </script>

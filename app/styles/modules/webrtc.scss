@@ -106,7 +106,7 @@
       white-space: nowrap;
       text-overflow: ellipsis;
     }
-  
+
   .mediacall-local {
     position: absolute;
     top: 15px;
@@ -141,7 +141,8 @@
     left: 0;
     bottom: 15px;
   }
-    .btn_mediacall {
+    .btn_mediacall,
+    .btn_mediacall:focus {
       width: 60px;
       height: 60px;
       background: rgba(0, 0, 0, 0.57);

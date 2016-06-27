@@ -25,8 +25,8 @@ define([
   var currentUser, profileView, changePassView, fbImportView;
 
   var TITLE_NAME = 'Q-municate',
-      FAVICON_COUNTER = 'favicon_counter.png',
-      FAVICON = 'favicon.png';
+      FAVICON_COUNTER = 'images/favicon_counter.png',
+      FAVICON = 'images/favicon.png';
 
   function DialogView(app) {
     this.app = app;
@@ -53,7 +53,7 @@ define([
       QB.chat.onSystemMessageListener = MessageView.onSystemMessage;
       QB.chat.onDeliveredStatusListener = MessageView.onDeliveredStatus;
       QB.chat.onReadStatusListener = MessageView.onReadStatus;
-      
+
       QB.chat.onContactListListener = ContactListView.onPresence;
       QB.chat.onSubscribeListener = ContactListView.onSubscribe;
       QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
@@ -86,12 +86,7 @@ define([
 
       QB.chat.onReconnectFailedListener = function(error) {
         if (error) {
-          QB.chat.disconnect();
-
-          Helpers.log('Error: ', error);
-          self.app.service.checkSession(function (res) {
-            Helpers.log('Check session: ', res);
-          }, true);
+          self.app.service.reconnectChat();
         }
       };
 
@@ -112,6 +107,8 @@ define([
     },
 
     createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
+      this.removeDataSpinner();
+
       var spinnerBlock;
       if (isAjaxDownloading) {
         spinnerBlock = '<div class="message message_service"><div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
@@ -513,9 +510,9 @@ define([
 
       objDom.mCustomScrollbar({
         theme: 'minimal-dark',
-        scrollInertia: 100,
+        scrollInertia: 200,
         mouseWheel: {
-          scrollAmount: QMCONFIG.isMac || 'auto',
+          scrollAmount: 'auto',
           deltaFactor: 'auto'
         },
         setTop: height + 'px',
@@ -626,7 +623,7 @@ define([
       theme: 'minimal-dark',
       scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 'auto',
+        scrollAmount: 'auto',
         deltaFactor: 'auto'
       },
       live: true

@@ -5,57 +5,94 @@
  *
  */
 
-define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, Helpers) {
+define([
+  'jquery',
+  'config',
+  'quickblox',
+  'Helpers',
+  'digits'
+], function($, QMCONFIG, QB, Helpers, Digits) {
 
-  var tempParams;
+  var tempParams,
+      that;
 
   function User(app) {
     this.app = app;
     this._is_import = null;
     this._remember = false;
     this._valid = false;
+    that = this;
   }
 
   User.prototype = {
 
+    connectTwitterDigits: function() {
+      Digits.logIn()
+        .done(function(onLogin) {
+          var params = {
+            'provider': 'twitter_digits',
+            'twitter_digits': onLogin.oauth_echo_headers
+          };
+
+          that.providerConnect(params);
+        })
+        .fail(function(error) {
+          Helpers.log('Digits failed to login: ', error);
+        });
+    },
+
     connectFB: function(token) {
+      var params = {
+        provider: 'facebook',
+        keys: {token: token}
+      };
+
+      that.providerConnect(params);
+    },
+
+    providerConnect: function(params) {
       var QBApiCalls = this.app.service,
           UserView = this.app.views.User,
           DialogView = this.app.views.Dialog,
           Contact = this.app.models.Contact,
           self = this,
-          params;
+          isFB = params.provider === 'facebook' ? true : false;
 
       UserView.loginQB();
       UserView.createSpinner();
 
-      params = {
-        provider: 'facebook',
-        keys: {token: token}
-      };
-
-      QBApiCalls.createSession(params, function(session) {
-        QBApiCalls.getUser(session.user_id, function(user) {
-          self.contact = Contact.create(user);
-          self._is_import = getImport(user);
-
-          Helpers.log('User', self);
-
-          QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
-            self.rememberMe();
-            UserView.successFormCallback();
-            DialogView.prepareDownloading(roster);
-
-            if (!self._is_import) {
-              self.import(roster, user);
-            } else {
-              DialogView.downloadDialogs(roster);
-            }
-            
+      if (isFB) {
+        QBApiCalls.createSession(params, function(session) {
+          QBApiCalls.getUser(session.user_id, function(user) {
+            _prepareChat(user);
           });
+        }, true);
+      } else {
+        QBApiCalls.createSession({}, function(session) {
+          QBApiCalls.loginUser(params, function(user) {
+            _prepareChat(user);
+          });
+        }, true);
+      }
 
+      function _prepareChat(user) {
+        self.contact = Contact.create(user);
+        self._is_import = getImport(user);
+
+        Helpers.log('User', self);
+
+        QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
+          self.rememberMe();
+          UserView.successFormCallback();
+          DialogView.prepareDownloading(roster);
+
+          if (!self._is_import && isFB) {
+            self.import(roster, user);
+          } else {
+            DialogView.downloadDialogs(roster);
+          }
         });
-      }, true);
+      }
     },
 
     import: function(roster, user) {
@@ -175,7 +212,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
           UserView.successFormCallback();
           DialogView.prepareDownloading(roster);
           DialogView.downloadDialogs(roster);
-          
+
           custom_data = JSON.stringify({avatar_url: blob.path});
           QBApiCalls.updateUser(self.contact.id, {blob_id: blob.id, custom_data: custom_data}, function(res) {
 
@@ -208,17 +245,14 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
             Helpers.log('User', self);
 
             QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
-              if (self._remember) {
-                self.rememberMe();
-              }
-
+              self.rememberMe();
               UserView.successFormCallback();
               DialogView.prepareDownloading(roster);
               DialogView.downloadDialogs(roster);
             });
 
           });
-        }, self._remember);
+        }, true);
       }
     },
 
@@ -230,7 +264,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
         if (prop !== 'app')
           storage[prop] = self.contact[prop];
       });
-      
+
       localStorage.setItem('QM.user', JSON.stringify(storage));
     },
 
@@ -387,7 +421,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers'], function($, QMCONFIG, QB, H
 
   function getImport(user) {
     var isImport;
-    
+
     try {
       isImport = JSON.parse(user.custom_data).is_import || null;
     } catch(err) {

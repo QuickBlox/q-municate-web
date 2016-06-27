@@ -3,14 +3,6 @@ define(function() {
 
   var QMCONFIG = {
 
-    // /* Production environment */
-    // qbAccount: {
-    //   appId: 13318,
-    //   authKey: 'WzrAY7vrGmbgFfP',
-    //   authSecret: 'xS2uerEveGHmEun'
-    // },
-
-    /* Test local environment */
     qbAccount: {
       appId: 36125,
       authKey: 'gOGVNO4L9cBwkPE',
@@ -27,8 +19,6 @@ define(function() {
     notification: {
       timeout: 7
     },
-
-    isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 
     defAvatar: {
       url: 'images/ava-single.svg',
