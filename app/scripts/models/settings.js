@@ -7,6 +7,8 @@ define([], function() {
     'use strict';
 
     function Settings(app) {
+        this.app = app;
+
         var options,
             self = this;
 
@@ -31,16 +33,20 @@ define([], function() {
         };
 
         this.save = function() {
-            localStorage.setItem('QM.settings', JSON.stringify(options));
+            var user = self.app.models.User.contact.id;
+
+            localStorage.setItem('QM.settings-' + user, JSON.stringify(options));
         };
 
         function sync() {
-            if (!localStorage['QM.settings']) {
+            var user = self.app.models.User.contact.id;
+
+            if (!localStorage['QM.settings-' + user]) {
                 self.save();
 
                 return false;
             } else {
-                options = JSON.parse(localStorage['QM.settings']);
+                options = JSON.parse(localStorage['QM.settings-' + user]);
             }
         }
     }

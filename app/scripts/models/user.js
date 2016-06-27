@@ -14,7 +14,8 @@ define([
 ], function($, QMCONFIG, QB, Helpers, Digits) {
 
   var tempParams,
-      that;
+      that,
+      isAlreadyЕxists;
 
   function User(app) {
     this.app = app;
@@ -27,18 +28,25 @@ define([
   User.prototype = {
 
     connectTwitterDigits: function() {
-      Digits.logIn()
-        .done(function(onLogin) {
-          var params = {
-            'provider': 'twitter_digits',
-            'twitter_digits': onLogin.oauth_echo_headers
-          };
+        if (isAlreadyЕxists) {
+            return false;
+        }
 
-          that.providerConnect(params);
-        })
-        .fail(function(error) {
-          Helpers.log('Digits failed to login: ', error);
-        });
+        isAlreadyЕxists = true;
+
+        Digits.logIn()
+            .done(function(onLogin) {
+                var params = {
+                    'provider': 'twitter_digits',
+                    'twitter_digits': onLogin.oauth_echo_headers
+                };
+                that.providerConnect(params);
+                isAlreadyЕxists = false;
+            })
+            .fail(function(error) {
+                Helpers.log('Digits failed to login: ', error);
+                isAlreadyЕxists = false;
+            });
     },
 
     connectFB: function(token) {
@@ -50,7 +58,7 @@ define([
       that.providerConnect(params);
     },
 
-    providerConnect: function(params) {
+    providerConnect: function(params, callback) {
       var QBApiCalls = this.app.service,
           UserView = this.app.views.User,
           DialogView = this.app.views.Dialog,

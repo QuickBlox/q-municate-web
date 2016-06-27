@@ -6,11 +6,13 @@
 define(['jquery'], function($) {
     'use strict';
 
-    var Settings;
+    var Settings,
+        User;
 
     function SettingsView(app) {
         this.app = app;
         Settings = this.app.models.Settings;
+        User = this.app.models.User;
     }
 
     SettingsView.prototype = {
@@ -19,7 +21,7 @@ define(['jquery'], function($) {
         setUp: function() {
             Settings.init();
 
-            var storageSettings = JSON.parse(localStorage['QM.settings']);
+            var storageSettings = JSON.parse(localStorage['QM.settings-' + User.id]);
             // set checkbox position
             for (var key in storageSettings) {
                 $('#' + key)[0].checked = storageSettings[key];
