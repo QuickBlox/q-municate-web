@@ -18,10 +18,10 @@ define(['jquery'], function($) {
     SettingsView.prototype = {
 
         // set users settings from localStorage or create default (default - all is ON)
-        setUp: function() {
-            Settings.init();
+        setUp: function(userId) {
+            Settings.init(userId);
 
-            var storageSettings = JSON.parse(localStorage['QM.settings-' + User.id]);
+            var storageSettings = JSON.parse(localStorage['QM.settings-' + userId]);
             // set checkbox position
             for (var key in storageSettings) {
                 $('#' + key)[0].checked = storageSettings[key];

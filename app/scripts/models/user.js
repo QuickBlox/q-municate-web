@@ -15,7 +15,7 @@ define([
 
   var tempParams,
       that,
-      isAlreadyЕxists;
+      isSecondTab;
 
   function User(app) {
     this.app = app;
@@ -28,24 +28,25 @@ define([
   User.prototype = {
 
     connectTwitterDigits: function() {
-        if (isAlreadyЕxists) {
+        if (isSecondTab) {
             return false;
         }
 
-        isAlreadyЕxists = true;
+        isSecondTab = true;
 
         Digits.logIn()
             .done(function(onLogin) {
+                isSecondTab = false;
                 var params = {
                     'provider': 'twitter_digits',
                     'twitter_digits': onLogin.oauth_echo_headers
                 };
+
                 that.providerConnect(params);
-                isAlreadyЕxists = false;
             })
             .fail(function(error) {
+                isSecondTab = false;
                 Helpers.log('Digits failed to login: ', error);
-                isAlreadyЕxists = false;
             });
     },
 

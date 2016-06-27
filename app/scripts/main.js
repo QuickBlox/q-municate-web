@@ -25,8 +25,7 @@ requirejs.config({
         },
         minEmoji: {
             exports: 'minEmoji'
-        },
-        chromaHash: ['jquery']
+        }
     },
     paths: {
         // libs
@@ -51,7 +50,6 @@ requirejs.config({
         mousewheel: '../bower_components/jquery-mousewheel/jquery.mousewheel',
         timeago: '../bower_components/jquery-timeago/jquery.timeago',
         minEmoji: '../vendor/emoji/js/minEmoji',
-        chromaHash: '../bower_components/Chroma-Hash/jquery.chroma-hash',
         QBNotification: '../bower_components/web-notifications/qbNotification',
 
         // Q-municate application

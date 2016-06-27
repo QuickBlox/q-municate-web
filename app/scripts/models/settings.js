@@ -7,16 +7,16 @@ define([], function() {
     'use strict';
 
     function Settings(app) {
-        this.app = app;
-
-        var options,
+        var userId,
+            options,
             self = this;
 
-        this.init = function() {
+        this.init = function(currentUserId) {
+            userId = currentUserId;
             options = {
                 'messages_notify': true,
-                'calls_notify':    true,
-                'sounds_notify':   true
+                'calls_notify': true,
+                'sounds_notify': true
             };
 
             sync();
@@ -33,20 +33,16 @@ define([], function() {
         };
 
         this.save = function() {
-            var user = self.app.models.User.contact.id;
-
-            localStorage.setItem('QM.settings-' + user, JSON.stringify(options));
+            localStorage.setItem('QM.settings-' + userId, JSON.stringify(options));
         };
 
         function sync() {
-            var user = self.app.models.User.contact.id;
-
-            if (!localStorage['QM.settings-' + user]) {
+            if (!localStorage['QM.settings-' + userId]) {
                 self.save();
 
                 return false;
             } else {
-                options = JSON.parse(localStorage['QM.settings-' + user]);
+                options = JSON.parse(localStorage['QM.settings-' + userId]);
             }
         }
     }

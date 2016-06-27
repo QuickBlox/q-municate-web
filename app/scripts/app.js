@@ -71,7 +71,6 @@ define([
             }
 
             this.events.init();
-            this.views.Settings.setUp();
 
             Helpers.log('App init', this);
         },
