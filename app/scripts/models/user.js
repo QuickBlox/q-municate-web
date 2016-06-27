@@ -29,7 +29,7 @@ define([
 
     connectTwitterDigits: function() {
         if (isSecondTab) {
-            return false;console.info(isSecondTab);
+            return false;
         }
 
         isSecondTab = true;
