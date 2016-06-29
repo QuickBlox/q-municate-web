@@ -183,15 +183,14 @@
     }
         .btn_popup:hover,
         .btn_popup:active {
-            background-color: #445f8c;
-            opacity: 1;
+            background-color: #0d70b3;
         }
     .btn.btn_popup.btn_popup_changepass.without_M,
     .btn.btn_popup.btn_popup_changepass.without_M:hover,
     .btn.btn_popup.btn_popup_changepass.without_M:focus {
         display: block;
-        width: 420px;
-        height: 42px;
+        width: 100%;
+        height: 100%;
         background: #0d70b3;
         margin: 0 auto;
     }
