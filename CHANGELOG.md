@@ -2,50 +2,50 @@
 
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
 
-### v. 1.8.7 - June 29, 2016
-* Stable version
-* Added authorization by Twitter Digits
-* Redesign for welcome pages
-* Added ability to send push notification about incoming call to mobile
-* Added user's settings (switches for sounds, messages and calls notifications)
-* Fixed bugs
+### v. 1.5.0 - June 29, 2016
+* Sign in/ Sign up by phone number;
+* User Settings;
+* Login page - New Design;
+* Updated FB SDK up to 2.6;
+* Stability improvements;
+* Bug fixes.
 
 ### v. 1.4.3 - May 13, 2016
-* Stable version
-* Fixed bug with calls
-* Q-municate can return after long sleep mode
-* Fixed bugs
+* Stable version;
+* Fixed bug with calls;
+* Q-municate can return after long sleep mode;
+* Fixed bugs.
 
 ### v. 1.4.0 - May 13, 2016
-* Added ability to send messages with geotag
-* Added ability to send map with location
-* Added tooltips for footer's buttons
-* Fixed bugs
+* Added ability to send messages with geotag;
+* Added ability to send map with location;
+* Added tooltips for footer's buttons;
+* Fixed bugs.
 
 ### v. 1.3.0 - April 20, 2016
-* Updated QuickBlox JS SDK to 2.1.1
-* Audio/video calls restored (WebRTC)
-* Added local notifications for calls
-* Added full screen mode for audio and video calls (Fullscreen API)
-* Added smart scrolling chat
-* Fixed bugs
+* Updated QuickBlox JS SDK to 2.1.1;
+* Audio/video calls restored (WebRTC);
+* Added local notifications for calls;
+* Added full screen mode for audio and video calls (Fullscreen API);
+* Added smart scrolling chat;
+* Fixed bugs.
 
 ### v. 1.2.1 - March 1, 2016
-* Added local notifications for chat
-* Closed calls (Not working with QuickBlox JS SDK 2.0.3)
-* Fixed bugs
+* Added local notifications for chat;
+* Closed calls (Not working with QuickBlox JS SDK 2.0.3);
+* Fixed bugs.
 
 ### v. 1.2.0 - January 29, 2016
-* Update QuickBlox JS SDK to 2.0.2
-* Added system notification for chat
-* Added typing statuses
-* Added read/delivered statuses
-* Fixed bugs
+* Update QuickBlox JS SDK to 2.0.2;
+* Added system notification for chat;
+* Added typing statuses;
+* Added read/delivered statuses;
+* Fixed bugs.
 
 ### v. 1.1.0 - December 15, 2015
-* Updated all dependencies
-* Updated QuickBlox JS SDK to 1.17.1
-* Fixed bugs
+* Updated all dependencies;
+* Updated QuickBlox JS SDK to 1.17.1;
+* Fixed bugs.
 
 ### v. 1.0.0 – February 12, 2015
 * [Full screen mode for audio and video calls](#18-full-screen-mode-for-audio-and-video-calls)
