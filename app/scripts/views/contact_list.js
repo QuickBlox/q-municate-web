@@ -52,7 +52,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
 
     globalSearch: function(form) {
         if (isExistingRequest) {
-            return true;
+            return false;
         } else {
             isExistingRequest = true;
         }
