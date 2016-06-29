@@ -540,6 +540,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
         item;
 
     if (results.length > 0) {
+      list.find('.mCSB_container').empty();
+
       results.forEach(function(contact) {
         var rosterItem = roster[contact.id];
 
@@ -558,7 +560,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
         }
         item += '</a></li>';
 
-        list.find('.mCSB_container').empty().append(item);
+        list.find('.mCSB_container').append(item);
         list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
       });
     } else {
