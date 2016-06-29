@@ -7,7 +7,11 @@
 
 define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScrollbar', 'mousewheel'], function($, QMCONFIG, QB, Helpers, _) {
 
-  var Dialog, Message, ContactList, User;
+  var Dialog,
+      Message,
+      ContactList,
+      User,
+      isExistingRequest;
 
   function ContactListView(app) {
     this.app = app;
@@ -47,38 +51,45 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
     },
 
     globalSearch: function(form) {
-      var self = this,
-          popup = form.parent(),
-          list = popup.find('ul:first'),
-          val = form.find('input[type="search"]').val().trim(),
-          len = val.length;
-
-      if (len > 0) {
-
-        // display "Name must be more than 2 characters" or "No results found"
-        if (len < 3) {
-          popup.find('.popup-elem .not_found').addClass('is-hidden');
-          popup.find('.popup-elem .short_length').removeClass('is-hidden');
+        if (isExistingRequest) {
+            return true;
         } else {
-          popup.find('.popup-elem .not_found').removeClass('is-hidden');
-          popup.find('.popup-elem .short_length').addClass('is-hidden');
+            isExistingRequest = true;
         }
 
-          form.find('input').prop('disabled', false).val(val);
-          popup.find('.popup-elem').addClass('is-hidden');
-          popup.find('.mCSB_container').empty();
+        var self = this,
+            popup = form.parent(),
+            list = popup.find('ul:first'),
+            val = form.find('input[type="search"]').val().trim(),
+            len = val.length;
 
-          scrollbar(list, self);
-          self.createDataSpinner(list);
-          $('.popup:visible .spinner_bounce').removeClass('is-hidden').addClass('is-empty');
+        if (len > 0) {
 
-          sessionStorage.setItem('QM.search.value', val);
-          sessionStorage.setItem('QM.search.page', 1);
+            // display "Name must be more than 2 characters" or "No results found"
+            if (len < 3) {
+                popup.find('.popup-elem .not_found').addClass('is-hidden');
+                popup.find('.popup-elem .short_length').removeClass('is-hidden');
+            } else {
+                popup.find('.popup-elem .not_found').removeClass('is-hidden');
+                popup.find('.popup-elem .short_length').addClass('is-hidden');
+            }
 
-          ContactList.globalSearch(function(results) {
-            createListResults(list, results, self);
-          });
-      }
+            form.find('input').prop('disabled', false).val(val);
+            popup.find('.popup-elem').addClass('is-hidden');
+            popup.find('.mCSB_container').empty();
+
+            scrollbar(list, self);
+            self.createDataSpinner(list);
+            $('.popup:visible .spinner_bounce').removeClass('is-hidden').addClass('is-empty');
+
+            sessionStorage.setItem('QM.search.value', val);
+            sessionStorage.setItem('QM.search.page', 1);
+
+            ContactList.globalSearch(function(results) {
+                isExistingRequest = false;
+                createListResults(list, results, self);
+            });
+        }
     },
 
     addContactsToChat: function(objDom, type, dialog_id, isPrivate) {
