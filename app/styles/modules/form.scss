@@ -110,6 +110,12 @@ input.form-input-search.without_M[type=search]:focus:not([readonly]) {
         margin-left: 1vh;
         vertical-align: middle;
     }
+        .form-checkbox[type="checkbox"]:not(:checked),
+        .form-checkbox[type="checkbox"]:checked {
+            position: relative;
+            left: initial;
+            opacity: initial;
+        }
 
 .form-file {
     position: relative;
