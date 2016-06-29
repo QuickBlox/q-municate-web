@@ -7,7 +7,8 @@
 
 define(['config', 'underscore', 'Helpers'], function(QMCONFIG, _, Helpers) {
 
-  var contact_ids;
+  var contact_ids,
+      isExistingRequest;
 
   function ContactList(app) {
     this.app = app;
@@ -60,26 +61,33 @@ define(['config', 'underscore', 'Helpers'], function(QMCONFIG, _, Helpers) {
           Helpers.log('Contact List is updated', self);
           callback(dialog);
         });
-        
+
       } else {
         callback(dialog);
       }
     },
 
     globalSearch: function(callback) {
+      if (isExistingRequest) {
+        return false;
+      } else {
+        isExistingRequest = true;
+      }
+
       var QBApiCalls = this.app.service,
           val = sessionStorage['QM.search.value'],
           page = sessionStorage['QM.search.page'],
           self = this,
           contacts;
-      
+
       QBApiCalls.getUser({full_name: val, page: page}, function(data) {
         sessionStorage.setItem('QM.search.allPages', Math.ceil(data.total_entries / data.per_page));
         sessionStorage.setItem('QM.search.page', ++page);
-        
+
         contacts = self.getResults(data.items);
         Helpers.log('Search results', contacts);
 
+        isExistingRequest = false;
         callback(contacts);
       });
     },
@@ -90,7 +98,7 @@ define(['config', 'underscore', 'Helpers'], function(QMCONFIG, _, Helpers) {
           self = this,
           contacts = [],
           contact;
-      
+
       data.forEach(function(item) {
         if (item.user.id !== User.contact.id) {
           contact = Contact.create(item.user);
