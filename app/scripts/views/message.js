@@ -8,12 +8,13 @@
 define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 'timeago', 'QBNotification', 'LocationView', 'QMHtml'],
         function($, QMCONFIG, QB, _, minEmoji, Helpers, timeago, QBNotification, Location, QMHtml) {
 
-  var User, Message, ContactList, Dialog;
+  var User, Message, ContactList, Dialog, Settings;
   var clearTyping, typingList = []; // for typing statuses
   var self;
 
   function MessageView(app) {
     this.app = app;
+    Settings = this.app.models.Settings;
     User = this.app.models.User;
     Dialog = this.app.models.Dialog;
     Message = this.app.models.Message;
@@ -629,7 +630,7 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
         createAndShowNotification(msg, isHiddenChat);
       }
 
-      if ((isHiddenChat || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id)) {
+      if ((isHiddenChat || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) && Settings.get('sounds_notify')) {
         audioSignal.play();
       }
 
@@ -882,6 +883,10 @@ define(['jquery', 'config', 'quickblox', 'underscore', 'minEmoji', 'Helpers', 't
   }
 
   function createAndShowNotification(msg, isHiddenChat) {
+    if (!Settings.get('messages_notify')) {
+        return false;
+    }
+
     var params = {
       'user': User,
       'dialogs': ContactList.dialogs,

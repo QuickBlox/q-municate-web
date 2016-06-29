@@ -1,71 +1,98 @@
 /* form elements */
 .form-header {
-  margin: 7vh 0 5vh;
-  font-size: 3.4vh;
-  font-weight: normal;
-  color: #333;
+    margin: 7vh 0 5vh;
+    font-size: 3.4vh;
+    font-weight: normal;
+    color: #333;
+}
+.input-field {
+    margin: 0;
+    margin-bottom: 8px;
+}
+.input_field {
+    width: 304px;
+    height: 56px;
+    background-color: #ffffff;
 }
 
-.form-input {
-  width: 100%;
-  height: 4.5vh;
-  margin-bottom: 1vh;
-  padding: 0 1.3vh;
-  font-size: 2vh;
-  line-height: 2.6vh;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+input.input_pass[type=password],
+input.input_email[type=email] {
+    width: 304px;
+    height: 17px;
+    margin: 0 0 7px 0;
+    padding: 20px 0 10px 0;
+    background-color: #ffffff;
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+    color: #1f1f1f;
+    border-bottom: 2px solid #959595;
+    box-shadow: inset 0 99px 0 0 #fff;
 }
 
-.form-input-password {
-  height: 45px;
-  margin-bottom: 0;
-  padding: 0 13px;
-  font-size: 20px;
-  line-height: 26px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+input.input_email[type=email]:focus:not([readonly]),
+input.input_pass[type=password]:focus:not([readonly]) {
+    border-bottom: 2px solid #28ca4a;
+    box-shadow: inset 0 99px 0 0 #fff;
 }
 
-.form-input-search {
-  width: 100%;
-  /*height: 100%;*/
-  height: 30px;
-  padding: 6px 5px 5px 10px;
-  font-size: 15px;
-  line-height: 20px;
-  border: 1px solid #bebebe;
-  border-radius: 18px;
-  -webkit-appearance: none;
+.input-field label {
+    left: 0;
+    top: 18px;
+    color: #959595;
 }
+
+input.input_pass[type=password]:focus:not([readonly])+label,
+input.input_email[type=email]:focus:not([readonly])+label {
+    color: #28ca4a;
+}
+
+input.form-input-search.without_M[type=search],
+input.form-input-search.without_M[type=search]:focus:not([readonly]) {
+    width: 100%;
+    height: 100%;
+    height: 30px;
+    padding: 6px 5px 5px 10px;
+    font-size: 15px;
+    line-height: 20px;
+    border: 1px solid #bebebe;
+    border-radius: 18px;
+    -webkit-appearance: none;
+}
+    input.form-input-search.without_M[type=search]:focus:not([readonly]) {
+        border-color: #66afe9;
+    }
 
 .formSearch {
-  position: relative;
+    position: relative;
 }
-  .clean-button {
-    position: absolute;
-    top: 19px;
-    right: 32px;
-    color: #fff;
-    cursor: text;
-  }
-    #searchContacts .clean-button {
-      right: 27px;
+    .clean-button {
+        position: absolute;
+        display: block;
+        width: 21px;
+        height: 21px;
+        top: 20px;
+        right: 27px;
+        color: #fff;
+        cursor: text;
     }
-      .form-input-search:focus ~ .clean-button {
+        #searchContacts .clean-button {
+            right: 23px;
+        }
+    .form-input-search:focus ~ .clean-button {
         color: #ccc;
         cursor: pointer;
-      }
+    }
 
 .form-input-message {
-  width: 96%;
-  height: 100%;
-  margin: 0 auto;
-  padding: 5px 40px 5px 5px;
-  font-size: 15px;
-  line-height: 20px;
-  border-bottom: 1px solid #bebebe;
-  resize: none;
+    width: 96%;
+    height: 100%;
+    margin: 0 auto;
+    padding: 10px 40px 5px 5px;
+    font-size: 15px;
+    line-height: 20px;
+    border-bottom: 1px solid #bebebe;
+    resize: none;
 }
 
 .form-input-message::-webkit-input-placeholder   {position: relative; color: #ccc; line-height: 33px;}
@@ -74,33 +101,89 @@
 .form-input-message:-ms-input-placeholder        {position: relative; color: #ccc; line-height: 33px;}
 
 .form-label {
-  display: block;
-  margin: 1vh 0 5vh;
-  font-size: 2vh;
-  color: #666;
+    display: block;
+    margin: 1vh 0 5vh;
+    font-size: 2vh;
+    color: #666;
 }
-  .form-checkbox {
-    margin-left: 1vh;
-    vertical-align: middle;
-  }
+    .form-checkbox {
+        margin-left: 1vh;
+        vertical-align: middle;
+    }
+        .form-checkbox[type="checkbox"]:not(:checked),
+        .form-checkbox[type="checkbox"]:checked {
+            position: relative;
+            left: initial;
+            opacity: initial;
+        }
 
 .form-file {
-  position: relative;
-  width: 100%;
-  height: 6vh;
-  margin: 2vh 0 4vh;
-}
-  .form-file:hover .form-file-custom {
-    opacity: .6;
-  }
-  .form-file-custom {
-    height: 100%;
-  }
-  .form-file-default {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     width: 100%;
-    height: 100%;
-    opacity: 0;
-  }
+    height: 6vh;
+    margin: 2vh 0 4vh;
+}
+    .form-file:hover .form-file-custom {
+        opacity: .6;
+    }
+    .form-file-custom {
+        height: 100%;
+    }
+    .form-file-default {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+    }
+
+// reset Materailize styles
+input.without_M:not([type]),
+input.without_M[type=text],
+input.without_M[type=password],
+input.without_M[type=email],
+input.without_M[type=url],
+input.without_M[type=time],
+input.without_M[type=date],
+input.without_M[type=datetime],
+input.without_M[type=datetime-local],
+input.without_M[type=tel],
+input.without_M[type=number],
+input.without_M[type=search],
+textarea.without_M.materialize-textarea {
+    background-color: transparent;
+    border: none;
+    border-bottom: none;
+    border-radius: initial;
+    outline: none;
+    height: auto;
+    width: auto;
+    font-size: initial;
+    margin: auto;
+    padding: initial;
+    box-shadow: none;
+    box-sizing: initial;
+    transition: initial;
+}
+    input.without_M[type=search] {
+        box-sizing: inherit;
+    }
+
+input.without_M:not([type]):focus:not([readonly]),
+input.without_M[type=text]:focus:not([readonly]),
+input.without_M[type=password]:focus:not([readonly]),
+input.without_M[type=email]:focus:not([readonly]),
+input.without_M[type=url]:focus:not([readonly]),
+input.without_M[type=time]:focus:not([readonly]),
+input.without_M[type=date]:focus:not([readonly]),
+input.without_M[type=datetime]:focus:not([readonly]),
+input.without_M[type=datetime-local]:focus:not([readonly]),
+input.without_M[type=tel]:focus:not([readonly]),
+input.without_M[type=number]:focus:not([readonly]),
+input.without_M[type=search]:focus:not([readonly]),
+textarea.without_M.materialize-textarea:focus:not([readonly]) {
+    border-bottom: none;
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+}

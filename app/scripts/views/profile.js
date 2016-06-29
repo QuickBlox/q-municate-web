@@ -50,7 +50,7 @@ define([
     editProfile: function(event) {
       var obj = $(event.target),
           params;
-      
+
       if (obj.is('.' + this.className)) {
         params = {
           full_name: this.$el.find('.userProfile-filename').val().trim(),
@@ -79,7 +79,7 @@ define([
       var URL = window.URL,
           avatar = this.$el.find('.btn_userProfile_file')[0].files[0],
           src = avatar ? URL.createObjectURL(avatar) : (this.model.get('avatar_url') === QMCONFIG.defAvatar.url) ? QMCONFIG.defAvatar.url : this.model.get('avatar_url');
-  
+
       this.$el.find('.userDetails-avatar').css('background-image', "url("+src+")");
     },
 

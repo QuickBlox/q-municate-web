@@ -25,12 +25,11 @@ define([
   var currentUser, profileView, changePassView, fbImportView;
 
   var TITLE_NAME = 'Q-municate',
-      FAVICON_COUNTER = 'favicon_counter.png',
-      FAVICON = 'favicon.png';
+      FAVICON_COUNTER = 'images/favicon_counter.png',
+      FAVICON = 'images/favicon.png';
 
   function DialogView(app) {
     this.app = app;
-
     User = this.app.models.User;
     Dialog = this.app.models.Dialog;
     Message = this.app.models.Message;
@@ -107,6 +106,8 @@ define([
     },
 
     createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
+      this.removeDataSpinner();
+
       var spinnerBlock;
       if (isAjaxDownloading) {
         spinnerBlock = '<div class="message message_service"><div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
@@ -142,6 +143,7 @@ define([
 
     prepareDownloading: function(roster) {
       Helpers.log('QB SDK: Roster has been got', roster);
+      this.app.views.Settings.setUp(User.contact.id);
       this.chatCallbacksInit();
       this.createDataSpinner();
       scrollbar();
@@ -508,9 +510,9 @@ define([
 
       objDom.mCustomScrollbar({
         theme: 'minimal-dark',
-        scrollInertia: 100,
+        scrollInertia: 200,
         mouseWheel: {
-          scrollAmount: QMCONFIG.isMac || 'auto',
+          scrollAmount: 'auto',
           deltaFactor: 'auto'
         },
         setTop: height + 'px',
@@ -621,7 +623,7 @@ define([
       theme: 'minimal-dark',
       scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 'auto',
+        scrollAmount: 'auto',
         deltaFactor: 'auto'
       },
       live: true

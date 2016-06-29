@@ -20,8 +20,6 @@ define(function() {
       timeout: 7
     },
 
-    isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
-
     defAvatar: {
       url: 'images/ava-single.svg',
       url_png: 'images/ava-single.png',

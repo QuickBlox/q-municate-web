@@ -63,6 +63,9 @@ h2[contenteditable="true"] * {
 h2[contenteditable="true"] br {
   display:none;
 }
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+}
 
 input[type="file"]:focus {
   box-shadow: none;
@@ -123,7 +126,7 @@ input[type="search"]::-moz-search-cancel-button {
 input[type="search"]::-moz-search-cancel-button:after {
   content: "\00d7";
   font-size: 24px;
-  
+
   color: #bebebe;
   vertical-align: middle;
 }

@@ -1,75 +1,76 @@
 /* list */
 .list-item {
-  height: 60px;
-  background: #fff;
-  border-bottom: 1px solid #f2f2f2;
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid #f2f2f2;
 }
 .list-item:hover {
-  background: #f2f2f2;
+    background: #f2f2f2;
 }
 #requestsList .list-item:hover {
-  background: #fff;
+    background: #fff;
 }
 
 .list-actions {
-  position: relative;
-  width: 160px;
-  z-index: 2;
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0);
-  top: 100%;
+    position: relative;
+    width: 160px;
+    z-index: 2;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    -webkit-transform: translate(-50%, 0);
+    top: 100%;
 }
-  .list-actions_contacts {
-    margin: -15px auto 0;
-  }
-  .list-actions_contacts.margin-up {
-    top: inherit;
-    bottom: 70%;
-  }
-  .list-actions_occupants {
-    position: absolute;
-    margin-top: 32px;
-  }
-  .list-actions_profile {
-    position: absolute;
-    top: 74px;
-    right: 0;
-  }
-    .list-actions .list-item {
-      height: auto;
+    .list-actions_contacts {
+        margin: -15px auto 0;
     }
-    .list-actions .list-item:last-child {
-      border-bottom: 0;
+    .list-actions_contacts.margin-up {
+        top: inherit;
+        bottom: 70%;
     }
-      .list-actions-action {
-        display: block;
-        padding: 0 10px;
-        font-size: 16px;
-        line-height: 40px;
-        color: #333;
-      }
-      .list-actions-action:hover {
-        opacity: 1;
-      }
+    .list-actions_occupants {
+        position: absolute;
+        margin-top: 32px;
+    }
+    .list-actions_profile {
+        position: absolute;
+        top: 74px;
+        right: 0;
+    }
+        .list-actions .list-item {
+            height: auto;
+        }
+        .list-actions .list-item:last-child {
+            border-bottom: 0;
+        }
+            .list-actions-action {
+                display: block;
+                padding: 0 10px;
+                font-size: 16px;
+                line-height: 40px;
+                color: #333;
+            }
+            .list-actions-action:hover {
+                opacity: 1;
+            }
 
 .list_contacts {
-  height: calc(100% - 60px - 60px - 37px); /* 37px - spinner_bounce height */
+    height: calc(100% - 60px - 60px - 37px); /* 37px - spinner_bounce height */
 }
 .popup-content .list_contacts {
-  height: 100%;
+    height: 100%;
 }
 
 /* hover icons */
 .list-item .icon-active,
 .header-links-item .icon-active {
-  display: none;
+    display: none;
 }
 .send-request:hover .icon-normal,
 .header-links-item:hover .icon-normal {
-  display: none;
+    display: none;
 }
 .send-request:hover .icon-active,
 .header-links-item:hover .icon-active {
-  display: inline-block;
+    display: inline-block;
 }

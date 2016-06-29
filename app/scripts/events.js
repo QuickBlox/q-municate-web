@@ -16,7 +16,7 @@ define([
   'mousewheel'
 ], function($, QMCONFIG, Helpers, QMHtml, Location, minEmoji) {
 
-  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView;
+  var Dialog, UserView, ContactListView, DialogView, MessageView, AttachView, VideoChatView, SettingsView;
   var chatName, editedChatName, stopTyping, retryTyping, keyupSearch;
   var App;
   var $workspace = $('.l-workspace-wrap');
@@ -33,6 +33,7 @@ define([
     MessageView = this.app.views.Message;
     AttachView = this.app.views.Attach;
     VideoChatView = this.app.views.VideoChat;
+    SettingsView = this.app.views.Settings;
   }
 
   Events.prototype = {
@@ -153,7 +154,7 @@ define([
         theme: 'minimal-dark',
         scrollInertia: 500,
         mouseWheel: {
-          scrollAmount: QMCONFIG.isMac || 'auto',
+          scrollAmount: 'auto',
           deltaFactor: 'auto'
         }
       });
@@ -257,6 +258,34 @@ define([
           $('.j-send_map').click();
         }
       });
+
+        /* user settings
+        ----------------------------------------------------- */
+        $('body').on('click', '#userSettings', function() {
+            removePopover();
+            $('.j-settings').addClass('is-overlay')
+             .parent('.j-overlay').addClass('is-overlay');
+
+            return false;
+        });
+
+        $('body').on('click', '.j-close_settings', function() {
+            closePopup();
+
+            return false;
+        });
+
+        $('.j-toogle_settings').click(function() {
+            var $target = $(this).find('.j-setings_notify')[0],
+                obj = {};
+
+            $target.checked = $target.checked === true ? false : true;
+            obj[$target.id] = $target.checked;
+
+            SettingsView.update(obj);
+
+            return false;
+        });
 
       /* group chats
       ----------------------------------------------------- */
@@ -397,25 +426,33 @@ define([
         }, {scope: QMCONFIG.fbAccount.scope});
       });
 
+      $('.j-twitterDigits').on('click', function() {
+        UserView.connectTwitterDigits();
+        Helpers.log('connecting with twitterDigits');
+
+        return false;
+      });
+
       $('#signupQB').on('click', function() {
         Helpers.log('signup with QB');
         UserView.signupQB();
       });
 
-      $('#loginQB').on('click', function(event) {
+      $('.j-login_QB').on('click', function() {
         Helpers.log('login wih QB');
-        event.preventDefault();
+
+        // removed class "active" (hotfix for input on qmdev.quickblox.com/qm.quickblox.com)
+        $('#loginPage .j-prepare_inputs').removeClass('active');
         UserView.loginQB();
+
+        return false;
       });
 
       /* button "back"
       ----------------------------------------------------- */
-      $('.back_to_welcome_page').on('click', function() {
-        UserView.logout();
-      });
-
-      $('.back_to_login_page').on('click', function() {
+      $('.j-back_to_login_page').on('click', function() {
         UserView.loginQB();
+        $('.j-success_callback').remove();
       });
 
       /* signup page
@@ -587,7 +624,6 @@ define([
       /* search
       ----------------------------------------------------- */
       $('#globalSearch').on('keyup search submit', function(event) {
-        event.preventDefault();
         var code = event.keyCode;
             form = $(this);
 
@@ -607,6 +643,8 @@ define([
             ContactListView.globalSearch(form);
           }, 1000);
         }
+
+        return false;
       });
 
       $('.localSearch').on('keyup search submit', function(event) {
@@ -864,7 +902,7 @@ define([
       theme: 'minimal-dark',
       scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 'auto',
+        scrollAmount: 'auto',
         deltaFactor: 'auto'
       },
       live: true

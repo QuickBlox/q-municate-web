@@ -1,63 +1,105 @@
 /* text */
 .text {
-  display: block;
-  font-size: 1.6vh;
-  line-height: 2.2vh;
-  color: #999;
-  text-align: center;
+    display: block;
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
 }
 .l-sidebar .text,
 .popup .text {
-  font-size: 16px;
-  line-height: 22px;
+    font-size: 16px;
+    line-height: 22px;
 }
-  .text_welcome {
-    color: #3d5b99;
-    font-size: 2.2vh;
-  }
-  .text_error {
-    margin-bottom: 0.2vh;
-    color: #c03d3d;
-    opacity: 0;
-  }
-  .text_signup {
-    margin-bottom: 2.5vh;
-    font-size: 1.4vh;
-    line-height: 2vh;
-  }
-  .text_back {
-    font-size: 1.8vh;
-    margin-bottom: 2.5vh;
-  }
-    .text_signup a {
-      color: #999;
+    .text_welcome {
+        color: #3d5b99;
+        font-size: 2.2vh;
+        text-transform: uppercase;
     }
-    .text_back a.click_to_back {
-      color: #3d5b99;
+    .text_error {
+        font-family: "Roboto", sans-serif;
+        font-size: 12px;
+        font-weight: normal;
+        text-align: center;
+        color: #c03d3d;
+        position: absolute;
+        top: 120px;
+        opacity: 0;
     }
-  .text_login {
-    color: #3d5b99;
-    font-size: 1.8vh;
-    margin-bottom: 2.5vh;
-  }
-  .text_forgot {
-    margin-bottom: 2vh;
-    font-size: 1.8vh;
-    line-height: 2.4vh;
-  }
+        .text_error.text_error_reset {
+            top: 110px;
+        }
+    .text_signup {
+        margin-bottom: 2.5vh;
+        font-size: 1.4vh;
+        line-height: 2vh;
+    }
+    .text_mid {
+        display: block;
+        margin: 0 auto;
+        width: 11px;
+        height: 14px;
+        font-family: "Roboto", sans-serif;
+        font-size: 12px;
+        font-weight: normal;
+        text-align: center;
+        color: #959595;
+    }
+    .text_digits {
+        color: #959595;
+        margin-bottom: 34px;
+    }
+        .text_signup a {
+            color: #999;
+        }
+        .text_digits a.twitterDigits {
+            color: #2c74c7;
+        }
+            a.twitterDigits:hover,
+            a.twitterDigits:focus {
+                text-decoration: underline;
+                opacity: 1;
+            }
+    .text_login {
+        font-family: "Roboto", sans-serif;
+        font-size: 11px;
+        font-weight: normal;
+        color: #959595;
+    }
+        .text_login:hover,
+        .text_login:focus {
+            text-decoration: underline;
+            opacity: 1;
+        }
     .text_forgot_black {
-      margin-top: 4.5vh;
-      color: #333;
+        display: inline-block;
+        height: 25px;
+        font-family: "Roboto", sans-serif;
+        font-size: 22px;
+        font-weight: normal;
+        color: #1f1f1f;
+        vertical-align: bottom;
+    }
+    .text_forgot {
+        width: 304px;
+        height: 38px;
+        font-family: "Roboto", sans-serif;
+        font-size: 13px;
+        font-weight: normal;
+        line-height: 1.46;
+        color: #6e6e6e;
+        text-align: left;
+        margin-bottom: 18px;
     }
 
-.note {
-  padding-top: 25px;
-}
-  .text_alert {
-    margin: 20px 0 20px 0;
-    padding-left: 20px;
-    font-size: 32px !important;
-  }
-  .text_alert_success {
-    padding-left: 0;
-  }
+    .note {
+        padding-top: 25px;
+    }
+        .text_alert {
+            margin: 20px 0 20px 0;
+            padding-left: 20px;
+            font-size: 32px !important;
+        }
+        .text_alert_success {
+            padding-left: 0;
+        }

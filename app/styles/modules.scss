@@ -10,6 +10,7 @@
 @import "modules/smiles";
 @import "modules/webrtc";
 @import "modules/profile";
+@import "modules/settings";
 
 /* scrollbar */
 .mCS-autoHide > .mCustomScrollBox ~ .mCSB_scrollTools {
@@ -80,7 +81,7 @@
     display: block;
   }
   .download-app:first-child {
-    margin-bottom: 7px; 
+    margin-bottom: 7px;
   }
     .download-app img {
       width: 145px;
@@ -96,6 +97,7 @@
   .header-links-item {
     height: 100%;
     border-right: 1px solid #ededed;
+    list-style: none;
   }
   .header-links-item:last-child {
     border-right: 0;

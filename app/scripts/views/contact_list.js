@@ -22,6 +22,8 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
   ContactListView.prototype = {
 
     createDataSpinner: function(list) {
+      this.removeDataSpinner();
+
       var spinnerBlock = '<div class="popup-elem spinner_bounce">';
       spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';
       spinnerBlock += '<div class="spinner_bounce-bounce2"></div>';
@@ -495,7 +497,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
       theme: 'minimal-dark',
       scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 'auto',
+        scrollAmount: 'auto',
         deltaFactor: 'auto'
       },
       live: true
@@ -507,7 +509,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
       theme: 'minimal-dark',
       scrollInertia: 500,
       mouseWheel: {
-        scrollAmount: QMCONFIG.isMac || 'auto',
+        scrollAmount: 'auto',
         deltaFactor: 'auto'
       },
       callbacks: {
@@ -541,10 +543,9 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
       results.forEach(function(contact) {
         var rosterItem = roster[contact.id];
 
-        item = '<li class="list-item" data-jid="'+contact.user_jid+'">';
+        item =  '<li class="list-item" data-jid="'+contact.user_jid+'">';
         item += '<a class="contact l-flexbox" href="#">';
         item += '<div class="l-flexbox_inline">';
-        // item += '<img class="contact-avatar avatar" src="'+contact.avatar_url+'" alt="user">';
         item += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url('+contact.avatar_url+')" data-id="'+contact.id+'"></div>';
         item += '<span class="name profileUserName" data-id="'+contact.id+'">'+contact.full_name+'</span>';
         item += '</div>';
@@ -557,7 +558,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
         }
         item += '</a></li>';
 
-        list.find('.mCSB_container').append(item);
+        list.find('.mCSB_container').empty().append(item);
         list.removeClass('is-hidden').siblings('.popup-elem').addClass('is-hidden');
       });
     } else {
