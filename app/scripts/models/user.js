@@ -59,7 +59,7 @@ define([
       that.providerConnect(params);
     },
 
-    providerConnect: function(params) {
+    providerConnect: function(params, callback) {
       var QBApiCalls = this.app.service,
           UserView = this.app.views.User,
           DialogView = this.app.views.Dialog,
