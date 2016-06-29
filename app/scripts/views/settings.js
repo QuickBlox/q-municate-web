@@ -6,13 +6,11 @@
 define(['jquery'], function($) {
     'use strict';
 
-    var Settings,
-        User;
+    var Settings;
 
     function SettingsView(app) {
         this.app = app;
         Settings = this.app.models.Settings;
-        User = this.app.models.User;
     }
 
     SettingsView.prototype = {
