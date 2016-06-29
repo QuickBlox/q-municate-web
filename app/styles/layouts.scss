@@ -255,12 +255,14 @@
     background-color: #fff;
     position: relative;
     height: 60px;
-    padding: 0 5px;
+    padding: 0 20px;
 }
 
 .l-app-version {
     height: 60px;
     line-height: 60px;
+    width: 130px;
+    text-align: right;
     font-size: 14px;
     color: #999;
 }
