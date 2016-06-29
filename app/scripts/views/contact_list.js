@@ -10,8 +10,7 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
   var Dialog,
       Message,
       ContactList,
-      User,
-      isExistingRequest;
+      User;
 
   function ContactListView(app) {
     this.app = app;
@@ -51,12 +50,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
     },
 
     globalSearch: function(form) {
-        if (isExistingRequest) {
-            return false;
-        } else {
-            isExistingRequest = true;
-        }
-
         var self = this,
             popup = form.parent(),
             list = popup.find('ul:first'),
@@ -86,7 +79,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
             sessionStorage.setItem('QM.search.page', 1);
 
             ContactList.globalSearch(function(results) {
-                isExistingRequest = false;
                 createListResults(list, results, self);
             });
         }
@@ -551,8 +543,6 @@ define(['jquery', 'config', 'quickblox', 'Helpers', 'underscore', 'mCustomScroll
         item;
 
     if (results.length > 0) {
-      list.find('.mCSB_container').empty();
-
       results.forEach(function(contact) {
         var rosterItem = roster[contact.id];
 
