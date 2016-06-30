@@ -22,11 +22,15 @@ define([
     ProgressBar
 ) {
 
-    var User, Message, Attach;
     var self;
+
+    var User,
+        Message,
+        Attach;
 
     function AttachView(app) {
         this.app = app;
+
         User = this.app.models.User;
         Message = this.app.models.Message;
         Attach = this.app.models.Attach;
@@ -43,12 +47,13 @@ define([
                 fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
                 fileSizeUnit = fileSize > (1024 * 1024) ? 'MB' : 'KB',
                 maxSize = QMCONFIG.maxLimitFile * 1024 * 1024,
-                errMsg, html;
+                errMsg,
+                html;
 
             if (file) {
                 if (file.name.length > 100) {
                     errMsg = QMCONFIG.errors.fileName;
-                } else if (file.size > maxSize)
+                } else if (file.size > maxSize) {
                     errMsg = QMCONFIG.errors.fileSize;
                 }
 
@@ -106,7 +111,8 @@ define([
             var progressBar = new ProgressBar('progress_' + id),
                 percent = 5,
                 isUpload = false,
-                part, time;
+                part,
+                time;
 
             if (fileSize <= 5 * 1024 * 1024) {
                 time = 50;

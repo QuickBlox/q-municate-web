@@ -94,12 +94,23 @@ requirejs([
     'QBNotification',
     'Helpers',
     'digits'
-], function ($, QMCONFIG, minEmoji, QM, Backbone, QBNotification, Helpers, Digits) {
-
+], function(
+    $,
+    QMCONFIG,
+    minEmoji,
+    QM,
+    Backbone,
+    QBNotification,
+    Helpers,
+    Digits
+) {
     var APP;
+
     // Application initialization
     $(function() {
-        $.ajaxSetup({ cache: true });
+        $.ajaxSetup({
+            cache: true
+        });
 
         /* Materialize sdk
          *
@@ -107,7 +118,7 @@ requirejs([
          * which often creates problems when loading
          */
         $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js', function() {
-          Helpers.log('Materialize connected');
+            Helpers.log('Materialize connected');
         });
 
         // facebook sdk
@@ -120,12 +131,14 @@ requirejs([
         });
 
         // twitter digits sdk
-        Digits.init({ consumerKey: 'KCcPaHrIgJ44gs3kwJuIbLaad' })
-              .done(function() {
+        Digits.init({
+                consumerKey: 'KCcPaHrIgJ44gs3kwJuIbLaad'
+            })
+            .done(function() {
                 Helpers.log('Digits initialized.');
-              }).fail(function(error) {
+            }).fail(function(error) {
                 Helpers.log('Digits failed to initialize: ', error);
-              });
+            });
 
         // emoji smiles run
         $('.smiles-group').each(function() {
