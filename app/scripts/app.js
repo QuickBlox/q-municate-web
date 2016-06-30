@@ -4,18 +4,30 @@
  * Main Module
  *
  */
-
 define([
-    'jquery', 'UserModule', 'SessionModule', 'SettingsModule',
-    'ContactModule', 'DialogModule', 'MessageModule', 'AttachModule',
-    'ContactListModule', 'VideoChatModule', 'UserView', 'SettingsView',
-    'DialogView', 'MessageView', 'AttachView', 'ContactListView',
-    'VideoChatView', 'Events', 'Helpers', 'QBApiCalls', 'config'
+    'jquery', 'UserModule',
+    'SessionModule', 'SettingsModule',
+    'ContactModule', 'DialogModule',
+    'MessageModule', 'AttachModule',
+    'ContactListModule', 'VideoChatModule',
+    'UserView', 'SettingsView',
+    'DialogView', 'MessageView',
+    'AttachView', 'ContactListView',
+    'VideoChatView', 'Events',
+    'Helpers', 'QBApiCalls',
+    'config'
 ], function(
-    $, User, Session, Settings, Contact, Dialog, Message,
-    Attach, ContactList, VideoChat, UserView, SettingsView,
-    DialogView, MessageView, AttachView, ContactListView,
-    VideoChatView, Events, Helpers, QBApiCalls, QMCONFIG
+    $, User,
+    Session, Settings,
+    Contact, Dialog,
+    Message, Attach,
+    ContactList, VideoChat,
+    UserView, SettingsView,
+    DialogView, MessageView,
+    AttachView, ContactListView,
+    VideoChatView, Events,
+    Helpers, QBApiCalls,
+    QMCONFIG
 ) {
 
     function QM() {

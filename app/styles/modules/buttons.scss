@@ -1,210 +1,205 @@
 /* buttons */
 .btn,
-.btn:hover,
-.btn:focus {
+.btn:focus,
+.btn:hover {
     color: #fff;
     text-align: center;
     box-shadow: none;
 }
-    button:hover,
-    button:focus {
-        background-color: initial;
-    }
-
-    .btn_form {
-        width: 100%;
-        font-size: 2.3vh;
-        line-height: 6vh;
-        border-radius: .3vh;
-        font-weight: 300;
-        text-transform: uppercase;
-    }
-    .l-welcome_btn {
-        width: 304px;
-        height: 40px;
-        display: block;
-        position: relative;
-        margin: 0 auto;
-        border-radius: 2px;
-        font-family: "Roboto", sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        text-align: center;
-        vertical-align: middle;
-    }
-    .l-welcome_btn_green {
-        margin-top: 76px;
-        background-color: #28c849;
-        color: #ffffff;
-    }
-    .l-welcome_btn_white {
-        margin-top: 16px;
-        background-color: #ffffff;
-        color: #6e6e6e;
-    }
-        .l-welcome_btn_white:hover,
-        .l-welcome_btn_white:focus {
-            background-color: #eeeeee;
-            color: #6e6e6e;
-            opacity: 1;
-        }
-    .l-btn_login {
-        margin: 20px 0 9px 0;
-        background-color: #28c849;
-        color: #ffffff;
-    }
-        .l-welcome_btn_green:hover,
-        .l-welcome_btn_green:focus,
-        .l-btn_login:hover,
-        .l-btn_login:focus {
-            background-color: #26a640;
-            opacity: 1;
-        }
-    .l-btn_login_fb {
-        margin: 9px 0 35px 0;
-        background-color: #4e70a8;
-        color: #ffffff;
-    }
-        .l-btn_login_fb:hover,
-        .l-btn_login_fb:focus {
-            background-color: #445f8c;
-            opacity: 1;
-        }
-    .l-btn_reset  {
-        margin-top: 24px;
-        background-color: #28c849;
-        color: #ffffff;
-    }
-        .l-btn_reset:hover,
-        .l-btn_reset:focus {
-            background-color: #26a640;
-            opacity: 1;
-        }
-    .i-btn_icon_fb {
-        display: inline-block;
-        width: 18px;
-        height: 18px;
-        background: image-url('fb-logo.svg') no-repeat center;
-        margin-right: 7px;
-        vertical-align: middle;
-    }
-
-    .l-welcome_footer_logo a {
-        display: inline-block;
-        text-align: left;
-    }
-        .i-mini_logo {
-            width: 22px;
-            height: 22px;
-            background: image-url('qmweb-launch-qblogo.svg') no-repeat center;
-        }
-        .by_QB {
-            margin-left: 6px;
-            font-family: "Roboto", sans-serif;
-            font-size: 13px;
-            font-weight: normal;
-            color: #959595;
-        }
-    .l-welcome_download {
-        display: inline-block;
-        text-align: right;
-        float: right;
-    }
-        .l-welcome_download_app {
-            margin-left: 16px;
-        }
-            .i-appstore {
-                width: 24px;
-                height: 24px;
-                background: image-url('ic-appstore.svg') no-repeat center;
-            }
-            .i-android {
-                width: 24px;
-                height: 24px;
-                background: image-url('ic-android.svg') no-repeat center;
-            }
-
-    .i-back_login {
-        display: inline-block;
-        width: 24px;
-        height: 24px;
-        background: image-url('ic-arrow-back.svg') no-repeat center;
-        margin-right: 7px;
-    }
-
-    button.btn.btn_add,
-    button.btn.btn_add:hover,
-    button.btn.btn_add:focus  {
-        width: 300px;
-        font-size: 20px;
-        border-radius: 56px;
-        height: 56px;
-        line-height: 100%;
-        vertical-align: middle;
-    }
-        button.btn_invite,
-        button.btn_invite:hover,
-        button.btn_invite:focus {
-            margin-bottom: 2vh;
-            background: #ff4945;
-        }
-        button.btn.btn_invite_contacts {
-            width: 300px;
-            font-size: 20px;
-            border-radius: 56px;
-            height: 56px;
-            line-height: 56px;
-            transition: initial;
-            vertical-align: middle;
-            text-transform: none;
-        }
-        .btn_share {
-            background: #3b5998;
-        }
-    button.btn.btn_search,
-    button.btn.btn_search:hover,
-    button.btn.btn_search:focus {
-        display: block;
-        width: 285px;
-        margin: 20px auto 0;
-        font-size: 16px;
-        line-height: 40px;
-        background: #0d70b3;
-        border-radius: 7px;
-    }
-    .btn_popup {
-        width: 100%;
-        font-size: 24px;
-        height: 60px;
-        line-height: 100%;
-        background: #0d70b3;
-        text-transform: none;
-        border-radius: 0;
-    }
-        .btn_popup:hover,
-        .btn_popup:active {
-            background-color: #0d70b3;
-        }
-    .btn.btn_popup.btn_popup_changepass.without_M,
-    .btn.btn_popup.btn_popup_changepass.without_M:hover,
-    .btn.btn_popup.btn_popup_changepass.without_M:focus {
-        display: block;
-        width: 100%;
-        height: 100%;
-        background: #0d70b3;
-        margin: 0 auto;
-    }
-
+button:focus,
+button:hover {
+    background-color: initial;
+}
+.btn_form {
+    width: 100%;
+    font-size: 2.3vh;
+    line-height: 6vh;
+    border-radius: 0.3vh;
+    font-weight: 300;
+    text-transform: uppercase;
+}
+.l-welcome_btn {
+    width: 304px;
+    height: 40px;
+    display: block;
+    position: relative;
+    margin: 0 auto;
+    border-radius: 2px;
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle;
+}
+.l-welcome_btn_green {
+    margin-top: 76px;
+    background-color: #28c849;
+    color: #ffffff;
+}
+.l-welcome_btn_white {
+    margin-top: 16px;
+    background-color: #ffffff;
+    color: #6e6e6e;
+}
+.l-welcome_btn_white:focus,
+.l-welcome_btn_white:hover {
+    background-color: #eeeeee;
+    color: #6e6e6e;
+    opacity: 1;
+}
+.l-btn_login {
+    margin: 20px 0 9px;
+    background-color: #28c849;
+    color: #ffffff;
+}
+.l-btn_login:focus,
+.l-btn_login:hover,
+.l-welcome_btn_green:focus,
+.l-welcome_btn_green:hover {
+    background-color: #26a640;
+    opacity: 1;
+}
+.l-btn_login_fb {
+    margin: 9px 0 35px;
+    background-color: #4e70a8;
+    color: #ffffff;
+}
+.l-btn_login_fb:focus,
+.l-btn_login_fb:hover {
+    background-color: #445f8c;
+    opacity: 1;
+}
+.l-btn_reset {
+    margin-top: 24px;
+    background-color: #28c849;
+    color: #ffffff;
+}
+.l-btn_reset:focus,
+.l-btn_reset:hover {
+    background-color: #26a640;
+    opacity: 1;
+}
+.i-btn_icon_fb {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background: image-url('fb-logo.svg') no-repeat center;
+    margin-right: 7px;
+    vertical-align: middle;
+}
+.l-welcome_footer_logo a {
+    display: inline-block;
+    text-align: left;
+}
+.i-mini_logo {
+    width: 22px;
+    height: 22px;
+    background: image-url('qmweb-launch-qblogo.svg') no-repeat center;
+}
+.by_QB {
+    margin-left: 6px;
+    font-family: "Roboto", sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    color: #959595;
+}
+.l-welcome_download {
+    display: inline-block;
+    text-align: right;
+    float: right;
+}
+.l-welcome_download_app {
+    margin-left: 16px;
+}
+.i-appstore {
+    width: 24px;
+    height: 24px;
+    background: image-url('ic-appstore.svg') no-repeat center;
+}
+.i-android {
+    width: 24px;
+    height: 24px;
+    background: image-url('ic-android.svg') no-repeat center;
+}
+.i-back_login {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: image-url('ic-arrow-back.svg') no-repeat center;
+    margin-right: 7px;
+}
+button.btn.btn_add,
+button.btn.btn_add:focus,
+button.btn.btn_add:hover {
+    width: 300px;
+    font-size: 20px;
+    border-radius: 56px;
+    height: 56px;
+    line-height: 100%;
+    vertical-align: middle;
+}
+button.btn_invite,
+button.btn_invite:focus,
+button.btn_invite:hover {
+    margin-bottom: 2vh;
+    background: #ff4945;
+}
+button.btn.btn_invite_contacts {
+    width: 300px;
+    font-size: 20px;
+    border-radius: 56px;
+    height: 56px;
+    line-height: 56px;
+    transition: initial;
+    vertical-align: middle;
+    text-transform: none;
+}
+.btn_share {
+    background: #3b5998;
+}
+button.btn.btn_search,
+button.btn.btn_search:focus,
+button.btn.btn_search:hover {
+    display: block;
+    width: 285px;
+    margin: 20px auto 0;
+    font-size: 16px;
+    line-height: 40px;
+    background: #0d70b3;
+    border-radius: 7px;
+}
+.btn_popup {
+    width: 100%;
+    font-size: 24px;
+    height: 60px;
+    line-height: 100%;
+    background: #0d70b3;
+    text-transform: none;
+    border-radius: 0;
+}
+.btn_popup:active,
+.btn_popup:hover {
+    background-color: #0d70b3;
+}
+.btn.btn_popup.btn_popup_changepass.without_M,
+.btn.btn_popup.btn_popup_changepass.without_M:focus,
+.btn.btn_popup.btn_popup_changepass.without_M:hover {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #0d70b3;
+    margin: 0 auto;
+}
 .btn_chat {
     margin-right: 15px;
 }
-    .btn_chat:last-child {
-        margin-right: 0;
-    }
-    .btn_chat_videocall {
-        position: relative;
-        top: -2px;
-    }
+.btn_chat:last-child {
+    margin-right: 0;
+}
+.btn_chat_videocall {
+    position: relative;
+    top: -2px;
+}
 .footer_btn {
     cursor: pointer;
 }
@@ -219,48 +214,48 @@
     background: image-url('ic_location_off.svg') 50% no-repeat;
     background-size: contain;
 }
-    .btn_sendlocation.btn_active {
-        background: image-url('ic_location_on.svg');
-    }
-    .btn_sendlocation[data-balloon-length="small"]:after {
-        width: 110px;
-    }
-    .btn_message {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        display: block;
-        width: 34px;
-        height: 34px;
-    }
-    .btn_input_smile {
-        position: relative;
-        width: 20px;
-        background: image-url('ic_smile.svg') 50% no-repeat;
-    }
-    .btn_input_smile.is-active {
-        background: image-url('ic_smile_active.svg') 50% no-repeat;
-    }
-    .btn_input_location {
-        position: relative;
-        width: 14px;
-        background: image-url('ic_send_location.svg') 50% no-repeat;
-    }
-    .btn_input_location.is-active {
-        background: image-url('ic_send_location_active.svg') 50% no-repeat;
-    }
-    .btn_input_attach {
-        position: relative;
-        width: 20px;
-        background: image-url('ic_attach.svg') 50% no-repeat;
-    }
-    .btn_input_send {
-        vertical-align: inherit;
-        font-family: 'Open Sans', sans-serif;
-        font-weight: 600;
-        font-size: 15px;
-        color: #007de3;
-    }
+.btn_sendlocation.btn_active {
+    background: image-url('ic_location_on.svg');
+}
+.btn_sendlocation[data-balloon-length="small"]:after {
+    width: 110px;
+}
+.btn_message {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: block;
+    width: 34px;
+    height: 34px;
+}
+.btn_input_smile {
+    position: relative;
+    width: 20px;
+    background: image-url('ic_smile.svg') 50% no-repeat;
+}
+.btn_input_smile.is-active {
+    background: image-url('ic_smile_active.svg') 50% no-repeat;
+}
+.btn_input_location {
+    position: relative;
+    width: 14px;
+    background: image-url('ic_send_location.svg') 50% no-repeat;
+}
+.btn_input_location.is-active {
+    background: image-url('ic_send_location_active.svg') 50% no-repeat;
+}
+.btn_input_attach {
+    position: relative;
+    width: 20px;
+    background: image-url('ic_attach.svg') 50% no-repeat;
+}
+.btn_input_send {
+    vertical-align: inherit;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: #007de3;
+}
 .btn_to_bottom {
     position: absolute;
     top: -35px;
@@ -291,65 +286,63 @@
     border-radius: 5px;
     text-transform: none;
 }
-    .btn_request_again:hover,
-    .btn_request_again:focus {
-        background: #f2f2f2;
-        color: #333;
-    }
+.btn_request_again:focus,
+.btn_request_again:hover {
+    background: #f2f2f2;
+    color: #333;
+}
 .btn_request_again_delete {
     margin-left: 0;
 }
-
 /* button icons */
 .btn-icon {
     margin-right: 2vh;
     vertical-align: text-bottom;
 }
-    .btn-icon.i-btn-icon_fb {
-        width: 3.4vh;
-        height: 3.4vh;
-        display: inline-block;
-        margin: 0vh 2vh .6vh 0vh;
-        vertical-align: middle;
-        background: image-url('icon-fb.svg') 50% no-repeat;
-    }
-    .btn-icon_fb_header {
-        width: 19px;
-        margin-right: 10px;
-        vertical-align: text-top;
-    }
-    .btn-icon_invite {
-        display: inline-block;
-        width: 27px;
-        height: 100%;
-        position: relative;
-        top: -3px;
-        margin-right: 12px;
-        background: url('../images/icon-invite.svg?1464359307') no-repeat center;
-        vertical-align: middle;
-    }
-    .btn-icon_invite_contacts {
-        width: 25px;
-    }
-    .btn-icon_share {
-        width: 2.4vh;
-        opacity: .5;
-    }
-    .btn-icon_request {
-        width: 19px;
-        margin-right: 8px;
-        vertical-align: text-top;
-    }
-
-.btn.without_M,
+.btn-icon.i-btn-icon_fb {
+    width: 3.4vh;
+    height: 3.4vh;
+    display: inline-block;
+    margin: 0 2vh 0.6vh 0;
+    vertical-align: middle;
+    background: image-url('icon-fb.svg') 50% no-repeat;
+}
+.btn-icon_fb_header {
+    width: 19px;
+    margin-right: 10px;
+    vertical-align: text-top;
+}
+.btn-icon_invite {
+    display: inline-block;
+    width: 27px;
+    height: 100%;
+    position: relative;
+    top: -3px;
+    margin-right: 12px;
+    background: url('../images/icon-invite.svg?1464359307') no-repeat center;
+    vertical-align: middle;
+}
+.btn-icon_invite_contacts {
+    width: 25px;
+}
+.btn-icon_share {
+    width: 2.4vh;
+    opacity: 0.5;
+}
+.btn-icon_request {
+    width: 19px;
+    margin-right: 8px;
+    vertical-align: text-top;
+}
 .btn-flat.without_M,
-.btn-large.without_M,
-.btn.without_M:hover,
-.btn-large.without_M:hover,
+.btn-flat.without_M:focus,
 .btn-flat.without_M:hover,
-.btn.without_M:focus,
+.btn-large.without_M,
 .btn-large.without_M:focus,
-.btn-flat.without_M:focus {
+.btn-large.without_M:hover,
+.btn.without_M,
+.btn.without_M:focus,
+.btn.without_M:hover {
     border: none;
     border-radius: initial;
     height: auto;

@@ -1,29 +1,28 @@
 /* Incomming calls */
 .incoming-call-popup {
-  width: 345px;
-  max-height: 538px;
-  overflow-y: auto;
-  background: #fff;
-  border: 1px solid #f0f0f0;
+    width: 345px;
+    max-height: 538px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #f0f0f0;
 }
-  .incoming-call {
+.incoming-call {
     width: 100%;
     border-bottom: 1px solid #f0f0f0;
-  }
-  .incoming-call:last-child {
-    border-bottom: 0;
-  }
-
-.incoming-call-info {
-  width: 100%;
 }
-  .info-avatar {
+.incoming-call:last-child {
+    border-bottom: 0;
+}
+.incoming-call-info {
+    width: 100%;
+}
+.info-avatar {
     width: 40px;
     height: 40px;
     margin: 15px 0;
     border-radius: 50%;
-  }
-  .info-notice {
+}
+.info-notice {
     width: 100%;
     padding: 0 15px;
     font-size: 20px;
@@ -32,160 +31,153 @@
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-.incoming-call-controls {
-  width: 100%;
-  margin: 20px 0;
 }
-  .btn_decline,
-  .btn_accept {
+.incoming-call-controls {
+    width: 100%;
+    margin: 20px 0;
+}
+.btn_accept,
+.btn_decline {
     text-transform: uppercase;
-  }
-  .btn_decline:hover,
-  .btn_accept:hover {
+}
+.btn_accept:hover,
+.btn_decline:hover {
     opacity: 1;
-  }
-  .btn_decline {
+}
+.btn_decline {
     margin-right: 55px;
     color: #b20001;
-  }
-  .btn_accept {
+}
+.btn_accept {
     color: #1ec252;
-  }
-
+}
 /* Video / audio calls */
 .mediacall {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 185px;
-  max-height: 50%;
-  background: #262626;
-  text-align: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 185px;
+    max-height: 50%;
+    background: #262626;
+    text-align: center;
 }
-  .mediacall-remote-stream {
+.mediacall-remote-stream {
     width: 100%;
     height: 100%;
     max-height: 100%;
-  }
-
-  .mediacall-remote-user {
+}
+.mediacall-remote-user {
     width: 80%;
     height: 100%;
     max-height: 326px;
     margin: auto;
-  }
-    .mediacall-remote-avatar {
-      height: 50%;
-      max-width: 146px;
-      max-height: 146px;
-      margin: 10px 0 10px 0;
-      border-radius: 50%;
-    }
-      .mediacall.small_screen .mediacall-remote-avatar {
-        margin: 5px 0 5px 0;
-      }
-      .mediacall.small_screen .mediacall-remote-name {
-        font-size: 18px;
-        line-height: 18px;
-      }
-      .mediacall.small_screen .mediacall-controls {
-        bottom: 0;
-      }
-    .mediacall-remote-name,
-    .mediacall-remote-duration {
-      font-size: 22px;
-      color: rgba(255, 255, 255, 0.2);
-    }
-    .mediacall-remote-name {
-      width: 100%;
-      line-height: 26px;
-      margin-bottom: 15px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-
-  .mediacall-local {
+}
+.mediacall-remote-avatar {
+    height: 50%;
+    max-width: 146px;
+    max-height: 146px;
+    margin: 10px 0;
+    border-radius: 50%;
+}
+.mediacall.small_screen .mediacall-remote-avatar {
+    margin: 5px 0;
+}
+.mediacall.small_screen .mediacall-remote-name {
+    font-size: 18px;
+    line-height: 18px;
+}
+.mediacall.small_screen .mediacall-controls {
+    bottom: 0;
+}
+.mediacall-remote-duration,
+.mediacall-remote-name {
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.2);
+}
+.mediacall-remote-name {
+    width: 100%;
+    line-height: 26px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.mediacall-local {
     position: absolute;
     top: 15px;
     right: 15px;
-  }
-    .mediacall-local-stream {
-      width: 20%;
-    }
-    .mediacall-local-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-    }
-
-  .mediacall-info {
+}
+.mediacall-local-stream {
+    width: 20%;
+}
+.mediacall-local-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+.mediacall-info {
     position: absolute;
     top: 15px;
     left: 15px;
-  }
-    .mediacall-info-logo {
-      margin-bottom: 17px;
-    }
-    .mediacall-info-duration {
-      font-size: 16px;
-      font-weight: bold;
-      color: rgba(255, 255, 255, 0.2);
-    }
-
-  .mediacall-controls {
+}
+.mediacall-info-logo {
+    margin-bottom: 17px;
+}
+.mediacall-info-duration {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.2);
+}
+.mediacall-controls {
     position: absolute;
     width: 100%;
     left: 0;
     bottom: 15px;
-  }
-    .btn_mediacall,
-    .btn_mediacall:focus {
-      width: 60px;
-      height: 60px;
-      background: rgba(0, 0, 0, 0.57);
-    }
-    .btn_mediacall:hover,
-    .btn_mediacall.off {
-      opacity: 1;
-      background: rgba(255, 0, 0, 0.57);
-    }
-    .btn_mediacall:first-child:hover,
-    .btn_mediacall:last-child:hover {
-      background: rgba(0, 0, 0, 0.4);
-    }
-      .btn-icon_mediacall {
-        vertical-align: text-bottom;
-      }
-    #fullModeOn {
-      width: 21px;
-      height: 21px;
-      margin: 0 auto;
-      background: image-url('icon-full-mode-on.png') no-repeat center;
-    }
-    #fullModeOff {
-      width: 21px;
-      height: 21px;
-      margin: 0 auto;
-      background: image-url('icon-full-mode-off.png') no-repeat center;
-      display: none;
-    }
-
+}
+.btn_mediacall,
+.btn_mediacall:focus {
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.57);
+}
+.btn_mediacall.off,
+.btn_mediacall:hover {
+    opacity: 1;
+    background: rgba(255, 0, 0, 0.57);
+}
+.btn_mediacall:first-child:hover,
+.btn_mediacall:last-child:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+.btn-icon_mediacall {
+    vertical-align: text-bottom;
+}
+#fullModeOn {
+    width: 21px;
+    height: 21px;
+    margin: 0 auto;
+    background: image-url('icon-full-mode-on.png') no-repeat center;
+}
+#fullModeOff {
+    width: 21px;
+    height: 21px;
+    margin: 0 auto;
+    background: image-url('icon-full-mode-off.png') no-repeat center;
+    display: none;
+}
 .mediacall:-webkit-full-screen {
-  height: 100% !important;
-  max-height: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
 }
 .mediacall:-moz-full-screen {
-  height: 100% !important;
-  max-height: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
 }
 .mediacall:-ms-fullscreen {
-  height: 100% !important;
-  max-height: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
 }
 .mediacall:fullscreen {
-  height: 100% !important;
-  max-height: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
 }

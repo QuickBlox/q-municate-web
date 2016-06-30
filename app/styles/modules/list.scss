@@ -10,7 +10,6 @@
 #requestsList .list-item:hover {
     background: #fff;
 }
-
 .list-actions {
     position: relative;
     width: 160px;
@@ -21,56 +20,55 @@
     -webkit-transform: translate(-50%, 0);
     top: 100%;
 }
-    .list-actions_contacts {
-        margin: -15px auto 0;
-    }
-    .list-actions_contacts.margin-up {
-        top: inherit;
-        bottom: 70%;
-    }
-    .list-actions_occupants {
-        position: absolute;
-        margin-top: 32px;
-    }
-    .list-actions_profile {
-        position: absolute;
-        top: 74px;
-        right: 0;
-    }
-        .list-actions .list-item {
-            height: auto;
-        }
-        .list-actions .list-item:last-child {
-            border-bottom: 0;
-        }
-            .list-actions-action {
-                display: block;
-                padding: 0 10px;
-                font-size: 16px;
-                line-height: 40px;
-                color: #333;
-            }
-            .list-actions-action:hover {
-                opacity: 1;
-            }
-
+.list-actions_contacts {
+    margin: -15px auto 0;
+}
+.list-actions_contacts.margin-up {
+    top: inherit;
+    bottom: 70%;
+}
+.list-actions_occupants {
+    position: absolute;
+    margin-top: 32px;
+}
+.list-actions_profile {
+    position: absolute;
+    top: 74px;
+    right: 0;
+}
+.list-actions .list-item {
+    height: auto;
+}
+.list-actions .list-item:last-child {
+    border-bottom: 0;
+}
+.list-actions-action {
+    display: block;
+    padding: 0 10px;
+    font-size: 16px;
+    line-height: 40px;
+    color: #333;
+}
+.list-actions-action:hover {
+    opacity: 1;
+}
 .list_contacts {
-    height: calc(100% - 60px - 60px - 37px); /* 37px - spinner_bounce height */
+    height: calc(100% - 60px - 60px - 37px);
+    /* 37px - spinner_bounce height */
 }
 .popup-content .list_contacts {
     height: 100%;
 }
-
 /* hover icons */
-.list-item .icon-active,
-.header-links-item .icon-active {
+.header-links-item .icon-active,
+.list-item .icon-active {
     display: none;
 }
-.send-request:hover .icon-normal,
-.header-links-item:hover .icon-normal {
+.header-links-item:hover .icon-normal,
+.send-request:hover .icon-normal {
     display: none;
 }
-.send-request:hover .icon-active,
-.header-links-item:hover .icon-active {
+.header-links-item:hover .icon-active,
+.send-request:hover .icon-active {
     display: inline-block;
 }

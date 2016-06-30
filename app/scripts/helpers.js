@@ -1,36 +1,40 @@
 /**
  * Helper Module
  */
-
 define([
     'jquery',
     'quickblox',
     'config',
     'QBNotification'
-], function($, QB, QMCONFIG, QBNotification) {
+], function(
+    $,
+    QB,
+    QMCONFIG,
+    QBNotification
+) {
 
     var Helpers = {};
 
     Helpers.Notifications = {
 
         show: function(title, options) {
-          // show notification if all parameters are is
-          if (title && options) {
-            var notify = new QBNotification(title, options);
-            notify.show();
-          }
+            // show notification if all parameters are is
+            if (title && options) {
+                var notify = new QBNotification(title, options);
+                notify.show();
+            }
         },
 
         getTitle: function(message, params) {
-          var dialogs = params.dialogs,
-              contacts = params.contacts,
-              dialog = dialogs[message.dialog_id],
-              contact = contacts[message.sender_id],
-              title;
+            var dialogs = params.dialogs,
+                contacts = params.contacts,
+                dialog = dialogs[message.dialog_id],
+                contact = contacts[message.sender_id],
+                title;
 
-          title = (dialog && dialog.room_name) || contact.full_name;
+            title = (dialog && dialog.room_name) || contact.full_name;
 
-          return title;
+            return title;
         },
 
         getOptions: function(message, params) {
@@ -42,7 +46,7 @@ define([
                 chatType = message.type,
                 photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (dialog.room_photo || QMCONFIG.defAvatar.group_url_png),
                 type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
-                selectDialog = $('.dialog-item[data-dialog="'+message.dialog_id+'"] .contact'),
+                selectDialog = $('.dialog-item[data-dialog="' + message.dialog_id + '"] .contact'),
                 occupants_ids,
                 occupantsNames = '',
                 options,
@@ -80,12 +84,12 @@ define([
                     text = contact.full_name + ' has added ' + occupantsNames + ' to the group chat';
                     break;
 
-                // groupchat updated
+                    // groupchat updated
                 case '2':
                     // for future cases
                     break;
 
-                // contacts
+                    // contacts
                 case '4':
                     text = contact.full_name + ' has sent a request to you';
                     break;
@@ -102,7 +106,7 @@ define([
                     text = 'You have been deleted from the contact list by ' + contact.full_name;
                     break;
 
-                // calls
+                    // calls
                 case '8':
                     if (message.caller === myUser.contact.id) {
                         text = 'Call to ' + contacts[message.callee].full_name + ', duration ' + message.duration;
@@ -143,7 +147,7 @@ define([
                     text = 'The ' + message.callType + ' Call accepted by ' + contact.full_name;
                     break;
 
-                // messages
+                    // messages
                 default:
                     if (chatType === 'groupchat') {
                         text = contact.full_name + ': ' + message.body;
@@ -201,8 +205,8 @@ define([
             } else {
                 console.group("[Q-MUNICATE debug mode]:");
                 for (var i = 0; i < arguments.length; i++) {
-                    if ((typeof arguments[i] === "string") && (typeof arguments[i+1] !== "string")) {
-                        console.log(arguments[i], arguments[i+1]);
+                    if ((typeof arguments[i] === "string") && (typeof arguments[i + 1] !== "string")) {
+                        console.log(arguments[i], arguments[i + 1]);
                         i = i + 1;
                     } else {
                         console.log(arguments[i]);

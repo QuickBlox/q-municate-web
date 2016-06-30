@@ -1,10 +1,10 @@
 {
-  "generator-backbone": {
-    "appPath": "app",
-    "appName": "q-municate",
-    "coffee": false,
-    "templateFramework": "handlebars",
-    "compassBootstrap": false,
-    "includeRequireJS": true
-  }
+    "generator-backbone": {
+        "appPath": "app",
+        "appName": "q-municate",
+        "coffee": false,
+        "templateFramework": "handlebars",
+        "compassBootstrap": false,
+        "includeRequireJS": true
+    }
 }
