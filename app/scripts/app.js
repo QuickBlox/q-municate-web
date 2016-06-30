@@ -4,7 +4,6 @@
  * Main Module
  *
  */
-
 define([
     'jquery', 'UserModule',
     'SessionModule', 'SettingsModule',

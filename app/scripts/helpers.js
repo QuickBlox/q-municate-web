@@ -1,7 +1,6 @@
 /**
  * Helper Module
  */
-
 define([
     'jquery',
     'quickblox',

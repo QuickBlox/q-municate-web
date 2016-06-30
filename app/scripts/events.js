@@ -4,7 +4,6 @@
  * Events Module
  *
  */
-
 define([
     'jquery',
     'config',

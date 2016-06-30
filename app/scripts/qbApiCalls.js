@@ -4,7 +4,6 @@
  * QuickBlox JS SDK Wrapper
  *
  */
-
 define([
     'jquery',
     'config',

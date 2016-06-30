@@ -3,7 +3,6 @@
  * htmlQM Module
  *
  */
-
 define([
     'jquery',
     'underscore',
