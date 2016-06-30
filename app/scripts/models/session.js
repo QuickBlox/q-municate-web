@@ -4,7 +4,13 @@
  * Session Module
  *
  */
-define(['config', 'cryptojs'], function(QMCONFIG, CryptoJS) {
+define([
+    'config',
+    'cryptojs'
+], function(
+    QMCONFIG,
+    CryptoJS
+) {
 
     function Session(app) {
         this.app = app;

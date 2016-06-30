@@ -10,7 +10,13 @@ define([
     'backbone',
     'config',
     'Helpers'
-], function($, _, Backbone, QMCONFIG, Helpers) {
+], function(
+    $,
+    _,
+    Backbone,
+    QMCONFIG,
+    Helpers
+) {
 
     var App;
 

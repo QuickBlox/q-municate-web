@@ -4,7 +4,11 @@
  * Message Module
  *
  */
-define(['quickblox'], function(QB) {
+define([
+    'quickblox'
+], function(
+    QB
+) {
 
     function Message(app) {
         this.app = app;

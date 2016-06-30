@@ -4,9 +4,6 @@
  * VideoChat View Module
  *
  */
-var callTimer,
-    videoStreamTime;
-
 define([
     'jquery',
     'quickblox',
@@ -21,8 +18,11 @@ define([
     QBNotification,
     QMHtml
 ) {
-
     var self;
+
+    var callTimer,
+        videoStreamTime;
+
     var Settings,
         User,
         ContactList,
