@@ -191,7 +191,7 @@ define([
                     $curTextarea = $('.l-chat:visible .textarea'),
                     val = $curTextarea.html();
 
-                $curTextarea.addClass('contenteditable').html(val + minEmoji(code));
+                $curTextarea.focus().html(val + minEmoji(code));
                 setCursorToEnd($curTextarea);
             });
 
@@ -1021,12 +1021,19 @@ define([
     function setCursorToEnd(el) {
         el.focus();
         if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+            // var range = document.createRange();
+            // range.selectNodeContents(el.get(0));
+            // range.collapse(false);
+            // var sel = window.getSelection();
+            // sel.removeAllRanges();
+            // sel.addRange(range);
+            var element = el.get(0)
+            ci
+            var selection = window.getSelection();
+            selection.removeAllRanges();
             var range = document.createRange();
-            range.selectNodeContents(el.get(0));
-            range.collapse(false);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
+            range.setStartAfter(element);
+            selection.addRange(range);
         } else if (typeof document.body.createTextRange != "undefined") {
             var textRange = document.body.createTextRange();
             textRange.moveToElementText(el.get(0));

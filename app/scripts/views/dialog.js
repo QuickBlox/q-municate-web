@@ -343,9 +343,10 @@ define([
                 html = getStatus(status, html);
             } else {
                 html += '<span class="status"></span>';
-                html += '<span class="unread">' + dialog.unread_count + '</span>';
-                html += '</a></li>';
             }
+            
+            html += '<span class="unread">' + dialog.unread_count + '</span>';
+            html += '</a></li>';
 
             startOfCurrentDay = new Date();
             startOfCurrentDay.setHours(0, 0, 0, 0);
@@ -464,7 +465,7 @@ define([
                 html += '<footer class="l-chat-footer">';
                 html += '<div class="footer_btn j-toBottom btn_to_bottom"></div>';
                 html += '<form class="l-message" action="#">';
-                html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
+                html += '<div class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"></div>';
                 html += '<div class="footer_btn j-send_location btn_sendlocation' + ((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '') + '"';
                 html += 'data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>';
                 html += '<input class="attachment" type="file" accept="image/*"></form>';
@@ -543,7 +544,7 @@ define([
                 theme: 'minimal-dark',
                 scrollInertia: 'auto',
                 mouseWheel: {
-                    scrollAmount: 'auto',
+                    scrollAmount: 120,
                     deltaFactor: 'auto'
                 },
                 setTop: height + 'px',
@@ -662,10 +663,10 @@ define([
     function scrollbar() {
         $('.l-sidebar .scrollbar').mCustomScrollbar({
             theme: 'minimal-dark',
-            scrollInertia: 500,
+            scrollInertia: 150,
             mouseWheel: {
-                scrollAmount: 'auto',
-                deltaFactor: 'auto'
+                scrollAmount: 100,
+                deltaFactor: 0
             },
             live: true
         });
@@ -725,7 +726,7 @@ define([
         $('.l-chat:visible .textarea').niceScroll({
             cursoropacitymax: 0.5,
             railpadding: {
-                right: 5
+                right: -13
             },
             zindex: 1,
             enablekeyboard: false

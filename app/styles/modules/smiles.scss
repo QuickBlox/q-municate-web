@@ -54,26 +54,16 @@
     cursor: pointer;
 }
 /* emoji plugin */
-.em-wrap {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-}
-.popover_smile .em-wrap:hover {
-    background: #cecece;
+.popover_smile .em:hover {
+    opacity: .8;
     cursor: pointer;
 }
 .em {
+    display: inline-block;
     margin: 5px;
 }
-.message-body .em-wrap,
-.textarea .em-wrap {
-    width: auto;
-    height: auto;
-}
-.message-body .em-wrap .em,
-.textarea .em-wrap .em {
-    position: relative;
-    top: 5px;
+.message-body .em,
+.textarea .em {
     margin: 0;
+    vertical-align: top;
 }
