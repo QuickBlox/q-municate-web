@@ -343,9 +343,10 @@ define([
                 html = getStatus(status, html);
             } else {
                 html += '<span class="status"></span>';
-                html += '<span class="unread">' + dialog.unread_count + '</span>';
-                html += '</a></li>';
             }
+
+            html += '<span class="unread">' + dialog.unread_count + '</span>';
+            html += '</a></li>';
 
             startOfCurrentDay = new Date();
             startOfCurrentDay.setHours(0, 0, 0, 0);
