@@ -1,0 +1,160 @@
+// settings popup
+//
+.popup_settings {
+    width: 464px;
+    height: 352px;
+    border-radius: 4px;
+    background-color: #ffffff;
+}
+//
+//
+// Settings title
+//
+.header_settings {
+    width: 100%;
+    height: 56px;
+    line-height: 56px;
+    vertical-align: middle;
+    box-shadow: inset 0 -1px 0 0 #28ca4a;
+}
+.header_settings_label {
+    display: inline-block;
+    width: 67px;
+    height: 21px;
+    padding-left: 24px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: #1f1f1f;
+}
+.i-close_settings {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 24px;
+    height: 24px;
+    background: image-url('ic-close.svg') no-repeat center;
+    cursor: pointer;
+}
+//
+//
+// Users settings
+//
+.body_settings {
+    padding: 16px 24px;
+}
+li.switch_settings:first-child {
+    font-weight: 500;
+    position: relative;
+}
+.i-notifications_settings {
+    position: absolute;
+    top: 7px;
+    left: 1px;
+    width: 24px;
+    height: 24px;
+    background: image-url('ic-notifications.svg') no-repeat center;
+}
+li.switch_settings {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    color: #1f1f1f;
+    vertical-align: middle;
+    padding-left: 40px;
+}
+.toogle_settings {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+label.settings_label {
+    display: inline-block;
+}
+//
+//
+// footer links
+//
+.footer_settings_menu {
+    width: 100%;
+    margin-top: 24px;
+}
+.footer_settings {
+    display: inline-block;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+    position: relative;
+}
+.i-footer_settings {
+    position: absolute;
+    top: 8px;
+    width: 24px;
+    height: 24px;
+}
+.footer_settings_label {
+    display: inline-block;
+    padding-left: 40px;
+}
+.footer_settings_link {
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    color: #1f1f1f;
+}
+.footer_settings_link:hover,
+.toogle_settings:hover .settings_label {
+    color: #238339;
+}
+.i-feedback_settings {
+    background: image-url('ic-feedback.svg') no-repeat center;
+}
+.i-help_settings {
+    background: image-url('ic-help-outline.svg') no-repeat center;
+}
+//
+//
+// switches for users settings
+//
+.switch label .lever {
+    width: 36px;
+    height: 14px;
+    border-radius: 7px;
+    background-color: #e0e0e0;
+    box-shadow: none;
+    margin: 13px auto auto;
+    float: right;
+}
+.switch label .lever:after {
+    left: 0;
+    top: -3px;
+    width: 20px;
+    height: 20px;
+    background-color: #ffffff;
+    border: 1px solid #eeeeee;
+    box-shadow: none;
+}
+.switch label input[type=checkbox]:checked+.lever {
+    width: 36px;
+    height: 14px;
+    border-radius: 7px;
+    background-color: rgba(39, 202, 73, 0.46);
+}
+.switch label input[type=checkbox]:checked+.lever:after {
+    left: 16px;
+    width: 20px;
+    height: 20px;
+    background-color: #28ca4a;
+    border: none;
+}
+input[type=checkbox]:checked:not(:disabled) ~ .lever:active::after,
+input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::after,
+input[type=checkbox]:not(:disabled) ~ .lever:active:after,
+input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
+    box-shadow: initial;
+}
