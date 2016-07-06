@@ -442,17 +442,9 @@ define([
             if (val.length > 0) {
                 if (form.find('.textarea > img').length > 0) {
                     form.find('.textarea > img').each(function() {
-                        $(this).after($(this).find('img').data('unicode')).remove();
-                        console.info($(this).after($(this).find('img').data('unicode')));
+                        $(this).after($(this).data('unicode')).remove();
                     });
                     val = form.find('.textarea').html().trim();
-                    console.info(val);
-                ////////////////////////////////////////////////////////////////////////////////////////////////////
-                ///
-                ///
-                ///
-                ///
-                ///
                 }
                 if (form.find('.textarea > div').length > 0) {
                     val = form.find('.textarea').text().trim();

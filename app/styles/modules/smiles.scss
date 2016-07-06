@@ -61,6 +61,8 @@
 .em {
     display: inline-block;
     margin: 5px;
+    word-wrap: break-word;
+    cursor: text;
 }
 .message-body .em,
 .textarea .em {

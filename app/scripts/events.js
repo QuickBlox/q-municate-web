@@ -186,8 +186,8 @@ define([
                 }
             });
 
-            $('.em-wrap').on('click', function() {
-                var code = $(this).find('.em').data('unicode'),
+            $('.em').on('click', function() {
+                var code = $(this).data('unicode'),
                     $curTextarea = $('.l-chat:visible .textarea'),
                     val = $curTextarea.html();
 
@@ -1021,19 +1021,12 @@ define([
     function setCursorToEnd(el) {
         el.focus();
         if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
-            // var range = document.createRange();
-            // range.selectNodeContents(el.get(0));
-            // range.collapse(false);
-            // var sel = window.getSelection();
-            // sel.removeAllRanges();
-            // sel.addRange(range);
-            var element = el.get(0)
-            ci
-            var selection = window.getSelection();
-            selection.removeAllRanges();
             var range = document.createRange();
-            range.setStartAfter(element);
-            selection.addRange(range);
+            range.selectNodeContents(el.get(0));
+            range.collapse(false);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
         } else if (typeof document.body.createTextRange != "undefined") {
             var textRange = document.body.createTextRange();
             textRange.moveToElementText(el.get(0));

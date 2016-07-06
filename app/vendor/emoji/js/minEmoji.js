@@ -10,10 +10,7 @@
 	regx_arr = null;
 	var minEmoji = function(s){
 		return s.replace(regx, function (a, b) {
-			// return '<span class="em-wrap" contenteditable="false"><span class="em emj'+emoji[b]+'" data-unicode="'+b+'"></span></span>';
-			var smile = '<img src="blank.gif" alt="'+emoji[b]+'" data-unicode="'+b+'" ' +
-						'class="em emj'+emoji[b]+'" onresizestart="return false">';
-			return smile;
+			return '<img src="blank.gif" alt="'+b+'" data-unicode="'+b+'" class="em emj'+emoji[b]+'" onresizestart="return false">';
 		});
 	}
 	window.minEmoji = minEmoji;
