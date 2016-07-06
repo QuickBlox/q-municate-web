@@ -79,6 +79,7 @@ If you want to build your own app using Q-municate as a base, please do the foll
 8. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID ([How to generate and save Facebook application ID](https://quickblox.com/developers/How_to_generate_and_save_Facebook_application_ID)) into your Q-municate project code in `config.js`.
 
 ![](http://quickblox.com/developers//images/9/95/Js_qm_project.png)
+![](http://quickblox.com/developers//images/0/05/Endpoints.png)
 
 ### 6\. Build and run
 
