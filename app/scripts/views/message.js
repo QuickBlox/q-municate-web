@@ -560,8 +560,6 @@ define([
                 // send read status if message displayed in chat
                 Message.update(msg.id, dialog_id, id);
             } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length > 0 && message.markable == 1) {
-                console.info(dialogs);
-                console.info(dialog_id);
                 msgArr = dialogs[dialog_id].messages || [];
                 msgArr.push(msg.id);
                 dialogs[dialog_id].messages = msgArr;
@@ -570,7 +568,6 @@ define([
             if (otherChat || (!otherChat && !isBottom && isNotMyUser)) {
                 unread++;
                 dialogItem.find('.unread').text(unread);
-                console.info(dialogItem.find('.unread').text());
                 DialogView.getUnreadCounter(dialog_id);
             }
 
