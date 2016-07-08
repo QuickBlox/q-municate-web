@@ -65,7 +65,9 @@
     cursor: text;
 }
 .message-body .em,
-.textarea .em {
+.textarea .em,
+.textarea .em:hover {
     margin: 0;
     vertical-align: top;
+    cursor: text;
 }
