@@ -188,8 +188,8 @@ define([
                 }
             });
 
-            $workspace.on('click', '.j-em', function(event) {
-                Cursor.setCursorAfterElement(event.target);
+            $workspace.on('click', '.j-em', function() {
+                Cursor.setCursorAfterElement($(this)[0]);
             });
 
             $('.smiles-group').on('click', function(event) {
@@ -905,10 +905,10 @@ define([
 
             $workspace.on('keyup', '.l-message', function() {
                 var $textarea = $('.l-chat:visible .textarea'),
-                    $val = $textarea.text().trim(),
-                    $emj = $textarea.find('.j-em');
+                    $emj = $textarea.find('.j-em'),
+                    val = $textarea.text().trim();
 
-                if ($val.length > 0 || $emj.length > 0) {
+                if (val.length > 0 || $emj.length > 0) {
                     $textarea.addClass('contenteditable');
                 } else {
                     $textarea.removeClass('contenteditable').empty();

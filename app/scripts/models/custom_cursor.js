@@ -19,16 +19,19 @@ define([], function() {
         };
 
         this.setCursorToEnd = function(el) {
+            var isSelectionAndRangeAvaible = typeof window.getSelection !== 'undefined' &&
+                                             typeof document.createRange !== 'undefined',
+                isTextRangeAvaible = typeof document.body.createTextRange !== 'undefined';
+
             el.focus();
-            if (typeof window.getSelection !== 'undefined' &&
-                typeof document.createRange !== 'undefined') {
+
+            if (isSelectionAndRangeAvaible) {
                 var range = document.createRange();
 
                 range.selectNodeContents(el);
                 range.collapse(false);
-
                 setRange(range);
-            } else if (typeof document.body.createTextRange !== 'undefined') {
+            } else if (isTextRangeAvaible) {
                 var textRange = document.body.createTextRange();
 
                 textRange.moveToElementText(el);

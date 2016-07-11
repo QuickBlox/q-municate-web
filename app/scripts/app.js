@@ -10,7 +10,7 @@ define([
     'ContactModule', 'DialogModule',
     'MessageModule', 'AttachModule',
     'ContactListModule', 'VideoChatModule',
-    'CustomCursorModule',
+    'CursorModule',
     'UserView', 'SettingsView',
     'DialogView', 'MessageView',
     'AttachView', 'ContactListView',

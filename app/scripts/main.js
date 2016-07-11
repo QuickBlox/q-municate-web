@@ -65,7 +65,7 @@ requirejs.config({
         AttachModule: 'models/attach',
         ContactListModule: 'models/contact_list',
         VideoChatModule: 'models/videochat',
-        CustomCursorModule: 'models/custom_cursor',
+        CursorModule: 'models/custom_cursor',
         // views
         UserView: 'views/user',
         SettingsView: 'views/settings',
