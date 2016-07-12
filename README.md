@@ -47,7 +47,7 @@ You can build your own chat app using Q-municate as a basis in just 5 minutes! A
 
 If you don't have one yet, just register your account at <https://admin.quickblox.com/register>
 
-![](http://quickblox.com/developers//images/7/70/Register_your_account.jpg)
+![](http://quickblox.com/developers/images/7/70/Register_your_account.jpg)
 
 You can read more about how to create an account [here](https://quickblox.com/developers/5_Minute_Guide#Create_your_QuickBlox_account).
 
@@ -63,7 +63,7 @@ Click on the "Add new application" button after "Log in": <https://admin.quickbl
 
 Click on the app title in the list to reveal the app details. You are going to need App ID, Authorization key and Authorization secret later in our Q-municate source code.
 
-![](https://quickblox.com/developers//images/e/e3/Info_about_app.jpg)
+![](https://quickblox.com/developers/images/e/e3/Info_about_app.jpg)
 
 ### 5\. Setup environment
 
@@ -78,14 +78,15 @@ If you want to build your own app using Q-municate as a base, please do the foll
 7. Run `npm install` to install all additional packages in your terminal as an administrator.
 8. Copy the credentials (App ID, Authorization key, Authorization secret) and your Facebook App ID ([How to generate and save Facebook application ID](https://quickblox.com/developers/How_to_generate_and_save_Facebook_application_ID)) into your Q-municate project code in `config.js`.
 
-![](http://quickblox.com/developers//images/9/95/Js_qm_project.png)
+![](https://quickblox.com/developers/images/9/95/Js_qm_project.png)
+![](https://quickblox.com/developers/images/0/05/Endpoints.png)
 
 ### 6\. Build and run
 
 1. Run `grunt build` or `grunt` (build with jshint verification) in your terminal to build Q-municate (q-municate-web/dist).
 2. Run `grunt serve` in your terminal to open Q-municate in a browser window (<https://localhost:9000>).
 
-![](http://quickblox.com/developers//images/7/7b/Gruntserve.jpg)
+![](https://quickblox.com/developers/images/7/7b/Gruntserve.jpg)
 
 # License
 

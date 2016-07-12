@@ -515,9 +515,9 @@ define([
     function scrollbarContacts() {
         $('.scrollbarContacts').mCustomScrollbar({
             theme: 'minimal-dark',
-            scrollInertia: 500,
+            scrollInertia: 150,
             mouseWheel: {
-                scrollAmount: 'auto',
+                scrollAmount: 60,
                 deltaFactor: 'auto'
             },
             live: true
@@ -527,9 +527,9 @@ define([
     function scrollbar(list, self) {
         list.mCustomScrollbar({
             theme: 'minimal-dark',
-            scrollInertia: 500,
+            scrollInertia: 150,
             mouseWheel: {
-                scrollAmount: 'auto',
+                scrollAmount: 60,
                 deltaFactor: 'auto'
             },
             callbacks: {
