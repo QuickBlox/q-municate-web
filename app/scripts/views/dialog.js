@@ -344,7 +344,7 @@ define([
             } else {
                 html += '<span class="status"></span>';
             }
-            
+
             html += '<span class="unread">' + dialog.unread_count + '</span>';
             html += '</a></li>';
 
@@ -464,7 +464,7 @@ define([
                 html += '<section class="l-chat-content scrollbar_message"></section>';
                 html += '<footer class="l-chat-footer">';
                 html += '<div class="footer_btn j-toBottom btn_to_bottom"></div>';
-                html += '<form class="l-message" action="#">';
+                html += '<form class="l-message j-message" action="#">';
                 html += '<div class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"></div>';
                 html += '<div class="footer_btn j-send_location btn_sendlocation' + ((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '') + '"';
                 html += 'data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>';

@@ -440,17 +440,14 @@ define([
                 msg;
 
             if (val.length > 0) {
-                var $textarea = form.find('.textarea'),
-                    $smiles = form.find('.textarea > img');
-
-                if ($smiles.length > 0) {
-                    $smiles.each(function() {
+                if (form.find('.textarea > img').length > 0) {
+                    form.find('.textarea > img').each(function() {
                         $(this).after($(this).data('unicode')).remove();
                     });
-                    val = $textarea.html().trim();
+                    val = form.find('.textarea').html().trim();
                 }
                 if (form.find('.textarea > div').length > 0) {
-                    val = $textarea.text().trim();
+                    val = form.find('.textarea').text().trim();
                 }
                 val = val.replace(/<br>/gi, '\n');
 

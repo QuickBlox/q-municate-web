@@ -815,7 +815,7 @@ define([
                 DialogView.createGroupChat('add', dialog_id);
             });
 
-            $workspace.on('keydown', '.l-message', function(event) {
+            $workspace.on('keydown', '.j-message', function(event) {
                 var $self = $(this),
                     jid = $self.parents('.l-chat').data('jid'),
                     type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
@@ -831,7 +831,7 @@ define([
             });
 
             $workspace.on('click', '.j-btn_input_send', function() {
-                var $msg = $('.l-message:visible');
+                var $msg = $('.j-message:visible');
 
                 MessageView.sendMessage($msg);
                 $msg.find('.textarea').empty();
@@ -866,7 +866,7 @@ define([
             });
 
             // send typing statuses with keyup event
-            $workspace.on('keyup', '.l-message', function(event) {
+            $workspace.on('keyup', '.j-message', function(event) {
                 var $self = $(this),
                     jid = $self.parents('.l-chat').data('jid'),
                     type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
@@ -899,16 +899,16 @@ define([
                 }
             });
 
-            $workspace.on('submit', '.l-message', function(event) {
-                event.preventDefault();
+            $workspace.on('submit', '.j-message', function(event) {
+                return false;
             });
 
-            $workspace.on('keyup', '.l-message', function() {
+            $workspace.on('keyup', '.j-message', function() {
                 var $textarea = $('.l-chat:visible .textarea'),
                     $emj = $textarea.find('.j-em'),
                     val = $textarea.text().trim();
 
-                if (val.length > 0 || $emj.length > 0) {
+                if (val.length || $emj.length) {
                     $textarea.addClass('contenteditable');
                 } else {
                     $textarea.removeClass('contenteditable').empty();
@@ -918,10 +918,11 @@ define([
 
             // fix QMW-253
             // solution http://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser
-            $('body').on('paste', '.l-message', function(e) {
-                e.preventDefault();
+            $('body').on('paste', '.j-message', function(e) {
                 var text = (e.originalEvent || e).clipboardData.getData('text/plain');
                 document.execCommand('insertText', false, text);
+
+                return false;
             });
 
             $('#home').on('click', function(event) {
