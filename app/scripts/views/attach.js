@@ -187,8 +187,7 @@ define([
             if (mapCoords) {
                 attach = {
                     'type': 'location',
-                    'lat': mapCoords.lat,
-                    'lng': mapCoords.lng
+                    'data': JSON.stringify(mapCoords)
                 };
             } else {
                 attach = Attach.create(blob, size);

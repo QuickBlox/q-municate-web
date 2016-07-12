@@ -80,9 +80,15 @@ define([
                         'latitude': message.latitude,
                         'longitude': message.longitude
                     } : null,
-                    geoCoords = (message.attachment && message.attachment.type === 'location') ? {
-                        'latitude': message.attachment.lat,
-                        'longitude': message.attachment.lng
+                    geodata = (message.attachment && message.attachment.type === 'location' && message.attachment.data) ?
+                        JSON.parse(message.attachment.data) :
+                        (message.attachment && message.attachment.type === 'location' && message.attachment.lat) ? {
+                            'lat': message.attachment.lat,
+                            'lng': message.attachment.lng
+                        } : null,
+                    geoCoords = geodata ? {
+                        'latitude': geodata.lat,
+                        'longitude': geodata.lng
                     } : null,
                     mapAttachImage = geoCoords ? Location.getStaticMapUrl(geoCoords, {
                         'size': [380, 200]
