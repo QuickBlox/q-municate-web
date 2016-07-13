@@ -80,11 +80,12 @@ input.form-input-search.without_M[type=search]:focus:not([readonly]) {
     width: 96%;
     height: 100%;
     margin: 0 auto;
-    padding: 10px 40px 5px 5px;
+    padding: 5px 40px 5px 5px;
     font-size: 15px;
     line-height: 20px;
     border-bottom: 1px solid #bebebe;
     resize: none;
+    cursor: text !important;
 }
 .form-input-message::-webkit-input-placeholder {
     position: relative;

@@ -422,7 +422,7 @@ define([
         updateMessage: function(id, params, callback) {
             this.checkSession(function(res) {
                 QB.chat.message.update(id, params, function(response) {
-                    if (response.code === 404) {
+                    if (response && response.code === 404) {
                         Helpers.log(response.message);
 
                     } else {

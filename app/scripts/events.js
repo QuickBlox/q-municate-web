@@ -23,6 +23,7 @@ define([
 ) {
 
     var Dialog,
+        Cursor,
         UserView,
         ContactListView,
         DialogView,
@@ -46,6 +47,7 @@ define([
         this.app = app;
 
         Dialog = this.app.models.Dialog;
+        Cursor = this.app.models.Cursor;
         UserView = this.app.views.User;
         ContactList = this.app.models.ContactList;
         ContactListView = this.app.views.ContactList;
@@ -174,7 +176,7 @@ define([
                 $('.smiles-group_' + group).removeClass('is-hidden')
                     .siblings().addClass('is-hidden');
 
-                setCursorToEnd($('.l-chat:visible .textarea'));
+                Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
             $('.smiles-group').mCustomScrollbar({
@@ -186,13 +188,19 @@ define([
                 }
             });
 
-            $('.em-wrap').on('click', function() {
-                var code = $(this).find('.em').data('unicode'),
-                    $curTextarea = $('.l-chat:visible .textarea'),
-                    val = $curTextarea.html();
+            $workspace.on('click', '.j-em', function() {
+                Cursor.setCursorAfterElement($(this)[0]);
+            });
 
-                $curTextarea.addClass('contenteditable').html(val + minEmoji(code));
-                setCursorToEnd($curTextarea);
+            $('.smiles-group').on('click', function(event) {
+                var target = event.target,
+                    isEmoji = target.tagName === 'IMG' ? true : false;
+
+                if (isEmoji) {
+                    Cursor.insertElement(target, 'j-em');
+                } else {
+                    Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
+                }
             });
 
             /* attachments
@@ -268,13 +276,10 @@ define([
             });
 
             $workspace.on('click', '.j-send_map', function() {
-                var localData = localStorage['QM.locationAttach'],
-                    mapCoords;
+                var localData = localStorage['QM.locationAttach'];
 
                 if (localData) {
-                    mapCoords = JSON.parse(localData);
-
-                    AttachView.sendMessage($('.l-chat:visible'), null, null, mapCoords);
+                    AttachView.sendMessage($('.l-chat:visible'), null, null, localData);
                     localStorage.removeItem('QM.locationAttach');
                     removePopover();
                 }
@@ -554,7 +559,7 @@ define([
                     $('.j-popover_smile').fadeIn(150);
                 }
 
-                setCursorToEnd($('.l-chat:visible .textarea'));
+                Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
             /* popups
@@ -807,7 +812,7 @@ define([
                 DialogView.createGroupChat('add', dialog_id);
             });
 
-            $workspace.on('keydown', '.l-message', function(event) {
+            $workspace.on('keydown', '.j-message', function(event) {
                 var $self = $(this),
                     jid = $self.parents('.l-chat').data('jid'),
                     type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
@@ -823,12 +828,12 @@ define([
             });
 
             $workspace.on('click', '.j-btn_input_send', function() {
-                var $msg = $('.l-message:visible');
+                var $msg = $('.j-message:visible');
 
                 MessageView.sendMessage($msg);
                 $msg.find('.textarea').empty();
                 removePopover();
-                setCursorToEnd($('.l-chat:visible .textarea'));
+                Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
             // show message status on hover event
@@ -858,7 +863,7 @@ define([
             });
 
             // send typing statuses with keyup event
-            $workspace.on('keyup', '.l-message', function(event) {
+            $workspace.on('keyup', '.j-message', function(event) {
                 var $self = $(this),
                     jid = $self.parents('.l-chat').data('jid'),
                     type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
@@ -891,26 +896,30 @@ define([
                 }
             });
 
-            $workspace.on('keyup', '.l-message', function() {
-                var val = $('.l-chat:visible .textarea').text().trim();
-
-                if (val.length > 0) {
-                    $('.l-chat:visible .textarea').addClass('contenteditable');
-                } else {
-                    $('.l-chat:visible .textarea').removeClass('contenteditable').empty();
-                }
+            $workspace.on('submit', '.j-message', function(event) {
+                return false;
             });
 
-            $workspace.on('submit', '.l-message', function(event) {
-                event.preventDefault();
+            $workspace.on('keyup', '.j-message', function() {
+                var $textarea = $('.l-chat:visible .textarea'),
+                    $emj = $textarea.find('.j-em'),
+                    val = $textarea.text().trim();
+
+                if (val.length || $emj.length) {
+                    $textarea.addClass('contenteditable');
+                } else {
+                    $textarea.removeClass('contenteditable').empty();
+                    Cursor.setCursorToEnd($textarea[0]);
+                }
             });
 
             // fix QMW-253
             // solution http://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser
-            $('body').on('paste', '.l-message', function(e) {
-                e.preventDefault();
+            $('body').on('paste', '.j-message', function(e) {
                 var text = (e.originalEvent || e).clipboardData.getData('text/plain');
                 document.execCommand('insertText', false, text);
+
+                return false;
             });
 
             $('#home').on('click', function(event) {
@@ -947,7 +956,7 @@ define([
     // Checking if the target is not an object run popover
     function clickBehaviour(e) {
         var objDom = $(e.target),
-            selectors = '#profile, #profile *, .occupant, .occupant *, .j-btn_input_smile, .j-btn_input_smile *, ' +
+            selectors = '#profile, #profile *, .occupant, .occupant *, .j-btn_input_smile, .j-btn_input_smile *, .j-em, ' +
             '.j-popover_smile, .j-popover_smile *, .j-popover_gmap, .j-popover_gmap *, .j-btn_input_location, .j-btn_input_location *',
             googleImage = objDom.context.src && objDom.context.src.indexOf('/maps.gstatic.com/mapfiles/api-3/images/mapcnt6.png') || null;
 
@@ -1016,23 +1025,6 @@ define([
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();
         if ($('.attach-video video')[0]) $('.attach-video video')[0].pause();
-    }
-
-    function setCursorToEnd(el) {
-        el.focus();
-        if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
-            var range = document.createRange();
-            range.selectNodeContents(el.get(0));
-            range.collapse(false);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        } else if (typeof document.body.createTextRange != "undefined") {
-            var textRange = document.body.createTextRange();
-            textRange.moveToElementText(el.get(0));
-            textRange.collapse(false);
-            textRange.select();
-        }
     }
 
     function setAttachType(type) {

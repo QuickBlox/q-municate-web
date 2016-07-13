@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="15px" height="15px" viewBox="0 0 15 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-pencil-active</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="-icons" sketch:type="MSArtboardGroup" transform="translate(-628.000000, -453.000000)" fill="#FFFFFF">
+            <g id="icon-pencil-active" sketch:type="MSLayerGroup" transform="translate(628.000000, 453.000000)">
+                <path d="M13.43,1.839 C12.135,0.544 11.163,0.738 11.163,0.738 L1.449,10.453 L0.542,14.728 L4.816,13.821 L14.531,4.106 C14.531,4.106 14.726,3.135 13.43,1.839 L13.43,1.839 Z M4.562,13.307 L3.105,13.621 C2.964,13.357 2.795,13.095 2.485,12.785 C2.175,12.475 1.911,12.306 1.649,12.165 L1.963,10.708 L2.384,10.287 C2.384,10.287 3.177,10.302 4.072,11.198 C4.967,12.093 4.983,12.886 4.983,12.886 L4.562,13.307 L4.562,13.307 Z" id="Fill-44" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

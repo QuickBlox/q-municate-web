@@ -80,10 +80,7 @@ define([
                         'latitude': message.latitude,
                         'longitude': message.longitude
                     } : null,
-                    geoCoords = (message.attachment && message.attachment.type === 'location') ? {
-                        'latitude': message.attachment.lat,
-                        'longitude': message.attachment.lng
-                    } : null,
+                    geoCoords = (message.attachment && message.attachment.type === 'location') ? getLocationFromAttachment(message.attachment) : null,
                     mapAttachImage = geoCoords ? Location.getStaticMapUrl(geoCoords, {
                         'size': [380, 200]
                     }) : null,
@@ -440,14 +437,17 @@ define([
                 msg;
 
             if (val.length > 0) {
-                if (form.find('.textarea > span').length > 0) {
-                    form.find('.textarea > span').each(function() {
-                        $(this).after($(this).find('span').data('unicode')).remove();
+                var $textarea = form.find('.textarea'),
+                    $smiles = form.find('.textarea > img');
+
+                if ($smiles.length > 0) {
+                    $smiles.each(function() {
+                        $(this).after($(this).data('unicode')).remove();
                     });
-                    val = form.find('.textarea').html().trim();
+                    val = $textarea.html().trim();
                 }
                 if (form.find('.textarea > div').length > 0) {
-                    val = form.find('.textarea').text().trim();
+                    val = $textarea.text().trim();
                 }
                 val = val.replace(/<br>/gi, '\n');
 
@@ -944,6 +944,28 @@ define([
                 });
             }
         }
+    }
+
+    function getLocationFromAttachment(attachment) {
+        var geodata = attachment.data,
+            escape,
+            geocoords;
+
+        if (geodata) {
+            escape = geodata.replace(/&amp;/g, '&')
+                            .replace(/&#10;/g, '\n')
+                            .replace(/&quot;/g, '"');
+
+            geocoords = JSON.parse(escape);
+        } else {
+            // the old way for receive geo coordinates from attachments
+            geocoords = {
+                'lat': attachment.lat,
+                'lng': attachment.lng
+            };
+        }
+
+        return geocoords;
     }
 
     return MessageView;

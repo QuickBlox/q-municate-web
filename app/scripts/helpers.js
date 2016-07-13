@@ -195,7 +195,7 @@ define([
         }
     };
 
-    // smart console (beta)
+    // smart console
     Helpers.log = function() {
         if (QMCONFIG.debug) {
             if (arguments.length <= 1) {

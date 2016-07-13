@@ -10,6 +10,7 @@ define([
     'ContactModule', 'DialogModule',
     'MessageModule', 'AttachModule',
     'ContactListModule', 'VideoChatModule',
+    'CursorModule',
     'UserView', 'SettingsView',
     'DialogView', 'MessageView',
     'AttachView', 'ContactListView',
@@ -22,6 +23,7 @@ define([
     Contact, Dialog,
     Message, Attach,
     ContactList, VideoChat,
+    Cursor,
     UserView, SettingsView,
     DialogView, MessageView,
     AttachView, ContactListView,
@@ -40,7 +42,8 @@ define([
             Message: new Message(this),
             Attach: new Attach(this),
             ContactList: new ContactList(this),
-            VideoChat: new VideoChat(this)
+            VideoChat: new VideoChat(this),
+            Cursor: new Cursor(this)
         };
 
         this.views = {
