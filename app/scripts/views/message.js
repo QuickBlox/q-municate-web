@@ -80,10 +80,7 @@ define([
                         'latitude': message.latitude,
                         'longitude': message.longitude
                     } : null,
-                    geoCoords = (message.attachment && message.attachment.type === 'location') ? {
-                        'latitude': message.attachment.lat,
-                        'longitude': message.attachment.lng
-                    } : null,
+                    geoCoords = (message.attachment && message.attachment.type === 'location') ? getLocationFromAttachment(message.attachment) : null,
                     mapAttachImage = geoCoords ? Location.getStaticMapUrl(geoCoords, {
                         'size': [380, 200]
                     }) : null,
@@ -947,6 +944,28 @@ define([
                 });
             }
         }
+    }
+
+    function getLocationFromAttachment(attachment) {
+        var geodata = attachment.data,
+            escape,
+            geocoords;
+
+        if (geodata) {
+            escape = geodata.replace(/&amp;/g, '&')
+                            .replace(/&#10;/g, '\n')
+                            .replace(/&quot;/g, '"');
+
+            geocoords = JSON.parse(escape);
+        } else {
+            // the old way for receive geo coordinates from attachments
+            geocoords = {
+                'lat': attachment.lat,
+                'lng': attachment.lng
+            };
+        }
+
+        return geocoords;
     }
 
     return MessageView;

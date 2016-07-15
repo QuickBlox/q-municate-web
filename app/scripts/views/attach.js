@@ -187,8 +187,7 @@ define([
             if (mapCoords) {
                 attach = {
                     'type': 'location',
-                    'lat': mapCoords.lat,
-                    'lng': mapCoords.lng
+                    'data': mapCoords.replace(/"/g, '&quot;')
                 };
             } else {
                 attach = Attach.create(blob, size);
@@ -196,7 +195,7 @@ define([
 
             msg = {
                 'type': type,
-                'body': 'Attachment',
+                'body': attach.type === 'location' ? 'Location' : 'Attachment',
                 'extension': {
                     'save_to_history': 1,
                     'dialog_id': dialog_id,
