@@ -509,7 +509,8 @@ define([
 
             } else {
 
-                $chat.removeClass('is-hidden').siblings().addClass('is-hidden');
+                $chat.removeClass('is-hidden')
+                     .siblings(':not(.j-popover_const)').addClass('is-hidden');
                 $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
                 self.messageScrollbar();
 

@@ -53,12 +53,19 @@
     background: #cecece;
     cursor: pointer;
 }
+.em_wrap {
+    display: inline-block;
+    width: 30px;
+    height: 33px;
+}
 /* emoji plugin */
 .popover_smile .em:hover {
     opacity: .8;
     cursor: pointer;
 }
 .em {
+    width: 20px;
+    height: 20px;
     display: inline-block;
     margin: 5px;
     word-wrap: break-word;
