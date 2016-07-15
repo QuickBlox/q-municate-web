@@ -45,12 +45,12 @@ define([
         getStaticMapUrl: function(geoCoords, options) {
             var params = {
                 'size': options && options.size || [200, 150],
-                'lat': geoCoords.latitude,
-                'lng': geoCoords.longitude,
+                'lat': geoCoords.lat,
+                'lng': geoCoords.lng,
                 'zoom': options && options.zoom || 15,
                 'markers': [{
-                    lat: geoCoords.latitude,
-                    lng: geoCoords.longitude
+                    lat: geoCoords.lat,
+                    lng: geoCoords.lng
                 }]
             };
 
@@ -58,7 +58,7 @@ define([
         },
 
         getMapUrl: function(geoCoords) {
-            return 'https://www.google.com/maps?q=' + geoCoords.latitude + ',' + geoCoords.longitude;
+            return 'https://www.google.com/maps?q=' + geoCoords.lat + ',' + geoCoords.lng;
         },
 
         toggleGeoCoordinatesToLocalStorage: function(saveLocation, callback) {

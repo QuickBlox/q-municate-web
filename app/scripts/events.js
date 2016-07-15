@@ -276,13 +276,10 @@ define([
             });
 
             $workspace.on('click', '.j-send_map', function() {
-                var localData = localStorage['QM.locationAttach'],
-                    mapCoords;
+                var localData = localStorage['QM.locationAttach'];
 
                 if (localData) {
-                    mapCoords = JSON.parse(localData);
-
-                    AttachView.sendMessage($('.l-chat:visible'), null, null, mapCoords);
+                    AttachView.sendMessage($('.l-chat:visible'), null, null, localData);
                     localStorage.removeItem('QM.locationAttach');
                     removePopover();
                 }
