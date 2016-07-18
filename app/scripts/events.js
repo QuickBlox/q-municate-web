@@ -205,6 +205,8 @@ define([
                 } else {
                     Cursor.setCursorToEnd(textarea);
                 }
+
+                return false;
             });
 
             /* attachments
