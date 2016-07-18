@@ -190,17 +190,23 @@ define([
 
             $workspace.on('click', '.j-em', function() {
                 Cursor.setCursorAfterElement($(this)[0]);
+
+                return false;
             });
 
-            $('.smiles-group').on('click', function(event) {
-                var target = event.target,
-                    isEmoji = target.tagName === 'IMG' ? true : false;
 
-                if (isEmoji) {
+            $('.j-em_wrap').on('click', function(event) {
+                var target = $(this).children()[0],
+                    textarea = $('.l-chat:visible .textarea')[0];
+
+                if (target === event.target) {
+                    textarea.focus();
                     Cursor.insertElement(target, 'j-em');
                 } else {
-                    Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
+                    Cursor.setCursorToEnd(textarea);
                 }
+
+                return false;
             });
 
             /* attachments
@@ -268,7 +274,7 @@ define([
 
                 if (!bool) {
                     $self.addClass('is-active');
-                    $gmap.fadeIn(150);
+                    $gmap.addClass('is-active');
 
                     Location.addMap($gmap);
                 }
@@ -556,7 +562,7 @@ define([
 
                 if (!bool) {
                     $self.addClass('is-active');
-                    $('.j-popover_smile').fadeIn(150);
+                    $('.j-popover_smile').addClass('is-active');
                 }
 
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
@@ -922,10 +928,12 @@ define([
                 return false;
             });
 
-            $('#home').on('click', function(event) {
-                event.preventDefault();
-                $('#capBox').removeClass('is-hidden').siblings().addClass('is-hidden');
+            $('.j-home').on('click', function() {
+                $('.j-capBox').removeClass('is-hidden')
+                            .siblings().removeClass('is-active');
                 $('.is-selected').removeClass('is-selected');
+
+                return false;
             });
 
             /* temporary events
@@ -956,8 +964,11 @@ define([
     // Checking if the target is not an object run popover
     function clickBehaviour(e) {
         var objDom = $(e.target),
-            selectors = '#profile, #profile *, .occupant, .occupant *, .j-btn_input_smile, .j-btn_input_smile *, .j-em, ' +
-            '.j-popover_smile, .j-popover_smile *, .j-popover_gmap, .j-popover_gmap *, .j-btn_input_location, .j-btn_input_location *',
+            selectors = '#profile, #profile *, .occupant, .occupant *, ' +
+            '.j-btn_input_smile, .j-btn_input_smile *, .textarea, ' +
+            '.textarea *, .j-popover_smile, .j-popover_smile *, ' +
+            '.j-popover_gmap, .j-popover_gmap *, .j-btn_input_location, ' +
+            '.j-btn_input_location *',
             googleImage = objDom.context.src && objDom.context.src.indexOf('/maps.gstatic.com/mapfiles/api-3/images/mapcnt6.png') || null;
 
         if (objDom.is(selectors) || e.which === 3 || googleImage === 7) {
@@ -981,8 +992,7 @@ define([
 
         $('.is-contextmenu').removeClass('is-contextmenu');
         $('.is-active').removeClass('is-active');
-        $('.popover:not(.j-popover_const)').remove();
-        $('.j-popover_smile, .j-popover_gmap').fadeOut(150);
+        $('.popover').remove();
 
         if ($openMap.length) {
             $openMap.remove();

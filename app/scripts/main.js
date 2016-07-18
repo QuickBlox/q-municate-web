@@ -144,7 +144,7 @@ requirejs([
         // emoji smiles run
         $('.smiles-group').each(function() {
             var obj = $(this);
-            obj.html(minEmoji(obj.text()));
+            obj.html(minEmoji(obj.text(), true));
         });
 
         if (QMCONFIG.notification && QBNotification.isSupported()) {

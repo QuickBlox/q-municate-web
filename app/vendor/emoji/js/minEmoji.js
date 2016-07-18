@@ -8,16 +8,17 @@
 	}
 	var regx = new RegExp('(' + regx_arr.join('|') + ')', 'g');
 	regx_arr = null;
-	var minEmoji = function(s){
+	var minEmoji = function(s, wrap){
 		return s.replace(regx, function (a, b) {
-			return '<img src="images/blank.gif" ' +
-				   'alt="'+b+'" ' +
-				   'data-unicode="'+b+'" ' +
-				   'class="em emj'+emoji[b]+'" ' +
-				   'onresizestart="return false;" ' +
-				   'unselectable="on" ' +
-				   'onselectstart="return false;" ' +
-				   'onmousedown="return false;">';
+			var smileIMG  = '<img src="images/blank.gif" ' +
+							'alt="'+b+'" ' +
+							'data-unicode="'+b+'" ' +
+							'class="em emj'+emoji[b]+'">';
+			if (wrap) {
+				smileIMG = '<div class="em_wrap j-em_wrap">' + smileIMG + '</div>';
+			}
+
+			return smileIMG
 		});
 	}
 	window.minEmoji = minEmoji;
