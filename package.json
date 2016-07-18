@@ -29,10 +29,7 @@
         "load-grunt-tasks": "^3.3.0",
         "time-grunt": "^1.2.2"
     },
-    "scripts": {
-        "preinstall" : "npm install -g bower & gem install compass & npm install -g grunt-cli",
-        "postinstall": "bower install"
-    },
+    "scripts": {},
     "engines": {
         "node": ">=4.4.5"
     },
