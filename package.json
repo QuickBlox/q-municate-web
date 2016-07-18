@@ -1,25 +1,24 @@
 {
     "name": "q-municate",
-    "version": "1.5.0",
+    "version": "1.5.10",
     "dependencies": {},
     "devDependencies": {
-        "bower": "^1.7.0",
         "connect-livereload": "^0.5.4",
         "ghooks": "^1.2.1",
-        "grunt": "^0.4.5",
+        "grunt": "^0.4.0",
         "grunt-bower-requirejs": "^2.0.0",
-        "grunt-contrib-clean": "^0.7.0",
+        "grunt-contrib-clean": "^1.0.0",
         "grunt-contrib-compass": "^1.0.4",
-        "grunt-contrib-concat": "^0.5.1",
-        "grunt-contrib-connect": "^0.11.2",
-        "grunt-contrib-copy": "^0.8.2",
-        "grunt-contrib-cssmin": "^0.14.0",
-        "grunt-contrib-handlebars": "^0.11.0",
-        "grunt-contrib-htmlmin": "^0.6.0",
+        "grunt-contrib-concat": "^1.0.1",
+        "grunt-contrib-connect": "^1.0.2",
+        "grunt-contrib-copy": "^1.0.0",
+        "grunt-contrib-cssmin": "^1.0.1",
+        "grunt-contrib-handlebars": "^1.0.0",
+        "grunt-contrib-htmlmin": "^1.5.0",
         "grunt-contrib-imagemin": "^1.0.0",
-        "grunt-contrib-jshint": "^0.11.3",
-        "grunt-contrib-uglify": "^0.11.0",
-        "grunt-contrib-watch": "^0.6.1",
+        "grunt-contrib-jshint": "^1.0.0",
+        "grunt-contrib-uglify": "^1.0.1",
+        "grunt-contrib-watch": "^1.0.0",
         "grunt-include-replace": "^4.0.1",
         "grunt-newer": "^1.1.1",
         "grunt-open": "^0.2.3",
@@ -30,8 +29,12 @@
         "load-grunt-tasks": "^3.3.0",
         "time-grunt": "^1.2.2"
     },
+    "scripts": {
+        "preinstall" : "npm install -g bower & gem install compass & npm install -g grunt-cli",
+        "postinstall": "bower install"
+    },
     "engines": {
-        "node": ">=4.4.4"
+        "node": ">=4.4.5"
     },
     "config": {
         "ghooks": {

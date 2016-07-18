@@ -53,27 +53,28 @@
     background: #cecece;
     cursor: pointer;
 }
-/* emoji plugin */
-.em-wrap {
+.em_wrap {
     display: inline-block;
     width: 30px;
-    height: 30px;
+    height: 33px;
 }
-.popover_smile .em-wrap:hover {
-    background: #cecece;
+/* emoji plugin */
+.popover_smile .em:hover {
+    opacity: .8;
     cursor: pointer;
 }
 .em {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
     margin: 5px;
+    word-wrap: break-word;
+    cursor: text;
 }
-.message-body .em-wrap,
-.textarea .em-wrap {
-    width: auto;
-    height: auto;
-}
-.message-body .em-wrap .em,
-.textarea .em-wrap .em {
-    position: relative;
-    top: 5px;
+.message-body .em,
+.textarea .em,
+.textarea .em:hover {
     margin: 0;
+    vertical-align: top;
+    cursor: text;
 }

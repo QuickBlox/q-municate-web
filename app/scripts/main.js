@@ -65,6 +65,7 @@ requirejs.config({
         AttachModule: 'models/attach',
         ContactListModule: 'models/contact_list',
         VideoChatModule: 'models/videochat',
+        CursorModule: 'models/custom_cursor',
         // views
         UserView: 'views/user',
         SettingsView: 'views/settings',
@@ -143,7 +144,7 @@ requirejs([
         // emoji smiles run
         $('.smiles-group').each(function() {
             var obj = $(this);
-            obj.html(minEmoji(obj.text()));
+            obj.html(minEmoji(obj.text(), true));
         });
 
         if (QMCONFIG.notification && QBNotification.isSupported()) {

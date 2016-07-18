@@ -84,8 +84,6 @@ define([
         globalSearch: function(callback) {
             if (isExistingRequest) {
                 return false;
-            } else {
-                isExistingRequest = true;
             }
 
             var QBApiCalls = this.app.service,
@@ -94,17 +92,20 @@ define([
                 self = this,
                 contacts;
 
+            isExistingRequest = true;
+            
             QBApiCalls.getUser({
                 full_name: val,
                 page: page
             }, function(data) {
+                isExistingRequest = false;
+
                 sessionStorage.setItem('QM.search.allPages', Math.ceil(data.total_entries / data.per_page));
                 sessionStorage.setItem('QM.search.page', ++page);
 
                 contacts = self.getResults(data.items);
                 Helpers.log('Search results', contacts);
 
-                isExistingRequest = false;
                 callback(contacts);
             });
         },
