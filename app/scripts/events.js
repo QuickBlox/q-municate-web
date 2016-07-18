@@ -190,7 +190,10 @@ define([
 
             $workspace.on('click', '.j-em', function() {
                 Cursor.setCursorAfterElement($(this)[0]);
+
+                return false;
             });
+
 
             $('.j-em_wrap').on('click', function(event) {
                 var target = $(this).children()[0],
