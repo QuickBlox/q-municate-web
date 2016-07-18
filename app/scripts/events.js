@@ -36,7 +36,8 @@ define([
         editedChatName,
         stopTyping,
         retryTyping,
-        keyupSearch;
+        keyupSearch,
+        tabNumber;
 
     var App;
 
@@ -48,6 +49,7 @@ define([
 
         Dialog = this.app.models.Dialog;
         Cursor = this.app.models.Cursor;
+        User = this.app.models.User;
         UserView = this.app.views.User;
         ContactList = this.app.models.ContactList;
         ContactListView = this.app.views.ContactList;
@@ -949,6 +951,14 @@ define([
 
     /* Private
     ---------------------------------------------------------------------- */
+    function handle_storage(e) {
+        if (!e) {
+            e = window.event;
+            console.info(e);
+        }
+        console.info(e);
+    }
+
     function occupantScrollbar() {
         $('.chat-occupants, #popupIncoming').mCustomScrollbar({
             theme: 'minimal-dark',
