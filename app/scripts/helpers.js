@@ -238,7 +238,7 @@ define([
         }
     };
 
-    Helpers.Tabs = function(userId) {
+    Helpers.TabsListener = function(userId) {
         var tabsCount = 'QM.tabsCount-' + userId,
             activeTab = 'QM.activeTab-' + userId;
 
