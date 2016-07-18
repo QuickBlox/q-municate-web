@@ -928,8 +928,8 @@ define([
                 return false;
             });
 
-            $('#home').on('click', function() {
-                $('#capBox').removeClass('is-hidden')
+            $('.j-home').on('click', function() {
+                $('.j-capBox').removeClass('is-hidden')
                             .siblings().removeClass('is-active');
                 $('.is-selected').removeClass('is-selected');
 
