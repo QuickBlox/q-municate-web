@@ -262,12 +262,12 @@ define([
         $(window).bind('storage', function(e) {
             var key = e.originalEvent.key,
                 oldVal = e.originalEvent.oldValue,
-                newVal = e.originalEvent.newValue
+                newVal = e.originalEvent.newValue,
                 userTab = User.contact.id;
 
             console.info(key, oldVal, newVal);
         });
-    }
+    };
 
     return Helpers;
 });
