@@ -153,7 +153,7 @@ define([
         prepareDownloading: function(roster) {
             Helpers.log('QB SDK: Roster has been got', roster);
             this.app.views.Settings.setUp(User.contact.id);
-            Helpers.TabsListener(User.contact.id)
+            Helpers.TabsListener(User.contact.id);
             this.chatCallbacksInit();
             this.createDataSpinner();
             scrollbar();
