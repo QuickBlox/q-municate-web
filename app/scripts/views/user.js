@@ -254,7 +254,7 @@ define([
             });
         },
 
-        logout: function() {
+        logout: function(tab) {
             var DialogView = this.app.views.Dialog;
 
             $('.mediacall .btn_hangup').click();
@@ -265,7 +265,7 @@ define([
                 $('.l-chat').remove();
                 Helpers.log('current User and Session were destroyed');
                 DialogView.logoutWithClearData();
-            });
+            }, tab);
         },
 
         localSearch: function(form) {

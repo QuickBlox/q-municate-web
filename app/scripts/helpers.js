@@ -238,36 +238,5 @@ define([
         }
     };
 
-    Helpers.TabsListener = function(userId) {
-        var tabsCount = 'QM.tabsCount-' + userId,
-            activeTab = 'QM.activeTab-' + userId;
-
-        if (localStorage[tabsCount] && localStorage[activeTab]) {
-            tabNumber = (+localStorage[tabsCount] + 1).toString();
-            localStorage.removeItem(tabsCount);
-            localStorage.removeItem(activeTab);
-            localStorage.setItem(tabsCount, tabNumber);
-            localStorage.setItem(activeTab, tabNumber);
-        } else {
-            tabNumber = '1';
-            localStorage.setItem(tabsCount, tabNumber);
-            localStorage.setItem(activeTab, tabNumber);
-        }
-
-        $(window).unload(function() {
-            localStorage.removeItem('');
-        });
-
-        // localStorage listener
-        $(window).bind('storage', function(e) {
-            var key = e.originalEvent.key,
-                oldVal = e.originalEvent.oldValue,
-                newVal = e.originalEvent.newValue,
-                userTab = User.contact.id;
-
-            console.info(key, oldVal, newVal);
-        });
-    };
-
     return Helpers;
 });

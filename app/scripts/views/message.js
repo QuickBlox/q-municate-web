@@ -35,6 +35,7 @@ define([
     function MessageView(app) {
         this.app = app;
         Settings = this.app.models.Settings;
+        SyncTabs = this.app.models.SyncTabs;
         User = this.app.models.User;
         Dialog = this.app.models.Dialog;
         Message = this.app.models.Message;
@@ -667,7 +668,9 @@ define([
                 createAndShowNotification(msg, isHiddenChat);
             }
 
-            if ((isHiddenChat || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) && Settings.get('sounds_notify')) {
+            if ((isHiddenChat || !window.isQMAppActive) &&
+                (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) &&
+                Settings.get('sounds_notify') && SyncTabs.get()) {
                 audioSignal.play();
             }
 
@@ -920,7 +923,7 @@ define([
     }
 
     function createAndShowNotification(msg, isHiddenChat) {
-        if (!Settings.get('messages_notify')) {
+        if (!Settings.get('messages_notify') || !SyncTabs.get()) {
             return false;
         }
 

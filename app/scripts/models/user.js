@@ -347,12 +347,15 @@ define([
             });
         },
 
-        logout: function(callback) {
+        logout: function(callback, tab) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
                 self = this;
 
-            QB.chat.disconnect();
+            if (!tab) {
+                QB.chat.disconnect();
+            }
+
             DialogView.hideDialogs();
             QBApiCalls.logoutUser(function() {
                 localStorage.removeItem('QM.user');

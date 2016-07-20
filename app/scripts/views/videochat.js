@@ -38,6 +38,7 @@ define([
 
         self = this;
         Settings = this.app.models.Settings;
+        SyncTabs = this.app.models.SyncTabs;
         User = this.app.models.User;
         ContactList = this.app.models.ContactList;
         VideoChat = this.app.models.VideoChat;
@@ -576,7 +577,7 @@ define([
     }
 
     function createAndShowNotification(paramsObg) {
-        if (!Settings.get('calls_notify')) {
+        if (!Settings.get('calls_notify') || !SyncTabs.get()) {
             return false;
         }
 

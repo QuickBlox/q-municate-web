@@ -36,8 +36,7 @@ define([
         editedChatName,
         stopTyping,
         retryTyping,
-        keyupSearch,
-        tabNumber;
+        keyupSearch;
 
     var App;
 
@@ -602,6 +601,7 @@ define([
             });
 
             $('#logoutConfirm').on('click', function() {
+                localStorage.setItem('QM.' + User.contact.id + '_logOut', true);
                 UserView.logout();
             });
 
