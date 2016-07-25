@@ -152,6 +152,7 @@ define([
                 $chat = $self.parents('.l-chat'),
                 opponentId = $self.data('id'),
                 dialogId = $self.data('dialog'),
+                callType = curSession.callType === 1 ? 'video' : 'audio',
                 duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0],
@@ -161,6 +162,7 @@ define([
                 if (!isErrorMessage && duration !== 'connect...') {
                     VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
                 } else {
+                    VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
                     $self.removeAttr('data-errorMessage');
                 }
             }
