@@ -8,7 +8,7 @@ define(['jquery'], function($) {
 
     function SyncTabs(app) {
         var self = this,
-            curTab,
+            curTab = 1,
             currentUserId,
             countTabs,
             mainTab,
@@ -61,7 +61,6 @@ define(['jquery'], function($) {
                 localStorage.setItem(countTabs, curTab); // set the number of existing tabs
                 localStorage.setItem(mainTab, curTab);   // set the last active tab
             } else {
-                curTab = 1;                              // set first order for current tab
                 localStorage.setItem(countTabs, curTab); // set the number of existing tabs
                 localStorage.setItem(mainTab, curTab);   // set this tab as active
             }

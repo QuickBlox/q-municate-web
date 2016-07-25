@@ -668,9 +668,12 @@ define([
                 createAndShowNotification(msg, isHiddenChat);
             }
 
-            if ((isHiddenChat || !window.isQMAppActive) &&
-                (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) &&
-                Settings.get('sounds_notify') && SyncTabs.get()) {
+            var isHidden   = (isHiddenChat || !window.isQMAppActive) ? true : false,
+                sendedToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
+                isSoundOn  = Settings.get('sounds_notify'),
+                isMainTab  = SyncTabs.get();
+
+            if (isHidden && sendedToMe && isSoundOn && isMainTab) {
                 audioSignal.play();
             }
 
@@ -923,7 +926,11 @@ define([
     }
 
     function createAndShowNotification(msg, isHiddenChat) {
-        if (!Settings.get('messages_notify') || !SyncTabs.get()) {
+        var cancelNotify  = !Settings.get('messages_notify'),
+            isNotMainTab  = !SyncTabs.get(),
+            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false;
+
+        if (cancelNotify || isNotMainTab || isCurrentUser) {
             return false;
         }
 
