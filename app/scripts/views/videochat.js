@@ -287,7 +287,6 @@ define([
         });
 
         sendAutoReject = setTimeout(function() {
-            console.info("REJECT");
             $('.btn_decline').click();
         }, autoReject);
     };

@@ -951,14 +951,6 @@ define([
 
     /* Private
     ---------------------------------------------------------------------- */
-    function handle_storage(e) {
-        if (!e) {
-            e = window.event;
-            console.info(e);
-        }
-        console.info(e);
-    }
-
     function occupantScrollbar() {
         $('.chat-occupants, #popupIncoming').mCustomScrollbar({
             theme: 'minimal-dark',
