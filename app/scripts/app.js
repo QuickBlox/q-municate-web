@@ -10,7 +10,7 @@ define([
     'ContactModule', 'DialogModule',
     'MessageModule', 'AttachModule',
     'ContactListModule', 'VideoChatModule',
-    'CursorModule',
+    'CursorModule', 'SyncTabsModule',
     'UserView', 'SettingsView',
     'DialogView', 'MessageView',
     'AttachView', 'ContactListView',
@@ -23,7 +23,7 @@ define([
     Contact, Dialog,
     Message, Attach,
     ContactList, VideoChat,
-    Cursor,
+    Cursor, SyncTabs,
     UserView, SettingsView,
     DialogView, MessageView,
     AttachView, ContactListView,
@@ -34,30 +34,31 @@ define([
 
     function QM() {
         this.models = {
-            User: new User(this),
-            Session: new Session(this),
-            Settings: new Settings(this),
-            Contact: new Contact(this),
-            Dialog: new Dialog(this),
-            Message: new Message(this),
-            Attach: new Attach(this),
-            ContactList: new ContactList(this),
-            VideoChat: new VideoChat(this),
-            Cursor: new Cursor(this)
+            User          : new User(this),
+            Session       : new Session(this),
+            Settings      : new Settings(this),
+            Contact       : new Contact(this),
+            Dialog        : new Dialog(this),
+            Message       : new Message(this),
+            Attach        : new Attach(this),
+            ContactList   : new ContactList(this),
+            VideoChat     : new VideoChat(this),
+            Cursor        : new Cursor(this),
+            SyncTabs      : new SyncTabs(this),
         };
 
         this.views = {
-            User: new UserView(this),
-            Settings: new SettingsView(this),
-            Dialog: new DialogView(this),
-            Message: new MessageView(this),
-            Attach: new AttachView(this),
-            ContactList: new ContactListView(this),
-            VideoChat: new VideoChatView(this)
+            User          : new UserView(this),
+            Settings      : new SettingsView(this),
+            Dialog        : new DialogView(this),
+            Message       : new MessageView(this),
+            Attach        : new AttachView(this),
+            ContactList   : new ContactListView(this),
+            VideoChat     : new VideoChatView(this)
         };
 
-        this.events = new Events(this);
-        this.service = new QBApiCalls(this);
+        this.events       = new Events(this);
+        this.service      = new QBApiCalls(this);
     }
 
     QM.prototype = {

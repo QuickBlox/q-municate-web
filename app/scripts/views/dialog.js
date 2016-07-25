@@ -71,6 +71,7 @@ define([
                 QB.webrtc.onCallListener          = VideoChatView.onCall;
                 QB.webrtc.onAcceptCallListener    = VideoChatView.onAccept;
                 QB.webrtc.onRejectCallListener    = VideoChatView.onReject;
+                QB.webrtc.onIgnoredListener       = VideoChatView.onIgnored;
                 QB.webrtc.onStopCallListener      = VideoChatView.onStop;
                 QB.webrtc.onUpdateCallListener    = VideoChatView.onUpdateCall;
                 QB.webrtc.onRemoteStreamListener  = VideoChatView.onRemoteStream;
@@ -152,11 +153,13 @@ define([
 
         prepareDownloading: function(roster) {
             Helpers.log('QB SDK: Roster has been got', roster);
-            this.app.views.Settings.setUp(User.contact.id);
             this.chatCallbacksInit();
             this.createDataSpinner();
             scrollbar();
             ContactList.saveRoster(roster);
+
+            this.app.views.Settings.setUp(User.contact.id);
+            this.app.models.SyncTabs.init(User.contact.id);
         },
 
         getUnreadCounter: function(dialog_id) {

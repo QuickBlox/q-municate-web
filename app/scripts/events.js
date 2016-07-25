@@ -48,6 +48,7 @@ define([
 
         Dialog = this.app.models.Dialog;
         Cursor = this.app.models.Cursor;
+        User = this.app.models.User;
         UserView = this.app.views.User;
         ContactList = this.app.models.ContactList;
         ContactListView = this.app.views.ContactList;
@@ -600,6 +601,7 @@ define([
             });
 
             $('#logoutConfirm').on('click', function() {
+                localStorage.setItem('QM.' + User.contact.id + '_logOut', true);
                 UserView.logout();
             });
 

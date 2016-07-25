@@ -40,8 +40,8 @@ requirejs.config({
         // lodash: '../bower_components/lodash/dist/lodash',
         backbone: '../bower_components/backbone/backbone',
         handlebars: '../bower_components/handlebars/handlebars',
-        // quickblox: '../bower_components/quickblox/quickblox.min',
-        quickblox: 'https://rawgit.com/QuickBlox/quickblox-javascript-sdk/develop/quickblox.min',
+        // quickblox: '../bower_components/quickblox/quickblox',
+        quickblox: 'https://rawgit.com/QuickBlox/quickblox-javascript-sdk/gh-pages.listeners/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
@@ -66,6 +66,7 @@ requirejs.config({
         ContactListModule: 'models/contact_list',
         VideoChatModule: 'models/videochat',
         CursorModule: 'models/custom_cursor',
+        SyncTabsModule: 'models/sync_tabs',
         // views
         UserView: 'views/user',
         SettingsView: 'views/settings',
