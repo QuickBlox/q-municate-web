@@ -21,7 +21,7 @@ define(['jquery'], function($) {
             currentUserId = userId;
 
             // set params to local storage
-            set();
+            _set();
 
             // enter to new page (listener)
             $(window).focus(function() {
@@ -42,7 +42,7 @@ define(['jquery'], function($) {
 
             // localStorage listener
             $(window).bind('storage', function(e) {
-                sync(e);
+                _sync(e);
             });
         };
 
@@ -50,7 +50,7 @@ define(['jquery'], function($) {
             return (localStorage[mainTab] == curTab) ? true : false;
         };
 
-        function set() {
+        function _set() {
             countTabs = 'QM.' + currentUserId + '_countTabs',
             mainTab   = 'QM.' + currentUserId + '_mainTab',
             closedTab = 'QM.' + currentUserId + '_closedTab',
@@ -66,7 +66,7 @@ define(['jquery'], function($) {
             }
         }
 
-        function sync(e) {
+        function _sync(e) {
             var key    = e.originalEvent.key,
                 oldVal = e.originalEvent.oldValue,
                 newVal = e.originalEvent.newValue;
