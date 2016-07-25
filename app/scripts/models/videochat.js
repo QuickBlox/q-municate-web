@@ -53,7 +53,7 @@ define([
                 if (!options.isCallee) {
                     callback(err, null);
                 } else {
-                    self.sendMessage(options.opponentId, '4', null, options.dialogId, callType, true);
+                    self.sendMessage(options.opponentId, '3', null, options.dialogId, callType, true);
                     callback(err, null);
                 }
             } else {
@@ -78,7 +78,7 @@ define([
         });
     };
 
-    VideoChat.prototype.sendMessage = function(userId, state, duration, dialogId, callType, isErrorMessage, sessionID) {
+    VideoChat.prototype.sendMessage = function(userId, state, callDuration, dialogId, callType, isErrorMessage, sessionID) {
         var jid = QB.chat.helpers.getUserJid(userId, QMCONFIG.qbAccount.appId),
             User = this.app.models.User,
             Message = this.app.models.Message,
@@ -94,19 +94,18 @@ define([
             extension = {
                 save_to_history: 1,
                 date_sent: time,
-
-                callType: state === '3' ? (callType === 'video' ? '1' : '2') : (VideoChatView.type === 'video' ? '1' : '2'),
-                callState: state === '1' && !duration ? '2' : state,
-                caller: state === '3' ? userId : self.caller,
-                callee: state === '3' ? User.contact.id : self.callee
+                callType: state === '2' ? (callType === 'video' ? '2' : '1') : (VideoChatView.type === 'video' ? '2' : '1'),
+                callState: state === '1' && !callDuration ? '2' : state,
+                caller: state === '2' ? userId : self.caller,
+                callee: state === '2' ? User.contact.id : self.callee
             };
 
-            if (duration) extension.duration = duration;
+            if (callDuration) extension.callDuration = Helpers.getDuration(null, callDuration);
         } else {
             extension = {
                 save_to_history: 1,
                 date_sent: time,
-                callType: callType === 'video' ? '1' : '2',
+                callType: callType === 'video' ? '2' : '1',
                 callState: state,
                 caller: userId,
                 callee: User.contact.id
@@ -119,7 +118,7 @@ define([
 
         QB.chat.send(jid, {
             type: 'chat',
-            body: 'Call info',
+            body: 'Call notification',
             extension: extension
         });
 
@@ -131,7 +130,7 @@ define([
             callState: extension.callState,
             caller: extension.caller,
             callee: extension.callee,
-            duration: extension.duration || null,
+            callDuration: extension.callDuration || null,
             sessionID: extension.sessionID || null
         });
         Helpers.log(message);

@@ -65,7 +65,7 @@ define([
                 callState: (params.extension && params.extension.callState) || params.callState || null,
                 caller: parseInt((params.extension && params.extension.caller)) || parseInt(params.caller) || null,
                 callee: parseInt((params.extension && params.extension.callee)) || parseInt(params.callee) || null,
-                duration: (params.extension && params.extension.duration) || params.duration || null,
+                callDuration: (params.extension && params.extension.callDuration) || params.callDuration || null,
                 sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
                 read_ids: params.read_ids || [],
                 delivered_ids: params.delivered_ids || [],

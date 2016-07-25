@@ -70,10 +70,9 @@ define([
              * 7 - about deleting from contact list
              * 8 - incomming call
              * 9 - about missed call
-             * 10 - no answer
-             * 11 - сamera and/or microphone wasn't found
-             * 12 - incoming call
-             * 13 - call accepted
+             * 10 - сamera and/or microphone wasn't found
+             * 11 - incoming call
+             * 12 - call accepted
              * default - message
              */
             switch (type) {
@@ -109,9 +108,9 @@ define([
                     // calls
                 case '8':
                     if (message.caller === myUser.contact.id) {
-                        text = 'Call to ' + contacts[message.callee].full_name + ', duration ' + message.duration;
+                        text = 'Call to ' + contacts[message.callee].full_name + ', duration ' + Helpers.getDuration(message.callDuration);
                     } else {
-                        text = 'Call from ' + contacts[message.caller].full_name + ', duration ' + message.duration;
+                        text = 'Call from ' + contacts[message.caller].full_name + ', duration ' + Helpers.getDuration(message.callDuration);
                     }
                     break;
 
@@ -125,29 +124,21 @@ define([
 
                 case '10':
                     if (message.caller === myUser.contact.id) {
-                        text = 'Call to ' + contacts[message.callee].full_name + ', busy';
-                    } else {
-                        text = 'Call from ' + contacts[message.caller].full_name + ', busy';
-                    }
-                    break;
-
-                case '11':
-                    if (message.caller === myUser.contact.id) {
                         text = contacts[message.callee].full_name + ' doesn\'t have camera and/or microphone.';
                     } else {
                         text = 'Camera and/or microphone wasn\'t found.';
                     }
                     break;
 
-                case '12':
+                case '11':
                     text = 'Incomming ' + message.callType + ' Call from ' + contact.full_name;
                     break;
 
-                case '13':
+                case '12':
                     text = 'The ' + message.callType + ' Call accepted by ' + contact.full_name;
                     break;
 
-                    // messages
+                // messages
                 default:
                     if (chatType === 'groupchat') {
                         text = contact.full_name + ': ' + message.body;
@@ -235,6 +226,14 @@ define([
             }
 
             return bottom;
+        }
+    };
+
+    Helpers.getDuration = function(seconds, duration) {
+        if (duration) {
+            return Date.parse('Thu, 01 Jan 1970 ' + duration + ' GMT') / 1000;
+        } else {
+            return new Date(seconds*1000).toUTCString().split(/ /)[4];
         }
     };
 

@@ -210,9 +210,9 @@ define([
                             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '" data-session="' + message.sessionID + '">';
 
                             if (message.caller === User.contact.id) {
-                                html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_outgoing' : 'request-audio_outgoing') + '"></span>';
+                                html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_outgoing' : 'request-audio_outgoing') + '"></span>';
                             } else {
-                                html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_incoming' : 'request-audio_incoming') + '"></span>';
+                                html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_incoming' : 'request-audio_incoming') + '"></span>';
                             }
 
                             html += '<div class="message-container-wrap">';
@@ -220,9 +220,9 @@ define([
                             html += '<div class="message-content">';
 
                             if (message.caller === User.contact.id) {
-                                html += '<h4 class="message-author">Call to ' + contacts[message.callee].full_name + ', duration ' + message.duration;
+                                html += '<h4 class="message-author">Outgoing ' + (message.callType === '2' ? 'Video' : '') + ' Call, ' + Helpers.getDuration(message.callDuration);
                             } else {
-                                html += '<h4 class="message-author">Call from ' + contacts[message.caller].full_name + ', duration ' + message.duration;
+                                html += '<h4 class="message-author">Incoming ' + (message.callType === '2' ? 'Video' : '') + ' Call, ' + Helpers.getDuration(message.callDuration);
                             }
 
                             html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
@@ -235,9 +235,9 @@ define([
                             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
 
                             if (message.caller === User.contact.id) {
-                                html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
+                                html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
                             } else {
-                                html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_missed' : 'request-audio_missed') + '"></span>';
+                                html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_missed' : 'request-audio_missed') + '"></span>';
                             }
 
                             html += '<div class="message-container-wrap">';
@@ -245,9 +245,9 @@ define([
                             html += '<div class="message-content">';
 
                             if (message.caller === User.contact.id) {
-                                html += '<h4 class="message-author">Call to ' + contacts[message.callee].full_name + ', no answer';
+                                html += '<h4 class="message-author">No Answer';
                             } else {
-                                html += '<h4 class="message-author">Missed call from ' + contacts[message.caller].full_name;
+                                html += '<h4 class="message-author">Missed ' + (message.callType === '2' ? 'Video' : '') + ' Call';
                             }
 
                             html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
@@ -258,26 +258,7 @@ define([
                     case '10':
                         if (message.caller) {
                             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
-                            html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
-                            html += '<div class="message-container-wrap">';
-                            html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-                            html += '<div class="message-content">';
-
-                            if (message.caller === User.contact.id) {
-                                html += '<h4 class="message-author">Call to ' + contacts[message.callee].full_name + ', busy';
-                            } else {
-                                html += '<h4 class="message-author">Call from ' + contacts[message.caller].full_name + ', busy';
-                            }
-
-                            html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
-                            html += '<div class="info_indent"></div></div></div></div></article>';
-                        }
-                        break;
-
-                    case '11':
-                        if (message.caller) {
-                            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
-                            html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
+                            html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
                             html += '<div class="message-container-wrap">';
                             html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                             html += '<div class="message-content">';

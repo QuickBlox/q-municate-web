@@ -74,11 +74,11 @@ define([
                 opponentId = $self.data('id'),
                 dialogId = $self.data('dialog'),
                 callType = $self.data('calltype'),
-                audioSignal = $('#ringtoneSignal')[0];
+                audioSignal = document.getElementById('ringtoneSignal');
 
             curSession.reject({});
 
-            VideoChat.sendMessage(opponentId, '3', null, dialogId, callType);
+            VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
 
             $incomingCall.remove();
 
@@ -282,7 +282,7 @@ define([
         createAndShowNotification({
             'id': id,
             'dialogId': dialogId,
-            'callState': '5',
+            'callState': '4',
             'callType': callType
         });
 
@@ -317,7 +317,7 @@ define([
         createAndShowNotification({
             'id': id,
             'dialogId': dialogId,
-            'callState': '6',
+            'callState': '5',
             'callType': callType
         });
     };
@@ -352,6 +352,10 @@ define([
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
             isCurrentUser = (User.contact.id === id) ? true : false;
+
+        if (Settings.get('sounds_notify')) {
+            document.getElementById('callingSignal').pause();
+        }
 
         if (isCurrentUser) {
             stopIncomingCall(session.initiatorID);
@@ -675,7 +679,7 @@ define([
         if ($('#popupIncoming .mCSB_container').children().length === 0) {
             closePopup();
             if (Settings.get('sounds_notify')) {
-                $('#ringtoneSignal')[0].pause();
+                document.getElementById('ringtoneSignal').pause();
             }
         }
 
