@@ -251,7 +251,7 @@ define([
             $incomings = $('#popupIncoming'),
             id = session.initiatorID,
             contact = ContactList.contacts[id],
-            callType = (session.callType == 1 ? 'video' : 'audio') || extension.call_type,
+            callType = (session.callType === 1 ? 'video' : 'audio') || extension.call_type,
             userName = contact.full_name || extension.full_name,
             userAvatar = contact.avatar_url || extension.avatar,
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
@@ -299,6 +299,13 @@ define([
         }
         if ((state === 'onStop') && (User.contact.id === id)) {
             closeStreamScreen(id);
+        }
+        // send message to caller that user is busy
+        if ((state === 'onCall') && (User.contact.id !== id)) {
+            var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog');
+                callType = (extension.callType === '1' ? 'video' : 'audio') || extension.call_type;
+
+            VideoChat.sendMessage(id, '2', null, dialogId, callType);
         }
     };
 
