@@ -86,6 +86,10 @@ define([
             VideoChatView = this.app.views.VideoChat,
             time = Math.floor(Date.now() / 1000),
             $dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialogId + '"]'),
+            selected = $('[data-dialog = ' + dialogId + ']').is('.is-selected'),
+            unread = parseInt($dialogItem.length > 0 &&
+                $dialogItem.find('.unread').text().length > 0 ?
+                $dialogItem.find('.unread').text() : 0),
             copyDialogItem,
             message,
             extension;
@@ -135,6 +139,13 @@ define([
         });
         Helpers.log(message);
         MessageView.addItem(message, true, true);
+
+        // show counter on dialog item about missed calls
+        if (!selected) {
+            unread++;
+            $dialogItem.find('.unread').text(unread);
+            DialogView.getUnreadCounter(dialogId);
+        }
 
         if ($dialogItem.length > 0) {
             copyDialogItem = $dialogItem.clone();

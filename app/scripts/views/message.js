@@ -204,7 +204,7 @@ define([
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
-                        // calls messages
+                    // calls messages
                     case '8':
                         if (message.caller) {
                             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '" data-session="' + message.sessionID + '">';
@@ -649,10 +649,10 @@ define([
                 createAndShowNotification(msg, isHiddenChat);
             }
 
-            var isHidden   = (isHiddenChat || !window.isQMAppActive) ? true : false,
+            var isHidden = (isHiddenChat || !window.isQMAppActive) ? true : false,
                 sendedToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
-                isSoundOn  = Settings.get('sounds_notify'),
-                isMainTab  = SyncTabs.get();
+                isSoundOn = Settings.get('sounds_notify'),
+                isMainTab = SyncTabs.get();
 
             if (isHidden && sendedToMe && isSoundOn && isMainTab) {
                 audioSignal.play();
@@ -907,8 +907,8 @@ define([
     }
 
     function createAndShowNotification(msg, isHiddenChat) {
-        var cancelNotify  = !Settings.get('messages_notify'),
-            isNotMainTab  = !SyncTabs.get(),
+        var cancelNotify = !Settings.get('messages_notify'),
+            isNotMainTab = !SyncTabs.get(),
             isCurrentUser = (msg.sender_id === User.contact.id) ? true : false;
 
         if (cancelNotify || isNotMainTab || isCurrentUser) {
@@ -944,8 +944,8 @@ define([
 
         if (geodata) {
             escape = geodata.replace(/&amp;/g, '&')
-                            .replace(/&#10;/g, '\n')
-                            .replace(/&quot;/g, '"');
+                .replace(/&#10;/g, '\n')
+                .replace(/&quot;/g, '"');
 
             geocoords = JSON.parse(escape);
         } else {
