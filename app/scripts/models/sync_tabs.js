@@ -87,14 +87,15 @@ define(['jquery'], function($) {
             if (key === ('QM.settings-' + currentUserId)) {
                 self.app.views.Settings.setUp(currentUserId);
             }
-
+console.info(e.originalEvent);
             // fire if user log out from QM
             if (key === logOutAll) {
+                console.info(e.originalEvent);
                 localStorage.removeItem(countTabs);
                 localStorage.removeItem(mainTab);
                 localStorage.removeItem(closedTab);
                 localStorage.removeItem(logOutAll);
-                
+
                 window.location.reload();
             }
         }
