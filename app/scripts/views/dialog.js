@@ -384,6 +384,7 @@ define([
                 dialog = dialogs[dialog_id],
                 user = contacts[user_id],
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
+                readBadge = 'QM.' + User.contact.id + '_readBadge',
                 self = this,
                 html,
                 jid,
@@ -536,6 +537,9 @@ define([
             $('.is-selected').removeClass('is-selected');
             parent.addClass('is-selected').find('.unread').text('');
             self.decUnreadCounter(dialog.id);
+            // set dialog_id to localStorage wich must bee read in all tabs for same user
+            localStorage.removeItem(readBadge);
+            localStorage.setItem(readBadge, dialog_id);
 
         },
 

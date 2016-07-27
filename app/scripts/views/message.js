@@ -523,6 +523,7 @@ define([
                 isBottom = Helpers.isBeginOfChat(),
                 otherChat = !selected && isHiddenChat && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat'),
                 isNotMyUser = id !== User.contact.id,
+                readBadge = 'QM.' + User.contact.id + '_readBadge',
                 copyDialogItem,
                 lastMessage,
                 dialog,
@@ -551,6 +552,12 @@ define([
                 unread++;
                 dialogItem.find('.unread').text(unread);
                 DialogView.getUnreadCounter(dialog_id);
+            }
+
+            // set dialog_id to localStorage wich must bee read in all tabs for same user
+            if (selected) {
+                localStorage.removeItem(readBadge);
+                localStorage.setItem(readBadge, dialog_id);
             }
 
             // add new occupants

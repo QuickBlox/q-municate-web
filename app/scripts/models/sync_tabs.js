@@ -13,7 +13,8 @@ define(['jquery'], function($) {
             countTabs,
             mainTab,
             closedTab,
-            logOutAll;
+            logOutAll,
+            readBadge;
 
         this.app = app;
 
@@ -55,6 +56,7 @@ define(['jquery'], function($) {
             mainTab   = 'QM.' + currentUserId + '_mainTab',
             closedTab = 'QM.' + currentUserId + '_closedTab',
             logOutAll = 'QM.' + currentUserId + '_logOut';
+            readBadge = 'QM.' + currentUserId + '_readBadge';
 
             if (localStorage[mainTab] && localStorage[countTabs]) {
                 curTab = +localStorage[countTabs] + 1;   // set new order for current tab
@@ -94,8 +96,14 @@ define(['jquery'], function($) {
                 localStorage.removeItem(mainTab);
                 localStorage.removeItem(closedTab);
                 localStorage.removeItem(logOutAll);
+                localStorage.removeItem(readBadge);
 
                 window.location.reload();
+            }
+
+            // remove unread message count for opened chat in other tab
+            if (key === readBadge && newVal !== null) {
+                $('.dialog-item[data-dialog="' + newVal + '"]').find('.unread').text('')
             }
         }
 
