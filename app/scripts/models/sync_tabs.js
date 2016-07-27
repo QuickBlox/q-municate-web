@@ -90,14 +90,12 @@ define(['jquery'], function($) {
 
             // fire if user log out from QM
             if (key === logOutAll) {
-                self.app.views.User.logout(true);
-
                 localStorage.removeItem(countTabs);
                 localStorage.removeItem(mainTab);
                 localStorage.removeItem(closedTab);
                 localStorage.removeItem(logOutAll);
-
-                curTab = undefined;
+                
+                window.location.reload();
             }
         }
 
