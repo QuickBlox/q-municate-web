@@ -634,7 +634,7 @@ define([
                     type: 2
                 }, function(dialog) {
                     self.removeDataSpinner();
-                    $('.is-overlay').removeClass('is-overlay');
+                    $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
                     $('.dialog-item[data-dialog="' + dialog.id + '"]').find('.contact').click();
                 });
             }
