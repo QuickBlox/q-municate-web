@@ -160,18 +160,26 @@
     margin-bottom: 5vh;
 }
 /* popover */
-.popover {
-    display: none;
+.chat_popover {
+    position: absolute;
+    bottom: 40px;
+    right: 19px;
+    visibility: hidden;
+    opacity: 0;
+    background: #fff;
     border: 1px solid #f2f2f2;
     box-shadow: 0 0 10px 3px rgba(240, 240, 240, .7);
+    transition: opacity 0.4s, bottom 0.6s;
+    z-index: 3;
+}
+.chat_popover.is-active {
+    bottom: 102px;
+    visibility: visible;
+    opacity: 1;
 }
 .popover_smile {
-    position: absolute;
-    right: 19px;
-    bottom: 40px;
     width: 230px;
     height: 240px;
-    background: #fff;
 }
 .popover_smile .coner {
     position: absolute;
@@ -196,12 +204,8 @@
     box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
 }
 .popover_gmap {
-    position: absolute;
     width: 462px;
     height: 350px;
-    background: #fff;
-    bottom: 40px;
-    right: 18px;
     padding: 5px;
 }
 .popover_gmap .coner {

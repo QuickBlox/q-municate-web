@@ -71,6 +71,7 @@ define([
                 QB.webrtc.onCallListener          = VideoChatView.onCall;
                 QB.webrtc.onAcceptCallListener    = VideoChatView.onAccept;
                 QB.webrtc.onRejectCallListener    = VideoChatView.onReject;
+                QB.webrtc.onIgnoredListener       = VideoChatView.onIgnored;
                 QB.webrtc.onStopCallListener      = VideoChatView.onStop;
                 QB.webrtc.onUpdateCallListener    = VideoChatView.onUpdateCall;
                 QB.webrtc.onRemoteStreamListener  = VideoChatView.onRemoteStream;
@@ -152,11 +153,13 @@ define([
 
         prepareDownloading: function(roster) {
             Helpers.log('QB SDK: Roster has been got', roster);
-            this.app.views.Settings.setUp(User.contact.id);
             this.chatCallbacksInit();
             this.createDataSpinner();
             scrollbar();
             ContactList.saveRoster(roster);
+
+            this.app.views.Settings.setUp(User.contact.id);
+            this.app.models.SyncTabs.init(User.contact.id);
         },
 
         getUnreadCounter: function(dialog_id) {
@@ -381,6 +384,7 @@ define([
                 dialog = dialogs[dialog_id],
                 user = contacts[user_id],
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
+                readBadge = 'QM.' + User.contact.id + '_readBadge',
                 self = this,
                 html,
                 jid,
@@ -464,8 +468,8 @@ define([
                 html += '<section class="l-chat-content scrollbar_message"></section>';
                 html += '<footer class="l-chat-footer">';
                 html += '<div class="footer_btn j-toBottom btn_to_bottom"></div>';
-                html += '<form class="l-message" action="#">';
-                html += '<div class="form-input-message textarea" contenteditable="true" placeholder="Type a message"></div>';
+                html += '<form class="l-message j-message" action="#">';
+                html += '<div class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"></div>';
                 html += '<div class="footer_btn j-send_location btn_sendlocation' + ((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '') + '"';
                 html += 'data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>';
                 html += '<input class="attachment" type="file" accept="image/*"></form>';
@@ -509,7 +513,8 @@ define([
 
             } else {
 
-                $chat.removeClass('is-hidden').siblings().addClass('is-hidden');
+                $chat.removeClass('is-hidden')
+                     .siblings(':not(.j-popover_const)').addClass('is-hidden');
                 $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
                 self.messageScrollbar();
 
@@ -532,6 +537,9 @@ define([
             $('.is-selected').removeClass('is-selected');
             parent.addClass('is-selected').find('.unread').text('');
             self.decUnreadCounter(dialog.id);
+            // set dialog_id to localStorage wich must bee read in all tabs for same user
+            localStorage.removeItem(readBadge);
+            localStorage.setItem(readBadge, dialog_id);
 
         },
 
@@ -544,7 +552,7 @@ define([
                 theme: 'minimal-dark',
                 scrollInertia: 'auto',
                 mouseWheel: {
-                    scrollAmount: 'auto',
+                    scrollAmount: 120,
                     deltaFactor: 'auto'
                 },
                 setTop: height + 'px',
@@ -626,7 +634,7 @@ define([
                     type: 2
                 }, function(dialog) {
                     self.removeDataSpinner();
-                    $('.is-overlay').removeClass('is-overlay');
+                    $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
                     $('.dialog-item[data-dialog="' + dialog.id + '"]').find('.contact').click();
                 });
             }
@@ -663,10 +671,10 @@ define([
     function scrollbar() {
         $('.l-sidebar .scrollbar').mCustomScrollbar({
             theme: 'minimal-dark',
-            scrollInertia: 500,
+            scrollInertia: 150,
             mouseWheel: {
-                scrollAmount: 'auto',
-                deltaFactor: 'auto'
+                scrollAmount: 100,
+                deltaFactor: 0
             },
             live: true
         });
@@ -726,7 +734,7 @@ define([
         $('.l-chat:visible .textarea').niceScroll({
             cursoropacitymax: 0.5,
             railpadding: {
-                right: 5
+                right: -13
             },
             zindex: 1,
             enablekeyboard: false

@@ -165,28 +165,28 @@
     height: 21px;
 }
 .request-video_incoming {
-    background: image-url('icon-video-incoming.svg') no-repeat center bottom;
+    background: image-url('icon-video-incoming.svg') no-repeat left bottom;
 }
 .request-video_outgoing {
-    background: image-url('icon-video-outgoing.svg') no-repeat center bottom;
+    background: image-url('icon-video-outgoing.svg') no-repeat left bottom;
 }
 .request-video_missed {
-    background: image-url('icon-video-missed.svg') no-repeat center bottom;
+    background: image-url('icon-video-missed.svg') no-repeat left bottom;
 }
 .request-video_ended {
-    background: image-url('icon-video-ended.svg') no-repeat center bottom;
+    background: image-url('icon-video-ended.svg') no-repeat left bottom;
 }
 .request-audio_incoming {
-    background: image-url('icon-audio-incoming.svg') no-repeat center bottom;
+    background: image-url('icon-audio-incoming.svg') no-repeat left bottom;
 }
 .request-audio_outgoing {
-    background: image-url('icon-audio-outgoing.svg') no-repeat center bottom;
+    background: image-url('icon-audio-outgoing.svg') no-repeat left bottom;
 }
 .request-audio_missed {
-    background: image-url('icon-audio-missed.svg') no-repeat center bottom;
+    background: image-url('icon-audio-missed.svg') no-repeat left bottom;
 }
 .request-audio_ended {
-    background: image-url('icon-audio-ended.svg') no-repeat center bottom;
+    background: image-url('icon-audio-ended.svg') no-repeat left bottom;
 }
 .request-button_pending:after {
     content: 'i';

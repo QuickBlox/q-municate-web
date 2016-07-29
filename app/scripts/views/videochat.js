@@ -38,6 +38,7 @@ define([
 
         self = this;
         Settings = this.app.models.Settings;
+        SyncTabs = this.app.models.SyncTabs;
         User = this.app.models.User;
         ContactList = this.app.models.ContactList;
         VideoChat = this.app.models.VideoChat;
@@ -73,11 +74,11 @@ define([
                 opponentId = $self.data('id'),
                 dialogId = $self.data('dialog'),
                 callType = $self.data('calltype'),
-                audioSignal = $('#ringtoneSignal')[0];
+                audioSignal = document.getElementById('ringtoneSignal');
 
             curSession.reject({});
 
-            VideoChat.sendMessage(opponentId, '3', null, dialogId, callType);
+            VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
 
             $incomingCall.remove();
 
@@ -151,6 +152,7 @@ define([
                 $chat = $self.parents('.l-chat'),
                 opponentId = $self.data('id'),
                 dialogId = $self.data('dialog'),
+                callType = curSession.callType === 1 ? 'video' : 'audio',
                 duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0],
@@ -160,11 +162,12 @@ define([
                 if (!isErrorMessage && duration !== 'connect...') {
                     VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
                 } else {
+                    VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
                     $self.removeAttr('data-errorMessage');
                 }
             }
 
-            if (Settings.get('sounds_notify')) {
+            if (Settings.get('sounds_notify') && SyncTabs.get()) {
                 callingSignal.pause();
                 endCallSignal.play();
             }
@@ -236,7 +239,11 @@ define([
     };
 
     VideoChatView.prototype.onCall = function(session, extension) {
-        if ('div.popups.is-overlay') {
+        if (User.contact.id === session.initiatorID) {
+            return false;
+        }
+
+        if ($('div.popups.is-overlay').length) {
             $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         }
 
@@ -244,7 +251,7 @@ define([
             $incomings = $('#popupIncoming'),
             id = session.initiatorID,
             contact = ContactList.contacts[id],
-            callType = (session.callType == 1 ? 'video' : 'audio') || extension.call_type,
+            callType = (session.callType === 1 ? 'video' : 'audio') || extension.call_type,
             userName = contact.full_name || extension.full_name,
             userAvatar = contact.avatar_url || extension.avatar,
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
@@ -267,7 +274,7 @@ define([
         $incomings.find('.mCSB_container').prepend(htmlTpl);
         openPopup($incomings);
 
-        if (Settings.get('sounds_notify')) {
+        if (Settings.get('sounds_notify') && SyncTabs.get()) {
             audioSignal.play();
         }
 
@@ -277,7 +284,7 @@ define([
         createAndShowNotification({
             'id': id,
             'dialogId': dialogId,
-            'callState': '5',
+            'callState': '4',
             'callType': callType
         });
 
@@ -286,10 +293,27 @@ define([
         }, autoReject);
     };
 
+    VideoChatView.prototype.onIgnored = function(state, session, id, extension) {
+        if ((state === 'onAccept') && (User.contact.id === id)) {
+            stopIncomingCall(session.initiatorID);
+        }
+        if ((state === 'onStop') && (User.contact.id === id)) {
+            closeStreamScreen(id);
+        }
+        // send message to caller that user is busy
+        if ((state === 'onCall') && (User.contact.id !== id)) {
+            var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog');
+                callType = (extension.callType === '1' ? 'video' : 'audio') || extension.call_type;
+
+            VideoChat.sendMessage(id, '2', null, dialogId, callType);
+        }
+    };
+
     VideoChatView.prototype.onAccept = function(session, id, extension) {
         var audioSignal = document.getElementById('callingSignal'),
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
-            callType = self.type;
+            callType = self.type,
+            isCurrentUser = (User.contact.id === id) ? true : false;
 
         if (Settings.get('sounds_notify')) {
             audioSignal.pause();
@@ -302,7 +326,7 @@ define([
         createAndShowNotification({
             'id': id,
             'dialogId': dialogId,
-            'callState': '6',
+            'callState': '5',
             'callType': callType
         });
     };
@@ -335,17 +359,22 @@ define([
     VideoChatView.prototype.onReject = function(session, id, extension) {
         var audioSignal = document.getElementById('callingSignal'),
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
-            $chat = $('.l-chat[data-dialog="' + dialogId + '"]');
+            $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
+            isCurrentUser = (User.contact.id === id) ? true : false;
+
+        if (Settings.get('sounds_notify')) {
+            document.getElementById('callingSignal').pause();
+        }
+
+        if (isCurrentUser) {
+            stopIncomingCall(session.initiatorID);
+        }
 
         curSession = {};
         VideoChat.session = null;
         VideoChat.caller = null;
         VideoChat.callee = null;
         self.type = null;
-
-        if (Settings.get('sounds_notify')) {
-            audioSignal.pause();
-        }
 
         $chat.find('.mediacall').remove();
         $chat.find('.l-chat-header').show();
@@ -507,7 +536,7 @@ define([
             incomingCall;
 
         if ($chat[0] && ($chat.find('.mediacall')[0])) {
-            if (Settings.get('sounds_notify')) {
+            if (Settings.get('sounds_notify') && SyncTabs.get()) {
                 callingSignal.pause();
                 endCallSignal.play();
             }
@@ -576,7 +605,10 @@ define([
     }
 
     function createAndShowNotification(paramsObg) {
-        if (!Settings.get('calls_notify')) {
+        var cancelNotify  = !Settings.get('calls_notify'),
+            isNotMainTab  = !SyncTabs.get();
+
+        if (cancelNotify || isNotMainTab) {
             return false;
         }
 
@@ -642,6 +674,31 @@ define([
         }
 
         return res;
+    }
+
+    function stopIncomingCall(id) {
+        var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
+            $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]');
+
+        clearTimeout(sendAutoReject);
+        sendAutoReject = undefined;
+
+        $declineButton.parents('.incoming-call').remove();
+
+        if ($('#popupIncoming .mCSB_container').children().length === 0) {
+            closePopup();
+            if (Settings.get('sounds_notify')) {
+                document.getElementById('ringtoneSignal').pause();
+            }
+        }
+
+        curSession = {};
+        VideoChat.session = null;
+        VideoChat.caller = null;
+        VideoChat.callee = null;
+        self.type = null;
+
+        return false;
     }
 
     return VideoChatView;

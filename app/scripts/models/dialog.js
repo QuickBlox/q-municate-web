@@ -272,8 +272,10 @@ define([
                         h: 240
                     }, function(avatar) {
                         Attach.upload(avatar, function(blob) {
+                            var imgUrl = QB.content.privateUrl(blob.uid);
+
                             QBApiCalls.updateDialog(dialog_id, {
-                                photo: blob.path
+                                photo: imgUrl
                             }, function(res) {
                                 dialog = self.create(res);
                                 ContactList.dialogs[dialog_id] = dialog;
@@ -287,7 +289,7 @@ define([
                                         date_sent: Math.floor(Date.now() / 1000),
                                         save_to_history: 1,
                                         notification_type: '2',
-                                        room_photo: blob.path,
+                                        room_photo: imgUrl,
                                         dialog_id: dialog.id,
                                         room_updated_date: dialog.room_updated_date,
                                         dialog_update_info: 1

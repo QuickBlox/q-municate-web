@@ -35,6 +35,7 @@ define([
     function MessageView(app) {
         this.app = app;
         Settings = this.app.models.Settings;
+        SyncTabs = this.app.models.SyncTabs;
         User = this.app.models.User;
         Dialog = this.app.models.Dialog;
         Message = this.app.models.Message;
@@ -80,10 +81,7 @@ define([
                         'latitude': message.latitude,
                         'longitude': message.longitude
                     } : null,
-                    geoCoords = (message.attachment && message.attachment.type === 'location') ? {
-                        'latitude': message.attachment.lat,
-                        'longitude': message.attachment.lng
-                    } : null,
+                    geoCoords = (message.attachment && message.attachment.type === 'location') ? getLocationFromAttachment(message.attachment) : null,
                     mapAttachImage = geoCoords ? Location.getStaticMapUrl(geoCoords, {
                         'size': [380, 200]
                     }) : null,
@@ -206,15 +204,15 @@ define([
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
-                        // calls messages
+                    // calls messages
                     case '8':
                         if (message.caller) {
                             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '" data-session="' + message.sessionID + '">';
 
                             if (message.caller === User.contact.id) {
-                                html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_outgoing' : 'request-audio_outgoing') + '"></span>';
+                                html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_outgoing' : 'request-audio_outgoing') + '"></span>';
                             } else {
-                                html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_incoming' : 'request-audio_incoming') + '"></span>';
+                                html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_incoming' : 'request-audio_incoming') + '"></span>';
                             }
 
                             html += '<div class="message-container-wrap">';
@@ -222,9 +220,9 @@ define([
                             html += '<div class="message-content">';
 
                             if (message.caller === User.contact.id) {
-                                html += '<h4 class="message-author">Call to ' + contacts[message.callee].full_name + ', duration ' + message.duration;
+                                html += '<h4 class="message-author">Outgoing ' + (message.callType === '2' ? 'Video' : '') + ' Call, ' + Helpers.getDuration(message.callDuration);
                             } else {
-                                html += '<h4 class="message-author">Call from ' + contacts[message.caller].full_name + ', duration ' + message.duration;
+                                html += '<h4 class="message-author">Incoming ' + (message.callType === '2' ? 'Video' : '') + ' Call, ' + Helpers.getDuration(message.callDuration);
                             }
 
                             html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
@@ -237,9 +235,9 @@ define([
                             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
 
                             if (message.caller === User.contact.id) {
-                                html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
+                                html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
                             } else {
-                                html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_missed' : 'request-audio_missed') + '"></span>';
+                                html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_missed' : 'request-audio_missed') + '"></span>';
                             }
 
                             html += '<div class="message-container-wrap">';
@@ -247,9 +245,9 @@ define([
                             html += '<div class="message-content">';
 
                             if (message.caller === User.contact.id) {
-                                html += '<h4 class="message-author">Call to ' + contacts[message.callee].full_name + ', no answer';
+                                html += '<h4 class="message-author">No Answer';
                             } else {
-                                html += '<h4 class="message-author">Missed call from ' + contacts[message.caller].full_name;
+                                html += '<h4 class="message-author">Missed ' + (message.callType === '2' ? 'Video' : '') + ' Call';
                             }
 
                             html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
@@ -260,26 +258,7 @@ define([
                     case '10':
                         if (message.caller) {
                             html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
-                            html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
-                            html += '<div class="message-container-wrap">';
-                            html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-                            html += '<div class="message-content">';
-
-                            if (message.caller === User.contact.id) {
-                                html += '<h4 class="message-author">Call to ' + contacts[message.callee].full_name + ', busy';
-                            } else {
-                                html += '<h4 class="message-author">Call from ' + contacts[message.caller].full_name + ', busy';
-                            }
-
-                            html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
-                            html += '<div class="info_indent"></div></div></div></div></article>';
-                        }
-                        break;
-
-                    case '11':
-                        if (message.caller) {
-                            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
-                            html += '<span class="message-avatar request-call ' + (message.callType === '1' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
+                            html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
                             html += '<div class="message-container-wrap">';
                             html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                             html += '<div class="message-content">';
@@ -440,14 +419,17 @@ define([
                 msg;
 
             if (val.length > 0) {
-                if (form.find('.textarea > span').length > 0) {
-                    form.find('.textarea > span').each(function() {
-                        $(this).after($(this).find('span').data('unicode')).remove();
+                var $textarea = form.find('.textarea'),
+                    $smiles = form.find('.textarea > img');
+
+                if ($smiles.length > 0) {
+                    $smiles.each(function() {
+                        $(this).after($(this).data('unicode')).remove();
                     });
-                    val = form.find('.textarea').html().trim();
+                    val = $textarea.html().trim();
                 }
                 if (form.find('.textarea > div').length > 0) {
-                    val = form.find('.textarea').text().trim();
+                    val = $textarea.text().trim();
                 }
                 val = val.replace(/<br>/gi, '\n');
 
@@ -541,6 +523,7 @@ define([
                 isBottom = Helpers.isBeginOfChat(),
                 otherChat = !selected && isHiddenChat && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat'),
                 isNotMyUser = id !== User.contact.id,
+                readBadge = 'QM.' + User.contact.id + '_readBadge',
                 copyDialogItem,
                 lastMessage,
                 dialog,
@@ -569,6 +552,12 @@ define([
                 unread++;
                 dialogItem.find('.unread').text(unread);
                 DialogView.getUnreadCounter(dialog_id);
+            }
+
+            // set dialog_id to localStorage wich must bee read in all tabs for same user
+            if (selected) {
+                localStorage.removeItem(readBadge);
+                localStorage.setItem(readBadge, dialog_id);
             }
 
             // add new occupants
@@ -667,7 +656,12 @@ define([
                 createAndShowNotification(msg, isHiddenChat);
             }
 
-            if ((isHiddenChat || !window.isQMAppActive) && (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) && Settings.get('sounds_notify')) {
+            var isHidden = (isHiddenChat || !window.isQMAppActive) ? true : false,
+                sendedToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
+                isSoundOn = Settings.get('sounds_notify'),
+                isMainTab = SyncTabs.get();
+
+            if (isHidden && sendedToMe && isSoundOn && isMainTab) {
                 audioSignal.play();
             }
 
@@ -920,7 +914,11 @@ define([
     }
 
     function createAndShowNotification(msg, isHiddenChat) {
-        if (!Settings.get('messages_notify')) {
+        var cancelNotify = !Settings.get('messages_notify'),
+            isNotMainTab = !SyncTabs.get(),
+            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false;
+
+        if (cancelNotify || isNotMainTab || isCurrentUser) {
             return false;
         }
 
@@ -944,6 +942,28 @@ define([
                 });
             }
         }
+    }
+
+    function getLocationFromAttachment(attachment) {
+        var geodata = attachment.data,
+            escape,
+            geocoords;
+
+        if (geodata) {
+            escape = geodata.replace(/&amp;/g, '&')
+                .replace(/&#10;/g, '\n')
+                .replace(/&quot;/g, '"');
+
+            geocoords = JSON.parse(escape);
+        } else {
+            // the old way for receive geo coordinates from attachments
+            geocoords = {
+                'lat': attachment.lat,
+                'lng': attachment.lng
+            };
+        }
+
+        return geocoords;
     }
 
     return MessageView;

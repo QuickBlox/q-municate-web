@@ -72,7 +72,7 @@ define([
                     return false;
                 }
 
-                if (file.name.length < 17) {
+                if (file.name.length > 100) {
                     html = '<article class="message message_service message_attach message_attach_row l-flexbox l-flexbox_alignstretch">';
                 } else {
                     html = '<article class="message message_service message_attach l-flexbox l-flexbox_alignstretch">';
@@ -187,8 +187,7 @@ define([
             if (mapCoords) {
                 attach = {
                     'type': 'location',
-                    'lat': mapCoords.lat,
-                    'lng': mapCoords.lng
+                    'data': mapCoords.replace(/"/g, '&quot;')
                 };
             } else {
                 attach = Attach.create(blob, size);
@@ -196,7 +195,7 @@ define([
 
             msg = {
                 'type': type,
-                'body': 'Attachment',
+                'body': attach.type === 'location' ? 'Location' : 'Attachment',
                 'extension': {
                     'save_to_history': 1,
                     'dialog_id': dialog_id,
@@ -249,18 +248,7 @@ define([
     /* Private
     ---------------------------------------------------------------------- */
     function fixScroll() {
-        var chat = $('.l-chat:visible'),
-            containerHeight = chat.find('.l-chat-content .mCSB_container').height(),
-            chatContentHeight = chat.find('.l-chat-content').height(),
-            draggerContainerHeight = chat.find('.l-chat-content .mCSB_draggerContainer').height(),
-            draggerHeight = chat.find('.l-chat-content .mCSB_dragger').height();
-
-        chat.find('.l-chat-content .mCSB_container').css({
-            top: chatContentHeight - containerHeight + 'px'
-        });
-        chat.find('.l-chat-content .mCSB_dragger').css({
-            top: draggerContainerHeight - draggerHeight + 'px'
-        });
+        $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
     }
 
     function isSectionEmpty(list) {

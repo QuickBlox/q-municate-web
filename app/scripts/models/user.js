@@ -353,6 +353,7 @@ define([
                 self = this;
 
             QB.chat.disconnect();
+
             DialogView.hideDialogs();
             QBApiCalls.logoutUser(function() {
                 localStorage.removeItem('QM.user');
