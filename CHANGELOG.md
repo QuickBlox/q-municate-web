@@ -2,6 +2,15 @@
 
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
 
+## v. 1.6.0 - July 29, 2016
+
+- Ability to sync between the tabs for the same user;
+- Cross-platform polishing of Location feature;
+- Cross-platform polishing of call-history functionality;
+- Retina icons changing of smileys;
+- Stability improvements;
+- Bug fixes.
+
 ## v. 1.5.0 - June 29, 2016
 
 - Sign in/ Sign up by phone number;
