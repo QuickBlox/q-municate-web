@@ -104,6 +104,7 @@ define(['jquery'], function($) {
             // remove unread message count for opened chat in other tab
             if (key === readBadge && newVal !== null) {
                 $('.dialog-item[data-dialog="' + newVal + '"]').find('.unread').text('');
+                self.app.views.Dialog.decUnreadCounter(newVal);
             }
         }
 
