@@ -7,12 +7,14 @@
 define([
     'jquery',
     'underscore',
+    'quickblox',
     'backbone',
     'config',
     'Helpers'
 ], function(
     $,
     _,
+    QB,
     Backbone,
     QMCONFIG,
     Helpers
@@ -127,10 +129,12 @@ define([
             }
             if (data.avatar) {
                 this.uploadAvatar(data.avatar, function(blob) {
-                    self.set('avatar_url', blob.path);
+                    var avatarUrl = QB.content.privateUrl(blob.uid);
+
+                    self.set('avatar_url', avatarUrl);
 
                     params.blob_id = currentUser.blob_id = blob.id;
-                    custom_data.avatar_url = currentUser.avatar_url = blob.path;
+                    custom_data.avatar_url = currentUser.avatar_url = avatarUrl;
                     params.custom_data = currentUser.custom_data = JSON.stringify(custom_data);
 
                     $('.profileUserName[data-id="' + currentUser.id + '"]').text(currentUser.full_name);
