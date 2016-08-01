@@ -78,8 +78,8 @@ define([
                     attachType = message.attachment && message.attachment['content-type'] || message.attachment && message.attachment.type || null,
                     attachUrl = message.attachment && (QB.content.privateUrl(message.attachment.id) || message.attachment.url || null),
                     geolocation = (message.latitude && message.longitude) ? {
-                        'latitude': message.latitude,
-                        'longitude': message.longitude
+                        'lat': message.latitude,
+                        'lng': message.longitude
                     } : null,
                     geoCoords = (message.attachment && message.attachment.type === 'location') ? getLocationFromAttachment(message.attachment) : null,
                     mapAttachImage = geoCoords ? Location.getStaticMapUrl(geoCoords, {

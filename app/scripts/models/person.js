@@ -129,7 +129,7 @@ define([
             }
             if (data.avatar) {
                 this.uploadAvatar(data.avatar, function(blob) {
-                    var avatarUrl = QB.content.privateUrl(blob.uid);
+                    var avatarUrl = QB.content.publicUrl(blob.uid);
 
                     self.set('avatar_url', avatarUrl);
 

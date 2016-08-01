@@ -272,7 +272,7 @@ define([
                         h: 240
                     }, function(avatar) {
                         Attach.upload(avatar, function(blob) {
-                            var imgUrl = QB.content.privateUrl(blob.uid);
+                            var imgUrl = QB.content.publicUrl(blob.uid);
 
                             QBApiCalls.updateDialog(dialog_id, {
                                 photo: imgUrl
