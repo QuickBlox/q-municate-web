@@ -505,6 +505,8 @@ define([
                 contacts = ContactList.contacts,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
+                recipient_id = message.extension && message.extension.recipient_id || null,
+                recipient_jid = recipient_id ? QB.chat.helpers.getUserJid(recipient_id, QMCONFIG.qbAccount.appId) : null,
                 room_jid = roomJidVerification(dialog_id),
                 room_name = message.extension && message.extension.room_name,
                 room_photo = message.extension && message.extension.room_photo,
@@ -663,6 +665,40 @@ define([
 
             if (isHidden && sendedToMe && isSoundOn && isMainTab) {
                 audioSignal.play();
+            }
+
+            if (msg.sender_id === User.contact.id) {
+                var DialogView = self.app.views.Dialog,
+                    ContactListView = self.app.views.ContactList;
+
+                switch (notification_type) {
+                    case '4':
+                        QB.chat.dialog.list({ _id: dialog_id }, function(err, resDialogs) {
+                            var dialog = Dialog.create(resDialogs.items[0]);
+                            ContactList.dialogs[dialog.id] = dialog;
+                            DialogView.addDialogItem(dialog, null, true);
+                        });
+                        Helpers.log('send subscribe');
+                        break;
+
+                    case '5':
+                        ContactListView.sendConfirm(recipient_jid);
+                        Helpers.log('send confirm');
+                        break;
+
+                    case '6':
+                        ContactListView.sendReject(recipient_jid);
+                        Helpers.log('send reject');
+                        break;
+
+                    case '7':
+                        ContactListView.sendDelete(recipient_id);
+                        Helpers.log('delete contact');
+                        break;
+
+                    default:
+                        break;
+                }
             }
 
         },

@@ -606,8 +606,10 @@ define([
             });
 
             $('#deleteConfirm').on('click', function() {
+                var id = $(this).data('id');
+                ContactListView.sendDelete(id, true);
+
                 Helpers.log('delete contact');
-                ContactListView.sendDelete($(this));
             });
 
             $('#leaveConfirm').on('click', function() {
@@ -729,20 +731,25 @@ define([
                 ContactListView.sendSubscribe($(this), true);
             });
 
-            $('body').on('click', '.requestAction', function(event) {
-                event.preventDefault();
-                Helpers.log('send subscribe');
+            $('body').on('click', '.requestAction', function() {
                 ContactListView.sendSubscribe($(this));
+                Helpers.log('send subscribe');
+
+                return false;
             });
 
             $('.list').on('click', '.request-button_ok', function() {
+                var jid = $(this).parents('li').data('jid');
+
+                ContactListView.sendConfirm(jid, true);
                 Helpers.log('send confirm');
-                ContactListView.sendConfirm($(this));
             });
 
             $('.list').on('click', '.request-button_cancel', function() {
+                var jid = $(this).parents('li').data('jid');
+
+                ContactListView.sendReject(jid, true);
                 Helpers.log('send reject');
-                ContactListView.sendReject($(this));
             });
 
             /* dialogs

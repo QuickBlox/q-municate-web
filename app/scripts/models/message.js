@@ -52,7 +52,7 @@ define([
                 attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) ||
                     (params.attachments && params.attachments[0]) || params.attachment || null,
                 sender_id: params.sender_id || null,
-                recipient_id: params.recipient_id || null,
+                recipient_id: params.recipient_id || (params.extension && params.extension.message_id) || null,
                 current_occupant_ids: (params.extension && params.extension.current_occupant_ids) || params.current_occupant_ids || null,
                 added_occupant_ids: (params.extension && params.extension.added_occupant_ids) || params.added_occupant_ids || null,
                 deleted_occupant_ids: (params.extension && params.extension.deleted_occupant_ids) || params.deleted_occupant_ids || null,

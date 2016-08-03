@@ -76,6 +76,7 @@ define([
                     type: 'chat',
                     body: 'Contact request',
                     extension: {
+                        recipient_id: id,
                         date_sent: Math.floor(Date.now() / 1000),
                         dialog_id: dialog.id,
                         save_to_history: 1,
@@ -273,7 +274,7 @@ define([
                     }, function(avatar) {
                         Attach.upload(avatar, function(blob) {
                             var imgUrl = QB.content.publicUrl(blob.uid);
-                            
+
                             QBApiCalls.updateDialog(dialog_id, {
                                 photo: imgUrl
                             }, function(res) {
