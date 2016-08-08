@@ -221,6 +221,11 @@ define([
                         Helpers.log(err.message);
 
                         failSearch();
+                        /** emulate right answer from a server */
+                        callback({
+                            current_page: 1,
+                            items: []
+                        });
                     } else {
                         Helpers.log('QB SDK: Users is found', res);
 
