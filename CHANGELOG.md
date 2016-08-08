@@ -2,10 +2,10 @@
 
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
 
-## v. 1.6.1 - August 8, 2016
+## v. 1.6.2 - August 8, 2016
 - Fixed issue (global search);
 
-## v. 1.6.0 - August 1, 2016
+## v. 1.6.1 - August 1, 2016
 - Stability improvements;
 - Bug fixes.
 
