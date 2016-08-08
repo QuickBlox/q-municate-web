@@ -9,6 +9,7 @@ define([
     'config',
     'quickblox',
     'Helpers',
+    'QMHtml',
     'underscore',
     'models/person',
     'views/profile',
@@ -16,12 +17,14 @@ define([
     'views/fb_import',
     'mCustomScrollbar',
     'nicescroll',
+
     'mousewheel'
 ], function(
     $,
     QMCONFIG,
     QB,
     Helpers,
+    QMHtml,
     _,
     Person,
     ProfileView,
@@ -466,19 +469,7 @@ define([
                 }
 
                 html += '<section class="l-chat-content scrollbar_message"></section>';
-                html += '<footer class="l-chat-footer">';
-                html += '<div class="footer_btn j-toBottom btn_to_bottom"></div>';
-                html += '<form class="l-message j-message" action="#">';
-                html += '<div class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"></div>';
-                html += '<div class="footer_btn j-send_location btn_sendlocation' + ((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '') + '"';
-                html += 'data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>';
-                html += '<input class="attachment" type="file" accept="image/*"></form>';
-                html += '<div class="j-typing l-typing"></div><div class="l-input-menu">';
-                html += '<div class="footer_btn l-input-buttons btn_input_smile j-btn_input_smile" data-balloon="Add smiles" data-balloon-pos="up"></div>';
-                html += '<div class="footer_btn l-input-buttons btn_input_location j-btn_input_location" data-balloon="Send location" data-balloon-pos="up"></div>';
-                html += '<div class="footer_btn l-input-buttons btn_input_attach j-btn_input_attach" data-balloon="Send attachment file" data-balloon-pos="up"></div>';
-                html += '<button class="footer_btn l-input-buttons btn_input_send j-btn_input_send" data-balloon="Send message" data-balloon-pos="up">SEND</button></div></footer>';
-
+                html += QMHtml.Dialogs.setTextarea();
                 html += '</section>';
 
                 $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append($(html));

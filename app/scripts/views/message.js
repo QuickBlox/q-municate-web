@@ -359,7 +359,7 @@ define([
                     var mapLink = Location.getMapUrl(geolocation),
                         imgUrl = Location.getStaticMapUrl(geolocation);
 
-                    QMHtml.message.setMap({
+                    QMHtml.Messages.setMap({
                         id: message.id,
                         mapLink: mapLink,
                         imgUrl: imgUrl
@@ -668,37 +668,12 @@ define([
             }
 
             if (msg.sender_id === User.contact.id) {
-                var DialogView = self.app.views.Dialog,
-                    ContactListView = self.app.views.ContactList;
-
-                switch (notification_type) {
-                    case '4':
-                        QB.chat.dialog.list({ _id: dialog_id }, function(err, resDialogs) {
-                            var dialog = Dialog.create(resDialogs.items[0]);
-                            ContactList.dialogs[dialog.id] = dialog;
-                            DialogView.addDialogItem(dialog, null, true);
-                        });
-                        Helpers.log('send subscribe');
-                        break;
-
-                    case '5':
-                        ContactListView.sendConfirm(recipient_jid);
-                        Helpers.log('send confirm');
-                        break;
-
-                    case '6':
-                        ContactListView.sendReject(recipient_jid);
-                        Helpers.log('send reject');
-                        break;
-
-                    case '7':
-                        ContactListView.sendDelete(recipient_id);
-                        Helpers.log('delete contact');
-                        break;
-
-                    default:
-                        break;
-                }
+                syncContactRequestInfo({
+                    notification_type: notification_type,
+                    recipient_jid: recipient_jid,
+                    dialog_id: dialog_id,
+                    isHiddenChat : isHiddenChat
+                });
             }
 
         },
@@ -1000,6 +975,43 @@ define([
         }
 
         return geocoords;
+    }
+
+    function syncContactRequestInfo(params) {
+        var ContactListView = self.app.views.ContactList,
+            notification_type = params.notification_type,
+            dialog_id = params.dialog_id,
+            recipient_jid = params.recipient_jid,
+            recipient_id = QB.chat.helpers.getIdFromNode(recipient_jid);
+
+        switch (notification_type) {
+            case '4':
+                ContactListView.sendSubscribe(recipient_jid, null, dialog_id);
+
+                Helpers.log('send subscribe');
+                break;
+
+            case '5':
+                ContactListView.sendConfirm(recipient_jid);
+
+                Helpers.log('send confirm');
+                break;
+
+            case '6':
+                ContactListView.sendReject(recipient_jid);
+
+                Helpers.log('send reject');
+                break;
+
+            case '7':
+                ContactListView.sendDelete(recipient_id);
+
+                Helpers.log('delete contact');
+                break;
+
+            default:
+                break;
+        }
     }
 
     return MessageView;

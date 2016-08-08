@@ -54,40 +54,52 @@ define([
             };
         },
 
-        createPrivate: function(jid, isNew) {
+        createPrivate: function(jid, isNew, dialog_id) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
                 ContactList = this.app.models.ContactList,
                 User = this.app.models.User,
                 id = QB.chat.helpers.getIdFromNode(jid),
-                self = this,
-                dialog;
+                self = this;
 
-            QBApiCalls.createDialog({
-                type: 3,
-                occupants_ids: id
-            }, function(res) {
-                dialog = self.create(res);
+            if (dialog_id) {
+                QB.chat.dialog.list({ _id: dialog_id }, function(err, resDialogs) {
+                    addContactRequestDialogItem(resDialogs.items[0]);
+                });
+            } else {
+                QBApiCalls.createDialog({
+                    type: 3,
+                    occupants_ids: id
+                }, function(res) {
+                    addContactRequestDialogItem(res, true);
+                });
+            }
+
+            function addContactRequestDialogItem(objDialog, isClick) {
+                var dialog = self.create(objDialog);
+
                 ContactList.dialogs[dialog.id] = dialog;
                 Helpers.log('Dialog', dialog);
 
                 // send notification about subscribe
-                QB.chat.send(jid, {
-                    type: 'chat',
-                    body: 'Contact request',
-                    extension: {
-                        recipient_id: id,
-                        date_sent: Math.floor(Date.now() / 1000),
-                        dialog_id: dialog.id,
-                        save_to_history: 1,
-                        notification_type: '4'
-                    }
-                });
+                if (isClick) {
+                    QB.chat.send(jid, {
+                        type: 'chat',
+                        body: 'Contact request',
+                        extension: {
+                            recipient_id: id,
+                            date_sent: Math.floor(Date.now() / 1000),
+                            dialog_id: dialog.id,
+                            save_to_history: 1,
+                            notification_type: '4'
+                        }
+                    });
+                }
 
                 ContactList.add(dialog.occupants_ids, null, function() {
                     DialogView.addDialogItem(dialog, null, isNew);
                 });
-            });
+            }
         },
 
         createGroup: function(occupants_names, params, callback) {

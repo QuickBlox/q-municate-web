@@ -606,10 +606,8 @@ define([
             });
 
             $('#deleteConfirm').on('click', function() {
-                var id = $(this).data('id');
-                ContactListView.sendDelete(id, true);
-
                 Helpers.log('delete contact');
+                ContactListView.sendDelete($(this));
             });
 
             $('#leaveConfirm').on('click', function() {
@@ -722,20 +720,24 @@ define([
             /* subscriptions
             ----------------------------------------------------- */
             $('.list_contacts').on('click', 'button.send-request', function() {
+                var jid = $(this).parents('li').data('jid');
+                ContactListView.sendSubscribe(jid);
+
                 Helpers.log('send subscribe');
-                ContactListView.sendSubscribe($(this));
             });
 
             $workspace.on('click', '.btn_request_again', function() {
+                var jid = $(this).parents('.l-chat').data('jid');
+                ContactListView.sendSubscribe(jid, true);
+
                 Helpers.log('send subscribe');
-                ContactListView.sendSubscribe($(this), true);
             });
 
             $('body').on('click', '.requestAction', function() {
-                ContactListView.sendSubscribe($(this));
-                Helpers.log('send subscribe');
+                var jid = $(this).parents('li').data('jid');
+                ContactListView.sendSubscribe(jid);
 
-                return false;
+                Helpers.log('send subscribe');
             });
 
             $('.list').on('click', '.request-button_ok', function() {

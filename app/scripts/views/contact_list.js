@@ -9,6 +9,7 @@ define([
     'config',
     'quickblox',
     'Helpers',
+    'QMHtml',
     'underscore',
     'mCustomScrollbar',
     'mousewheel'
@@ -17,6 +18,7 @@ define([
     QMCONFIG,
     QB,
     Helpers,
+    QMHtml,
     _
 ) {
 
@@ -169,9 +171,9 @@ define([
 
         },
 
-        sendSubscribe: function(objDom, isChat) {
+        sendSubscribe: function(jid, isChat, dialog_id) {
             var MessageView = this.app.views.Message,
-                jid = isChat ? objDom.parents('.l-chat').data('jid') : objDom.parents('li').data('jid'),
+                $objDom = $('.list-item[data-jid="' + jid + '"]'),
                 roster = ContactList.roster,
                 id = QB.chat.helpers.getIdFromNode(jid),
                 dialogItem = $('.dialog-item[data-id="' + id + '"]')[0],
@@ -182,8 +184,8 @@ define([
                 self = this;
 
             if (!isChat) {
-                objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
-                objDom.remove();
+                $objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
+                $objDom.remove();
             }
 
             if (notConfirmed[id] && requestItem[0]) {
@@ -197,7 +199,7 @@ define([
                     };
                     ContactList.saveRoster(roster);
 
-                    if (dialogItem) {
+                    if (dialogItem && !dialog_id) {
                         // send notification about subscribe
                         QB.chat.send(jid, {
                             'type': 'chat',
@@ -220,7 +222,7 @@ define([
 
                         MessageView.addItem(message, true, true);
                     } else {
-                        Dialog.createPrivate(jid, true);
+                        Dialog.createPrivate(jid, true, dialog_id);
                     }
 
                     dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]');
@@ -443,17 +445,21 @@ define([
 
         onConfirm: function(id) {
             var roster = ContactList.roster,
-                dialogItem = $('.presence-listener[data-id="' + id + '"]');
+                dialogItem = $('.presence-listener[data-id="' + id + '"]'),
+                $chat = $('.l-chat[data-id="' + id + '"]');
 
             // update roster
             roster[id] = {
                 'subscription': 'to',
                 'ask': null
             };
+
             ContactList.saveRoster(roster);
 
             dialogItem.find('.status').removeClass('status_request');
             dialogItem.removeClass('is-request');
+
+            $chat.removeClass('is-request');
         },
 
         onReject: function(id) {
