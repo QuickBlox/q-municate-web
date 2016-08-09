@@ -87,7 +87,10 @@ define([
 
                 scrollbar(list, self);
                 self.createDataSpinner(list);
-                $('.popup:visible .spinner_bounce').removeClass('is-hidden').addClass('is-empty');
+                
+                $('.popup:visible .spinner_bounce')
+                    .removeClass('is-hidden')
+                    .addClass('is-empty');
 
                 sessionStorage.setItem('QM.search.value', val);
                 sessionStorage.setItem('QM.search.page', 1);

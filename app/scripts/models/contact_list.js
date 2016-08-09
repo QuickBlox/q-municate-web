@@ -93,7 +93,7 @@ define([
                 contacts;
 
             isExistingRequest = true;
-            
+
             QBApiCalls.getUser({
                 full_name: val,
                 page: page
@@ -103,7 +103,12 @@ define([
                 sessionStorage.setItem('QM.search.allPages', Math.ceil(data.total_entries / data.per_page));
                 sessionStorage.setItem('QM.search.page', ++page);
 
-                contacts = self.getResults(data.items);
+                if(data.items.length) {
+                    contacts = self.getResults(data.items);
+                } else {
+                    contacts = data.items;
+                }
+
                 Helpers.log('Search results', contacts);
 
                 callback(contacts);
