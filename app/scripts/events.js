@@ -605,9 +605,11 @@ define([
                 UserView.logout();
             });
 
-            $('#deleteConfirm').on('click', function() {
+            $('.j-deleteConfirm').on('click', function() {
+                var id = $(this).parents('section').data('id');
+
+                ContactListView.sendDelete(id, true);
                 Helpers.log('delete contact');
-                ContactListView.sendDelete($(this));
             });
 
             $('#leaveConfirm').on('click', function() {
@@ -719,35 +721,35 @@ define([
 
             /* subscriptions
             ----------------------------------------------------- */
-            $('.list_contacts').on('click', 'button.send-request', function() {
+            $('.list_contacts').on('click', '.j-sendRequest', function() {
                 var jid = $(this).parents('li').data('jid');
-                ContactListView.sendSubscribe(jid);
 
+                ContactListView.sendSubscribe(jid);
                 Helpers.log('send subscribe');
             });
 
-            $workspace.on('click', '.btn_request_again', function() {
+            $workspace.on('click', '.j-requestAgain', function() {
                 var jid = $(this).parents('.l-chat').data('jid');
+
                 ContactListView.sendSubscribe(jid, true);
-
                 Helpers.log('send subscribe');
             });
 
-            $('body').on('click', '.requestAction', function() {
+            $('body').on('click', '.j-requestAction', function() {
                 var jid = $(this).parents('li').data('jid');
-                ContactListView.sendSubscribe(jid);
 
+                ContactListView.sendSubscribe(jid);
                 Helpers.log('send subscribe');
             });
 
-            $('.list').on('click', '.request-button_ok', function() {
+            $('.list').on('click', '.j-requestConfirm', function() {
                 var jid = $(this).parents('li').data('jid');
 
                 ContactListView.sendConfirm(jid, true);
                 Helpers.log('send confirm');
             });
 
-            $('.list').on('click', '.request-button_cancel', function() {
+            $('.list').on('click', '.j-requestCancel', function() {
                 var jid = $(this).parents('li').data('jid');
 
                 ContactListView.sendReject(jid, true);

@@ -33,6 +33,7 @@ define([
         Message = this.app.models.Message;
         ContactList = this.app.models.ContactList;
         User = this.app.models.User;
+        that = this;
 
         scrollbarContacts();
     }
@@ -87,7 +88,7 @@ define([
 
                 scrollbar(list, self);
                 self.createDataSpinner(list);
-                
+
                 $('.popup:visible .spinner_bounce')
                     .removeClass('is-hidden')
                     .addClass('is-empty');
@@ -179,66 +180,76 @@ define([
                 $objDom = $('.list-item[data-jid="' + jid + '"]'),
                 roster = ContactList.roster,
                 id = QB.chat.helpers.getIdFromNode(jid),
-                dialogItem = $('.dialog-item[data-id="' + id + '"]')[0],
+                $dialogItem = $('.dialog-item[data-id="' + id + '"]'),
+                dialogItem = $dialogItem[0],
                 requestItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 time = Math.floor(Date.now() / 1000),
-                message, copyDialogItem,
+                $buttonRequest,
+                copyDialogItem,
+                message,
                 self = this;
 
             if (!isChat) {
-                $objDom.after('<span class="send-request l-flexbox">Request Sent</span>');
-                $objDom.remove();
+                $buttonRequest = $objDom.find('.j-sendRequest');
+
+                $buttonRequest.after('<span class="send-request l-flexbox">Request Sent</span>');
+                $buttonRequest.remove();
             }
 
             if (notConfirmed[id] && requestItem[0]) {
                 self.sendConfirm(requestItem);
             } else {
-                QB.chat.roster.add(jid, function() {
-                    // update roster
-                    roster[id] = {
-                        'subscription': 'none',
-                        'ask': 'subscribe'
-                    };
-                    ContactList.saveRoster(roster);
-
-                    if (dialogItem && !dialog_id) {
-                        // send notification about subscribe
-                        QB.chat.send(jid, {
-                            'type': 'chat',
-                            'body': 'Contact request',
-                            'extension': {
-                                'recipient_id': id,
-                                'date_sent': time,
-                                'dialog_id': dialogItem.getAttribute('data-dialog'),
-                                'save_to_history': 1,
-                                'notification_type': '4'
-                            }
-                        });
-
-                        message = Message.create({
-                            'date_sent': time,
-                            'chat_dialog_id': dialogItem.getAttribute('data-dialog'),
-                            'sender_id': User.contact.id,
-                            'notification_type': '4'
-                        });
-
-                        MessageView.addItem(message, true, true);
-                    } else {
+                if (dialog_id) {
+                    if (!$dialogItem.length) {
                         Dialog.createPrivate(jid, true, dialog_id);
                     }
+                } else {
+                    QB.chat.roster.add(jid, function() {
+                        if ($dialogItem.length) {
+                            // send notification about subscribe
+                            QB.chat.send(jid, {
+                                'type': 'chat',
+                                'body': 'Contact request',
+                                'extension': {
+                                    'recipient_id': id,
+                                    'date_sent': time,
+                                    'dialog_id': dialogItem.getAttribute('data-dialog'),
+                                    'save_to_history': 1,
+                                    'notification_type': '4'
+                                }
+                            });
 
-                    dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]');
-                    copyDialogItem = dialogItem.clone();
-                    dialogItem.remove();
-                    $('#recentList ul').prepend(copyDialogItem);
-                    if (!$('#searchList').is(':visible')) {
-                        $('#recentList').removeClass('is-hidden');
-                        isSectionEmpty($('#recentList ul'));
-                    }
-                });
+                            message = Message.create({
+                                'date_sent': time,
+                                'chat_dialog_id': dialogItem.getAttribute('data-dialog'),
+                                'sender_id': User.contact.id,
+                                'notification_type': '4'
+                            });
+
+                            MessageView.addItem(message, true, true);
+                        } else {
+                            Dialog.createPrivate(jid, true);
+                        }
+                    });
+                }
             }
 
+            // update roster
+            roster[id] = {
+                'subscription': 'none',
+                'ask': 'subscribe'
+            };
+            ContactList.saveRoster(roster);
+
+            dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]');
+            copyDialogItem = dialogItem.clone();
+            dialogItem.remove();
+            $('#recentList ul').prepend(copyDialogItem);
+            if (!$('#searchList').is(':visible')) {
+                $('#recentList').removeClass('is-hidden');
+                isSectionEmpty($('#recentList ul'));
+            }
         },
 
         sendConfirm: function(jid, isClick) {
@@ -387,32 +398,32 @@ define([
 
             // send notification about reject
             if (isClick) {
-                QB.chat.send(jid, {
-                    'type': 'chat',
-                    'body': 'Contact request',
-                    'extension': {
-                        'recipient_id': id,
-                        'date_sent': time,
-                        'dialog_id': dialog_id,
-                        'save_to_history': 1,
-                        'notification_type': '7'
-                    }
+                QB.chat.roster.remove(jid, function() {
+                    QB.chat.send(jid, {
+                        'type': 'chat',
+                        'body': 'Contact request',
+                        'extension': {
+                            'recipient_id': id,
+                            'date_sent': time,
+                            'dialog_id': dialog_id,
+                            'save_to_history': 1,
+                            'notification_type': '7'
+                        }
+                    });
                 });
             }
 
-            QB.chat.roster.remove(jid, function() {
-                li.remove();
-                isSectionEmpty(list);
+            li.remove();
+            isSectionEmpty(list);
 
-                // delete chat section
-                if (chat.is(':visible')) {
-                    $('#capBox').removeClass('is-hidden');
-                }
-                if (chat.length > 0) {
-                    chat.remove();
-                }
-                delete dialogs[dialog_id];
-            });
+            // delete chat section
+            if (chat.is(':visible')) {
+                $('#capBox').removeClass('is-hidden');
+            }
+            if (chat.length > 0) {
+                chat.remove();
+            }
+            delete dialogs[dialog_id];
 
         },
 
@@ -422,28 +433,36 @@ define([
             var html,
                 contacts = ContactList.contacts,
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-                dialogItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
+                $dialogItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
+                $isCurrentItem = $('.list-item[data-id="' + id + '"]'),
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
-            if (dialogItem.length > 0) return true;
-            // update notConfirmed people list
-            notConfirmed[id] = true;
-            ContactList.saveNotConfirmed(notConfirmed);
+            if ($dialogItem.length) {
+                return true;
+            }
 
-            ContactList.add([id], null, function() {
-                html = '<li class="list-item" data-jid="' + jid + '">';
-                html += '<a class="contact l-flexbox" href="#">';
-                html += '<div class="l-flexbox_inline">';
-                html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + (typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '') + ')" data-id="' + id + '"></div>';
-                html += '<span class="name profileUserName" data-id="' + id + '">' + (typeof contacts[id] !== 'undefined' ? contacts[id].full_name : '') + '</span>';
-                html += '</div><div class="request-controls l-flexbox">';
-                html += '<button class="request-button request-button_cancel">&#10005;</button>';
-                html += '<button class="request-button request-button_ok">&#10003;</button>';
-                html += '</div></a></li>';
+            if ($isCurrentItem.length) {
+                that.onConfirm(id);
+            } else {
+                // update notConfirmed people list
+                notConfirmed[id] = true;
+                ContactList.saveNotConfirmed(notConfirmed);
 
-                $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
-                $('#emptyList').addClass('is-hidden');
-            }, 'subscribe');
+                ContactList.add([id], null, function() {
+                    html = '<li class="list-item" data-jid="' + jid + '">';
+                    html += '<a class="contact l-flexbox" href="#">';
+                    html += '<div class="l-flexbox_inline">';
+                    html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + (typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '') + ')" data-id="' + id + '"></div>';
+                    html += '<span class="name profileUserName" data-id="' + id + '">' + (typeof contacts[id] !== 'undefined' ? contacts[id].full_name : '') + '</span>';
+                    html += '</div><div class="request-controls l-flexbox">';
+                    html += '<button class="request-button request-button_cancel j-requestCancel">&#10005;</button>';
+                    html += '<button class="request-button request-button_ok j-requestConfirm">&#10003;</button>';
+                    html += '</div></a></li>';
+
+                    $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
+                    $('#emptyList').addClass('is-hidden');
+                }, 'subscribe');
+            }
         },
 
         onConfirm: function(id) {
@@ -589,7 +608,7 @@ define([
                 item += '<span class="name profileUserName" data-id="' + contact.id + '">' + contact.full_name + '</span>';
                 item += '</div>';
                 if (!rosterItem || (rosterItem && rosterItem.subscription === 'none' && !rosterItem.ask && !notConfirmed[contact.id])) {
-                    item += '<button class="send-request"><img class="icon-normal" src="images/icon-request.svg" alt="request">';
+                    item += '<button class="send-request j-sendRequest"><img class="icon-normal" src="images/icon-request.svg" alt="request">';
                     item += '<img class="icon-active" src="images/icon-request_active.svg" alt="request"></button>';
                 }
                 if (rosterItem && rosterItem.subscription === 'none' && rosterItem.ask) {

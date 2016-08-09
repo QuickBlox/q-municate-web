@@ -155,7 +155,7 @@ define([
 
                     case '5':
                         html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
-                        html += '<span class="message-avatar request-button_ok">&#10003;</span>';
+                        html += '<span class="message-avatar request-button_ok j-requestConfirm">&#10003;</span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
@@ -172,7 +172,7 @@ define([
 
                     case '6':
                         html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
-                        html += '<span class="message-avatar request-button_cancel">&#10005;</span>';
+                        html += '<span class="message-avatar request-button_cancel j-requestCancel">&#10005;</span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
@@ -180,7 +180,7 @@ define([
                         if (message.sender_id === User.contact.id) {
                             html += '<h4 class="message-author">You have rejected a request';
                         } else {
-                            html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
+                            html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again j-requestAgain"><img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
                         }
 
                         html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
@@ -197,7 +197,9 @@ define([
                         if (message.sender_id === User.contact.id) {
                             html += '<h4 class="message-author">You have deleted ' + recipient.full_name + ' from your contact list';
                         } else {
-                            html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again btn_request_again_delete"><img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
+                            html += '<h4 class="message-author">You have been deleted from the contact list ';
+                            html += '<button class="btn btn_request_again btn_request_again_delete j-requestAgain">';
+                            html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
                         }
 
                         html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
