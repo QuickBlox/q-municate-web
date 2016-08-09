@@ -93,7 +93,7 @@ define([
                 contacts;
 
             isExistingRequest = true;
-            
+
             QBApiCalls.getUser({
                 full_name: val,
                 page: page
@@ -108,7 +108,7 @@ define([
                 } else {
                     contacts = data.items;
                 }
-                
+
                 Helpers.log('Search results', contacts);
 
                 callback(contacts);

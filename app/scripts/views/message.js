@@ -359,7 +359,7 @@ define([
                     var mapLink = Location.getMapUrl(geolocation),
                         imgUrl = Location.getStaticMapUrl(geolocation);
 
-                    QMHtml.message.setMap({
+                    QMHtml.Messages.setMap({
                         id: message.id,
                         mapLink: mapLink,
                         imgUrl: imgUrl
@@ -505,6 +505,8 @@ define([
                 contacts = ContactList.contacts,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
+                recipient_id = message.extension && message.extension.recipient_id || null,
+                recipient_jid = recipient_id ? QB.chat.helpers.getUserJid(recipient_id, QMCONFIG.qbAccount.appId) : null,
                 room_jid = roomJidVerification(dialog_id),
                 room_name = message.extension && message.extension.room_name,
                 room_photo = message.extension && message.extension.room_photo,
@@ -663,6 +665,15 @@ define([
 
             if (isHidden && sendedToMe && isSoundOn && isMainTab) {
                 audioSignal.play();
+            }
+
+            if (msg.sender_id === User.contact.id) {
+                syncContactRequestInfo({
+                    notification_type: notification_type,
+                    recipient_jid: recipient_jid,
+                    dialog_id: dialog_id,
+                    isHiddenChat : isHiddenChat
+                });
             }
 
         },
@@ -964,6 +975,43 @@ define([
         }
 
         return geocoords;
+    }
+
+    function syncContactRequestInfo(params) {
+        var ContactListView = self.app.views.ContactList,
+            notification_type = params.notification_type,
+            dialog_id = params.dialog_id,
+            recipient_jid = params.recipient_jid,
+            recipient_id = QB.chat.helpers.getIdFromNode(recipient_jid);
+
+        switch (notification_type) {
+            case '4':
+                ContactListView.sendSubscribe(recipient_jid, null, dialog_id);
+
+                Helpers.log('send subscribe');
+                break;
+
+            case '5':
+                ContactListView.sendConfirm(recipient_jid);
+
+                Helpers.log('send confirm');
+                break;
+
+            case '6':
+                ContactListView.sendReject(recipient_jid);
+
+                Helpers.log('send reject');
+                break;
+
+            case '7':
+                ContactListView.sendDelete(recipient_id);
+
+                Helpers.log('delete contact');
+                break;
+
+            default:
+                break;
+        }
     }
 
     return MessageView;
