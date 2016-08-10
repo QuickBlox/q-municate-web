@@ -519,6 +519,7 @@ define([
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden'),
+                isExistent = dialogItem.length ? true : false,
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 roster = ContactList.roster,
                 audioSignal = $('#newMessageSignal')[0],
@@ -552,7 +553,7 @@ define([
                 dialogs[dialog_id].messages = msgArr;
             }
 
-            if (otherChat || (!otherChat && !isBottom && isNotMyUser)) {
+            if (otherChat || (!otherChat && !isBottom && isNotMyUser && isExistent)) {
                 unread++;
                 dialogItem.find('.unread').text(unread);
                 DialogView.getUnreadCounter(dialog_id);
@@ -660,12 +661,16 @@ define([
                 createAndShowNotification(msg, isHiddenChat);
             }
 
+            if (notification_type === '7') {
+                self.app.views.ContactList.onReject(id);
+            }
+
             var isHidden = (isHiddenChat || !window.isQMAppActive) ? true : false,
                 sendedToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
                 isSoundOn = Settings.get('sounds_notify'),
                 isMainTab = SyncTabs.get();
 
-            if (isHidden && sendedToMe && isSoundOn && isMainTab) {
+            if (isHidden && sendedToMe && isSoundOn && isMainTab && isExistent) {
                 audioSignal.play();
             }
 
@@ -929,9 +934,10 @@ define([
     function createAndShowNotification(msg, isHiddenChat) {
         var cancelNotify = !Settings.get('messages_notify'),
             isNotMainTab = !SyncTabs.get(),
-            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false;
+            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false,
+            isExistent = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + msg.sender_id + '"]').length;
 
-        if (cancelNotify || isNotMainTab || isCurrentUser) {
+        if (cancelNotify || isNotMainTab || isCurrentUser || !isExistent) {
             return false;
         }
 

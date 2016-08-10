@@ -943,7 +943,8 @@ define([
 
             $('.j-home').on('click', function() {
                 $('.j-capBox').removeClass('is-hidden')
-                            .siblings().removeClass('is-active');
+                    .siblings().removeClass('is-active');
+                $('.l-chat').addClass('is-hidden');
                 $('.is-selected').removeClass('is-selected');
 
                 return false;
