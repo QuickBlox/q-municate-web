@@ -606,7 +606,7 @@ define([
             });
 
             $('.j-deleteConfirm').on('click', function() {
-                var id = $(this).parents('section').data('id');
+                var id = $(this).parents('.j-popupDelete').data('id');
 
                 ContactListView.sendDelete(id, true);
                 Helpers.log('delete contact');
@@ -722,35 +722,35 @@ define([
             /* subscriptions
             ----------------------------------------------------- */
             $('.list_contacts').on('click', '.j-sendRequest', function() {
-                var jid = $(this).parents('li').data('jid');
+                var jid = $(this).parents('.j-listItem').data('jid');
 
                 ContactListView.sendSubscribe(jid);
                 Helpers.log('send subscribe');
             });
 
             $workspace.on('click', '.j-requestAgain', function() {
-                var jid = $(this).parents('.l-chat').data('jid');
+                var jid = $(this).parents('.j-chatItem').data('jid');
 
                 ContactListView.sendSubscribe(jid, true);
                 Helpers.log('send subscribe');
             });
 
             $('body').on('click', '.j-requestAction', function() {
-                var jid = $(this).parents('li').data('jid');
+                var jid = $(this).parents('.j-listItem').data('jid');
 
                 ContactListView.sendSubscribe(jid);
                 Helpers.log('send subscribe');
             });
 
             $('.list').on('click', '.j-requestConfirm', function() {
-                var jid = $(this).parents('li').data('jid');
+                var jid = $(this).parents('.j-incommingContactRequest').data('jid');
 
                 ContactListView.sendConfirm(jid, true);
                 Helpers.log('send confirm');
             });
 
             $('.list').on('click', '.j-requestCancel', function() {
-                var jid = $(this).parents('li').data('jid');
+                var jid = $(this).parents('.j-incommingContactRequest').data('jid');
 
                 ContactListView.sendReject(jid, true);
                 Helpers.log('send reject');

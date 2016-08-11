@@ -126,7 +126,7 @@ define([
                 htmlStr = '';
 
             if (!roster || (roster.subscription === 'none' && !roster.ask)) {
-                htmlStr = '<li class="list-item" data-jid="<%=jid%>">' +
+                htmlStr = '<li class="list-item j-listItem" data-jid="<%=jid%>">' +
                     '<a class="list-actions-action requestAction j-requestAction" data-id="<%=id%>" href="#">Send request</a></li>';
             } else if (roster.ask === 'subscribe' && !roster.status) {
                 htmlStr = '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>' +

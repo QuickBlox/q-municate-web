@@ -180,7 +180,10 @@ define([
                         if (message.sender_id === User.contact.id) {
                             html += '<h4 class="message-author">You have rejected a request';
                         } else {
-                            html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again j-requestAgain"><img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
+                            html += '<h4 class="message-author">Your request has been rejected ';
+                            html += '<button class="btn btn_request_again j-requestAgain">';
+                            html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again';
+                            html += '</button></h4>';
                         }
 
                         html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
@@ -500,6 +503,7 @@ define([
         },
 
         onMessage: function(id, message) {
+            console.info(message);
             if (message.type === 'error') return true;
             var DialogView = self.app.views.Dialog,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
@@ -507,7 +511,7 @@ define([
                 contacts = ContactList.contacts,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
-                recipient_id = message.extension && message.extension.recipient_id || null,
+                recipient_id = message.recipient_id || message.extension && message.extension.recipient_id || null,
                 recipient_jid = recipient_id ? QB.chat.helpers.getUserJid(recipient_id, QMCONFIG.qbAccount.appId) : null,
                 room_jid = roomJidVerification(dialog_id),
                 room_name = message.extension && message.extension.room_name,

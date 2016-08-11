@@ -210,7 +210,6 @@ define([
                             // send notification about subscribe
                             sendContactRequest({
                                 jid: jid,
-                                recipient_id: id,
                                 date_sent: time,
                                 dialog_id: dialogItem.getAttribute('data-dialog'),
                                 save_to_history: 1,
@@ -287,7 +286,6 @@ define([
                     // send notification about confirm
                     sendContactRequest({
                         jid: jid,
-                        recipient_id: id,
                         date_sent: time,
                         dialog_id: hiddenDialogs[id],
                         save_to_history: 1,
@@ -365,7 +363,6 @@ define([
                     // send notification about reject
                     sendContactRequest({
                         jid: jid,
-                        recipient_id: id,
                         date_sent: time,
                         dialog_id: hiddenDialogs[id],
                         save_to_history: 1,
@@ -396,7 +393,6 @@ define([
                 QB.chat.roster.remove(jid, function() {
                     sendContactRequest({
                         jid: jid,
-                        recipient_id: id,
                         date_sent: time,
                         dialog_id: dialog_id,
                         save_to_history: 1,
@@ -440,7 +436,7 @@ define([
             ContactList.saveNotConfirmed(notConfirmed);
 
             ContactList.add([id], null, function() {
-                html = '<li class="list-item" data-jid="' + jid + '">';
+                html = '<li class="list-item j-incommingContactRequest" data-jid="' + jid + '">';
                 html += '<a class="contact l-flexbox" href="#">';
                 html += '<div class="l-flexbox_inline">';
                 html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + (typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '') + ')" data-id="' + id + '"></div>';
@@ -540,7 +536,6 @@ define([
             'type': 'chat',
             'body': 'Contact request',
             'extension': {
-                'recipient_id': params.recipient_id,
                 'date_sent': params.date_sent,
                 'dialog_id': params.dialog_id,
                 'save_to_history': params.save_to_history,
@@ -609,7 +604,7 @@ define([
             results.forEach(function(contact) {
                 var rosterItem = roster[contact.id];
 
-                item = '<li class="list-item" data-jid="' + contact.user_jid + '">';
+                item = '<li class="list-item j-listItem" data-jid="' + contact.user_jid + '">';
                 item += '<a class="contact l-flexbox" href="#">';
                 item += '<div class="l-flexbox_inline">';
                 item += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + contact.avatar_url + ')" data-id="' + contact.id + '"></div>';

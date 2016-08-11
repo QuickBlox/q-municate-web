@@ -406,10 +406,10 @@ define([
 
             if ($chat.length === 0) {
                 if (dialog.type === 3) {
-                    html = '<section class="l-workspace l-chat l-chat_private presence-listener" data-dialog="' + dialog_id + '" data-id="' + user_id + '" data-jid="' + jid + '">';
+                    html = '<section class="l-workspace l-chat l-chat_private presence-listener j-chatItem" data-dialog="' + dialog_id + '" data-id="' + user_id + '" data-jid="' + jid + '">';
                     html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
                 } else {
-                    html = '<section class="l-workspace l-chat l-chat_group is-group" data-dialog="' + dialog_id + '" data-jid="' + jid + '">';
+                    html = '<section class="l-workspace l-chat l-chat_group is-group j-chatItem" data-dialog="' + dialog_id + '" data-jid="' + jid + '">';
                     html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">';
                 }
 

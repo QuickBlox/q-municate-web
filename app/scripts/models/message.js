@@ -43,7 +43,7 @@ define([
                 message;
 
             message = {
-                id: (params.extension && params.extension.message_id) || params._id || null,
+                id: (params.extension && params.extension.message_id) || params.id || null,
                 dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
                 body: params.body || params.message || null,
                 notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
@@ -52,7 +52,7 @@ define([
                 attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) ||
                     (params.attachments && params.attachments[0]) || params.attachment || null,
                 sender_id: params.sender_id || null,
-                recipient_id: params.recipient_id || (params.extension && params.extension.message_id) || null,
+                recipient_id: params.recipient_id || (params.extension && params.extension.recipient_id) || null,
                 current_occupant_ids: (params.extension && params.extension.current_occupant_ids) || params.current_occupant_ids || null,
                 added_occupant_ids: (params.extension && params.extension.added_occupant_ids) || params.added_occupant_ids || null,
                 deleted_occupant_ids: (params.extension && params.extension.deleted_occupant_ids) || params.deleted_occupant_ids || null,
