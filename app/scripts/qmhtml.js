@@ -171,7 +171,7 @@ define([
 
     };
 
-    QMHtml.message = {
+    QMHtml.Messages = {
 
         setMap: function(params) {
             var htmlTemplate = _.template('<div class="popover_map"><a class="open_map" href="<%=mapLink%>" target="_blank">' +
