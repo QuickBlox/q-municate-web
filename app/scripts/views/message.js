@@ -503,7 +503,6 @@ define([
         },
 
         onMessage: function(id, message) {
-            console.info(message);
             if (message.type === 'error') return true;
             var DialogView = self.app.views.Dialog,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
