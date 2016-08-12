@@ -605,9 +605,11 @@ define([
                 UserView.logout();
             });
 
-            $('#deleteConfirm').on('click', function() {
+            $('.j-deleteConfirm').on('click', function() {
+                var id = $(this).parents('.j-popupDelete').data('id');
+
+                ContactListView.sendDelete(id, true);
                 Helpers.log('delete contact');
-                ContactListView.sendDelete($(this));
             });
 
             $('#leaveConfirm').on('click', function() {
@@ -719,30 +721,39 @@ define([
 
             /* subscriptions
             ----------------------------------------------------- */
-            $('.list_contacts').on('click', 'button.send-request', function() {
+            $('.list_contacts').on('click', '.j-sendRequest', function() {
+                var jid = $(this).parents('.j-listItem').data('jid');
+
+                ContactListView.sendSubscribe(jid);
                 Helpers.log('send subscribe');
-                ContactListView.sendSubscribe($(this));
             });
 
-            $workspace.on('click', '.btn_request_again', function() {
+            $workspace.on('click', '.j-requestAgain', function() {
+                var jid = $(this).parents('.j-chatItem').data('jid');
+
+                ContactListView.sendSubscribe(jid, true);
                 Helpers.log('send subscribe');
-                ContactListView.sendSubscribe($(this), true);
             });
 
-            $('body').on('click', '.requestAction', function(event) {
-                event.preventDefault();
+            $('body').on('click', '.j-requestAction', function() {
+                var jid = $(this).parents('.j-listItem').data('jid');
+
+                ContactListView.sendSubscribe(jid);
                 Helpers.log('send subscribe');
-                ContactListView.sendSubscribe($(this));
             });
 
-            $('.list').on('click', '.request-button_ok', function() {
+            $('.list').on('click', '.j-requestConfirm', function() {
+                var jid = $(this).parents('.j-incommingContactRequest').data('jid');
+
+                ContactListView.sendConfirm(jid, true);
                 Helpers.log('send confirm');
-                ContactListView.sendConfirm($(this));
             });
 
-            $('.list').on('click', '.request-button_cancel', function() {
+            $('.list').on('click', '.j-requestCancel', function() {
+                var jid = $(this).parents('.j-incommingContactRequest').data('jid');
+
+                ContactListView.sendReject(jid, true);
                 Helpers.log('send reject');
-                ContactListView.sendReject($(this));
             });
 
             /* dialogs
@@ -932,7 +943,8 @@ define([
 
             $('.j-home').on('click', function() {
                 $('.j-capBox').removeClass('is-hidden')
-                            .siblings().removeClass('is-active');
+                    .siblings().removeClass('is-active');
+                $('.l-chat').addClass('is-hidden');
                 $('.is-selected').removeClass('is-selected');
 
                 return false;

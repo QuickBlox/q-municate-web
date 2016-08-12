@@ -155,7 +155,7 @@ define([
 
                     case '5':
                         html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
-                        html += '<span class="message-avatar request-button_ok">&#10003;</span>';
+                        html += '<span class="message-avatar request-button_ok j-requestConfirm">&#10003;</span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
@@ -172,7 +172,7 @@ define([
 
                     case '6':
                         html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
-                        html += '<span class="message-avatar request-button_cancel">&#10005;</span>';
+                        html += '<span class="message-avatar request-button_cancel j-requestCancel">&#10005;</span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
@@ -180,7 +180,10 @@ define([
                         if (message.sender_id === User.contact.id) {
                             html += '<h4 class="message-author">You have rejected a request';
                         } else {
-                            html += '<h4 class="message-author">Your request has been rejected <button class="btn btn_request_again"><img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
+                            html += '<h4 class="message-author">Your request has been rejected ';
+                            html += '<button class="btn btn_request_again j-requestAgain">';
+                            html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again';
+                            html += '</button></h4>';
                         }
 
                         html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
@@ -197,7 +200,9 @@ define([
                         if (message.sender_id === User.contact.id) {
                             html += '<h4 class="message-author">You have deleted ' + recipient.full_name + ' from your contact list';
                         } else {
-                            html += '<h4 class="message-author">You have been deleted from the contact list <button class="btn btn_request_again btn_request_again_delete"><img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
+                            html += '<h4 class="message-author">You have been deleted from the contact list ';
+                            html += '<button class="btn btn_request_again btn_request_again_delete j-requestAgain">';
+                            html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
                         }
 
                         html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
@@ -505,7 +510,7 @@ define([
                 contacts = ContactList.contacts,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
-                recipient_id = message.extension && message.extension.recipient_id || null,
+                recipient_id = message.recipient_id || message.extension && message.extension.recipient_id || null,
                 recipient_jid = recipient_id ? QB.chat.helpers.getUserJid(recipient_id, QMCONFIG.qbAccount.appId) : null,
                 room_jid = roomJidVerification(dialog_id),
                 room_name = message.extension && message.extension.room_name,
@@ -517,6 +522,7 @@ define([
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden'),
+                isExistent = dialogItem.length ? true : false,
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 roster = ContactList.roster,
                 audioSignal = $('#newMessageSignal')[0],
@@ -550,7 +556,7 @@ define([
                 dialogs[dialog_id].messages = msgArr;
             }
 
-            if (otherChat || (!otherChat && !isBottom && isNotMyUser)) {
+            if (otherChat || (!otherChat && !isBottom && isNotMyUser && isExistent)) {
                 unread++;
                 dialogItem.find('.unread').text(unread);
                 DialogView.getUnreadCounter(dialog_id);
@@ -658,12 +664,16 @@ define([
                 createAndShowNotification(msg, isHiddenChat);
             }
 
+            if (notification_type === '7') {
+                self.app.views.ContactList.onReject(id);
+            }
+
             var isHidden = (isHiddenChat || !window.isQMAppActive) ? true : false,
                 sendedToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
                 isSoundOn = Settings.get('sounds_notify'),
                 isMainTab = SyncTabs.get();
 
-            if (isHidden && sendedToMe && isSoundOn && isMainTab) {
+            if (isHidden && sendedToMe && isSoundOn && isMainTab && isExistent) {
                 audioSignal.play();
             }
 
@@ -927,9 +937,10 @@ define([
     function createAndShowNotification(msg, isHiddenChat) {
         var cancelNotify = !Settings.get('messages_notify'),
             isNotMainTab = !SyncTabs.get(),
-            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false;
+            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false,
+            isExistent = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + msg.sender_id + '"]').length;
 
-        if (cancelNotify || isNotMainTab || isCurrentUser) {
+        if (cancelNotify || isNotMainTab || isCurrentUser || !isExistent) {
             return false;
         }
 
