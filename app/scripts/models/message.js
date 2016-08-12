@@ -43,7 +43,7 @@ define([
                 message;
 
             message = {
-                id: (params.extension && params.extension.message_id) || params.id || null,
+                id: (params.extension && params.extension.message_id) || params._id || params.id || null,
                 dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
                 body: params.body || params.message || null,
                 notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
