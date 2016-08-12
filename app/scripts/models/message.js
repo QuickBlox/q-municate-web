@@ -106,20 +106,24 @@ define([
         update: function(message_ids, dialog_id, user_id) {
             var QBApiCalls = this.app.service,
                 ContactList = this.app.models.ContactList,
-                dialog = ContactList.dialogs[dialog_id],
-                unreadMessages = message_ids.split(','),
-                unreadMessage;
+                dialog = ContactList.dialogs[dialog_id];
 
-            for (var i = 0, len = unreadMessages.length; i < len; i++) {
-                unreadMessage = unreadMessages[i];
-                QB.chat.sendReadStatus({
-                    messageId: unreadMessage,
-                    userId: user_id,
-                    dialogId: dialog_id
-                });
+            if (message_ids !== null) {
+                var unreadMessages = message_ids.split(','),
+                    unreadMessage;
+
+                for (var i = 0, len = unreadMessages.length; i < len; i++) {
+                    unreadMessage = unreadMessages[i];
+                    
+                    QB.chat.sendReadStatus({
+                        messageId: unreadMessage,
+                        userId: user_id,
+                        dialogId: dialog_id
+                    });
+                }
+
+                dialog.messages = [];
             }
-
-            dialog.messages = [];
 
             QBApiCalls.updateMessage(message_ids, {
                 chat_dialog_id: dialog_id,
