@@ -1046,6 +1046,7 @@ define([
     }
 
     function closePopup() {
+        $('.j-popupDelete.is-overlay').removeData('id');
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();
         if ($('.attach-video video')[0]) $('.attach-video video')[0].pause();
