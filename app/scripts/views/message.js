@@ -505,6 +505,7 @@ define([
         onMessage: function(id, message) {
             if (message.type === 'error') return true;
             var DialogView = self.app.views.Dialog,
+                ContactListView = self.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
                 dialogs = ContactList.dialogs,
                 contacts = ContactList.contacts,
@@ -662,6 +663,10 @@ define([
                 });
             } else {
                 createAndShowNotification(msg, isHiddenChat);
+            }
+
+            if (notification_type === '5' && isNotMyUser) {
+                ContactListView.onConfirm(id);
             }
 
             if (notification_type === '7') {
