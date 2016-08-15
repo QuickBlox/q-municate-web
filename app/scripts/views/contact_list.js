@@ -242,19 +242,19 @@ define([
             copyDialogItem = dialogItem.clone();
             dialogItem.remove();
             $('#recentList ul').prepend(copyDialogItem);
-            if (!$('#searchList').is(':visible')) {
+            if ($('#searchList').is(':hidden')) {
                 $('#recentList').removeClass('is-hidden');
-                isSectionEmpty($('#recentList ul'));
+                isSectionEmpty($('.j-recentList'));
             }
         },
 
         sendConfirm: function(jid, isClick) {
             var DialogView = this.app.views.Dialog,
                 MessageView = this.app.views.Message,
-                $objDom = $('.list-item[data-jid="' + jid + '"]'),
+                $objDom = $('.j-incommingContactRequest[data-jid="' + jid + '"]'),
                 id = QB.chat.helpers.getIdFromNode(jid),
                 $chat = $('.l-chat[data-id="' + id + '"]'),
-                list = $objDom.parents('ul'),
+                list = $objDom.parents('ul.j-requestsList'),
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
@@ -324,9 +324,9 @@ define([
             copyDialogItem = dialogItem.clone();
             dialogItem.remove();
             $('#recentList ul').prepend(copyDialogItem);
-            if (!$('#searchList').is(':visible')) {
+            if ($('#searchList').is(':hidden')) {
                 $('#recentList').removeClass('is-hidden');
-                isSectionEmpty($('#recentList ul'));
+                isSectionEmpty($('.j-recentList'));
             }
 
             dialogItem = $('.presence-listener[data-id="' + id + '"]');
@@ -335,8 +335,8 @@ define([
 
         sendReject: function(jid, isClick) {
             var id = QB.chat.helpers.getIdFromNode(jid),
-                $objDom = $('.list-item[data-jid="' + jid + '"]'),
-                list = $objDom.parents('ul'),
+                $objDom = $('.j-incommingContactRequest[data-jid="' + jid + '"]'),
+                list = $objDom.parents('ul.j-requestsList'),
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
@@ -379,7 +379,7 @@ define([
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 li = $('.dialog-item[data-id="' + id + '"]'),
                 $chat = $('.l-chat[data-id="' + id + '"]'),
-                list = li.parents('ul'),
+                list = li.parents('ul.j-friendsList'),
                 dialog_id = li.data('dialog'),
                 roster = ContactList.roster,
                 time = Math.floor(Date.now() / 1000);
@@ -422,8 +422,10 @@ define([
             var html,
                 contacts = ContactList.contacts,
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+                roster = ContactList.roster,
                 $dialogItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
                 $isCurrentItem = $('#recentList .list-item[data-id="' + id + '"]'),
+                recentList = $isCurrentItem.parents('ul.j-recentList'),
                 dialog_id = $isCurrentItem.data('dialog'),
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
@@ -452,6 +454,7 @@ define([
 
             if ($isCurrentItem.length) {
                 $isCurrentItem.remove();
+                isSectionEmpty(recentList);
             }
         },
 
@@ -630,12 +633,12 @@ define([
     }
 
     function isSectionEmpty(list) {
-        if (list.contents().length === 0) {
+        if (list.find('li.list-item').length === 0) {
             list.parent().addClass('is-hidden');
         }
 
-        if ($('#historyList ul').contents().length === 0) {
-            $('#historyList ul').parent().addClass('is-hidden');
+        if ($('.j-historyList').find('li.list-item').length === 0) {
+            $('.j-historyList').parent().addClass('is-hidden');
         }
 
         if ($('#requestsList').is('.is-hidden') &&
