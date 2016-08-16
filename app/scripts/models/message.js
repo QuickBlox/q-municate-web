@@ -29,7 +29,7 @@ define([
             QBApiCalls.listMessages({
                 chat_dialog_id: dialog_id,
                 sort_desc: 'date_sent',
-                limit: 50,
+                limit: 20,
                 skip: count || 0
             }, function(messages) {
                 if (isAjaxDownloading) DialogView.removeDataSpinner();
@@ -114,7 +114,7 @@ define([
 
                 for (var i = 0, len = unreadMessages.length; i < len; i++) {
                     unreadMessage = unreadMessages[i];
-                    
+
                     QB.chat.sendReadStatus({
                         messageId: unreadMessage,
                         userId: user_id,

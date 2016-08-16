@@ -57,24 +57,30 @@ define([
         },
 
         checkSession: function(callback) {
-            QB.getSession(function(err, res) {
-                if (((new Date()).toISOString() > Session.expirationTime) || err) {
-                    // recovery session
-                    if (Session.authParams.provider === 'facebook') {
-                        UserView.getFBStatus(function(token) {
-                            Session.authParams.keys.token = token;
-                            self.createSession(Session.authParams, callback, Session._remember);
-                        });
-                    } else if (Session.authParams.provider === 'twitter_digits') {
-                        self.getTwitterDigits(callback);
-                    } else {
-                        self.createSession(Session.decrypt(Session.authParams), callback, Session._remember);
-                        Session.encrypt(Session.authParams);
-                    }
+            if ((new Date()).toISOString() > Session.expirationTime) {
+                // recovery session
+                if (Session.authParams.provider === 'facebook') {
+                    UserView.getFBStatus(function(token) {
+                        Session.authParams.keys.token = token;
+
+                        self.createSession(Session.authParams, function(session) {
+                            callback(session);
+                        }, Session._remember);
+                    });
+                } else if (Session.authParams.provider === 'twitter_digits') {
+                    self.getTwitterDigits(function(session) {
+                        callback(session);
+                    });
                 } else {
-                    callback(res);
+                    self.createSession(Session.decrypt(Session.authParams), function(session) {
+                        callback(session);
+                    }, Session._remember);
+
+                    Session.encrypt(Session.authParams);
                 }
-            });
+            } else {
+                callback();
+            }
         },
 
         createSession: function(params, callback, isRemember) {
