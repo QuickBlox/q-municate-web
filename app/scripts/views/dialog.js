@@ -389,6 +389,7 @@ define([
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
                 unreadCount = Number(objDom.find('.unread').text()),
+                isBottom = Helpers.isBeginOfChat(),
                 self = this,
                 html,
                 jid,
@@ -481,6 +482,10 @@ define([
                 self.createDataSpinner(true);
                 self.showChatWithNewMessages(dialog_id, unreadCount);
 
+                if (!isBottom) {
+                    $('.j-toBottom').show();
+                }
+
             } else {
 
                 $chat.removeClass('is-hidden')
@@ -514,11 +519,11 @@ define([
         },
 
         messageScrollbar: function() {
-            var objDom = $('.l-chat:visible .scrollbar_message'),
-                height = objDom[0].scrollHeight,
+            var $objDom = $('.l-chat:visible .scrollbar_message'),
+                height = $objDom[0].scrollHeight,
                 self = this;
 
-            objDom.mCustomScrollbar({
+            $objDom.mCustomScrollbar({
                 theme: 'minimal-dark',
                 scrollInertia: 'auto',
                 mouseWheel: {
@@ -528,11 +533,10 @@ define([
                 setTop: height + 'px',
                 callbacks: {
                     onTotalScrollBack: function() {
-                        console.info(objDom);
-                        console.info(self);
-                        ajaxDownloading(objDom, self);
+                        ajaxDownloading($objDom, self);
                     },
                     onTotalScroll: function() {
+
                         var isBottom = Helpers.isBeginOfChat(),
                             $currentDialog = $('.dialog-item.is-selected'),
                             dialogId = $currentDialog.data('dialog');
@@ -645,8 +649,8 @@ define([
 
             if (unreadCount < 20) {
                 lastReaded = unreadCount;
-            } else if (19 > unreadCount < 100) {
-                lastReaded = unreadCount;
+            } else if (unreadCount > 19 && unreadCount < 100) {
+                lastReaded = unreadCount - 1;
                 count = unreadCount + 1;
             } else {
                 lastReaded = 99;
@@ -668,28 +672,31 @@ define([
 
                     if (unreadCount) {
                         switch (i) {
+
                             case (lastReaded - 1):
                                 message.stack = false;
                                 break;
-                            case lastReaded:
-                                var $chatContainer = $('.l-chat[data-dialog="' + dialogId + '"]').find('.l-chat-content .mCSB_container')
-                                    $newMessages = $('<div class="new_messages j-newMessages">' +
-                                        '<span class="newMessages">New messages</span></div>');
 
-                                $chatContainer.prepend($newMessages);
+                            case lastReaded:
+                                setLabelForNewMessages(dialogId);
                                 break;
+
                             default:
                                 break;
                         }
                     }
 
-                    MessageView.addItem(message, null, null, message.recipient_id, unreadCount);
-
-                    if (i === (len - 1)) {
-                        self.removeDataSpinner();
-                    }
+                    MessageView.addItem(message, null, null, message.recipient_id);
 
                     self.messageScrollbar();
+                    setScrollToNewMessages();
+
+                    if (i === (len - 1)) {
+                        if (len === unreadCount) {
+                            setLabelForNewMessages(dialogId);
+                        }
+                        setTimeout(self.removeDataSpinner(), 250);
+                    }
                 }
             }, count);
 
@@ -790,6 +797,20 @@ define([
             $('#historyList').is('.is-hidden')) {
 
             $('#emptyList').removeClass('is-hidden');
+        }
+    }
+
+    function setLabelForNewMessages(dialogId) {
+        var $chatContainer = $('.l-chat[data-dialog="' + dialogId + '"]').find('.l-chat-content .mCSB_container'),
+            $newMessages = $('<div class="new_messages j-newMessages">' +
+                '<span class="newMessages">New messages</span></div>');
+
+        $chatContainer.prepend($newMessages);
+    }
+
+    function setScrollToNewMessages() {
+        if ($('.j-newMessages').length) {
+            $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', '.j-newMessages');
         }
     }
 

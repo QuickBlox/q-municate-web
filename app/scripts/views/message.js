@@ -357,9 +357,7 @@ define([
                     } else {
                         $chat.find('.l-chat-content').prepend(html);
                     }
-                    if (!isNew) {
-                        smartScroll(message.id, attachType);
-                    }
+                    smartScroll(message.id, attachType);
                 }
 
                 if (geolocation) {
