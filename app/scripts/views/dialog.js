@@ -388,13 +388,13 @@ define([
                 user = contacts[user_id],
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
+                unreadCount = Number(objDom.find('.unread').text()),
                 self = this,
                 html,
                 jid,
                 icon,
                 name,
                 status,
-                message,
                 msgArr,
                 userId,
                 messageId;
@@ -479,28 +479,7 @@ define([
                     $('.l-chat:visible').addClass('is-request');
 
                 self.createDataSpinner(true);
-                Message.download(dialog_id, function(messages) {
-                    for (var i = 0, len = messages.length; i < len; i++) {
-                        message = Message.create(messages[i]);
-                        if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
-                            QB.chat.sendReadStatus({
-                                messageId: message.id,
-                                userId: message.sender_id,
-                                dialogId: message.dialog_id
-                            });
-                        }
-
-                        message.stack = Message.isStack(false, messages[i], messages[i + 1]);
-
-                        MessageView.addItem(message, null, null, message.recipient_id);
-
-                        if ((i + 1) === len) {
-                            self.removeDataSpinner();
-                        }
-                    }
-
-                    self.messageScrollbar();
-                });
+                self.showChatWithNewMessages(dialog_id, unreadCount);
 
             } else {
 
@@ -549,6 +528,8 @@ define([
                 setTop: height + 'px',
                 callbacks: {
                     onTotalScrollBack: function() {
+                        console.info(objDom);
+                        console.info(self);
                         ajaxDownloading(objDom, self);
                     },
                     onTotalScroll: function() {
@@ -653,6 +634,68 @@ define([
                 delete dialogs[dialog_id];
             });
 
+        },
+
+        showChatWithNewMessages: function(dialogId, unreadCount) {
+            var MessageView = this.app.views.Message,
+                self = this,
+                lastReaded,
+                message,
+                count;
+
+            if (unreadCount < 20) {
+                lastReaded = unreadCount;
+            } else if (19 > unreadCount < 100) {
+                lastReaded = unreadCount;
+                count = unreadCount + 1;
+            } else {
+                lastReaded = 99;
+                count = 100;
+            }
+
+            Message.download(dialogId, function(messages) {
+                for (var i = 0, len = messages.length; i < len; i++) {
+                    message = Message.create(messages[i]);
+                    message.stack = Message.isStack(false, messages[i], messages[i + 1]);
+
+                    if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
+                        QB.chat.sendReadStatus({
+                            messageId: message.id,
+                            userId: message.sender_id,
+                            dialogId: message.dialogId
+                        });
+                    }
+
+                    if (unreadCount) {
+                        switch (i) {
+                            case (lastReaded - 1):
+                                message.stack = false;
+                                break;
+                            case lastReaded:
+                                var $chatContainer = $('.l-chat[data-dialog="' + dialogId + '"]').find('.l-chat-content .mCSB_container')
+                                    $newMessages = $('<div class="new_messages j-newMessages">' +
+                                        '<span class="newMessages">New messages</span></div>');
+
+                                $chatContainer.prepend($newMessages);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    MessageView.addItem(message, null, null, message.recipient_id, unreadCount);
+
+                    if (i === (len - 1)) {
+                        self.removeDataSpinner();
+                    }
+
+                    self.messageScrollbar();
+                }
+            }, count);
+
+            if (unreadCount) {
+                Message.update(null, dialogId);
+            }
         }
 
     };
@@ -686,6 +729,7 @@ define([
             for (var i = 0, len = messages.length; i < len; i++) {
                 message = Message.create(messages[i]);
                 message.stack = Message.isStack(false, messages[i], messages[i + 1]);
+
                 MessageView.addItem(message, true);
 
                 if ((i + 1) === len) {

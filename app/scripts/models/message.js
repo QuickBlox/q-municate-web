@@ -20,21 +20,32 @@ define([
         download: function(dialog_id, callback, count, isAjaxDownloading) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
-                self = this;
+                self = this,
+                limitCount,
+                skipCount;
 
-            if (self.skip[dialog_id] && self.skip[dialog_id] === count) return false;
+            if (self.skip[dialog_id] && self.skip[dialog_id] === count) {
+                return false;
+            }
 
-            if (isAjaxDownloading) DialogView.createDataSpinner(null, null, true);
+            if (isAjaxDownloading) {
+                DialogView.createDataSpinner(null, null, true);
+                skipCount = count;
+            } else {
+                limitCount = count;
+            }
 
             QBApiCalls.listMessages({
                 chat_dialog_id: dialog_id,
                 sort_desc: 'date_sent',
-                limit: 20,
-                skip: count || 0
+                limit: limitCount || 20,
+                skip: skipCount || 0
             }, function(messages) {
-                if (isAjaxDownloading) DialogView.removeDataSpinner();
+                if (isAjaxDownloading) {
+                    DialogView.removeDataSpinner();
+                    self.skip[dialog_id] = count;
+                }
                 callback(messages);
-                self.skip[dialog_id] = count;
             });
         },
 
@@ -123,12 +134,12 @@ define([
                 }
 
                 dialog.messages = [];
+            } else {
+                QBApiCalls.updateMessage(message_ids, {
+                    chat_dialog_id: dialog_id,
+                    read: 1
+                }, function() {});
             }
-
-            QBApiCalls.updateMessage(message_ids, {
-                chat_dialog_id: dialog_id,
-                read: 1
-            }, function() {});
         }
 
     };

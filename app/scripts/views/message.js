@@ -56,7 +56,7 @@ define([
             }
         },
 
-        addItem: function(message, isCallback, isMessageListener, recipientId) {
+        addItem: function(message, isCallback, isMessageListener, recipientId, isNew) {
             var DialogView = this.app.views.Dialog,
                 ContactListMsg = this.app.models.ContactList,
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
@@ -357,7 +357,9 @@ define([
                     } else {
                         $chat.find('.l-chat-content').prepend(html);
                     }
-                    smartScroll(message.id, attachType);
+                    if (!isNew) {
+                        smartScroll(message.id, attachType);
+                    }
                 }
 
                 if (geolocation) {
