@@ -647,14 +647,20 @@ define([
                 message,
                 count;
 
-            if (unreadCount < 20) {
+            var MIN_STACK = 20,
+                MAX_STACK = 100,
+                lessThenMinStack = unreadCount < MIN_STACK,
+                moreThenMinStack = unreadCount > (MIN_STACK - 1),
+                lessThenMaxStack = unreadCount < MAX_STACK;
+
+            if (lessThenMinStack) {
                 lastReaded = unreadCount;
-            } else if (unreadCount > 19 && unreadCount < 100) {
+            } else if (moreThenMinStack && lessThenMaxStack) {
                 lastReaded = unreadCount - 1;
                 count = unreadCount + 1;
             } else {
-                lastReaded = 99;
-                count = 100;
+                lastReaded = MAX_STACK - 1;
+                count = MAX_STACK;
             }
 
             Message.download(dialogId, function(messages) {
@@ -672,15 +678,12 @@ define([
 
                     if (unreadCount) {
                         switch (i) {
-
                             case (lastReaded - 1):
                                 message.stack = false;
                                 break;
-
                             case lastReaded:
                                 setLabelForNewMessages(dialogId);
                                 break;
-
                             default:
                                 break;
                         }

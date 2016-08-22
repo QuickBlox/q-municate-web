@@ -21,7 +21,6 @@ define([
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
                 self = this,
-                limitCount,
                 skipCount;
 
             if (self.skip[dialog_id] && self.skip[dialog_id] === count) {

@@ -56,7 +56,7 @@ define([
             }
         },
 
-        addItem: function(message, isCallback, isMessageListener, recipientId, isNew) {
+        addItem: function(message, isCallback, isMessageListener, recipientId) {
             var DialogView = this.app.views.Dialog,
                 ContactListMsg = this.app.models.ContactList,
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
