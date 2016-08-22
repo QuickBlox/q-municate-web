@@ -695,10 +695,7 @@ define([
                     setScrollToNewMessages();
 
                     if (i === (len - 1)) {
-                        if (len === unreadCount) {
-                            setLabelForNewMessages(dialogId);
-                        }
-                        setTimeout(self.removeDataSpinner(), 250);
+                        self.removeDataSpinner();
                     }
                 }
             }, count);
@@ -812,8 +809,12 @@ define([
     }
 
     function setScrollToNewMessages() {
+        var $chat = $('.l-chat:visible .scrollbar_message');
+        
         if ($('.j-newMessages').length) {
-            $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', '.j-newMessages');
+            $chat.mCustomScrollbar('scrollTo', '.j-newMessages');
+        } else {
+            $chat.mCustomScrollbar('scrollTo', 'bottom');
         }
     }
 
