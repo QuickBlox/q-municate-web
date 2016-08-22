@@ -692,9 +692,9 @@ define([
                     MessageView.addItem(message, null, null, message.recipient_id);
 
                     self.messageScrollbar();
-                    setScrollToNewMessages();
 
                     if (i === (len - 1)) {
+                        setScrollToNewMessages();
                         self.removeDataSpinner();
                     }
                 }
@@ -810,7 +810,7 @@ define([
 
     function setScrollToNewMessages() {
         var $chat = $('.l-chat:visible .scrollbar_message');
-        
+
         if ($('.j-newMessages').length) {
             $chat.mCustomScrollbar('scrollTo', '.j-newMessages');
         } else {
