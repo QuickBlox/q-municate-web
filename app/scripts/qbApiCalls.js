@@ -40,8 +40,6 @@ define([
     QBApiCalls.prototype = {
 
         init: function(token) {
-            window.QB = QB;
-
             if (typeof token === 'undefined') {
                 QB.init(QMCONFIG.qbAccount.appId, QMCONFIG.qbAccount.authKey, QMCONFIG.qbAccount.authSecret, QMCONFIG.QBconf);
             } else {
