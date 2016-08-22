@@ -20,21 +20,32 @@ define([
         download: function(dialog_id, callback, count, isAjaxDownloading) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
-                self = this;
+                self = this,
+                limitCount,
+                skipCount;
 
-            if (self.skip[dialog_id] && self.skip[dialog_id] === count) return false;
+            if (self.skip[dialog_id] && self.skip[dialog_id] === count) {
+                return false;
+            }
 
-            if (isAjaxDownloading) DialogView.createDataSpinner(null, null, true);
+            if (isAjaxDownloading) {
+                DialogView.createDataSpinner(null, null, true);
+                skipCount = count;
+            } else {
+                limitCount = count;
+            }
 
             QBApiCalls.listMessages({
                 chat_dialog_id: dialog_id,
                 sort_desc: 'date_sent',
-                limit: 50,
-                skip: count || 0
+                limit: limitCount || 20,
+                skip: skipCount || 0
             }, function(messages) {
-                if (isAjaxDownloading) DialogView.removeDataSpinner();
+                if (isAjaxDownloading) {
+                    DialogView.removeDataSpinner();
+                    self.skip[dialog_id] = count;
+                }
                 callback(messages);
-                self.skip[dialog_id] = count;
             });
         },
 
@@ -91,10 +102,15 @@ define([
                     var lastMessageSender = +prevMsg.attr('data-id'),
                         lastMessageDateSent = +prevMsg.find('.message-time').attr('data-time');
 
+
                     sameUser = (curMsg.sender_id === lastMessageSender) ? true : false;
                     sameTime = (Math.floor(curMsg.date_sent / 60) === Math.floor(lastMessageDateSent / 60)) ? true : false;
                 } else {
-                    sameUser = (curMsg.sender_id === prevMsg.sender_id) ? true : false;
+                    if (prevMsg.notification_type) {
+                        sameUser = false;
+                    } else {
+                        sameUser = (curMsg.sender_id === prevMsg.sender_id) ? true : false;
+                    }
                     sameTime = (Math.floor(curMsg.date_sent / 60) === Math.floor(prevMsg.date_sent / 60)) ? true : false;
                 }
                 stack = (sameTime && sameUser) ? true : false;
@@ -106,25 +122,29 @@ define([
         update: function(message_ids, dialog_id, user_id) {
             var QBApiCalls = this.app.service,
                 ContactList = this.app.models.ContactList,
-                dialog = ContactList.dialogs[dialog_id],
-                unreadMessages = message_ids.split(','),
-                unreadMessage;
+                dialog = ContactList.dialogs[dialog_id];
 
-            for (var i = 0, len = unreadMessages.length; i < len; i++) {
-                unreadMessage = unreadMessages[i];
-                QB.chat.sendReadStatus({
-                    messageId: unreadMessage,
-                    userId: user_id,
-                    dialogId: dialog_id
-                });
+            if (message_ids !== null) {
+                var unreadMessages = message_ids.split(','),
+                    unreadMessage;
+
+                for (var i = 0, len = unreadMessages.length; i < len; i++) {
+                    unreadMessage = unreadMessages[i];
+
+                    QB.chat.sendReadStatus({
+                        messageId: unreadMessage,
+                        userId: user_id,
+                        dialogId: dialog_id
+                    });
+                }
+
+                dialog.messages = [];
+            } else {
+                QBApiCalls.updateMessage(message_ids, {
+                    chat_dialog_id: dialog_id,
+                    read: 1
+                }, function() {});
             }
-
-            dialog.messages = [];
-
-            QBApiCalls.updateMessage(message_ids, {
-                chat_dialog_id: dialog_id,
-                read: 1
-            }, function() {});
         }
 
     };
