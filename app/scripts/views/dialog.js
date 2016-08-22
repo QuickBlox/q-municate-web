@@ -700,9 +700,7 @@ define([
                 }
             }, count);
 
-            if (unreadCount) {
-                Message.update(null, dialogId);
-            }
+            Message.update(null, dialogId);
         }
 
     };
