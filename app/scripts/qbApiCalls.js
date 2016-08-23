@@ -58,13 +58,13 @@ define([
             if ((new Date()).toISOString() > Session.expirationTime) {
                 // recovery session
                 if (Session.authParams.provider === 'facebook') {
-                    setTimeout(UserView.getFBStatus(function(token) {
+                    UserView.getFBStatus(function(token) {
                         Session.authParams.keys.token = token;
 
                         self.createSession(Session.authParams, function(session) {
                             callback(session);
                         }, Session._remember);
-                    }), 1000);
+                    });
                 } else if (Session.authParams.provider === 'twitter_digits') {
                     self.getTwitterDigits(function(session) {
                         callback(session);
