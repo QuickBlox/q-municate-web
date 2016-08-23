@@ -107,7 +107,6 @@ define([
 
         getFBStatus: function(callback) {
             console.info(FB);
-            setTimeout(console.info(FB), 5000);
             if (typeof FB === 'undefined') {
                 // Wait until FB SDK will be downloaded and then calling this function again
                 FBCallback = callback;
