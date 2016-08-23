@@ -32,7 +32,7 @@ requirejs.config({
     },
     paths: {
         // libs
-        facebook: '//connect.facebook.net/en_US/sdk'
+        facebook: 'https://connect.facebook.net/en_US/sdk',
         googlemaps: '../bower_components/googlemaps-amd/src/googlemaps',
         async: '../bower_components/requirejs-plugins/src/async',
         gmaps: 'https://rawgit.com/HPNeo/gmaps/master/gmaps',
