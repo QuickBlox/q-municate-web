@@ -1,6 +1,6 @@
 {
     "name": "q-municate",
-    "version": "1.6.5",
+    "version": "1.6.6",
     "dependencies": {},
     "devDependencies": {
         "connect-livereload": "^0.5.4",

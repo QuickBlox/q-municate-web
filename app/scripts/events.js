@@ -801,8 +801,8 @@ define([
                     dataId = $('.l-list .list-item.is-selected').attr("data-id");
 
                 MessageView.clearTheListTyping();
-
                 DialogView.htmlBuild($(this));
+                Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
             $('#popupContacts .btn_popup_private').on('click', function() {

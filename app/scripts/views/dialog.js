@@ -389,7 +389,6 @@ define([
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
                 unreadCount = Number(objDom.find('.unread').text()),
-                isBottom = Helpers.isBeginOfChat(),
                 self = this,
                 html,
                 jid,
@@ -482,10 +481,6 @@ define([
                 self.createDataSpinner(true);
                 self.showChatWithNewMessages(dialog_id, unreadCount);
 
-                if (!isBottom) {
-                    $('.j-toBottom').show();
-                }
-
             } else {
 
                 $chat.removeClass('is-hidden')
@@ -506,16 +501,19 @@ define([
                             dialogId: dialog_id
                         });
                     }
+
+                    Message.update(null, dialog_id);
                 }
             }
 
+            removeNewMessagesLabel($('.is-selected'), dialog_id);
             $('.is-selected').removeClass('is-selected');
             parent.addClass('is-selected').find('.unread').text('');
             self.decUnreadCounter(dialog.id);
+            setScrollToNewMessages();
             // set dialog_id to localStorage wich must bee read in all tabs for same user
             localStorage.removeItem(readBadge);
             localStorage.setItem(readBadge, dialog_id);
-
         },
 
         messageScrollbar: function() {
@@ -672,7 +670,7 @@ define([
                         QB.chat.sendReadStatus({
                             messageId: message.id,
                             userId: message.sender_id,
-                            dialogId: message.dialogId
+                            dialogId: dialogId
                         });
                     }
 
@@ -807,12 +805,26 @@ define([
     }
 
     function setScrollToNewMessages() {
-        var $chat = $('.l-chat:visible .scrollbar_message');
+        var $chat = $('.l-chat:visible .scrollbar_message'),
+            isBottom = Helpers.isBeginOfChat();
 
         if ($('.j-newMessages').length) {
             $chat.mCustomScrollbar('scrollTo', '.j-newMessages');
         } else {
             $chat.mCustomScrollbar('scrollTo', 'bottom');
+        }
+
+        if (!isBottom) {
+            $('.j-toBottom').show();
+        }
+    }
+
+    function removeNewMessagesLabel($objDom, curDialogId) {
+        var dialogId = $objDom.data('dialog'),
+            $label = $('.l-chat[data-dialog="' + dialogId + '"]').find('.j-newMessages');
+
+        if ($label.length && (dialogId !== curDialogId)) {
+            $label.remove();
         }
     }
 

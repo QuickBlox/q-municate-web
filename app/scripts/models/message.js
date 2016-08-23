@@ -139,12 +139,12 @@ define([
                 }
 
                 dialog.messages = [];
-            } else {
-                QBApiCalls.updateMessage(message_ids, {
-                    chat_dialog_id: dialog_id,
-                    read: 1
-                }, function() {});
             }
+
+            QBApiCalls.updateMessage(message_ids, {
+                chat_dialog_id: dialog_id,
+                read: 1
+            }, function() {});
         }
 
     };

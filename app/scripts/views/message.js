@@ -503,7 +503,10 @@ define([
         },
 
         onMessage: function(id, message) {
-            if (message.type === 'error') return true;
+            if (message.type === 'error') {
+                return true;
+            }
+            
             var DialogView = self.app.views.Dialog,
                 ContactListView = self.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
@@ -533,6 +536,8 @@ define([
                 otherChat = !selected && isHiddenChat && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat'),
                 isNotMyUser = id !== User.contact.id,
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
+                isNewMessages = $chat.find('.j-newMessages').length,
+                $newMessages = $('<div class="new_messages j-newMessages"><span class="newMessages">New messages</span></div>'),
                 copyDialogItem,
                 lastMessage,
                 dialog,
@@ -548,13 +553,17 @@ define([
             msg = Message.create(message);
             msg.sender_id = id;
 
-            if (message.markable === 1 && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
+            if ($chat.length && message.markable === 1 && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
                 // send read status if message displayed in chat
                 Message.update(msg.id, dialog_id, id);
             } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length > 0 && message.markable == 1) {
                 msgArr = dialogs[dialog_id].messages || [];
                 msgArr.push(msg.id);
                 dialogs[dialog_id].messages = msgArr;
+
+                if (!isNewMessages) {
+                    $chat.find('.l-chat-content .mCSB_container').append($newMessages);
+                }
             }
 
             if (otherChat || (!otherChat && !isBottom && isNotMyUser && isExistent)) {
