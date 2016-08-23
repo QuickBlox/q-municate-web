@@ -506,7 +506,7 @@ define([
                 }
             }
 
-            removeNewMessagesLabel($('.is-selected'), dialog_id);
+            removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
             $('.is-selected').removeClass('is-selected');
             parent.addClass('is-selected').find('.unread').text('');
             self.decUnreadCounter(dialog.id);
@@ -798,7 +798,7 @@ define([
 
     function setLabelForNewMessages(dialogId) {
         var $chatContainer = $('.l-chat[data-dialog="' + dialogId + '"]').find('.l-chat-content .mCSB_container'),
-            $newMessages = $('<div class="new_messages j-newMessages">' +
+            $newMessages = $('<div class="new_messages j-newMessages" data-dialog="' + dialogId + '">' +
                 '<span class="newMessages">New messages</span></div>');
 
         $chatContainer.prepend($newMessages);
@@ -819,9 +819,8 @@ define([
         }
     }
 
-    function removeNewMessagesLabel($objDom, curDialogId) {
-        var dialogId = $objDom.data('dialog'),
-            $label = $('.l-chat[data-dialog="' + dialogId + '"]').find('.j-newMessages');
+    function removeNewMessagesLabel(dialogId, curDialogId) {
+        var $label = $('.j-newMessages[data-dialog="' + dialogId + '"]');
 
         if ($label.length && (dialogId !== curDialogId)) {
             $label.remove();

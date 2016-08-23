@@ -416,6 +416,7 @@ define([
                 time = Math.floor(Date.now() / 1000),
                 type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
+                $newMessages = $('.j-newMessages[data-dialog="' + dialog_id + '"]'),
                 dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
                 locationIsActive = ($('.j-send_location').hasClass('btn_active') && localStorage['QM.latitude'] && localStorage['QM.longitude']),
                 copyDialogItem,
@@ -473,6 +474,10 @@ define([
                     lastMessage = $chat.find('article[data-type="message"]').last();
                     message.stack = Message.isStack(true, message, lastMessage);
                     self.addItem(message, true, true);
+                    if ($newMessages.length) {
+                        $newMessages.remove();
+                    }
+
                 }
 
                 if (dialogItem.length > 0) {
@@ -484,7 +489,6 @@ define([
                         isSectionEmpty($('#recentList ul'));
                     }
                 }
-
             }
         },
 
@@ -506,7 +510,7 @@ define([
             if (message.type === 'error') {
                 return true;
             }
-            
+
             var DialogView = self.app.views.Dialog,
                 ContactListView = self.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
@@ -536,8 +540,10 @@ define([
                 otherChat = !selected && isHiddenChat && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat'),
                 isNotMyUser = id !== User.contact.id,
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
-                isNewMessages = $chat.find('.j-newMessages').length,
-                $newMessages = $('<div class="new_messages j-newMessages"><span class="newMessages">New messages</span></div>'),
+                $newMessages = $('<div class="new_messages j-newMessages" data-dialog="' + dialog_id +
+                    '"><span class="newMessages">New messages</span></div>'),
+                $label = $chat.find('.j-newMessages'),
+                isNewMessages = $label.length,
                 copyDialogItem,
                 lastMessage,
                 dialog,
@@ -553,6 +559,12 @@ define([
             msg = Message.create(message);
             msg.sender_id = id;
 
+            if ($chat.length && !isHiddenChat && window.isQMAppActive && isNewMessages) {
+                $label.remove();
+            } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length && !isNewMessages) {
+                $chat.find('.l-chat-content .mCSB_container').append($newMessages);
+            }
+
             if ($chat.length && message.markable === 1 && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
                 // send read status if message displayed in chat
                 Message.update(msg.id, dialog_id, id);
@@ -560,10 +572,6 @@ define([
                 msgArr = dialogs[dialog_id].messages || [];
                 msgArr.push(msg.id);
                 dialogs[dialog_id].messages = msgArr;
-
-                if (!isNewMessages) {
-                    $chat.find('.l-chat-content .mCSB_container').append($newMessages);
-                }
             }
 
             if (otherChat || (!otherChat && !isBottom && isNotMyUser && isExistent)) {
@@ -699,7 +707,6 @@ define([
                     isHiddenChat : isHiddenChat
                 });
             }
-
         },
 
         onSystemMessage: function(message) {

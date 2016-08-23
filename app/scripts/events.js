@@ -86,6 +86,13 @@ define([
             });
 
             $(window).blur(function() {
+                var $chat = $('.l-chat:visible'),
+                    $label = $('.l-chat:visible').find('.j-newMessages');
+
+                if ($chat.length && $label.length) {
+                    $label.remove();
+                }
+
                 window.isQMAppActive = false;
             });
 
@@ -942,10 +949,19 @@ define([
             });
 
             $('.j-home').on('click', function() {
+                var $selected = $('.is-selected'),
+                    dialogId = $selected.data('dialog'),
+                    $label = $('.j-newMessages[data-dialog="' + dialogId + '"]');
+
                 $('.j-capBox').removeClass('is-hidden')
                     .siblings().removeClass('is-active');
                 $('.l-chat').addClass('is-hidden');
-                $('.is-selected').removeClass('is-selected');
+
+                if ($label.length) {
+                    $label.remove();
+                }
+
+                $selected.removeClass('is-selected');
 
                 return false;
             });
