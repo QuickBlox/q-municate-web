@@ -116,23 +116,10 @@ requirejs([
 
     // Application initialization
     $(function() {
-        $.ajaxSetup({
-            cache: true
-        });
-
         // facebook sdk
         FB.init({
             appId: QMCONFIG.fbAccount.appId,
             version: 'v2.7'
-        });
-
-        /* Materialize sdk
-         *
-         * Not included in requirejs dependencies as required hammer.js,
-         * which often creates problems when loading
-         */
-        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js', function() {
-            Helpers.log('Materialize connected');
         });
 
         // twitter digits sdk
@@ -144,6 +131,19 @@ requirejs([
             }).fail(function(error) {
                 Helpers.log('Digits failed to initialize: ', error);
             });
+
+        $.ajaxSetup({
+            cache: true
+        });
+
+        /* Materialize sdk
+         *
+         * Not included in requirejs dependencies as required hammer.js,
+         * which often creates problems when loading
+         */
+        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js', function() {
+            Helpers.log('Materialize connected');
+        });
 
         // emoji smiles run
         $('.smiles-group').each(function() {
