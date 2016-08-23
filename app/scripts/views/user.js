@@ -6,13 +6,16 @@
  */
 define([
     'jquery',
+    'facebook',
     'config',
     'quickblox',
     'Helpers',
     'QMHtml',
     'LocationView',
     'digits'
-], function($,
+], function(
+    $,
+    FB,
     QMCONFIG,
     QB,
     Helpers,

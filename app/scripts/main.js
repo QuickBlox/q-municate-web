@@ -10,6 +10,9 @@ requirejs.config({
     },
     baseUrl: 'scripts',
     shim: {
+        facebook: {
+            exports: 'FB'
+        },
         gmaps: {
             deps: ['googlemaps'],
             exports: "GMaps"
@@ -29,6 +32,7 @@ requirejs.config({
     },
     paths: {
         // libs
+        facebook: '//connect.facebook.net/en_US/sdk'
         googlemaps: '../bower_components/googlemaps-amd/src/googlemaps',
         async: '../bower_components/requirejs-plugins/src/async',
         gmaps: 'https://rawgit.com/HPNeo/gmaps/master/gmaps',
@@ -89,6 +93,7 @@ requirejs.config({
 
 requirejs([
     'jquery',
+    'facebook',
     'config',
     'minEmoji',
     'MainModule',
@@ -98,6 +103,7 @@ requirejs([
     'digits'
 ], function(
     $,
+    FB,
     QMCONFIG,
     minEmoji,
     QM,
@@ -114,6 +120,12 @@ requirejs([
             cache: true
         });
 
+        // facebook sdk
+        FB.init({
+            appId: QMCONFIG.fbAccount.appId,
+            version: 'v2.7'
+        });
+
         /* Materialize sdk
          *
          * Not included in requirejs dependencies as required hammer.js,
@@ -121,15 +133,6 @@ requirejs([
          */
         $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js', function() {
             Helpers.log('Materialize connected');
-        });
-
-        // facebook sdk
-        $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
-            FB.init({
-                appId: QMCONFIG.fbAccount.appId,
-                version: 'v2.6'
-            });
-            Helpers.log('FB init', FB);
         });
 
         // twitter digits sdk
