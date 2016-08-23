@@ -153,7 +153,7 @@ requirejs([
         }
 
         APP = new QM();
-        APP.init();
+        setTimeout(APP.init(), 1000);
 
         $.getScript('https://cdn.flurry.com/js/flurry.js', function() {
             FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');

@@ -57,14 +57,11 @@ define([
         checkSession: function(callback) {
             if ((new Date()).toISOString() > Session.expirationTime) {
                 // recovery session
-                console.info(Session.authParams.provider);
                 if (Session.authParams.provider === 'facebook') {
-                    console.info(Session.authParams.provider);
                     UserView.getFBStatus(function(token) {
-                        console.info(token);
                         Session.authParams.keys.token = token;
+
                         self.createSession(Session.authParams, function(session) {
-                            console.info(Session.authParams);
                             callback(session);
                         }, Session._remember);
                     });
