@@ -806,7 +806,7 @@ define([
 
     function setScrollToNewMessages() {
         var $chat = $('.l-chat:visible .scrollbar_message'),
-            isBottom = Helpers.isBeginOfChat()
+            isBottom = Helpers.isBeginOfChat(),
             isScrollDragger = $chat.find('.mCSB_draggerContainer').length;
 
         if ($('.j-newMessages').length) {
