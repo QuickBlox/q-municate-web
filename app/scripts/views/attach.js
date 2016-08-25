@@ -70,10 +70,6 @@ define([
                     objDom.val('');
                     fixScroll();
                     return false;
-                }
-
-                if (file.name.length > 100) {
-                    html = '<article class="message message_service message_attach message_attach_row l-flexbox l-flexbox_alignstretch">';
                 } else {
                     html = '<article class="message message_service message_attach l-flexbox l-flexbox_alignstretch">';
                     html += '<span class="message-avatar request-button_attach">';

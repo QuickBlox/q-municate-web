@@ -543,7 +543,8 @@ define([
                 'dialog_id': params.dialog_id,
                 'save_to_history': params.save_to_history,
                 'notification_type': params.notification_type
-            }
+            },
+            'markable': 1
         });
     }
 
