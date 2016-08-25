@@ -535,7 +535,7 @@ define([
                 isOfflineStorage = message.delay,
                 selected = $('[data-dialog = ' + dialog_id + ']').is('.is-selected'),
                 isBottom = Helpers.isBeginOfChat(),
-                otherChat = !selected && isHiddenChat && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat'),
+                otherChat = !selected && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat'),
                 isNotMyUser = id !== User.contact.id,
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
                 $newMessages = $('<div class="new_messages j-newMessages" data-dialog="' + dialog_id +
