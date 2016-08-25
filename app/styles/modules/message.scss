@@ -138,8 +138,12 @@ article.message[data-status="typing"] > div {
 }
 /* preview */
 .preview {
+    width: 380px;
+    height: 214px;
     float: left;
     cursor: pointer;
+    overflow: hidden;
+    position: relative;
 }
 .preview:hover {
     opacity: 0.6;
@@ -165,8 +169,11 @@ article.message[data-status="typing"] > div {
     border-left: 20px solid #ccc;
 }
 .preview-photo img {
-    max-width: 200px;
-    max-height: 165px;
+    max-width: 380px;
+    max-height: 214px;
+    transform: translate(0, -50%);
+    position: absolute;
+    top: 50%;
 }
 .attachment {
     position: absolute;

@@ -345,9 +345,7 @@ define([
                 if (isCallback) {
                     if (isMessageListener) {
                         $chat.find('.l-chat-content .mCSB_container').append(html);
-                        if (isBottom) {
-                            smartScroll(message.id, attachType);
-                        }
+                        smartScroll(isBottom);
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
                     }
@@ -357,7 +355,7 @@ define([
                     } else {
                         $chat.find('.l-chat-content').prepend(html);
                     }
-                    smartScroll(message.id, attachType);
+                    smartScroll(true);
                 }
 
                 if (geolocation) {
@@ -559,6 +557,7 @@ define([
             msg = Message.create(message);
             msg.sender_id = id;
 
+            // add or remove label about new messages
             if ($chat.length && !isHiddenChat && window.isQMAppActive && isNewMessages) {
                 $label.remove();
             } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length && !isNewMessages) {
@@ -828,16 +827,14 @@ define([
         return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
     }
 
-    function smartScroll(messageId, attachType) {
+    function smartScroll(isBottom) {
+        if (!isBottom) {
+            return true;
+        }
+
         var $objDom = $('.l-chat:visible .scrollbar_message');
 
-        if (attachType) {
-            $('#attach_' + messageId).load(function() {
-                $objDom.mCustomScrollbar('scrollTo', 'bottom');
-            });
-        } else {
-            $objDom.mCustomScrollbar('scrollTo', 'bottom');
-        }
+        $objDom.mCustomScrollbar('scrollTo', 'bottom');
     }
 
     function getTime(time) {
