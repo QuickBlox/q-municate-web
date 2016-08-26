@@ -272,7 +272,9 @@ define([
         },
 
         localSearch: function(form) {
-            var val = form.find('input[type="search"]').val().trim().toLowerCase();
+            var val = form.find('input[type="search"]').val().trim().toLowerCase(),
+                selected = $('#searchList li.is-selected').data('dialog'),
+                $notSearchLists = $('#recentList, #historyList, #requestsList');
 
             if (val.length > 0) {
                 $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
@@ -293,10 +295,17 @@ define([
                     $('#searchList .note').removeClass('is-hidden').siblings('ul').addClass('is-hidden');
                 }
             } else {
+
                 $('#searchList').addClass('is-hidden');
-                $('#recentList, #historyList, #requestsList').each(function() {
-                    if ($(this).find('.list-item').length > 0) {
-                        $(this).removeClass('is-hidden');
+                $notSearchLists.each(function() {
+                    var $this = $(this);
+
+                    if ($this.find('.list-item').length > 0) {
+                        $this.removeClass('is-hidden');
+                    }
+                    
+                    if (selected) {
+                        $this.find('.list-item[data-dialog="' + selected + '"]').addClass('is-selected');
                     }
                 });
                 if ($('.l-list-wrap section:not(#searchList) .list-item').length === 0) {
