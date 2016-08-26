@@ -9,6 +9,7 @@ define([
     'config',
     'quickblox',
     'Helpers',
+    'QMHtml',
     'LocationView',
     'underscore',
     'progressbar'
@@ -17,6 +18,7 @@ define([
     QMCONFIG,
     QB,
     Helpers,
+    QMHtml,
     Location,
     _,
     ProgressBar
@@ -58,33 +60,14 @@ define([
                 }
 
                 if (errMsg) {
-                    html = '<article class="message message_service l-flexbox l-flexbox_alignstretch">';
-                    html += '<span class="message-avatar request-button_pending"></span>';
-                    html += '<div class="message-container-wrap">';
-                    html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-                    html += '<div class="message-content">';
-                    html += '<h4 class="message-author message-error">' + errMsg + '</h4>';
-                    html += '</div>';
-                    html += '</div></div></article>';
-                    chat.append(html);
-                    objDom.val('');
-                    fixScroll();
-                    return false;
+                    self.pastErrorMessage(errMsg, objDom, chat);
                 } else {
-                    html = '<article class="message message_service message_attach l-flexbox l-flexbox_alignstretch">';
-                    html += '<span class="message-avatar request-button_attach">';
-                    html += '<img src="images/icon-attach.svg" alt="attach"></span>';
-                    html += '<div class="message-container-wrap">';
-                    html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
-                    html += '<div class="message-content">';
-                    html += '<h4 class="message-author">';
-                    html += file.name;
-                    html += '<div class="attach-upload">';
-                    html += '<div id="progress_' + id + '"></div>';
-                    html += '<span class="attach-size"><span class="attach-part attach-part_' + id + '"></span> of ' + fileSizeCrop + ' ' + fileSizeUnit + '</span>';
-                    html += '</div></h4></div>';
-                    html += '<time class="message-time"><a class="attach-cancel" href="#">Cancel</a></time>';
-                    html += '</div></div></article>';
+                    html = QMHtml.Attach.attach({
+                        'fileName': file.name,
+                        'fileSizeCrop': fileSizeCrop,
+                        'fileSizeUnit': fileSizeUnit,
+                        'id': id
+                    });
                 }
 
                 chat.append(html);
@@ -101,6 +84,19 @@ define([
                     self.createProgressBar(id, fileSizeCrop, fileSize, file);
                 }
             }
+        },
+
+        pastErrorMessage: function(errMsg, objDom, chat) {
+            var html = QMHtml.Attach.error({
+                'errMsg': errMsg
+            });
+
+            chat.append(html);
+            objDom.val('');
+
+            fixScroll();
+
+            return false;
         },
 
         createProgressBar: function(id, fileSizeCrop, fileSize, file) {

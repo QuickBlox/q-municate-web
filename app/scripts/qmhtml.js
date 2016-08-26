@@ -207,5 +207,40 @@ define([
 
     };
 
+    QMHtml.Attach = {
+
+        error: function(params) {
+            var htmlTemplate = _.template('<article class="message message_service l-flexbox l-flexbox_alignstretch">'+
+                '<span class="message-avatar request-button_pending"></span>'+
+                '<div class="message-container-wrap">'+
+                '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">'+
+                '<div class="message-content">'+
+                '<h4 class="message-author message-error"><%= errMsg %></h4>'+
+                '</div></div></div></article>')(params);
+
+            return htmlTemplate;
+        },
+
+        attach: function(params) {
+            var htmlTemplate = _.template(
+                '<article class="message message_service message_attach l-flexbox l-flexbox_alignstretch">' +
+                '<span class="message-avatar request-button_attach">' +
+                '<img src="images/icon-attach.svg" alt="attach"></span>' +
+                '<div class="message-container-wrap">' +
+                '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">' +
+                '<div class="message-content">' +
+                '<h4 class="message-author"><%= fileName %><div class="attach-upload">' +
+                '<div id="progress_<%= id %>"></div>' +
+                '<span class="attach-size"><span class="attach-part attach-part_<%= id %>">' +
+                '</span> of <%= fileSizeCrop %> <%= fileSizeUnit %></span>' +
+                '</div></h4></div>' +
+                '<time class="message-time"><a class="attach-cancel" href="#">Cancel</a></time>' +
+                '</div></div></article>')(params);
+
+            return htmlTemplate;
+        }
+
+    };
+
     return QMHtml;
 });

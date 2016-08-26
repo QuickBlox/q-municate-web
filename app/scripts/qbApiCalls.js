@@ -424,6 +424,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback(res.items);
                     }
                 });

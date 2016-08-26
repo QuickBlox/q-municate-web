@@ -265,9 +265,11 @@ define([
             var QBApiCalls = this.app.service,
                 ContactList = this.app.models.ContactList,
                 Attach = this.app.models.Attach,
+                AttachView = this.app.views.Attach,
                 file = objDom[0].files[0] || null,
                 self = this,
-                errMsg, dialog;
+                errMsg,
+                dialog;
 
             if (file) {
                 if (file.type.indexOf('image/') === -1) {
@@ -278,6 +280,7 @@ define([
 
                 if (errMsg) {
                     Helpers.log('Error', errMsg);
+                    AttachView.pastErrorMessage(errMsg, objDom, $('.l-chat:visible .l-chat-content .mCSB_container'));
                     callback(false);
                 } else {
                     Attach.crop(file, {
