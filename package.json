@@ -5,7 +5,7 @@
         "type": "git",
         "url": "git@github.com:QuickBlox/q-municate-web.git"
     },
-    "license" : "(Apache-2.0)" ,
+    "license" : "(Apache-2.0)",
     "dependencies": {},
     "devDependencies": {
         "connect-livereload": "^0.5.4",
