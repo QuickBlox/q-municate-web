@@ -268,6 +268,16 @@ module.exports = function(grunt) {
             return grunt.task.run(['build', 'connect:dist:keepalive']);
         }
 
+        /***********************************************************************
+        1) task - "grunt serve"
+        > use configs from ../q-municate-web./app/config.js
+
+        2) task - "grunt serve --env=dev"
+        > use configs from ../q-municate-web./app/configs/environments.js and set DEV environment
+
+        3) task - "grunt serve --env=prod"
+        > use configs from ../q-municate-web./app/configs/environments.js and set PROD environment
+        ***********************************************************************/
         grunt.task.run([
             'includereplace:' + envTarget,
             'clean:dev',
@@ -279,6 +289,16 @@ module.exports = function(grunt) {
         ]);
     });
 
+    /***************************************************************************
+    1) task - "grunt build"
+    > use configs from ../q-municate-web./app/config.js
+
+    2) task - "grunt build --env=dev"
+    > use configs from ../q-municate-web./app/configs/environments.js and set DEV environment
+
+    3) task - "grunt build --env=prod"
+    > use configs from ../q-municate-web./app/configs/environments.js and set PROD environment
+    ***************************************************************************/
     grunt.registerTask('build', [
         'jshint',
         'includereplace:' + envTarget,

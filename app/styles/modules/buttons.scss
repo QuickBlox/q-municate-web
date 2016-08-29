@@ -258,21 +258,24 @@ button.btn.btn_search:hover {
 }
 .btn_to_bottom {
     position: absolute;
-    top: -35px;
-    left: 50%;
-    width: 30px;
-    height: 30px;
+    top: -60px;
+    right: 0px;
+    width: 40px;
+    height: 40px;
     transform: translate(-50%);
     -webkit-transform: translate(-50%);
     -moz-transform: translate(-50%);
     -o-transform: translate(-50%);
     -ms-transform: translate(-50%);
-    opacity: 0.4;
-    background-image: image-url('to-bottom-icon.png');
+    opacity: 0.3;
+    background-image: image-url('scrolltobottom.svg');
     background-repeat: no-repeat;
     background-size: contain;
     background-position: 50%;
     display: none;
+}
+.btn_to_bottom:hover {
+    opacity: 0.4;
 }
 .btn_request_again {
     display: none;

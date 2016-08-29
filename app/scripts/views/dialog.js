@@ -339,7 +339,7 @@ define([
             }
 
             html = '<li class="list-item dialog-item presence-listener" data-dialog="' + dialog.id + '" data-id="' + private_id + '">';
-            html += '<a class="contact l-flexbox" href="#">';
+            html += '<div class="contact l-flexbox" href="#">';
             html += '<div class="l-flexbox_inline">';
             html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="' + private_id + '"></div>';
             html += '<span class="name profileUserName" data-id="' + private_id + '">' + name + '</span>';

@@ -37,7 +37,9 @@ define([
         },
 
         validate: function(attrs) {
-            var MAX_SIZE = QMCONFIG.maxLimitFile * 1024 * 1024;
+            var MAX_SIZE = QMCONFIG.maxLimitFile * 1024 * 1024,
+                prevModel = JSON.stringify(this.previousAttributes()),
+                thisModel = JSON.stringify(attrs);
 
             // Field: full_name
             // mandatory; 3-50 characters; could contain everything except '<', '>' and ';'
@@ -83,7 +85,6 @@ define([
                     return QMCONFIG.errors.fileName;
                 }
             }
-
         },
 
         parse: function(data, options) {
@@ -110,7 +111,7 @@ define([
         update: function() {
             var currentUser = App.models.User.contact,
                 QBApiCalls = App.service,
-                data = this.changed,
+                data = this.toJSON(),
                 params = {},
                 custom_data = currentUser.custom_data && JSON.parse(currentUser.custom_data) || {},
                 self = this;
@@ -123,7 +124,7 @@ define([
             if (data.phone) {
                 params.phone = currentUser.phone = data.phone;
             }
-            if (data.status) {
+            if (data.status.length >= 0) {
                 custom_data.status = currentUser.status = data.status;
                 params.custom_data = currentUser.custom_data = JSON.stringify(custom_data);
             }
