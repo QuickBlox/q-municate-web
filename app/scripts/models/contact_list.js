@@ -96,7 +96,8 @@ define([
 
             QBApiCalls.getUser({
                 full_name: val,
-                page: page
+                page: page,
+                per_page: 20
             }, function(data) {
                 isExistingRequest = false;
 
@@ -108,6 +109,13 @@ define([
                 } else {
                     contacts = data.items;
                 }
+
+                contacts.sort(function(first, second) {
+                    var a = first.full_name.toLowerCase(),
+                        b = second.full_name.toLowerCase();
+
+                    return (a < b) ? -1 : (a > b) ? 1 : 0;
+                });
 
                 Helpers.log('Search results', contacts);
 

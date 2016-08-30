@@ -45,7 +45,7 @@ requirejs.config({
         backbone: '../bower_components/backbone/backbone',
         handlebars: '../bower_components/handlebars/handlebars',
         // quickblox: '../bower_components/quickblox/quickblox.min',
-        quickblox: 'https://rawgit.com/QuickBlox/quickblox-javascript-sdk/gh-pages.listeners/quickblox.min',
+        quickblox: 'https://rawgit.com/QuickBlox/quickblox-javascript-sdk/gh-pages/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
@@ -117,7 +117,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.6.10');
+        $('.j-appVersion').html('v. 1.6.11');
 
         // facebook sdk
         FB.init({
