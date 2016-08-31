@@ -304,15 +304,16 @@ define([
                         } else if (attachType && attachType.indexOf('audio') > -1) {
                             html += '<div class="message-body">';
                             html += message.attachment.name + '<br><br>';
-                            html += '<audio id="attach_' + message.id + '" src="' + attachUrl + '" controls></audio>';
-                            html += '</div>';
-                            html += '</div><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + ' ';
-                            html += '<a href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a></time>';
+                            html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
+                            html += '<audio id="attach_' + message.id + '" src="' + attachUrl + '" controls class="attach-audio"></audio></div>';
+                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
                             html += '<div class="message-body">';
-                            html += message.attachment.name + '<br>';
-                            html += '<div id="attach_' + message.id + '" class="preview preview-video" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '"></div>';
-                            html += '</div>';
+                            html += message.attachment.name + '<br><br>';
+                            html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
+                            html += '<div id="attach_' + message.id + '" class="preview preview-video" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '"></div></div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
