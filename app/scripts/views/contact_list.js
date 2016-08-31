@@ -120,9 +120,6 @@ define([
 
             // get your friends which are sorted by alphabet
             sortedContacts = _.pluck(_.sortBy(contacts, function(user) {
-                if (!user.full_name) {
-                    user.full_name = '';
-                }
                 return user.full_name.toLowerCase();
             }), 'id').map(String);
             friends = _.filter(sortedContacts, function(el) {

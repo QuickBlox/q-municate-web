@@ -654,7 +654,7 @@ define([
             if (lessThenMinStack) {
                 lastReaded = unreadCount;
             } else if (moreThenMinStack && lessThenMaxStack) {
-                lastReaded = unreadCount - 1;
+                lastReaded = unreadCount;
                 count = unreadCount + 1;
             } else {
                 lastReaded = MAX_STACK - 1;
