@@ -304,14 +304,14 @@ define([
                         } else if (attachType && attachType.indexOf('audio') > -1) {
                             html += '<div class="message-body">';
                             html += message.attachment.name + '<br><br>';
-                            html += '<audio id="' + message.id + '" src="' + attachUrl + '" controls></audio>';
+                            html += '<audio id="attach_' + message.id + '" src="' + attachUrl + '" controls></audio>';
                             html += '</div>';
                             html += '</div><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + ' ';
                             html += '<a href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a></time>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
                             html += '<div class="message-body">';
-                            html += message.attachment.name + '<br><br>';
-                            html += '<div id="' + message.id + '" class="preview preview-video" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '"></div>';
+                            html += message.attachment.name + '<br>';
+                            html += '<div id="attach_' + message.id + '" class="preview preview-video" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '"></div>';
                             html += '</div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
@@ -319,18 +319,17 @@ define([
                         } else if (attachType && attachType.indexOf('location') > -1) {
                             html += '<div class="message-body">';
                             html += '<a class="open_googlemaps" href="' + mapAttachLink + '" target="_blank">';
-                            html += '<img id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map">';
-                            html += '</a></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '<img id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map"></a></div></div>';
+                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType) {
                             html += '<div class="message-body">';
-                            html += '<a id="' + message.id + '" class="attach-file" href="' + attachUrl + '" download="' + message.attachment.name + '">' + message.attachment.name + '</a>';
-                            html += '<span class="attach-size">' + getFileSize(message.attachment.size) + '</span>';
-                            html += '</div>';
-                            html += '</div><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + ' ';
-                            html += '<a href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a></time>';
+                            html += '<a id="attach_' + message.id + '" class="attach-file" href="' + attachUrl + '" download="' + message.attachment.name + '">' + message.attachment.name + '</a>';
+                            html += '<span class="attach-size">' + getFileSize(message.attachment.size) + '</span></div></div>';
+                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-geo j-showlocation"></div></div>';
                         } else {
                             html += '<div class="message-body">' + minEmoji(parser(message.body)) + '</div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';

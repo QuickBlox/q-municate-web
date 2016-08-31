@@ -119,7 +119,9 @@ define([
             popup.find('.btn').removeClass('is-hidden');
 
             // get your friends which are sorted by alphabet
-            sortedContacts = _.pluck(_.sortBy(contacts, 'full_name'), 'id').map(String);
+            sortedContacts = _.pluck(_.sortBy(contacts, function(user) {
+                return user.full_name.toLowerCase();
+            }), 'id').map(String);
             friends = _.filter(sortedContacts, function(el) {
                 return roster[el] && roster[el].subscription !== 'none';
             });

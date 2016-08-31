@@ -38,10 +38,9 @@ requirejs.config({
         gmaps: 'https://rawgit.com/HPNeo/gmaps/master/gmaps',
         digits: 'https://cdn.digits.com/1/sdk',
         cryptojs: '../bower_components/crypto-js-lib/rollups/aes',
-        videojs: '//vjs.zencdn.net/4.6/video',
+        videojs: '//vjs.zencdn.net/5.8.8/video',
         jquery: '../bower_components/jquery/dist/jquery',
         underscore: '../bower_components/underscore/underscore',
-        // lodash: '../bower_components/lodash/dist/lodash',
         backbone: '../bower_components/backbone/backbone',
         handlebars: '../bower_components/handlebars/handlebars',
         // quickblox: '../bower_components/quickblox/quickblox.min',
@@ -117,7 +116,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.6.11');
+        $('.j-appVersion').html('v. 1.6.12');
 
         // facebook sdk
         FB.init({
