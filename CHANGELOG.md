@@ -2,6 +2,12 @@
 
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
 
+## v. 1.7.0 - September 1, 2016
+- New Logic for unread messages;
+- Ability to sync of contact requests between tabs and browsers for the same user;
+- Stability improvements;
+- Bug fixes.
+
 ## v. 1.6.2 - August 8, 2016
 - Fixed issue (global search);
 
