@@ -1,6 +1,6 @@
 {
     "name": "q-municate",
-    "version": "1.7.0",
+    "version": "1.7.1",
     "repository": {
         "type": "git",
         "url": "git@github.com:QuickBlox/q-municate-web.git"

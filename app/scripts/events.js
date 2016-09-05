@@ -1051,7 +1051,7 @@ define([
 
     function openAttachPopup(objDom, name, url, attachType) {
         if (attachType === 'video') {
-            objDom.find('video.attach-video').attr('src', url);
+            objDom.find('.attach-video video').attr('src', url);
         } else {
             objDom.find('.attach-photo').attr('src', url);
         }
@@ -1065,7 +1065,7 @@ define([
         $('.j-popupDelete.is-overlay').removeData('id');
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();
-        if ($('video.attach-video')[0]) $('video.attach-video')[0].pause();
+        if ($('.attach-video video')[0]) $('.attach-video video')[0].pause();
     }
 
     function setAttachType(type) {
