@@ -21,7 +21,7 @@ define([
         create: function(qbUser) {
             return {
                 id: qbUser.id,
-                full_name: qbUser.full_name || 'unknown_user',
+                full_name: qbUser.full_name || 'Unknown user',
                 email: qbUser.email || '',
                 phone: qbUser.phone || '',
                 facebook_id: qbUser.facebook_id || null,
