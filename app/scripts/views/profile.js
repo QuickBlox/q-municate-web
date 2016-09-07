@@ -62,12 +62,14 @@ define([
                     phone: this.$el.find('.userProfile-phone').val().trim(),
                     status: this.$el.find('.userProfile-status-field').val().trim(),
                     avatar: this.$el.find('.btn_userProfile_file')[0].files[0] || null
-
                 };
+
                 this.model.set(params, {
                     validate: true
                 });
+
                 Helpers.log(this.model);
+
                 if (!this.model.validationError) {
                     this.model.update();
                     this.remove();

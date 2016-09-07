@@ -333,7 +333,7 @@ define([
                         setRecoverySessionInterval();
                         callback(res);
 
-                        if (!User.contact.full_name) {
+                        if (User.contact.full_name === 'Unknown user') {
                             self.app.views.Profile.render().openPopup();
                         }
                     }

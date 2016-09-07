@@ -31,8 +31,8 @@ define(function() {
         maxLimitFile: 10,
 
         patterns: {
-            name: "[^><;]{3,50}",
-            password: "[A-Za-z0-9`~!@#%&=_<>;:,'" + '\\"' + "\\.\\$\\^\\*\\-\\+\\\\\/\\|\\(\\)\\[\\]\\{\\}\\?]{8,40}"
+            name: ".{3,50}",
+            password: ".{8,40}"
         },
 
         errors: {
