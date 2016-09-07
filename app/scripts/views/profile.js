@@ -34,10 +34,18 @@ define([
         },
 
         render: function() {
-            var template = this.$el.html(this.template(this.model.toJSON()));
+            var self = this,
+                template,
+                renderObj = self.model.toJSON();
+
+            if (renderObj.phone && (renderObj.full_name === 'Unknown user')) {
+                renderObj.full_name = renderObj.phone;
+            }
+
+            template = self.$el.html(self.template(renderObj));
             $('.popups').append(template);
-            this.delegateEvents(this.events);
-            return this;
+            self.delegateEvents(self.events);
+            return self;
         },
 
         openPopup: function() {
