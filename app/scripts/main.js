@@ -35,7 +35,7 @@ requirejs.config({
         facebook: 'https://connect.facebook.net/en_US/sdk',
         googlemaps: '../bower_components/googlemaps-amd/src/googlemaps',
         async: '../bower_components/requirejs-plugins/src/async',
-        gmaps: 'https://rawgit.com/HPNeo/gmaps/master/gmaps',
+        gmaps: 'https://cdnjs.cloudflare.com/ajax/libs/gmaps.js/0.4.24/gmaps.min',
         digits: 'https://cdn.digits.com/1/sdk',
         cryptojs: '../bower_components/crypto-js-lib/rollups/aes',
         videojs: '//vjs.zencdn.net/5.8.8/video',
@@ -43,8 +43,7 @@ requirejs.config({
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
         handlebars: '../bower_components/handlebars/handlebars',
-        // quickblox: '../bower_components/quickblox/quickblox.min',
-        quickblox: 'https://rawgit.com/QuickBlox/quickblox-javascript-sdk/gh-pages/quickblox.min',
+        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.2.1/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
@@ -116,7 +115,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.7.1');
+        $('.j-appVersion').html('v. 1.7.2');
 
         // facebook sdk
         FB.init({
