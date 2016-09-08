@@ -46,6 +46,9 @@ define([
             if (!attrs.full_name) {
                 return 'Name is required';
             }
+            if (attrs.full_name === 'Unknown user') {
+                return 'Your name is "Unknown user", please change';
+            }
             if (attrs.full_name.length < 3) {
                 return QMCONFIG.errors.shortName;
             }
@@ -208,7 +211,7 @@ define([
                 self = this;
 
             if (self.get('avatar_url') === QMCONFIG.defAvatar.url) {
-                custom_data.avatar_url = 'https://graph.facebook.com/v2.2/' + fbId + '/picture?width=146&height=146';
+                custom_data.avatar_url = 'https://graph.facebook.com/v2.7/' + fbId + '/picture?width=1200&height=1200';
             }
             custom_data.is_import = '1';
             params.facebook_id = fbId;
