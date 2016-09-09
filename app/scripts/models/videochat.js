@@ -153,29 +153,13 @@ define([
             $('#recentList ul').prepend(copyDialogItem);
             if (!$('#searchList').is(':visible')) {
                 $('#recentList').removeClass('is-hidden');
-                isSectionEmpty($('#recentList ul'));
+                Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
             }
         }
     };
 
     /* Private
     ---------------------------------------------------------------------- */
-    function isSectionEmpty(list) {
-        if (list.contents().length === 0) {
-            list.parent().addClass('is-hidden');
-        }
-
-        if ($('#historyList ul').contents().length === 0) {
-            $('#historyList ul').parent().addClass('is-hidden');
-        }
-
-        if ($('#requestsList').is('.is-hidden') &&
-            $('#recentList').is('.is-hidden') &&
-            $('#historyList').is('.is-hidden')) {
-
-            $('#emptyList').removeClass('is-hidden');
-        }
-    }
 
     return VideoChat;
 

@@ -469,6 +469,8 @@ define([
                 Helpers.log('Message send:', message);
 
                 if (type === 'chat') {
+                    Helpers.Dialogs.moveDialogToTop(dialog_id);
+                    
                     lastMessage = $chat.find('article[data-type="message"]').last();
                     message.stack = Message.isStack(true, message, lastMessage);
                     self.addItem(message, true, true);
@@ -476,16 +478,6 @@ define([
                         $newMessages.remove();
                     }
 
-                }
-
-                if (dialogItem.length > 0) {
-                    copyDialogItem = dialogItem.clone();
-                    dialogItem.remove();
-                    $('#recentList ul').prepend(copyDialogItem);
-                    if (!$('#searchList').is(':visible')) {
-                        $('#recentList').removeClass('is-hidden');
-                        isSectionEmpty($('#recentList ul'));
-                    }
                 }
             }
         },
@@ -649,15 +641,8 @@ define([
                 }
             }
 
-            if (notification_type !== '1' && dialogItem.length > 0 /* && !isOfflineStorage*/ ) {
-                copyDialogItem = dialogItem.clone();
-                dialogItem.remove();
-                $('#recentList ul').prepend(copyDialogItem);
-
-                if (!$('#searchList').is(':visible')) {
-                    $('#recentList').removeClass('is-hidden');
-                    isSectionEmpty($('#recentList ul'));
-                }
+            if (notification_type !== '1') {
+                Helpers.Dialogs.moveDialogToTop(dialog_id);
             }
 
             lastMessage = $chat.find('article[data-type="message"]').last();
@@ -872,20 +857,6 @@ define([
 
         function escapeHTML(s) {
             return s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-    }
-
-    function isSectionEmpty(list) {
-        if (list.contents().length === 0) {
-            list.parent().addClass('is-hidden');
-        }
-
-        if ($('#historyList ul').contents().length === 0) {
-            $('#historyList ul').parent().addClass('is-hidden');
-        }
-
-        if ($('#requestsList').is('.is-hidden') && $('#recentList').is('.is-hidden') && $('#historyList').is('.is-hidden')) {
-            $('#emptyList').removeClass('is-hidden');
         }
     }
 

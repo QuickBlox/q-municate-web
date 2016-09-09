@@ -1,6 +1,6 @@
 {
     "name": "q-municate",
-    "version": "1.7.2",
+    "version": "1.7.1",
     "dependencies": {
         "jquery": "~2.1.4",
         "lodash": "~3.10.1",
@@ -13,6 +13,7 @@
         "jquery.nicescroll": "~3.6.6",
         "blueimp-load-image": "~1.14.0",
         "blueimp-canvas-to-blob": "~2.2.2",
+        "Chroma-Hash": "https://github.com/mattt/Chroma-Hash.git#~1.0.1",
         "progressbar.js": "https://github.com/bug7a/progressbar.js.git",
         "web-notifications": "~1.1.4",
         "underscore": "^1.8.3",

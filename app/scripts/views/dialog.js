@@ -596,7 +596,7 @@ define([
                         $('#recentList ul').prepend(copyDialogItem);
                         if (!$('#searchList').is(':visible')) {
                             $('#recentList').removeClass('is-hidden');
-                            isSectionEmpty($('#recentList ul'));
+                            Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
                         }
                     }
                     $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
@@ -624,7 +624,7 @@ define([
 
             Dialog.leaveChat(dialog, function() {
                 li.remove();
-                isSectionEmpty(list);
+                Helpers.Dialogs.isSectionEmpty(list);
 
                 // delete chat section
                 if (chat.is(':visible')) {
@@ -777,23 +777,6 @@ define([
             zindex: 1,
             enablekeyboard: false
         });
-    }
-
-    function isSectionEmpty(list) {
-        if (list.contents().length === 0) {
-            list.parent().addClass('is-hidden');
-        }
-
-        if ($('#historyList ul').contents().length === 0) {
-            $('#historyList ul').parent().addClass('is-hidden');
-        }
-
-        if ($('#requestsList').is('.is-hidden') &&
-            $('#recentList').is('.is-hidden') &&
-            $('#historyList').is('.is-hidden')) {
-
-            $('#emptyList').removeClass('is-hidden');
-        }
     }
 
     function setLabelForNewMessages(dialogId) {
