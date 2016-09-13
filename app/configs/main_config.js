@@ -3,7 +3,7 @@ define(function() {
 
     var QMCONFIG = {
 
-        version: 'v. 1.7.3',
+        version: 'v. 1.7.4',
 
         qbAccount: {
             appId: 36125,

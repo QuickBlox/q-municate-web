@@ -179,7 +179,7 @@ define([
             if (mapCoords) {
                 attach = {
                     'type': 'location',
-                    'data': mapCoords.replace(/"/g, '&quot;')
+                    'data': mapCoords
                 };
             } else {
                 attach = Attach.create(blob, size);
