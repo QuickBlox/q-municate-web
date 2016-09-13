@@ -218,7 +218,7 @@ define([
                 $('#emptyList').removeClass('is-hidden');
             }
         }
-    }
+    };
 
     // smart console
     Helpers.log = function() {
