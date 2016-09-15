@@ -324,8 +324,14 @@ define([
         addDialogItem: function(dialog, isDownload, isNew) {
             var contacts = ContactList.contacts,
                 roster = ContactList.roster,
-                private_id, icon, name, status,
-                html, startOfCurrentDay,
+                lastTime = Helpers.getTime(dialog.last_message_date_sent, true),
+                lastMessage = dialog.last_message,
+                startOfCurrentDay,
+                private_id,
+                status,
+                icon,
+                name,
+                html,
                 self = this;
 
             private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
@@ -338,12 +344,12 @@ define([
                 console.error(error);
             }
 
-            html = '<li class="list-item dialog-item presence-listener" data-dialog="' + dialog.id + '" data-id="' + private_id + '">';
+            html  = '<li class="list-item dialog-item presence-listener" data-dialog="' + dialog.id + '" data-id="' + private_id + '">';
             html += '<div class="contact l-flexbox" href="#">';
             html += '<div class="l-flexbox_inline">';
             html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="' + private_id + '"></div>';
-            html += '<span class="name profileUserName" data-id="' + private_id + '">' + name + '</span>';
-            html += '</div>';
+            html += '<div class="dialog_body"><span class="name name_dialog profileUserName" data-id="' + private_id + '">' + name + '</span>';
+            html += '<span class="last_message_preview j-lastMessagePreview">' + lastMessage + '</span></div></div>';
 
             if (dialog.type === 3) {
                 html = getStatus(status, html);
@@ -351,6 +357,7 @@ define([
                 html += '<span class="status"></span>';
             }
 
+            html += '<span class="last_time_preview j-lastTimePreview">' + lastTime + '</span>';
             html += '<span class="unread">' + dialog.unread_count + '</span>';
             html += '</a></li>';
 
@@ -596,7 +603,7 @@ define([
                         $('#recentList ul').prepend(copyDialogItem);
                         if (!$('#searchList').is(':visible')) {
                             $('#recentList').removeClass('is-hidden');
-                            isSectionEmpty($('#recentList ul'));
+                            Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
                         }
                     }
                     $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
@@ -624,7 +631,7 @@ define([
 
             Dialog.leaveChat(dialog, function() {
                 li.remove();
-                isSectionEmpty(list);
+                Helpers.Dialogs.isSectionEmpty(list);
 
                 // delete chat section
                 if (chat.is(':visible')) {
@@ -777,23 +784,6 @@ define([
             zindex: 1,
             enablekeyboard: false
         });
-    }
-
-    function isSectionEmpty(list) {
-        if (list.contents().length === 0) {
-            list.parent().addClass('is-hidden');
-        }
-
-        if ($('#historyList ul').contents().length === 0) {
-            $('#historyList ul').parent().addClass('is-hidden');
-        }
-
-        if ($('#requestsList').is('.is-hidden') &&
-            $('#recentList').is('.is-hidden') &&
-            $('#historyList').is('.is-hidden')) {
-
-            $('#emptyList').removeClass('is-hidden');
-        }
     }
 
     function setLabelForNewMessages(dialogId) {

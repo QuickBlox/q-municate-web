@@ -179,7 +179,7 @@ define([
             if (mapCoords) {
                 attach = {
                     'type': 'location',
-                    'data': mapCoords.replace(/"/g, '&quot;')
+                    'data': mapCoords
                 };
             } else {
                 attach = Attach.create(blob, size);
@@ -230,7 +230,7 @@ define([
                 $('#recentList ul').prepend(copyDialogItem);
                 if (!$('#searchList').is(':visible')) {
                     $('#recentList').removeClass('is-hidden');
-                    isSectionEmpty($('#recentList ul'));
+                    Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
                 }
             }
         }
@@ -241,23 +241,6 @@ define([
     ---------------------------------------------------------------------- */
     function fixScroll() {
         $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
-    }
-
-    function isSectionEmpty(list) {
-        if (list.contents().length === 0) {
-            list.parent().addClass('is-hidden');
-        }
-
-        if ($('#historyList ul').contents().length === 0) {
-            $('#historyList ul').parent().addClass('is-hidden');
-        }
-
-        if ($('#requestsList').is('.is-hidden') &&
-            $('#recentList').is('.is-hidden') &&
-            $('#historyList').is('.is-hidden')) {
-
-            $('#emptyList').removeClass('is-hidden');
-        }
     }
 
     return AttachView;

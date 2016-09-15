@@ -186,6 +186,40 @@ define([
         }
     };
 
+    Helpers.Dialogs = {
+        moveDialogToTop: function(dialogId) {
+            var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialogId + '"]');
+
+            if (dialogItem.length > 0) {
+                copyDialogItem = dialogItem.clone();
+                dialogItem.remove();
+                $('#recentList ul').prepend(copyDialogItem);
+                if (!$('#searchList').is(':visible')) {
+                    $('#recentList').removeClass('is-hidden');
+                    this.isSectionEmpty($('#recentList ul'));
+                }
+            }
+        },
+
+        isSectionEmpty: function(list) {
+            if (list.contents().length === 0) {
+                list.parent().addClass('is-hidden');
+            }
+
+            if ($('#historyList ul').contents().length === 0) {
+                $('#historyList ul').parent().addClass('is-hidden');
+            }
+
+            if ($('#requestsList').is('.is-hidden') &&
+                $('#recentList').is('.is-hidden') &&
+                $('#historyList').is('.is-hidden')) {
+
+
+                $('#emptyList').removeClass('is-hidden');
+            }
+        }
+    };
+
     // smart console
     Helpers.log = function() {
         if (QMCONFIG.debug) {
@@ -234,6 +268,21 @@ define([
             return Date.parse('Thu, 01 Jan 1970 ' + duration + ' GMT') / 1000;
         } else {
             return new Date(seconds*1000).toUTCString().split(/ /)[4];
+        }
+    };
+
+    Helpers.getTime = function(time, isDate) {
+        var messageDate = new Date(time * 1000),
+            startOfCurrentDay = new Date();
+
+        startOfCurrentDay.setHours(0, 0, 0, 0);
+
+        if (messageDate > startOfCurrentDay) {
+            return messageDate.getHours() + ':' + (messageDate.getMinutes().toString().length === 1 ? '0' + messageDate.getMinutes() : messageDate.getMinutes());
+        } else if ((messageDate.getFullYear() === startOfCurrentDay.getFullYear()) && !isDate) {
+            return $.timeago(messageDate);
+        } else {
+            return messageDate.getDate() + '/' + (messageDate.getMonth() + 1) + '/' + messageDate.getFullYear();
         }
     };
 

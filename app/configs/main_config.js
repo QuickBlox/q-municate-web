@@ -3,6 +3,8 @@ define(function() {
 
     var QMCONFIG = {
 
+        version: 'v. 1.7.4',
+
         qbAccount: {
             appId: 36125,
             authKey: 'gOGVNO4L9cBwkPE',
@@ -31,8 +33,8 @@ define(function() {
         maxLimitFile: 10,
 
         patterns: {
-            name: ".{3,50}",
-            password: ".{8,40}"
+            name: '.{3,50}',
+            password: '.{8,40}'
         },
 
         errors: {
