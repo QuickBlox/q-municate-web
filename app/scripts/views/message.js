@@ -102,7 +102,7 @@ define([
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
                         html += '<h4 class="message-author"><span class="profileUserName" data-id="' + message.sender_id + '">' + contact.full_name + '</span> has added ' + occupants_names + ' to the group chat</h4>';
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -132,7 +132,7 @@ define([
                             html += '<h4 class="message-author"><span class="profileUserName" data-id="' + message.sender_id + '">' + contact.full_name + '</span> has changed the chat picture</h4>';
                         }
 
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -149,7 +149,7 @@ define([
                             html += '<h4 class="message-author"><span class="profileUserName" data-id="' + message.sender_id + '">' + contact.full_name + '</span> has sent a request to you</h4>';
                         }
 
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -166,7 +166,7 @@ define([
                             html += '<h4 class="message-author">Your request has been accepted</h4>';
                         }
 
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -186,7 +186,7 @@ define([
                             html += '</button></h4>';
                         }
 
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -205,7 +205,7 @@ define([
                             html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
                         }
 
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -230,7 +230,7 @@ define([
                                 html += '<h4 class="message-author">Incoming ' + (message.callType === '2' ? 'Video' : '') + ' Call, ' + Helpers.getDuration(message.callDuration);
                             }
 
-                            html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="info_indent"></div></div></div></div></article>';
                         }
                         break;
@@ -255,7 +255,7 @@ define([
                                 html += '<h4 class="message-author">Missed ' + (message.callType === '2' ? 'Video' : '') + ' Call';
                             }
 
-                            html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="info_indent"></div></div></div></div></article>';
                         }
                         break;
@@ -274,7 +274,7 @@ define([
                                 html += '<h4 class="message-author">Camera and/or microphone wasn\'t found.';
                             }
 
-                            html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="info_indent"></div></div></div></div></article>';
                         }
                         break;
@@ -298,7 +298,7 @@ define([
                             html += '<div class="preview preview-photo" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '">';
                             html += '<img id="attach_' + message.id + '" src="' + attachUrl + '" alt="attach">';
                             html += '</div></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('audio') > -1) {
@@ -306,7 +306,7 @@ define([
                             html += message.attachment.name + '<br><br>';
                             html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
                             html += '<audio id="attach_' + message.id + '" src="' + attachUrl + '" controls class="attach-audio"></audio></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
@@ -314,26 +314,26 @@ define([
                             html += message.attachment.name + '<br><br>';
                             html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
                             html += '<div id="attach_' + message.id + '" class="preview preview-video" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '"></div></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('location') > -1) {
                             html += '<div class="message-body">';
                             html += '<a class="open_googlemaps" href="' + mapAttachLink + '" target="_blank">';
                             html += '<img id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map"></a></div></div>';
-                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType) {
                             html += '<div class="message-body">';
                             html += '<a id="attach_' + message.id + '" class="attach-file" href="' + attachUrl + '" download="' + message.attachment.name + '">' + message.attachment.name + '</a>';
                             html += '<span class="attach-size">' + getFileSize(message.attachment.size) + '</span></div></div>';
-                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else {
                             html += '<div class="message-body">' + minEmoji(parser(message.body)) + '</div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         }
@@ -346,6 +346,11 @@ define([
                     if (isMessageListener) {
                         $chat.find('.l-chat-content .mCSB_container').append(html);
                         smartScroll(isBottom);
+                        updateDialogItem({
+                            val: message.body,
+                            time: Helpers.getTime(message.date_sent, true),
+                            dialogId: message.dialog_id
+                        });
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
                     }
@@ -470,7 +475,7 @@ define([
 
                 if (type === 'chat') {
                     Helpers.Dialogs.moveDialogToTop(dialog_id);
-                    
+
                     lastMessage = $chat.find('article[data-type="message"]').last();
                     message.stack = Message.isStack(true, message, lastMessage);
                     self.addItem(message, true, true);
@@ -478,6 +483,11 @@ define([
                         $newMessages.remove();
                     }
 
+                    updateDialogItem({
+                        val: val,
+                        time: Helpers.getTime(time, true),
+                        dialogId: dialog_id
+                    });
                 }
             }
         },
@@ -822,21 +832,6 @@ define([
         $objDom.mCustomScrollbar('scrollTo', 'bottom');
     }
 
-    function getTime(time) {
-        var messageDate = new Date(time * 1000),
-            startOfCurrentDay = new Date();
-
-        startOfCurrentDay.setHours(0, 0, 0, 0);
-
-        if (messageDate > startOfCurrentDay) {
-            return messageDate.getHours() + ':' + (messageDate.getMinutes().toString().length === 1 ? '0' + messageDate.getMinutes() : messageDate.getMinutes());
-        } else if (messageDate.getFullYear() === startOfCurrentDay.getFullYear()) {
-            return $.timeago(messageDate);
-        } else {
-            return messageDate.getDate() + '/' + (messageDate.getMonth() + 1) + '/' + messageDate.getFullYear();
-        }
-    }
-
     function parser(str) {
         var url, url_text;
         var URL_REGEXP = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/gi;
@@ -961,11 +956,7 @@ define([
             geocoords;
 
         if (geodata) {
-            escape = geodata.replace(/&amp;/g, '&')
-                .replace(/&#10;/g, '\n')
-                .replace(/&quot;/g, '"');
-
-            geocoords = JSON.parse(escape);
+            geocoords = JSON.parse(geodata);
         } else {
             // the old way for receive geo coordinates from attachments
             geocoords = {
@@ -1012,6 +1003,15 @@ define([
             default:
                 break;
         }
+    }
+
+    function updateDialogItem(params) {
+        var $dialogItem = $('.dialog-item[data-dialog="'+ params.dialogId +'"]'),
+            $lastMessage = $dialogItem.find('.j-lastMessagePreview'),
+            $lastTime = $dialogItem.find('.j-lastTimePreview');
+
+        $lastMessage.text(params.val);
+        $lastTime.text(params.time);
     }
 
     return MessageView;

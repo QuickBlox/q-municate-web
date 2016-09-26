@@ -218,7 +218,7 @@ define([
                 $('#emptyList').removeClass('is-hidden');
             }
         }
-    }
+    };
 
     // smart console
     Helpers.log = function() {
@@ -268,6 +268,21 @@ define([
             return Date.parse('Thu, 01 Jan 1970 ' + duration + ' GMT') / 1000;
         } else {
             return new Date(seconds*1000).toUTCString().split(/ /)[4];
+        }
+    };
+
+    Helpers.getTime = function(time, isDate) {
+        var messageDate = new Date(time * 1000),
+            startOfCurrentDay = new Date();
+
+        startOfCurrentDay.setHours(0, 0, 0, 0);
+
+        if (messageDate > startOfCurrentDay) {
+            return messageDate.getHours() + ':' + (messageDate.getMinutes().toString().length === 1 ? '0' + messageDate.getMinutes() : messageDate.getMinutes());
+        } else if ((messageDate.getFullYear() === startOfCurrentDay.getFullYear()) && !isDate) {
+            return $.timeago(messageDate);
+        } else {
+            return messageDate.getDate() + '/' + (messageDate.getMonth() + 1) + '/' + messageDate.getFullYear();
         }
     };
 
