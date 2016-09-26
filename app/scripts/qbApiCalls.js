@@ -322,10 +322,10 @@ define([
                         window.location.reload();
                     } else {
                         var eventParams = {
-                            'chat_endpoints': QB.auth.service.qbInst.config.endpoints.chat,
+                            'chat_endpoint': QB.auth.service.qbInst.config.endpoints.chat,
                             'app_id': (QMCONFIG.qbAccount.appId).toString()
                         };
-                        FlurryAgent.logEvent("Connect to chat", eventParams);
+                        FlurryAgent.logEvent("Connect_to_chat", eventParams);
 
                         Session.update({
                             date: new Date()
