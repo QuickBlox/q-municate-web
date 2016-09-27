@@ -28,8 +28,8 @@
 }
 .last_message_preview {
     display: block;
-    height: 17px;
-    margin-top: 5px;
+    height: 25px;
+    line-height: 25px;
     font-size: 15px;
     color: #959595;
     overflow: hidden;
@@ -145,19 +145,25 @@
 }
 .status.icon_videocall,
 .status.status_online.icon_videocall {
-    min-width: 27px;
-    height: 15px;
-    border-radius: 0;
-    opacity: 1;
+    min-width: 25px;
+    height: 25px;
+    left: 27px;
+    top: 29px;
     background: image-url('icon-current-videocall.svg') no-repeat center;
+    background-size: 85%;
+    background-color: #fff;
+    opacity: 1;
 }
 .status.icon_audiocall,
 .status.status_online.icon_audiocall {
-    min-width: 19px;
-    height: 19px;
-    border-radius: 0;
-    opacity: 1;
+    min-width: 25px;
+    height: 25px;
+    left: 27px;
+    top: 29px;
     background: image-url('icon-current-audiocall.svg') no-repeat center;
+    background-size: 65%;
+    background-color: #fff;
+    opacity: 1;
 }
 .last_time_preview {
     font-size: 13px;

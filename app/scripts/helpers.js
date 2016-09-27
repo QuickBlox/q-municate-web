@@ -183,6 +183,29 @@ define([
             }
 
             return occupants_names;
+        },
+
+        parser: function(str) {
+            var url, url_text;
+            var URL_REGEXP = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/gi;
+
+            str = escapeHTML(str);
+
+            // parser of paragraphs
+            str = str.replace(/\n/g, '<br>');
+
+            // parser of links
+            str = str.replace(URL_REGEXP, function(match) {
+                url = (/^[a-z]+:/i).test(match) ? match : 'http://' + match;
+                url_text = match;
+                return '<a href="' + escapeHTML(url) + '" target="_blank">' + escapeHTML(url_text) + '</a>';
+            });
+
+            return str;
+
+            function escapeHTML(s) {
+                return s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            }
         }
     };
 

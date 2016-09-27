@@ -10,6 +10,7 @@ define([
     'quickblox',
     'Helpers',
     'QMHtml',
+    'minEmoji',
     'underscore',
     'models/person',
     'views/profile',
@@ -17,7 +18,6 @@ define([
     'views/fb_import',
     'mCustomScrollbar',
     'nicescroll',
-
     'mousewheel'
 ], function(
     $,
@@ -25,6 +25,7 @@ define([
     QB,
     Helpers,
     QMHtml,
+    minEmoji,
     _,
     Person,
     ProfileView,
@@ -325,7 +326,7 @@ define([
             var contacts = ContactList.contacts,
                 roster = ContactList.roster,
                 lastTime = Helpers.getTime(dialog.last_message_date_sent, true),
-                lastMessage = dialog.last_message,
+                lastMessage = minEmoji(Helpers.Messages.parser(dialog.last_message)),
                 startOfCurrentDay,
                 private_id,
                 status,

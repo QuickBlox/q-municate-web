@@ -332,7 +332,7 @@ define([
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else {
-                            html += '<div class="message-body">' + minEmoji(parser(message.body)) + '</div>';
+                            html += '<div class="message-body">' + minEmoji(Helpers.Messages.parser(message.body)) + '</div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
@@ -832,29 +832,6 @@ define([
         $objDom.mCustomScrollbar('scrollTo', 'bottom');
     }
 
-    function parser(str) {
-        var url, url_text;
-        var URL_REGEXP = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/gi;
-
-        str = escapeHTML(str);
-
-        // parser of paragraphs
-        str = str.replace(/\n/g, '<br>');
-
-        // parser of links
-        str = str.replace(URL_REGEXP, function(match) {
-            url = (/^[a-z]+:/i).test(match) ? match : 'http://' + match;
-            url_text = match;
-            return '<a href="' + escapeHTML(url) + '" target="_blank">' + escapeHTML(url_text) + '</a>';
-        });
-
-        return str;
-
-        function escapeHTML(s) {
-            return s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-    }
-
     function stopShowTyping(chat, user) {
         var index = typingList.indexOf(user);
 
@@ -1010,8 +987,8 @@ define([
             $lastMessage = $dialogItem.find('.j-lastMessagePreview'),
             $lastTime = $dialogItem.find('.j-lastTimePreview');
 
-        $lastMessage.text(params.val);
-        $lastTime.text(params.time);
+        $lastMessage.html(minEmoji(Helpers.Messages.parser(params.val)));
+        $lastTime.html(params.time);
     }
 
     return MessageView;

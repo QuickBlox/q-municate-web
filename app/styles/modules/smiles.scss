@@ -73,7 +73,8 @@
 }
 .message-body .em,
 .textarea .em,
-.textarea .em:hover {
+.textarea .em:hover,
+.last_message_preview .em {
     margin: 0;
     vertical-align: top;
     cursor: text;
