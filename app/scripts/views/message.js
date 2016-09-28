@@ -349,7 +349,8 @@ define([
                         updateDialogItem({
                             val: message.body,
                             time: Helpers.getTime(message.date_sent, true),
-                            dialogId: message.dialog_id
+                            dialogId: message.dialog_id,
+                            type: type
                         });
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
@@ -985,9 +986,20 @@ define([
     function updateDialogItem(params) {
         var $dialogItem = $('.dialog-item[data-dialog="'+ params.dialogId +'"]'),
             $lastMessage = $dialogItem.find('.j-lastMessagePreview'),
-            $lastTime = $dialogItem.find('.j-lastTimePreview');
+            $lastTime = $dialogItem.find('.j-lastTimePreview'),
+            lastMessage;
 
-        $lastMessage.html(minEmoji(Helpers.Messages.parser(params.val)));
+        if (params.type >= 1 && params.type <= 2) {
+            lastMessage = 'notification message';
+        } else if (params.type >= 4 && params.type <= 7) {
+            lastMessage = 'Contact request';
+        } else if (params.type >= 8) {
+            lastMessage = 'Call notification';
+        } else {
+            lastMessage = minEmoji(Helpers.Messages.parser(params.val));
+        }
+
+        $lastMessage.html(lastMessage);
         $lastTime.html(params.time);
     }
 

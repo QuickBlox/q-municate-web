@@ -207,6 +207,7 @@ define([
             QB.chat.send(jid, msg);
 
             message = Message.create({
+                'body': msg.body,
                 'chat_dialog_id': dialog_id,
                 'date_sent': time,
                 'attachment': attach,

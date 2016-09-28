@@ -108,7 +108,10 @@
 }
 .occupant .status {
     display: none;
-    margin: 0 5px 0 -5px;
+    margin: -1px 5px 0 -5px;
+}
+.occupant .status_request {
+    margin-top: -3px;
 }
 .occupant .status_online,
 .occupant .status_request {
@@ -119,12 +122,19 @@
     opacity: 1;
 }
 .status_request {
+    background: #fff;
     font-weight: bold;
     color: #999;
     opacity: 1;
+    text-align: center;
+    border-color: #fff;
 }
 .status_request:after {
     content: '?';
+}
+.chat-title .status_request {
+    background: none;
+    border: none;
 }
 .list-item:hover .status_request {
     background: #fff;
