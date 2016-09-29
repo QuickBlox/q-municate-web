@@ -584,7 +584,7 @@ define([
         if ($obj.is('.off')) {
             self.unmute(deviceType);
             if (deviceType === 'video')
-                curSession.update(opponentId, {
+                curSession.update({
                     dialog_id: dialogId,
                     unmute: deviceType
                 });
@@ -593,7 +593,7 @@ define([
         } else {
             self.mute(deviceType);
             if (deviceType === 'video')
-                curSession.update(opponentId, {
+                curSession.update({
                     dialog_id: dialogId,
                     mute: deviceType
                 });
