@@ -20,7 +20,7 @@
     "googlemaps-amd": "^1.0.2",
     "balloon-css": "*",
     "crypto-js-lib": "^3.1.2",
-    "quickblox": "^2.3.0"
+    "quickblox": "^2.3.1"
   },
   "devDependencies": {}
 }

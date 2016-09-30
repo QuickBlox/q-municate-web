@@ -62,6 +62,10 @@ define([
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
                 isBottom = Helpers.isBeginOfChat();
 
+            if (isCallback && isMessageListener) {
+                updateDialogItem(message);
+            }
+
             if (typeof $chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) {
                 return true;
             }
@@ -346,12 +350,6 @@ define([
                     if (isMessageListener) {
                         $chat.find('.l-chat-content .mCSB_container').append(html);
                         smartScroll(isBottom);
-                        updateDialogItem({
-                            val: message.body,
-                            time: Helpers.getTime(message.date_sent, true),
-                            dialogId: message.dialog_id,
-                            type: type
-                        });
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
                     }
@@ -983,24 +981,27 @@ define([
         }
     }
 
-    function updateDialogItem(params) {
-        var $dialogItem = $('.dialog-item[data-dialog="'+ params.dialogId +'"]'),
+    function updateDialogItem(message) {
+        var $dialogItem = $('.dialog-item[data-dialog="'+ message.dialog_id +'"]'),
             $lastMessage = $dialogItem.find('.j-lastMessagePreview'),
             $lastTime = $dialogItem.find('.j-lastTimePreview'),
+            time = Helpers.getTime(message.date_sent, true),
             lastMessage;
 
-        if (params.type >= 1 && params.type <= 2) {
-            lastMessage = 'notification message';
-        } else if (params.type >= 4 && params.type <= 7) {
-            lastMessage = 'Contact request';
-        } else if (params.type >= 8) {
+        if (message.notification_type) {
+            if (message.notification_type <= 2) {
+                lastMessage = 'notification message';
+            } else {
+                lastMessage = 'Contact request';
+            }
+        } else if (message.callType) {
             lastMessage = 'Call notification';
         } else {
-            lastMessage = minEmoji(Helpers.Messages.parser(params.val));
+            lastMessage = minEmoji( Helpers.Messages.parser(message.body) );
         }
 
         $lastMessage.html(lastMessage);
-        $lastTime.html(params.time);
+        $lastTime.html(time);
     }
 
     return MessageView;

@@ -9,6 +9,7 @@
     "dependencies": {},
     "devDependencies": {
         "connect-livereload": "^0.5.4",
+        "quickblox": "^2.2.3",
         "ghooks": "^1.2.1",
         "grunt": "^0.4.0",
         "grunt-bower-requirejs": "^2.0.0",

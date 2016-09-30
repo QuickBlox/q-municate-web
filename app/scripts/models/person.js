@@ -164,8 +164,8 @@ define([
                 Attach = App.models.Attach;
 
             Attach.crop(avatar, {
-                w: 1200,
-                h: 1200
+                w: 1000,
+                h: 1000
             }, function(file) {
                 QBApiCalls.createBlob({
                     file: file,

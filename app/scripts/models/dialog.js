@@ -286,8 +286,8 @@ define([
                     callback(false);
                 } else {
                     Attach.crop(file, {
-                        w: 1200,
-                        h: 1200
+                        w: 1000,
+                        h: 1000
                     }, function(avatar) {
                         Attach.upload(avatar, function(blob) {
                             var imgUrl = QB.content.publicUrl(blob.uid);
