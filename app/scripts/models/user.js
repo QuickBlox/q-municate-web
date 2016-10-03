@@ -336,14 +336,14 @@ define([
 
             UserView.createSpinner();
 
-            QB.users.get(storage.id, function(error, user) {
-                if (error) {
-                    this.contact = Contact.create(storage);
-                } else {
+            QBApiCalls.getUser(storage.id, function(user) {
+                if (user) {
                     self.contact = Contact.create(user);
+                } else {
+                    this.contact = Contact.create(storage);
                 }
 
-                Helpers.log('User', self);
+                Helpers.log('User', user);
 
                 QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
                     self.rememberMe();
