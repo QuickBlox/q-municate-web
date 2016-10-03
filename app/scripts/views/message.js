@@ -481,12 +481,6 @@ define([
                     if ($newMessages.length) {
                         $newMessages.remove();
                     }
-
-                    updateDialogItem({
-                        val: val,
-                        time: Helpers.getTime(time, true),
-                        dialogId: dialog_id
-                    });
                 }
             }
         },
@@ -986,11 +980,12 @@ define([
             $lastMessage = $dialogItem.find('.j-lastMessagePreview'),
             $lastTime = $dialogItem.find('.j-lastTimePreview'),
             time = Helpers.getTime(message.date_sent, true),
+            type = message.notification_type,
             lastMessage;
 
-        if (message.notification_type) {
-            if (message.notification_type == (1 || 2 || 5)) {
-                lastMessage = 'notification message';
+        if (type) {
+            if ((type <= 2) || (type == 5)) {
+                lastMessage = 'Notification message';
             } else {
                 lastMessage = 'Contact request';
             }
