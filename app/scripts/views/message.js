@@ -989,7 +989,7 @@ define([
             lastMessage;
 
         if (message.notification_type) {
-            if (message.notification_type <= 2) {
+            if (message.notification_type === (1 || 2 || 5)) {
                 lastMessage = 'notification message';
             } else {
                 lastMessage = 'Contact request';
