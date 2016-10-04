@@ -555,7 +555,8 @@ define([
             // add or remove label about new messages
             if ($chat.length && !isHiddenChat && window.isQMAppActive && isNewMessages) {
                 $label.remove();
-            } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length && !isNewMessages) {
+            } else if ((isHiddenChat || !window.isQMAppActive) &&
+                        $chat.length && !isNewMessages && isNotMyUser) {
                 $chat.find('.l-chat-content .mCSB_container').append($newMessages);
             }
 
@@ -631,7 +632,7 @@ define([
                     $chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
                 }
 
-                if (deleted_id[0] === User.contact.id) {
+                if (deleted_id && (deleted_id[0] === User.contact.id)) {
                     DialogView.leaveGroupChat(dialog_id, true);
                     DialogView.decUnreadCounter(dialog_id);
                 }
@@ -755,11 +756,10 @@ define([
                         DialogView.getUnreadCounter(dialog_id);
                     }
                 });
+
+                self.addItem(msg, true, true, true);
+                createAndShowNotification(msg, true);
             }
-
-            self.addItem(msg, true, true, true);
-
-            createAndShowNotification(msg, true);
         },
 
         onMessageTyping: function(isTyping, userId, dialogId) {
