@@ -560,13 +560,17 @@ define([
                 $chat.find('.l-chat-content .mCSB_container').append($newMessages);
             }
 
-            if ($chat.length && message.markable === 1 && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
-                // send read status if message displayed in chat
-                Message.update(msg.id, dialog_id, id);
-            } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length > 0 && message.markable == 1) {
-                msgArr = dialogs[dialog_id].messages || [];
-                msgArr.push(msg.id);
-                dialogs[dialog_id].messages = msgArr;
+            if (isNotMyUser) {
+                if ($chat.length && message.markable === 1 && !isHiddenChat &&
+                    window.isQMAppActive && msg.sender_id !== User.contact.id) {
+                    // send read status if message displayed in chat
+                    Message.update(msg.id, dialog_id, id);
+                } else if ((isHiddenChat || !window.isQMAppActive) &&
+                    $chat.length > 0 && message.markable == 1) {
+                    msgArr = dialogs[dialog_id].messages || [];
+                    msgArr.push(msg.id);
+                    dialogs[dialog_id].messages = msgArr;
+                }
             }
 
             if (otherChat || (!otherChat && !isBottom && isNotMyUser && isExistent)) {
