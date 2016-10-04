@@ -631,6 +631,11 @@ define([
                     $chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
                 }
 
+                if (deleted_id[0] === User.contact.id) {
+                    DialogView.leaveGroupChat(dialog_id, true);
+                    DialogView.decUnreadCounter(dialog_id);
+                }
+
                 // change name
                 if (room_name) {
                     $chat.find('.name_chat').text(room_name).attr('title', room_name);
@@ -710,7 +715,8 @@ define([
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
-                msg, dialog;
+                dialog,
+                msg;
 
             msg = Message.create(message);
             msg.sender_id = message.userId;
@@ -742,15 +748,18 @@ define([
                     DialogView.addDialogItem(dialog);
                     unread++;
                     dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]');
-                    dialogGroupItem.find('.unread').text(unread);
-                    DialogView.getUnreadCounter(dialog_id);
+
+                    // Don't show any notification if system message from current User
+                    if (msg.sender_id !== User.contact.id) {
+                        dialogGroupItem.find('.unread').text(unread);
+                        DialogView.getUnreadCounter(dialog_id);
+                    }
                 });
             }
 
             self.addItem(msg, true, true, true);
 
             createAndShowNotification(msg, true);
-
         },
 
         onMessageTyping: function(isTyping, userId, dialogId) {

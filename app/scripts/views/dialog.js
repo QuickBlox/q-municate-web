@@ -622,15 +622,23 @@ define([
             }
         },
 
-        leaveGroupChat: function(objDom) {
+        leaveGroupChat: function(dialogParam, sameUser) {
             var dialogs = ContactList.dialogs,
-                dialog_id = objDom.data('dialog'),
+                dialog_id = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
                 dialog = dialogs[dialog_id],
                 li = $('.dialog-item[data-dialog="' + dialog_id + '"]'),
                 chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 list = li.parents('ul');
 
-            Dialog.leaveChat(dialog, function() {
+            if (sameUser) {
+                removeDialogItem();
+            } else {
+                Dialog.leaveChat(dialog, function() {
+                    removeDialogItem();
+                });
+            }
+
+            function removeDialogItem() {
                 li.remove();
                 Helpers.Dialogs.isSectionEmpty(list);
 
@@ -642,7 +650,7 @@ define([
                     chat.remove();
                 }
                 delete dialogs[dialog_id];
-            });
+            }
 
         },
 
