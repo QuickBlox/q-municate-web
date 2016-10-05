@@ -996,7 +996,7 @@ define([
             lastMessage;
 
         if (type) {
-            if ((type <= 2) || (type == 5)) {
+            if (type <= 2) {
                 lastMessage = 'Notification message';
             } else {
                 lastMessage = 'Contact request';

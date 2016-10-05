@@ -701,6 +701,12 @@ define([
                 return false;
             });
 
+            $('body').on('keyup', function(event) {
+                var code = event.keyCode;
+
+                console.info(code);
+            });
+
             $('.localSearch').on('keyup search submit', function(event) {
                 var $self = $(this),
                     type = event.type,

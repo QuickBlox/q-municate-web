@@ -48,7 +48,7 @@ define([
                 room_name: params.name || null,
                 room_photo: params.photo && params.photo.replace('http://', 'https://') || '',
                 occupants_ids: occupants_ids,
-                last_message: params.last_message || 'Notification message',
+                last_message: params.last_message || ((params.type === 2) ? 'Notification message' : 'Contact request'),
                 last_message_date_sent: params.last_message_date_sent || time,
                 room_updated_date: Date.parse(params.updated_at) || params.room_updated_date || time,
                 unread_count: params.unread_messages_count || '',
@@ -119,50 +119,47 @@ define([
                 Helpers.log('Dialog', dialog);
 
                 QB.chat.muc.join(dialog.room_jid, function() {
-                    var msgId = QB.chat.helpers.getBsonObjectId();
+                    var msgId = QB.chat.helpers.getBsonObjectId(),
+                        time = Math.floor(Date.now() / 1000);
 
-                    QB.chat.addListener({
-                        name: 'message',
-                        type: 'groupchat',
-                        id: msgId
-                    }, function() {
-                        DialogView.addDialogItem(dialog);
-                        callback(dialog);
+                    // send invites for all occupants
+                    for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
+                        id = dialog.occupants_ids[i];
+                        QB.chat.sendSystemMessage(contacts[id].user_jid, {
+                            extension: {
+                                date_sent: time,
+                                notification_type: '1',
+                                dialog_id: dialog.id,
+                                room_name: dialog.room_name,
+                                room_updated_date: time,
+                                current_occupant_ids: res.occupants_ids.join(),
+                                type: 2
+                            }
+                        });
 
-                        // send invites for all occupants
-                        for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
-                            id = dialog.occupants_ids[i];
-                            QB.chat.sendSystemMessage(contacts[id].user_jid, {
+                        if ((i + 1) === len) {
+                            // send message about added people for history
+                            QB.chat.send(dialog.room_jid, {
+                                id: msgId,
+                                type: 'groupchat',
+                                body: 'Notification message',
                                 extension: {
-                                    date_sent: Math.floor(Date.now() / 1000),
-                                    notification_type: '1',
+                                    date_sent: time,
+                                    save_to_history: 1,
+                                    notification_type: '2',
                                     dialog_id: dialog.id,
-                                    room_name: dialog.room_name,
-                                    room_updated_date: Math.floor(Date.now() / 1000),
+                                    room_updated_date: time,
                                     current_occupant_ids: res.occupants_ids.join(),
-                                    type: 2
+                                    added_occupant_ids: params.occupants_ids,
+                                    dialog_update_info: 3,
+                                    message_id: msgId
                                 }
                             });
                         }
-                    });
+                    }
 
-                    // send message about added people for history
-                    QB.chat.send(dialog.room_jid, {
-                        id: msgId,
-                        type: 'groupchat',
-                        body: 'Notification message',
-                        extension: {
-                            date_sent: Math.floor(Date.now() / 1000),
-                            save_to_history: 1,
-                            notification_type: '2',
-                            dialog_id: dialog.id,
-                            room_updated_date: Math.floor(Date.now() / 1000),
-                            current_occupant_ids: res.occupants_ids.join(),
-                            added_occupant_ids: params.occupants_ids,
-                            dialog_update_info: 3,
-                            message_id: msgId
-                        }
-                    });
+                    callback(dialog);
+                    DialogView.addDialogItem(dialog);
                 });
 
             });
