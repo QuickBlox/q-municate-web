@@ -81,17 +81,17 @@ define([
                     popup.find('.popup-elem .not_found').removeClass('is-hidden');
                     popup.find('.popup-elem .short_length').addClass('is-hidden');
                 }
-
-                form.find('input').prop('disabled', false).val(val);
-                popup.find('.popup-elem').addClass('is-hidden');
-                popup.find('.mCSB_container').empty();
+                // 
+                // form.find('input').prop('disabled', false).val(val);
+                // popup.find('.popup-elem').addClass('is-hidden');
+                // popup.find('.mCSB_container').empty();
 
                 scrollbar(list, self);
                 self.createDataSpinner(list);
-
-                $('.popup:visible .spinner_bounce')
-                    .removeClass('is-hidden')
-                    .addClass('is-empty');
+                //
+                // $('.popup:visible .spinner_bounce')
+                //     .removeClass('is-hidden')
+                //     .addClass('is-empty');
 
                 sessionStorage.setItem('QM.search.value', val);
                 sessionStorage.setItem('QM.search.page', 1);
@@ -100,6 +100,14 @@ define([
                     createListResults(list, results, self);
                 });
             }
+
+            form.find('input').prop('disabled', false).val(val);
+            popup.find('.popup-elem').addClass('is-hidden');
+            popup.find('.mCSB_container').empty();
+
+            $('.popup:visible .spinner_bounce')
+                .removeClass('is-hidden')
+                .addClass('is-empty');
         },
 
         addContactsToChat: function(objDom, type, dialog_id, isPrivate) {

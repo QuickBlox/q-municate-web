@@ -126,6 +126,7 @@ define([
                     for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
                         id = dialog.occupants_ids[i];
                         QB.chat.sendSystemMessage(contacts[id].user_jid, {
+                            body: 'Notification message',
                             extension: {
                                 date_sent: time,
                                 notification_type: '1',

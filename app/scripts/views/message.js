@@ -774,7 +774,6 @@ define([
                 visible = $chat.is(':visible') ? true : false;
 
             if (recipient && visible) {
-
                 // stop displays the status if they do not come
                 if (clearTyping === undefined) {
                     clearTyping = setTimeout(function() {

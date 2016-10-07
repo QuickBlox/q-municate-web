@@ -677,38 +677,46 @@ define([
 
             /* search
             ----------------------------------------------------- */
-            $('#globalSearch').on('keyup search submit', function(event) {
-                var code = event.keyCode;
-                form = $(this);
+            $('.j-globalSearch').on('keyup search submit', function(event) {
+                var $self = $(this),
+                    code = event.keyCode,
+                    isText = $self.find('.form-input-search').val().length,
+                    $cleanButton = $self.find('.j-clean-button'),
+                    isNoBtn = $cleanButton.is(':hidden');
 
                 if (code === 13) {
                     clearTimeout(keyupSearch);
-                    keyupSearch = undefined;
-                    ContactListView.globalSearch(form);
+                    startSearch();
                 } else if (keyupSearch === undefined) {
                     keyupSearch = setTimeout(function() {
-                        keyupSearch = undefined;
-                        ContactListView.globalSearch(form);
-                    }, 1000);
+                        startSearch();
+                    }, (code === 8) ? 0 : 1000);
                 } else {
                     clearTimeout(keyupSearch);
                     keyupSearch = setTimeout(function() {
-                        keyupSearch = undefined;
-                        ContactListView.globalSearch(form);
+                        startSearch();
                     }, 1000);
+                }
+
+                function startSearch() {
+                    keyupSearch = undefined;
+                    ContactListView.globalSearch($self);
+                }
+
+                if (isText && isNoBtn) {
+                    $cleanButton.show();
+                } else if (!isText) {
+                    $cleanButton.hide();
                 }
 
                 return false;
             });
 
-            $('body').on('keyup', function(event) {
-                var code = event.keyCode;
-
-                console.info(code);
-            });
-
             $('.localSearch').on('keyup search submit', function(event) {
                 var $self = $(this),
+                    isText = $self.find('.form-input-search').val().length,
+                    $cleanButton = $self.find('.j-clean-button'),
+                    isNoBtn = $cleanButton.is(':hidden'),
                     type = event.type,
                     code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
@@ -720,14 +728,29 @@ define([
                     }
                 }
 
+                if (isText && isNoBtn) {
+                    $cleanButton.show();
+                } else if (!isText) {
+                    $cleanButton.hide();
+                }
+
                 return false;
             });
 
-            $('.clean-button').on('click', function(event) {
-                var $form = $(this).parent('form.formSearch');
+            $('.j-clean-button').on('click', function(event) {
+                var $self = $(this),
+                    $form = $self.parent('form.formSearch');
 
+                $self.hide();
                 $form.find('input.form-input-search').val('').focus();
-                UserView.localSearch($form);
+
+                if ($form.is('.j-globalSearch')) {
+                    ContactListView.globalSearch($form);
+                }
+
+                if ($form.is('.j-localSearch')) {
+                    UserView.localSearch($form);
+                }
 
                 return false;
             });
