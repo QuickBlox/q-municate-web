@@ -29,6 +29,7 @@ define(function() {
         },
 
         maxLimitFile: 10,
+        maxVideoSize: 100,
 
         patterns: {
             name: '.{3,50}',
@@ -49,6 +50,7 @@ define(function() {
             avatarType: "Avatar must be image",
             fileName: "File name mustn't be more than 100 characters",
             fileSize: "File mustn't be more than 10 MB",
+            videoSize: "File mustn't be more than 100 MB",
             emailExists: "The email has already been taken",
             unauthorized: "The email or password is incorrect",
             notFoundEmail: "The email you entered wasn't found",

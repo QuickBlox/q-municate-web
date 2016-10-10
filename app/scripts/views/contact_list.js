@@ -81,7 +81,7 @@ define([
                     popup.find('.popup-elem .not_found').removeClass('is-hidden');
                     popup.find('.popup-elem .short_length').addClass('is-hidden');
                 }
-                // 
+                //
                 // form.find('input').prop('disabled', false).val(val);
                 // popup.find('.popup-elem').addClass('is-hidden');
                 // popup.find('.mCSB_container').empty();
@@ -333,6 +333,7 @@ define([
             Helpers.log('Dialog', dialog);
 
             DialogView.addDialogItem(dialog);
+            Message.update(null, dialog.id);
 
             dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]');
             copyDialogItem = dialogItem.clone();

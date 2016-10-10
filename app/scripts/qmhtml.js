@@ -195,8 +195,7 @@ define([
             '<div class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"></div>' +
             '<div class="footer_btn j-send_location btn_sendlocation' + ((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '') + '"' +
             'data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>' +
-            // '<input class="attachment" type="file" accept="audio/*,video/webm,video/mp4,image/*"></form>' +  (for next release)
-            '<input class="attachment" type="file" accept="image/*"></form>' +
+            '<input class="attachment" type="file" accept="audio/*,video/webm,video/mp4,video/avi,image/*"></form>' +
             '<div class="j-typing l-typing"></div><div class="l-input-menu">' +
             '<div class="footer_btn l-input-buttons btn_input_smile j-btn_input_smile" data-balloon="Add smiles" data-balloon-pos="up"></div>' +
             '<div class="footer_btn l-input-buttons btn_input_location j-btn_input_location" data-balloon="Send location" data-balloon-pos="up"></div>' +
