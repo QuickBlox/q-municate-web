@@ -327,7 +327,7 @@ define([
         $popup.find('.attach-photo').attr('src', url);
         $popup.find('.attach-name').text(name);
         $popup.add('.popups').addClass('is-overlay');
-    }
+    };
 
     return Helpers;
 });
