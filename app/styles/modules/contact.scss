@@ -42,7 +42,7 @@
 /* avatar */
 .avatar {
     width: 45px;
-    max-width: 45px;
+    min-width: 45px;
     height: 45px;
     border-radius: 50%;
     background-size: cover;

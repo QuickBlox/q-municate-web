@@ -312,7 +312,7 @@ define([
                                     }
                                 });
 
-                                callback(blob.path);
+                                callback(imgUrl);
                             });
                         });
                     });

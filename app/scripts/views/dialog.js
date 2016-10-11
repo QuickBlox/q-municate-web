@@ -425,13 +425,13 @@ define([
                 html += '<div class="l-flexbox_inline">';
 
                 if (dialog.type === 3) {
-                    html += '<div class="contact-avatar avatar avatar_chat profileUserAvatar" style="background-image:url(' + icon + ')" data-id="' + user_id + '"></div>';
+                    html += '<div class="contact-avatar avatar avatar_chat profileUserAvatar scaleAvatar j-scaleAvatar" '
+                    html += 'style="background-image:url(' + icon + ')" data-id="' + user_id + '" data-name="' + name + '"></div>';
                     html += '<h2 class="name name_chat profileUserName" title="' + name + '" data-id="' + user_id + '">' + name + '</h2>';
                     html = getStatus(status, html);
                 } else {
-                    html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url(' + icon + ')"></div>';
-                    html += '<span class="pencil_active avatar is-hidden"></span>';
-                    html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">';
+                    html += '<div class="contact-avatar avatar avatar_chat scaleAvatar j-scaleAvatar" style="background-image:url(' + icon + ')" data-name="' + name + '"></div>';
+                    html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*" data-dialog="' + dialog_id + '">';
                     html += '<h2 class="name name_chat" contenteditable="true" title="' + name + '">' + name + '</h2>';
                     html += '<span class="pencil is-hidden"></span>';
                     html += '<span class="triangle triangle_down"></span>';

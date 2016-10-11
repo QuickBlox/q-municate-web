@@ -265,6 +265,9 @@
     max-width: 80vw;
     max-height: 80vh;
     margin-bottom: 20px;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
 }
 .attach-video {
     width: 640px !important;
