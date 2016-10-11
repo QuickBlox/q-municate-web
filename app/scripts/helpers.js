@@ -313,7 +313,7 @@ define([
         var $chat = $pic.parents('.l-chat'),
             name = $pic.data('name'),
             url = $pic.css("background-image").replace(/.*\s?url\([\'\"]?/, '').replace(/[\'\"]?\).*/, ''),
-            $popup = $('#popupAvatar'),
+            $popup = $('.j-popupAvatar'),
             dialog_id;
 
         if ($chat.is('.is-group')) {
@@ -324,8 +324,8 @@ define([
             $popup.find('.j-changePic').addClass('is-hidden');
         }
 
-        $popup.find('.attach-photo').attr('src', url);
-        $popup.find('.attach-name').text(name);
+        $popup.find('.j-avatarPic').attr('src', url);
+        $popup.find('.j-avatarName').text(name);
         $popup.add('.popups').addClass('is-overlay');
     };
 

@@ -441,7 +441,7 @@ define([
                     }
 
                     $chat.find('.avatar_chat').css('background-image', 'url(' + avatar + ')');
-                    $('#popupAvatar.is-overlay .attach-photo').attr('src', avatar);
+                    $('.j-popupAvatar.is-overlay .j-avatarPic').attr('src', avatar);
                 });
             });
 
@@ -1076,15 +1076,15 @@ define([
         objDom.add('.popups').addClass('is-overlay');
     }
 
-    function openAttachPopup(objDom, name, url, type, dialogId) {
-        if (type === 'video') {
+    function openAttachPopup(objDom, name, url, attachType) {
+        if (attachType === 'video') {
             objDom.find('video.attach-video').attr('src', url);
         } else {
             objDom.find('.attach-photo').attr('src', url);
         }
 
-        objDom.find('.attach-download').attr('href', url).attr('download', name);
         objDom.find('.attach-name').text(name);
+        objDom.find('.attach-download').attr('href', url).attr('download', name);
         objDom.add('.popups').addClass('is-overlay');
     }
 

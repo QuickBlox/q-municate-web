@@ -38,7 +38,7 @@
 .popup_password {
     width: 460px;
 }
-.popup_attach {
+.popup_attach, .popup_avatar {
     padding: 20px 20px 25px;
 }
 .popover_map {
@@ -260,8 +260,8 @@
     margin: 0;
     border: 0;
 }
-/* attach popup */
-.attach-photo {
+/* attach/avatar popup */
+.attach-photo, .avatar-pic {
     max-width: 80vw;
     max-height: 80vh;
     margin-bottom: 20px;
@@ -283,10 +283,10 @@
     right: -125px;
     font-size: 13px
 }
-.attach-description {
+.attach-description, .avatar-description {
     font-size: 16px;
 }
-.attach-name {
+.attach-name, .avatar-name {
     color: #999;
 }
 .attach-download {
