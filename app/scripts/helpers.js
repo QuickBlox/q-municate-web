@@ -312,7 +312,8 @@ define([
     Helpers.scaleAvatar = function($pic) {
         var $chat = $pic.parents('.l-chat'),
             name = $pic.data('name'),
-            url = $pic.css("background-image").replace(/.*\s?url\([\'\"]?/, '').replace(/[\'\"]?\).*/, ''),
+            url = $pic.css('background-image').replace(/.*\s?url\([\'\"]?/, '')
+                .replace(/[\'\"]?\).*/, ''), // take URL from css background source
             $popup = $('.j-popupAvatar'),
             dialog_id;
 

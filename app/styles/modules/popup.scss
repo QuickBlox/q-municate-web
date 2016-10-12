@@ -261,7 +261,8 @@
     border: 0;
 }
 /* attach/avatar popup */
-.attach-photo, .avatar-pic {
+.attach-photo,
+.avatar-pic {
     max-width: 80vw;
     max-height: 80vh;
     margin-bottom: 20px;
@@ -283,10 +284,12 @@
     right: -125px;
     font-size: 13px
 }
-.attach-description, .avatar-description {
+.attach-description,
+.avatar-description {
     font-size: 16px;
 }
-.attach-name, .avatar-name {
+.attach-name,
+.avatar-name {
     color: #999;
 }
 .attach-download {

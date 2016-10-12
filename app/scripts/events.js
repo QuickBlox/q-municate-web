@@ -441,7 +441,7 @@ define([
                     }
 
                     $chat.find('.avatar_chat').css('background-image', 'url(' + avatar + ')');
-                    $('.j-popupAvatar.is-overlay .j-avatarPic').attr('src', avatar);
+                    $('.j-popupAvatar .j-avatarPic').attr('src', avatar);
                 });
             });
 

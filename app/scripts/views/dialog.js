@@ -353,7 +353,7 @@ define([
             html += '<span class="last_message_preview j-lastMessagePreview">' + lastMessage + '</span></div></div>';
 
             if (dialog.type === 3) {
-                html = getStatus(status, html);
+                html += getStatus(status);
             } else {
                 html += '<span class="status"></span>';
             }
@@ -398,6 +398,7 @@ define([
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
                 unreadCount = Number(objDom.find('.unread').text()),
                 self = this,
+                headerParams,
                 html,
                 jid,
                 icon,
@@ -412,52 +413,24 @@ define([
             name = dialog.room_name || user.full_name;
             status = roster[user_id] ? roster[user_id] : null;
 
+            headerParams = {
+                'occupantsIds': dialog.occupants_ids.join(),
+                'status': getStatus(status),
+                'dialog_id': dialog_id,
+                'type': dialog.type,
+                'user_id': user_id,
+                'name': name,
+                'icon': icon
+            };
+
             if ($chat.length === 0) {
                 if (dialog.type === 3) {
                     html = '<section class="l-workspace l-chat l-chat_private presence-listener j-chatItem" data-dialog="' + dialog_id + '" data-id="' + user_id + '" data-jid="' + jid + '">';
-                    html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
                 } else {
                     html = '<section class="l-workspace l-chat l-chat_group is-group j-chatItem" data-dialog="' + dialog_id + '" data-jid="' + jid + '">';
-                    html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">';
                 }
 
-                html += '<div class="chat-title">';
-                html += '<div class="l-flexbox_inline">';
-
-                if (dialog.type === 3) {
-                    html += '<div class="contact-avatar avatar avatar_chat profileUserAvatar scaleAvatar j-scaleAvatar" ';
-                    html += 'style="background-image:url(' + icon + ')" data-id="' + user_id + '" data-name="' + name + '"></div>';
-                    html += '<h2 class="name name_chat profileUserName" title="' + name + '" data-id="' + user_id + '">' + name + '</h2>';
-                    html = getStatus(status, html);
-                } else {
-                    html += '<div class="contact-avatar avatar avatar_chat scaleAvatar j-scaleAvatar" ';
-                    html += 'style="background-image:url(' + icon + ')" data-name="' + name + '"></div>';
-                    html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*" data-dialog="' + dialog_id + '">';
-                    html += '<h2 class="name name_chat" contenteditable="true" title="' + name + '">' + name + '</h2>';
-                    html += '<span class="pencil is-hidden"></span>';
-                    html += '<span class="triangle triangle_down"></span>';
-                    html += '<span class="triangle triangle_up is-hidden"></span>';
-                }
-
-                html += '</div></div>';
-                html += '<div class="chat-controls">';
-
-                if (dialog.type === 3) {
-                    html += '<button class="btn_chat btn_chat_videocall videoCall"><img src="images/icon-videocall.svg" alt="videocall"></button>';
-                    html += '<button class="btn_chat btn_chat_audiocall audioCall"><img src="images/icon-audiocall.svg" alt="audiocall"></button>';
-                    html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="' + dialog.occupants_ids.join() + '" data-private="1"><img src="images/icon-add.svg" alt="add"></button>';
-                    html += '<button class="btn_chat btn_chat_profile userDetails" data-id="' + user_id + '"><img src="images/icon-profile.svg" alt="profile"></button>';
-                } else {
-                    html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="' + dialog.occupants_ids.join() + '" data-dialog="' + dialog_id + '"><img src="images/icon-add.svg" alt="add"></button>';
-                }
-
-                if (dialog.type === 3) {
-                    html += '<button class="btn_chat btn_chat_delete deleteContact"><img src="images/icon-delete.svg" alt="delete"></button>';
-                } else {
-                    html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.svg" alt="delete"></button>';
-                }
-
-                html += '</div></header>';
+                html += QMHtml.Dialogs.chatHeader(headerParams);
 
                 // build occupants of room
                 if (dialog.type === 2) {
@@ -467,9 +440,7 @@ define([
                         id = dialog.occupants_ids[i];
                         if (id != User.contact.id) {
                             html += '<a class="occupant l-flexbox_inline presence-listener" data-id="' + id + '" href="#">';
-
-                            html = getStatus(roster[id], html);
-
+                            html += getStatus(roster[id]);
                             html += '<span class="name name_occupant">' + contacts[id].full_name + '</span>';
                             html += '</a>';
                         }
@@ -773,16 +744,18 @@ define([
         objDom.add('.popups').addClass('is-overlay');
     }
 
-    function getStatus(status, html) {
+    function getStatus(status) {
+        var str = '';
+
         if (!status || status.subscription === 'none') {
-            html += '<span class="status status_request"></span>';
+            str += '<span class="status status_request"></span>';
         } else if (status && status.status) {
-            html += '<span class="status status_online"></span>';
+            str += '<span class="status status_online"></span>';
         } else {
-            html += '<span class="status"></span>';
+            str += '<span class="status"></span>';
         }
 
-        return html;
+        return str;
     }
 
     function textAreaScrollbar() {
