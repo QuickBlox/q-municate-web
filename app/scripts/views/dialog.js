@@ -426,11 +426,11 @@ define([
             if ($chat.length === 0) {
                 if (dialog.type === 3) {
                     html = '<section class="l-workspace l-chat l-chat_private presence-listener j-chatItem" data-dialog="' + dialog_id + '" data-id="' + user_id + '" data-jid="' + jid + '">';
+                    html += QMHtml.Dialogs.privateChatHeader(headerParams);
                 } else {
                     html = '<section class="l-workspace l-chat l-chat_group is-group j-chatItem" data-dialog="' + dialog_id + '" data-jid="' + jid + '">';
+                    html += QMHtml.Dialogs.groupChatHeader(headerParams);
                 }
-
-                html += QMHtml.Dialogs.chatHeader(headerParams);
 
                 // build occupants of room
                 if (dialog.type === 2) {
