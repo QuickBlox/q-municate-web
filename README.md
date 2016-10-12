@@ -30,12 +30,12 @@ Q-municate is designed for all developers, including beginners, as we move from 
 
 - The App should work correctly in the following browsers:
 
-  - Chrome 23+
-  - Firefox 22+
-  - Opera 25+
-  - Safari 6.1+ (without audio/video calls)
+  - Chrome 50+
+  - Firefox 46+
+  - Opera 37+
+  - Safari 9+ (without audio/video calls)
   - IE 11+ (without audio/video calls and local notifications) (\*)
-  - Edge 14 (without audio/video calls) (\*)
+  - Edge 14+ (without audio/video calls) (\*)
 
   (\*) note: for IE and Edge browsers recommended BOSH connection ([Configuration](http://quickblox.com/developers/Javascript#Configuration))
 
