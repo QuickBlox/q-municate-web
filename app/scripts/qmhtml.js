@@ -186,68 +186,6 @@ define([
 
     };
 
-    QMHtml.Dialogs = {
-
-        setTextarea: function() {
-            var html = '<footer class="l-chat-footer">' +
-            '<div class="footer_btn j-toBottom btn_to_bottom"></div>' +
-            '<form class="l-message j-message" action="#">' +
-            '<div class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"></div>' +
-            '<div class="footer_btn j-send_location btn_sendlocation' + ((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '') + '"' +
-            'data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>' +
-            '<input class="attachment" type="file" accept="image/*"></form>' +
-            '<div class="j-typing l-typing"></div><div class="l-input-menu">' +
-            '<div class="footer_btn l-input-buttons btn_input_smile j-btn_input_smile" data-balloon="Add smiles" data-balloon-pos="up"></div>' +
-            '<div class="footer_btn l-input-buttons btn_input_location j-btn_input_location" data-balloon="Send location" data-balloon-pos="up"></div>' +
-            '<div class="footer_btn l-input-buttons btn_input_attach j-btn_input_attach" data-balloon="Send attachment file" data-balloon-pos="up"></div>' +
-            '<button class="footer_btn l-input-buttons btn_input_send j-btn_input_send" data-balloon="Send message" data-balloon-pos="up">SEND</button></div></footer>';
-
-            return html;
-        },
-
-        privateChatHeader: function(params) {
-            return _.template(
-                '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">' +
-                '<div class="chat-title"><div class="l-flexbox_inline">' +
-                '<div class="contact-avatar avatar avatar_chat profileUserAvatar scaleAvatar j-scaleAvatar" ' +
-                'style="background-image:url(<%= icon %>)" data-id="<%= user_id %>" data-name="<%= name %>"></div>' +
-                '<h2 class="name name_chat profileUserName" title="<%= name %>" data-id="<%= user_id %>"><%= name %></h2>' +
-                '<%= status %></div></div><div class="chat-controls">' +
-                '<button class="btn_chat btn_chat_videocall videoCall">' +
-                '<img src="images/icon-videocall.svg" alt="videocall"></button>' +
-                '<button class="btn_chat btn_chat_audiocall audioCall">' +
-                '<img src="images/icon-audiocall.svg" alt="audiocall"></button>' +
-                '<button class="btn_chat btn_chat_add createGroupChat" data-ids="<%= occupantsIds %>" data-private="1">' +
-                '<img src="images/icon-add.svg" alt="add"></button>' +
-                '<button class="btn_chat btn_chat_profile userDetails" data-id="<%= user_id %>">' +
-                '<img src="images/icon-profile.svg" alt="profile"></button>' +
-                '<button class="btn_chat btn_chat_delete deleteContact">' +
-                '<img src="images/icon-delete.svg" alt="delete"></button>' +
-                '</div></header>')(params);
-        },
-
-        groupChatHeader: function(params) {
-            return _.template(
-                '<header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">' +
-                '<div class="chat-title"><div class="l-flexbox_inline">' +
-                '<div class="contact-avatar avatar avatar_chat scaleAvatar j-scaleAvatar" ' +
-                'style="background-image:url(<%= icon %>)" data-name="<%= name %>"></div>' +
-                '<input class="avatar_file avatar is-hidden" type="file" accept="image/*" data-dialog="<%= dialog_id %>">' +
-                '<h2 class="name name_chat" contenteditable="true" title="<%= name %>"><%= name %></h2>' +
-                '<span class="pencil is-hidden"></span>' +
-                '<span class="triangle triangle_down"></span>' +
-                '<span class="triangle triangle_up is-hidden"></span>' +
-                '</div></div><div class="chat-controls">' +
-                '<button class="btn_chat btn_chat_add addToGroupChat" ' +
-                'data-ids="<%= occupantsIds %>" data-dialog="<%= dialog_id %>">' +
-                '<img src="images/icon-add.svg" alt="add"></button>' +
-                '<button class="btn_chat btn_chat_delete leaveChat">' +
-                '<img src="images/icon-delete.svg" alt="delete"></button>' +
-                '</div></header>')(params);
-        }
-
-    };
-
     QMHtml.Attach = {
 
         error: function(params) {

@@ -398,44 +398,41 @@ define([
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
                 unreadCount = Number(objDom.find('.unread').text()),
                 self = this,
-                headerParams,
-                html,
-                jid,
-                icon,
-                name,
+                chatHeaderTpl,
+                messageId,
+                location,
                 status,
                 msgArr,
                 userId,
-                messageId;
+                html,
+                icon,
+                name,
+                jid;
 
             jid = dialog.room_jid || user.user_jid;
             icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
             name = dialog.room_name || user.full_name;
             status = roster[user_id] ? roster[user_id] : null;
-
-            headerParams = {
-                'occupantsIds': dialog.occupants_ids.join(),
-                'status': getStatus(status),
-                'dialog_id': dialog_id,
-                'type': dialog.type,
-                'user_id': user_id,
-                'name': name,
-                'icon': icon
-            };
+            location = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? 'btn_active' : '';
 
             if ($chat.length === 0) {
-                if (dialog.type === 3) {
-                    html = '<section class="l-workspace l-chat l-chat_private presence-listener j-chatItem" data-dialog="' + dialog_id + '" data-id="' + user_id + '" data-jid="' + jid + '">';
-                    html += QMHtml.Dialogs.privateChatHeader(headerParams);
-                } else {
-                    html = '<section class="l-workspace l-chat l-chat_group is-group j-chatItem" data-dialog="' + dialog_id + '" data-jid="' + jid + '">';
-                    html += QMHtml.Dialogs.groupChatHeader(headerParams);
-                }
+                chatHeaderTpl = _.template($('#chatHeaderTpl').html())({
+                    'occupantsIds': dialog.occupants_ids,
+                    'status': getStatus(status),
+                    'dialog_id': dialog_id,
+                    'location': location,
+                    'type': dialog.type,
+                    'user_id': user_id,
+                    'name': name,
+                    'icon': icon,
+                    'jid': jid
+                });
+
+                $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append(chatHeaderTpl);
 
                 // build occupants of room
                 if (dialog.type === 2) {
-                    html += '<div class="chat-occupants-wrap">';
-                    html += '<div class="chat-occupants">';
+                    html = '<div class="chat-occupants">';
                     for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
                         id = dialog.occupants_ids[i];
                         if (id != User.contact.id) {
@@ -445,14 +442,11 @@ define([
                             html += '</a>';
                         }
                     }
-                    html += '</div></div>';
+                    html += '</div>';
                 }
 
-                html += '<section class="l-chat-content scrollbar_message"></section>';
-                html += QMHtml.Dialogs.setTextarea();
-                html += '</section>';
+                $('.l-chat[data-dialog="' + dialog_id + '"] .j-chatOccupants').append($(html));
 
-                $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append($(html));
                 textAreaScrollbar();
 
                 if (dialog.type === 3 && (!status || status.subscription === 'none'))
