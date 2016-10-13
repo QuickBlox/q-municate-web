@@ -269,28 +269,25 @@
     z-index: 1;
     background-color: #fff;
     position: relative;
-    height: 75px;
-    padding: 0 20px;
+    height: 60px;
+    padding: 0 10px;
     background: #f8f8f8;
     border-bottom: 1px solid #f2f2f2;
 }
-.l-chat_group .l-chat-header {
-    height: 55px;
-}
 .l-chat-content {
     position: relative;
-    height: calc(100% - 75px - 90px);
+    height: calc(100% - 150px);
     overflow-y: auto;
 }
 .l-chat_group .l-chat-content {
-    height: calc(100% - 55px - 90px);
+    height: calc(100% - 150px);
 }
 .is-request .l-chat-content {
-    height: calc(100% - 75px);
+    height: calc(100% - 60px);
 }
 .l-chat_group .l-chat-content_min {
     margin-top: 94px;
-    height: calc(100% - 55px - 90px - 94px);
+    height: calc(100% - 244px);
 }
 .l-chat-footer {
     z-index: 1;
@@ -309,7 +306,7 @@
     vertical-align: top;
     font-size: 15px;
     height: 34px;
-    width: 75%;
+    width: 490px;
 }
 .l-input-menu {
     display: inline-block;
@@ -317,12 +314,12 @@
     text-align: -moz-left;
     text-align: center;
     height: 33px;
-    width: 25%;
+    width: 160px;
     position: relative;
 }
 .l-input-menu .l-input-buttons {
     display: inline-block;
-    margin-right: 15px;
+    margin-right: 10px;
     height: 100%;
 }
 .l-input-menu .l-input-buttons:last-child {

@@ -426,30 +426,27 @@ define([
 
             /* change the chat avatar
             ----------------------------------------------------- */
-            $workspace.on('mouseenter', '.groupTitle .avatar', function() {
-                var $chat = $('.l-chat:visible');
+            $('body').on('click', '.j-changePic', function() {
+                var dialog_id = $(this).data('dialog');
 
-                $chat.find('.pencil_active').removeClass('is-hidden');
-            });
-
-            $workspace.on('mouseleave', '.groupTitle .avatar', function() {
-                var $chat = $('.l-chat:visible');
-
-                $chat.find('.pencil_active').addClass('is-hidden');
-            });
-
-            $workspace.on('click', '.groupTitle .pencil_active', function() {
-                $(this).siblings('input:file').click();
-                removePopover();
+                $('input:file[data-dialog="' + dialog_id + '"]').click();
             });
 
             $workspace.on('change', '.groupTitle .avatar_file', function() {
                 var $chat = $('.l-chat:visible');
 
                 Dialog.changeAvatar($chat.data('dialog'), $(this), function(avatar) {
-                    if (!avatar) return false;
+                    if (!avatar) {
+                        return false;
+                    }
+
                     $chat.find('.avatar_chat').css('background-image', 'url(' + avatar + ')');
+                    $('.j-popupAvatar .j-avatarPic').attr('src', avatar);
                 });
+            });
+
+            $workspace.on('click', '.j-scaleAvatar', function() {
+                Helpers.scaleAvatar($(this));
             });
 
             /* scrollbars
@@ -746,11 +743,12 @@ define([
 
                 if ($form.is('.j-globalSearch')) {
                     ContactListView.globalSearch($form);
+                } else if ($form.is('.j-localSearch')) {
+                    UserView.localSearch($form);
+                } else {
+                    UserView.friendsSearch($form);
                 }
 
-                if ($form.is('.j-localSearch')) {
-                    UserView.localSearch($form);
-                }
 
                 return false;
             });

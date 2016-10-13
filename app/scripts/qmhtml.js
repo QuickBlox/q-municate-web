@@ -186,27 +186,6 @@ define([
 
     };
 
-    QMHtml.Dialogs = {
-
-        setTextarea: function() {
-            var html = '<footer class="l-chat-footer">' +
-            '<div class="footer_btn j-toBottom btn_to_bottom"></div>' +
-            '<form class="l-message j-message" action="#">' +
-            '<div class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"></div>' +
-            '<div class="footer_btn j-send_location btn_sendlocation' + ((localStorage['QM.latitude'] && localStorage['QM.longitude']) ? ' btn_active' : '') + '"' +
-            'data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>' +
-            '<input class="attachment" type="file" accept="audio/*,video/webm,video/mp4,video/avi,image/*"></form>' +
-            '<div class="j-typing l-typing"></div><div class="l-input-menu">' +
-            '<div class="footer_btn l-input-buttons btn_input_smile j-btn_input_smile" data-balloon="Add smiles" data-balloon-pos="up"></div>' +
-            '<div class="footer_btn l-input-buttons btn_input_location j-btn_input_location" data-balloon="Send location" data-balloon-pos="up"></div>' +
-            '<div class="footer_btn l-input-buttons btn_input_attach j-btn_input_attach" data-balloon="Send attachment file" data-balloon-pos="up"></div>' +
-            '<button class="footer_btn l-input-buttons btn_input_send j-btn_input_send" data-balloon="Send message" data-balloon-pos="up">SEND</button></div></footer>';
-
-            return html;
-        }
-
-    };
-
     QMHtml.Attach = {
 
         error: function(params) {

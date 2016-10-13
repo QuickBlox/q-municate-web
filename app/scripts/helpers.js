@@ -309,5 +309,26 @@ define([
         }
     };
 
+    Helpers.scaleAvatar = function($pic) {
+        var $chat = $pic.parents('.l-chat'),
+            name = $pic.data('name'),
+            url = $pic.css('background-image').replace(/.*\s?url\([\'\"]?/, '')
+                .replace(/[\'\"]?\).*/, ''), // take URL from css background source
+            $popup = $('.j-popupAvatar'),
+            dialog_id;
+
+        if ($chat.is('.is-group')) {
+            dialog_id = $chat.data('dialog');
+            $popup.find('.j-changePic').removeClass('is-hidden')
+                .data('dialog', dialog_id);
+        } else {
+            $popup.find('.j-changePic').addClass('is-hidden');
+        }
+
+        $popup.find('.j-avatarPic').attr('src', url);
+        $popup.find('.j-avatarName').text(name);
+        $popup.add('.popups').addClass('is-overlay');
+    };
+
     return Helpers;
 });

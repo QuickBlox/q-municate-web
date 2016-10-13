@@ -17,7 +17,6 @@ Q-municate is designed for all developers, including beginners, as we move from 
 - Web - [Live app](https://qm.quickblox.com/)
 - iOS - [App Store](https://itunes.apple.com/us/app/q-municate/id909698517?mt=8)
 - Android - [Google Play](https://play.google.com/store/apps/details?id=com.quickblox.q_municate)
-- WP - [Microsoft Store](https://www.microsoft.com/en-us/store/apps/q-municate-messenger/9nblggh5jqnb)
 
 ## Software Environment
 
@@ -31,11 +30,14 @@ Q-municate is designed for all developers, including beginners, as we move from 
 
 - The App should work correctly in the following browsers:
 
-  - Chrome 13+
-  - Firefox 4+
-  - Opera 17+
-  - Safari 6.1+ (without audio, video calls)
-  - IE 10+ (without audio, video calls)
+  - Chrome 50+
+  - Firefox 46+
+  - Opera 37+
+  - Safari 9+ (without audio/video calls)
+  - IE 11+ (without audio/video calls and local notifications) (\*)
+  - Edge 14+ (without audio/video calls) (\*)
+
+  (\*) note: for IE and Edge browsers recommended BOSH connection ([Configuration](http://quickblox.com/developers/Javascript#Configuration))
 
 Q-municate is a fully fledged chat application using the Quickblox API.
 
