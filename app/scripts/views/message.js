@@ -642,7 +642,9 @@ define([
 
                 // change name
                 if (room_name) {
-                    $chat.find('.name_chat').text(room_name).attr('title', room_name);
+                    $chat.find('.name_chat').text(room_name)
+                        .attr('title', room_name);
+                    $chat.find('.j-scaleAvatar').data('name', room_name);
                     dialogItem.find('.name').text(room_name);
                 }
 
