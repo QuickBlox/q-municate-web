@@ -61,20 +61,16 @@ input.form-input-search.without_M[type=search]:focus:not([readonly]) {
 }
 .clean-button {
     position: absolute;
-    display: block;
+    display: none;
     width: 21px;
     height: 21px;
     top: 20px;
     right: 27px;
-    color: #fff;
-    cursor: text;
+    color: #ccc;
+    cursor: pointer;
 }
 #searchContacts .clean-button {
     right: 23px;
-}
-.form-input-search:focus ~ .clean-button {
-    color: #ccc;
-    cursor: pointer;
 }
 .form-input-message {
     width: 96%;

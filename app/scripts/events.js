@@ -426,30 +426,27 @@ define([
 
             /* change the chat avatar
             ----------------------------------------------------- */
-            $workspace.on('mouseenter', '.groupTitle .avatar', function() {
-                var $chat = $('.l-chat:visible');
+            $('body').on('click', '.j-changePic', function() {
+                var dialog_id = $(this).data('dialog');
 
-                $chat.find('.pencil_active').removeClass('is-hidden');
-            });
-
-            $workspace.on('mouseleave', '.groupTitle .avatar', function() {
-                var $chat = $('.l-chat:visible');
-
-                $chat.find('.pencil_active').addClass('is-hidden');
-            });
-
-            $workspace.on('click', '.groupTitle .pencil_active', function() {
-                $(this).siblings('input:file').click();
-                removePopover();
+                $('input:file[data-dialog="' + dialog_id + '"]').click();
             });
 
             $workspace.on('change', '.groupTitle .avatar_file', function() {
                 var $chat = $('.l-chat:visible');
 
                 Dialog.changeAvatar($chat.data('dialog'), $(this), function(avatar) {
-                    if (!avatar) return false;
+                    if (!avatar) {
+                        return false;
+                    }
+
                     $chat.find('.avatar_chat').css('background-image', 'url(' + avatar + ')');
+                    $('.j-popupAvatar .j-avatarPic').attr('src', avatar);
                 });
+            });
+
+            $workspace.on('click', '.j-scaleAvatar', function() {
+                Helpers.scaleAvatar($(this));
             });
 
             /* scrollbars
@@ -677,25 +674,36 @@ define([
 
             /* search
             ----------------------------------------------------- */
-            $('#globalSearch').on('keyup search submit', function(event) {
-                var code = event.keyCode;
-                form = $(this);
+            $('.j-globalSearch').on('keyup search submit', function(event) {
+                var $self = $(this),
+                    code = event.keyCode,
+                    isText = $self.find('.form-input-search').val().length,
+                    $cleanButton = $self.find('.j-clean-button'),
+                    isNoBtn = $cleanButton.is(':hidden');
 
                 if (code === 13) {
                     clearTimeout(keyupSearch);
-                    keyupSearch = undefined;
-                    ContactListView.globalSearch(form);
+                    startSearch();
                 } else if (keyupSearch === undefined) {
                     keyupSearch = setTimeout(function() {
-                        keyupSearch = undefined;
-                        ContactListView.globalSearch(form);
-                    }, 1000);
+                        startSearch();
+                    }, (code === 8) ? 0 : 1000);
                 } else {
                     clearTimeout(keyupSearch);
                     keyupSearch = setTimeout(function() {
-                        keyupSearch = undefined;
-                        ContactListView.globalSearch(form);
+                        startSearch();
                     }, 1000);
+                }
+
+                function startSearch() {
+                    keyupSearch = undefined;
+                    ContactListView.globalSearch($self);
+                }
+
+                if (isText && isNoBtn) {
+                    $cleanButton.show();
+                } else if (!isText) {
+                    $cleanButton.hide();
                 }
 
                 return false;
@@ -703,6 +711,9 @@ define([
 
             $('.localSearch').on('keyup search submit', function(event) {
                 var $self = $(this),
+                    isText = $self.find('.form-input-search').val().length,
+                    $cleanButton = $self.find('.j-clean-button'),
+                    isNoBtn = $cleanButton.is(':hidden'),
                     type = event.type,
                     code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
 
@@ -714,14 +725,30 @@ define([
                     }
                 }
 
+                if (isText && isNoBtn) {
+                    $cleanButton.show();
+                } else if (!isText) {
+                    $cleanButton.hide();
+                }
+
                 return false;
             });
 
-            $('.clean-button').on('click', function(event) {
-                var $form = $(this).parent('form.formSearch');
+            $('.j-clean-button').on('click', function(event) {
+                var $self = $(this),
+                    $form = $self.parent('form.formSearch');
 
+                $self.hide();
                 $form.find('input.form-input-search').val('').focus();
-                UserView.localSearch($form);
+
+                if ($form.is('.j-globalSearch')) {
+                    ContactListView.globalSearch($form);
+                } else if ($form.is('.j-localSearch')) {
+                    UserView.localSearch($form);
+                } else {
+                    UserView.friendsSearch($form);
+                }
+
 
                 return false;
             });

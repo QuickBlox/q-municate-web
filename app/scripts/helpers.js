@@ -183,6 +183,63 @@ define([
             }
 
             return occupants_names;
+        },
+
+        parser: function(str) {
+            var url, url_text;
+            var URL_REGEXP = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/gi;
+
+            str = escapeHTML(str);
+
+            // parser of paragraphs
+            str = str.replace(/\n/g, '<br>');
+
+            // parser of links
+            str = str.replace(URL_REGEXP, function(match) {
+                url = (/^[a-z]+:/i).test(match) ? match : 'http://' + match;
+                url_text = match;
+                return '<a href="' + escapeHTML(url) + '" target="_blank">' + escapeHTML(url_text) + '</a>';
+            });
+
+            return str;
+
+            function escapeHTML(s) {
+                return s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            }
+        }
+    };
+
+    Helpers.Dialogs = {
+        moveDialogToTop: function(dialogId) {
+            var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialogId + '"]');
+
+            if (dialogItem.length > 0) {
+                copyDialogItem = dialogItem.clone();
+                dialogItem.remove();
+                $('#recentList ul').prepend(copyDialogItem);
+                if (!$('#searchList').is(':visible')) {
+                    $('#recentList').removeClass('is-hidden');
+                    this.isSectionEmpty($('#recentList ul'));
+                }
+            }
+        },
+
+        isSectionEmpty: function(list) {
+            if (list.contents().length === 0) {
+                list.parent().addClass('is-hidden');
+            }
+
+            if ($('#historyList ul').contents().length === 0) {
+                $('#historyList ul').parent().addClass('is-hidden');
+            }
+
+            if ($('#requestsList').is('.is-hidden') &&
+                $('#recentList').is('.is-hidden') &&
+                $('#historyList').is('.is-hidden')) {
+
+
+                $('#emptyList').removeClass('is-hidden');
+            }
         }
     };
 
@@ -235,6 +292,42 @@ define([
         } else {
             return new Date(seconds*1000).toUTCString().split(/ /)[4];
         }
+    };
+
+    Helpers.getTime = function(time, isDate) {
+        var messageDate = new Date(time * 1000),
+            startOfCurrentDay = new Date();
+
+        startOfCurrentDay.setHours(0, 0, 0, 0);
+
+        if (messageDate > startOfCurrentDay) {
+            return messageDate.getHours() + ':' + (messageDate.getMinutes().toString().length === 1 ? '0' + messageDate.getMinutes() : messageDate.getMinutes());
+        } else if ((messageDate.getFullYear() === startOfCurrentDay.getFullYear()) && !isDate) {
+            return $.timeago(messageDate);
+        } else {
+            return messageDate.getDate() + '/' + (messageDate.getMonth() + 1) + '/' + messageDate.getFullYear();
+        }
+    };
+
+    Helpers.scaleAvatar = function($pic) {
+        var $chat = $pic.parents('.l-chat'),
+            name = $pic.data('name'),
+            url = $pic.css('background-image').replace(/.*\s?url\([\'\"]?/, '')
+                .replace(/[\'\"]?\).*/, ''), // take URL from css background source
+            $popup = $('.j-popupAvatar'),
+            dialog_id;
+
+        if ($chat.is('.is-group')) {
+            dialog_id = $chat.data('dialog');
+            $popup.find('.j-changePic').removeClass('is-hidden')
+                .data('dialog', dialog_id);
+        } else {
+            $popup.find('.j-changePic').addClass('is-hidden');
+        }
+
+        $popup.find('.j-avatarPic').attr('src', url);
+        $popup.find('.j-avatarName').text(name);
+        $popup.add('.popups').addClass('is-overlay');
     };
 
     return Helpers;

@@ -184,3 +184,17 @@ article.message[data-status="typing"] > div {
     opacity: 0;
     visibility: hidden;
 }
+.scaleAvatar {
+    cursor: pointer;
+}
+.scaleAvatar:hover {
+    opacity: .6;
+}
+.changePic {
+    color: #0d70b3;
+    cursor: pointer;
+    margin-left: 20px;
+}
+.changePic:hover {
+    opacity: none;
+}

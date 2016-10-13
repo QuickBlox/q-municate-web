@@ -62,6 +62,10 @@ define([
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
                 isBottom = Helpers.isBeginOfChat();
 
+            if (isCallback && isMessageListener) {
+                updateDialogItem(message);
+            }
+
             if (typeof $chat[0] === 'undefined' || (!message.notification_type && !message.callType && !message.attachment && !message.body)) {
                 return true;
             }
@@ -102,7 +106,7 @@ define([
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
                         html += '<h4 class="message-author"><span class="profileUserName" data-id="' + message.sender_id + '">' + contact.full_name + '</span> has added ' + occupants_names + ' to the group chat</h4>';
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -132,7 +136,7 @@ define([
                             html += '<h4 class="message-author"><span class="profileUserName" data-id="' + message.sender_id + '">' + contact.full_name + '</span> has changed the chat picture</h4>';
                         }
 
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -149,7 +153,7 @@ define([
                             html += '<h4 class="message-author"><span class="profileUserName" data-id="' + message.sender_id + '">' + contact.full_name + '</span> has sent a request to you</h4>';
                         }
 
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -166,7 +170,7 @@ define([
                             html += '<h4 class="message-author">Your request has been accepted</h4>';
                         }
 
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -186,7 +190,7 @@ define([
                             html += '</button></h4>';
                         }
 
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -205,7 +209,7 @@ define([
                             html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
                         }
 
-                        html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                        html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                         html += '<div class="info_indent"></div></div></div></div></article>';
                         break;
 
@@ -230,7 +234,7 @@ define([
                                 html += '<h4 class="message-author">Incoming ' + (message.callType === '2' ? 'Video' : '') + ' Call, ' + Helpers.getDuration(message.callDuration);
                             }
 
-                            html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="info_indent"></div></div></div></div></article>';
                         }
                         break;
@@ -255,7 +259,7 @@ define([
                                 html += '<h4 class="message-author">Missed ' + (message.callType === '2' ? 'Video' : '') + ' Call';
                             }
 
-                            html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="info_indent"></div></div></div></div></article>';
                         }
                         break;
@@ -274,7 +278,7 @@ define([
                                 html += '<h4 class="message-author">Camera and/or microphone wasn\'t found.';
                             }
 
-                            html += '</div><div class="message-info"><time class="message-time">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="info_indent"></div></div></div></div></article>';
                         }
                         break;
@@ -298,7 +302,7 @@ define([
                             html += '<div class="preview preview-photo" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '">';
                             html += '<img id="attach_' + message.id + '" src="' + attachUrl + '" alt="attach">';
                             html += '</div></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('audio') > -1) {
@@ -306,7 +310,7 @@ define([
                             html += message.attachment.name + '<br><br>';
                             html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
                             html += '<audio id="attach_' + message.id + '" src="' + attachUrl + '" controls class="attach-audio"></audio></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
@@ -314,26 +318,26 @@ define([
                             html += message.attachment.name + '<br><br>';
                             html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
                             html += '<div id="attach_' + message.id + '" class="preview preview-video" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '"></div></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('location') > -1) {
                             html += '<div class="message-body">';
                             html += '<a class="open_googlemaps" href="' + mapAttachLink + '" target="_blank">';
                             html += '<img id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map"></a></div></div>';
-                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType) {
                             html += '<div class="message-body">';
                             html += '<a id="attach_' + message.id + '" class="attach-file" href="' + attachUrl + '" download="' + message.attachment.name + '">' + message.attachment.name + '</a>';
                             html += '<span class="attach-size">' + getFileSize(message.attachment.size) + '</span></div></div>';
-                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else {
-                            html += '<div class="message-body">' + minEmoji(parser(message.body)) + '</div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + getTime(message.date_sent) + '</time>';
+                            html += '<div class="message-body">' + minEmoji(Helpers.Messages.parser(message.body)) + '</div>';
+                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
                             html += '<div class="message-status is-hidden">Not delivered yet</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         }
@@ -469,22 +473,13 @@ define([
                 Helpers.log('Message send:', message);
 
                 if (type === 'chat') {
+                    Helpers.Dialogs.moveDialogToTop(dialog_id);
+
                     lastMessage = $chat.find('article[data-type="message"]').last();
                     message.stack = Message.isStack(true, message, lastMessage);
                     self.addItem(message, true, true);
                     if ($newMessages.length) {
                         $newMessages.remove();
-                    }
-
-                }
-
-                if (dialogItem.length > 0) {
-                    copyDialogItem = dialogItem.clone();
-                    dialogItem.remove();
-                    $('#recentList ul').prepend(copyDialogItem);
-                    if (!$('#searchList').is(':visible')) {
-                        $('#recentList').removeClass('is-hidden');
-                        isSectionEmpty($('#recentList ul'));
                     }
                 }
             }
@@ -560,17 +555,21 @@ define([
             // add or remove label about new messages
             if ($chat.length && !isHiddenChat && window.isQMAppActive && isNewMessages) {
                 $label.remove();
-            } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length && !isNewMessages) {
+            } else if ((isHiddenChat || !window.isQMAppActive) &&
+                        $chat.length && !isNewMessages && isNotMyUser) {
                 $chat.find('.l-chat-content .mCSB_container').append($newMessages);
             }
 
-            if ($chat.length && message.markable === 1 && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
-                // send read status if message displayed in chat
-                Message.update(msg.id, dialog_id, id);
-            } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length > 0 && message.markable == 1) {
-                msgArr = dialogs[dialog_id].messages || [];
-                msgArr.push(msg.id);
-                dialogs[dialog_id].messages = msgArr;
+
+            if (isNotMyUser) {
+                if ($chat.length && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
+                    // send read status if message displayed in chat
+                    Message.update(msg.id, dialog_id, id);
+                } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length > 0) {
+                    msgArr = dialogs[dialog_id].messages || [];
+                    msgArr.push(msg.id);
+                    dialogs[dialog_id].messages = msgArr;
+                }
             }
 
             if (otherChat || (!otherChat && !isBottom && isNotMyUser && isExistent)) {
@@ -636,6 +635,11 @@ define([
                     $chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
                 }
 
+                if (deleted_id && (deleted_id[0] === User.contact.id)) {
+                    DialogView.leaveGroupChat(dialog_id, true);
+                    DialogView.decUnreadCounter(dialog_id);
+                }
+
                 // change name
                 if (room_name) {
                     $chat.find('.name_chat').text(room_name).attr('title', room_name);
@@ -649,15 +653,8 @@ define([
                 }
             }
 
-            if (notification_type !== '1' && dialogItem.length > 0 /* && !isOfflineStorage*/ ) {
-                copyDialogItem = dialogItem.clone();
-                dialogItem.remove();
-                $('#recentList ul').prepend(copyDialogItem);
-
-                if (!$('#searchList').is(':visible')) {
-                    $('#recentList').removeClass('is-hidden');
-                    isSectionEmpty($('#recentList ul'));
-                }
+            if (notification_type !== '1') {
+                Helpers.Dialogs.moveDialogToTop(dialog_id);
             }
 
             lastMessage = $chat.find('article[data-type="message"]').last();
@@ -722,7 +719,8 @@ define([
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
-                msg, dialog;
+                dialog,
+                msg;
 
             msg = Message.create(message);
             msg.sender_id = message.userId;
@@ -754,15 +752,17 @@ define([
                     DialogView.addDialogItem(dialog);
                     unread++;
                     dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]');
-                    dialogGroupItem.find('.unread').text(unread);
-                    DialogView.getUnreadCounter(dialog_id);
+
+                    // Don't show any notification if system message from current User
+                    if (msg.sender_id !== User.contact.id) {
+                        dialogGroupItem.find('.unread').text(unread);
+                        DialogView.getUnreadCounter(dialog_id);
+                    }
                 });
+
+                self.addItem(msg, true, true, true);
+                createAndShowNotification(msg, true);
             }
-
-            self.addItem(msg, true, true, true);
-
-            createAndShowNotification(msg, true);
-
         },
 
         onMessageTyping: function(isTyping, userId, dialogId) {
@@ -774,7 +774,6 @@ define([
                 visible = $chat.is(':visible') ? true : false;
 
             if (recipient && visible) {
-
                 // stop displays the status if they do not come
                 if (clearTyping === undefined) {
                     clearTyping = setTimeout(function() {
@@ -835,58 +834,6 @@ define([
         var $objDom = $('.l-chat:visible .scrollbar_message');
 
         $objDom.mCustomScrollbar('scrollTo', 'bottom');
-    }
-
-    function getTime(time) {
-        var messageDate = new Date(time * 1000),
-            startOfCurrentDay = new Date();
-
-        startOfCurrentDay.setHours(0, 0, 0, 0);
-
-        if (messageDate > startOfCurrentDay) {
-            return messageDate.getHours() + ':' + (messageDate.getMinutes().toString().length === 1 ? '0' + messageDate.getMinutes() : messageDate.getMinutes());
-        } else if (messageDate.getFullYear() === startOfCurrentDay.getFullYear()) {
-            return $.timeago(messageDate);
-        } else {
-            return messageDate.getDate() + '/' + (messageDate.getMonth() + 1) + '/' + messageDate.getFullYear();
-        }
-    }
-
-    function parser(str) {
-        var url, url_text;
-        var URL_REGEXP = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/gi;
-
-        str = escapeHTML(str);
-
-        // parser of paragraphs
-        str = str.replace(/\n/g, '<br>');
-
-        // parser of links
-        str = str.replace(URL_REGEXP, function(match) {
-            url = (/^[a-z]+:/i).test(match) ? match : 'http://' + match;
-            url_text = match;
-            return '<a href="' + escapeHTML(url) + '" target="_blank">' + escapeHTML(url_text) + '</a>';
-        });
-
-        return str;
-
-        function escapeHTML(s) {
-            return s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-    }
-
-    function isSectionEmpty(list) {
-        if (list.contents().length === 0) {
-            list.parent().addClass('is-hidden');
-        }
-
-        if ($('#historyList ul').contents().length === 0) {
-            $('#historyList ul').parent().addClass('is-hidden');
-        }
-
-        if ($('#requestsList').is('.is-hidden') && $('#recentList').is('.is-hidden') && $('#historyList').is('.is-hidden')) {
-            $('#emptyList').removeClass('is-hidden');
-        }
     }
 
     function stopShowTyping(chat, user) {
@@ -990,11 +937,7 @@ define([
             geocoords;
 
         if (geodata) {
-            escape = geodata.replace(/&amp;/g, '&')
-                .replace(/&#10;/g, '\n')
-                .replace(/&quot;/g, '"');
-
-            geocoords = JSON.parse(escape);
+            geocoords = JSON.parse(geodata);
         } else {
             // the old way for receive geo coordinates from attachments
             geocoords = {
@@ -1041,6 +984,30 @@ define([
             default:
                 break;
         }
+    }
+
+    function updateDialogItem(message) {
+        var $dialogItem = $('.dialog-item[data-dialog="'+ message.dialog_id +'"]'),
+            $lastMessage = $dialogItem.find('.j-lastMessagePreview'),
+            $lastTime = $dialogItem.find('.j-lastTimePreview'),
+            time = Helpers.getTime(message.date_sent, true),
+            type = message.notification_type,
+            lastMessage;
+
+        if (type) {
+            if (type <= 2) {
+                lastMessage = 'Notification message';
+            } else {
+                lastMessage = 'Contact request';
+            }
+        } else if (message.callType) {
+            lastMessage = 'Call notification';
+        } else {
+            lastMessage = minEmoji( Helpers.Messages.parser(message.body) );
+        }
+
+        $lastMessage.html(lastMessage);
+        $lastTime.html(time);
     }
 
     return MessageView;

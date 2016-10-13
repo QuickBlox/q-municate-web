@@ -223,8 +223,8 @@ define([
                 self = this;
 
             Attach.crop(tempParams.blob, {
-                w: 146,
-                h: 146
+                w: 1000,
+                h: 1000
             }, function(file) {
                 QBApiCalls.createBlob({
                     file: file,
@@ -279,7 +279,6 @@ define([
                             DialogView.prepareDownloading(roster);
                             DialogView.downloadDialogs(roster);
                         });
-
                     });
                 }, true);
             }
@@ -336,14 +335,22 @@ define([
                 self = this;
 
             UserView.createSpinner();
-            this.contact = Contact.create(storage);
 
-            Helpers.log('User', self);
+            QBApiCalls.getUser(storage.id, function(user) {
+                if (user) {
+                    self.contact = Contact.create(user);
+                } else {
+                    this.contact = Contact.create(storage);
+                }
 
-            QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
-                UserView.successFormCallback();
-                DialogView.prepareDownloading(roster);
-                DialogView.downloadDialogs(roster);
+                Helpers.log('User', user);
+
+                QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
+                    self.rememberMe();
+                    UserView.successFormCallback();
+                    DialogView.prepareDownloading(roster);
+                    DialogView.downloadDialogs(roster);
+                });
             });
         },
 

@@ -10,6 +10,7 @@ define([
     'quickblox',
     'Helpers',
     'QMHtml',
+    'minEmoji',
     'underscore',
     'models/person',
     'views/profile',
@@ -17,7 +18,6 @@ define([
     'views/fb_import',
     'mCustomScrollbar',
     'nicescroll',
-
     'mousewheel'
 ], function(
     $,
@@ -25,6 +25,7 @@ define([
     QB,
     Helpers,
     QMHtml,
+    minEmoji,
     _,
     Person,
     ProfileView,
@@ -324,8 +325,14 @@ define([
         addDialogItem: function(dialog, isDownload, isNew) {
             var contacts = ContactList.contacts,
                 roster = ContactList.roster,
-                private_id, icon, name, status,
-                html, startOfCurrentDay,
+                lastTime = Helpers.getTime(dialog.last_message_date_sent, true),
+                lastMessage = minEmoji(Helpers.Messages.parser(dialog.last_message)),
+                startOfCurrentDay,
+                private_id,
+                status,
+                icon,
+                name,
+                html,
                 self = this;
 
             private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
@@ -338,19 +345,20 @@ define([
                 console.error(error);
             }
 
-            html = '<li class="list-item dialog-item presence-listener" data-dialog="' + dialog.id + '" data-id="' + private_id + '">';
+            html  = '<li class="list-item dialog-item presence-listener" data-dialog="' + dialog.id + '" data-id="' + private_id + '">';
             html += '<div class="contact l-flexbox" href="#">';
             html += '<div class="l-flexbox_inline">';
             html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="' + private_id + '"></div>';
-            html += '<span class="name profileUserName" data-id="' + private_id + '">' + name + '</span>';
-            html += '</div>';
+            html += '<div class="dialog_body"><span class="name name_dialog profileUserName" data-id="' + private_id + '">' + name + '</span>';
+            html += '<span class="last_message_preview j-lastMessagePreview">' + lastMessage + '</span></div></div>';
 
             if (dialog.type === 3) {
-                html = getStatus(status, html);
+                html += getStatus(status);
             } else {
                 html += '<span class="status"></span>';
             }
 
+            html += '<span class="last_time_preview j-lastTimePreview">' + lastTime + '</span>';
             html += '<span class="unread">' + dialog.unread_count + '</span>';
             html += '</a></li>';
 
@@ -390,89 +398,55 @@ define([
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
                 unreadCount = Number(objDom.find('.unread').text()),
                 self = this,
-                html,
-                jid,
-                icon,
-                name,
+                chatHeaderTpl,
+                messageId,
+                location,
                 status,
                 msgArr,
                 userId,
-                messageId;
+                html,
+                icon,
+                name,
+                jid;
 
             jid = dialog.room_jid || user.user_jid;
             icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
             name = dialog.room_name || user.full_name;
             status = roster[user_id] ? roster[user_id] : null;
+            location = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? 'btn_active' : '';
 
             if ($chat.length === 0) {
-                if (dialog.type === 3) {
-                    html = '<section class="l-workspace l-chat l-chat_private presence-listener j-chatItem" data-dialog="' + dialog_id + '" data-id="' + user_id + '" data-jid="' + jid + '">';
-                    html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween">';
-                } else {
-                    html = '<section class="l-workspace l-chat l-chat_group is-group j-chatItem" data-dialog="' + dialog_id + '" data-jid="' + jid + '">';
-                    html += '<header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">';
-                }
+                chatHeaderTpl = _.template($('#chatHeaderTpl').html())({
+                    'occupantsIds': dialog.occupants_ids,
+                    'status': getStatus(status),
+                    'dialog_id': dialog_id,
+                    'location': location,
+                    'type': dialog.type,
+                    'user_id': user_id,
+                    'name': name,
+                    'icon': icon,
+                    'jid': jid
+                });
 
-                html += '<div class="chat-title">';
-                html += '<div class="l-flexbox_inline">';
-
-                if (dialog.type === 3) {
-                    html += '<div class="contact-avatar avatar avatar_chat profileUserAvatar" style="background-image:url(' + icon + ')" data-id="' + user_id + '"></div>';
-                    html += '<h2 class="name name_chat profileUserName" title="' + name + '" data-id="' + user_id + '">' + name + '</h2>';
-                    html = getStatus(status, html);
-                } else {
-                    html += '<div class="contact-avatar avatar avatar_chat" style="background-image:url(' + icon + ')"></div>';
-                    html += '<span class="pencil_active avatar is-hidden"></span>';
-                    html += '<input class="avatar_file avatar is-hidden" type="file" accept="image/*">';
-                    html += '<h2 class="name name_chat" contenteditable="true" title="' + name + '">' + name + '</h2>';
-                    html += '<span class="pencil is-hidden"></span>';
-                    html += '<span class="triangle triangle_down"></span>';
-                    html += '<span class="triangle triangle_up is-hidden"></span>';
-                }
-
-                html += '</div></div>';
-                html += '<div class="chat-controls">';
-
-                if (dialog.type === 3) {
-                    html += '<button class="btn_chat btn_chat_videocall videoCall"><img src="images/icon-videocall.svg" alt="videocall"></button>';
-                    html += '<button class="btn_chat btn_chat_audiocall audioCall"><img src="images/icon-audiocall.svg" alt="audiocall"></button>';
-                    html += '<button class="btn_chat btn_chat_add createGroupChat" data-ids="' + dialog.occupants_ids.join() + '" data-private="1"><img src="images/icon-add.svg" alt="add"></button>';
-                    html += '<button class="btn_chat btn_chat_profile userDetails" data-id="' + user_id + '"><img src="images/icon-profile.svg" alt="profile"></button>';
-                } else {
-                    html += '<button class="btn_chat btn_chat_add addToGroupChat" data-ids="' + dialog.occupants_ids.join() + '" data-dialog="' + dialog_id + '"><img src="images/icon-add.svg" alt="add"></button>';
-                }
-
-                if (dialog.type === 3) {
-                    html += '<button class="btn_chat btn_chat_delete deleteContact"><img src="images/icon-delete.svg" alt="delete"></button>';
-                } else {
-                    html += '<button class="btn_chat btn_chat_delete leaveChat"><img src="images/icon-delete.svg" alt="delete"></button>';
-                }
-
-                html += '</div></header>';
+                $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append(chatHeaderTpl);
 
                 // build occupants of room
                 if (dialog.type === 2) {
-                    html += '<div class="chat-occupants-wrap">';
-                    html += '<div class="chat-occupants">';
+                    html = '<div class="chat-occupants">';
                     for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
                         id = dialog.occupants_ids[i];
                         if (id != User.contact.id) {
                             html += '<a class="occupant l-flexbox_inline presence-listener" data-id="' + id + '" href="#">';
-
-                            html = getStatus(roster[id], html);
-
+                            html += getStatus(roster[id]);
                             html += '<span class="name name_occupant">' + contacts[id].full_name + '</span>';
                             html += '</a>';
                         }
                     }
-                    html += '</div></div>';
+                    html += '</div>';
                 }
 
-                html += '<section class="l-chat-content scrollbar_message"></section>';
-                html += QMHtml.Dialogs.setTextarea();
-                html += '</section>';
+                $('.l-chat[data-dialog="' + dialog_id + '"] .j-chatOccupants').append($(html));
 
-                $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append($(html));
                 textAreaScrollbar();
 
                 if (dialog.type === 3 && (!status || status.subscription === 'none'))
@@ -596,7 +570,7 @@ define([
                         $('#recentList ul').prepend(copyDialogItem);
                         if (!$('#searchList').is(':visible')) {
                             $('#recentList').removeClass('is-hidden');
-                            isSectionEmpty($('#recentList ul'));
+                            Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
                         }
                     }
                     $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
@@ -614,17 +588,25 @@ define([
             }
         },
 
-        leaveGroupChat: function(objDom) {
+        leaveGroupChat: function(dialogParam, sameUser) {
             var dialogs = ContactList.dialogs,
-                dialog_id = objDom.data('dialog'),
+                dialog_id = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
                 dialog = dialogs[dialog_id],
                 li = $('.dialog-item[data-dialog="' + dialog_id + '"]'),
                 chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 list = li.parents('ul');
 
-            Dialog.leaveChat(dialog, function() {
+            if (sameUser) {
+                removeDialogItem();
+            } else {
+                Dialog.leaveChat(dialog, function() {
+                    removeDialogItem();
+                });
+            }
+
+            function removeDialogItem() {
                 li.remove();
-                isSectionEmpty(list);
+                Helpers.Dialogs.isSectionEmpty(list);
 
                 // delete chat section
                 if (chat.is(':visible')) {
@@ -634,7 +616,7 @@ define([
                     chat.remove();
                 }
                 delete dialogs[dialog_id];
-            });
+            }
 
         },
 
@@ -756,16 +738,18 @@ define([
         objDom.add('.popups').addClass('is-overlay');
     }
 
-    function getStatus(status, html) {
+    function getStatus(status) {
+        var str = '';
+
         if (!status || status.subscription === 'none') {
-            html += '<span class="status status_request"></span>';
+            str += '<span class="status status_request"></span>';
         } else if (status && status.status) {
-            html += '<span class="status status_online"></span>';
+            str += '<span class="status status_online"></span>';
         } else {
-            html += '<span class="status"></span>';
+            str += '<span class="status"></span>';
         }
 
-        return html;
+        return str;
     }
 
     function textAreaScrollbar() {
@@ -777,23 +761,6 @@ define([
             zindex: 1,
             enablekeyboard: false
         });
-    }
-
-    function isSectionEmpty(list) {
-        if (list.contents().length === 0) {
-            list.parent().addClass('is-hidden');
-        }
-
-        if ($('#historyList ul').contents().length === 0) {
-            $('#historyList ul').parent().addClass('is-hidden');
-        }
-
-        if ($('#requestsList').is('.is-hidden') &&
-            $('#recentList').is('.is-hidden') &&
-            $('#historyList').is('.is-hidden')) {
-
-            $('#emptyList').removeClass('is-hidden');
-        }
     }
 
     function setLabelForNewMessages(dialogId) {

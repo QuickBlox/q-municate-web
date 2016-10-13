@@ -81,17 +81,17 @@ define([
                     popup.find('.popup-elem .not_found').removeClass('is-hidden');
                     popup.find('.popup-elem .short_length').addClass('is-hidden');
                 }
-
-                form.find('input').prop('disabled', false).val(val);
-                popup.find('.popup-elem').addClass('is-hidden');
-                popup.find('.mCSB_container').empty();
+                //
+                // form.find('input').prop('disabled', false).val(val);
+                // popup.find('.popup-elem').addClass('is-hidden');
+                // popup.find('.mCSB_container').empty();
 
                 scrollbar(list, self);
                 self.createDataSpinner(list);
-
-                $('.popup:visible .spinner_bounce')
-                    .removeClass('is-hidden')
-                    .addClass('is-empty');
+                //
+                // $('.popup:visible .spinner_bounce')
+                //     .removeClass('is-hidden')
+                //     .addClass('is-empty');
 
                 sessionStorage.setItem('QM.search.value', val);
                 sessionStorage.setItem('QM.search.page', 1);
@@ -100,6 +100,14 @@ define([
                     createListResults(list, results, self);
                 });
             }
+
+            form.find('input').prop('disabled', false).val(val);
+            popup.find('.popup-elem').addClass('is-hidden');
+            popup.find('.mCSB_container').empty();
+
+            $('.popup:visible .spinner_bounce')
+                .removeClass('is-hidden')
+                .addClass('is-empty');
         },
 
         addContactsToChat: function(objDom, type, dialog_id, isPrivate) {
@@ -250,7 +258,7 @@ define([
             $('#recentList ul').prepend(copyDialogItem);
             if ($('#searchList').is(':hidden')) {
                 $('#recentList').removeClass('is-hidden');
-                isSectionEmpty($('.j-recentList'));
+                Helpers.Dialogs.isSectionEmpty($('.j-recentList'));
             }
         },
 
@@ -269,7 +277,7 @@ define([
 
             $objDom.remove();
 
-            isSectionEmpty(list);
+            Helpers.Dialogs.isSectionEmpty(list);
 
             if ($chat.length) {
                 $chat.removeClass('is-request');
@@ -312,7 +320,7 @@ define([
             li = $('.dialog-item[data-id="' + id + '"]');
             list = li.parents('ul');
             li.remove();
-            isSectionEmpty(list);
+            Helpers.Dialogs.isSectionEmpty(list);
 
             dialog = Dialog.create({
                 '_id': hiddenDialogs[id],
@@ -325,6 +333,7 @@ define([
             Helpers.log('Dialog', dialog);
 
             DialogView.addDialogItem(dialog);
+            Message.update(null, dialog.id);
 
             dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]');
             copyDialogItem = dialogItem.clone();
@@ -332,7 +341,7 @@ define([
             $('#recentList ul').prepend(copyDialogItem);
             if ($('#searchList').is(':hidden')) {
                 $('#recentList').removeClass('is-hidden');
-                isSectionEmpty($('.j-recentList'));
+                Helpers.Dialogs.isSectionEmpty($('.j-recentList'));
             }
 
             dialogItem = $('.presence-listener[data-id="' + id + '"]');
@@ -350,7 +359,7 @@ define([
 
             $objDom.remove();
 
-            isSectionEmpty(list);
+            Helpers.Dialogs.isSectionEmpty(list);
 
             // update roster
             roster[id] = {
@@ -408,7 +417,7 @@ define([
             }
 
             li.remove();
-            isSectionEmpty(list);
+            Helpers.Dialogs.isSectionEmpty(list);
 
             // delete chat section
             if ($chat.is(':visible')) {
@@ -460,7 +469,7 @@ define([
 
             if ($isCurrentItem.length) {
                 $isCurrentItem.remove();
-                isSectionEmpty(recentList);
+                Helpers.Dialogs.isSectionEmpty(recentList);
             }
         },
 
@@ -509,7 +518,7 @@ define([
             if (request.length > 0) {
                 QB.chat.roster.remove(jid, function() {
                     request.remove();
-                    isSectionEmpty(list);
+                    Helpers.Dialogs.isSectionEmpty(list);
                 });
             }
             dialogItem.addClass('is-request');
@@ -549,8 +558,7 @@ define([
                 'dialog_id': params.dialog_id,
                 'save_to_history': params.save_to_history,
                 'notification_type': params.notification_type
-            },
-            'markable': 1
+            }
         });
     }
 
@@ -637,23 +645,6 @@ define([
         }
 
         self.removeDataSpinner();
-    }
-
-    function isSectionEmpty(list) {
-        if (list.find('li.list-item').length === 0) {
-            list.parent().addClass('is-hidden');
-        }
-
-        if ($('.j-historyList').find('li.list-item').length === 0) {
-            $('.j-historyList').parent().addClass('is-hidden');
-        }
-
-        if ($('#requestsList').is('.is-hidden') &&
-            $('#recentList').is('.is-hidden') &&
-            $('#historyList').is('.is-hidden')) {
-
-            $('#emptyList').removeClass('is-hidden');
-        }
     }
 
     return ContactListView;
