@@ -292,6 +292,13 @@
 .attach-name,
 .avatar-name {
     color: #999;
+    height: 20px;
+    line-height: 20px;
+    display: block;
+    max-width: 600px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .attach-download {
     color: #0d70b3;
