@@ -45,7 +45,7 @@ article.message[data-status="typing"] > div {
     margin-top: 0;
 }
 .message-content {
-    padding-left: 20px;
+    padding-left: 15px;
     width: 450px;
     max-width: 450px;
     color: #333;
@@ -194,6 +194,8 @@ article.message[data-status="typing"] > div {
     color: #0d70b3;
     cursor: pointer;
     margin-left: 20px;
+    width: 120px;
+    text-align: right;
 }
 .changePic:hover {
     opacity: none;

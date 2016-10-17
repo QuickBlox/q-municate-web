@@ -2,6 +2,14 @@
 
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
 
+## v. 1.8.0 - October 17, 2016
+- Added last message preview for dialogs;
+- Ability to sync of group chats between tabs and browsers for the same user;
+- Ability to scale opponent's avatar in private chat and image of group chat;
+- Cross-platform solutions for bug fixes;
+- Stability improvements;
+- Bug fixes.
+
 ## v. 1.7.0 - September 2, 2016
 - New Logic for unread messages;
 - Ability to sync of contact requests between tabs and browsers for the same user;
