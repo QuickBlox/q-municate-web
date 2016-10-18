@@ -648,16 +648,23 @@
                     <button class="btn_chat btn_chat_audiocall audioCall">
                         <img src="images/icon-audiocall.svg" alt="Make a Audio Call">
                     </button>
+                    <button class="btn_chat btn_chat_add createGroupChat" data-ids="<%= occupantsIds.join() %>" data-private="1">
+                        <img src="images/icon-add.svg" alt="Create group chat">
+                    </button>
                     <button class="btn_chat btn_chat_profile userDetails" data-id="<%= user_id %>">
                         <img src="images/icon-profile.svg" alt="Show user profile">
                     </button>
+                    <button class="btn_chat btn_chat_delete deleteContact">
+                        <img src="images/icon-delete.svg" alt="Delete contact">
+                    </button>
+                <% } else { %>
+                    <button class="btn_chat btn_chat_add addToGroupChat" data-ids="<%= occupantsIds.join() %>" data-dialog="<%= dialog_id %>">
+                        <img src="images/icon-add.svg" alt="Add occupants to group chat">
+                    </button>
+                    <button class="btn_chat btn_chat_delete leaveChat">
+                        <img src="images/icon-delete.svg" alt="Leave chat">
+                    </button>
                 <% } %>
-                <button class="btn_chat btn_chat_add createGroupChat" data-ids="<%= occupantsIds.join() %>" data-private="1">
-                    <img src="images/icon-add.svg" alt="Create group chat">
-                </button>
-                <button class="btn_chat btn_chat_delete deleteContact">
-                    <img src="images/icon-delete.svg" alt="Delete contact">
-                </button>
             </div>
         </header>
 
