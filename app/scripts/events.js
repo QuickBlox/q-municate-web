@@ -265,14 +265,6 @@ define([
                 }
             });
 
-            $workspace.on('mouseenter', '.j-showlocation', function() {
-                $(this).find('.popover_map').fadeIn(150);
-            });
-
-            $workspace.on('mouseleave', '.j-showlocation', function() {
-                $(this).find('.popover_map').fadeOut(100);
-            });
-
             $workspace.on('click', '.j-btn_input_location', function() {
                 var $self = $(this),
                     $gmap = $('.j-popover_gmap'),

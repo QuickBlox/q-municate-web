@@ -175,9 +175,9 @@ define([
     QMHtml.Messages = {
 
         setMap: function(params) {
-            var htmlTemplate = _.template('<div class="popover_map"><a class="open_map" href="<%=mapLink%>" target="_blank">' +
-                '<image class="static_map" src="<%=imgUrl%>"></a><div class="coner"><i class="icon_coner">' +
-                '</i></div></div>')(params);
+            var htmlTemplate = _.template(
+                '<a class="open_map" href="<%=mapLink%>" target="_blank">' +
+                '</a>')(params);
 
             $('article#' + params.id).find('.message-geo')
                 .addClass('with-geo')
