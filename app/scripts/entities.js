@@ -75,7 +75,7 @@ define([
             }
         },
 
-        updateLocalDialog: function(arguments) {
+        updateLocalDialog: function() {
             // body...
         }
     });
