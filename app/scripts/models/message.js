@@ -5,9 +5,11 @@
  *
  */
 define([
-    'quickblox'
+    'quickblox',
+    'Entities'
 ], function(
-    QB
+    QB,
+    Entities
 ) {
 
     function Message(app) {
@@ -50,15 +52,15 @@ define([
         },
 
         create: function(params) {
-            var User = this.app.models.User,
-                message;
-
-            message = {
+            var message = {
                 id: (params.extension && params.extension.message_id) || params._id || params.id || null,
-                dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
-                body: params.body || params.message || null,
-                notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
+                body: params.body || params.message || '',
                 date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
+                read_ids: params.read_ids || [],
+                delivered_ids: params.delivered_ids || [],
+                notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
+                dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
+
                 read: params.read || false,
                 attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) ||
                     (params.attachments && params.attachments[0]) || params.attachment || null,
@@ -78,17 +80,20 @@ define([
                 callee: parseInt((params.extension && params.extension.callee)) || parseInt(params.callee) || null,
                 callDuration: (params.extension && params.extension.callDuration) || params.callDuration || null,
                 sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
-                read_ids: params.read_ids || [],
-                delivered_ids: params.delivered_ids || [],
                 type: params.type || null,
-                stack: false,
-                latitude: (params.extension && params.extension.latitude) || params.latitude || null,
-                longitude: (params.extension && params.extension.longitude) || params.longitude || null
+                stack: false
             };
 
-            if (message.attachment) {
+            if (message.attachment && message.attachment.size) {
                 message.attachment.size = parseInt(message.attachment.size);
             }
+
+            if (params.extension && params.extension.latitude && params.extension.longitude) {
+                message.latitude = params.extension.latitude;
+                message.longitude = params.extension.longitude;
+            }
+
+            new Entities.MessageModel(message);
 
             return message;
         },
@@ -101,7 +106,6 @@ define([
                 if (online) {
                     var lastMessageSender = +prevMsg.attr('data-id'),
                         lastMessageDateSent = +prevMsg.find('.message-time').attr('data-time');
-
 
                     sameUser = (curMsg.sender_id === lastMessageSender) ? true : false;
                     sameTime = (Math.floor(curMsg.date_sent / 60) === Math.floor(lastMessageDateSent / 60)) ? true : false;
@@ -138,7 +142,7 @@ define([
                     });
                 }
 
-                dialog.messages = [];
+                dialog.unread_messages = [];
             }
 
             QBApiCalls.updateMessage(message_ids, {

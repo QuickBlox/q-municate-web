@@ -8,12 +8,14 @@ define([
     'config',
     'quickblox',
     'underscore',
-    'Helpers'
+    'Helpers',
+    'Entities'
 ], function(
     QMCONFIG,
     QB,
     _,
-    Helpers
+    Helpers,
+    Entities
 ) {
 
     function Dialog(app) {
@@ -37,23 +39,27 @@ define([
                 time = Math.floor(Date.now() / 1000),
                 // exclude current user from dialog occupants that he doesn't hit to yourself in Contact List
                 occupants_ids = _.chain(params.occupants_ids)
-                .without(params.occupants_ids, User.contact.id)
-                .uniq(occupants_ids)
-                .value();
+                                .without(params.occupants_ids, User.contact.id)
+                                .uniq(occupants_ids)
+                                .value(),
+                dialog = {
+                    id: params._id,
+                    type: params.type,
+                    room_jid: params.xmpp_room_jid || null,
+                    room_name: params.name || null,
+                    room_photo: params.photo && params.photo.replace('http://', 'https://') || '',
+                    occupants_ids: occupants_ids,
+                    last_message: params.last_message || ((params.type === 2) ? 'Notification message' : 'Contact request'),
+                    last_message_date_sent: params.last_message_date_sent || time,
+                    room_updated_date: Date.parse(params.updated_at) || params.room_updated_date || time,
+                    unread_count: params.unread_messages_count || '',
+                    unread_messages: [],
+                    messages: new Entities.MessagesCollection()
+                };
 
-            return {
-                id: params._id,
-                type: params.type,
-                room_jid: params.xmpp_room_jid || null,
-                room_name: params.name || null,
-                room_photo: params.photo && params.photo.replace('http://', 'https://') || '',
-                occupants_ids: occupants_ids,
-                last_message: params.last_message || ((params.type === 2) ? 'Notification message' : 'Contact request'),
-                last_message_date_sent: params.last_message_date_sent || time,
-                room_updated_date: Date.parse(params.updated_at) || params.room_updated_date || time,
-                unread_count: params.unread_messages_count || '',
-                messages: []
-            };
+            new Entities.DialogModel(dialog);
+
+            return dialog;
         },
 
         createPrivate: function(jid, isNew, dialog_id) {

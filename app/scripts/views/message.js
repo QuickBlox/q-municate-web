@@ -14,7 +14,8 @@ define([
     'timeago',
     'QBNotification',
     'LocationView',
-    'QMHtml'
+    'QMHtml',
+    'Entities'
 ], function(
     $,
     QMCONFIG,
@@ -25,7 +26,8 @@ define([
     timeago,
     QBNotification,
     Location,
-    QMHtml
+    QMHtml,
+    Entities
 ) {
 
     var User, Message, ContactList, Dialog, Settings;
@@ -566,9 +568,9 @@ define([
                     // send read status if message displayed in chat
                     Message.update(msg.id, dialog_id, id);
                 } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length > 0) {
-                    msgArr = dialogs[dialog_id].messages || [];
+                    msgArr = dialogs[dialog_id].unread_messages || [];
                     msgArr.push(msg.id);
-                    dialogs[dialog_id].messages = msgArr;
+                    dialogs[dialog_id].unread_messages = msgArr;
                 }
             }
 

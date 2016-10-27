@@ -462,12 +462,19 @@ define([
                 $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
                 self.messageScrollbar();
 
-                if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 3) {
-                    Message.update(dialog.messages.join(), dialog_id, user_id);
+                if (dialog.unread_messages &&
+                    dialog.unread_messages.length > 0 &&
+                    dialog.type == 3) {
+
+                    Message.update(dialog.unread_messages.join(), dialog_id, user_id);
                 }
-                if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 2) {
-                    for (var j = 0, ln = dialog.messages.length; j < ln; j++) {
-                        messageId = dialog.messages[j];
+
+                if (dialog.unread_messages &&
+                    dialog.unread_messages.length > 0 &&
+                    dialog.type == 2) {
+
+                    for (var j = 0, ln = dialog.unread_messages.length; j < ln; j++) {
+                        messageId = dialog.unread_messages[j];
                         userId = $('#' + messageId).data('id');
                         QB.chat.sendReadStatus({
                             messageId: messageId,
