@@ -38,26 +38,19 @@ define([
 
         initialize: function() {
             Helpers.log('MessageModel created: ', this.toJSON());
-            this.addToDialogModel();
+            this.saveInDialogModel();
         },
 
         validate: function(attrs) {
 
         },
 
-        addToDialogModel: function() {
-            var m_id = this.get('id');
-            console.info(m_id);
+        saveInDialogModel: function() {
+            var dialogId = this.get('dialog_id'),
+                dialog   = entities.dialogsCollection.get(dialogId),
+                messages = dialog.get('messages');
 
-            console.info(entities.DialogsCollection.toJSON());
-            var d_id = entities.DialogsCollection.get(m_id);
-            console.info(d_id);
-
-            var m_cl = d_id.get('messages');
-            console.info(m_cl);
-
-            m_cl.push(this);
-
+            messages.push(this);
         }
     });
 
@@ -70,13 +63,9 @@ define([
         },
 
         keepCountOfModels: function() {
-            if (this.length > 25) {
+            if (this.length > 20) {
                 this.shift();
             }
-        },
-
-        updateLocalDialog: function() {
-            // body...
         }
     });
 
@@ -101,7 +90,7 @@ define([
 
         initialize: function() {
             Helpers.log('DialogModel created: ', this.toJSON());
-            entities.DialogsCollection.push(this);
+            entities.dialogsCollection.push(this);
         },
 
         validate: function(attrs) {
@@ -114,7 +103,8 @@ define([
         model: entities.DialogModel
     });
 
-    entities.DialogsCollection = new entities.DialogsCollection();
+    entities.dialogsCollection = new entities.DialogsCollection();
+
 
     return entities;
 });
