@@ -72,7 +72,7 @@ define([
 
         update: function() {
 			var isActive = this.getDialogProp('active'),
-				unreadCount = this.getDialogProp('unread_count')
+				unreadCount = this.getDialogProp('unread_count');
 
 			if (isActive) {
 				if (this.length > (20 + unreadCount)) {
@@ -80,7 +80,7 @@ define([
 				}
 			} else {
 				var lastMessageId = this.at(length-1);
-				
+
 				this.setDialogProp('unread_count', ++unreadCount);
 				console.info(lastMessageId);
 				this.getDialogProp('unread_messages').push(lastMessageId);
