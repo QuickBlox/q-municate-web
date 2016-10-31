@@ -80,6 +80,8 @@ define([
                 callee: parseInt((params.extension && params.extension.callee)) || parseInt(params.callee) || null,
                 callDuration: (params.extension && params.extension.callDuration) || params.callDuration || null,
                 sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
+				latitude: (params.extension && params.extension.latitude) || params.latitude || null,
+                longitude: (params.extension && params.extension.longitude) || params.longitude || null,
                 type: params.type || null,
                 stack: false
             };
@@ -88,12 +90,7 @@ define([
                 message.attachment.size = parseInt(message.attachment.size);
             }
 
-            if (params.extension && params.extension.latitude && params.extension.longitude) {
-                message.latitude = params.extension.latitude;
-                message.longitude = params.extension.longitude;
-            }
-
-            new Entities.MessageModel(message);
+            new Entities.Models.Message(message);
 
             return message;
         },

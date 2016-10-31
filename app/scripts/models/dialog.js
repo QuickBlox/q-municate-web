@@ -54,10 +54,11 @@ define([
                     room_updated_date: Date.parse(params.updated_at) || params.room_updated_date || time,
                     unread_count: params.unread_messages_count || '',
                     unread_messages: [],
-                    messages: new Entities.MessagesCollection()
+                    messages: new Entities.Collections.Messages(),
+					active: false
                 };
 
-            new Entities.DialogModel(dialog);
+            new Entities.Models.Dialog(dialog);
 
             return dialog;
         },
