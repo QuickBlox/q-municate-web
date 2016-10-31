@@ -72,16 +72,19 @@ define([
 
         update: function() {
 			var isActive = this.getDialogProp('active'),
-				unreadCount = this.getDialogProp('unread_count');
+				unreadCount = this.getDialogProp('unread_count')
 
 			if (isActive) {
 				if (this.length > (20 + unreadCount)) {
 					this.shift();
 				}
 			} else {
+				var lastMessageId = this.at(length-1);
+				
 				this.setDialogProp('unread_count', ++unreadCount);
-				this.getDialogProp('unread_messages').push()
-				console.info(this.getDialogProp('unread_count'));
+				console.info(lastMessageId);
+				this.getDialogProp('unread_messages').push(lastMessageId);
+				console.info(this.getDialogProp('unread_messages'));
 
 				if (this.length > 100) {
 					this.shift();
