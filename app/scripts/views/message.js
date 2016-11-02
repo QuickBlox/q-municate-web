@@ -469,7 +469,9 @@ define([
                     'sender_id': User.contact.id,
                     'latitude': localStorage['QM.latitude'] || null,
                     'longitude': localStorage['QM.longitude'] || null,
-                    '_id': msg.id
+                    'sender_id': User.contact.id,
+                    '_id': msg.id,
+                    'type': type
                 });
 
                 Helpers.log('Message send:', message);
@@ -551,8 +553,8 @@ define([
             typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
             typeof occupants_ids === "string" ? occupants_ids = occupants_ids.split(',').map(Number) : null;
 
+            message.sender_id = id;
             msg = Message.create(message);
-            msg.sender_id = id;
 
             // add or remove label about new messages
             if ($chat.length && !isHiddenChat && window.isQMAppActive && isNewMessages) {
@@ -560,18 +562,6 @@ define([
             } else if ((isHiddenChat || !window.isQMAppActive) &&
                         $chat.length && !isNewMessages && isNotMyUser) {
                 $chat.find('.l-chat-content .mCSB_container').append($newMessages);
-            }
-
-
-            if (isNotMyUser) {
-                if ($chat.length && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
-                    // send read status if message displayed in chat
-                    Message.update(msg.id, dialog_id, id);
-                } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length > 0) {
-                    msgArr = dialogs[dialog_id].unread_messages || [];
-                    msgArr.push(msg.id);
-                    dialogs[dialog_id].unread_messages = msgArr;
-                }
             }
 
             if (otherChat || (!otherChat && !isBottom && isNotMyUser && isExistent)) {

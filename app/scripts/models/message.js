@@ -55,12 +55,12 @@ define([
             var message = {
                 id: (params.extension && params.extension.message_id) || params._id || params.id || null,
                 body: params.body || params.message || '',
+                type: params.type || null,
                 date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
                 read_ids: params.read_ids || [],
                 delivered_ids: params.delivered_ids || [],
                 notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
                 dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
-
                 read: params.read || false,
                 attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) ||
                     (params.attachments && params.attachments[0]) || params.attachment || null,
@@ -82,12 +82,17 @@ define([
                 sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
 				latitude: (params.extension && params.extension.latitude) || params.latitude || null,
                 longitude: (params.extension && params.extension.longitude) || params.longitude || null,
-                type: params.type || null,
                 stack: false
             };
 
             if (message.attachment && message.attachment.size) {
                 message.attachment.size = parseInt(message.attachment.size);
+            }
+
+            for (var prop in message) {
+                if (message[prop] === null) {
+                    delete message[prop];
+                }
             }
 
             new Entities.Models.Message(message);

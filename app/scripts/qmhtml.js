@@ -6,12 +6,10 @@
 define([
     'jquery',
     'underscore',
-    'MainModule',
     'Helpers'
 ], function(
     $,
     _,
-    QM,
     Helpers
 ) {
     var QMHtml = {};

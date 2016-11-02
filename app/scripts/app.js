@@ -16,7 +16,8 @@ define([
     'AttachView', 'ContactListView',
     'VideoChatView', 'Events',
     'Helpers', 'QBApiCalls',
-    'config', 'Entities'
+    'config', 'Entities',
+    'QMHtml'
 ], function(
     $, User,
     Session, Settings,
@@ -29,7 +30,8 @@ define([
     AttachView, ContactListView,
     VideoChatView, Events,
     Helpers, QBApiCalls,
-    QMCONFIG, Entities
+    QMCONFIG, Entities,
+    QMHtml
 ) {
 
     function QM() {
@@ -59,8 +61,9 @@ define([
 
         this.events    = new Events(this);
         this.service   = new QBApiCalls(this);
-        
+
         this.entities  = Entities;
+        this.entities.app = this;
     }
 
     QM.prototype = {
