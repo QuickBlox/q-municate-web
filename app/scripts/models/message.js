@@ -123,34 +123,6 @@ define([
             }
 
             return stack;
-        },
-
-        update: function(message_ids, dialog_id, user_id) {
-            var QBApiCalls = this.app.service,
-                ContactList = this.app.models.ContactList,
-                dialog = ContactList.dialogs[dialog_id];
-
-            if (message_ids !== null) {
-                var unreadMessages = message_ids.split(','),
-                    unreadMessage;
-
-                for (var i = 0, len = unreadMessages.length; i < len; i++) {
-                    unreadMessage = unreadMessages[i];
-
-                    QB.chat.sendReadStatus({
-                        messageId: unreadMessage,
-                        userId: user_id,
-                        dialogId: dialog_id
-                    });
-                }
-
-                dialog.unread_messages = [];
-            }
-
-            QBApiCalls.updateMessage(message_ids, {
-                chat_dialog_id: dialog_id,
-                read: 1
-            }, function() {});
         }
 
     };

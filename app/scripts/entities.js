@@ -19,6 +19,7 @@ define([
 		Models: {},
 		Views: {},
 		Collections: {},
+        Helpers: {},
         active: ''
 	};
 
@@ -47,15 +48,18 @@ define([
         // accumulate messages in dialogs
         accumulateInDialogModel: function() {
             var dialogId = this.get('dialog_id'),
+                messageId = this.get('id'),
+                senderId = this.get('sender_id'),
+                readIds = this.get('read_ids'),
                 dialog = entities.Collections.dialogs.get(dialogId),
                 isOpen = dialog.get('opened'),
-                isActive = (dialogId === entities.active),
-                isHidden = (isActive && !window.isQMAppActive),
                 unreadCount = dialog.get('unread_count'),
                 unreadMessages = dialog.get('unread_messages'),
                 myUserId = entities.app.models.User.contact.id,
-                senderId = this.get('sender_id'),
-                isFromOtherUser = (myUserId !== senderId);
+                isActive = (dialogId === entities.active),
+                isHidden = (isActive && !window.isQMAppActive),
+                isFromOtherUser = (myUserId !== senderId),
+                isUnreadMessage = (readIds.length < 2);
 
             // collect last messages for opened dialog's
             if (isOpen) {
@@ -67,10 +71,18 @@ define([
                 unreadMessages.push({
                     userId: senderId,
                     dialogId: dialogId,
-                    messageId: this.get('id')
+                    messageId: messageId
                 });
                 dialog.set('unread_count', ++unreadCount);
                 console.info(unreadCount + ' unread messages:', unreadMessages);
+            }
+
+            if ((this.get('read') === 1) && isFromOtherUser) {
+                QB.chat.sendReadStatus({
+                    userId: senderId,
+                    dialogId: dialogId,
+                    messageId: messageId
+                });
             }
         }
     });
@@ -151,6 +163,7 @@ define([
 
     // init dialog's collection with starting app
     entities.Collections.dialogs = new entities.Collections.Dialogs();
+
 
 	// do something after selected dialog
 	$('.list_contextmenu').on('click', 'li.dialog-item', function() {
