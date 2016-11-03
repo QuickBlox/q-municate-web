@@ -125,11 +125,11 @@ define([
     entities.Collections.Dialogs = Backbone.Collection.extend({
         model: entities.Models.Dialog,
 
-        // send read status for online messages wich was accumuladed as unread messages for dialog
         sendReadStatus: function(id) {
             var dialog = this.get(id),
                 unreadMeassages = dialog.get('unread_messages');
 
+            // send read status for online messages wich was accumuladed as unread messages for dialog
             if (unreadMeassages.length > 0) {
                 _.each(unreadMeassages, function(params) {
                     QB.chat.sendReadStatus(params);
@@ -140,6 +140,12 @@ define([
                     'unread_messages': []
                 });
             }
+
+            // read all dialog's messages on REST
+            QB.chat.message.update(null, {
+                chat_dialog_id: id,
+                read: 1
+            }, function() {});
         }
     });
 
@@ -155,18 +161,8 @@ define([
             dialogs = entities.Collections.dialogs,
             actived = dialogs.get(dialogId);
 
-        // if it's opening firstly...
-        if (!(actived.get('opened'))) {
-            // read all dialog's messages on REST
-            QB.chat.message.update(null, {
-                chat_dialog_id: dialogId,
-                read: 1
-            }, function() {
-                // set as opened after took history from REST
-                actived.set('opened', true);
-            });
-        }
-
+        // set as opened after took history from REST
+        actived.set('opened', true);
         // send read status
         dialogs.sendReadStatus(dialogId);
 	});

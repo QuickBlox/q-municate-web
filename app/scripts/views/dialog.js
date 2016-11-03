@@ -240,7 +240,9 @@ define([
                                 continue;
                             }
 
-                            if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);
+                            if (dialog.type === 2) {
+                                QB.chat.muc.join(dialog.room_jid);
+                            }
 
                             // update hidden dialogs
                             private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
@@ -462,29 +464,29 @@ define([
                 $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
                 self.messageScrollbar();
 
-                if (dialog.unread_messages &&
-                    dialog.unread_messages.length > 0 &&
-                    dialog.type == 3) {
-
-                    Message.update(dialog.unread_messages.join(), dialog_id, user_id);
-                }
-
-                if (dialog.unread_messages &&
-                    dialog.unread_messages.length > 0 &&
-                    dialog.type == 2) {
-
-                    for (var j = 0, ln = dialog.unread_messages.length; j < ln; j++) {
-                        messageId = dialog.unread_messages[j];
-                        userId = $('#' + messageId).data('id');
-                        QB.chat.sendReadStatus({
-                            messageId: messageId,
-                            userId: userId,
-                            dialogId: dialog_id
-                        });
-                    }
-
-                    Message.update(null, dialog_id);
-                }
+                // if (dialog.unread_messages &&
+                //     dialog.unread_messages.length > 0 &&
+                //     dialog.type == 3) {
+                //
+                //     Message.update(dialog.unread_messages.join(), dialog_id, user_id);
+                // }
+                //
+                // if (dialog.unread_messages &&
+                //     dialog.unread_messages.length > 0 &&
+                //     dialog.type == 2) {
+                //
+                //     for (var j = 0, ln = dialog.unread_messages.length; j < ln; j++) {
+                //         messageId = dialog.unread_messages[j];
+                //         userId = $('#' + messageId).data('id');
+                //         QB.chat.sendReadStatus({
+                //             messageId: messageId,
+                //             userId: userId,
+                //             dialogId: dialog_id
+                //         });
+                //     }
+                //
+                //     Message.update(null, dialog_id);
+                // }
             }
 
             removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
