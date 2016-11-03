@@ -469,7 +469,6 @@ define([
                     'sender_id': User.contact.id,
                     'latitude': localStorage['QM.latitude'] || null,
                     'longitude': localStorage['QM.longitude'] || null,
-                    'sender_id': User.contact.id,
                     '_id': msg.id,
                     'type': type
                 });

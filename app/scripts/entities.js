@@ -147,7 +147,7 @@ define([
     entities.Collections.dialogs = new entities.Collections.Dialogs();
 
 	// do something after selected dialog
-	$('.list_contextmenu').on('click', 'li.dialog-item', function() {\
+	$('.list_contextmenu').on('click', 'li.dialog-item', function() {
         // set up this dialog_id as active
 		entities.active = $(this).data('dialog');
 
