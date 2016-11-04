@@ -191,5 +191,10 @@ define([
         }
     });
 
+    $('.j-home').on('click', function() {
+        // clear active dialog id
+        entities.active = '';
+    });
+
     return entities;
 });
