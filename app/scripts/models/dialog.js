@@ -153,6 +153,7 @@ define([
                                 type: 'groupchat',
                                 body: 'Notification message',
                                 extension: {
+                                    // message_id: msgId
                                     date_sent: time,
                                     save_to_history: 1,
                                     notification_type: '2',
@@ -161,7 +162,6 @@ define([
                                     current_occupant_ids: res.occupants_ids.join(),
                                     added_occupant_ids: params.occupants_ids,
                                     dialog_update_info: 3,
-                                    message_id: msgId
                                 }
                             });
                         }

@@ -55,7 +55,7 @@ define([
             var message = {
                 id: (params.extension && params.extension.message_id) || params._id || params.id || null,
                 body: params.body || params.message || '',
-                type: params.type || null,
+                type: params.type || 'headline',
                 date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
                 read_ids: params.read_ids || [],
                 delivered_ids: params.delivered_ids || [],
@@ -64,7 +64,7 @@ define([
                 read: params.read || false,
                 attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) ||
                     (params.attachments && params.attachments[0]) || params.attachment || null,
-                sender_id: params.sender_id || null,
+                sender_id: params.sender_id || params.userId || null,
                 recipient_id: params.recipient_id || (params.extension && params.extension.recipient_id) || null,
                 current_occupant_ids: (params.extension && params.extension.current_occupant_ids) || params.current_occupant_ids || null,
                 added_occupant_ids: (params.extension && params.extension.added_occupant_ids) || params.added_occupant_ids || null,

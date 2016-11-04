@@ -8,6 +8,7 @@ define([
     'jquery',
     'config',
     'quickblox',
+    'Entities',
     'Helpers',
     'QMHtml',
     'underscore',
@@ -17,6 +18,7 @@ define([
     $,
     QMCONFIG,
     QB,
+    Entities,
     Helpers,
     QMHtml,
     _
@@ -81,17 +83,9 @@ define([
                     popup.find('.popup-elem .not_found').removeClass('is-hidden');
                     popup.find('.popup-elem .short_length').addClass('is-hidden');
                 }
-                //
-                // form.find('input').prop('disabled', false).val(val);
-                // popup.find('.popup-elem').addClass('is-hidden');
-                // popup.find('.mCSB_container').empty();
 
                 scrollbar(list, self);
                 self.createDataSpinner(list);
-                //
-                // $('.popup:visible .spinner_bounce')
-                //     .removeClass('is-hidden')
-                //     .addClass('is-empty');
 
                 sessionStorage.setItem('QM.search.value', val);
                 sessionStorage.setItem('QM.search.page', 1);
@@ -273,11 +267,11 @@ define([
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
                 time = Math.floor(Date.now() / 1000),
+                dialogs = Entities.Collections.dialogs,
                 copyDialogItem,
                 dialogItem,
                 message,
                 dialogId,
-                dialogs,
                 dialog,
                 li;
 
@@ -301,6 +295,16 @@ define([
             delete notConfirmed[id];
             ContactList.saveNotConfirmed(notConfirmed);
 
+            dialogId = Dialog.create({
+                '_id': hiddenDialogs[id],
+                'type': 3,
+                'occupants_ids': [id],
+                'unread_count': ''
+            });
+
+            dialog = dialogs.get(dialogId).toJSON();
+            Helpers.log('Dialog', dialog);
+
             if (isClick) {
                 QB.chat.roster.confirm(jid, function() {
                     // send notification about confirm
@@ -309,7 +313,7 @@ define([
                         date_sent: time,
                         dialog_id: hiddenDialogs[id],
                         save_to_history: 1,
-                        notification_type: '5',
+                        notification_type: '5'
                     });
 
                     message = Message.create({
@@ -328,20 +332,7 @@ define([
             li.remove();
             Helpers.Dialogs.isSectionEmpty(list);
 
-            dialogId = Dialog.create({
-                '_id': hiddenDialogs[id],
-                'type': 3,
-                'occupants_ids': [id],
-                'unread_count': ''
-            });
-
-            dialogs = Entities.Collections.dialogs;
-            dialog = dialogs.get(dialogId).toJSON();
-
-            Helpers.log('Dialog', dialog);
-
             DialogView.addDialogItem(dialog);
-            Message.update(null, dialog.id);
 
             dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]');
             copyDialogItem = dialogItem.clone();
@@ -434,7 +425,10 @@ define([
             if ($chat.length > 0) {
                 $chat.remove();
             }
-            // delete dialogs[dialog_id];
+
+            if (Entities.active === dialog_id) {
+                Entities.active = '';
+            }
             dialogs.remove(dialog_id).toJSON();
 
             that.app.views.Dialog.decUnreadCounter(dialog_id);

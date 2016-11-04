@@ -47,6 +47,7 @@ define([
 
         // accumulate messages in dialogs
         accumulateInDialogModel: function() {
+            console.info(entities.Collections.dialogs.get(this.get('dialog_id')));
             var dialogId = this.get('dialog_id'),
                 messageId = this.get('id'),
                 senderId = this.get('sender_id'),

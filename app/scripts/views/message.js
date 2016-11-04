@@ -700,7 +700,6 @@ define([
 
         onSystemMessage: function(message) {
             var DialogView = self.app.views.Dialog,
-                dialogs = Entities.Collections.dialogs,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
                 room_jid = roomJidVerification(dialog_id),
@@ -712,12 +711,11 @@ define([
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
+                dialogs = Entities.Collections.dialogs,
                 dialog,
                 msg;
 
             msg = Message.create(message);
-            msg.sender_id = message.userId;
-            msg.type = 'headline';
 
             // create new group chat
             if (notification_type === '1' && dialogGroupItem.length === 0) {
@@ -731,7 +729,6 @@ define([
                     xmpp_room_jid: room_jid,
                     unread_count: 1
                 });
-
                 dialog = dialogs.get(dialog_id).toJSON();
                 Helpers.log('Dialog', dialog);
 
