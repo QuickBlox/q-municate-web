@@ -61,30 +61,28 @@ define([
                 isFromOtherUser = (myUserId !== senderId),
                 isUnreadMessage = (readIds.length < 2);
 
-            // collect last messages for opened dialog's
             if (isOpen) {
+                // collect last messages for opened dialog's
                 dialog.get('messages').push(this);
+                // save as uread if dialog isn't active
+                if ((!isActive || isHidden) && isFromOtherUser) {
+                    dialog.set('unread_count', ++unreadCount);
+                    console.info(unreadCount, unreadMessages);
+                    unreadMessages.push({
+                        userId: senderId,
+                        dialogId: dialogId,
+                        messageId: messageId
+                    });
+                } else if ((readIds.length < 2) && isFromOtherUser) {
+                    QB.chat.sendReadStatus({
+                        userId: senderId,
+                        dialogId: dialogId,
+                        messageId: messageId
+                    });
+                }
             }
+        },
 
-            // save as uread if dialog isn't active
-            if ((!isActive || isHidden) && isFromOtherUser) {
-                unreadMessages.push({
-                    userId: senderId,
-                    dialogId: dialogId,
-                    messageId: messageId
-                });
-                dialog.set('unread_count', ++unreadCount);
-                console.info(unreadCount + ' unread messages:', unreadMessages);
-            }
-
-            if ((this.get('read') === 1) && isFromOtherUser) {
-                QB.chat.sendReadStatus({
-                    userId: senderId,
-                    dialogId: dialogId,
-                    messageId: messageId
-                });
-            }
-        }
     });
 
     /* Message Models Collection */
@@ -92,12 +90,16 @@ define([
         model: entities.Models.Message,
 
         initialize: function() {
-            this.listenTo(this, 'add', this.update);
+            this.listenTo(this, 'add', this.updateCollection);
         },
 
         // keep count for messages collection
-        update: function() {
-            if (this.length > 20) {
+        updateCollection: function() {
+            var dialogId = this.models[0].get('dialog_id'),
+                dialog = entities.Collections.dialogs.get(dialogId),
+                unreadCount = dialog.get('unread_count');
+
+            if ((this.length > 20) && (unreadCount < 20)) {
                 this.shift();
             }
         }
@@ -126,10 +128,6 @@ define([
         // add dialog to collection after initialize
         initialize: function() {
             entities.Collections.dialogs.push(this);
-        },
-
-        validate: function(attrs) {
-
         }
     });
 
@@ -137,27 +135,29 @@ define([
     entities.Collections.Dialogs = Backbone.Collection.extend({
         model: entities.Models.Dialog,
 
-        sendReadStatus: function(id) {
-            var dialog = this.get(id),
-                unreadMeassages = dialog.get('unread_messages');
+        readAll: function(dialogId) {
+            var dialog = this.get(dialogId),
+                unreadMeassages = dialog.get('unread_messages'),
+                unreadMeassagesIds = [];
 
-            // send read status for online messages wich was accumuladed as unread messages for dialog
             if (unreadMeassages.length > 0) {
+                // send read status for online messages wich was accumuladed as unread messages for dialog
                 _.each(unreadMeassages, function(params) {
                     QB.chat.sendReadStatus(params);
+                    unreadMeassagesIds.push(params.messageId);
                 });
+
+                // read all dialog's messages on REST
+                QB.chat.message.update(unreadMeassagesIds, {
+                    chat_dialog_id: dialogId,
+                    read: 1
+                }, function() {});
 
                 dialog.set({
                     'unread_count': '',
                     'unread_messages': []
                 });
             }
-
-            // read all dialog's messages on REST
-            QB.chat.message.update(null, {
-                chat_dialog_id: id,
-                read: 1
-            }, function() {});
         }
     });
 
@@ -177,7 +177,7 @@ define([
         // set as opened after took history from REST
         actived.set('opened', true);
         // send read status
-        dialogs.sendReadStatus(dialogId);
+        dialogs.readAll(dialogId);
 	});
 
     // when app is getting focus
@@ -187,7 +187,7 @@ define([
                 dialog = dialogs.get(entities.active);
 
             // send read status
-            dialogs.sendReadStatus(dialog.get('id'));
+            dialogs.readAll(dialog.get('id'));
         }
     });
 

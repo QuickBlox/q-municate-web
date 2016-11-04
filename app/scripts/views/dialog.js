@@ -657,14 +657,6 @@ define([
                     message = Message.create(messages[i]);
                     message.stack = Message.isStack(false, messages[i], messages[i + 1]);
 
-                    // if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
-                    //     QB.chat.sendReadStatus({
-                    //         messageId: message.id,
-                    //         userId: message.sender_id,
-                    //         dialogId: dialogId
-                    //     });
-                    // }
-
                     if (unreadCount) {
                         switch (i) {
                             case (lastReaded - 1):
@@ -685,14 +677,14 @@ define([
                     if (i === (len - 1)) {
                         setScrollToNewMessages();
                         self.removeDataSpinner();
+
+                        QB.chat.message.update(null, {
+                            chat_dialog_id: dialogId,
+                            read: 1
+                        }, function() {});
                     }
                 }
             }, count);
-            //
-            // QB.chat.message.update(null, {
-            //     chat_dialog_id: dialogId,
-            //     read: 1
-            // }, function() {});
         }
 
     };
