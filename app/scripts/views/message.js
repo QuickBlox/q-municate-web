@@ -510,7 +510,7 @@ define([
             var DialogView = self.app.views.Dialog,
                 ContactListView = self.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-                dialogs = ContactList.dialogs,
+                dialogs = Entities.Collections.dialogs,
                 contacts = ContactList.contacts,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
@@ -577,7 +577,7 @@ define([
 
             // add new occupants
             if (notification_type === '2') {
-                dialog = ContactList.dialogs[dialog_id];
+                dialog = dialogs.get(dialog_id).toJSON();
 
                 if (occupants_ids && msg.sender_id !== User.contact.id) {
                     dialog.occupants_ids = dialog.occupants_ids.concat(new_ids);
@@ -700,7 +700,7 @@ define([
 
         onSystemMessage: function(message) {
             var DialogView = self.app.views.Dialog,
-                dialogs = ContactList.dialogs,
+                dialogs = Entities.Collections.dialogs,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
                 room_jid = roomJidVerification(dialog_id),
@@ -721,7 +721,7 @@ define([
 
             // create new group chat
             if (notification_type === '1' && dialogGroupItem.length === 0) {
-                dialog = Dialog.create({
+                Dialog.create({
                     _id: dialog_id,
                     type: 2,
                     occupants_ids: occupants_ids,
@@ -732,7 +732,7 @@ define([
                     unread_count: 1
                 });
 
-                ContactList.dialogs[dialog.id] = dialog;
+                dialog = dialogs.get(dialog_id).toJSON();
                 Helpers.log('Dialog', dialog);
 
                 ContactList.add(dialog.occupants_ids, null, function() {

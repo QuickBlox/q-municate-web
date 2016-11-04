@@ -21,7 +21,6 @@ define([
         this.app = app;
         this.roster = {};
         this.contacts = getContacts();
-        this.dialogs = {};
         contact_ids = Object.keys(this.contacts).map(Number);
     }
 

@@ -59,7 +59,7 @@ define([
 
             new Entities.Models.Dialog(dialog);
 
-            return dialog;
+            return dialog.id;
         },
 
         createPrivate: function(jid, isNew, dialog_id) {
@@ -84,9 +84,10 @@ define([
             }
 
             function addContactRequestDialogItem(objDialog, isClick) {
-                var dialog = self.create(objDialog);
+                var dialogId = self.create(objDialog),
+                    dialogs = Entities.Collections.dialogs,
+                    dialog = dialogs.get(dialogId).toJSON();
 
-                ContactList.dialogs[dialog.id] = dialog;
                 Helpers.log('Dialog', dialog);
 
                 // send notification about subscribe
@@ -116,12 +117,13 @@ define([
                 ContactList = this.app.models.ContactList,
                 contacts = ContactList.contacts,
                 User = this.app.models.User,
-                self = this,
-                dialog;
+                self = this;
 
             QBApiCalls.createDialog(params, function(res) {
-                dialog = self.create(res);
-                ContactList.dialogs[dialog.id] = dialog;
+                var dialogId = self.create(res),
+                    dialogs = Entities.Collections.dialogs,
+                    dialog = dialogs.get(dialogId).toJSON();
+
                 Helpers.log('Dialog', dialog);
 
                 QB.chat.muc.join(dialog.room_jid, function() {
@@ -178,16 +180,17 @@ define([
                 ContactList = this.app.models.ContactList,
                 contacts = ContactList.contacts,
                 User = this.app.models.User,
-                self = this,
-                dialog;
+                self = this;
 
             QBApiCalls.updateDialog(params.dialog_id, {
                 push_all: {
                     occupants_ids: [params.occupants_ids]
                 }
             }, function(res) {
-                dialog = self.create(res);
-                ContactList.dialogs[params.dialog_id] = dialog;
+                var dialogId = self.create(res),
+                    dialogs = Entities.Collections.dialogs,
+                    dialog = dialogs.get(dialogId).toJSON();
+
                 Helpers.log('Dialog', dialog);
 
                 var msgId = QB.chat.helpers.getBsonObjectId();
@@ -240,14 +243,15 @@ define([
         changeName: function(dialog_id, name) {
             var QBApiCalls = this.app.service,
                 ContactList = this.app.models.ContactList,
-                self = this,
-                dialog;
+                self = this;
 
             QBApiCalls.updateDialog(dialog_id, {
                 name: name
             }, function(res) {
-                dialog = self.create(res);
-                ContactList.dialogs[dialog_id] = dialog;
+                var dialogId = self.create(res),
+                    dialogs = Entities.Collections.dialogs,
+                    dialog = dialogs.get(dialogId).toJSON();
+
                 Helpers.log('Dialog', dialog);
 
                 // send notification about updating room
@@ -274,8 +278,7 @@ define([
                 AttachView = this.app.views.Attach,
                 file = objDom[0].files[0] || null,
                 self = this,
-                errMsg,
-                dialog;
+                errMsg;
 
             if (file) {
                 if (file.type.indexOf('image/') === -1) {
@@ -299,8 +302,10 @@ define([
                             QBApiCalls.updateDialog(dialog_id, {
                                 photo: imgUrl
                             }, function(res) {
-                                dialog = self.create(res);
-                                ContactList.dialogs[dialog_id] = dialog;
+                                var dialogId = self.create(res),
+                                    dialogs = Entities.Collections.dialogs,
+                                    dialog = dialogs.get(dialogId).toJSON();
+
                                 Helpers.log('Dialog', dialog);
 
                                 // send notification about updating room

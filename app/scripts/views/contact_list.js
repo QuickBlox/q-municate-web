@@ -272,8 +272,14 @@ define([
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
-                li, dialog, message, dialogItem, copyDialogItem,
-                time = Math.floor(Date.now() / 1000);
+                time = Math.floor(Date.now() / 1000),
+                copyDialogItem,
+                dialogItem,
+                message,
+                dialogId,
+                dialogs,
+                dialog,
+                li;
 
             $objDom.remove();
 
@@ -322,14 +328,16 @@ define([
             li.remove();
             Helpers.Dialogs.isSectionEmpty(list);
 
-            dialog = Dialog.create({
+            dialogId = Dialog.create({
                 '_id': hiddenDialogs[id],
                 'type': 3,
                 'occupants_ids': [id],
                 'unread_count': ''
             });
 
-            ContactList.dialogs[dialog.id] = dialog;
+            dialogs = Entities.Collections.dialogs;
+            dialog = dialogs.get(dialogId).toJSON();
+
             Helpers.log('Dialog', dialog);
 
             DialogView.addDialogItem(dialog);
@@ -390,7 +398,7 @@ define([
 
         sendDelete: function(id, isClick) {
             var contacts = ContactList.contacts,
-                dialogs = ContactList.dialogs,
+                dialogs = Entities.Collections.dialogs,
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 li = $('.dialog-item[data-id="' + id + '"]'),
                 $chat = $('.l-chat[data-id="' + id + '"]'),
@@ -426,7 +434,8 @@ define([
             if ($chat.length > 0) {
                 $chat.remove();
             }
-            delete dialogs[dialog_id];
+            // delete dialogs[dialog_id];
+            dialogs.remove(dialog_id).toJSON();
 
             that.app.views.Dialog.decUnreadCounter(dialog_id);
         },

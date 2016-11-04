@@ -981,9 +981,10 @@ define([
                 }
 
                 $selected.removeClass('is-selected');
-                
+
                 // clear active dialog id
                 this.app.entities.active = '';
+                console.info(this.app.entities.active);
 
                 return false;
             });

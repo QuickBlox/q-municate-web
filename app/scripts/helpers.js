@@ -28,7 +28,7 @@ define([
         getTitle: function(message, params) {
             var dialogs = params.dialogs,
                 contacts = params.contacts,
-                dialog = dialogs[message.dialog_id],
+                dialog = dialogs.get(message.dialog_id).toJSON(),
                 contact = contacts[message.sender_id],
                 title;
 

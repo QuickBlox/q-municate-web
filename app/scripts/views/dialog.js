@@ -8,6 +8,7 @@ define([
     'jquery',
     'config',
     'quickblox',
+    'Entities',
     'Helpers',
     'QMHtml',
     'minEmoji',
@@ -23,6 +24,7 @@ define([
     $,
     QMCONFIG,
     QB,
+    Entities,
     Helpers,
     QMHtml,
     minEmoji,
@@ -212,6 +214,8 @@ define([
                 rosterIds = Object.keys(roster),
                 notConfirmed,
                 private_id,
+                dialogId,
+                dialogs,
                 dialog,
                 occupants_ids,
                 chat;
@@ -228,9 +232,9 @@ define([
                     ContactList.add(occupants_ids, null, function() {
 
                         for (var i = 0, len = dialogs.length; i < len; i++) {
-                            dialog = Dialog.create(dialogs[i]);
-
-                            ContactList.dialogs[dialog.id] = dialog;
+                            dialogId = Dialog.create(dialogs[i]);
+                            dialogsCollection = Entities.Collections.dialogs;
+                            dialog = dialogsCollection.get(dialogId).toJSON();
 
                             // don't create a duplicate dialog in contact list
                             chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.id + '"]');
@@ -389,12 +393,12 @@ define([
         htmlBuild: function(objDom) {
             var MessageView = this.app.views.Message,
                 contacts = ContactList.contacts,
-                dialogs = ContactList.dialogs,
+                dialogs = Entities.Collections.dialogs,
                 roster = ContactList.roster,
                 parent = objDom.parent(),
                 dialog_id = parent.data('dialog'),
                 user_id = parent.data('id'),
-                dialog = dialogs[dialog_id],
+                dialog = dialogs.get(dialog_id).toJSON(),
                 user = contacts[user_id],
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
@@ -463,30 +467,6 @@ define([
                      .siblings(':not(.j-popover_const)').addClass('is-hidden');
                 $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
                 self.messageScrollbar();
-
-                // if (dialog.unread_messages &&
-                //     dialog.unread_messages.length > 0 &&
-                //     dialog.type == 3) {
-                //
-                //     Message.update(dialog.unread_messages.join(), dialog_id, user_id);
-                // }
-                //
-                // if (dialog.unread_messages &&
-                //     dialog.unread_messages.length > 0 &&
-                //     dialog.type == 2) {
-                //
-                //     for (var j = 0, ln = dialog.unread_messages.length; j < ln; j++) {
-                //         messageId = dialog.unread_messages[j];
-                //         userId = $('#' + messageId).data('id');
-                //         QB.chat.sendReadStatus({
-                //             messageId: messageId,
-                //             userId: userId,
-                //             dialogId: dialog_id
-                //         });
-                //     }
-                //
-                //     Message.update(null, dialog_id);
-                // }
             }
 
             removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
@@ -598,9 +578,9 @@ define([
         },
 
         leaveGroupChat: function(dialogParam, sameUser) {
-            var dialogs = ContactList.dialogs,
+            var dialogs = Entities.Collections.dialogs,
                 dialog_id = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
-                dialog = dialogs[dialog_id],
+                dialog = dialogs.get(dialog_id).toJSON(),
                 li = $('.dialog-item[data-dialog="' + dialog_id + '"]'),
                 chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 list = li.parents('ul');

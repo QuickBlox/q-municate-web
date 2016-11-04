@@ -623,7 +623,7 @@ define([
 
         var params = {
             'user': User,
-            'dialogs': ContactList.dialogs,
+            'dialogs': entities.Collections.dialogs,
             'contacts': ContactList.contacts
         };
 
