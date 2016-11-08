@@ -63,7 +63,7 @@ define(function() {
                 active: 2
             },
             debug: {
-                mode: 1,
+                mode: 0,
                 file: null
             },
             webrtc: {

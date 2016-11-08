@@ -46,16 +46,18 @@ define([
                 if (isAjaxDownloading) {
                     DialogView.removeDataSpinner();
                     self.skip[dialog_id] = count;
+                } else {
+                    self.skip = 0;
                 }
                 callback(messages);
             });
         },
 
-        create: function(params) {
+        create: function(params, ajax) {
             var message = {
                 id: (params.extension && params.extension.message_id) || params._id || params.id || null,
                 body: params.body || params.message || '',
-                type: params.type || 'headline',
+                type: params.type || '',
                 date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
                 read_ids: params.read_ids || [],
                 delivered_ids: params.delivered_ids || [],
@@ -82,7 +84,8 @@ define([
                 sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
 				latitude: (params.extension && params.extension.latitude) || params.latitude || null,
                 longitude: (params.extension && params.extension.longitude) || params.longitude || null,
-                stack: false
+                stack: false,
+                online: params.online || false
             };
 
             if (message.attachment && message.attachment.size) {
@@ -95,7 +98,9 @@ define([
                 }
             }
 
-            new Entities.Models.Message(message);
+            if (!ajax) {
+                new Entities.Models.Message(message);
+            }
 
             return message;
         },

@@ -228,7 +228,8 @@ define([
                                 'date_sent': time,
                                 'chat_dialog_id': dialogItem.getAttribute('data-dialog'),
                                 'sender_id': User.contact.id,
-                                'notification_type': '4'
+                                'notification_type': '4',
+                                'online': true
                             });
 
                             MessageView.addItem(message, true, true);
@@ -320,7 +321,8 @@ define([
                         'chat_dialog_id': hiddenDialogs[id],
                         'notification_type': '5',
                         'date_sent': time,
-                        'sender_id': User.contact.id
+                        'sender_id': User.contact.id,
+                        'online': true
                     });
                     MessageView.addItem(message, true, true);
                 });

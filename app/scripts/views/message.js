@@ -470,7 +470,8 @@ define([
                     'latitude': localStorage['QM.latitude'] || null,
                     'longitude': localStorage['QM.longitude'] || null,
                     '_id': msg.id,
-                    'type': type
+                    'type': type,
+                    'online': true
                 });
 
                 Helpers.log('Message send:', message);
@@ -553,6 +554,7 @@ define([
             typeof occupants_ids === "string" ? occupants_ids = occupants_ids.split(',').map(Number) : null;
 
             message.sender_id = id;
+            message.online = true;
             msg = Message.create(message);
 
             // add or remove label about new messages
@@ -715,8 +717,6 @@ define([
                 dialog,
                 msg;
 
-            msg = Message.create(message);
-
             // create new group chat
             if (notification_type === '1' && dialogGroupItem.length === 0) {
                 Dialog.create({
@@ -727,15 +727,21 @@ define([
                     photo: room_photo,
                     room_updated_date: room_updated_at,
                     xmpp_room_jid: room_jid,
-                    unread_count: 1
+                    unread_count: 1,
+                    opened: true
                 });
+
                 dialog = dialogs.get(dialog_id).toJSON();
+
                 Helpers.log('Dialog', dialog);
 
                 ContactList.add(dialog.occupants_ids, null, function() {
                     // don't create a duplicate dialog in contact list
                     dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.id + '"]')[0];
-                    if (dialogItem) return true;
+
+                    if (dialogItem) {
+                        return true;
+                    }
 
                     QB.chat.muc.join(room_jid);
 
@@ -743,15 +749,17 @@ define([
                     unread++;
                     dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]');
 
+                    message.online = true;
+                    msg = Message.create(message);
                     // Don't show any notification if system message from current User
                     if (msg.sender_id !== User.contact.id) {
                         dialogGroupItem.find('.unread').text(unread);
                         DialogView.getUnreadCounter(dialog_id);
                     }
+                    //
+                    self.addItem(msg, true, true, true);
+                    createAndShowNotification(msg, true);
                 });
-
-                self.addItem(msg, true, true, true);
-                createAndShowNotification(msg, true);
             }
         },
 
@@ -901,7 +909,7 @@ define([
 
         var params = {
             'user': User,
-            'dialogs': ContactList.dialogs,
+            'dialogs': Entities.Collections.dialogs,
             'contacts': ContactList.contacts
         };
 

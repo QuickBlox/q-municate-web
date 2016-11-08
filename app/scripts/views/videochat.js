@@ -7,12 +7,15 @@
 define([
     'jquery',
     'quickblox',
+    'Entities',
     'config',
     'Helpers',
     'QBNotification',
     'QMHtml'
-], function($,
+], function(
+    $,
     QB,
+    Entities,
     QMCONFIG,
     Helpers,
     QBNotification,
@@ -623,7 +626,7 @@ define([
 
         var params = {
             'user': User,
-            'dialogs': entities.Collections.dialogs,
+            'dialogs': Entities.Collections.dialogs,
             'contacts': ContactList.contacts
         };
 

@@ -222,7 +222,8 @@ define([
                 'sender_id': User.contact.id,
                 'latitude': localStorage['QM.latitude'] || null,
                 'longitude': localStorage['QM.longitude'] || null,
-                '_id': msg.id
+                '_id': msg.id,
+                'online': true
             });
 
             Helpers.log(message);

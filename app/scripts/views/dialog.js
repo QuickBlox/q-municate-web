@@ -390,7 +390,7 @@ define([
             }
         },
 
-        htmlBuild: function(objDom) {
+        htmlBuild: function(objDom, messages) {
             var MessageView = this.app.views.Message,
                 contacts = ContactList.contacts,
                 dialogs = Entities.Collections.dialogs,
@@ -404,7 +404,7 @@ define([
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
                 unreadCount = Number(objDom.find('.unread').text()),
                 self = this,
-                chatHeaderTpl,
+                chatTpl,
                 messageId,
                 location,
                 status,
@@ -422,7 +422,9 @@ define([
             location = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? 'btn_active' : '';
 
             if ($chat.length === 0) {
-                chatHeaderTpl = _.template($('#chatHeaderTpl').html())({
+                $('.l-workspace-wrap .l-workspace').addClass('is-hidden');
+
+                new Entities.Models.Chat({
                     'occupantsIds': dialog.occupants_ids,
                     'status': getStatus(status),
                     'dialog_id': dialog_id,
@@ -433,8 +435,6 @@ define([
                     'icon': icon,
                     'jid': jid
                 });
-
-                $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append(chatHeaderTpl);
 
                 // build occupants of room
                 if (dialog.type === 2) {
@@ -459,7 +459,7 @@ define([
                     $('.l-chat:visible').addClass('is-request');
 
                 self.createDataSpinner(true);
-                self.showChatWithNewMessages(dialog_id, unreadCount);
+                self.showChatWithNewMessages(dialog_id, unreadCount, messages);
 
             } else {
 
@@ -609,13 +609,13 @@ define([
 
         },
 
-        showChatWithNewMessages: function(dialogId, unreadCount) {
+        showChatWithNewMessages: function(dialogId, unreadCount, messages) {
             var MessageView = this.app.views.Message,
                 self = this,
                 lastReaded,
                 message,
                 count;
-
+console.info(unreadCount);
             var MIN_STACK = 20,
                 MAX_STACK = 100,
                 lessThenMinStack = unreadCount < MIN_STACK,
@@ -632,10 +632,24 @@ define([
                 count = MAX_STACK;
             }
 
-            Message.download(dialogId, function(messages) {
-                for (var i = 0, len = messages.length; i < len; i++) {
-                    message = Message.create(messages[i]);
-                    message.stack = Message.isStack(false, messages[i], messages[i + 1]);
+            if (messages) {
+                addItems(messages);
+            } else {
+                messages = [];
+
+                Message.download(dialogId, function(response) {
+                    _.each(response, function(item) {
+                        messages.push(Message.create(item));
+                    });
+
+                    addItems(messages);
+                }, count);
+            }
+
+            function addItems(items) {
+                for (var i = 0, len = items.length; i < len; i++) {
+                    message = items[i];
+                    message.stack = Message.isStack(false, items[i], items[i + 1]);
 
                     if (unreadCount) {
                         switch (i) {
@@ -657,14 +671,9 @@ define([
                     if (i === (len - 1)) {
                         setScrollToNewMessages();
                         self.removeDataSpinner();
-
-                        QB.chat.message.update(null, {
-                            chat_dialog_id: dialogId,
-                            read: 1
-                        }, function() {});
                     }
                 }
-            }, count);
+            }
         }
 
     };
@@ -696,7 +705,7 @@ define([
 
         Message.download(dialog_id, function(messages) {
             for (var i = 0, len = messages.length; i < len; i++) {
-                message = Message.create(messages[i]);
+                message = Message.create(messages[i], 'ajax');
                 message.stack = Message.isStack(false, messages[i], messages[i + 1]);
 
                 MessageView.addItem(message, true);

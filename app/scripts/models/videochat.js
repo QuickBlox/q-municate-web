@@ -130,7 +130,8 @@ define([
             caller: extension.caller,
             callee: extension.callee,
             callDuration: extension.callDuration || null,
-            sessionID: extension.sessionID || null
+            sessionID: extension.sessionID || null,
+            'online': true
         };
 
         msg.id = QB.chat.send(jid, {
