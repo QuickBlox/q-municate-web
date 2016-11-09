@@ -10,3 +10,10 @@ debug.log
 
 # builded QM
 dist/*
+
+# *Storm
+.idea/*
+.idea/workspace.xml
+
+# *Sublime
+*.sublime-*
