@@ -87,7 +87,7 @@ define([
         }
 
     });
-/******************************************************************************/
+/************************************************************************(end)*/
 
 /***(Message Models Collection)************************************************/
     entities.Collections.Messages = Backbone.Collection.extend({
@@ -111,9 +111,9 @@ define([
             }
         }
     });
-/******************************************************************************/
+/************************************************************************(end)*/
 
-/***(Unread messages Model)****************************************************/
+/***(Unread message Model)****************************************************/
     entities.Models.UnreadMessage = Backbone.Model.extend({
         defaults: {
             messageId: '',
@@ -137,36 +137,13 @@ define([
             unreadMessages.add(this);
         },
     });
-/******************************************************************************/
+/************************************************************************(end)*/
 
 /***(Unread messages Collection)***********************************************/
     entities.Collections.UnreadMessages = Backbone.Collection.extend({
-        model: entities.Models.UnreadMessage,
-
-        readAll: function(dialogId) {
-            var dialog = this.get(dialogId),
-                unreadMeassages = dialog.get('unread_messages'),
-                unreadMeassagesIds = [];
-
-            if (unreadMeassages.length > 0) {
-                // send read status for online messages
-                unreadMeassages.each(function(params) {
-                    QB.chat.sendReadStatus(params.toJSON());
-                    unreadMeassagesIds.push(params.get('messageId'));
-                });
-
-                // read all dialog's messages on REST
-                QB.chat.message.update(unreadMeassagesIds, {
-                    chat_dialog_id: dialogId,
-                    read: 1
-                }, function() {});
-
-                dialog.set('unread_count', '');
-                unreadMeassages.reset();
-            }
-        }
+        model: entities.Models.UnreadMessage
     });
-/******************************************************************************/
+/************************************************************************(end)*/
 
 /***(Dialog Model)*************************************************************/
     entities.Models.Dialog = Backbone.Model.extend({
@@ -206,16 +183,39 @@ define([
             }
         }
     });
-/******************************************************************************/
+/************************************************************************(end)*/
 
 /***(Dialog Models Collection)*************************************************/
     entities.Collections.Dialogs = Backbone.Collection.extend({
         model: entities.Models.Dialog,
+
+        readAll: function(dialogId) {
+            var dialog = this.get(dialogId),
+                unreadMeassages = dialog.get('unread_messages'),
+                unreadMeassagesIds = [];
+
+            if (unreadMeassages.length > 0) {
+                // send read status for online messages
+                unreadMeassages.each(function(params) {
+                    QB.chat.sendReadStatus(params.toJSON());
+                    unreadMeassagesIds.push(params.get('messageId'));
+                });
+
+                // read all dialog's messages on REST
+                QB.chat.message.update(unreadMeassagesIds, {
+                    chat_dialog_id: dialogId,
+                    read: 1
+                }, function() {});
+
+                dialog.set('unread_count', '');
+                unreadMeassages.reset();
+            }
+        }
     });
 
     // init dialog's collection with starting app
     entities.Collections.dialogs = new entities.Collections.Dialogs();
-/******************************************************************************/
+/************************************************************************(end)*/
 
 /***(Chat Model)***************************************************************/
     entities.Models.Chat = Backbone.Model.extend({
@@ -235,7 +235,7 @@ define([
             entities.Views.chat = new entities.Views.Chat({model: this});
         }
     });
-/******************************************************************************/
+/************************************************************************(end)*/
 
 /***(Chat View)****************************************************************/
     entities.Views.Chat = Backbone.View.extend({
@@ -254,7 +254,7 @@ define([
             $('#chatWrap').removeClass('is-hidden').html(chatElem);
         }
     });
-/******************************************************************************/
+/************************************************************************(end)*/
 
 /*******************************************************************************
 *******************************************************************************/
