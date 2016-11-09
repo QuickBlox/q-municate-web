@@ -615,7 +615,7 @@ define([
                 lastReaded,
                 message,
                 count;
-console.info(unreadCount);
+
             var MIN_STACK = 20,
                 MAX_STACK = 100,
                 lessThenMinStack = unreadCount < MIN_STACK,

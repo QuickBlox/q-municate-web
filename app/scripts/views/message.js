@@ -474,8 +474,6 @@ define([
                     'online': true
                 });
 
-                Helpers.log('Message send:', message);
-
                 if (type === 'chat') {
                     Helpers.Dialogs.moveDialogToTop(dialog_id);
 
@@ -654,7 +652,7 @@ define([
 
             lastMessage = $chat.find('article[data-type="message"]').last();
             msg.stack = Message.isStack(true, msg, lastMessage);
-            Helpers.log('Message object created:', msg);
+
             self.addItem(msg, true, true, id);
 
             // subscribe message
