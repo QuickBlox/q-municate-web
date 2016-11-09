@@ -14,7 +14,7 @@ define(function() {
             scope: 'email,user_friends'
         },
 
-        debug: true,
+        debug: '@@debugQM',
 
         notification: {
             timeout: 7
@@ -65,7 +65,7 @@ define(function() {
                 active: 2
             },
             debug: {
-                mode: 1,
+                mode: Number('@@debugQB'),
                 file: null
             },
             webrtc: {

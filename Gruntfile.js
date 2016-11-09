@@ -217,7 +217,9 @@ module.exports = function(grunt) {
                     globals: {
                         appId: '13318',
                         authKey: 'WzrAY7vrGmbgFfP',
-                        authSecret: 'xS2uerEveGHmEun'
+                        authSecret: 'xS2uerEveGHmEun',
+                        debugQM: 'false',
+                        debugQB: '0'
                     }
                 },
                 src: '<%= yeoman.app %>/configs/environment.js',
@@ -228,7 +230,9 @@ module.exports = function(grunt) {
                     globals: {
                         appId: '36125',
                         authKey: 'gOGVNO4L9cBwkPE',
-                        authSecret: 'JdqsMHCjHVYkVxV'
+                        authSecret: 'JdqsMHCjHVYkVxV',
+                        debugQM: 'true',
+                        debugQB: '1'
                     }
                 },
                 src: '<%= yeoman.app %>/configs/environment.js',
