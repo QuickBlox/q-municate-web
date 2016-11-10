@@ -70,7 +70,7 @@ define([
         globalSearch: function(form) {
             var self = this,
                 popup = form.parent(),
-                list = popup.find('ul:first'),
+                list = popup.find('ul:first.list_contacts'),
                 val = form.find('input[type="search"]').val().trim(),
                 len = val.length;
 
@@ -422,7 +422,9 @@ define([
 
             // delete chat section
             if ($chat.is(':visible')) {
-                $('#capBox').removeClass('is-hidden');
+                $('.j-capBox').removeClass('is-hidden')
+                    .siblings().removeClass('is-active')
+                    .addClass('is-hidden');
             }
             if ($chat.length > 0) {
                 $chat.remove();

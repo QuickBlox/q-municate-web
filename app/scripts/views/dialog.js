@@ -599,7 +599,9 @@ define([
 
                 // delete chat section
                 if (chat.is(':visible')) {
-                    $('#capBox').removeClass('is-hidden');
+                    $('.j-capBox').removeClass('is-hidden')
+                        .siblings().removeClass('is-active')
+                        .addClass('is-hidden');
                 }
                 if (chat.length > 0) {
                     chat.remove();
