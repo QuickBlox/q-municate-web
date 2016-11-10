@@ -178,7 +178,7 @@ define([
 
             if (+curCount === 0) {
                 for (var i = 0; i < (msgCount - 20); i++) {
-                    messages.shift();
+                    messages.pop();
                 }
             }
         }
