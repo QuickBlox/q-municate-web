@@ -1076,7 +1076,14 @@ define([
         $('.j-popupDelete.is-overlay').removeData('id');
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();
-        if ($('video.attach-video')[0]) $('video.attach-video')[0].pause();
+
+        if ($('video.attach-video')[0]) {
+            $('video.attach-video')[0].pause();
+        }
+
+        if ($('img.attach-photo')[0]) {
+            $('img.attach-photo').attr('src', 'images/photo_preloader.gif');
+        }
     }
 
     function setAttachType(type) {
