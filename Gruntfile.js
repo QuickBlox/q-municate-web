@@ -218,7 +218,7 @@ module.exports = function(grunt) {
                         appId: '13318',
                         authKey: 'WzrAY7vrGmbgFfP',
                         authSecret: 'xS2uerEveGHmEun',
-                        debugQM: 'false',
+                        debugQM: '0',
                         debugQB: '0'
                     }
                 },
@@ -231,7 +231,7 @@ module.exports = function(grunt) {
                         appId: '36125',
                         authKey: 'gOGVNO4L9cBwkPE',
                         authSecret: 'JdqsMHCjHVYkVxV',
-                        debugQM: 'true',
+                        debugQM: '1',
                         debugQB: '1'
                     }
                 },

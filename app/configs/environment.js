@@ -14,13 +14,11 @@ define(function() {
             scope: 'email,user_friends'
         },
 
-        debug: '@@debugQM',
+        debug: Number('@@debugQM'),
 
         notification: {
             timeout: 7
         },
-
-        isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 
         defAvatar: {
             url: 'images/ava-single.svg',
