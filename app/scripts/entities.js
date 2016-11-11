@@ -23,7 +23,10 @@ define([
         active: ''
 	};
 
-/***(Message Model)************************************************************/
+    /**
+     * [Message model]
+     * @type {[Backbone model]}
+     */
     entities.Models.Message = Backbone.Model.extend({
         defaults: {
             id: '',
@@ -87,9 +90,11 @@ define([
         }
 
     });
-/************************************************************************(end)*/
 
-/***(Message Models Collection)************************************************/
+    /**
+     * [Messages collection]
+     * @type {[Backbone collection]}
+     */
     entities.Collections.Messages = Backbone.Collection.extend({
         model: entities.Models.Message,
 
@@ -111,9 +116,11 @@ define([
             }
         }
     });
-/************************************************************************(end)*/
 
-/***(Unread message Model)****************************************************/
+    /**
+     * [Unread message model]
+     * @type {[Backbone model]}
+     */
     entities.Models.UnreadMessage = Backbone.Model.extend({
         defaults: {
             messageId: '',
@@ -137,15 +144,19 @@ define([
             unreadMessages.add(this);
         },
     });
-/************************************************************************(end)*/
 
-/***(Unread messages Collection)***********************************************/
+    /**
+     * [Unread messages collection]
+     * @type {[Backbone collection]}
+     */
     entities.Collections.UnreadMessages = Backbone.Collection.extend({
         model: entities.Models.UnreadMessage
     });
-/************************************************************************(end)*/
 
-/***(Dialog Model)*************************************************************/
+    /**
+     * [Dialog model]
+     * @type {[Backbone model]}
+     */
     entities.Models.Dialog = Backbone.Model.extend({
         defaults: {
             id: '',
@@ -183,9 +194,11 @@ define([
             }
         }
     });
-/************************************************************************(end)*/
 
-/***(Dialog Models Collection)*************************************************/
+    /**
+     * [Dialog models collection]
+     * @type {[Backbone collection]}
+     */
     entities.Collections.Dialogs = Backbone.Collection.extend({
         model: entities.Models.Dialog,
 
@@ -212,12 +225,13 @@ define([
             }
         }
     });
-
     // init dialog's collection with starting app
     entities.Collections.dialogs = new entities.Collections.Dialogs();
-/************************************************************************(end)*/
 
-/***(Chat Model)***************************************************************/
+    /**
+     * [Chat model]
+     * @type {[Backbone model]}
+     */
     entities.Models.Chat = Backbone.Model.extend({
         defaults: {
             occupantsIds: '',
@@ -235,9 +249,11 @@ define([
             entities.Views.chat = new entities.Views.Chat({model: this});
         }
     });
-/************************************************************************(end)*/
 
-/***(Chat View)****************************************************************/
+    /**
+     * [Chat view]
+     * @type {[Backbone view]}
+     */
     entities.Views.Chat = Backbone.View.extend({
         tagName: 'div',
         className: 'chatView',
@@ -254,12 +270,12 @@ define([
             $('#chatWrap').removeClass('is-hidden').html(chatElem);
         }
     });
-/************************************************************************(end)*/
 
-/*******************************************************************************
-*******************************************************************************/
+    /**
+     * Events
+     */
 
-	// do something after selected dialog
+	// select and open dialog
 	$('.list_contextmenu').on('click', 'li.dialog-item', function() {
         var MessageView = entities.app.views.Message,
             DialogView = entities.app.views.Dialog,
@@ -286,13 +302,14 @@ define([
         dialogs.readAll(dialogId);
 	});
 
-    // when app is getting focus
+    // read all unread messages
     $(window).focus(function() {
         if (entities.active) {
             entities.Collections.dialogs.readAll(entities.active);
         }
     });
 
+    // unselect all dialogs
     $('.j-home').on('click', function() {
         // clear active dialog id
         entities.active = '';
