@@ -8,11 +8,13 @@ define([
     'jquery',
     'config',
     'quickblox',
+    'Entities',
     'Helpers',
     'LocationView'
 ], function($,
     QMCONFIG,
     QB,
+    Entities,
     Helpers,
     Location
 ) {
@@ -343,11 +345,11 @@ define([
 
         reconnectChat: function() {
             self.connectChat(User.contact.user_jid, function(roster) {
-                var dialogs = self.app.models.ContactList.dialogs;
+                var dialogs = Entities.Collections.dialogs;
 
                 for (var key in dialogs) {
-                    if (dialogs[key].type === 2) {
-                        QB.chat.muc.join(dialogs[key].room_jid);
+                    if (dialogs.get(key).get('type') === 2) {
+                        QB.chat.muc.join(dialogs.get(key).get('room_jid'));
                     }
                 }
 

@@ -212,7 +212,7 @@ define([
                 msg.extension.longitude = localStorage['QM.longitude'];
             }
 
-            QB.chat.send(jid, msg);
+            msg.id = QB.chat.send(jid, msg);
 
             message = Message.create({
                 'body': msg.body,
@@ -222,7 +222,8 @@ define([
                 'sender_id': User.contact.id,
                 'latitude': localStorage['QM.latitude'] || null,
                 'longitude': localStorage['QM.longitude'] || null,
-                '_id': msg.id
+                '_id': msg.id,
+                'online': true
             });
 
             Helpers.log(message);

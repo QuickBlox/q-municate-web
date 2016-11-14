@@ -28,7 +28,7 @@ define([
         getTitle: function(message, params) {
             var dialogs = params.dialogs,
                 contacts = params.contacts,
-                dialog = dialogs[message.dialog_id],
+                dialog = dialogs.get(message.dialog_id).toJSON(),
                 contact = contacts[message.sender_id],
                 title;
 
@@ -328,6 +328,18 @@ define([
         $popup.find('.j-avatarPic').attr('src', url);
         $popup.find('.j-avatarName').text(name);
         $popup.add('.popups').addClass('is-overlay');
+    };
+
+    Helpers.getOpenGraphInfo = function(url, callback) {
+        $.ajax({
+            'url': 'https://ogs.quickblox.com/?url=' + url,
+            success: function(data, status, jqHXR) {
+                callback(data);
+            },
+            error: function(jqHXR, status, error) {
+                console.error(error);
+            }
+        });
     };
 
     return Helpers;

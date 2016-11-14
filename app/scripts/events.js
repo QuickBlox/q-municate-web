@@ -822,15 +822,6 @@ define([
                 }
             });
 
-            $('.list_contextmenu').on('click', '.contact', function() {
-                var dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog"),
-                    dataId = $('.l-list .list-item.is-selected').attr("data-id");
-
-                MessageView.clearTheListTyping();
-                DialogView.htmlBuild($(this));
-                Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
-            });
-
             $('#popupContacts .btn_popup_private').on('click', function() {
                 var id = $('#popupContacts .is-chosen').data('id'),
                     dialogItem = $('.dialog-item[data-id="' + id + '"]').find('.contact');
@@ -973,7 +964,8 @@ define([
                     $label = $('.j-newMessages[data-dialog="' + dialogId + '"]');
 
                 $('.j-capBox').removeClass('is-hidden')
-                    .siblings().removeClass('is-active');
+                    .siblings().removeClass('is-active')
+                    .addClass('is-hidden');
                 $('.l-chat').addClass('is-hidden');
 
                 if ($label.length) {
@@ -1084,7 +1076,14 @@ define([
         $('.j-popupDelete.is-overlay').removeData('id');
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();
-        if ($('video.attach-video')[0]) $('video.attach-video')[0].pause();
+
+        if ($('video.attach-video')[0]) {
+            $('video.attach-video')[0].pause();
+        }
+
+        if ($('img.attach-photo')[0]) {
+            $('img.attach-photo').attr('src', 'images/photo_preloader.gif');
+        }
     }
 
     function setAttachType(type) {

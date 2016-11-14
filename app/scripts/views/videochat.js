@@ -7,35 +7,35 @@
 define([
     'jquery',
     'quickblox',
+    'Entities',
     'config',
     'Helpers',
     'QBNotification',
     'QMHtml'
-], function($,
+], function(
+    $,
     QB,
+    Entities,
     QMCONFIG,
     Helpers,
     QBNotification,
     QMHtml
 ) {
-    var self;
-
-    var callTimer,
-        videoStreamTime;
-
-    var Settings,
+    var self,
         User,
-        ContactList,
+        Settings,
         VideoChat,
-        curSession = {},
-        network = {},
+        ContactList,
+        callTimer,
         stopStreamFF,
         sendAutoReject,
+        videoStreamTime,
+        network = {},
+        curSession = {},
         is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
     function VideoChatView(app) {
         this.app = app;
-
         self = this;
         Settings = this.app.models.Settings;
         SyncTabs = this.app.models.SyncTabs;
@@ -376,6 +376,7 @@ define([
         VideoChat.callee = null;
         self.type = null;
 
+        $chat.find('.mediacall-info-duration').text('');
         $chat.find('.mediacall').remove();
         $chat.find('.l-chat-header').show();
         $chat.find('.l-chat-content').css({
@@ -526,6 +527,8 @@ define([
         }
     };
 
+    /* Private
+    --------------------------------------------------------------------------*/
     function closeStreamScreen(id) {
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
@@ -584,19 +587,19 @@ define([
         if ($obj.is('.off')) {
             self.unmute(deviceType);
             if (deviceType === 'video')
-                curSession.update({
-                    dialog_id: dialogId,
-                    unmute: deviceType
-                });
+            curSession.update({
+                dialog_id: dialogId,
+                unmute: deviceType
+            });
             $obj.removeClass('off');
             $obj.removeAttr('title');
         } else {
             self.mute(deviceType);
             if (deviceType === 'video')
-                curSession.update({
-                    dialog_id: dialogId,
-                    mute: deviceType
-                });
+            curSession.update({
+                dialog_id: dialogId,
+                mute: deviceType
+            });
             $obj.addClass('off');
             $obj.attr('title', msg + ' is off');
         }
@@ -623,7 +626,7 @@ define([
 
         var params = {
             'user': User,
-            'dialogs': ContactList.dialogs,
+            'dialogs': Entities.Collections.dialogs,
             'contacts': ContactList.contacts
         };
 
@@ -701,66 +704,67 @@ define([
         return false;
     }
 
+    function openPopup($objDom) {
+        $objDom.add('.popups').addClass('is-overlay');
+    }
+
+    function closePopup() {
+        $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
+        $('.temp-box').remove();
+
+        if ($('.attach-video video')[0]) {
+            $('.attach-video video')[0].pause();
+        }
+    }
+
+    function setDuration(currentTime) {
+        var c = currentTime || 0;
+        $('.mediacall-info-duration').text(getTimer(c));
+        callTimer = setTimeout(function() {
+            c++;
+            setDuration(c);
+        }, 1000);
+    }
+
+    function getTimer(time) {
+        var h, min, sec;
+
+        h = Math.floor(time / 3600);
+        h = h >= 10 ? h : '0' + h;
+        min = Math.floor(time / 60);
+        min = min >= 10 ? min : '0' + min;
+        sec = Math.floor(time % 60);
+        sec = sec >= 10 ? sec : '0' + sec;
+
+        return h + ':' + min + ':' + sec;
+    }
+
+    function fixScroll() {
+        var $chat = $('.l-chat:visible'),
+            containerHeight = $chat.find('.l-chat-content .mCSB_container').height(),
+            chatContentHeight = $chat.find('.l-chat-content').height(),
+            draggerContainerHeight = $chat.find('.l-chat-content .mCSB_draggerContainer').height(),
+            draggerHeight = $chat.find('.l-chat-content .mCSB_dragger').height();
+
+        $chat.find('.l-chat-content .mCSB_container').css({
+            top: chatContentHeight - containerHeight + 'px'
+        });
+        $chat.find('.l-chat-content .mCSB_dragger').css({
+            top: draggerContainerHeight - draggerHeight + 'px'
+        });
+    }
+
+    function capitaliseFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function setScreenStyle() {
+        if ($('.mediacall').outerHeight() <= 260) {
+            $('.mediacall').addClass('small_screen');
+        } else {
+            $('.mediacall').removeClass('small_screen');
+        }
+    }
+
     return VideoChatView;
 });
-
-/* Private
--------------------------------------------------------------*/
-function openPopup($objDom) {
-    $objDom.add('.popups').addClass('is-overlay');
-}
-
-function closePopup() {
-    $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
-    $('.temp-box').remove();
-    if ($('.attach-video video')[0]) $('.attach-video video')[0].pause();
-}
-
-function setDuration(currentTime) {
-    var c = currentTime || 0;
-    $('.mediacall-info-duration').text(getTimer(c));
-    callTimer = setTimeout(function() {
-        c++;
-        setDuration(c);
-    }, 1000);
-}
-
-function getTimer(time) {
-    var h, min, sec;
-
-    h = Math.floor(time / 3600);
-    h = h >= 10 ? h : '0' + h;
-    min = Math.floor(time / 60);
-    min = min >= 10 ? min : '0' + min;
-    sec = Math.floor(time % 60);
-    sec = sec >= 10 ? sec : '0' + sec;
-
-    return h + ':' + min + ':' + sec;
-}
-
-function fixScroll() {
-    var $chat = $('.l-chat:visible'),
-        containerHeight = $chat.find('.l-chat-content .mCSB_container').height(),
-        chatContentHeight = $chat.find('.l-chat-content').height(),
-        draggerContainerHeight = $chat.find('.l-chat-content .mCSB_draggerContainer').height(),
-        draggerHeight = $chat.find('.l-chat-content .mCSB_dragger').height();
-
-    $chat.find('.l-chat-content .mCSB_container').css({
-        top: chatContentHeight - containerHeight + 'px'
-    });
-    $chat.find('.l-chat-content .mCSB_dragger').css({
-        top: draggerContainerHeight - draggerHeight + 'px'
-    });
-}
-
-function capitaliseFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function setScreenStyle() {
-    if ($('.mediacall').outerHeight() <= 260) {
-        $('.mediacall').addClass('small_screen');
-    } else {
-        $('.mediacall').removeClass('small_screen');
-    }
-}

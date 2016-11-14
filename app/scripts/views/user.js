@@ -9,6 +9,7 @@ define([
     'facebook',
     'config',
     'quickblox',
+    'Entities',
     'Helpers',
     'QMHtml',
     'LocationView',
@@ -18,6 +19,7 @@ define([
     FB,
     QMCONFIG,
     QB,
+    Entities,
     Helpers,
     QMHtml,
     Location,
@@ -148,13 +150,14 @@ define([
             var ids = objDom.parent().data('id'),
                 dialog_id = objDom.parent().data('dialog'),
                 roster = ContactList.roster,
-                dialogs = ContactList.dialogs,
+                dialogs = Entities.Collections.dialogs,
+                dialog = dialogs.get(dialog_id).toJSON(),
                 htmlTpl;
 
             htmlTpl = QMHtml.User.contactPopover({
                 'dialogId': dialog_id,
-                'dialogType': dialogs[dialog_id].type,
-                'occupantsIds': dialogs[dialog_id].occupants_ids,
+                'dialogType': dialog.type,
+                'occupantsIds': dialog.occupants_ids,
                 'ids': ids
             }, roster[ids]);
 
@@ -264,7 +267,9 @@ define([
 
             User.logout(function() {
                 switchOnWelcomePage();
-                $('#capBox').removeClass('is-hidden');
+                $('.j-capBox').removeClass('is-hidden')
+                    .siblings().removeClass('is-active')
+                    .addClass('is-hidden');
                 $('.l-chat').remove();
                 Helpers.log('current User and Session were destroyed');
                 DialogView.logoutWithClearData();
@@ -303,7 +308,7 @@ define([
                     if ($this.find('.list-item').length > 0) {
                         $this.removeClass('is-hidden');
                     }
-                    
+
                     if (selected) {
                         $this.find('.list-item[data-dialog="' + selected + '"]').addClass('is-selected');
                     }

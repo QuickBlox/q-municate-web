@@ -264,6 +264,8 @@
                             </div>
                         </section>
 
+                        <div id="chatWrap" class="l-workspace is-hidden"></div>
+
                         <div class="chat_popover popover_gmap j-popover_const j-popover_gmap">
                             <button class="send_map j-send_map">SEND LOCATION</button>
                             <div class="coner"><i class="icon_coner"></i></div>
@@ -409,7 +411,7 @@
         <section id="popupIncoming" class="popup incoming-call-popup is-open"></section>
 
         <section id="popupAttach" class="popup popup_attach">
-            <img class="attach-photo" src="" alt="attach">
+            <img class="attach-photo" src="images/photo_preloader.gif" alt="attach">
             <video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls autoplay preload="auto" data-setup="{}">
                 <source src="" type="video/mp4"/>
                 <source src="" type="video/webm"/>
@@ -614,12 +616,12 @@
         </section>
     </script>
 
-    <script id="chatHeaderTpl" type="text/template">
+    <script id="chatTpl" type="text/template">
         <% if (type === 3) { %>
-            <section class="l-workspace l-chat l-chat_private presence-listener j-chatItem" data-dialog="<%= dialog_id %>" data-id="<%= user_id %>" data-jid="<%= jid %>">
+            <section class=" l-chat l-chat_private presence-listener j-chatItem" data-dialog="<%= dialog_id %>" data-id="<%= user_id %>" data-jid="<%= jid %>">
             <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
         <% } else { %>
-            <section class="l-workspace l-chat l-chat_group is-group j-chatItem" data-dialog="<%= dialog_id %>" data-jid="<%= jid %>">
+            <section class=" l-chat l-chat_group is-group j-chatItem" data-dialog="<%= dialog_id %>" data-jid="<%= jid %>">
             <header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">
         <% } %>
             <div class="chat-title">

@@ -14,7 +14,8 @@ define([
     'timeago',
     'QBNotification',
     'LocationView',
-    'QMHtml'
+    'QMHtml',
+    'Entities'
 ], function(
     $,
     QMCONFIG,
@@ -25,7 +26,8 @@ define([
     timeago,
     QBNotification,
     Location,
-    QMHtml
+    QMHtml,
+    Entities
 ) {
 
     var User, Message, ContactList, Dialog, Settings;
@@ -467,10 +469,10 @@ define([
                     'sender_id': User.contact.id,
                     'latitude': localStorage['QM.latitude'] || null,
                     'longitude': localStorage['QM.longitude'] || null,
-                    '_id': msg.id
+                    '_id': msg.id,
+                    'type': type,
+                    'online': true
                 });
-
-                Helpers.log('Message send:', message);
 
                 if (type === 'chat') {
                     Helpers.Dialogs.moveDialogToTop(dialog_id);
@@ -507,7 +509,7 @@ define([
             var DialogView = self.app.views.Dialog,
                 ContactListView = self.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-                dialogs = ContactList.dialogs,
+                dialogs = Entities.Collections.dialogs,
                 contacts = ContactList.contacts,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
@@ -549,8 +551,9 @@ define([
             typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
             typeof occupants_ids === "string" ? occupants_ids = occupants_ids.split(',').map(Number) : null;
 
+            message.sender_id = id;
+            message.online = true;
             msg = Message.create(message);
-            msg.sender_id = id;
 
             // add or remove label about new messages
             if ($chat.length && !isHiddenChat && window.isQMAppActive && isNewMessages) {
@@ -558,18 +561,6 @@ define([
             } else if ((isHiddenChat || !window.isQMAppActive) &&
                         $chat.length && !isNewMessages && isNotMyUser) {
                 $chat.find('.l-chat-content .mCSB_container').append($newMessages);
-            }
-
-
-            if (isNotMyUser) {
-                if ($chat.length && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
-                    // send read status if message displayed in chat
-                    Message.update(msg.id, dialog_id, id);
-                } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length > 0) {
-                    msgArr = dialogs[dialog_id].messages || [];
-                    msgArr.push(msg.id);
-                    dialogs[dialog_id].messages = msgArr;
-                }
             }
 
             if (otherChat || (!otherChat && !isBottom && isNotMyUser && isExistent)) {
@@ -586,7 +577,7 @@ define([
 
             // add new occupants
             if (notification_type === '2') {
-                dialog = ContactList.dialogs[dialog_id];
+                dialog = dialogs.get(dialog_id).toJSON();
 
                 if (occupants_ids && msg.sender_id !== User.contact.id) {
                     dialog.occupants_ids = dialog.occupants_ids.concat(new_ids);
@@ -661,7 +652,7 @@ define([
 
             lastMessage = $chat.find('article[data-type="message"]').last();
             msg.stack = Message.isStack(true, msg, lastMessage);
-            Helpers.log('Message object created:', msg);
+
             self.addItem(msg, true, true, id);
 
             // subscribe message
@@ -709,7 +700,6 @@ define([
 
         onSystemMessage: function(message) {
             var DialogView = self.app.views.Dialog,
-                dialogs = ContactList.dialogs,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
                 room_jid = roomJidVerification(dialog_id),
@@ -721,16 +711,13 @@ define([
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
+                dialogs = Entities.Collections.dialogs,
                 dialog,
                 msg;
 
-            msg = Message.create(message);
-            msg.sender_id = message.userId;
-            msg.type = 'headline';
-
             // create new group chat
             if (notification_type === '1' && dialogGroupItem.length === 0) {
-                dialog = Dialog.create({
+                Dialog.create({
                     _id: dialog_id,
                     type: 2,
                     occupants_ids: occupants_ids,
@@ -738,16 +725,21 @@ define([
                     photo: room_photo,
                     room_updated_date: room_updated_at,
                     xmpp_room_jid: room_jid,
-                    unread_count: 1
+                    unread_count: 1,
+                    opened: true
                 });
 
-                ContactList.dialogs[dialog.id] = dialog;
+                dialog = dialogs.get(dialog_id).toJSON();
+
                 Helpers.log('Dialog', dialog);
 
                 ContactList.add(dialog.occupants_ids, null, function() {
                     // don't create a duplicate dialog in contact list
                     dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.id + '"]')[0];
-                    if (dialogItem) return true;
+
+                    if (dialogItem) {
+                        return true;
+                    }
 
                     QB.chat.muc.join(room_jid);
 
@@ -755,15 +747,17 @@ define([
                     unread++;
                     dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]');
 
+                    message.online = true;
+                    msg = Message.create(message);
                     // Don't show any notification if system message from current User
                     if (msg.sender_id !== User.contact.id) {
                         dialogGroupItem.find('.unread').text(unread);
                         DialogView.getUnreadCounter(dialog_id);
                     }
+                    //
+                    self.addItem(msg, true, true, true);
+                    createAndShowNotification(msg, true);
                 });
-
-                self.addItem(msg, true, true, true);
-                createAndShowNotification(msg, true);
             }
         },
 
@@ -913,7 +907,7 @@ define([
 
         var params = {
             'user': User,
-            'dialogs': ContactList.dialogs,
+            'dialogs': Entities.Collections.dialogs,
             'contacts': ContactList.contacts
         };
 

@@ -262,6 +262,9 @@
 }
 /* Chats
 --------------------------------------------------*/
+.chatView, .l-chat {
+    height: 100%
+}
 .l-chat_group {
     position: relative;
 }
