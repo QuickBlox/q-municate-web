@@ -285,6 +285,10 @@ define([
             dialog = dialogs.get(dialogId),
             $dialog = $(this).find('.contact');
 
+        if (entities.active === dialogId) {
+            return false;
+        }
+
         // set up this dialog_id as active
         entities.active = dialogId;
 
@@ -304,6 +308,8 @@ define([
 
     // read all unread messages
     $(window).focus(function() {
+        Helpers.Dialogs.setScrollToNewMessages();
+        
         if (entities.active) {
             entities.Collections.dialogs.readAll(entities.active);
         }

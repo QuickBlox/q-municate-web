@@ -48,7 +48,6 @@ requirejs.config({
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
         mCustomScrollbar: '../bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar',
-        nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
         mousewheel: '../bower_components/jquery-mousewheel/jquery.mousewheel',
         timeago: '../bower_components/jquery-timeago/jquery.timeago',
         minEmoji: '../vendor/emoji/js/minEmoji',
@@ -117,7 +116,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.8.5');
+        $('.j-appVersion').html('v. 1.8.6');
 
         // facebook sdk
         FB.init({

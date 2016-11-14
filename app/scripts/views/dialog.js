@@ -18,7 +18,6 @@ define([
     'views/change_password',
     'views/fb_import',
     'mCustomScrollbar',
-    'nicescroll',
     'mousewheel'
 ], function(
     $,
@@ -421,59 +420,50 @@ define([
             status = roster[user_id] ? roster[user_id] : null;
             location = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? 'btn_active' : '';
 
-            if ($chat.length === 0) {
-                $('.l-workspace-wrap .l-workspace').addClass('is-hidden');
+            $('.l-workspace-wrap .l-workspace').addClass('is-hidden');
 
-                new Entities.Models.Chat({
-                    'occupantsIds': dialog.occupants_ids,
-                    'status': getStatus(status),
-                    'dialog_id': dialog_id,
-                    'location': location,
-                    'type': dialog.type,
-                    'user_id': user_id,
-                    'name': name,
-                    'icon': icon,
-                    'jid': jid
-                });
+            new Entities.Models.Chat({
+                'occupantsIds': dialog.occupants_ids,
+                'status': getStatus(status),
+                'dialog_id': dialog_id,
+                'location': location,
+                'type': dialog.type,
+                'user_id': user_id,
+                'name': name,
+                'icon': icon,
+                'jid': jid
+            });
 
-                // build occupants of room
-                if (dialog.type === 2) {
-                    html = '<div class="chat-occupants">';
-                    for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
-                        id = dialog.occupants_ids[i];
-                        if (id != User.contact.id) {
-                            html += '<a class="occupant l-flexbox_inline presence-listener" data-id="' + id + '" href="#">';
-                            html += getStatus(roster[id]);
-                            html += '<span class="name name_occupant">' + contacts[id].full_name + '</span>';
-                            html += '</a>';
-                        }
+            // build occupants of room
+            if (dialog.type === 2) {
+                html = '<div class="chat-occupants">';
+                for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
+                    id = dialog.occupants_ids[i];
+                    if (id != User.contact.id) {
+                        html += '<a class="occupant l-flexbox_inline presence-listener" data-id="' + id + '" href="#">';
+                        html += getStatus(roster[id]);
+                        html += '<span class="name name_occupant">' + contacts[id].full_name + '</span>';
+                        html += '</a>';
                     }
-                    html += '</div>';
                 }
-
-                $('.l-chat[data-dialog="' + dialog_id + '"] .j-chatOccupants').append($(html));
-
-                textAreaScrollbar();
-
-                if (dialog.type === 3 && (!status || status.subscription === 'none'))
-                    $('.l-chat:visible').addClass('is-request');
-
-                self.createDataSpinner(true);
-                self.showChatWithNewMessages(dialog_id, unreadCount, messages);
-
-            } else {
-
-                $chat.removeClass('is-hidden')
-                     .siblings(':not(.j-popover_const)').addClass('is-hidden');
-                $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
-                self.messageScrollbar();
+                html += '</div>';
             }
+
+            $('.l-chat[data-dialog="' + dialog_id + '"] .j-chatOccupants').append($(html));
+
+            if (dialog.type === 3 && (!status || status.subscription === 'none')) {
+                $('.l-chat:visible').addClass('is-request');
+            }
+
+            self.createDataSpinner(true);
+            self.messageScrollbar();
+            self.showChatWithNewMessages(dialog_id, unreadCount, messages);
 
             removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
             $('.is-selected').removeClass('is-selected');
             parent.addClass('is-selected').find('.unread').text('');
             self.decUnreadCounter(dialog.id);
-            setScrollToNewMessages();
+
             // set dialog_id to localStorage wich must bee read in all tabs for same user
             localStorage.removeItem(readBadge);
             localStorage.setItem(readBadge, dialog_id);
@@ -497,7 +487,6 @@ define([
                         ajaxDownloading($objDom, self);
                     },
                     onTotalScroll: function() {
-
                         var isBottom = Helpers.isBeginOfChat(),
                             $currentDialog = $('.dialog-item.is-selected'),
                             dialogId = $currentDialog.data('dialog');
@@ -634,6 +623,7 @@ define([
                 count = MAX_STACK;
             }
 
+
             if (messages) {
                 addItems(messages);
             } else {
@@ -649,6 +639,11 @@ define([
             }
 
             function addItems(items) {
+                var $history;
+
+                $history = $('section.l-chat-content').children('div:not(.spinner_bounce)');
+                $history.css('opacity', '0');
+
                 for (var i = 0, len = items.length; i < len; i++) {
                     message = items[i];
                     message.stack = Message.isStack(false, items[i], items[i + 1]);
@@ -667,14 +662,14 @@ define([
                     }
 
                     MessageView.addItem(message, null, null, message.recipient_id);
-
-                    self.messageScrollbar();
-
-                    if (i === (len - 1)) {
-                        setScrollToNewMessages();
-                        self.removeDataSpinner();
-                    }
                 }
+
+                setScrollToNewMessages();
+
+                setTimeout(function () {
+                    self.removeDataSpinner();
+                    $history.css('opacity', '1');
+                }, 120);
             }
         }
 
@@ -745,17 +740,6 @@ define([
         }
 
         return str;
-    }
-
-    function textAreaScrollbar() {
-        $('.l-chat:visible .textarea').niceScroll({
-            cursoropacitymax: 0.5,
-            railpadding: {
-                right: -13
-            },
-            zindex: 1,
-            enablekeyboard: false
-        });
     }
 
     function setLabelForNewMessages(dialogId) {

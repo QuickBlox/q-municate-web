@@ -65,19 +65,10 @@ define([
             window.isQMAppActive = true;
 
             $(window).focus(function() {
-                var dialogItem,
-                    dialog_id,
-                    dialog;
-
                 window.isQMAppActive = true;
 
-                dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
-                dialog_id = dialogItem[0] && dialogItem.data('dialog');
-                dialog = $('.dialog-item[data-dialog="' + dialog_id + '"] .contact');
-
-                if ($('.dialog-item[data-dialog="' + dialog_id + '"]').hasClass('is-selected')) {
-                    DialogView.htmlBuild(dialog);
-                }
+                var dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected'),
+                    dialog_id = dialogItem[0] && dialogItem.data('dialog');
 
                 if (dialog_id) {
                     dialogItem.find('.unread').text('');

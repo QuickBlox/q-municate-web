@@ -240,6 +240,22 @@ define([
 
                 $('#emptyList').removeClass('is-hidden');
             }
+        },
+
+        setScrollToNewMessages: function() {
+            var $chat = $('.l-chat:visible .scrollbar_message'),
+                isBottom = Helpers.isBeginOfChat(),
+                isScrollDragger = $chat.find('.mCSB_draggerContainer').length;
+
+            if ($('.j-newMessages').length) {
+                $chat.mCustomScrollbar('scrollTo', '.j-newMessages');
+            } else {
+                $chat.mCustomScrollbar('scrollTo', 'bottom');
+            }
+
+            if (!isBottom && isScrollDragger) {
+                $('.j-toBottom').show();
+            }
         }
     };
 
