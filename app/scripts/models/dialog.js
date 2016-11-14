@@ -212,6 +212,7 @@ define([
                     for (var i = 0, len = params.new_ids.length, id; i < len; i++) {
                         id = params.new_ids[i];
                         QB.chat.sendSystemMessage(contacts[id].user_jid, {
+                            body: 'Notification message',
                             extension: {
                                 date_sent: Math.floor(Date.now() / 1000),
                                 notification_type: '1',
