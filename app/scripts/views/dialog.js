@@ -671,6 +671,7 @@ define([
                     $history.css('opacity', '1');
                 }, 120);
             }
+            
         }
 
     };
