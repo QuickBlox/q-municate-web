@@ -358,12 +358,14 @@ define([
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
                 DialogsCollection = this.app.entities.Collections.dialogs,
+                activeDialog = this.app.entities.active,
                 self = this;
 
             QB.chat.disconnect();
 
             DialogView.hideDialogs();
             DialogsCollection.reset();
+            activeDialog = '';
             QBApiCalls.logoutUser(function() {
                 localStorage.removeItem('QM.user');
                 self.contact = null;

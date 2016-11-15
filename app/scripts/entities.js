@@ -202,6 +202,13 @@ define([
     entities.Collections.Dialogs = Backbone.Collection.extend({
         model: entities.Models.Dialog,
 
+        initialize: function functionName() {
+            this.listenTo(this, 'reset', function() {
+                entities.active = '';
+                $('.chatView').remove();
+            });
+        },
+
         readAll: function(dialogId) {
             var dialog = this.get(dialogId),
                 unreadCount = dialog.get('unread_count'),
