@@ -287,32 +287,31 @@ define([
 
 	// select and open dialog
 	$('.list_contextmenu').on('click', 'li.dialog-item', function() {
-        var MessageView = entities.app.views.Message,
-            DialogView = entities.app.views.Dialog,
-            Cursor = entities.app.models.Cursor,
-            dialogId = $(this).data('dialog'),
-            dialogs = entities.Collections.dialogs,
-            dialog = dialogs.get(dialogId),
-            $dialog = $(this).find('.contact');
+        var dialogId = $(this).data('dialog');
 
-        if (entities.active === dialogId) {
-            return false;
+        if (entities.active !== dialogId) {
+            var MessageView = entities.app.views.Message,
+                DialogView = entities.app.views.Dialog,
+                Cursor = entities.app.models.Cursor,
+                dialogs = entities.Collections.dialogs,
+                dialog = dialogs.get(dialogId),
+                $dialog = $(this).find('.contact');
+            
+            // set up this dialog_id as active
+            entities.active = dialogId;
+
+            if (dialog.get('opened')) {
+                DialogView.htmlBuild($dialog, dialog.get('messages').toJSON());
+            } else {
+                dialog.set('opened', true);
+                DialogView.htmlBuild($dialog, null);
+            }
+
+            MessageView.clearTheListTyping();
+            Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
+            // send read status
+            dialogs.readAll(dialogId);
         }
-
-        // set up this dialog_id as active
-        entities.active = dialogId;
-
-        if (dialog.get('opened')) {
-            DialogView.htmlBuild($dialog, dialog.get('messages').toJSON());
-        } else {
-            dialog.set('opened', true);
-            DialogView.htmlBuild($dialog, null);
-        }
-
-        MessageView.clearTheListTyping();
-        Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
-        // send read status
-        dialogs.readAll(dialogId);
 	});
 
     // read all unread messages
