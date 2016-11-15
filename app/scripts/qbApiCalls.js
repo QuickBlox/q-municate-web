@@ -433,25 +433,6 @@ define([
             });
         },
 
-        updateMessage: function(id, params, callback) {
-            this.checkSession(function(res) {
-                QB.chat.message.update(id, params, function(response) {
-                    if (response && response.code === 404) {
-                        Helpers.log(response.message);
-
-                    } else {
-                        Helpers.log('QB SDK: Message is updated');
-
-                        Session.update({
-                            date: new Date()
-                        });
-
-                        callback();
-                    }
-                });
-            });
-        },
-
         deleteMessage: function(params, callback) {
             this.checkSession(function(res) {
                 QB.chat.message.delete(params, function(response) {

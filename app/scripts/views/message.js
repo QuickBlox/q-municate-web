@@ -542,6 +542,7 @@ define([
                 copyDialogItem,
                 lastMessage,
                 dialog,
+                occupants,
                 occupant,
                 msgArr,
                 blobObj,
@@ -577,31 +578,33 @@ define([
 
             // add new occupants
             if (notification_type === '2') {
-                dialog = dialogs.get(dialog_id).toJSON();
+                dialog = dialogs.get(dialog_id);
 
                 if (occupants_ids && msg.sender_id !== User.contact.id) {
-                    dialog.occupants_ids = dialog.occupants_ids.concat(new_ids);
+                    occupants = dialog.get('occupants_ids').concat(new_ids);
+                    dialog.set('occupants_ids', occupants);
                 }
 
                 if (dialog && deleted_id) {
-                    dialog.occupants_ids = _.without(_.compact(dialog.occupants_ids), deleted_id[0]);
+                    occupants = _.without(_.compact(dialog.occupants_ids), deleted_id[0]);
+                    dialog.set('occupants_ids', occupants);
                 }
 
                 if (room_name) {
-                    dialog.room_name = room_name;
+                    dialog.set('room_name', room_name);
                 }
 
                 if (room_photo) {
-                    dialog.room_photo = room_photo;
+                    dialog.set('room_photo', room_photo);
                 }
-
-                if (dialog) {
-                    ContactList.dialogs[dialog_id] = dialog;
-                }
+                // 
+                // if (dialog) {
+                //     dialog.set(dialog.toJSON());
+                // }
 
                 // add new people
                 if (new_ids) {
-                    ContactList.add(dialog.occupants_ids, null, function() {
+                    ContactList.add(dialog.get('occupants_ids'), null, function() {
                         var dataIds = $chat.find('.addToGroupChat').data('ids'),
                             ids = dataIds ? dataIds.toString().split(',').map(Number) : [];
 
@@ -616,14 +619,14 @@ define([
                             }
                         }
 
-                        $chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+                        $chat.find('.addToGroupChat').data('ids', dialog.get('occupants_ids'));
                     });
                 }
 
                 // delete occupant
                 if (deleted_id && msg.sender_id !== User.contact.id) {
                     $chat.find('.occupant[data-id="' + id + '"]').remove();
-                    $chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+                    $chat.find('.addToGroupChat').data('ids', dialog.get('occupants_ids'));
                 }
 
                 if (deleted_id && (deleted_id[0] === User.contact.id)) {

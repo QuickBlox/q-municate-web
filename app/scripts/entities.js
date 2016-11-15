@@ -204,6 +204,7 @@ define([
 
         readAll: function(dialogId) {
             var dialog = this.get(dialogId),
+                unreadCount = dialog.get('unread_count'),
                 unreadMeassages = dialog.get('unread_messages'),
                 unreadMeassagesIds = [];
 
@@ -214,14 +215,16 @@ define([
                     unreadMeassagesIds.push(params.get('messageId'));
                 });
 
-                // read all dialog's messages on REST
-                QB.chat.message.update(unreadMeassagesIds, {
+                unreadMeassages.reset();
+            }
+            // read all dialog's messages on REST
+            if (+unreadCount > 0) {
+                QB.chat.message.update(null, {
                     chat_dialog_id: dialogId,
                     read: 1
-                }, function() {});
-
-                dialog.set('unread_count', '');
-                unreadMeassages.reset();
+                }, function() {
+                    dialog.set('unread_count', '');
+                });
             }
         }
     });
@@ -295,7 +298,6 @@ define([
         if (dialog.get('opened')) {
             DialogView.htmlBuild($dialog, dialog.get('messages').toJSON());
         } else {
-            // set as opened
             dialog.set('opened', true);
             DialogView.htmlBuild($dialog, null);
         }
@@ -309,7 +311,7 @@ define([
     // read all unread messages
     $(window).focus(function() {
         Helpers.Dialogs.setScrollToNewMessages();
-        
+
         if (entities.active) {
             entities.Collections.dialogs.readAll(entities.active);
         }
