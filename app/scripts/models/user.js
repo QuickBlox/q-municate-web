@@ -357,11 +357,13 @@ define([
         logout: function(callback) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
+                DialogsCollection = this.app.entities.Collections.dialogs,
                 self = this;
 
             QB.chat.disconnect();
 
             DialogView.hideDialogs();
+            DialogsCollection.reset();
             QBApiCalls.logoutUser(function() {
                 localStorage.removeItem('QM.user');
                 self.contact = null;

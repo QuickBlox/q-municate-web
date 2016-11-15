@@ -535,13 +535,12 @@ define([
                 otherChat = !selected && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat'),
                 isNotMyUser = id !== User.contact.id,
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
-                $newMessages = $('<div class="new_messages j-newMessages" data-dialog="' + dialog_id +
-                    '"><span class="newMessages">New messages</span></div>'),
+                $newMessages = $('<div class="new_messages j-newMessages" data-dialog="' + dialog_id + '"><span class="newMessages">New messages</span></div>'),
                 $label = $chat.find('.j-newMessages'),
                 isNewMessages = $label.length,
+                dialog = dialogs.get(dialog_id),
                 copyDialogItem,
                 lastMessage,
-                dialog,
                 occupants,
                 occupant,
                 msgArr,
@@ -576,10 +575,14 @@ define([
                 localStorage.setItem(readBadge, dialog_id);
             }
 
+            dialog.set({
+                'last_message': msg.body,
+                'last_message_date_sent': msg.date_sent,
+                'room_updated_date': msg.date_sent
+            });
+
             // add new occupants
             if (notification_type === '2') {
-                dialog = dialogs.get(dialog_id);
-
                 if (occupants_ids && msg.sender_id !== User.contact.id) {
                     occupants = dialog.get('occupants_ids').concat(new_ids);
                     dialog.set('occupants_ids', occupants);
@@ -597,10 +600,6 @@ define([
                 if (room_photo) {
                     dialog.set('room_photo', room_photo);
                 }
-                // 
-                // if (dialog) {
-                //     dialog.set(dialog.toJSON());
-                // }
 
                 // add new people
                 if (new_ids) {
