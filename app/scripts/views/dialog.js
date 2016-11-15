@@ -18,6 +18,7 @@ define([
     'views/change_password',
     'views/fb_import',
     'mCustomScrollbar',
+    'nicescroll',
     'mousewheel'
 ], function(
     $,
@@ -455,6 +456,7 @@ define([
                 $('.l-chat:visible').addClass('is-request');
             }
 
+            textAreaScrollbar();
             self.createDataSpinner(true);
             self.messageScrollbar();
             self.showChatWithNewMessages(dialog_id, unreadCount, messages);
@@ -671,7 +673,7 @@ define([
                     $history.css('opacity', '1');
                 }, 120);
             }
-            
+
         }
 
     };
@@ -687,6 +689,17 @@ define([
                 deltaFactor: 0
             },
             live: true
+        });
+    }
+
+    function textAreaScrollbar() {
+        $('.l-chat:visible .textarea').niceScroll({
+            cursoropacitymax: 0.5,
+            railpadding: {
+                right: -13
+            },
+            zindex: 1,
+            enablekeyboard: false
         });
     }
 
