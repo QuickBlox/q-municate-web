@@ -33,7 +33,7 @@
     right: 16px;
     width: 24px;
     height: 24px;
-    background: image-url('ic-close.svg') no-repeat center;
+    background: url('../images/ic-close.svg') no-repeat center;
     cursor: pointer;
 }
 //
@@ -53,7 +53,7 @@ li.switch_settings:first-child {
     left: 1px;
     width: 24px;
     height: 24px;
-    background: image-url('ic-notifications.svg') no-repeat center;
+    background: url('../images/ic-notifications.svg') no-repeat center;
 }
 li.switch_settings {
     width: 100%;
@@ -112,10 +112,10 @@ label.settings_label {
     color: #238339;
 }
 .i-feedback_settings {
-    background: image-url('ic-feedback.svg') no-repeat center;
+    background: url('../images/ic-feedback.svg') no-repeat center;
 }
 .i-help_settings {
-    background: image-url('ic-help-outline.svg') no-repeat center;
+    background: url('../images/ic-help-outline.svg') no-repeat center;
 }
 //
 //

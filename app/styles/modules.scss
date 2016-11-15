@@ -18,53 +18,6 @@
 .mCSB_container {
     overflow: visible;
 }
-/* Chroma-Hash */
-.chroma-hash {
-    position: relative;
-    width: 100%;
-    height: 4.5vh;
-    margin-bottom: 1vh;
-}
-.chroma-hash label {
-    top: auto !important;
-    left: auto !important;
-    right: 1px;
-    width: 1vh !important;
-    height: 4.2vh !important;
-}
-.chroma-hash label:nth-child(2) {
-    margin: 1px 0 0 !important;
-    border-radius: 0 3px 3px 0;
-}
-.chroma-hash label:nth-child(3) {
-    margin: 1px 1vh 0 0 !important;
-}
-.chroma-hash label:nth-child(4) {
-    margin: 1px 2vh 0 0 !important;
-}
-.chroma-hash label:nth-child(5) {
-    margin: 1px 3vh 0 0 !important;
-}
-.chroma-hash_password {
-    height: 45px;
-    margin-bottom: 20px;
-}
-.chroma-hash_password:last-child {
-    margin-bottom: 0;
-}
-.chroma-hash_password label {
-    width: 10px !important;
-    height: 42px !important;
-}
-.chroma-hash_password label:nth-child(3) {
-    margin: 1px 10px 0 0 !important;
-}
-.chroma-hash_password label:nth-child(4) {
-    margin: 1px 20px 0 0 !important;
-}
-.chroma-hash_password label:nth-child(5) {
-    margin: 1px 30px 0 0 !important;
-}
 /* download */
 .download {
     position: absolute;

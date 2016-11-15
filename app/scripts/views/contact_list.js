@@ -395,7 +395,7 @@ define([
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 li = $('.dialog-item[data-id="' + id + '"]'),
                 $chat = $('.l-chat[data-id="' + id + '"]'),
-                list = li.parents('ul.j-friendsList'),
+                list = li.parents('ul.j-list'),
                 dialog_id = li.data('dialog'),
                 roster = ContactList.roster,
                 time = Math.floor(Date.now() / 1000);

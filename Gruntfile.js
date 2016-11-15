@@ -31,19 +31,17 @@ module.exports = function(grunt) {
             tmpBuild: ['<%= yeoman.app %>/scripts/.build.js']
         },
 
-        compass: {
-            compile: {
+        sass: {
+            dist: {
                 options: {
-                    cssDir: '<%= yeoman.app %>/.css',
-                    sassDir: '<%= yeoman.app %>/styles',
-                    javascriptsDir: '<%= yeoman.app %>/scripts',
-                    imagesDir: '<%= yeoman.app %>/images',
-                    noLineComments: true,
-                    relativeAssets: true,
-                    raw: 'preferred_syntax = :scss\n'
+                    style: 'expanded'
+                },
+                files: {
+                    '<%= yeoman.app %>/.css/main.css': '<%= yeoman.app %>/styles/main.scss'
                 }
             }
         },
+
 
         handlebars: {
             compile: {
@@ -91,7 +89,7 @@ module.exports = function(grunt) {
             },
             css: {
                 files: ['<%= yeoman.app %>/styles/{,*/}*.scss'],
-                tasks: ['compass']
+                tasks: ['sass']
             },
             handlebars: {
                 files: [
@@ -285,7 +283,7 @@ module.exports = function(grunt) {
         grunt.task.run([
             'includereplace:' + envTarget,
             'clean:dev',
-            'compass',
+            'sass',
             'createDefaultTemplate',
             'handlebars',
             'connect:dev',
@@ -307,7 +305,7 @@ module.exports = function(grunt) {
         'jshint',
         'includereplace:' + envTarget,
         'clean:dist',
-        'compass',
+        'sass',
         'createDefaultTemplate',
         'handlebars',
         'requirejs',

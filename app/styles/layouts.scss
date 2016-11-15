@@ -95,7 +95,7 @@
     width: 80px;
     height: 80px;
     margin: 0 auto;
-    background: image-url('qm-logo.svg') 50% no-repeat;
+    background: url('../images/qm-logo.svg') 50% no-repeat;
 }
 .l-welcome_text_logo {
     width: 283px;
@@ -123,7 +123,7 @@
     position: absolute;
     top: 50px;
     left: 56px;
-    background: image-url('qm-logo.svg') 50% no-repeat;
+    background: url('../images/qm-logo.svg') 50% no-repeat;
     background-size: cover;
 }
 .l-welcome_text_logo_login {

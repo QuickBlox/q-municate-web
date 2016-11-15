@@ -124,7 +124,7 @@ article.message[data-status="typing"] > div {
     text-align: right;
 }
 .message-geo.with-geo {
-    background: image-url('ic_location_sm.svg') 50% 25% no-repeat;
+    background: url('../images/ic_location_sm.svg') 50% 25% no-repeat;
     cursor: pointer;
 }
 .message-avatar.request-button_pending {

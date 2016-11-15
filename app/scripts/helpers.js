@@ -216,10 +216,10 @@ define([
             if (dialogItem.length > 0) {
                 copyDialogItem = dialogItem.clone();
                 dialogItem.remove();
-                $('#recentList ul').prepend(copyDialogItem);
+                $('#recentList ul.j-list').prepend(copyDialogItem);
                 if (!$('#searchList').is(':visible')) {
                     $('#recentList').removeClass('is-hidden');
-                    this.isSectionEmpty($('#recentList ul'));
+                    this.isSectionEmpty($('#recentList ul.j-list'));
                 }
             }
         },
@@ -229,8 +229,8 @@ define([
                 list.parent().addClass('is-hidden');
             }
 
-            if ($('#historyList ul').contents().length === 0) {
-                $('#historyList ul').parent().addClass('is-hidden');
+            if ($('#historyList ul.j-list').contents().length === 0) {
+                $('#historyList ul.j-list').parent().addClass('is-hidden');
             }
 
             if ($('#requestsList').is('.is-hidden') &&

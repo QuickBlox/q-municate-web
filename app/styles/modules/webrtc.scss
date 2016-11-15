@@ -161,13 +161,13 @@
     width: 21px;
     height: 21px;
     margin: 0 auto;
-    background: image-url('icon-full-mode-on.png') no-repeat center;
+    background: url('../images/icon-full-mode-on.png') no-repeat center;
 }
 #fullModeOff {
     width: 21px;
     height: 21px;
     margin: 0 auto;
-    background: image-url('icon-full-mode-off.png') no-repeat center;
+    background: url('../images/icon-full-mode-off.png') no-repeat center;
     display: none;
 }
 .mediacall:-webkit-full-screen {
