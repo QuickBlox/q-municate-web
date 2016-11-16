@@ -955,9 +955,8 @@ define([
                     $label = $('.j-newMessages[data-dialog="' + dialogId + '"]');
 
                 $('.j-capBox').removeClass('is-hidden')
-                    .siblings().removeClass('is-active')
-                    .addClass('is-hidden');
-                $('.l-chat').addClass('is-hidden');
+                    .siblings().removeClass('is-active');
+                $('.j-chatWrap').addClass('is-hidden');
 
                 if ($label.length) {
                     $label.remove();
