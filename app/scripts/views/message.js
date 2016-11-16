@@ -690,7 +690,7 @@ define([
                 audioSignal.play();
             }
 
-            if (msg.sender_id === User.contact.id) {
+            if ((msg.sender_id === User.contact.id) && recipient_jid) {
                 syncContactRequestInfo({
                     notification_type: notification_type,
                     recipient_jid: recipient_jid,
