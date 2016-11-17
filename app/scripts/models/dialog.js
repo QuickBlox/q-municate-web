@@ -123,11 +123,11 @@ define([
             QBApiCalls.createDialog(params, function(res) {
                 var dialogId = self.create(res),
                     dialogs = Entities.Collections.dialogs,
-                    dialog = dialogs.get(dialogId).toJSON();
+                    dialog = dialogs.get(dialogId);
 
-                Helpers.log('Dialog', dialog);
+                Helpers.log('Dialog', dialog.toJSON());
 
-                QB.chat.muc.join(dialog.room_jid, function() {
+                QB.chat.muc.join(dialog.get('room_jid'), function() {
                     var msgId = QB.chat.helpers.getBsonObjectId(),
                         time = Math.floor(Date.now() / 1000);
 
@@ -140,15 +140,15 @@ define([
                         callback(dialog);
 
                         // send invites for all occupants
-                        for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
-                            id = dialog.occupants_ids[i];
+                        for (var i = 0, len = dialog.get('occupants_ids').length, id; i < len; i++) {
+                            id = dialog.get('occupants_ids')[i];
                             QB.chat.sendSystemMessage(contacts[id].user_jid, {
                                 body: 'Notification message',
                                 extension: {
                                     date_sent: time,
                                     notification_type: '1',
-                                    dialog_id: dialog.id,
-                                    room_name: dialog.room_name,
+                                    dialog_id: dialog.get('id'),
+                                    room_name: dialog.get('room_name'),
                                     room_updated_date: time,
                                     current_occupant_ids: res.occupants_ids.join(),
                                     type: 2
@@ -195,9 +195,11 @@ define([
             }, function(res) {
                 var dialogId = self.create(res),
                     dialogs = Entities.Collections.dialogs,
-                    dialog = dialogs.get(dialogId).toJSON();
+                    dialog = dialogs.get(dialogId);
 
-                Helpers.log('Dialog', dialog);
+                // dialog.set()
+
+                Helpers.log('Dialog', dialog.toJSON());
 
                 var msgId = QB.chat.helpers.getBsonObjectId();
 
@@ -216,11 +218,11 @@ define([
                             extension: {
                                 date_sent: Math.floor(Date.now() / 1000),
                                 notification_type: '1',
-                                dialog_id: dialog.id,
-                                room_name: dialog.room_name,
-                                room_photo: dialog.room_photo,
+                                dialog_id: dialog.get('id'),
+                                room_name: dialog.get('room_name'),
+                                room_photo: dialog.get('room_photo'),
                                 room_updated_date: Math.floor(Date.now() / 1000),
-                                current_occupant_ids: res.occupants_ids.join(),
+                                current_occupant_ids: params.occupants_ids.join(),
                                 type: 2
                             }
                         });
@@ -228,7 +230,7 @@ define([
                 });
 
                 // send message about added people for history
-                QB.chat.send(dialog.room_jid, {
+                QB.chat.send(dialog.get('room_jid'), {
                     id: msgId,
                     type: 'groupchat',
                     body: 'Notification message',
@@ -238,8 +240,8 @@ define([
                         notification_type: '2',
                         current_occupant_ids: res.occupants_ids.join(),
                         added_occupant_ids: params.new_ids.join(),
-                        dialog_id: dialog.id,
-                        room_updated_date: dialog.room_updated_date,
+                        dialog_id: dialog.get('id'),
+                        room_updated_date: dialog.get('room_updated_date'),
                         dialog_update_info: 3
                     }
                 });
@@ -257,12 +259,12 @@ define([
             }, function(res) {
                 var dialogId = self.create(res),
                     dialogs = Entities.Collections.dialogs,
-                    dialog = dialogs.get(dialogId).toJSON();
+                    dialog = dialogs.get(dialogId);
 
-                Helpers.log('Dialog', dialog);
+                Helpers.log('Dialog', dialog.toJSON());
 
                 // send notification about updating room
-                QB.chat.send(dialog.room_jid, {
+                QB.chat.send(dialog.get('room_jid'), {
                     type: 'groupchat',
                     body: 'Notification message',
                     extension: {
@@ -270,8 +272,8 @@ define([
                         save_to_history: 1,
                         notification_type: '2',
                         room_name: name,
-                        dialog_id: dialog.id,
-                        room_updated_date: dialog.room_updated_date,
+                        dialog_id: dialog.get('id'),
+                        room_updated_date: dialog.get('room_updated_date'),
                         dialog_update_info: 2
                     }
                 });
@@ -311,12 +313,12 @@ define([
                             }, function(res) {
                                 var dialogId = self.create(res),
                                     dialogs = Entities.Collections.dialogs,
-                                    dialog = dialogs.get(dialogId).toJSON();
+                                    dialog = dialogs.get(dialogId);
 
-                                Helpers.log('Dialog', dialog);
+                                Helpers.log('Dialog', dialog.toJSON());
 
                                 // send notification about updating room
-                                QB.chat.send(dialog.room_jid, {
+                                QB.chat.send(dialog.get('room_jid'), {
                                     type: 'groupchat',
                                     body: 'Notification message',
                                     extension: {
@@ -324,8 +326,8 @@ define([
                                         save_to_history: 1,
                                         notification_type: '2',
                                         room_photo: imgUrl,
-                                        dialog_id: dialog.id,
-                                        room_updated_date: dialog.room_updated_date,
+                                        dialog_id: dialog.get('id'),
+                                        room_updated_date: dialog.get('room_updated_date'),
                                         dialog_update_info: 1
                                     }
                                 });

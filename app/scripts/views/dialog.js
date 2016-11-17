@@ -234,23 +234,23 @@ define([
                         for (var i = 0, len = dialogs.length; i < len; i++) {
                             dialogId = Dialog.create(dialogs[i]);
                             dialogsCollection = Entities.Collections.dialogs;
-                            dialog = dialogsCollection.get(dialogId).toJSON();
+                            dialog = dialogsCollection.get(dialogId);
 
                             // don't create a duplicate dialog in contact list
-                            chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.id + '"]');
-                            if (chat[0] && dialog.unread_count) {
-                                chat.find('.unread').text(dialog.unread_count);
-                                self.getUnreadCounter(dialog.id);
+                            chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.get('id') + '"]');
+                            if (chat[0] && dialog.get('unread_count')) {
+                                chat.find('.unread').text(dialog.get('unread_count'));
+                                self.getUnreadCounter(dialog.get('id'));
                                 continue;
                             }
 
-                            if (dialog.type === 2) {
-                                QB.chat.muc.join(dialog.room_jid);
+                            if (dialog.get('type') === 2) {
+                                QB.chat.muc.join(dialog.get('room_jid'));
                             }
 
                             // update hidden dialogs
-                            private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
-                            hiddenDialogs[private_id] = dialog.id;
+                            private_id = dialog.get('type') === 3 ? dialog.get('occupants_ids')[0] : null;
+                            hiddenDialogs[private_id] = dialog.get('id');
                             ContactList.saveHiddenDialogs(hiddenDialogs);
 
                             // not show dialog if user has not confirmed this contact
@@ -331,8 +331,8 @@ define([
         addDialogItem: function(dialog, isDownload, isNew) {
             var contacts = ContactList.contacts,
                 roster = ContactList.roster,
-                lastTime = Helpers.getTime(dialog.last_message_date_sent, true),
-                lastMessage = minEmoji(Helpers.Messages.parser(dialog.last_message)),
+                lastTime = Helpers.getTime(dialog.get('last_message_date_sent'), true),
+                lastMessage = minEmoji(Helpers.Messages.parser(dialog.get('last_message'))),
                 startOfCurrentDay,
                 private_id,
                 status,
@@ -341,38 +341,38 @@ define([
                 html,
                 self = this;
 
-            private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
+            private_id = dialog.get('type') === 3 ? dialog.get('occupants_ids')[0] : null;
 
             try {
-                icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
-                name = private_id ? contacts[private_id].full_name : dialog.room_name;
+                icon = private_id ? contacts[private_id].avatar_url : (dialog.get('room_photo') || QMCONFIG.defAvatar.group_url);
+                name = private_id ? contacts[private_id].full_name : dialog.get('room_name');
                 status = roster[private_id] ? roster[private_id] : null;
             } catch (error) {
                 console.error(error);
             }
 
-            html  = '<li class="list-item dialog-item j-dialogItem presence-listener" data-dialog="' + dialog.id + '" data-id="' + private_id + '">';
+            html  = '<li class="list-item dialog-item j-dialogItem presence-listener" data-dialog="' + dialog.get('id') + '" data-id="' + private_id + '">';
             html += '<div class="contact l-flexbox" href="#">';
             html += '<div class="l-flexbox_inline">';
             html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="' + private_id + '"></div>';
             html += '<div class="dialog_body"><span class="name name_dialog profileUserName" data-id="' + private_id + '">' + name + '</span>';
             html += '<span class="last_message_preview j-lastMessagePreview">' + lastMessage + '</span></div></div>';
 
-            if (dialog.type === 3) {
+            if (dialog.get('type') === 3) {
                 html += getStatus(status);
             } else {
                 html += '<span class="status"></span>';
             }
 
             html += '<span class="last_time_preview j-lastTimePreview">' + lastTime + '</span>';
-            html += '<span class="unread">' + dialog.unread_count + '</span>';
+            html += '<span class="unread">' + dialog.get('unread_count') + '</span>';
             html += '</a></li>';
 
             startOfCurrentDay = new Date();
             startOfCurrentDay.setHours(0, 0, 0, 0);
 
             // checking if this dialog is recent OR no
-            if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay || isNew) {
+            if (!dialog.get('last_message_date_sent') || new Date(dialog.get('last_message_date_sent') * 1000) > startOfCurrentDay || isNew) {
                 if (isDownload) {
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
                 } else if (!$('#searchList').is(':visible')) {
@@ -385,8 +385,8 @@ define([
             }
 
             $('#emptyList').addClass('is-hidden');
-            if (dialog.unread_count) {
-                self.getUnreadCounter(dialog.id);
+            if (dialog.get('unread_count')) {
+                self.getUnreadCounter(dialog.get('id'));
             }
         },
 
@@ -398,7 +398,7 @@ define([
                 parent = objDom.parent(),
                 dialog_id = parent.data('dialog'),
                 user_id = parent.data('id'),
-                dialog = dialogs.get(dialog_id).toJSON(),
+                dialog = dialogs.get(dialog_id),
                 user = contacts[user_id],
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
@@ -415,21 +415,21 @@ define([
                 name,
                 jid;
 
-            jid = dialog.room_jid || user.user_jid;
-            icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
-            name = dialog.room_name || user.full_name;
+            jid = dialog.get('room_jid') || user.user_jid;
+            icon = user_id ? user.avatar_url : (dialog.get('room_photo') || QMCONFIG.defAvatar.group_url);
+            name = dialog.get('room_name') || user.full_name;
             status = roster[user_id] ? roster[user_id] : null;
             location = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? 'btn_active' : '';
 
             $('.l-workspace-wrap .l-workspace').addClass('is-hidden');
 
             new Entities.Models.Chat({
-                'occupantsIds': dialog.occupants_ids,
+                'occupantsIds': dialog.get('occupants_ids'),
                 'status': getStatus(status),
                 'dialog_id': dialog_id,
-                'draft': dialog.draft,
+                'draft': dialog.get('draft'),
                 'location': location,
-                'type': dialog.type,
+                'type': dialog.get('type'),
                 'user_id': user_id,
                 'name': name,
                 'icon': icon,
@@ -437,10 +437,10 @@ define([
             });
 
             // build occupants of room
-            if (dialog.type === 2) {
+            if (dialog.get('type') === 2) {
                 html = '<div class="chat-occupants">';
-                for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
-                    id = dialog.occupants_ids[i];
+                for (var i = 0, len = dialog.get('occupants_ids').length, id; i < len; i++) {
+                    id = dialog.get('occupants_ids')[i];
                     if (id != User.contact.id) {
                         html += '<a class="occupant l-flexbox_inline presence-listener" data-id="' + id + '" href="#">';
                         html += getStatus(roster[id]);
@@ -453,7 +453,7 @@ define([
 
             $('.l-chat[data-dialog="' + dialog_id + '"] .j-chatOccupants').append($(html));
 
-            if (dialog.type === 3 && (!status || status.subscription === 'none')) {
+            if (dialog.get('type') === 3 && (!status || status.subscription === 'none')) {
                 $('.l-chat:visible').addClass('is-request');
             }
 
@@ -465,7 +465,7 @@ define([
             removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
             $('.is-selected').removeClass('is-selected');
             parent.addClass('is-selected').find('.unread').text('');
-            self.decUnreadCounter(dialog.id);
+            self.decUnreadCounter(dialog.get('id'));
 
             // set dialog_id to localStorage wich must bee read in all tabs for same user
             localStorage.removeItem(readBadge);
@@ -544,7 +544,7 @@ define([
                     new_ids: new_ids
                 }, function(dialog) {
                     self.removeDataSpinner();
-                    var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.id + '"]');
+                    var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.get('id') + '"]');
                     if (dialogItem.length > 0) {
                         copyDialogItem = dialogItem.clone();
                         dialogItem.remove();
@@ -564,7 +564,7 @@ define([
                 }, function(dialog) {
                     self.removeDataSpinner();
                     $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
-                    $('.dialog-item[data-dialog="' + dialog.id + '"]').find('.contact').click();
+                    $('.dialog-item[data-dialog="' + dialog.get('id') + '"]').find('.contact').click();
                 });
             }
         },
@@ -593,6 +593,9 @@ define([
                 if (chat.is(':visible')) {
                     $('.j-capBox').removeClass('is-hidden')
                         .siblings().removeClass('is-active');
+
+                    $('.j-chatWrap').addClass('is-hidden')
+                        .children().remove();
                 }
 
                 dialogs.remove(dialog);
