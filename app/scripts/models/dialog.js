@@ -87,9 +87,9 @@ define([
             function addContactRequestDialogItem(objDialog, isClick) {
                 var dialogId = self.create(objDialog),
                     dialogs = Entities.Collections.dialogs,
-                    dialog = dialogs.get(dialogId).toJSON();
+                    dialog = dialogs.get(dialogId);
 
-                Helpers.log('Dialog', dialog);
+                Helpers.log('Dialog', dialog.toJSON());
 
                 // send notification about subscribe
                 if (isClick) {
@@ -99,14 +99,14 @@ define([
                         extension: {
                             recipient_id: id,
                             date_sent: Math.floor(Date.now() / 1000),
-                            dialog_id: dialog.id,
+                            dialog_id: dialog.get('id'),
                             save_to_history: 1,
                             notification_type: '4'
                         }
                     });
                 }
 
-                ContactList.add(dialog.occupants_ids, null, function() {
+                ContactList.add(dialog.get('occupants_ids'), null, function() {
                     DialogView.addDialogItem(dialog, null, isNew);
                 });
             }
@@ -158,7 +158,7 @@ define([
                     });
 
                     // send message about added people for history
-                    QB.chat.send(dialog.room_jid, {
+                    QB.chat.send(dialog.get('room_jid'), {
                         id: msgId,
                         type: 'groupchat',
                         body: 'Notification message',
@@ -167,7 +167,7 @@ define([
                             date_sent: time,
                             save_to_history: 1,
                             notification_type: '2',
-                            dialog_id: dialog.id,
+                            dialog_id: dialog.get('id'),
                             room_updated_date: time,
                             current_occupant_ids: res.occupants_ids.join(),
                             added_occupant_ids: params.occupants_ids,
@@ -196,8 +196,6 @@ define([
                 var dialogId = self.create(res),
                     dialogs = Entities.Collections.dialogs,
                     dialog = dialogs.get(dialogId);
-
-                // dialog.set()
 
                 Helpers.log('Dialog', dialog.toJSON());
 
@@ -358,13 +356,13 @@ define([
                     notification_type: '2',
                     current_occupant_ids: dialog.get('occupants_ids').join(),
                     deleted_occupant_ids: User.contact.id,
-                    dialog_id: dialog.id,
+                    dialog_id: dialog.get('id'),
                     room_updated_date: '',
                     dialog_update_info: 3
                 }
             });
 
-            QBApiCalls.updateDialog(dialog.id, {
+            QBApiCalls.updateDialog(dialog.get('id'), {
                 pull_all: {
                     occupants_ids: [User.contact.id]
                 }

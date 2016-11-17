@@ -583,7 +583,7 @@ define([
                     'room_updated_date': msg.date_sent
                 });
 
-                if (occupants_ids && new_ids) {
+                if (occupants_ids) {
                     occupants = dialog.get('occupants_ids').concat(new_ids);
                     dialog.set('occupants_ids', occupants);
                 }
