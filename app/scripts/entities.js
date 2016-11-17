@@ -172,13 +172,15 @@ define([
             unread_count: '',
             unread_messages: [],
             messages: [],
-            opened: false
+            opened: false,
+            draft: ''
         },
 
         // add dialog to collection after initialize
         initialize: function() {
             entities.Collections.dialogs.push(this);
             this.listenTo(this, 'change:unread_count', this.cutMessages);
+            this.listenTo(this, 'remove', this.setActiveDialog);
         },
 
         cutMessages: function() {
@@ -191,6 +193,12 @@ define([
                 for (var i = 0; i < (msgCount - 20); i++) {
                     messages.pop();
                 }
+            }
+        },
+
+        setActiveDialog: function() {
+            if (this.get('id') === entities.active) {
+                entities.active = '';
             }
         }
     });
@@ -233,6 +241,16 @@ define([
                     dialog.set('unread_count', '');
                 });
             }
+        },
+
+        saveDraft: function() {
+            if (entities.active) {
+                var dialog = this.get(entities.active),
+                    $chat = $('.chatView'),
+                    text = $chat.find('.textarea').text();
+
+                dialog.set('draft', text);
+            }
         }
     });
     // init dialog's collection with starting app
@@ -244,6 +262,7 @@ define([
      */
     entities.Models.Chat = Backbone.Model.extend({
         defaults: {
+            draft: '',
             occupantsIds: '',
             status: '',
             dialog_id: '',
@@ -256,6 +275,11 @@ define([
         },
 
         initialize: function() {
+            this.buildChatView();
+        },
+
+        buildChatView: function() {
+            entities.Collections.dialogs.saveDraft();
             entities.Views.chat = new entities.Views.Chat({model: this});
         }
     });
@@ -270,6 +294,8 @@ define([
         template: _.template($('#chatTpl').html()),
 
         initialize: function() {
+            // set up this dialog_id as active
+            entities.active = this.model.get('dialog_id');
             this.render();
         },
 
@@ -286,19 +312,16 @@ define([
      */
 
 	// select and open dialog
-	$('.list_contextmenu').on('click', 'li.dialog-item', function() {
-        var dialogId = $(this).data('dialog');
+	$('.list_contextmenu').on('click', '.contact', function() {
+        var $dialog = $(this),
+            dialogId = $dialog.parent().data('dialog');
 
         if (entities.active !== dialogId) {
             var MessageView = entities.app.views.Message,
                 DialogView = entities.app.views.Dialog,
                 Cursor = entities.app.models.Cursor,
                 dialogs = entities.Collections.dialogs,
-                dialog = dialogs.get(dialogId),
-                $dialog = $(this).find('.contact');
-            
-            // set up this dialog_id as active
-            entities.active = dialogId;
+                dialog = dialogs.get(dialogId);
 
             if (dialog.get('opened')) {
                 DialogView.htmlBuild($dialog, dialog.get('messages').toJSON());
@@ -326,8 +349,8 @@ define([
     // unselect all dialogs
     $('.j-home').on('click', function() {
         // clear active dialog id
+        entities.Collections.dialogs.saveDraft();
         entities.active = '';
-        $('.chatView').remove();
     });
 
     return entities;

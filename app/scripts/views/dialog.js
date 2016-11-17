@@ -351,7 +351,7 @@ define([
                 console.error(error);
             }
 
-            html  = '<li class="list-item dialog-item presence-listener" data-dialog="' + dialog.id + '" data-id="' + private_id + '">';
+            html  = '<li class="list-item dialog-item j-dialogItem presence-listener" data-dialog="' + dialog.id + '" data-id="' + private_id + '">';
             html += '<div class="contact l-flexbox" href="#">';
             html += '<div class="l-flexbox_inline">';
             html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="' + private_id + '"></div>';
@@ -427,6 +427,7 @@ define([
                 'occupantsIds': dialog.occupants_ids,
                 'status': getStatus(status),
                 'dialog_id': dialog_id,
+                'draft': dialog.draft,
                 'location': location,
                 'type': dialog.type,
                 'user_id': user_id,
@@ -571,7 +572,7 @@ define([
         leaveGroupChat: function(dialogParam, sameUser) {
             var dialogs = Entities.Collections.dialogs,
                 dialog_id = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
-                dialog = dialogs.get(dialog_id).toJSON(),
+                dialog = dialogs.get(dialog_id),
                 li = $('.dialog-item[data-dialog="' + dialog_id + '"]'),
                 chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 list = li.parents('ul');
@@ -579,7 +580,7 @@ define([
             if (sameUser) {
                 removeDialogItem();
             } else {
-                Dialog.leaveChat(dialog, function() {
+                Dialog.leaveChat(dialog.toJSON(), function() {
                     removeDialogItem();
                 });
             }
@@ -591,13 +592,12 @@ define([
                 // delete chat section
                 if (chat.is(':visible')) {
                     $('.j-capBox').removeClass('is-hidden')
-                        .siblings().removeClass('is-active')
-                        .addClass('is-hidden');
+                        .siblings().removeClass('is-active');
                 }
-                if (chat.length > 0) {
-                    chat.remove();
-                }
-                delete dialogs[dialog_id];
+                // if (chat.length > 0) {
+                //     Entities.Views.chat.remove();
+                // }
+                dialogs.remove(dialog);
             }
 
         },
