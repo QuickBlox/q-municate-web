@@ -575,21 +575,21 @@ define([
                 localStorage.setItem(readBadge, dialog_id);
             }
 
-            dialog.set({
-                'last_message': msg.body,
-                'last_message_date_sent': msg.date_sent,
-                'room_updated_date': msg.date_sent
-            });
-
             // add new occupants
             if (notification_type === '2') {
-                if (occupants_ids && msg.sender_id !== User.contact.id) {
+                dialog.set({
+                    'last_message': msg.body,
+                    'last_message_date_sent': msg.date_sent,
+                    'room_updated_date': msg.date_sent
+                });
+
+                if (occupants_ids && msg.sender_id !== User.contact.id && new_ids) {
                     occupants = dialog.get('occupants_ids').concat(new_ids);
                     dialog.set('occupants_ids', occupants);
                 }
 
                 if (dialog && deleted_id) {
-                    occupants = _.without(_.compact(dialog.occupants_ids), deleted_id[0]);
+                    occupants = _.without(_.compact(dialog.get('occupants_ids')), deleted_id[0]);
                     dialog.set('occupants_ids', occupants);
                 }
 

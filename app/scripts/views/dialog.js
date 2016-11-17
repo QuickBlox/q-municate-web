@@ -580,7 +580,7 @@ define([
             if (sameUser) {
                 removeDialogItem();
             } else {
-                Dialog.leaveChat(dialog.toJSON(), function() {
+                Dialog.leaveChat(dialog, function() {
                     removeDialogItem();
                 });
             }
@@ -594,9 +594,7 @@ define([
                     $('.j-capBox').removeClass('is-hidden')
                         .siblings().removeClass('is-active');
                 }
-                // if (chat.length > 0) {
-                //     Entities.Views.chat.remove();
-                // }
+
                 dialogs.remove(dialog);
             }
 

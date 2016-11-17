@@ -109,7 +109,11 @@ define([
                 popup = $('#popupContacts'),
                 contacts = ContactList.contacts,
                 roster = ContactList.roster,
-                html, sortedContacts, friends, user_id;
+                sortedContacts,
+                existing_ids,
+                user_id,
+                friends,
+                html;
 
             openPopup(popup, type, dialog_id);
             popup.addClass('not-selected').removeClass('is-addition');
@@ -158,7 +162,8 @@ define([
             }
 
             if (type || isPrivate) {
-                popup.addClass('is-addition').data('existing_ids', ids.length > 0 ? ids : null);
+                existing_ids = ids.length > 0 ? ids : null;
+                popup.addClass('is-addition').data('existing_ids', existing_ids);
             } else {
                 popup.data('existing_ids', null);
             }

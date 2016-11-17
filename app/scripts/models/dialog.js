@@ -347,14 +347,14 @@ define([
                 self = this;
 
             // send notification about leave
-            QB.chat.send(dialog.room_jid, {
+            QB.chat.send(dialog.get('room_jid'), {
                 type: 'groupchat',
                 body: 'Notification message',
                 extension: {
                     date_sent: Math.floor(Date.now() / 1000),
                     save_to_history: 1,
                     notification_type: '2',
-                    current_occupant_ids: dialog.occupants_ids.join(),
+                    current_occupant_ids: dialog.get('occupants_ids').join(),
                     deleted_occupant_ids: User.contact.id,
                     dialog_id: dialog.id,
                     room_updated_date: '',
