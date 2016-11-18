@@ -598,7 +598,6 @@ define([
                         .children().remove();
                 }
 
-                dialogs.remove(dialog);
             }
 
         },

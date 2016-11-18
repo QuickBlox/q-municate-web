@@ -542,9 +542,10 @@ define([
                 copyDialogItem,
                 lastMessage,
                 occupants,
+                isMyLeave,
                 occupant,
-                msgArr,
                 blobObj,
+                msgArr,
                 msg;
 
             typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
@@ -554,6 +555,8 @@ define([
             message.sender_id = id;
             message.online = true;
             msg = Message.create(message);
+
+            isMyLeave = deleted_id && (deleted_id[0] === User.contact.id);
 
             // add or remove label about new messages
             if ($chat.length && !isHiddenChat && window.isQMAppActive && isNewMessages) {
@@ -576,7 +579,7 @@ define([
             }
 
             // add new occupants
-            if ((notification_type === '2') && (deleted_id[0] === User.contact.id)) {
+            if (notification_type === '2') {
                 dialog.set({
                     'last_message': msg.body,
                     'last_message_date_sent': msg.date_sent,
@@ -629,6 +632,9 @@ define([
                 }
 
                 if (deleted_id && (deleted_id[0] === User.contact.id)) {
+                    DialogView.leaveGroupChat(dialog_id, true);
+                    DialogView.decUnreadCounter(dialog_id);
+                    dialogs.remove(dialog);
                 }
 
                 // change name
@@ -644,10 +650,6 @@ define([
                     $chat.find('.avatar_chat').css('background-image', 'url(' + room_photo + ')');
                     dialogItem.find('.avatar').css('background-image', 'url(' + room_photo + ')');
                 }
-            } else if ((notification_type === '2') &&
-                (msg.sender_id === User.contact.id)) {
-                DialogView.leaveGroupChat(dialog_id, true);
-                DialogView.decUnreadCounter(dialog_id);
             }
 
             if (notification_type !== '1') {
