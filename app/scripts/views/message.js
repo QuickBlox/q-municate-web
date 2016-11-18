@@ -576,7 +576,7 @@ define([
             }
 
             // add new occupants
-            if (notification_type === '2') {
+            if ((notification_type === '2') && (deleted_id[0] === User.contact.id)) {
                 dialog.set({
                     'last_message': msg.body,
                     'last_message_date_sent': msg.date_sent,
@@ -629,8 +629,6 @@ define([
                 }
 
                 if (deleted_id && (deleted_id[0] === User.contact.id)) {
-                    DialogView.leaveGroupChat(dialog_id, true);
-                    DialogView.decUnreadCounter(dialog_id);
                 }
 
                 // change name
@@ -646,6 +644,10 @@ define([
                     $chat.find('.avatar_chat').css('background-image', 'url(' + room_photo + ')');
                     dialogItem.find('.avatar').css('background-image', 'url(' + room_photo + ')');
                 }
+            } else if ((notification_type === '2') &&
+                (msg.sender_id === User.contact.id)) {
+                DialogView.leaveGroupChat(dialog_id, true);
+                DialogView.decUnreadCounter(dialog_id);
             }
 
             if (notification_type !== '1') {
@@ -731,13 +733,13 @@ define([
                     opened: true
                 });
 
-                dialog = dialogs.get(dialog_id).toJSON();
+                dialog = dialogs.get(dialog_id);
 
-                Helpers.log('Dialog', dialog);
+                Helpers.log('Dialog', dialog.toJSON());
 
-                ContactList.add(dialog.occupants_ids, null, function() {
+                ContactList.add(dialog.get('occupants_ids'), null, function() {
                     // don't create a duplicate dialog in contact list
-                    dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.id + '"]')[0];
+                    dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]')[0];
 
                     if (dialogItem) {
                         return true;
@@ -752,11 +754,11 @@ define([
                     message.online = true;
                     msg = Message.create(message);
                     // Don't show any notification if system message from current User
-                    if (msg.sender_id !== User.contact.id) {
+                    if (msg.sender_id !== User.contagetct.id) {
                         dialogGroupItem.find('.unread').text(unread);
                         DialogView.getUnreadCounter(dialog_id);
                     }
-                    //
+
                     self.addItem(msg, true, true, true);
                     createAndShowNotification(msg, true);
                 });

@@ -199,7 +199,8 @@ define([
 
                 Helpers.log('Dialog', dialog.toJSON());
 
-                var msgId = QB.chat.helpers.getBsonObjectId();
+                var msgId = QB.chat.helpers.getBsonObjectId(),
+                    time = Math.floor(Date.now() / 1000);
 
                 QB.chat.addListener({
                     name: 'message',
@@ -219,7 +220,7 @@ define([
                                 dialog_id: dialog.get('id'),
                                 room_name: dialog.get('room_name'),
                                 room_photo: dialog.get('room_photo'),
-                                room_updated_date: Math.floor(Date.now() / 1000),
+                                room_updated_date: time,
                                 current_occupant_ids: params.occupants_ids.join(),
                                 type: 2
                             }
@@ -239,7 +240,7 @@ define([
                         current_occupant_ids: res.occupants_ids.join(),
                         added_occupant_ids: params.new_ids.join(),
                         dialog_id: dialog.get('id'),
-                        room_updated_date: dialog.get('room_updated_date'),
+                        room_updated_date: time,
                         dialog_update_info: 3
                     }
                 });
@@ -344,20 +345,21 @@ define([
         leaveChat: function(dialog, callback) {
             var QBApiCalls = this.app.service,
                 User = this.app.models.User,
-                self = this;
+                self = this,
+                time = Math.floor(Date.now() / 1000);
 
             // send notification about leave
             QB.chat.send(dialog.get('room_jid'), {
                 type: 'groupchat',
                 body: 'Notification message',
                 extension: {
-                    date_sent: Math.floor(Date.now() / 1000),
+                    date_sent: time,
                     save_to_history: 1,
                     notification_type: '2',
                     current_occupant_ids: dialog.get('occupants_ids').join(),
                     deleted_occupant_ids: User.contact.id,
                     dialog_id: dialog.get('id'),
-                    room_updated_date: '',
+                    room_updated_date: time,
                     dialog_update_info: 3
                 }
             });
@@ -367,10 +369,8 @@ define([
                     occupants_ids: [User.contact.id]
                 }
             }, function() {
-                // QB.chat.muc.leave(dialog.room_jid, function() {});
+                callback();
             });
-
-            callback();
         }
 
     };

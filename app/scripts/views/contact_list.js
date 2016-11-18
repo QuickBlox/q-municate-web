@@ -308,8 +308,8 @@ define([
                 'unread_count': ''
             });
 
-            dialog = dialogs.get(dialogId).toJSON();
-            Helpers.log('Dialog', dialog);
+            dialog = dialogs.get(dialogId);
+            Helpers.log('Dialog', dialog.toJSON());
 
             if (isClick) {
                 QB.chat.roster.confirm(jid, function() {
