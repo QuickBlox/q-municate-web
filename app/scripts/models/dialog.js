@@ -212,16 +212,17 @@ define([
                     // send invites for all new occupants
                     for (var i = 0, len = params.new_ids.length, id; i < len; i++) {
                         id = params.new_ids[i];
+
                         QB.chat.sendSystemMessage(contacts[id].user_jid, {
                             body: 'Notification message',
                             extension: {
-                                date_sent: Math.floor(Date.now() / 1000),
+                                date_sent: time,
                                 notification_type: '1',
                                 dialog_id: dialog.get('id'),
                                 room_name: dialog.get('room_name'),
                                 room_photo: dialog.get('room_photo'),
                                 room_updated_date: time,
-                                current_occupant_ids: params.occupants_ids.join(),
+                                current_occupant_ids: res.occupants_ids.join(),
                                 type: 2
                             }
                         });
@@ -234,7 +235,7 @@ define([
                     type: 'groupchat',
                     body: 'Notification message',
                     extension: {
-                        date_sent: Math.floor(Date.now() / 1000),
+                        date_sent: time,
                         save_to_history: 1,
                         notification_type: '2',
                         current_occupant_ids: res.occupants_ids.join(),

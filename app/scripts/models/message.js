@@ -85,7 +85,8 @@ define([
 				latitude: (params.extension && params.extension.latitude) || params.latitude || null,
                 longitude: (params.extension && params.extension.longitude) || params.longitude || null,
                 stack: false,
-                online: params.online || false
+                online: params.online || false,
+                status: ''
             };
 
             if (message.attachment && message.attachment.size) {

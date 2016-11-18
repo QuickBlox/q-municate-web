@@ -542,7 +542,6 @@ define([
                 copyDialogItem,
                 lastMessage,
                 occupants,
-                isMyLeave,
                 occupant,
                 blobObj,
                 msgArr,
@@ -556,7 +555,11 @@ define([
             message.online = true;
             msg = Message.create(message);
 
-            isMyLeave = deleted_id && (deleted_id[0] === User.contact.id);
+            dialog.set({
+                'last_message': msg.body,
+                'last_message_date_sent': msg.date_sent,
+                'room_updated_date': msg.date_sent
+            });
 
             // add or remove label about new messages
             if ($chat.length && !isHiddenChat && window.isQMAppActive && isNewMessages) {
@@ -580,11 +583,6 @@ define([
 
             // add new occupants
             if (notification_type === '2') {
-                dialog.set({
-                    'last_message': msg.body,
-                    'last_message_date_sent': msg.date_sent,
-                    'room_updated_date': msg.date_sent
-                });
 
                 if (occupants_ids) {
                     occupants = dialog.get('occupants_ids').concat(new_ids);
@@ -756,7 +754,7 @@ define([
                     message.online = true;
                     msg = Message.create(message);
                     // Don't show any notification if system message from current User
-                    if (msg.sender_id !== User.contagetct.id) {
+                    if (msg.sender_id !== User.contact.id) {
                         dialogGroupItem.find('.unread').text(unread);
                         DialogView.getUnreadCounter(dialog_id);
                     }
