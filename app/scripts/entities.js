@@ -38,7 +38,8 @@ define([
             delivered_ids: [],
             read_ids: [],
             read: null,
-            online: false
+            online: false,
+            status: ''
         },
 
         initialize: function() {

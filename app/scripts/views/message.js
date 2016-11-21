@@ -62,7 +62,8 @@ define([
             var DialogView = this.app.views.Dialog,
                 ContactListMsg = this.app.models.ContactList,
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
-                isBottom = Helpers.isBeginOfChat();
+                isBottom = Helpers.isBeginOfChat(),
+                isOnline = message.online;
 
             if (isCallback && isMessageListener) {
                 updateDialogItem(message);
@@ -95,6 +96,7 @@ define([
                     recipient = contacts[recipientId] || null,
                     occupants_names = '',
                     occupants_ids,
+                    status,
                     html;
 
                 switch (type) {
@@ -286,6 +288,8 @@ define([
                         break;
 
                     default:
+                        status = isOnline ? message.status : 'Not delivered yet';
+
                         if (message.sender_id === User.contact.id) {
                             html = '<article id="' + message.id + '" class="message is-own l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         } else {
@@ -305,7 +309,7 @@ define([
                             html += '<img id="attach_' + message.id + '" src="' + attachUrl + '" alt="attach">';
                             html += '</div></div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('audio') > -1) {
                             html += '<div class="message-body">';
@@ -313,7 +317,7 @@ define([
                             html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
                             html += '<audio id="attach_' + message.id + '" src="' + attachUrl + '" controls class="attach-audio"></audio></div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
                             html += '<div class="message-body">';
@@ -321,26 +325,26 @@ define([
                             html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
                             html += '<div id="attach_' + message.id + '" class="preview preview-video" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '"></div></div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('location') > -1) {
                             html += '<div class="message-body">';
                             html += '<a class="open_googlemaps" href="' + mapAttachLink + '" target="_blank">';
                             html += '<img id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map"></a></div></div>';
                             html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType) {
                             html += '<div class="message-body">';
                             html += '<a id="attach_' + message.id + '" class="attach-file" href="' + attachUrl + '" download="' + message.attachment.name + '">' + message.attachment.name + '</a>';
                             html += '<span class="attach-size">' + getFileSize(message.attachment.size) + '</span></div></div>';
                             html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else {
                             html += '<div class="message-body">' + minEmoji(Helpers.Messages.parser(message.body)) + '</div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         }
 
@@ -375,10 +379,10 @@ define([
                     });
                 }
 
-                if (message.sender_id == User.contact.id && message.delivered_ids.length > 0) {
+                if ((message.sender_id == User.contact.id) && (message.delivered_ids.length > 0)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'delivered', false);
                 }
-                if (message.sender_id == User.contact.id && message.read_ids.length > 1) {
+                if ((message.sender_id == User.contact.id) && (message.read_ids.length > 1)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'displayed', false);
                 }
 
@@ -800,10 +804,12 @@ define([
 
         onDeliveredStatus: function(messageId, dialogId, userId) {
             self.addStatusMessages(messageId, dialogId, 'delivered', true);
+            updatedMessageModel(messageId, dialogId, 'delivered');
         },
 
         onReadStatus: function(messageId, dialogId, userId) {
             self.addStatusMessages(messageId, dialogId, 'displayed', true);
+            updatedMessageModel(messageId, dialogId, 'displayed');
         }
 
     };
@@ -1010,6 +1016,22 @@ define([
 
         $lastMessage.html(lastMessage);
         $lastTime.html(time);
+    }
+
+    function updatedMessageModel(messageId, dialogId, param) {
+        var dialogs = Entities.Collections.dialogs,
+            dialog = dialogs.get(dialogId),
+            isOpen = dialog.get('opened'),
+            messagges,
+            message,
+            status;
+
+        if (isOpen) {
+            messages = dialog.get('messages');
+            message = messages.get(messageId);
+            status = param === 'delivered' ? 'Delivered' : 'Seen';
+            message.set('status', status);
+        }
     }
 
     return MessageView;

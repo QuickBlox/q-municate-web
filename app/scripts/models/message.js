@@ -86,7 +86,7 @@ define([
                 longitude: (params.extension && params.extension.longitude) || params.longitude || null,
                 stack: false,
                 online: params.online || false,
-                status: ''
+                status: 'Not delivered yet'
             };
 
             if (message.attachment && message.attachment.size) {
@@ -115,7 +115,7 @@ define([
                     var lastMessageSender = +prevMsg.attr('data-id'),
                         lastMessageDateSent = +prevMsg.find('.message-time').attr('data-time');
 
-                    sameUser = (curMsg.sender_id === lastMessageSender) ? true : false;
+                    sameUser = (curMsg.sender_id === lastMessageSender) ? (prevMsg.attr('id') ? true : false) : false;
                     sameTime = (Math.floor(curMsg.date_sent / 60) === Math.floor(lastMessageDateSent / 60)) ? true : false;
                 } else {
                     if (prevMsg.notification_type) {
