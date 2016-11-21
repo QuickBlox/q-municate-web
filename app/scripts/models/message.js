@@ -86,7 +86,7 @@ define([
                 longitude: (params.extension && params.extension.longitude) || params.longitude || null,
                 stack: false,
                 online: params.online || false,
-                status: 'Not delivered yet'
+                status: ((params.extension && params.extension.notification_type) || params.notification_type) ? '' : 'Not delivered yet'
             };
 
             if (message.attachment && message.attachment.size) {

@@ -403,6 +403,7 @@ define([
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
                 unreadCount = Number(objDom.find('.unread').text()),
+                occupants_ids = dialog.get('occupants_ids'),
                 self = this,
                 chatTpl,
                 messageId,
@@ -424,7 +425,7 @@ define([
             $('.l-workspace-wrap .l-workspace').addClass('is-hidden');
 
             new Entities.Models.Chat({
-                'occupantsIds': dialog.get('occupants_ids'),
+                'occupantsIds': occupants_ids,
                 'status': getStatus(status),
                 'dialog_id': dialog_id,
                 'draft': dialog.get('draft'),
@@ -439,8 +440,9 @@ define([
             // build occupants of room
             if (dialog.get('type') === 2) {
                 html = '<div class="chat-occupants">';
-                for (var i = 0, len = dialog.get('occupants_ids').length, id; i < len; i++) {
-                    id = dialog.get('occupants_ids')[i];
+                console.info(occupants_ids);
+                for (var i = 0, len = occupants_ids.length, id; i < len; i++) {
+                    id = occupants_ids[i];
                     if (id != User.contact.id) {
                         html += '<a class="occupant l-flexbox_inline presence-listener" data-id="' + id + '" href="#">';
                         html += getStatus(roster[id]);

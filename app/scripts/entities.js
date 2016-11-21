@@ -165,7 +165,7 @@ define([
             room_jid: null,
             room_name: null,
             room_photo: '',
-            occupants_ids: null,
+            occupants_ids: [],
             room_updated_date: null,
             last_message_date_sent: null,
             last_message: '',

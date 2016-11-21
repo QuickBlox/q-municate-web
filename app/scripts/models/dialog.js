@@ -38,17 +38,13 @@ define([
             var User = this.app.models.User,
                 time = Math.floor(Date.now() / 1000),
                 // exclude current user from dialog occupants that he doesn't hit to yourself in Contact List
-                occupants_ids = _.chain(params.occupants_ids)
-                                .without(params.occupants_ids, User.contact.id)
-                                .uniq(occupants_ids)
-                                .value(),
                 dialog = {
                     id: params._id,
                     type: params.type,
                     room_jid: params.xmpp_room_jid || null,
                     room_name: params.name || null,
                     room_photo: params.photo && params.photo.replace('http://', 'https://') || '',
-                    occupants_ids: occupants_ids,
+                    occupants_ids: _.uniq(_.without(params.occupants_ids, User.contact.id)),
                     last_message: params.last_message || ((params.type === 2) ? 'Notification message' : 'Contact request'),
                     last_message_date_sent: params.last_message_date_sent || time,
                     room_updated_date: Date.parse(params.updated_at) || params.room_updated_date || time,
@@ -123,7 +119,8 @@ define([
             QBApiCalls.createDialog(params, function(res) {
                 var dialogId = self.create(res),
                     dialogs = Entities.Collections.dialogs,
-                    dialog = dialogs.get(dialogId);
+                    dialog = dialogs.get(dialogId),
+                    occupants_ids = dialog.get('occupants_ids');
 
                 Helpers.log('Dialog', dialog.toJSON());
 
@@ -136,12 +133,10 @@ define([
                         type: 'groupchat',
                         id: msgId
                     }, function() {
-                        DialogView.addDialogItem(dialog);
-                        callback(dialog);
-
+                        dialog.set('occupants_ids', occupants_ids);
                         // send invites for all occupants
-                        for (var i = 0, len = dialog.get('occupants_ids').length, id; i < len; i++) {
-                            id = dialog.get('occupants_ids')[i];
+                        for (var i = 0, len = occupants_ids.length, id; i < len; i++) {
+                            id = occupants_ids[i];
                             QB.chat.sendSystemMessage(contacts[id].user_jid, {
                                 body: 'Notification message',
                                 extension: {
@@ -155,6 +150,9 @@ define([
                                 }
                             });
                         }
+
+                        callback(dialog);
+                        DialogView.addDialogItem(dialog);
                     });
 
                     // send message about added people for history

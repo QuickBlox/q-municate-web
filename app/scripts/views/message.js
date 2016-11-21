@@ -910,10 +910,9 @@ define([
             dialog = dialogs.get(msg.dialog_id),
             cancelNotify = !Settings.get('messages_notify'),
             isNotMainTab = !SyncTabs.get(),
-            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false,
-            isExistent = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + msg.sender_id + '"]').length;
+            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false;
 
-        if (cancelNotify || isNotMainTab || isCurrentUser || !isExistent) {
+        if (cancelNotify || isNotMainTab || isCurrentUser) {
             return false;
         }
 
