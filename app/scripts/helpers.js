@@ -26,9 +26,8 @@ define([
         },
 
         getTitle: function(message, params) {
-            var dialogs = params.dialogs,
-                contacts = params.contacts,
-                dialog = dialogs.get(message.dialog_id),
+            var contacts = params.contacts,
+                dialog = params.dialog,
                 contact = contacts[message.sender_id],
                 title;
 
@@ -39,9 +38,8 @@ define([
 
         getOptions: function(message, params) {
             var myUser = params.user,
-                dialogs = params.dialogs,
                 contacts = params.contacts,
-                dialog = dialogs[message.dialog_id],
+                dialog = params.dialog,
                 contact = contacts[message.sender_id],
                 chatType = message.type,
                 photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (dialog.get('room_photo') || QMCONFIG.defAvatar.group_url_png),
@@ -83,12 +81,12 @@ define([
                     text = contact.full_name + ' has added ' + occupantsNames + ' to the group chat';
                     break;
 
-                    // groupchat updated
+                // groupchat updated
                 case '2':
-                    // for future cases
+                    text = 'Notification message';
                     break;
 
-                    // contacts
+                // contacts
                 case '4':
                     text = contact.full_name + ' has sent a request to you';
                     break;
@@ -105,7 +103,7 @@ define([
                     text = 'You have been deleted from the contact list by ' + contact.full_name;
                     break;
 
-                    // calls
+                // calls
                 case '8':
                     if (message.caller === myUser.contact.id) {
                         text = 'Call to ' + contacts[message.callee].full_name + ', duration ' + Helpers.getDuration(message.callDuration);

@@ -737,7 +737,7 @@ define([
 
                 Helpers.log('Dialog', dialog.toJSON());
 
-                ContactList.add(dialog.get('occupants_ids'), null, function() {
+                ContactList.add(occupants_ids, null, function() {
                     // don't create a duplicate dialog in contact list
                     dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]')[0];
 
@@ -900,7 +900,9 @@ define([
     }
 
     function createAndShowNotification(msg, isHiddenChat) {
-        var cancelNotify = !Settings.get('messages_notify'),
+        var dialogs = Entities.Collections.dialogs,
+            dialog = dialogs.get(msg.dialog_id),
+            cancelNotify = !Settings.get('messages_notify'),
             isNotMainTab = !SyncTabs.get(),
             isCurrentUser = (msg.sender_id === User.contact.id) ? true : false,
             isExistent = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + msg.sender_id + '"]').length;
@@ -911,7 +913,7 @@ define([
 
         var params = {
             'user': User,
-            'dialogs': Entities.Collections.dialogs,
+            'dialog': dialog,
             'contacts': ContactList.contacts
         };
 
