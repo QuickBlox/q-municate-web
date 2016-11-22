@@ -438,6 +438,7 @@ define([
             if (Entities.active === dialog_id) {
                 Entities.active = '';
             }
+            dialogs.remove(dialog_id);
 
             that.app.views.Dialog.decUnreadCounter(dialog_id);
         },

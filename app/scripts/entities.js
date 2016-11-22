@@ -49,10 +49,15 @@ define([
         // accumulate messages in dialogs
         accumulateInDialogModel: function() {
             var dialogId = this.get('dialog_id'),
-                messageId = this.get('id'),
+                dialog = entities.Collections.dialogs.get(dialogId);
+
+            if (!dialog) {
+                return true;
+            }
+
+            var messageId = this.get('id'),
                 senderId = this.get('sender_id'),
                 readIds = this.get('read_ids'),
-                dialog = entities.Collections.dialogs.get(dialogId),
                 isOpen = dialog.get('opened'),
                 myUserId = entities.app.models.User.contact.id,
                 isActive = (dialogId === entities.active),

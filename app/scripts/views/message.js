@@ -559,12 +559,6 @@ define([
             message.online = true;
             msg = Message.create(message);
 
-            dialog.set({
-                'last_message': msg.body,
-                'last_message_date_sent': msg.date_sent,
-                'room_updated_date': msg.date_sent
-            });
-
             // add or remove label about new messages
             if ($chat.length && !isHiddenChat && window.isQMAppActive && isNewMessages) {
                 $label.remove();
@@ -587,7 +581,6 @@ define([
 
             // add new occupants
             if (notification_type === '2') {
-
                 if (occupants_ids) {
                     occupants = dialog.get('occupants_ids').concat(new_ids);
                     dialog.set('occupants_ids', occupants);
@@ -661,15 +654,15 @@ define([
             lastMessage = $chat.find('article[data-type="message"]').last();
             msg.stack = Message.isStack(true, msg, lastMessage);
 
-            self.addItem(msg, true, true, id);
 
             // subscribe message
-            if (notification_type === '4') {
+            if (notification_type == '4') {
                 var QBApiCalls = self.app.service,
                     Contact = self.app.models.Contact;
                 // update hidden dialogs
                 hiddenDialogs[id] = dialog_id;
                 ContactList.saveHiddenDialogs(hiddenDialogs);
+                isExistent = true;
                 // update contact list
                 QBApiCalls.getUser(id, function(user) {
                     contacts[id] = Contact.create(user);
@@ -677,6 +670,7 @@ define([
                 });
             } else {
                 createAndShowNotification(msg, isHiddenChat);
+                self.addItem(msg, true, true, id);
             }
 
             if (notification_type === '5' && isNotMyUser) {
@@ -694,6 +688,14 @@ define([
 
             if (isHidden && sendedToMe && isSoundOn && isMainTab && isExistent) {
                 audioSignal.play();
+            }
+
+            if (dialog) {
+                dialog.set({
+                    'last_message': msg.body,
+                    'last_message_date_sent': msg.date_sent,
+                    'room_updated_date': msg.date_sent
+                });
             }
 
             if ((msg.sender_id === User.contact.id) && recipient_jid) {
@@ -915,16 +917,19 @@ define([
             title,
             params;
 
-        if (cancelNotify || isNotMainTab || isCurrentUser || !dialog) {
+        if (cancelNotify || isNotMainTab || isCurrentUser) {
             return false;
         }
 
         params = {
             'user': User,
-            'contacts': ContactList.contacts,
-            'roomName': dialog.get('room_name'),
-            'roomPhoto': dialog.get('room_photo')
+            'contacts': ContactList.contacts
         };
+
+        if (dialog) {
+            params.roomName = dialog.get('room_name');
+            params.roomPhoto = dialog.get('room_photo');
+        }
 
         title = Helpers.Notifications.getTitle(msg, params),
         options = Helpers.Notifications.getOptions(msg, params);

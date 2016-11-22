@@ -99,7 +99,7 @@ define([
                 }
             }
 
-            if (!ajax) {
+            if (!ajax || message.notification_type) {
                 new Entities.Models.Message(message);
             }
 
