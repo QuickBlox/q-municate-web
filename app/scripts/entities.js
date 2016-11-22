@@ -254,8 +254,6 @@ define([
             }
         }
     });
-    // init dialog's collection with starting app
-    entities.Collections.dialogs = new entities.Collections.Dialogs();
 
     /**
      * [Chat model]

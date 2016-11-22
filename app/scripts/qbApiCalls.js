@@ -54,6 +54,9 @@ define([
             }
 
             Helpers.log('QB init', this);
+
+            // init dialog's collection with starting app
+            Entities.Collections.dialogs = new Entities.Collections.Dialogs();
         },
 
         checkSession: function(callback) {
@@ -148,7 +151,6 @@ define([
                 QB.login(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
-
                     } else {
                         Helpers.log('QB SDK: User has logged', res);
 

@@ -332,6 +332,7 @@ define([
                 DialogView = this.app.views.Dialog,
                 Contact = this.app.models.Contact,
                 storage = JSON.parse(localStorage['QM.user']),
+                Entities = this.app.entities,
                 self = this;
 
             UserView.createSpinner();
@@ -357,15 +358,18 @@ define([
         logout: function(callback) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
-                DialogsCollection = this.app.entities.Collections.dialogs,
-                activeDialog = this.app.entities.active,
+                Entities = this.app.entities,
                 self = this;
 
             QB.chat.disconnect();
 
             DialogView.hideDialogs();
-            DialogsCollection.reset();
-            activeDialog = '';
+
+            Entities.Collections.dialogs = undefined;
+            Entities.active = '';
+            // init dialog's collection with starting app
+            Entities.Collections.dialogs = new Entities.Collections.Dialogs();
+
             QBApiCalls.logoutUser(function() {
                 localStorage.removeItem('QM.user');
                 self.contact = null;
