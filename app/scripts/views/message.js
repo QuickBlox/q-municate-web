@@ -915,19 +915,16 @@ define([
             title,
             params;
 
-        if (cancelNotify || isNotMainTab || isCurrentUser) {
+        if (cancelNotify || isNotMainTab || isCurrentUser || !dialog) {
             return false;
         }
 
         params = {
             'user': User,
-            'contacts': ContactList.contacts
+            'contacts': ContactList.contacts,
+            'roomName': dialog.get('room_name'),
+            'roomPhoto': dialog.get('room_photo')
         };
-
-        if (dialog) {
-            params.roomName = dialog.get('room_name');
-            params.roomPhoto = dialog.get('room_photo');
-        }
 
         title = Helpers.Notifications.getTitle(msg, params),
         options = Helpers.Notifications.getOptions(msg, params);

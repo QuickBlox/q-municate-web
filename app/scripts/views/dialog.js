@@ -329,9 +329,21 @@ define([
         },
 
         addDialogItem: function(dialog, isDownload, isNew) {
+            if (!dialog) {
+                Helpers.log('Dialog is undefined');
+                return false;
+            }
+
             var contacts = ContactList.contacts,
                 roster = ContactList.roster,
-                lastTime = Helpers.getTime(dialog.get('last_message_date_sent'), true),
+                last_message_date_sent = dialog.get('last_message_date_sent'),
+                occupants_ids = dialog.get('occupants_ids'),
+                unread_count = dialog.get('unread_count'),
+                room_photo = dialog.get('room_photo'),
+                room_name = dialog.get('room_name'),
+                dialog_type = dialog.get('type'),
+                dialog_id =  dialog.get('id'),
+                lastTime = Helpers.getTime(last_message_date_sent, true),
                 lastMessage = minEmoji(Helpers.Messages.parser(dialog.get('last_message'))),
                 startOfCurrentDay,
                 private_id,
@@ -341,54 +353,57 @@ define([
                 html,
                 self = this;
 
-            private_id = dialog.get('type') === 3 ? dialog.get('occupants_ids')[0] : null;
+            private_id = dialog_type === 3 ? occupants_ids[0] : null;
 
             try {
-                icon = private_id ? contacts[private_id].avatar_url : (dialog.get('room_photo') || QMCONFIG.defAvatar.group_url);
-                name = private_id ? contacts[private_id].full_name : dialog.get('room_name');
+                icon = private_id ? contacts[private_id].avatar_url : (room_photo || QMCONFIG.defAvatar.group_url);
+                name = private_id ? contacts[private_id].full_name : room_name;
                 status = roster[private_id] ? roster[private_id] : null;
             } catch (error) {
                 console.error(error);
             }
 
-            html  = '<li class="list-item dialog-item j-dialogItem presence-listener" data-dialog="' + dialog.get('id') + '" data-id="' + private_id + '">';
+            html  = '<li class="list-item dialog-item j-dialogItem presence-listener" data-dialog="' + dialog_id + '" data-id="' + private_id + '">';
             html += '<div class="contact l-flexbox" href="#">';
             html += '<div class="l-flexbox_inline">';
             html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="' + private_id + '"></div>';
             html += '<div class="dialog_body"><span class="name name_dialog profileUserName" data-id="' + private_id + '">' + name + '</span>';
             html += '<span class="last_message_preview j-lastMessagePreview">' + lastMessage + '</span></div></div>';
 
-            if (dialog.get('type') === 3) {
+            if (dialog_type === 3) {
                 html += getStatus(status);
             } else {
                 html += '<span class="status"></span>';
             }
 
             html += '<span class="last_time_preview j-lastTimePreview">' + lastTime + '</span>';
-            html += '<span class="unread">' + dialog.get('unread_count') + '</span>';
+            html += '<span class="unread">' + unread_count + '</span>';
             html += '</a></li>';
 
             startOfCurrentDay = new Date();
             startOfCurrentDay.setHours(0, 0, 0, 0);
 
             // checking if this dialog is recent OR no
-            if (!dialog.get('last_message_date_sent') || new Date(dialog.get('last_message_date_sent') * 1000) > startOfCurrentDay || isNew) {
+            if (!last_message_date_sent || new Date(last_message_date_sent * 1000) > startOfCurrentDay || isNew) {
                 if (isDownload) {
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
                 } else if (!$('#searchList').is(':visible')) {
                     $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
+                    $('[data-dialog="' + dialog_id + '"] .contact').click();
                 } else {
                     $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
+                    $('[data-dialog="' + dialog_id + '"] .contact').click();
                 }
             } else if (!$('#searchList').is(':visible')) {
                 $('#historyList').removeClass('is-hidden').find('ul').append(html);
             }
 
             $('#emptyList').addClass('is-hidden');
-            if (dialog.get('unread_count')) {
-                self.getUnreadCounter(dialog.get('id'));
+            if (unread_count) {
+                self.getUnreadCounter(dialog_id);
             }
         },
+
 
         htmlBuild: function(objDom, messages) {
             var MessageView = this.app.views.Message,
