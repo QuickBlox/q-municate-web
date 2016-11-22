@@ -27,11 +27,12 @@ define([
 
         getTitle: function(message, params) {
             var contacts = params.contacts,
-                dialog = params.dialog,
+                roomName = params.roomName,
+                roomPhoto = params.roomPhoto,
                 contact = contacts[message.sender_id],
                 title;
 
-            title = (dialog && dialog.get('room_name')) || contact.full_name;
+            title = roomPhoto || contact.full_name;
 
             return title;
         },
@@ -39,10 +40,11 @@ define([
         getOptions: function(message, params) {
             var myUser = params.user,
                 contacts = params.contacts,
-                dialog = params.dialog,
+                roomName = params.roomName,
+                roomPhoto = params.roomPhoto,
                 contact = contacts[message.sender_id],
                 chatType = message.type,
-                photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (dialog.get('room_photo') || QMCONFIG.defAvatar.group_url_png),
+                photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (roomName || QMCONFIG.defAvatar.group_url_png),
                 type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
                 selectDialog = $('.dialog-item[data-dialog="' + message.dialog_id + '"] .contact'),
                 occupants_ids,

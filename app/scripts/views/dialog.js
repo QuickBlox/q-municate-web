@@ -440,7 +440,6 @@ define([
             // build occupants of room
             if (dialog.get('type') === 2) {
                 html = '<div class="chat-occupants">';
-                console.info(occupants_ids);
                 for (var i = 0, len = occupants_ids.length, id; i < len; i++) {
                     id = occupants_ids[i];
                     if (id != User.contact.id) {

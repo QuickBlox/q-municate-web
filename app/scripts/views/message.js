@@ -910,20 +910,27 @@ define([
             dialog = dialogs.get(msg.dialog_id),
             cancelNotify = !Settings.get('messages_notify'),
             isNotMainTab = !SyncTabs.get(),
-            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false;
+            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false,
+            options,
+            title,
+            params;
 
         if (cancelNotify || isNotMainTab || isCurrentUser) {
             return false;
         }
 
-        var params = {
+        params = {
             'user': User,
-            'dialog': dialog,
             'contacts': ContactList.contacts
         };
 
-        var title = Helpers.Notifications.getTitle(msg, params),
-            options = Helpers.Notifications.getOptions(msg, params);
+        if (dialog) {
+            params.roomName = dialog.get('room_name');
+            params.roomPhoto = dialog.get('room_photo');
+        }
+
+        title = Helpers.Notifications.getTitle(msg, params),
+        options = Helpers.Notifications.getOptions(msg, params);
 
         if (QMCONFIG.notification && QBNotification.isSupported() && (isHiddenChat || !window.isQMAppActive)) {
             if (!QBNotification.needsPermission()) {
@@ -1019,17 +1026,17 @@ define([
 
     function updatedMessageModel(messageId, dialogId, param) {
         var dialogs = Entities.Collections.dialogs,
-            dialog = dialogs.get(dialogId),
-            isOpen = dialog.get('opened'),
-            messagges,
-            message,
-            status;
+            dialog = dialogs.get(dialogId);
 
-        if (isOpen) {
-            messages = dialog.get('messages');
-            message = messages.get(messageId);
-            status = param === 'delivered' ? 'Delivered' : 'Seen';
-            message.set('status', status);
+        if (dialog && dialog.get('opened')) {
+            var messages = dialog.get('messages'),
+                message = messages.get(messageId);
+
+            if (message) {
+                var status = param === 'delivered' ? 'Delivered' : 'Seen';
+
+                message.set('status', status);
+            }
         }
     }
 
