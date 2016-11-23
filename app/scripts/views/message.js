@@ -518,7 +518,7 @@ define([
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
                 recipient_id = message.recipient_id || message.extension && message.extension.recipient_id || null,
-                recipient_jid = recipient_id ? QB.chat.helpers.getUserJid(recipient_id, QMCONFIG.qbAccount.appId) : null,
+                recipient_jid = recipient_id ? makeJid(recipient_id) : null,
                 room_jid = roomJidVerification(dialog_id),
                 room_name = message.extension && message.extension.room_name,
                 room_photo = message.extension && message.extension.room_photo,
@@ -526,10 +526,11 @@ define([
                 new_ids = message.extension && message.extension.added_occupant_ids,
                 occupants_ids = message.extension && message.extension.current_occupant_ids,
                 dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
+                contactRequest = $('.j-incommingContactRequest[data-jid="' + makeJid(id) + '"]'),
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden'),
-                isExistent = dialogItem.length ? true : false,
+                isExistent = dialogItem.length ? true : (contactRequest.length ? true : false),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 roster = ContactList.roster,
                 audioSignal = $('#newMessageSignal')[0],
@@ -662,31 +663,32 @@ define([
                 // update hidden dialogs
                 hiddenDialogs[id] = dialog_id;
                 ContactList.saveHiddenDialogs(hiddenDialogs);
-                isExistent = true;
                 // update contact list
                 QBApiCalls.getUser(id, function(user) {
                     contacts[id] = Contact.create(user);
-                    createAndShowNotification(msg, isHiddenChat);
                 });
             } else {
-                createAndShowNotification(msg, isHiddenChat);
                 self.addItem(msg, true, true, id);
             }
 
-            if (notification_type === '5' && isNotMyUser) {
+            if (notification_type === '5' && isNotMyUser && isExistent) {
                 ContactListView.onConfirm(id);
             }
 
             if (notification_type === '7') {
-                self.app.views.ContactList.onReject(id);
+                ContactListView.onReject(id);
+            }
+
+            if ((notification_type !== '7') && isExistent) {
+                createAndShowNotification(msg, isHiddenChat);
             }
 
             var isHidden = (isHiddenChat || !window.isQMAppActive) ? true : false,
-                sendedToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
+                sentToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
                 isSoundOn = Settings.get('sounds_notify'),
                 isMainTab = SyncTabs.get();
 
-            if (isHidden && sendedToMe && isSoundOn && isMainTab && isExistent) {
+            if (isHidden && sentToMe && isSoundOn && isMainTab && isExistent) {
                 audioSignal.play();
             }
 
@@ -1040,6 +1042,10 @@ define([
                 message.set('status', status);
             }
         }
+    }
+
+    function makeJid(id) {
+        return QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
     }
 
     return MessageView;

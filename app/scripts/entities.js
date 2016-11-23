@@ -56,6 +56,7 @@ define([
             }
 
             var messageId = this.get('id'),
+                type = this.get('type'),
                 senderId = this.get('sender_id'),
                 readIds = this.get('read_ids'),
                 isOpen = dialog.get('opened'),
@@ -75,6 +76,12 @@ define([
                     });
                 } else if (isUnreadMessage && isFromOtherUser) {
                     QB.chat.sendReadStatus({
+                        'userId': senderId,
+                        'dialogId': dialogId,
+                        'messageId': messageId
+                    });
+                } else if ((type === 'groupchat') && !isFromOtherUser) {
+                    QB.chat.sendDeliveredStatus({
                         'userId': senderId,
                         'dialogId': dialogId,
                         'messageId': messageId

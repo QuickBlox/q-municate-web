@@ -389,10 +389,8 @@ define([
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
                 } else if (!$('#searchList').is(':visible')) {
                     $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
-                    $('[data-dialog="' + dialog_id + '"] .contact').click();
                 } else {
                     $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
-                    $('[data-dialog="' + dialog_id + '"] .contact').click();
                 }
             } else if (!$('#searchList').is(':visible')) {
                 $('#historyList').removeClass('is-hidden').find('ul').append(html);
@@ -580,6 +578,7 @@ define([
                 }, function(dialog) {
                     self.removeDataSpinner();
                     $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
+                    $('[data-dialog="' + dialog_id + '"] .contact').click();
                     $('.dialog-item[data-dialog="' + dialog.get('id') + '"]').find('.contact').click();
                 });
             }
@@ -684,10 +683,10 @@ define([
 
                 setScrollToNewMessages();
 
-                setTimeout(function () {
+                setTimeout(function() {
                     self.removeDataSpinner();
                     $history.css('opacity', '1');
-                }, 120);
+                }, 150);
             }
 
         }
@@ -781,7 +780,7 @@ define([
     }
 
     function setScrollToNewMessages() {
-        var $chat = $('.l-chat:visible .scrollbar_message'),
+        var $chat = $('.j-chatWrap:visible').find('.scrollbar_message'),
             isBottom = Helpers.isBeginOfChat(),
             isScrollDragger = $chat.find('.mCSB_draggerContainer').length;
 

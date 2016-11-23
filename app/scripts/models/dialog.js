@@ -134,6 +134,8 @@ define([
                         id: msgId
                     }, function() {
                         dialog.set('occupants_ids', occupants_ids);
+                        
+                        DialogView.addDialogItem(dialog);
                         // send invites for all occupants
                         for (var i = 0, len = occupants_ids.length, id; i < len; i++) {
                             id = occupants_ids[i];
@@ -152,7 +154,6 @@ define([
                         }
 
                         callback(dialog);
-                        DialogView.addDialogItem(dialog);
                     });
 
                     // send message about added people for history
