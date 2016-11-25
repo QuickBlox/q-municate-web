@@ -305,8 +305,6 @@ define([
         template: _.template($('#chatTpl').html()),
 
         initialize: function() {
-            // set up this dialog_id as active
-            entities.active = this.model.get('dialog_id');
             this.render();
         },
 
@@ -314,7 +312,7 @@ define([
             var chatTpl = this.template(this.model.toJSON()),
                 chatElem = this.$el.html(chatTpl);
 
-            $('#chatWrap').removeClass('is-hidden').html(chatElem);
+            $('#chatWrap').removeClass('is-hidden').append(chatElem);
         }
     });
 
@@ -340,6 +338,8 @@ define([
                 dialog.set('opened', true);
                 DialogView.htmlBuild($dialog, null);
             }
+            // set up this dialog_id as active
+            entities.active = dialogId;
 
             MessageView.clearTheListTyping();
             Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);

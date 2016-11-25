@@ -413,11 +413,13 @@ define([
                 user_id = parent.data('id'),
                 dialog = dialogs.get(dialog_id),
                 user = contacts[user_id],
-                $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
                 unreadCount = Number(objDom.find('.unread').text()),
                 occupants_ids = dialog.get('occupants_ids'),
+                $chatWrap = $('.j-chatWrap'),
+                $chatView = $('.chatView'),
                 self = this,
+                isCall,
                 chatTpl,
                 messageId,
                 location,
@@ -429,6 +431,7 @@ define([
                 name,
                 jid;
 
+            isCall = objDom.find('.icon_videocall').length || objDom.find('.icon_audiocall').length;
             jid = dialog.get('room_jid') || user.user_jid;
             icon = user_id ? user.avatar_url : (dialog.get('room_photo') || QMCONFIG.defAvatar.group_url);
             name = dialog.get('room_name') || user.full_name;
@@ -437,38 +440,21 @@ define([
 
             $('.l-workspace-wrap .l-workspace').addClass('is-hidden');
 
-            new Entities.Models.Chat({
-                'occupantsIds': occupants_ids,
-                'status': getStatus(status),
-                'dialog_id': dialog_id,
-                'draft': dialog.get('draft'),
-                'location': location,
-                'type': dialog.get('type'),
-                'user_id': user_id,
-                'name': name,
-                'icon': icon,
-                'jid': jid
+            $chatView.each(function(index, element) {
+                var $element = $(element);
+
+                if ($element.hasClass('j-mediacall')) {
+                    $element.addClass('is-hidden');
+                } else {
+                    $element.remove();
+                }
             });
 
-            // build occupants of room
-            if (dialog.get('type') === 2) {
-                html = '<div class="chat-occupants">';
-                for (var i = 0, len = occupants_ids.length, id; i < len; i++) {
-                    id = occupants_ids[i];
-                    if (id != User.contact.id) {
-                        html += '<a class="occupant l-flexbox_inline presence-listener" data-id="' + id + '" href="#">';
-                        html += getStatus(roster[id]);
-                        html += '<span class="name name_occupant">' + contacts[id].full_name + '</span>';
-                        html += '</a>';
-                    }
-                }
-                html += '</div>';
-            }
-
-            $('.l-chat[data-dialog="' + dialog_id + '"] .j-chatOccupants').append($(html));
-
-            if (dialog.get('type') === 3 && (!status || status.subscription === 'none')) {
-                $('.l-chat:visible').addClass('is-request');
+            if (isCall) {
+                $chatWrap.removeClass('is-hidden');
+                $chatView.removeClass('is-hidden');
+            } else {
+                buildChat();
             }
 
             textAreaScrollbar();
@@ -484,6 +470,42 @@ define([
             // set dialog_id to localStorage wich must bee read in all tabs for same user
             localStorage.removeItem(readBadge);
             localStorage.setItem(readBadge, dialog_id);
+
+            function buildChat() {
+                new Entities.Models.Chat({
+                    'occupantsIds': occupants_ids,
+                    'status': getStatus(status),
+                    'dialog_id': dialog_id,
+                    'draft': dialog.get('draft'),
+                    'location': location,
+                    'type': dialog.get('type'),
+                    'user_id': user_id,
+                    'name': name,
+                    'icon': icon,
+                    'jid': jid
+                });
+
+                // build occupants of room
+                if (dialog.get('type') === 2) {
+                    html = '<div class="chat-occupants">';
+                    for (var i = 0, len = occupants_ids.length, id; i < len; i++) {
+                        id = occupants_ids[i];
+                        if (id != User.contact.id) {
+                            html += '<a class="occupant l-flexbox_inline presence-listener" data-id="' + id + '" href="#">';
+                            html += getStatus(roster[id]);
+                            html += '<span class="name name_occupant">' + contacts[id].full_name + '</span>';
+                            html += '</a>';
+                        }
+                    }
+                    html += '</div>';
+                }
+
+                $('.l-chat[data-dialog="' + dialog_id + '"] .j-chatOccupants').append($(html));
+
+                if (dialog.get('type') === 3 && (!status || status.subscription === 'none')) {
+                    $('.l-chat:visible').addClass('is-request');
+                }
+            }
         },
 
         messageScrollbar: function() {

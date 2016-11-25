@@ -177,6 +177,7 @@ define([
             curSession.stop({});
 
             self.type = null;
+            $chat.parent('.chatView').removeClass('j-mediacall');
             $chat.find('.mediacall').remove();
             $chat.find('.l-chat-header').show();
             $chat.find('.l-chat-content').css({
@@ -376,6 +377,7 @@ define([
         VideoChat.callee = null;
         self.type = null;
 
+        $chat.parent('.chatView').removeClass('j-mediacall');
         $chat.find('.mediacall-info-duration').text('');
         $chat.find('.mediacall').remove();
         $chat.find('.l-chat-header').show();
@@ -450,13 +452,14 @@ define([
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
             QBApiCalls = this.app.service,
             calleeId = params.opponentId,
-            fullName = User.contact.full_name;
+            fullName = User.contact.full_name,
+            id = $chat.data('id');
 
         VideoChat.getUserMedia(params, callType, function(err, res) {
+            fixScroll();
             if (err) {
                 $chat.find('.mediacall .btn_hangup').click();
                 QMHtml.VideoChat.showError();
-                fixScroll();
                 return true;
             } else {
                 QBApiCalls.sendPushNotification(calleeId, fullName);
@@ -474,6 +477,8 @@ define([
                 self.unmute('video');
             }
 
+            addCallTypeIcon(id, callType);
+            $('.chatView').addClass('j-mediacall');
         });
     };
 
@@ -495,6 +500,7 @@ define([
 
         htmlTpl = QMHtml.VideoChat.buildTpl(tplParams);
 
+        $chat.parent('.chatView').addClass('j-mediacall');
         $chat.prepend(htmlTpl);
         $chat.find('.l-chat-header').hide();
         $chat.find('.l-chat-content').css({
@@ -551,6 +557,7 @@ define([
             self.type = null;
             videoStreamTime = null;
 
+            $chat.parent('.chatView').removeClass('j-mediacall');
             $chat.find('.mediacall').remove();
             $chat.find('.l-chat-header').show();
             $chat.find('.l-chat-content').css({
