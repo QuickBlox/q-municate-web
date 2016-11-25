@@ -529,7 +529,7 @@ define([
                 contactRequest = $('.j-incommingContactRequest[data-jid="' + makeJid(id) + '"]'),
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
-                isHiddenChat = $chat.is(':hidden'),
+                isHiddenChat = $chat.is(':hidden') || !$chat.length,
                 isExistent = dialogItem.length ? true : (contactRequest.length ? true : false),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 roster = ContactList.roster,
@@ -679,14 +679,14 @@ define([
                 ContactListView.onReject(id);
             }
 
-            if ((notification_type !== '7') && isExistent) {
-                createAndShowNotification(msg, isHiddenChat);
-            }
-
             var isHidden = (isHiddenChat || !window.isQMAppActive) ? true : false,
                 sentToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
                 isSoundOn = Settings.get('sounds_notify'),
                 isMainTab = SyncTabs.get();
+
+            if ((notification_type !== '7') && isExistent) {
+                createAndShowNotification(msg, isHidden);
+            }
 
             if (isHidden && sentToMe && isSoundOn && isMainTab && isExistent) {
                 audioSignal.play();
@@ -704,8 +704,7 @@ define([
                 syncContactRequestInfo({
                     notification_type: notification_type,
                     recipient_jid: recipient_jid,
-                    dialog_id: dialog_id,
-                    isHiddenChat : isHiddenChat
+                    dialog_id: dialog_id
                 });
             }
         },
@@ -936,7 +935,7 @@ define([
         title = Helpers.Notifications.getTitle(msg, params),
         options = Helpers.Notifications.getOptions(msg, params);
 
-        if (QMCONFIG.notification && QBNotification.isSupported() && (isHiddenChat || !window.isQMAppActive)) {
+        if (QBNotification.isSupported() && isHiddenChat) {
             if (!QBNotification.needsPermission()) {
                 Helpers.Notifications.show(title, options);
             } else {
