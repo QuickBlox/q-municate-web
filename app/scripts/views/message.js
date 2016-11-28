@@ -684,9 +684,7 @@ define([
                 isSoundOn = Settings.get('sounds_notify'),
                 isMainTab = SyncTabs.get();
 
-            if ((notification_type !== '7') && isExistent) {
-                createAndShowNotification(msg, isHidden);
-            }
+            createAndShowNotification(msg, isHidden);
 
             if (isHidden && sentToMe && isSoundOn && isMainTab && isExistent) {
                 audioSignal.play();
@@ -914,11 +912,13 @@ define([
             cancelNotify = !Settings.get('messages_notify'),
             isNotMainTab = !SyncTabs.get(),
             isCurrentUser = (msg.sender_id === User.contact.id) ? true : false,
+            isDialog = $('.j-dialogItem[data-id="' + msg.sender_id + '"]').length,
+            isApsent = (+msg.notification_type === 7) && !isDialog,
             options,
             title,
             params;
 
-        if (cancelNotify || isNotMainTab || isCurrentUser) {
+        if (cancelNotify || isNotMainTab || isCurrentUser || isApsent) {
             return false;
         }
 

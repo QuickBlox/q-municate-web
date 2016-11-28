@@ -802,18 +802,26 @@ define([
     }
 
     function setScrollToNewMessages() {
-        var $chat = $('.j-chatWrap:visible').find('.scrollbar_message'),
+        var $chat = $('.j-chatItem'),
+            $scroll = $chat.find('section.scrollbar_message'),
+            isReady = $chat.find('.spinner_bounce').length,
             isBottom = Helpers.isBeginOfChat(),
-            isScrollDragger = $chat.find('.mCSB_draggerContainer').length;
+            isScrollDragger = $scroll.find('.mCSB_draggerContainer').length;
 
         if ($('.j-newMessages').length) {
-            $chat.mCustomScrollbar('scrollTo', '.j-newMessages');
+            scrollToThrArea('.j-newMessages');
         } else {
-            $chat.mCustomScrollbar('scrollTo', 'bottom');
+            scrollToThrArea('bottom');
         }
 
-        if (!isBottom && isScrollDragger) {
-            $('.j-toBottom').show();
+        function scrollToThrArea(area) {
+            if (isReady) {
+                $scroll.mCustomScrollbar('scrollTo', area);
+            }
+
+            if (!isBottom && isScrollDragger) {
+                $('.j-toBottom').show();
+            }
         }
     }
 
