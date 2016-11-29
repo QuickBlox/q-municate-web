@@ -8,7 +8,7 @@
 }
 .new_messages {
     padding: 15px 20px 15px 25px;
-    border-bottom: 1px solid #f2f2f2;
+    border-top: 1px solid #f2f2f2;
     font:600 16px 'Open Sans', sans-serif;
     color: #007de3;
 }
@@ -22,7 +22,7 @@ article.message[data-status="typing"] {
     height: 100%;
     line-height: 100%;
     padding: 9px;
-    border-bottom: none;
+    border: none;
 }
 article.message[data-status="typing"] > div {
     display: inline-block;
