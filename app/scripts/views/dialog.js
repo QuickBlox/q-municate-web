@@ -744,12 +744,12 @@ define([
     function ajaxDownloading($chat, self) {
         var MessageView = self.app.views.Message,
             dialog_id = $chat.parents('.l-chat').data('dialog'),
+            $scroll = $chat.find('section.scrollbar_message'),
             messages = $chat.find('.message'),
             firstMsgId = messages.first().attr('id'),
             count = messages.length,
             message;
 
-        var $scroll = $chat.find('section.scrollbar_message');
 
         Message.download(dialog_id, function(messages) {
             for (var i = 0, len = messages.length; i < len; i++) {
