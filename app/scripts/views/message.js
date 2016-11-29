@@ -448,12 +448,12 @@ define([
                     $smiles.each(function() {
                         $(this).after($(this).data('unicode')).remove();
                     });
-                    val = $textarea.html().trim();
+                    val = $textarea.html();
                 }
                 if (form.find('.textarea > div').length > 0) {
-                    val = $textarea.text().trim();
+                    val = $textarea.text();
                 }
-                val = val.replace(/<br>/gi, '\n');
+                val = val.replace(/<br>/gi, '\n').trim();
 
                 // send message
                 msg = {
