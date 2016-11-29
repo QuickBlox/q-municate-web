@@ -744,12 +744,12 @@ define([
     function ajaxDownloading($chat, self) {
         var MessageView = self.app.views.Message,
             dialog_id = $chat.parents('.l-chat').data('dialog'),
-            count = $chat.find('.message').length,
+            messages = $chat.find('.message'),
+            firstMsgId = messages.first().attr('id'),
+            count = messages.length,
             message;
 
-        var listHeightBefore = $chat.find('.mCSB_container').height(),
-            draggerHeightBefore = $chat.find('.mCSB_dragger').height(),
-            viewPort = $chat.find('.mCustomScrollBox').height();
+        var $scroll = $chat.find('section.scrollbar_message');
 
         Message.download(dialog_id, function(messages) {
             for (var i = 0, len = messages.length; i < len; i++) {
@@ -759,17 +759,7 @@ define([
                 MessageView.addItem(message, true);
 
                 if ((i + 1) === len) {
-                    var listHeightAfter = $chat.find('.mCSB_container').height(),
-                        draggerHeightAfter = $chat.find('.mCSB_dragger').height(),
-                        thisStopList = listHeightBefore - listHeightAfter,
-                        thisStopDragger = (draggerHeightAfter / (draggerHeightBefore + draggerHeightAfter)) * viewPort;
-
-                    $('.l-chat-content .mCSB_container').css({
-                        top: thisStopList + 'px'
-                    });
-                    $('.l-chat-content .mCSB_dragger').css({
-                        top: thisStopDragger + 'px'
-                    });
+                    $scroll.mCustomScrollbar('scrollTo', '#' + firstMsgId);
                 }
             }
         }, count, 'ajax');

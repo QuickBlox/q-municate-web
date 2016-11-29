@@ -424,6 +424,7 @@ define([
                 time = Math.floor(Date.now() / 1000),
                 type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
+                isLoading = $chat.find('.spinner_bounce').length,
                 $newMessages = $('.j-newMessages[data-dialog="' + dialog_id + '"]'),
                 dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
                 locationIsActive = ($('.j-send_location').hasClass('btn_active') && localStorage['QM.latitude'] && localStorage['QM.longitude']),
@@ -431,6 +432,11 @@ define([
                 lastMessage,
                 message,
                 msg;
+
+            // if chat isn't loaded
+            if (isLoading) {
+                return true;
+            }
 
             if (val.length > 0) {
                 var $textarea = form.find('.textarea'),

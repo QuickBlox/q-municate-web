@@ -319,9 +319,13 @@ define([
             /* group chats
             ----------------------------------------------------- */
             $workspace.on('click', '.groupTitle', function() {
+                $scroll = $('.l-chat:visible').find('.scrollbar_message');
+
                 if ($('.l-chat:visible').find('.triangle_up').is('.is-hidden')) {
+                    $scroll.mCustomScrollbar('scrollTo','-=94');
                     setTriagle('up');
                 } else {
+                    $scroll.mCustomScrollbar('scrollTo','+=94');
                     setTriagle('down');
                 }
             });
