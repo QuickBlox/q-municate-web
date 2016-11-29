@@ -81,7 +81,11 @@ input.form-input-search.without_M[type=search]:focus:not([readonly]) {
     line-height: 20px;
     border-bottom: 1px solid #bebebe;
     resize: none;
-    cursor: text !important;
+    word-wrap: break-word;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 .form-input-message::-webkit-input-placeholder {
     position: relative;
