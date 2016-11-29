@@ -1,7 +1,10 @@
 /* message */
 .message {
     padding: 10px 20px 10px 10px;
-    border-bottom: 1px solid #f2f2f2;
+    border-top: 1px solid #f2f2f2;
+}
+.message.without_border {
+    border: none;
 }
 .new_messages {
     padding: 15px 20px 15px 25px;

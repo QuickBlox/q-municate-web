@@ -291,9 +291,11 @@ define([
                         status = isOnline ? message.status : 'Not delivered yet';
 
                         if (message.sender_id === User.contact.id) {
-                            html = '<article id="' + message.id + '" class="message is-own l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                            html = '<article id="' + message.id + '" class="message is-own l-flexbox l-flexbox_alignstretch' +
+                            (message.stack ? ' without_border' : '') + '" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         } else {
-                            html = '<article id="' + message.id + '" class="message l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                            html = '<article id="' + message.id + '" class="message l-flexbox l-flexbox_alignstretch' +
+                            (message.stack ? ' without_border' : '') + '" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         }
 
                         html += '<div class="message-avatar avatar profileUserAvatar' + (message.stack ? ' is-hidden' : '') +
