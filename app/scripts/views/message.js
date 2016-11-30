@@ -104,7 +104,7 @@ define([
                         occupants_ids = _.without(message.current_occupant_ids.split(',').map(Number), contact.id);
                         occupants_names = Helpers.Messages.getOccupantsNames(occupants_ids, User, contacts);
 
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_pending"></span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -115,7 +115,7 @@ define([
                         break;
 
                     case '2':
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_pending"></span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -145,7 +145,7 @@ define([
                         break;
 
                     case '4':
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_pending"></span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -162,7 +162,7 @@ define([
                         break;
 
                     case '5':
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_ok j-requestConfirm">&#10003;</span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -179,7 +179,7 @@ define([
                         break;
 
                     case '6':
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_cancel j-requestCancel">&#10005;</span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -199,7 +199,7 @@ define([
                         break;
 
                     case '7':
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_pending"></span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -220,7 +220,7 @@ define([
                     // calls messages
                     case '8':
                         if (message.caller) {
-                            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '" data-session="' + message.sessionID + '">';
+                            html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '" data-session="' + message.sessionID + '">';
 
                             if (message.caller === User.contact.id) {
                                 html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_outgoing' : 'request-audio_outgoing') + '"></span>';
@@ -245,7 +245,7 @@ define([
 
                     case '9':
                         if (message.caller) {
-                            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                            html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
 
                             if (message.caller === User.contact.id) {
                                 html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
@@ -270,7 +270,7 @@ define([
 
                     case '10':
                         if (message.caller) {
-                            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                            html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                             html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
                             html += '<div class="message-container-wrap">';
                             html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
