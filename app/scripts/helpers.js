@@ -243,7 +243,7 @@ define([
         },
 
         setScrollToNewMessages: function() {
-            var $chat = $('.j-chatItem .scrollbar_message');
+            var $chat = $('.j-chatItem .j-scrollbar_message');
 
             if ($('.j-newMessages').length) {
                 $chat.mCustomScrollbar('scrollTo', '.j-newMessages');
@@ -274,7 +274,7 @@ define([
     };
 
     Helpers.isBeginOfChat = function() {
-        var $viewPort = $('.l-chat:visible .scrollbar_message .mCustomScrollBox'),
+        var $viewPort = $('.l-chat:visible .j-scrollbar_message .mCustomScrollBox'),
             $msgList = $viewPort.find('.mCSB_container');
 
         if ($msgList.offset()) {

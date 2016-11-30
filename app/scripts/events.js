@@ -319,7 +319,7 @@ define([
             /* group chats
             ----------------------------------------------------- */
             $workspace.on('click', '.groupTitle', function() {
-                $scroll = $('.l-chat:visible').find('.scrollbar_message');
+                $scroll = $('.l-chat:visible').find('.j-scrollbar_message');
 
                 if ($('.l-chat:visible').find('.triangle_up').is('.is-hidden')) {
                     $scroll.mCustomScrollbar('scrollTo','-=94');
@@ -893,7 +893,7 @@ define([
             /* A button for the scroll to the bottom of chat
             ------------------------------------------------------ */
             $workspace.on('click', '.j-toBottom', function() {
-                $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+                $('.j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
                 $(this).hide();
             });
 

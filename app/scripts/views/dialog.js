@@ -438,7 +438,7 @@ define([
             name = dialog.get('room_name') || user.full_name;
             status = roster[user_id] ? roster[user_id] : null;
             location = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? 'btn_active' : '';
-            
+
             $('.l-workspace-wrap .l-workspace').addClass('is-hidden');
 
             $chatView.each(function(index, element) {
@@ -510,7 +510,7 @@ define([
         },
 
         messageScrollbar: function() {
-            var $objDom = $('.l-chat:visible .scrollbar_message'),
+            var $objDom = $('.l-chat:visible .j-scrollbar_message'),
                 height = $objDom[0].scrollHeight,
                 self = this;
 
@@ -745,7 +745,7 @@ define([
     function ajaxDownloading($chat, self) {
         var MessageView = self.app.views.Message,
             dialog_id = $chat.parents('.l-chat').data('dialog'),
-            $scroll = $chat.find('section.scrollbar_message'),
+            $scroll = $('.l-chat:visible .j-scrollbar_message'),
             messages = $chat.find('.message'),
             firstMsgId = messages.first().attr('id'),
             count = messages.length,
@@ -794,7 +794,7 @@ define([
 
     function setScrollToNewMessages() {
         var $chat = $('.j-chatItem'),
-            $scroll = $chat.find('section.scrollbar_message'),
+            $scroll = $('.l-chat:visible .j-scrollbar_message'),
             isReady = $chat.find('.spinner_bounce').length,
             isBottom = Helpers.isBeginOfChat(),
             isScrollDragger = $scroll.find('.mCSB_draggerContainer').length;

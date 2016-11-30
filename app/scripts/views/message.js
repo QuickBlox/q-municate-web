@@ -842,7 +842,7 @@ define([
             return true;
         }
 
-        var $objDom = $('.l-chat:visible .scrollbar_message');
+        var $objDom = $('.l-chat:visible .j-scrollbar_message');
 
         $objDom.mCustomScrollbar('scrollTo', 'bottom');
     }

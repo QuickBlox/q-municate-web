@@ -70,7 +70,7 @@ define([
             $chat.find('.mCSB_container').append($html);
 
             if (isBottom) {
-                $chat.find('.scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+                $chat.find('.j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
             }
         },
 
@@ -88,7 +88,7 @@ define([
             $chat.find('.mCSB_container').append($html);
 
             if (isBottom) {
-                $chat.find('.scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+                $chat.find('.j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
             }
         }
 

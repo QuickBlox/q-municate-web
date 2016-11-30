@@ -250,7 +250,7 @@ define([
     /* Private
     ---------------------------------------------------------------------- */
     function fixScroll() {
-        $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+        $('.l-chat:visible .j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
     }
 
     return AttachView;
