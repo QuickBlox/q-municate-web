@@ -324,7 +324,6 @@ define([
 	$('.list_contextmenu').on('click', '.contact', function() {
         var $dialog = $(this),
             dialogId = $dialog.parent().data('dialog');
-
         if (entities.active !== dialogId) {
             var MessageView = entities.app.views.Message,
                 DialogView = entities.app.views.Dialog,
@@ -336,10 +335,8 @@ define([
                 DialogView.htmlBuild($dialog, dialog.get('messages').toJSON());
             } else {
                 dialog.set('opened', true);
-                DialogView.htmlBuild($dialog, null);
+                DialogView.htmlBuild($dialog);
             }
-            // set up this dialog_id as active
-            entities.active = dialogId;
 
             MessageView.clearTheListTyping();
             Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);

@@ -151,15 +151,7 @@ define([
             DialogView.getUnreadCounter(dialogId);
         }
 
-        if ($dialogItem.length > 0) {
-            copyDialogItem = $dialogItem.clone();
-            $dialogItem.remove();
-            $('#recentList ul').prepend(copyDialogItem);
-            if (!$('#searchList').is(':visible')) {
-                $('#recentList').removeClass('is-hidden');
-                Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
-            }
-        }
+        Helpers.Dialogs.moveDialogToTop(dialogId);
     };
 
     /* Private

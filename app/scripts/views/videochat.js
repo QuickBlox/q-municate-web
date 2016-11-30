@@ -45,8 +45,18 @@ define([
     }
 
     VideoChatView.prototype.cancelCurrentCalls = function() {
-        if ($('.mediacall').length > 0) {
-            $('.mediacall').find('.btn_hangup').click();
+        var $mediacall = $('.mediacall');
+
+        if ($mediacall.length > 0) {
+            $mediacall.find('.btn_hangup').click();
+        }
+    };
+
+    VideoChatView.prototype.clearChat = function() {
+        var $chatView = $('.chatView');
+
+        if ($chatView.length > 1) {
+            $chatView.first().remove();
         }
     };
 
@@ -116,6 +126,7 @@ define([
             $('#popupIncoming .mCSB_container').children().each(function() {
                 $self.find('.btn_decline').click();
             });
+
             closePopup();
 
             if (Settings.get('sounds_notify')) {
@@ -148,6 +159,8 @@ define([
         });
 
         $('body').on('click', '.btn_hangup', function() {
+            self.clearChat();
+
             var $self = $(this),
                 $chat = $self.parents('.l-chat'),
                 opponentId = $self.data('id'),
@@ -177,7 +190,6 @@ define([
             curSession.stop({});
 
             self.type = null;
-            $chat.parent('.chatView').removeClass('j-mediacall');
             $chat.find('.mediacall').remove();
             $chat.find('.l-chat-header').show();
             $chat.find('.l-chat-content').css({
@@ -508,8 +520,6 @@ define([
         });
 
         setScreenStyle();
-
-        $('.dialog-item[data-dialog="' + dialogId + '"]').find('.contact').click();
 
         return {
             opponentId: userId,

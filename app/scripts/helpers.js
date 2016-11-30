@@ -216,7 +216,7 @@ define([
             if (dialogItem.length > 0) {
                 copyDialogItem = dialogItem.clone();
                 dialogItem.remove();
-                $('#recentList ul.j-list').prepend(copyDialogItem);
+                $('.j-recentList').prepend(copyDialogItem);
                 if (!$('#searchList').is(':visible')) {
                     $('#recentList').removeClass('is-hidden');
                     this.isSectionEmpty($('#recentList ul.j-list'));

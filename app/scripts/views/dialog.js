@@ -431,13 +431,14 @@ define([
                 name,
                 jid;
 
+            Entities.active = dialog_id;
             isCall = objDom.find('.icon_videocall').length || objDom.find('.icon_audiocall').length;
             jid = dialog.get('room_jid') || user.user_jid;
             icon = user_id ? user.avatar_url : (dialog.get('room_photo') || QMCONFIG.defAvatar.group_url);
             name = dialog.get('room_name') || user.full_name;
             status = roster[user_id] ? roster[user_id] : null;
             location = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? 'btn_active' : '';
-
+            
             $('.l-workspace-wrap .l-workspace').addClass('is-hidden');
 
             $chatView.each(function(index, element) {

@@ -435,11 +435,6 @@ define([
                 message,
                 msg;
 
-            // if chat isn't loaded
-            if (isLoading) {
-                return true;
-            }
-
             if (val.length > 0) {
                 var $textarea = form.find('.textarea'),
                     $smiles = form.find('.textarea > img');
@@ -488,9 +483,10 @@ define([
 
                 if (type === 'chat') {
                     Helpers.Dialogs.moveDialogToTop(dialog_id);
-
                     lastMessage = $chat.find('article[data-type="message"]').last();
-                    message.stack = Message.isStack(true, message, lastMessage);
+                    if (!isLoading) {
+                        message.stack = Message.isStack(true, message, lastMessage);
+                    }
                     self.addItem(message, true, true);
                     if ($newMessages.length) {
                         $newMessages.remove();
