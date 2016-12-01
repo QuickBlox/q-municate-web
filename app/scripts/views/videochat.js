@@ -396,6 +396,8 @@ define([
         $chat.find('.l-chat-content').css({
             height: 'calc(100% - 165px)'
         });
+
+         addCallTypeIcon(id, null);
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {

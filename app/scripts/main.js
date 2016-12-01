@@ -1,3 +1,4 @@
+
 /*global require*/
 'use strict';
 
@@ -117,7 +118,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.8.34');
+        $('.j-appVersion').html('v. 1.8.35');
 
         // facebook sdk
         FB.init({
