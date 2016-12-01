@@ -719,7 +719,7 @@ define([
     /* Private
     ---------------------------------------------------------------------- */
     function scrollbar() {
-        $('.l-sidebar .scrollbar').mCustomScrollbar({
+        $('.scrollbar').mCustomScrollbar({
             theme: 'minimal-dark',
             scrollInertia: 150,
             mouseWheel: {
@@ -794,7 +794,7 @@ define([
 
     function setScrollToNewMessages() {
         var $chat = $('.j-chatItem'),
-            $scroll = $('.l-chat:visible .j-scrollbar_message'),
+            $scroll = $chat.find('.j-scrollbar_message'),
             isReady = $chat.find('.spinner_bounce').length,
             isBottom = Helpers.isBeginOfChat(),
             isScrollDragger = $scroll.find('.mCSB_draggerContainer').length;
@@ -808,6 +808,7 @@ define([
         function scrollToThrArea(area) {
             if (isReady) {
                 $scroll.mCustomScrollbar('scrollTo', area);
+                console.info($scroll.length);
             }
 
             if (!isBottom && isScrollDragger) {

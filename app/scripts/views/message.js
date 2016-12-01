@@ -104,7 +104,7 @@ define([
                         occupants_ids = _.without(message.current_occupant_ids.split(',').map(Number), contact.id);
                         occupants_names = Helpers.Messages.getOccupantsNames(occupants_ids, User, contacts);
 
-                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_pending"></span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -426,7 +426,6 @@ define([
                 time = Math.floor(Date.now() / 1000),
                 type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
-                isLoading = $chat.find('.spinner_bounce').length,
                 $newMessages = $('.j-newMessages[data-dialog="' + dialog_id + '"]'),
                 dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
                 locationIsActive = ($('.j-send_location').hasClass('btn_active') && localStorage['QM.latitude'] && localStorage['QM.longitude']),
@@ -484,9 +483,7 @@ define([
                 if (type === 'chat') {
                     Helpers.Dialogs.moveDialogToTop(dialog_id);
                     lastMessage = $chat.find('article[data-type="message"]').last();
-                    if (!isLoading) {
-                        message.stack = Message.isStack(true, message, lastMessage);
-                    }
+                    message.stack = Message.isStack(true, message, lastMessage);
                     self.addItem(message, true, true);
                     if ($newMessages.length) {
                         $newMessages.remove();
@@ -842,7 +839,7 @@ define([
             return true;
         }
 
-        var $objDom = $('.l-chat:visible .j-scrollbar_message');
+        var $objDom = $('.l-chat:visible .scrollbar_message');
 
         $objDom.mCustomScrollbar('scrollTo', 'bottom');
     }

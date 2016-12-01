@@ -282,7 +282,7 @@ define([
                 }
             });
 
-            $('body').on('keydown', function(e) {
+            $('body').on('keyup', function(e) {
                 if ((e.keyCode === 13) && $('.j-open_map').length) {
                     $('.j-send_map').click();
                 }
@@ -847,13 +847,19 @@ define([
                 DialogView.createGroupChat('add', dialog_id);
             });
 
-            $workspace.on('keydown', '.j-message', function(event) {
+            $workspace.on('keyup', '.j-message', function(event) {
                 var $self = $(this),
-                    jid = $self.parents('.l-chat').data('jid'),
-                    type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+                    $chat = $self.parents('.l-chat'),
+                    jid = $chat.data('jid'),
+                    type = $chat.is('.is-group') ? 'groupchat' : 'chat',
                     shiftKey = event.shiftKey,
                     code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
-                    val = $('.l-chat:visible .textarea').html().trim();
+                    isLoading = $chat.find('.spinner_bounce').length,
+                    val = $chat.find('.textarea').text().trim();
+
+                if (isLoading || !val) {
+                    return false;
+                }
 
                 if (code === 13 && !shiftKey) {
                     MessageView.sendMessage($self);
