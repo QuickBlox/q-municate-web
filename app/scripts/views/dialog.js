@@ -720,6 +720,8 @@ define([
         $('.j-scrollbar_aside').niceScroll({
             cursoropacitymax: 0.3,
             railpadding: {
+                top: 10,
+                bottom: 10,
                 right: 2
             },
             zindex: 1,
