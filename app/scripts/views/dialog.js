@@ -458,7 +458,7 @@ define([
                 buildChat();
             }
 
-            textAreaScrollbar();
+            textAreaScrollbar('#textarea_'+dialog_id);
             self.createDataSpinner(true);
             self.messageScrollbar($('#mCS_'+dialog_id));
             self.showChatWithNewMessages(dialog_id, unreadCount, messages);
@@ -718,20 +718,22 @@ define([
         $('.j-scrollbar_aside').niceScroll({
             cursoropacitymax: 0.3,
             railpadding: {
-                right: 1
+                right: 2
             },
             zindex: 1,
+            cursorwidth: '6px',
             enablekeyboard: false
         });
     }
 
-    function textAreaScrollbar() {
-        $('.l-chat:visible .textarea').niceScroll({
+    function textAreaScrollbar(selector) {
+        $(selector).niceScroll({
             cursoropacitymax: 0.3,
             railpadding: {
                 right: -13
             },
             zindex: 1,
+            cursorwidth: '6px',
             enablekeyboard: false
         });
     }

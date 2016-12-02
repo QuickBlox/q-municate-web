@@ -617,10 +617,10 @@
 
     <script id="chatTpl" type="text/template">
         <% if (type === 3) { %>
-            <section class="l-chat l-chat_private presence-listener j-chatItem" data-dialog="<%= dialog_id %>" data-id="<%= user_id %>" data-jid="<%= jid %>">
+            <section id="chat_<%= dialog_id %>" class="l-chat l-chat_private presence-listener j-chatItem" data-dialog="<%= dialog_id %>" data-id="<%= user_id %>" data-jid="<%= jid %>">
             <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
         <% } else { %>
-            <section class="l-chat l-chat_group is-group j-chatItem" data-dialog="<%= dialog_id %>" data-jid="<%= jid %>">
+            <section id="chat_<%= dialog_id %>" class="l-chat l-chat_group is-group j-chatItem" data-dialog="<%= dialog_id %>" data-jid="<%= jid %>">
             <header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">
         <% } %>
             <div class="chat-title">
@@ -676,7 +676,7 @@
         <footer class="l-chat-footer">
             <div class="footer_btn j-toBottom btn_to_bottom"></div>
             <form class="l-message j-message" action="#">
-                <div class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"><%= draft %></div>
+                <div id="textarea_<%= dialog_id %>" class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"><%= draft %></div>
                 <div class="footer_btn j-send_location btn_sendlocation <%= location %>" data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>
                 <input class="attachment" type="file" accept="image/*">
             </form>
