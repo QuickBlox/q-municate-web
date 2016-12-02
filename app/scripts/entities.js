@@ -290,7 +290,6 @@ define([
         },
 
         buildChatView: function() {
-            entities.Collections.dialogs.saveDraft();
             entities.Views.chat = new entities.Views.Chat({model: this});
         }
     });
@@ -324,6 +323,7 @@ define([
 	$('.list_contextmenu').on('click', '.contact', function() {
         var $dialog = $(this),
             dialogId = $dialog.parent().data('dialog');
+
         if (entities.active !== dialogId) {
             var MessageView = entities.app.views.Message,
                 DialogView = entities.app.views.Dialog,

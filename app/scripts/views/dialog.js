@@ -404,6 +404,8 @@ define([
 
 
         htmlBuild: function(objDom, messages) {
+            Entities.Collections.dialogs.saveDraft();
+
             var MessageView = this.app.views.Message,
                 contacts = ContactList.contacts,
                 dialogs = Entities.Collections.dialogs,
