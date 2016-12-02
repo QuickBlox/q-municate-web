@@ -126,7 +126,7 @@ define([
 
             var spinnerBlock;
             if (isAjaxDownloading) {
-                spinnerBlock = '<div class="message message_service msg_preloader">' +
+                spinnerBlock = '<div class="message message_service msg_preloader j-msg_preloader">' +
                     '<div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
             } else if (groupchat) {
                 spinnerBlock = '<div class="popup-elem spinner_bounce is-creating">';
@@ -441,6 +441,7 @@ define([
             name = dialog.get('room_name') || user.full_name;
             status = roster[user_id] ? roster[user_id] : null;
             location = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? 'btn_active' : '';
+            Message.skip = 0;
 
             $('.l-workspace-wrap .l-workspace').addClass('is-hidden');
 
@@ -457,6 +458,7 @@ define([
             if (isCall) {
                 $chatWrap.removeClass('is-hidden');
                 $chatView.removeClass('is-hidden');
+                Message.skip = document.querySelectorAll('.message').length;
             } else {
                 buildChat();
             }

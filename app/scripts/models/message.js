@@ -11,10 +11,13 @@ define([
     QB,
     Entities
 ) {
+    var self;
 
     function Message(app) {
         this.app = app;
-        this.skip = {};
+        this.skip = undefined;
+
+        self = this;
     }
 
     Message.prototype = {
@@ -22,11 +25,11 @@ define([
         download: function(dialog_id, callback, count, isAjaxDownloading) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
-                self = this,
                 limitCount,
                 skipCount;
+                console.info(self.skip);
 
-            if (self.skip[dialog_id] && self.skip[dialog_id] === count) {
+            if (self.skip === count) {
                 return false;
             }
 
@@ -44,8 +47,8 @@ define([
                 skip: skipCount || 0
             }, function(messages) {
                 if (isAjaxDownloading) {
+                    self.skip = skipCount;
                     DialogView.removeDataSpinner();
-                    self.skip[dialog_id] = count;
                 } else {
                     self.skip = 0;
                 }
