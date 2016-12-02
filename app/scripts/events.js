@@ -859,9 +859,7 @@ define([
 
                 if (isLoading || !val) {
                     return false;
-                }
-
-                if (code === 13 && !shiftKey) {
+                } else if (code === 13 && !shiftKey) {
                     MessageView.sendMessage($self);
                     $self.find('.textarea').empty();
                     removePopover();

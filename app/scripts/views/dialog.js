@@ -161,7 +161,7 @@ define([
             Helpers.log('QB SDK: Roster has been got', roster);
             this.chatCallbacksInit();
             this.createDataSpinner();
-            scrollbar();
+            scrollbarAside();
             ContactList.saveRoster(roster);
 
             this.app.views.Settings.setUp(User.contact.id);
@@ -460,7 +460,7 @@ define([
 
             textAreaScrollbar();
             self.createDataSpinner(true);
-            self.messageScrollbar();
+            self.messageScrollbar($('#mCS_'+dialog_id));
             self.showChatWithNewMessages(dialog_id, unreadCount, messages);
 
             removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
@@ -509,22 +509,19 @@ define([
             }
         },
 
-        messageScrollbar: function() {
-            var $objDom = $('.l-chat:visible .j-scrollbar_message'),
-                height = $objDom[0].scrollHeight,
-                self = this;
+        messageScrollbar: function($chatScroll) {
+            var self = this;
 
-            $objDom.mCustomScrollbar({
+            $chatScroll.mCustomScrollbar({
                 theme: 'minimal-dark',
                 scrollInertia: 'auto',
                 mouseWheel: {
                     scrollAmount: 120,
                     deltaFactor: 'auto'
                 },
-                setTop: height + 'px',
                 callbacks: {
                     onTotalScrollBack: function() {
-                        ajaxDownloading($objDom, self);
+                        ajaxDownloading($chatScroll, self);
                     },
                     onTotalScroll: function() {
                         var isBottom = Helpers.isBeginOfChat(),
@@ -544,9 +541,8 @@ define([
                         }
                     }
                 },
-                live: true
+                live: 'on'
             });
-
         },
 
         createGroupChat: function(type, dialog_id) {
@@ -704,7 +700,7 @@ define([
                     MessageView.addItem(message, null, null, message.recipient_id);
                 }
 
-                setScrollToNewMessages();
+                setScrollToNewMessages($('#mCS_'+dialogId));
 
                 setTimeout(function() {
                     self.removeDataSpinner();
@@ -718,21 +714,20 @@ define([
 
     /* Private
     ---------------------------------------------------------------------- */
-    function scrollbar() {
-        $('.scrollbar').mCustomScrollbar({
-            theme: 'minimal-dark',
-            scrollInertia: 150,
-            mouseWheel: {
-                scrollAmount: 100,
-                deltaFactor: 0
+    function scrollbarAside() {
+        $('.j-scrollbar_aside').niceScroll({
+            cursoropacitymax: 0.3,
+            railpadding: {
+                right: 1
             },
-            live: true
+            zindex: 1,
+            enablekeyboard: false
         });
     }
 
     function textAreaScrollbar() {
         $('.l-chat:visible .textarea').niceScroll({
-            cursoropacitymax: 0.5,
+            cursoropacitymax: 0.3,
             railpadding: {
                 right: -13
             },
@@ -742,10 +737,10 @@ define([
     }
 
     // ajax downloading of data through scroll
-    function ajaxDownloading($chat, self) {
+    function ajaxDownloading($chatScroll, self) {
         var MessageView = self.app.views.Message,
-            dialog_id = $chat.parents('.l-chat').data('dialog'),
-            $scroll = $('.l-chat:visible .j-scrollbar_message'),
+            $chat = $('.j-chatItem:visible'),
+            dialog_id = $chat.data('dialog'),
             messages = $chat.find('.message'),
             firstMsgId = messages.first().attr('id'),
             count = messages.length,
@@ -760,7 +755,7 @@ define([
                 MessageView.addItem(message, true);
 
                 if ((i + 1) === len) {
-                    $scroll.mCustomScrollbar('scrollTo', '#' + firstMsgId);
+                    $chatScroll.mCustomScrollbar('scrollTo', '#'+firstMsgId);
                 }
             }
         }, count, 'ajax');
@@ -792,12 +787,10 @@ define([
         $chatContainer.prepend($newMessages);
     }
 
-    function setScrollToNewMessages() {
-        var $chat = $('.j-chatItem'),
-            $scroll = $chat.find('.j-scrollbar_message'),
-            isReady = $chat.find('.spinner_bounce').length,
+    function setScrollToNewMessages($chatScroll) {
+        var $chat = $('.j-chatItem:visible'),
             isBottom = Helpers.isBeginOfChat(),
-            isScrollDragger = $scroll.find('.mCSB_draggerContainer').length;
+            isScrollDragger = $chat.find('.mCSB_draggerContainer').length;
 
         if ($('.j-newMessages').length) {
             scrollToThrArea('.j-newMessages');
@@ -806,14 +799,10 @@ define([
         }
 
         function scrollToThrArea(area) {
-            if (isReady) {
-                $scroll.mCustomScrollbar('scrollTo', area);
-                console.info($scroll.length);
-            }
-
             if (!isBottom && isScrollDragger) {
                 $('.j-toBottom').show();
             }
+            $chatScroll.mCustomScrollbar('scrollTo', area);
         }
     }
 
