@@ -277,7 +277,7 @@ define([
         var viewPort = document.querySelector('.j-scrollbar_message'),
             msgList = document.querySelector('.j-scrollbar_message .mCSB_container');
 
-        if (msgList.offsetTop) {
+        if (msgList.offsetTop < 0) {
             var viewPortBottom = viewPort.clientHeight,
                 msgListPosition = msgList.offsetTop,
                 msgListHeight = msgList.clientHeight,
