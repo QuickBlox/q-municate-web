@@ -274,7 +274,7 @@ define([
     };
 
     Helpers.isBeginOfChat = function() {
-        var $viewPort = $('.l-chat:visible .j-scrollbar_message .mCustomScrollBox'),
+        var $viewPort = $('.j-scrollbar_message .mCustomScrollBox'),
             $msgList = $viewPort.find('.mCSB_container');
 
         if ($msgList.offset()) {

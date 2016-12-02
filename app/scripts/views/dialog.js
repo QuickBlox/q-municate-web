@@ -798,14 +798,14 @@ define([
 
         if ($('.j-newMessages').length) {
             scrollToThrArea('.j-newMessages');
+            if (!isBottom && isScrollDragger) {
+                $('.j-toBottom').show();
+            }
         } else {
             scrollToThrArea('bottom');
         }
 
         function scrollToThrArea(area) {
-            if (!isBottom && isScrollDragger) {
-                $('.j-toBottom').show();
-            }
             $chatScroll.mCustomScrollbar('scrollTo', area);
         }
     }
