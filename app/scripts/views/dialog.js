@@ -722,7 +722,8 @@ define([
             railpadding: {
                 top: 10,
                 bottom: 10,
-                right: 2
+                right: 2,
+                left: 0
             },
             zindex: 1,
             cursorwidth: '6px',
@@ -734,6 +735,8 @@ define([
         $(selector).niceScroll({
             cursoropacitymax: 0.3,
             railpadding: {
+                top: 3,
+                bottom: 3,
                 right: -13
             },
             zindex: 1,
