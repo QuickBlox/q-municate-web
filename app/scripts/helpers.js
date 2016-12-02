@@ -284,7 +284,7 @@ define([
                 msgListBottom = msgListPosition + msgListHeight,
                 bottom = false;
 
-            if ((viewPortBottom + 360) >= msgListBottom) {
+            if ((viewPortBottom + 350) > msgListBottom) {
                 bottom = true;
             }
 
