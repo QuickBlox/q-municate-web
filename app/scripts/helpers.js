@@ -274,19 +274,17 @@ define([
     };
 
     Helpers.isBeginOfChat = function() {
-        var $viewPort = $('.j-scrollbar_message .mCustomScrollBox'),
-            $msgList = $viewPort.find('.mCSB_container');
+        var viewPort = document.querySelector('.j-scrollbar_message'),
+            msgList = document.querySelector('.j-scrollbar_message .mCSB_container');
 
-        if ($msgList.offset()) {
-            var viewPortPosition = $viewPort.offset().top,
-                viewPortHeight = $viewPort.outerHeight(),
-                msgListPosition = $msgList.offset().top,
-                msgListHeight = $msgList.outerHeight(),
-                viewPortBottom = viewPortPosition + viewPortHeight,
+        if (msgList.offsetTop) {
+            var viewPortBottom = viewPort.clientHeight,
+                msgListPosition = msgList.offsetTop,
+                msgListHeight = msgList.clientHeight,
                 msgListBottom = msgListPosition + msgListHeight,
                 bottom = false;
 
-            if ((viewPortBottom + viewPortHeight / 2) >= msgListBottom) {
+            if ((viewPortBottom + 360) >= msgListBottom) {
                 bottom = true;
             }
 
