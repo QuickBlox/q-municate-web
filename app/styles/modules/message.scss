@@ -15,6 +15,10 @@
 .message_service {
     padding: 10px 20px 10px 10px;
 }
+.message.msg_preloader {
+    position: absolute;
+    width: 100%;
+}
 .message_service:last-of-type .btn_request_again {
     display: inline-block;
 }

@@ -126,7 +126,8 @@ define([
 
             var spinnerBlock;
             if (isAjaxDownloading) {
-                spinnerBlock = '<div class="message message_service"><div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
+                spinnerBlock = '<div class="message message_service msg_preloader">' +
+                    '<div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
             } else if (groupchat) {
                 spinnerBlock = '<div class="popup-elem spinner_bounce is-creating">';
             } else {
