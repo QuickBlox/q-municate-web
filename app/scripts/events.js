@@ -178,13 +178,15 @@ define([
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
-            $('.smiles-group').mCustomScrollbar({
-                theme: 'minimal-dark',
-                scrollInertia: 500,
-                mouseWheel: {
-                    scrollAmount: 'auto',
-                    deltaFactor: 'auto'
-                }
+            $('.smiles-group').niceScroll({
+                cursoropacitymax: 0.3,
+                railpadding: {
+                    right: 2
+                },
+                zindex: 1,
+                autohidemode: false,
+                cursorwidth: '6px',
+                enablekeyboard: false
             });
 
             $workspace.on('click', '.j-em', function() {

@@ -167,21 +167,26 @@ define([
             appearAnimation();
 
             var elemPosition = objDom.offset().top,
-                topListOffset = $('.mCustomScrollBox').offset().top,
-                listHeigth = $('.mCustomScrollBox').height(),
-                listViewPort = $('.mCustomScrollbar').height(),
+                list = document.querySelector('.j-scrollbar_aside'),
+                topListOffset = list.offsetTop,
+                listHeigth = list.offsetHeight,
+                listViewPort = 0,
                 botListOffset = listHeigth + topListOffset,
                 dropList = objDom.next(),
                 dropListElemCount = objDom.next().children().length,
                 botElemPosition = botListOffset - elemPosition,
                 elemPositionInList = elemPosition - topListOffset;
 
+            $('.j-aside_list_item').each(function(index, element) {
+                listViewPort += element.offsetHeight;
+            });
+
             if ((botElemPosition <= dropListElemCount * 50) && (elemPositionInList > dropListElemCount * 40)) {
                 dropList.addClass('margin-up');
             }
 
             if (listViewPort <= 400) {
-                $('#mCSB_8_container')[0].style.paddingBottom = (dropListElemCount * 40) + "px";
+                list.style.paddingBottom = (dropListElemCount * 40) + "px";
             }
         },
 
