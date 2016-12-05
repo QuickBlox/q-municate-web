@@ -2,6 +2,14 @@
 
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
 
+## v. 1.9.0 - December 5, 2016
+- Refactored functionality of dialogs, chats and messages (optimized with backboneJS framework):
+    * new logic for chat messages rendering,
+    * new logic for chat messages storage,
+    * new logic to work with messages statuses;
+- Stability improvements;
+- Bug fixes.
+
 ## v. 1.8.0 - October 17, 2016
 - Added last message preview for dialogs;
 - Ability to sync of group chats between tabs and browsers for the same user;
