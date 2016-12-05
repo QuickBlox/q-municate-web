@@ -27,7 +27,6 @@ define([
                 DialogView = this.app.views.Dialog,
                 limitCount,
                 skipCount;
-                console.info(self.skip);
 
             // if (self.skip === count) {
             //     return false;
