@@ -5,8 +5,9 @@ See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases)
 ## v. 1.9.0 - December 5, 2016
 - Refactored functionality of dialogs, chats and messages (optimized with backboneJS framework):
     * new logic for chat messages rendering,
-    * new logic for chat messages storage,
+    * new logic for chat messages' storage,
     * new logic to work with messages statuses;
+- Replaced the 'grunt-contrib-compass' on 'grunt-contrib-sass' (for faster compilation of styles);
 - Stability improvements;
 - Bug fixes.
 
