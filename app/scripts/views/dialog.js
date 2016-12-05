@@ -460,7 +460,6 @@ define([
             if (isCall) {
                 $chatWrap.removeClass('is-hidden');
                 $chatView.removeClass('is-hidden');
-                Message.skip = document.querySelectorAll('.message').length;
             } else {
                 buildChat();
             }
@@ -658,6 +657,7 @@ define([
 
             if (lessThenMinStack) {
                 lastReaded = unreadCount;
+                count = MIN_STACK;
             } else if (moreThenMinStack && lessThenMaxStack) {
                 lastReaded = unreadCount;
                 count = unreadCount + 1;

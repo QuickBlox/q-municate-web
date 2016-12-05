@@ -274,22 +274,27 @@ define([
     };
 
     Helpers.isBeginOfChat = function() {
-        var viewPort = document.querySelector('.j-scrollbar_message'),
-            msgList = document.querySelector('.j-scrollbar_message .mCSB_container');
+        if (!document.querySelector('.j-chatItem')) {
+            return null;
+        }
 
-        if (msgList.offsetTop < 0) {
-            var viewPortBottom = viewPort.clientHeight,
-                msgListPosition = msgList.offsetTop,
-                msgListHeight = msgList.clientHeight,
-                msgListBottom = msgListPosition + msgListHeight,
-                bottom = false;
+        var viewPort = document.querySelector('.j-scrollbar_message'),
+            msgList = document.querySelector('.j-scrollbar_message .mCSB_container'),
+            viewPortBottom = viewPort.clientHeight,
+            msgListPosition = msgList.offsetTop,
+            msgListHeight = msgList.clientHeight,
+            msgListBottom = msgListPosition + msgListHeight,
+            bottom;
+
+        if (msgListPosition < 0) {
+            bottom = false;
 
             if ((viewPortBottom + 350) > msgListBottom) {
                 bottom = true;
             }
-
-            return bottom;
         }
+
+        return bottom;
     };
 
     Helpers.getDuration = function(seconds, duration) {

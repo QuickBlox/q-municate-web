@@ -16,7 +16,6 @@ define([
     function Message(app) {
         this.app = app;
         this.skip = undefined;
-
         self = this;
     }
 
@@ -28,9 +27,9 @@ define([
                 limitCount,
                 skipCount;
 
-            // if (self.skip === count) {
-            //     return false;
-            // }
+            if (self.skip === count) {
+                return false;
+            }
 
             if (isAjaxDownloading) {
                 DialogView.createDataSpinner(null, null, true);
@@ -46,10 +45,8 @@ define([
                 skip: skipCount || 0
             }, function(messages) {
                 if (isAjaxDownloading) {
-                    // self.skip = skipCount;
+                    self.skip = skipCount;
                     DialogView.removeDataSpinner();
-                } else {
-                    // self.skip = 0;
                 }
                 callback(messages);
             });

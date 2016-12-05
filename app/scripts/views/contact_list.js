@@ -329,7 +329,6 @@ define([
                         'sender_id': User.contact.id,
                         'online': true
                     });
-                    MessageView.addItem(message, true, true);
                 });
             }
 
@@ -429,6 +428,9 @@ define([
             if ($chat.is(':visible')) {
                 $('.j-capBox').removeClass('is-hidden')
                     .siblings().removeClass('is-active');
+
+                $('.j-chatWrap').addClass('is-hidden')
+                    .children().remove();
             }
             if ($chat.length > 0) {
                 $chat.remove();
