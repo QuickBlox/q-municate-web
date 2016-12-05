@@ -126,7 +126,7 @@ define([
 
             var spinnerBlock;
             if (isAjaxDownloading) {
-                spinnerBlock = '<div class="message message_service">' +
+                spinnerBlock = '<div class="message message_service msg_preloader">' +
                     '<div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
             } else if (groupchat) {
                 spinnerBlock = '<div class="popup-elem spinner_bounce is-creating">';
@@ -139,7 +139,9 @@ define([
             spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
             spinnerBlock += '</div>';
 
-            if (isAjaxDownloading) spinnerBlock += '</div>';
+            if (isAjaxDownloading) {
+                spinnerBlock += '</div>';
+            }
 
             if (chat) {
                 $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
