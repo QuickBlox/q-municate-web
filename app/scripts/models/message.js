@@ -15,7 +15,7 @@ define([
 
     function Message(app) {
         this.app = app;
-        // this.skip = undefined;
+        this.skip = undefined;
 
         self = this;
     }
