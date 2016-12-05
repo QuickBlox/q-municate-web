@@ -34,9 +34,9 @@ define([
 
             if (isAjaxDownloading) {
                 DialogView.createDataSpinner(null, null, true);
-                // skipCount = count;
+                skipCount = count;
             } else {
-                // limitCount = count;
+                limitCount = count;
             }
 
             QBApiCalls.listMessages({
