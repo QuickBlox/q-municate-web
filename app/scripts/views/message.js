@@ -422,33 +422,31 @@ define([
             var jid = form.parents('.l-chat').data('jid'),
                 id = form.parents('.l-chat').data('id'),
                 dialog_id = form.parents('.l-chat').data('dialog'),
-                val = form.find('.textarea').html().trim(),
+                $textarea = form.find('.textarea'),
+                $smiles = form.find('.textarea > img'),
+                val = $textarea.html().trim(),
                 time = Math.floor(Date.now() / 1000),
                 type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 $newMessages = $('.j-newMessages[data-dialog="' + dialog_id + '"]'),
                 dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
                 locationIsActive = ($('.j-send_location').hasClass('btn_active') && localStorage['QM.latitude'] && localStorage['QM.longitude']),
-                copyDialogItem,
                 lastMessage,
                 message,
                 msg;
 
+            if ($smiles.length > 0) {
+                $smiles.each(function() {
+                    $(this).after($(this).data('unicode')).remove();
+                });
+                val = $textarea.html();
+            }
+            if (form.find('.textarea > div').length > 0) {
+                val = $textarea.text();
+            }
+            val = val.replace(/<br>/gi, '\n').trim();
+
             if (val.length > 0) {
-                var $textarea = form.find('.textarea'),
-                    $smiles = form.find('.textarea > img');
-
-                if ($smiles.length > 0) {
-                    $smiles.each(function() {
-                        $(this).after($(this).data('unicode')).remove();
-                    });
-                    val = $textarea.html();
-                }
-                if (form.find('.textarea > div').length > 0) {
-                    val = $textarea.text();
-                }
-                val = val.replace(/<br>/gi, '\n').trim();
-
                 // send message
                 msg = {
                     'type': type,
@@ -485,6 +483,7 @@ define([
                     lastMessage = $chat.find('article[data-type="message"]').last();
                     message.stack = Message.isStack(true, message, lastMessage);
                     self.addItem(message, true, true);
+
                     if ($newMessages.length) {
                         $newMessages.remove();
                     }
@@ -740,9 +739,15 @@ define([
                 });
 
                 dialog = dialogs.get(dialog_id);
+<<<<<<< HEAD
 
                 Helpers.log('Dialog', dialog.toJSON());
 
+=======
+
+                Helpers.log('Dialog', dialog.toJSON());
+
+>>>>>>> ca0e3825388759512afc916dde881ada7fe3af2f
                 ContactList.add(occupants_ids, null, function() {
                     // don't create a duplicate dialog in contact list
                     dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]')[0];
@@ -932,10 +937,17 @@ define([
             params.roomName = dialog.get('room_name');
             params.roomPhoto = dialog.get('room_photo');
         }
+<<<<<<< HEAD
 
         title = Helpers.Notifications.getTitle(msg, params),
         options = Helpers.Notifications.getOptions(msg, params);
 
+=======
+
+        title = Helpers.Notifications.getTitle(msg, params),
+        options = Helpers.Notifications.getOptions(msg, params);
+
+>>>>>>> ca0e3825388759512afc916dde881ada7fe3af2f
         if (QBNotification.isSupported() && isHiddenChat) {
             if (!QBNotification.needsPermission()) {
                 Helpers.Notifications.show(title, options);
