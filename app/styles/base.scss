@@ -88,14 +88,14 @@ input[type="search"]::-webkit-input-placeholder {
 }
 input[type="search"]::-moz-placeholder {
     text-align: center;
-    background: image-url('icon-search.svg') no-repeat 37% center;
+    background: url('../images/icon-search.svg') no-repeat 37% center;
 }
 input[type="search"]:-ms-input-placeholder {
     text-align: center;
-    background: image-url('icon-search.svg') no-repeat 37% center;
+    background: url('../images/icon-search.svg') no-repeat 37% center;
 }
 input[type="search"]::-webkit-input-placeholder:before {
-    content: image-url('icon-search.svg');
+    content: url('../images/icon-search.svg');
     position: relative;
     margin-right: 7px;
 }

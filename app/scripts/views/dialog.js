@@ -8,6 +8,7 @@ define([
     'jquery',
     'config',
     'quickblox',
+    'Entities',
     'Helpers',
     'QMHtml',
     'minEmoji',
@@ -23,6 +24,7 @@ define([
     $,
     QMCONFIG,
     QB,
+    Entities,
     Helpers,
     QMHtml,
     minEmoji,
@@ -124,7 +126,8 @@ define([
 
             var spinnerBlock;
             if (isAjaxDownloading) {
-                spinnerBlock = '<div class="message message_service"><div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
+                spinnerBlock = '<div class="message message_service msg_preloader">' +
+                    '<div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
             } else if (groupchat) {
                 spinnerBlock = '<div class="popup-elem spinner_bounce is-creating">';
             } else {
@@ -136,7 +139,9 @@ define([
             spinnerBlock += '<div class="spinner_bounce-bounce3"></div>';
             spinnerBlock += '</div>';
 
-            if (isAjaxDownloading) spinnerBlock += '</div>';
+            if (isAjaxDownloading) {
+                spinnerBlock += '</div>';
+            }
 
             if (chat) {
                 $('.l-chat:visible').find('.l-chat-content').append(spinnerBlock);
@@ -159,7 +164,7 @@ define([
             Helpers.log('QB SDK: Roster has been got', roster);
             this.chatCallbacksInit();
             this.createDataSpinner();
-            scrollbar();
+            scrollbarAside();
             ContactList.saveRoster(roster);
 
             this.app.views.Settings.setUp(User.contact.id);
@@ -212,6 +217,8 @@ define([
                 rosterIds = Object.keys(roster),
                 notConfirmed,
                 private_id,
+                dialogId,
+                dialogs,
                 dialog,
                 occupants_ids,
                 chat;
@@ -228,23 +235,25 @@ define([
                     ContactList.add(occupants_ids, null, function() {
 
                         for (var i = 0, len = dialogs.length; i < len; i++) {
-                            dialog = Dialog.create(dialogs[i]);
-
-                            ContactList.dialogs[dialog.id] = dialog;
+                            dialogId = Dialog.create(dialogs[i]);
+                            dialogsCollection = Entities.Collections.dialogs;
+                            dialog = dialogsCollection.get(dialogId);
 
                             // don't create a duplicate dialog in contact list
-                            chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.id + '"]');
-                            if (chat[0] && dialog.unread_count) {
-                                chat.find('.unread').text(dialog.unread_count);
-                                self.getUnreadCounter(dialog.id);
+                            chat = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.get('id') + '"]');
+                            if (chat[0] && dialog.get('unread_count')) {
+                                chat.find('.unread').text(dialog.get('unread_count'));
+                                self.getUnreadCounter(dialog.get('id'));
                                 continue;
                             }
 
-                            if (dialog.type === 2) QB.chat.muc.join(dialog.room_jid);
+                            if (dialog.get('type') === 2) {
+                                QB.chat.muc.join(dialog.get('room_jid'));
+                            }
 
                             // update hidden dialogs
-                            private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
-                            hiddenDialogs[private_id] = dialog.id;
+                            private_id = dialog.get('type') === 3 ? dialog.get('occupants_ids')[0] : null;
+                            hiddenDialogs[private_id] = dialog.get('id');
                             ContactList.saveHiddenDialogs(hiddenDialogs);
 
                             // not show dialog if user has not confirmed this contact
@@ -323,10 +332,22 @@ define([
         },
 
         addDialogItem: function(dialog, isDownload, isNew) {
+            if (!dialog) {
+                Helpers.log('Dialog is undefined');
+                return false;
+            }
+
             var contacts = ContactList.contacts,
                 roster = ContactList.roster,
-                lastTime = Helpers.getTime(dialog.last_message_date_sent, true),
-                lastMessage = minEmoji(Helpers.Messages.parser(dialog.last_message)),
+                last_message_date_sent = dialog.get('last_message_date_sent'),
+                occupants_ids = dialog.get('occupants_ids'),
+                unread_count = dialog.get('unread_count'),
+                room_photo = dialog.get('room_photo'),
+                room_name = dialog.get('room_name'),
+                dialog_type = dialog.get('type'),
+                dialog_id =  dialog.get('id'),
+                lastTime = Helpers.getTime(last_message_date_sent, true),
+                lastMessage = minEmoji(Helpers.Messages.parser(dialog.get('last_message'))),
                 startOfCurrentDay,
                 private_id,
                 status,
@@ -335,38 +356,38 @@ define([
                 html,
                 self = this;
 
-            private_id = dialog.type === 3 ? dialog.occupants_ids[0] : null;
+            private_id = dialog_type === 3 ? occupants_ids[0] : null;
 
             try {
-                icon = private_id ? contacts[private_id].avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
-                name = private_id ? contacts[private_id].full_name : dialog.room_name;
+                icon = private_id ? contacts[private_id].avatar_url : (room_photo || QMCONFIG.defAvatar.group_url);
+                name = private_id ? contacts[private_id].full_name : room_name;
                 status = roster[private_id] ? roster[private_id] : null;
             } catch (error) {
                 console.error(error);
             }
 
-            html  = '<li class="list-item dialog-item presence-listener" data-dialog="' + dialog.id + '" data-id="' + private_id + '">';
+            html  = '<li class="list-item dialog-item j-dialogItem presence-listener" data-dialog="' + dialog_id + '" data-id="' + private_id + '">';
             html += '<div class="contact l-flexbox" href="#">';
             html += '<div class="l-flexbox_inline">';
             html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="' + private_id + '"></div>';
             html += '<div class="dialog_body"><span class="name name_dialog profileUserName" data-id="' + private_id + '">' + name + '</span>';
             html += '<span class="last_message_preview j-lastMessagePreview">' + lastMessage + '</span></div></div>';
 
-            if (dialog.type === 3) {
+            if (dialog_type === 3) {
                 html += getStatus(status);
             } else {
                 html += '<span class="status"></span>';
             }
 
             html += '<span class="last_time_preview j-lastTimePreview">' + lastTime + '</span>';
-            html += '<span class="unread">' + dialog.unread_count + '</span>';
+            html += '<span class="unread">' + unread_count + '</span>';
             html += '</a></li>';
 
             startOfCurrentDay = new Date();
             startOfCurrentDay.setHours(0, 0, 0, 0);
 
             // checking if this dialog is recent OR no
-            if (!dialog.last_message_date_sent || new Date(dialog.last_message_date_sent * 1000) > startOfCurrentDay || isNew) {
+            if (!last_message_date_sent || new Date(last_message_date_sent * 1000) > startOfCurrentDay || isNew) {
                 if (isDownload) {
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
                 } else if (!$('#searchList').is(':visible')) {
@@ -379,26 +400,32 @@ define([
             }
 
             $('#emptyList').addClass('is-hidden');
-            if (dialog.unread_count) {
-                self.getUnreadCounter(dialog.id);
+            if (unread_count) {
+                self.getUnreadCounter(dialog_id);
             }
         },
 
-        htmlBuild: function(objDom) {
+
+        htmlBuild: function(objDom, messages) {
+            Entities.Collections.dialogs.saveDraft();
+
             var MessageView = this.app.views.Message,
                 contacts = ContactList.contacts,
-                dialogs = ContactList.dialogs,
+                dialogs = Entities.Collections.dialogs,
                 roster = ContactList.roster,
                 parent = objDom.parent(),
                 dialog_id = parent.data('dialog'),
                 user_id = parent.data('id'),
-                dialog = dialogs[dialog_id],
+                dialog = dialogs.get(dialog_id),
                 user = contacts[user_id],
-                $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
                 unreadCount = Number(objDom.find('.unread').text()),
+                occupants_ids = dialog.get('occupants_ids'),
+                $chatWrap = $('.j-chatWrap'),
+                $chatView = $('.chatView'),
                 self = this,
-                chatHeaderTpl,
+                isCall,
+                chatTpl,
                 messageId,
                 location,
                 status,
@@ -409,32 +436,67 @@ define([
                 name,
                 jid;
 
-            jid = dialog.room_jid || user.user_jid;
-            icon = user_id ? user.avatar_url : (dialog.room_photo || QMCONFIG.defAvatar.group_url);
-            name = dialog.room_name || user.full_name;
+            Entities.active = dialog_id;
+            isCall = objDom.find('.icon_videocall').length || objDom.find('.icon_audiocall').length;
+            jid = dialog.get('room_jid') || user.user_jid;
+            icon = user_id ? user.avatar_url : (dialog.get('room_photo') || QMCONFIG.defAvatar.group_url);
+            name = dialog.get('room_name') || user.full_name;
             status = roster[user_id] ? roster[user_id] : null;
             location = (localStorage['QM.latitude'] && localStorage['QM.longitude']) ? 'btn_active' : '';
+            Message.skip = 0;
 
-            if ($chat.length === 0) {
-                chatHeaderTpl = _.template($('#chatHeaderTpl').html())({
-                    'occupantsIds': dialog.occupants_ids,
+            $('.l-workspace-wrap .l-workspace').addClass('is-hidden');
+
+            $chatView.each(function(index, element) {
+                var $element = $(element);
+
+                if ($element.hasClass('j-mediacall')) {
+                    $element.addClass('is-hidden');
+                } else {
+                    $element.remove();
+                }
+            });
+
+            if (isCall) {
+                $chatWrap.removeClass('is-hidden');
+                $chatView.removeClass('is-hidden');
+            } else {
+                buildChat();
+            }
+
+            textAreaScrollbar('#textarea_'+dialog_id);
+            self.createDataSpinner(true);
+            self.messageScrollbar($('#mCS_'+dialog_id));
+            self.showChatWithNewMessages(dialog_id, unreadCount, messages);
+
+            removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
+            $('.is-selected').removeClass('is-selected');
+            parent.addClass('is-selected').find('.unread').text('');
+            self.decUnreadCounter(dialog.get('id'));
+
+            // set dialog_id to localStorage wich must bee read in all tabs for same user
+            localStorage.removeItem(readBadge);
+            localStorage.setItem(readBadge, dialog_id);
+
+            function buildChat() {
+                new Entities.Models.Chat({
+                    'occupantsIds': occupants_ids,
                     'status': getStatus(status),
                     'dialog_id': dialog_id,
+                    'draft': dialog.get('draft'),
                     'location': location,
-                    'type': dialog.type,
+                    'type': dialog.get('type'),
                     'user_id': user_id,
                     'name': name,
                     'icon': icon,
                     'jid': jid
                 });
 
-                $('.l-workspace-wrap .l-workspace').addClass('is-hidden').parent().append(chatHeaderTpl);
-
                 // build occupants of room
-                if (dialog.type === 2) {
+                if (dialog.get('type') === 2) {
                     html = '<div class="chat-occupants">';
-                    for (var i = 0, len = dialog.occupants_ids.length, id; i < len; i++) {
-                        id = dialog.occupants_ids[i];
+                    for (var i = 0, len = occupants_ids.length, id; i < len; i++) {
+                        id = occupants_ids[i];
                         if (id != User.contact.id) {
                             html += '<a class="occupant l-flexbox_inline presence-listener" data-id="' + id + '" href="#">';
                             html += getStatus(roster[id]);
@@ -447,68 +509,27 @@ define([
 
                 $('.l-chat[data-dialog="' + dialog_id + '"] .j-chatOccupants').append($(html));
 
-                textAreaScrollbar();
-
-                if (dialog.type === 3 && (!status || status.subscription === 'none'))
+                if (dialog.get('type') === 3 && (!status || status.subscription === 'none')) {
                     $('.l-chat:visible').addClass('is-request');
-
-                self.createDataSpinner(true);
-                self.showChatWithNewMessages(dialog_id, unreadCount);
-
-            } else {
-
-                $chat.removeClass('is-hidden')
-                     .siblings(':not(.j-popover_const)').addClass('is-hidden');
-                $('.l-chat:visible .scrollbar_message').mCustomScrollbar('destroy');
-                self.messageScrollbar();
-
-                if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 3) {
-                    Message.update(dialog.messages.join(), dialog_id, user_id);
-                }
-                if (typeof dialog.messages !== "undefined" && dialog.messages.length > 0 && dialog.type == 2) {
-                    for (var j = 0, ln = dialog.messages.length; j < ln; j++) {
-                        messageId = dialog.messages[j];
-                        userId = $('#' + messageId).data('id');
-                        QB.chat.sendReadStatus({
-                            messageId: messageId,
-                            userId: userId,
-                            dialogId: dialog_id
-                        });
-                    }
-
-                    Message.update(null, dialog_id);
                 }
             }
-
-            removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
-            $('.is-selected').removeClass('is-selected');
-            parent.addClass('is-selected').find('.unread').text('');
-            self.decUnreadCounter(dialog.id);
-            setScrollToNewMessages();
-            // set dialog_id to localStorage wich must bee read in all tabs for same user
-            localStorage.removeItem(readBadge);
-            localStorage.setItem(readBadge, dialog_id);
         },
 
-        messageScrollbar: function() {
-            var $objDom = $('.l-chat:visible .scrollbar_message'),
-                height = $objDom[0].scrollHeight,
-                self = this;
+        messageScrollbar: function($chatScroll) {
+            var self = this;
 
-            $objDom.mCustomScrollbar({
+            $chatScroll.mCustomScrollbar({
                 theme: 'minimal-dark',
                 scrollInertia: 'auto',
                 mouseWheel: {
                     scrollAmount: 120,
                     deltaFactor: 'auto'
                 },
-                setTop: height + 'px',
                 callbacks: {
                     onTotalScrollBack: function() {
-                        ajaxDownloading($objDom, self);
+                        ajaxDownloading($chatScroll, self);
                     },
                     onTotalScroll: function() {
-
                         var isBottom = Helpers.isBeginOfChat(),
                             $currentDialog = $('.dialog-item.is-selected'),
                             dialogId = $currentDialog.data('dialog');
@@ -526,9 +547,8 @@ define([
                         }
                     }
                 },
-                live: true
+                live: 'on'
             });
-
         },
 
         createGroupChat: function(type, dialog_id) {
@@ -563,14 +583,14 @@ define([
                     new_ids: new_ids
                 }, function(dialog) {
                     self.removeDataSpinner();
-                    var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.id + '"]');
+                    var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.get('id') + '"]');
                     if (dialogItem.length > 0) {
                         copyDialogItem = dialogItem.clone();
                         dialogItem.remove();
-                        $('#recentList ul').prepend(copyDialogItem);
+                        $('#recentList ul.j-list').prepend(copyDialogItem);
                         if (!$('#searchList').is(':visible')) {
                             $('#recentList').removeClass('is-hidden');
-                            Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
+                            Helpers.Dialogs.isSectionEmpty($('#recentList ul.j-list'));
                         }
                     }
                     $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
@@ -583,15 +603,16 @@ define([
                 }, function(dialog) {
                     self.removeDataSpinner();
                     $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
-                    $('.dialog-item[data-dialog="' + dialog.id + '"]').find('.contact').click();
+                    $('[data-dialog="' + dialog_id + '"] .contact').click();
+                    $('.dialog-item[data-dialog="' + dialog.get('id') + '"]').find('.contact').click();
                 });
             }
         },
 
         leaveGroupChat: function(dialogParam, sameUser) {
-            var dialogs = ContactList.dialogs,
+            var dialogs = Entities.Collections.dialogs,
                 dialog_id = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
-                dialog = dialogs[dialog_id],
+                dialog = dialogs.get(dialog_id),
                 li = $('.dialog-item[data-dialog="' + dialog_id + '"]'),
                 chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 list = li.parents('ul');
@@ -610,17 +631,18 @@ define([
 
                 // delete chat section
                 if (chat.is(':visible')) {
-                    $('#capBox').removeClass('is-hidden');
+                    $('.j-capBox').removeClass('is-hidden')
+                        .siblings().removeClass('is-active');
+
+                    $('.j-chatWrap').addClass('is-hidden')
+                        .children().remove();
                 }
-                if (chat.length > 0) {
-                    chat.remove();
-                }
-                delete dialogs[dialog_id];
+
             }
 
         },
 
-        showChatWithNewMessages: function(dialogId, unreadCount) {
+        showChatWithNewMessages: function(dialogId, unreadCount, messages) {
             var MessageView = this.app.views.Message,
                 self = this,
                 lastReaded,
@@ -635,6 +657,7 @@ define([
 
             if (lessThenMinStack) {
                 lastReaded = unreadCount;
+                count = MIN_STACK;
             } else if (moreThenMinStack && lessThenMaxStack) {
                 lastReaded = unreadCount;
                 count = unreadCount + 1;
@@ -643,18 +666,30 @@ define([
                 count = MAX_STACK;
             }
 
-            Message.download(dialogId, function(messages) {
-                for (var i = 0, len = messages.length; i < len; i++) {
-                    message = Message.create(messages[i]);
-                    message.stack = Message.isStack(false, messages[i], messages[i + 1]);
 
-                    if (message.read_ids.length < 2 && message.sender_id != User.contact.id) {
-                        QB.chat.sendReadStatus({
-                            messageId: message.id,
-                            userId: message.sender_id,
-                            dialogId: dialogId
-                        });
-                    }
+            if (messages) {
+                addItems(messages);
+            } else {
+                messages = [];
+
+                Message.download(dialogId, function(response) {
+                    _.each(response, function(item) {
+                        messages.push(Message.create(item));
+                    });
+
+                    addItems(messages);
+                }, count);
+            }
+
+            function addItems(items) {
+                var $history;
+
+                $history = $('section.l-chat-content').children('div:not(.spinner_bounce)');
+                $history.css('opacity', '0');
+
+                for (var i = 0, len = items.length; i < len; i++) {
+                    message = items[i];
+                    message.stack = Message.isStack(false, items[i], items[i + 1]);
 
                     if (unreadCount) {
                         switch (i) {
@@ -670,65 +705,71 @@ define([
                     }
 
                     MessageView.addItem(message, null, null, message.recipient_id);
-
-                    self.messageScrollbar();
-
-                    if (i === (len - 1)) {
-                        setScrollToNewMessages();
-                        self.removeDataSpinner();
-                    }
                 }
-            }, count);
 
-            Message.update(null, dialogId);
+                setScrollToNewMessages($('#mCS_'+dialogId));
+
+                setTimeout(function() {
+                    self.removeDataSpinner();
+                    $history.css('opacity', '1');
+                }, 150);
+            }
+
         }
 
     };
 
     /* Private
     ---------------------------------------------------------------------- */
-    function scrollbar() {
-        $('.l-sidebar .scrollbar').mCustomScrollbar({
-            theme: 'minimal-dark',
-            scrollInertia: 150,
-            mouseWheel: {
-                scrollAmount: 100,
-                deltaFactor: 0
+    function scrollbarAside() {
+        $('.j-scrollbar_aside').niceScroll({
+            cursoropacitymax: 0.3,
+            railpadding: {
+                top: 10,
+                bottom: 10,
+                right: 2,
+                left: 0
             },
-            live: true
+            zindex: 1,
+            cursorwidth: '6px',
+            enablekeyboard: false
+        });
+    }
+
+    function textAreaScrollbar(selector) {
+        $(selector).niceScroll({
+            cursoropacitymax: 0.3,
+            railpadding: {
+                top: 3,
+                bottom: 3,
+                right: -13
+            },
+            zindex: 1,
+            cursorwidth: '6px',
+            enablekeyboard: false
         });
     }
 
     // ajax downloading of data through scroll
-    function ajaxDownloading($chat, self) {
+    function ajaxDownloading($chatScroll, self) {
         var MessageView = self.app.views.Message,
-            dialog_id = $chat.parents('.l-chat').data('dialog'),
-            count = $chat.find('.message').length,
+            $chat = $('.j-chatItem:visible'),
+            dialog_id = $chat.data('dialog'),
+            messages = $chat.find('.message'),
+            firstMsgId = messages.first().attr('id'),
+            count = messages.length,
             message;
 
-        var listHeightBefore = $chat.find('.mCSB_container').height(),
-            draggerHeightBefore = $chat.find('.mCSB_dragger').height(),
-            viewPort = $chat.find('.mCustomScrollBox').height();
 
         Message.download(dialog_id, function(messages) {
             for (var i = 0, len = messages.length; i < len; i++) {
-                message = Message.create(messages[i]);
+                message = Message.create(messages[i], 'ajax');
                 message.stack = Message.isStack(false, messages[i], messages[i + 1]);
 
                 MessageView.addItem(message, true);
 
                 if ((i + 1) === len) {
-                    var listHeightAfter = $chat.find('.mCSB_container').height(),
-                        draggerHeightAfter = $chat.find('.mCSB_dragger').height(),
-                        thisStopList = listHeightBefore - listHeightAfter,
-                        thisStopDragger = (draggerHeightAfter / (draggerHeightBefore + draggerHeightAfter)) * viewPort;
-
-                    $('.l-chat-content .mCSB_container').css({
-                        top: thisStopList + 'px'
-                    });
-                    $('.l-chat-content .mCSB_dragger').css({
-                        top: thisStopDragger + 'px'
-                    });
+                    $chatScroll.mCustomScrollbar('scrollTo', '#'+firstMsgId);
                 }
             }
         }, count, 'ajax');
@@ -752,17 +793,6 @@ define([
         return str;
     }
 
-    function textAreaScrollbar() {
-        $('.l-chat:visible .textarea').niceScroll({
-            cursoropacitymax: 0.5,
-            railpadding: {
-                right: -13
-            },
-            zindex: 1,
-            enablekeyboard: false
-        });
-    }
-
     function setLabelForNewMessages(dialogId) {
         var $chatContainer = $('.l-chat[data-dialog="' + dialogId + '"]').find('.l-chat-content .mCSB_container'),
             $newMessages = $('<div class="new_messages j-newMessages" data-dialog="' + dialogId + '">' +
@@ -771,19 +801,22 @@ define([
         $chatContainer.prepend($newMessages);
     }
 
-    function setScrollToNewMessages() {
-        var $chat = $('.l-chat:visible .scrollbar_message'),
+    function setScrollToNewMessages($chatScroll) {
+        var $chat = $('.j-chatItem:visible'),
             isBottom = Helpers.isBeginOfChat(),
             isScrollDragger = $chat.find('.mCSB_draggerContainer').length;
 
         if ($('.j-newMessages').length) {
-            $chat.mCustomScrollbar('scrollTo', '.j-newMessages');
+            scrollToThrArea('.j-newMessages');
+            if (!isBottom && isScrollDragger) {
+                $('.j-toBottom').show();
+            }
         } else {
-            $chat.mCustomScrollbar('scrollTo', 'bottom');
+            scrollToThrArea('bottom');
         }
 
-        if (!isBottom && isScrollDragger) {
-            $('.j-toBottom').show();
+        function scrollToThrArea(area) {
+            $chatScroll.mCustomScrollbar('scrollTo', area);
         }
     }
 

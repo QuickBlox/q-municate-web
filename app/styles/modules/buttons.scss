@@ -83,7 +83,7 @@ button:hover {
     display: inline-block;
     width: 18px;
     height: 18px;
-    background: image-url('fb-logo.svg') no-repeat center;
+    background: url('../images/fb-logo.svg') no-repeat center;
     margin-right: 7px;
     vertical-align: middle;
 }
@@ -94,7 +94,7 @@ button:hover {
 .i-mini_logo {
     width: 22px;
     height: 22px;
-    background: image-url('qmweb-launch-qblogo.svg') no-repeat center;
+    background: url('../images/qmweb-launch-qblogo.svg') no-repeat center;
 }
 .by_QB {
     margin-left: 6px;
@@ -114,18 +114,18 @@ button:hover {
 .i-appstore {
     width: 24px;
     height: 24px;
-    background: image-url('ic-appstore.svg') no-repeat center;
+    background: url('../images/ic-appstore.svg') no-repeat center;
 }
 .i-android {
     width: 24px;
     height: 24px;
-    background: image-url('ic-android.svg') no-repeat center;
+    background: url('../images/ic-android.svg') no-repeat center;
 }
 .i-back_login {
     display: inline-block;
     width: 24px;
     height: 24px;
-    background: image-url('ic-arrow-back.svg') no-repeat center;
+    background: url('../images/ic-arrow-back.svg') no-repeat center;
     margin-right: 7px;
 }
 button.btn.btn_add,
@@ -201,6 +201,7 @@ button.btn.btn_search:hover {
     top: -2px;
 }
 .footer_btn {
+    display: none;
     cursor: pointer;
 }
 .btn_sendlocation {
@@ -211,11 +212,11 @@ button.btn.btn_search:hover {
     display: block;
     width: 34px;
     height: 34px;
-    background: image-url('ic_location_off.svg') 50% no-repeat;
+    background: url('../images/ic_location_off.svg') 50% no-repeat;
     background-size: contain;
 }
 .btn_sendlocation.btn_active {
-    background: image-url('ic_location_on.svg');
+    background: url('../images/ic_location_on.svg');
 }
 .btn_sendlocation[data-balloon-length="small"]:after {
     width: 110px;
@@ -231,23 +232,23 @@ button.btn.btn_search:hover {
 .btn_input_smile {
     position: relative;
     width: 20px;
-    background: image-url('ic_smile.svg') 50% no-repeat;
+    background: url('../images/ic_smile.svg') 50% no-repeat;
 }
 .btn_input_smile.is-active {
-    background: image-url('ic_smile_active.svg') 50% no-repeat;
+    background: url('../images/ic_smile_active.svg') 50% no-repeat;
 }
 .btn_input_location {
     position: relative;
     width: 14px;
-    background: image-url('ic_send_location.svg') 50% no-repeat;
+    background: url('../images/ic_send_location.svg') 50% no-repeat;
 }
 .btn_input_location.is-active {
-    background: image-url('ic_send_location_active.svg') 50% no-repeat;
+    background: url('../images/ic_send_location_active.svg') 50% no-repeat;
 }
 .btn_input_attach {
     position: relative;
     width: 20px;
-    background: image-url('ic_attach.svg') 50% no-repeat;
+    background: url('../images/ic_attach.svg') 50% no-repeat;
 }
 .btn_input_send {
     vertical-align: inherit;
@@ -268,7 +269,7 @@ button.btn.btn_search:hover {
     -o-transform: translate(-50%);
     -ms-transform: translate(-50%);
     opacity: 0.3;
-    background-image: image-url('scrolltobottom.svg');
+    background-image: url('../images/scrolltobottom.svg');
     background-repeat: no-repeat;
     background-size: contain;
     background-position: 50%;
@@ -308,7 +309,7 @@ button.btn.btn_search:hover {
     display: inline-block;
     margin: 0 2vh 0.6vh 0;
     vertical-align: middle;
-    background: image-url('icon-fb.svg') 50% no-repeat;
+    background: url('../images/icon-fb.svg') 50% no-repeat;
 }
 .btn-icon_fb_header {
     width: 19px;

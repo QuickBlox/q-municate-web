@@ -26,25 +26,25 @@ define([
         },
 
         getTitle: function(message, params) {
-            var dialogs = params.dialogs,
-                contacts = params.contacts,
-                dialog = dialogs[message.dialog_id],
+            var contacts = params.contacts,
+                roomName = params.roomName,
+                roomPhoto = params.roomPhoto,
                 contact = contacts[message.sender_id],
                 title;
 
-            title = (dialog && dialog.room_name) || contact.full_name;
+            title = roomName || contact.full_name;
 
             return title;
         },
 
         getOptions: function(message, params) {
             var myUser = params.user,
-                dialogs = params.dialogs,
                 contacts = params.contacts,
-                dialog = dialogs[message.dialog_id],
+                roomName = params.roomName,
+                roomPhoto = params.roomPhoto,
                 contact = contacts[message.sender_id],
                 chatType = message.type,
-                photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (dialog.room_photo || QMCONFIG.defAvatar.group_url_png),
+                photo = (chatType === 'chat') ? (contact.avatar_url || QMCONFIG.defAvatar.url_png) : (roomPhoto || QMCONFIG.defAvatar.group_url_png),
                 type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
                 selectDialog = $('.dialog-item[data-dialog="' + message.dialog_id + '"] .contact'),
                 occupants_ids,
@@ -83,12 +83,12 @@ define([
                     text = contact.full_name + ' has added ' + occupantsNames + ' to the group chat';
                     break;
 
-                    // groupchat updated
+                // groupchat updated
                 case '2':
-                    // for future cases
+                    text = 'Notification message';
                     break;
 
-                    // contacts
+                // contacts
                 case '4':
                     text = contact.full_name + ' has sent a request to you';
                     break;
@@ -105,7 +105,7 @@ define([
                     text = 'You have been deleted from the contact list by ' + contact.full_name;
                     break;
 
-                    // calls
+                // calls
                 case '8':
                     if (message.caller === myUser.contact.id) {
                         text = 'Call to ' + contacts[message.callee].full_name + ', duration ' + Helpers.getDuration(message.callDuration);
@@ -216,10 +216,10 @@ define([
             if (dialogItem.length > 0) {
                 copyDialogItem = dialogItem.clone();
                 dialogItem.remove();
-                $('#recentList ul').prepend(copyDialogItem);
+                $('.j-recentList').prepend(copyDialogItem);
                 if (!$('#searchList').is(':visible')) {
                     $('#recentList').removeClass('is-hidden');
-                    this.isSectionEmpty($('#recentList ul'));
+                    this.isSectionEmpty($('#recentList ul.j-list'));
                 }
             }
         },
@@ -229,8 +229,8 @@ define([
                 list.parent().addClass('is-hidden');
             }
 
-            if ($('#historyList ul').contents().length === 0) {
-                $('#historyList ul').parent().addClass('is-hidden');
+            if ($('#historyList ul.j-list').contents().length === 0) {
+                $('#historyList ul.j-list').parent().addClass('is-hidden');
             }
 
             if ($('#requestsList').is('.is-hidden') &&
@@ -239,6 +239,14 @@ define([
 
 
                 $('#emptyList').removeClass('is-hidden');
+            }
+        },
+
+        setScrollToNewMessages: function() {
+            var $chat = $('.j-chatItem .j-scrollbar_message');
+
+            if ($('.j-newMessages').length) {
+                $chat.mCustomScrollbar('scrollTo', '.j-newMessages');
             }
         }
     };
@@ -266,24 +274,27 @@ define([
     };
 
     Helpers.isBeginOfChat = function() {
-        var $viewPort = $('.l-chat:visible .scrollbar_message .mCustomScrollBox'),
-            $msgList = $viewPort.find('.mCSB_container');
+        if (!document.querySelector('.j-chatItem')) {
+            return null;
+        }
 
-        if ($msgList.offset()) {
-            var viewPortPosition = $viewPort.offset().top,
-                viewPortHeight = $viewPort.outerHeight(),
-                msgListPosition = $msgList.offset().top,
-                msgListHeight = $msgList.outerHeight(),
-                viewPortBottom = viewPortPosition + viewPortHeight,
-                msgListBottom = msgListPosition + msgListHeight,
-                bottom = false;
+        var viewPort = document.querySelector('.j-scrollbar_message'),
+            msgList = document.querySelector('.j-scrollbar_message .mCSB_container'),
+            viewPortBottom = viewPort.clientHeight,
+            msgListPosition = msgList.offsetTop,
+            msgListHeight = msgList.clientHeight,
+            msgListBottom = msgListPosition + msgListHeight,
+            bottom;
 
-            if ((viewPortBottom + viewPortHeight / 2) >= msgListBottom) {
+        if (msgListPosition < 0) {
+            bottom = false;
+
+            if ((viewPortBottom + 350) > msgListBottom) {
                 bottom = true;
             }
-
-            return bottom;
         }
+
+        return bottom;
     };
 
     Helpers.getDuration = function(seconds, duration) {
@@ -328,6 +339,18 @@ define([
         $popup.find('.j-avatarPic').attr('src', url);
         $popup.find('.j-avatarName').text(name);
         $popup.add('.popups').addClass('is-overlay');
+    };
+
+    Helpers.getOpenGraphInfo = function(url, callback) {
+        $.ajax({
+            'url': 'https://ogs.quickblox.com/?url=' + url,
+            success: function(data, status, jqHXR) {
+                callback(data);
+            },
+            error: function(jqHXR, status, error) {
+                console.error(error);
+            }
+        });
     };
 
     return Helpers;

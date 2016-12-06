@@ -91,8 +91,9 @@ define([
                 $dialogItem.find('.unread').text().length > 0 ?
                 $dialogItem.find('.unread').text() : 0),
             copyDialogItem,
+            extension,
             message,
-            extension;
+            msg;
 
         if (!isErrorMessage) {
             extension = {
@@ -120,13 +121,7 @@ define([
             extension.sessionID = sessionID;
         }
 
-        QB.chat.send(jid, {
-            type: 'chat',
-            body: 'Call notification',
-            extension: extension
-        });
-
-        message = Message.create({
+        msg = {
             chat_dialog_id: dialogId,
             date_sent: time,
             sender_id: User.contact.id,
@@ -135,8 +130,17 @@ define([
             caller: extension.caller,
             callee: extension.callee,
             callDuration: extension.callDuration || null,
-            sessionID: extension.sessionID || null
+            sessionID: extension.sessionID || null,
+            'online': true
+        };
+
+        msg.id = QB.chat.send(jid, {
+            type: 'chat',
+            body: 'Call notification',
+            extension: extension
         });
+
+        message = Message.create(msg);
         Helpers.log(message);
         MessageView.addItem(message, true, true);
 
@@ -147,15 +151,7 @@ define([
             DialogView.getUnreadCounter(dialogId);
         }
 
-        if ($dialogItem.length > 0) {
-            copyDialogItem = $dialogItem.clone();
-            $dialogItem.remove();
-            $('#recentList ul').prepend(copyDialogItem);
-            if (!$('#searchList').is(':visible')) {
-                $('#recentList').removeClass('is-hidden');
-                Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
-            }
-        }
+        Helpers.Dialogs.moveDialogToTop(dialogId);
     };
 
     /* Private

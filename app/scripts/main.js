@@ -1,3 +1,4 @@
+
 /*global require*/
 'use strict';
 
@@ -43,15 +44,15 @@ requirejs.config({
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
         handlebars: '../bower_components/handlebars/handlebars',
-        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.2.3/quickblox.min',
+        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.4.0/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
         mCustomScrollbar: '../bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar',
-        nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
         mousewheel: '../bower_components/jquery-mousewheel/jquery.mousewheel',
         timeago: '../bower_components/jquery-timeago/jquery.timeago',
         minEmoji: '../vendor/emoji/js/minEmoji',
+        nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
 
         // Q-municate application
@@ -85,7 +86,9 @@ requirejs.config({
         // helpers
         Helpers: 'helpers',
         // templates
-        QMHtml: 'qmhtml'
+        QMHtml: 'qmhtml',
+        // entities
+        Entities: 'entities'
     }
 });
 
@@ -115,7 +118,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.8.0');
+        $('.j-appVersion').html('v. 1.9.0');
 
         // facebook sdk
         FB.init({

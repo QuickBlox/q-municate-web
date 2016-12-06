@@ -95,7 +95,7 @@
     width: 80px;
     height: 80px;
     margin: 0 auto;
-    background: image-url('qm-logo.svg') 50% no-repeat;
+    background: url('../images/qm-logo.svg') 50% no-repeat;
 }
 .l-welcome_text_logo {
     width: 283px;
@@ -123,7 +123,7 @@
     position: absolute;
     top: 50px;
     left: 56px;
-    background: image-url('qm-logo.svg') 50% no-repeat;
+    background: url('../images/qm-logo.svg') 50% no-repeat;
     background-size: cover;
 }
 .l-welcome_text_logo_login {
@@ -214,12 +214,12 @@
     padding-bottom: 20px;
 }
 .l-list-header {
-    padding: 0 20px;
+    padding: 0 15px;
     background: #f2f2f2;
 }
 .l-list-header-title {
-    font-size: 15px;
-    line-height: 30px;
+    font-size: 14px;
+    line-height: 25px;
     color: #999;
     text-transform: uppercase;
 }
@@ -262,6 +262,9 @@
 }
 /* Chats
 --------------------------------------------------*/
+.chatView, .l-chat {
+    height: 100%
+}
 .l-chat_group {
     position: relative;
 }

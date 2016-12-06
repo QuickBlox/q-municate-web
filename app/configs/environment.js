@@ -14,13 +14,11 @@ define(function() {
             scope: 'email,user_friends'
         },
 
-        debug: true,
+        debug: Number('@@debugQM'),
 
         notification: {
             timeout: 7
         },
-
-        isMac: !!navigator.platform.match(/Mac/) ? 1 : 0,
 
         defAvatar: {
             url: 'images/ava-single.svg',
@@ -65,7 +63,7 @@ define(function() {
                 active: 2
             },
             debug: {
-                mode: 1,
+                mode: Number('@@debugQB'),
                 file: null
             },
             webrtc: {

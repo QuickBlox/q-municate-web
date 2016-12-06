@@ -8,11 +8,13 @@ define([
     'jquery',
     'config',
     'quickblox',
+    'Entities',
     'Helpers',
     'LocationView'
 ], function($,
     QMCONFIG,
     QB,
+    Entities,
     Helpers,
     Location
 ) {
@@ -52,6 +54,9 @@ define([
             }
 
             Helpers.log('QB init', this);
+
+            // init dialog's collection with starting app
+            Entities.Collections.dialogs = new Entities.Collections.Dialogs();
         },
 
         checkSession: function(callback) {
@@ -146,7 +151,6 @@ define([
                 QB.login(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
-
                     } else {
                         Helpers.log('QB SDK: User has logged', res);
 
@@ -343,11 +347,11 @@ define([
 
         reconnectChat: function() {
             self.connectChat(User.contact.user_jid, function(roster) {
-                var dialogs = self.app.models.ContactList.dialogs;
+                var dialogs = Entities.Collections.dialogs;
 
                 for (var key in dialogs) {
-                    if (dialogs[key].type === 2) {
-                        QB.chat.muc.join(dialogs[key].room_jid);
+                    if (dialogs.get(key).get('type') === 2) {
+                        QB.chat.muc.join(dialogs.get(key).get('room_jid'));
                     }
                 }
 
@@ -426,25 +430,6 @@ define([
                         });
 
                         callback(res.items);
-                    }
-                });
-            });
-        },
-
-        updateMessage: function(id, params, callback) {
-            this.checkSession(function(res) {
-                QB.chat.message.update(id, params, function(response) {
-                    if (response && response.code === 404) {
-                        Helpers.log(response.message);
-
-                    } else {
-                        Helpers.log('QB SDK: Message is updated');
-
-                        Session.update({
-                            date: new Date()
-                        });
-
-                        callback();
                     }
                 });
             });

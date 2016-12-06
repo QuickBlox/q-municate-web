@@ -109,6 +109,7 @@ define([
 
         createProgressBar: function(id, fileSizeCrop, fileSize, file) {
             var progressBar = new ProgressBar('progress_' + id),
+                $chatItem = $('.j-chatItem'),
                 percent = 5,
                 isUpload = false,
                 part,
@@ -135,12 +136,11 @@ define([
             Attach.upload(file, function(blob) {
                 Helpers.log('Blob:', blob);
 
-                var chat;
+                self.sendMessage($chatItem, blob, fileSize);
                 isUpload = true;
+
                 if ($('#progress_' + id).length > 0) {
-                    chat = $('#progress_' + id).parents('.l-chat');
                     setPercent();
-                    self.sendMessage(chat, blob, fileSize);
                 }
             });
 
@@ -174,8 +174,8 @@ define([
                 jid = chat.data('jid'),
                 id = chat.data('id'),
                 dialog_id = chat.data('dialog'),
-                time = Math.floor(Date.now() / 1000),
                 type = chat.is('.is-group') ? 'groupchat' : 'chat',
+                time = Math.floor(Date.now() / 1000),
                 dialogItem = type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
                 locationIsActive = $('.j-send_location').hasClass('btn_active'),
                 copyDialogItem,
@@ -212,7 +212,7 @@ define([
                 msg.extension.longitude = localStorage['QM.longitude'];
             }
 
-            QB.chat.send(jid, msg);
+            msg.id = QB.chat.send(jid, msg);
 
             message = Message.create({
                 'body': msg.body,
@@ -222,7 +222,8 @@ define([
                 'sender_id': User.contact.id,
                 'latitude': localStorage['QM.latitude'] || null,
                 'longitude': localStorage['QM.longitude'] || null,
-                '_id': msg.id
+                '_id': msg.id,
+                'online': true
             });
 
             Helpers.log(message);
@@ -249,7 +250,7 @@ define([
     /* Private
     ---------------------------------------------------------------------- */
     function fixScroll() {
-        $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+        $('.l-chat:visible .j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
     }
 
     return AttachView;

@@ -42,46 +42,12 @@
 .popup_avatar {
     padding: 20px 20px 25px;
 }
-.popover_map {
-    z-index: 2;
-    display: none;
-    position: absolute;
-    bottom: 36px;
-    right: -17px;
-    padding: 5px;
-    width: 212px;
-    height: 162px;
-    background: #fff;
-    border: 1px solid #f2f2f2;
-    box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
-}
-.popover_map .coner {
-    position: absolute;
-    bottom: -14px;
-    right: 15px;
-    margin-left: -13px;
-    overflow: hidden;
-    width: 26px;
-    height: 14px;
-}
-.popover_map i.icon_coner {
-    background: #fff;
-    width: 18px;
-    height: 18px;
-    display: inline-block;
-    border: 1px solid #f2f2f2;
-    border-width: 0 1px 1px 0;
-    border-radius: 2px;
-    position: relative;
-    top: -9px;
-    left: -4px;
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
-    box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
-}
 .open_map {
-    width: 450px;
-    height: 300px;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 450px;
+    max-height: 300px;
 }
 .send_map,
 .send_map:hover {
@@ -220,17 +186,13 @@
     width: 380px;
     height: 200px;
 }
-.static_map {
-    max-width: 200px;
-    max-height: 150px;
-}
 /* attach message */
 .attach-file {
     display: inline-block;
     padding-left: 18px;
     line-height: 25px;
     color: #0d70b3;
-    background: image-url('icon-attach.svg') no-repeat 0 0;
+    background: url('../images/icon-attach.svg') no-repeat 0 0;
     background-size: 10px auto;
     word-break: break-all;
 }

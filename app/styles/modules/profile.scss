@@ -16,7 +16,7 @@
     float: left;
     margin-right: 15px;
     border-radius: 50%;
-    background-image: image-url('ava-single.svg');
+    background-image: url('../images/ava-single.svg');
     background-size: cover;
     background-position: 50%;
 }
@@ -120,7 +120,7 @@ input.userProfile-filename.without_M[type=text]:focus:not([readonly]) {
     display: none;
     width: 30px;
     height: 30px;
-    background: image-url('icon-pencil.svg') no-repeat center, #f8f8f8;
+    background: url('../images/icon-pencil.svg') no-repeat center, #f8f8f8;
     border: 1px solid #f2f2f2;
     border-radius: 4px;
     vertical-align: top;
@@ -196,7 +196,7 @@ input.userProfile-phone.without_M[type=text]:focus:not([readonly]) {
     padding: 0 0 0 20px;
 }
 .userProfile-edit:hover {
-    background: image-url('icon-pencil.svg') no-repeat 430px center, #f8f8f8;
+    background: url('../images/icon-pencil.svg') no-repeat 430px center, #f8f8f8;
 }
 .btn_userProfile_connect {
     position: absolute;

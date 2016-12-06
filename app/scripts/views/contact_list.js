@@ -8,6 +8,7 @@ define([
     'jquery',
     'config',
     'quickblox',
+    'Entities',
     'Helpers',
     'QMHtml',
     'underscore',
@@ -17,6 +18,7 @@ define([
     $,
     QMCONFIG,
     QB,
+    Entities,
     Helpers,
     QMHtml,
     _
@@ -68,7 +70,7 @@ define([
         globalSearch: function(form) {
             var self = this,
                 popup = form.parent(),
-                list = popup.find('ul:first'),
+                list = popup.find('ul:first.list_contacts'),
                 val = form.find('input[type="search"]').val().trim(),
                 len = val.length;
 
@@ -81,17 +83,9 @@ define([
                     popup.find('.popup-elem .not_found').removeClass('is-hidden');
                     popup.find('.popup-elem .short_length').addClass('is-hidden');
                 }
-                //
-                // form.find('input').prop('disabled', false).val(val);
-                // popup.find('.popup-elem').addClass('is-hidden');
-                // popup.find('.mCSB_container').empty();
 
                 scrollbar(list, self);
                 self.createDataSpinner(list);
-                //
-                // $('.popup:visible .spinner_bounce')
-                //     .removeClass('is-hidden')
-                //     .addClass('is-empty');
 
                 sessionStorage.setItem('QM.search.value', val);
                 sessionStorage.setItem('QM.search.page', 1);
@@ -115,7 +109,11 @@ define([
                 popup = $('#popupContacts'),
                 contacts = ContactList.contacts,
                 roster = ContactList.roster,
-                html, sortedContacts, friends, user_id;
+                sortedContacts,
+                existing_ids,
+                user_id,
+                friends,
+                html;
 
             openPopup(popup, type, dialog_id);
             popup.addClass('not-selected').removeClass('is-addition');
@@ -164,7 +162,8 @@ define([
             }
 
             if (type || isPrivate) {
-                popup.addClass('is-addition').data('existing_ids', ids.length > 0 ? ids : null);
+                existing_ids = ids.length > 0 ? ids : null;
+                popup.addClass('is-addition').data('existing_ids', existing_ids);
             } else {
                 popup.data('existing_ids', null);
             }
@@ -234,7 +233,8 @@ define([
                                 'date_sent': time,
                                 'chat_dialog_id': dialogItem.getAttribute('data-dialog'),
                                 'sender_id': User.contact.id,
-                                'notification_type': '4'
+                                'notification_type': '4',
+                                'online': true
                             });
 
                             MessageView.addItem(message, true, true);
@@ -272,8 +272,14 @@ define([
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
-                li, dialog, message, dialogItem, copyDialogItem,
-                time = Math.floor(Date.now() / 1000);
+                time = Math.floor(Date.now() / 1000),
+                dialogs = Entities.Collections.dialogs,
+                copyDialogItem,
+                dialogItem,
+                message,
+                dialogId,
+                dialog,
+                li;
 
             $objDom.remove();
 
@@ -295,6 +301,16 @@ define([
             delete notConfirmed[id];
             ContactList.saveNotConfirmed(notConfirmed);
 
+            dialogId = Dialog.create({
+                '_id': hiddenDialogs[id],
+                'type': 3,
+                'occupants_ids': [id],
+                'unread_count': ''
+            });
+
+            dialog = dialogs.get(dialogId);
+            Helpers.log('Dialog', dialog.toJSON());
+
             if (isClick) {
                 QB.chat.roster.confirm(jid, function() {
                     // send notification about confirm
@@ -303,16 +319,16 @@ define([
                         date_sent: time,
                         dialog_id: hiddenDialogs[id],
                         save_to_history: 1,
-                        notification_type: '5',
+                        notification_type: '5'
                     });
 
                     message = Message.create({
                         'chat_dialog_id': hiddenDialogs[id],
                         'notification_type': '5',
                         'date_sent': time,
-                        'sender_id': User.contact.id
+                        'sender_id': User.contact.id,
+                        'online': true
                     });
-                    MessageView.addItem(message, true, true);
                 });
             }
 
@@ -322,18 +338,7 @@ define([
             li.remove();
             Helpers.Dialogs.isSectionEmpty(list);
 
-            dialog = Dialog.create({
-                '_id': hiddenDialogs[id],
-                'type': 3,
-                'occupants_ids': [id],
-                'unread_count': ''
-            });
-
-            ContactList.dialogs[dialog.id] = dialog;
-            Helpers.log('Dialog', dialog);
-
             DialogView.addDialogItem(dialog);
-            Message.update(null, dialog.id);
 
             dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]');
             copyDialogItem = dialogItem.clone();
@@ -390,11 +395,11 @@ define([
 
         sendDelete: function(id, isClick) {
             var contacts = ContactList.contacts,
-                dialogs = ContactList.dialogs,
+                dialogs = Entities.Collections.dialogs,
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 li = $('.dialog-item[data-id="' + id + '"]'),
                 $chat = $('.l-chat[data-id="' + id + '"]'),
-                list = li.parents('ul.j-friendsList'),
+                list = li.parents('ul.j-list'),
                 dialog_id = li.data('dialog'),
                 roster = ContactList.roster,
                 time = Math.floor(Date.now() / 1000);
@@ -421,12 +426,20 @@ define([
 
             // delete chat section
             if ($chat.is(':visible')) {
-                $('#capBox').removeClass('is-hidden');
+                $('.j-capBox').removeClass('is-hidden')
+                    .siblings().removeClass('is-active');
+
+                $('.j-chatWrap').addClass('is-hidden')
+                    .children().remove();
             }
             if ($chat.length > 0) {
                 $chat.remove();
             }
-            delete dialogs[dialog_id];
+
+            if (Entities.active === dialog_id) {
+                Entities.active = '';
+            }
+            dialogs.remove(dialog_id);
 
             that.app.views.Dialog.decUnreadCounter(dialog_id);
         },

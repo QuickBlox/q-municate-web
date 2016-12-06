@@ -6,12 +6,10 @@
 define([
     'jquery',
     'underscore',
-    'MainModule',
     'Helpers'
 ], function(
     $,
     _,
-    QM,
     Helpers
 ) {
     var QMHtml = {};
@@ -72,7 +70,7 @@ define([
             $chat.find('.mCSB_container').append($html);
 
             if (isBottom) {
-                $chat.find('.scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+                $chat.find('.j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
             }
         },
 
@@ -90,7 +88,7 @@ define([
             $chat.find('.mCSB_container').append($html);
 
             if (isBottom) {
-                $chat.find('.scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+                $chat.find('.j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
             }
         }
 
@@ -175,9 +173,9 @@ define([
     QMHtml.Messages = {
 
         setMap: function(params) {
-            var htmlTemplate = _.template('<div class="popover_map"><a class="open_map" href="<%=mapLink%>" target="_blank">' +
-                '<image class="static_map" src="<%=imgUrl%>"></a><div class="coner"><i class="icon_coner">' +
-                '</i></div></div>')(params);
+            var htmlTemplate = _.template(
+                '<a class="open_map" href="<%=mapLink%>" target="_blank">' +
+                '</a>')(params);
 
             $('article#' + params.id).find('.message-geo')
                 .addClass('with-geo')

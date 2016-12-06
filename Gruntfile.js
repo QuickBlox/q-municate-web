@@ -31,16 +31,10 @@ module.exports = function(grunt) {
             tmpBuild: ['<%= yeoman.app %>/scripts/.build.js']
         },
 
-        compass: {
-            compile: {
-                options: {
-                    cssDir: '<%= yeoman.app %>/.css',
-                    sassDir: '<%= yeoman.app %>/styles',
-                    javascriptsDir: '<%= yeoman.app %>/scripts',
-                    imagesDir: '<%= yeoman.app %>/images',
-                    noLineComments: true,
-                    relativeAssets: true,
-                    raw: 'preferred_syntax = :scss\n'
+        sass: {
+            dist: {
+                files: {
+                    '<%= yeoman.app %>/.css/main.css': '<%= yeoman.app %>/styles/main.scss'
                 }
             }
         },
@@ -91,7 +85,7 @@ module.exports = function(grunt) {
             },
             css: {
                 files: ['<%= yeoman.app %>/styles/{,*/}*.scss'],
-                tasks: ['compass']
+                tasks: ['sass']
             },
             handlebars: {
                 files: [
@@ -217,7 +211,9 @@ module.exports = function(grunt) {
                     globals: {
                         appId: '13318',
                         authKey: 'WzrAY7vrGmbgFfP',
-                        authSecret: 'xS2uerEveGHmEun'
+                        authSecret: 'xS2uerEveGHmEun',
+                        debugQM: '0',
+                        debugQB: '0'
                     }
                 },
                 src: '<%= yeoman.app %>/configs/environment.js',
@@ -228,7 +224,9 @@ module.exports = function(grunt) {
                     globals: {
                         appId: '36125',
                         authKey: 'gOGVNO4L9cBwkPE',
-                        authSecret: 'JdqsMHCjHVYkVxV'
+                        authSecret: 'JdqsMHCjHVYkVxV',
+                        debugQM: '1',
+                        debugQB: '1'
                     }
                 },
                 src: '<%= yeoman.app %>/configs/environment.js',
@@ -281,7 +279,7 @@ module.exports = function(grunt) {
         grunt.task.run([
             'includereplace:' + envTarget,
             'clean:dev',
-            'compass',
+            'sass',
             'createDefaultTemplate',
             'handlebars',
             'connect:dev',
@@ -303,7 +301,7 @@ module.exports = function(grunt) {
         'jshint',
         'includereplace:' + envTarget,
         'clean:dist',
-        'compass',
+        'sass',
         'createDefaultTemplate',
         'handlebars',
         'requirejs',

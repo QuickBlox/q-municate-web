@@ -14,7 +14,8 @@ define([
     'timeago',
     'QBNotification',
     'LocationView',
-    'QMHtml'
+    'QMHtml',
+    'Entities'
 ], function(
     $,
     QMCONFIG,
@@ -25,7 +26,8 @@ define([
     timeago,
     QBNotification,
     Location,
-    QMHtml
+    QMHtml,
+    Entities
 ) {
 
     var User, Message, ContactList, Dialog, Settings;
@@ -60,7 +62,8 @@ define([
             var DialogView = this.app.views.Dialog,
                 ContactListMsg = this.app.models.ContactList,
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
-                isBottom = Helpers.isBeginOfChat();
+                isBottom = Helpers.isBeginOfChat(),
+                isOnline = message.online;
 
             if (isCallback && isMessageListener) {
                 updateDialogItem(message);
@@ -93,6 +96,7 @@ define([
                     recipient = contacts[recipientId] || null,
                     occupants_names = '',
                     occupants_ids,
+                    status,
                     html;
 
                 switch (type) {
@@ -111,7 +115,7 @@ define([
                         break;
 
                     case '2':
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_pending"></span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -141,7 +145,7 @@ define([
                         break;
 
                     case '4':
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_pending"></span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -158,7 +162,7 @@ define([
                         break;
 
                     case '5':
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_ok j-requestConfirm">&#10003;</span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -175,7 +179,7 @@ define([
                         break;
 
                     case '6':
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_cancel j-requestCancel">&#10005;</span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -195,7 +199,7 @@ define([
                         break;
 
                     case '7':
-                        html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                        html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_pending"></span>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -216,7 +220,7 @@ define([
                     // calls messages
                     case '8':
                         if (message.caller) {
-                            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '" data-session="' + message.sessionID + '">';
+                            html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '" data-session="' + message.sessionID + '">';
 
                             if (message.caller === User.contact.id) {
                                 html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_outgoing' : 'request-audio_outgoing') + '"></span>';
@@ -241,7 +245,7 @@ define([
 
                     case '9':
                         if (message.caller) {
-                            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                            html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
 
                             if (message.caller === User.contact.id) {
                                 html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
@@ -266,7 +270,7 @@ define([
 
                     case '10':
                         if (message.caller) {
-                            html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                            html = '<article id="' + message.id + '" class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                             html += '<span class="message-avatar request-call ' + (message.callType === '2' ? 'request-video_ended' : 'request-audio_ended') + '"></span>';
                             html += '<div class="message-container-wrap">';
                             html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -284,10 +288,14 @@ define([
                         break;
 
                     default:
+                        status = isOnline ? message.status : 'Not delivered yet';
+
                         if (message.sender_id === User.contact.id) {
-                            html = '<article id="' + message.id + '" class="message is-own l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                            html = '<article id="' + message.id + '" class="message is-own l-flexbox l-flexbox_alignstretch' +
+                            (message.stack ? ' without_border' : '') + '" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         } else {
-                            html = '<article id="' + message.id + '" class="message l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
+                            html = '<article id="' + message.id + '" class="message l-flexbox l-flexbox_alignstretch' +
+                            (message.stack ? ' without_border' : '') + '" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         }
 
                         html += '<div class="message-avatar avatar profileUserAvatar' + (message.stack ? ' is-hidden' : '') +
@@ -303,7 +311,7 @@ define([
                             html += '<img id="attach_' + message.id + '" src="' + attachUrl + '" alt="attach">';
                             html += '</div></div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('audio') > -1) {
                             html += '<div class="message-body">';
@@ -311,7 +319,7 @@ define([
                             html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
                             html += '<audio id="attach_' + message.id + '" src="' + attachUrl + '" controls class="attach-audio"></audio></div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
                             html += '<div class="message-body">';
@@ -319,26 +327,26 @@ define([
                             html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
                             html += '<div id="attach_' + message.id + '" class="preview preview-video" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '"></div></div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType && attachType.indexOf('location') > -1) {
                             html += '<div class="message-body">';
                             html += '<a class="open_googlemaps" href="' + mapAttachLink + '" target="_blank">';
                             html += '<img id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map"></a></div></div>';
                             html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType) {
                             html += '<div class="message-body">';
                             html += '<a id="attach_' + message.id + '" class="attach-file" href="' + attachUrl + '" download="' + message.attachment.name + '">' + message.attachment.name + '</a>';
                             html += '<span class="attach-size">' + getFileSize(message.attachment.size) + '</span></div></div>';
                             html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         } else {
                             html += '<div class="message-body">' + minEmoji(Helpers.Messages.parser(message.body)) + '</div>';
                             html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">Not delivered yet</div>';
+                            html += '<div class="message-status is-hidden">'+ status +'</div>';
                             html += '<div class="message-geo j-showlocation"></div></div>';
                         }
 
@@ -373,10 +381,10 @@ define([
                     });
                 }
 
-                if (message.sender_id == User.contact.id && message.delivered_ids.length > 0) {
+                if ((message.sender_id == User.contact.id) && (message.delivered_ids.length > 0)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'delivered', false);
                 }
-                if (message.sender_id == User.contact.id && message.read_ids.length > 1) {
+                if ((message.sender_id == User.contact.id) && (message.read_ids.length > 1)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'displayed', false);
                 }
 
@@ -434,12 +442,12 @@ define([
                     $smiles.each(function() {
                         $(this).after($(this).data('unicode')).remove();
                     });
-                    val = $textarea.html().trim();
+                    val = $textarea.html();
                 }
                 if (form.find('.textarea > div').length > 0) {
-                    val = $textarea.text().trim();
+                    val = $textarea.text();
                 }
-                val = val.replace(/<br>/gi, '\n');
+                val = val.replace(/<br>/gi, '\n').trim();
 
                 // send message
                 msg = {
@@ -458,7 +466,7 @@ define([
                     msg.extension.longitude = localStorage['QM.longitude'];
                 }
 
-                QB.chat.send(jid, msg);
+                msg.id = QB.chat.send(jid, msg);
 
                 message = Message.create({
                     'chat_dialog_id': dialog_id,
@@ -467,14 +475,13 @@ define([
                     'sender_id': User.contact.id,
                     'latitude': localStorage['QM.latitude'] || null,
                     'longitude': localStorage['QM.longitude'] || null,
-                    '_id': msg.id
+                    '_id': msg.id,
+                    'type': type,
+                    'online': true
                 });
-
-                Helpers.log('Message send:', message);
 
                 if (type === 'chat') {
                     Helpers.Dialogs.moveDialogToTop(dialog_id);
-
                     lastMessage = $chat.find('article[data-type="message"]').last();
                     message.stack = Message.isStack(true, message, lastMessage);
                     self.addItem(message, true, true);
@@ -507,12 +514,12 @@ define([
             var DialogView = self.app.views.Dialog,
                 ContactListView = self.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-                dialogs = ContactList.dialogs,
+                dialogs = Entities.Collections.dialogs,
                 contacts = ContactList.contacts,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
                 recipient_id = message.recipient_id || message.extension && message.extension.recipient_id || null,
-                recipient_jid = recipient_id ? QB.chat.helpers.getUserJid(recipient_id, QMCONFIG.qbAccount.appId) : null,
+                recipient_jid = recipient_id ? makeJid(recipient_id) : null,
                 room_jid = roomJidVerification(dialog_id),
                 room_name = message.extension && message.extension.room_name,
                 room_photo = message.extension && message.extension.room_photo,
@@ -520,10 +527,11 @@ define([
                 new_ids = message.extension && message.extension.added_occupant_ids,
                 occupants_ids = message.extension && message.extension.current_occupant_ids,
                 dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
+                contactRequest = $('.j-incommingContactRequest[data-jid="' + makeJid(id) + '"]'),
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
-                isHiddenChat = $chat.is(':hidden'),
-                isExistent = dialogItem.length ? true : false,
+                isHiddenChat = $chat.is(':hidden') || !$chat.length,
+                isExistent = dialogItem.length ? true : (contactRequest.length ? true : false),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 roster = ContactList.roster,
                 audioSignal = $('#newMessageSignal')[0],
@@ -533,24 +541,25 @@ define([
                 otherChat = !selected && dialogItem.length > 0 && notification_type !== '1' && (!isOfflineStorage || message.type === 'groupchat'),
                 isNotMyUser = id !== User.contact.id,
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
-                $newMessages = $('<div class="new_messages j-newMessages" data-dialog="' + dialog_id +
-                    '"><span class="newMessages">New messages</span></div>'),
+                $newMessages = $('<div class="new_messages j-newMessages" data-dialog="' + dialog_id + '"><span class="newMessages">New messages</span></div>'),
                 $label = $chat.find('.j-newMessages'),
                 isNewMessages = $label.length,
+                dialog = dialogs.get(dialog_id),
                 copyDialogItem,
                 lastMessage,
-                dialog,
+                occupants,
                 occupant,
-                msgArr,
                 blobObj,
+                msgArr,
                 msg;
 
             typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
             typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
             typeof occupants_ids === "string" ? occupants_ids = occupants_ids.split(',').map(Number) : null;
 
+            message.sender_id = id;
+            message.online = true;
             msg = Message.create(message);
-            msg.sender_id = id;
 
             // add or remove label about new messages
             if ($chat.length && !isHiddenChat && window.isQMAppActive && isNewMessages) {
@@ -558,18 +567,6 @@ define([
             } else if ((isHiddenChat || !window.isQMAppActive) &&
                         $chat.length && !isNewMessages && isNotMyUser) {
                 $chat.find('.l-chat-content .mCSB_container').append($newMessages);
-            }
-
-
-            if (isNotMyUser) {
-                if ($chat.length && !isHiddenChat && window.isQMAppActive && msg.sender_id !== User.contact.id) {
-                    // send read status if message displayed in chat
-                    Message.update(msg.id, dialog_id, id);
-                } else if ((isHiddenChat || !window.isQMAppActive) && $chat.length > 0) {
-                    msgArr = dialogs[dialog_id].messages || [];
-                    msgArr.push(msg.id);
-                    dialogs[dialog_id].messages = msgArr;
-                }
             }
 
             if (otherChat || (!otherChat && !isBottom && isNotMyUser && isExistent)) {
@@ -586,31 +583,27 @@ define([
 
             // add new occupants
             if (notification_type === '2') {
-                dialog = ContactList.dialogs[dialog_id];
-
-                if (occupants_ids && msg.sender_id !== User.contact.id) {
-                    dialog.occupants_ids = dialog.occupants_ids.concat(new_ids);
+                if (occupants_ids) {
+                    occupants = dialog.get('occupants_ids').concat(new_ids);
+                    dialog.set('occupants_ids', occupants);
                 }
 
                 if (dialog && deleted_id) {
-                    dialog.occupants_ids = _.without(_.compact(dialog.occupants_ids), deleted_id[0]);
+                    occupants = _.without(_.compact(dialog.get('occupants_ids')), deleted_id[0]);
+                    dialog.set('occupants_ids', occupants);
                 }
 
                 if (room_name) {
-                    dialog.room_name = room_name;
+                    dialog.set('room_name', room_name);
                 }
 
                 if (room_photo) {
-                    dialog.room_photo = room_photo;
-                }
-
-                if (dialog) {
-                    ContactList.dialogs[dialog_id] = dialog;
+                    dialog.set('room_photo', room_photo);
                 }
 
                 // add new people
                 if (new_ids) {
-                    ContactList.add(dialog.occupants_ids, null, function() {
+                    ContactList.add(dialog.get('occupants_ids'), null, function() {
                         var dataIds = $chat.find('.addToGroupChat').data('ids'),
                             ids = dataIds ? dataIds.toString().split(',').map(Number) : [];
 
@@ -625,19 +618,20 @@ define([
                             }
                         }
 
-                        $chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+                        $chat.find('.addToGroupChat').data('ids', dialog.get('occupants_ids'));
                     });
                 }
 
                 // delete occupant
                 if (deleted_id && msg.sender_id !== User.contact.id) {
                     $chat.find('.occupant[data-id="' + id + '"]').remove();
-                    $chat.find('.addToGroupChat').data('ids', dialog.occupants_ids);
+                    $chat.find('.addToGroupChat').data('ids', dialog.get('occupants_ids'));
                 }
 
                 if (deleted_id && (deleted_id[0] === User.contact.id)) {
                     DialogView.leaveGroupChat(dialog_id, true);
                     DialogView.decUnreadCounter(dialog_id);
+                    dialogs.remove(dialog);
                 }
 
                 // change name
@@ -661,11 +655,10 @@ define([
 
             lastMessage = $chat.find('article[data-type="message"]').last();
             msg.stack = Message.isStack(true, msg, lastMessage);
-            Helpers.log('Message object created:', msg);
-            self.addItem(msg, true, true, id);
+
 
             // subscribe message
-            if (notification_type === '4') {
+            if (notification_type == '4') {
                 var QBApiCalls = self.app.service,
                     Contact = self.app.models.Contact;
                 // update hidden dialogs
@@ -674,42 +667,49 @@ define([
                 // update contact list
                 QBApiCalls.getUser(id, function(user) {
                     contacts[id] = Contact.create(user);
-                    createAndShowNotification(msg, isHiddenChat);
                 });
             } else {
-                createAndShowNotification(msg, isHiddenChat);
+                self.addItem(msg, true, true, id);
             }
 
-            if (notification_type === '5' && isNotMyUser) {
+            if (notification_type === '5' && isNotMyUser && isExistent) {
                 ContactListView.onConfirm(id);
             }
 
             if (notification_type === '7') {
-                self.app.views.ContactList.onReject(id);
+                ContactListView.onReject(id);
             }
 
             var isHidden = (isHiddenChat || !window.isQMAppActive) ? true : false,
-                sendedToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
+                sentToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
                 isSoundOn = Settings.get('sounds_notify'),
                 isMainTab = SyncTabs.get();
 
-            if (isHidden && sendedToMe && isSoundOn && isMainTab && isExistent) {
+            createAndShowNotification(msg, isHidden);
+
+            if (isHidden && sentToMe && isSoundOn && isMainTab && isExistent) {
                 audioSignal.play();
             }
 
-            if (msg.sender_id === User.contact.id) {
+            if (dialog) {
+                dialog.set({
+                    'last_message': msg.body,
+                    'last_message_date_sent': msg.date_sent,
+                    'room_updated_date': msg.date_sent
+                });
+            }
+
+            if ((msg.sender_id === User.contact.id) && recipient_jid) {
                 syncContactRequestInfo({
                     notification_type: notification_type,
                     recipient_jid: recipient_jid,
-                    dialog_id: dialog_id,
-                    isHiddenChat : isHiddenChat
+                    dialog_id: dialog_id
                 });
             }
         },
 
         onSystemMessage: function(message) {
             var DialogView = self.app.views.Dialog,
-                dialogs = ContactList.dialogs,
                 notification_type = message.extension && message.extension.notification_type,
                 dialog_id = message.extension && message.extension.dialog_id,
                 room_jid = roomJidVerification(dialog_id),
@@ -721,16 +721,13 @@ define([
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
+                dialogs = Entities.Collections.dialogs,
                 dialog,
                 msg;
 
-            msg = Message.create(message);
-            msg.sender_id = message.userId;
-            msg.type = 'headline';
-
             // create new group chat
             if (notification_type === '1' && dialogGroupItem.length === 0) {
-                dialog = Dialog.create({
+                Dialog.create({
                     _id: dialog_id,
                     type: 2,
                     occupants_ids: occupants_ids,
@@ -738,16 +735,21 @@ define([
                     photo: room_photo,
                     room_updated_date: room_updated_at,
                     xmpp_room_jid: room_jid,
-                    unread_count: 1
+                    unread_count: 1,
+                    opened: true
                 });
 
-                ContactList.dialogs[dialog.id] = dialog;
-                Helpers.log('Dialog', dialog);
+                dialog = dialogs.get(dialog_id);
 
-                ContactList.add(dialog.occupants_ids, null, function() {
+                Helpers.log('Dialog', dialog.toJSON());
+
+                ContactList.add(occupants_ids, null, function() {
                     // don't create a duplicate dialog in contact list
-                    dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog.id + '"]')[0];
-                    if (dialogItem) return true;
+                    dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]')[0];
+
+                    if (dialogItem) {
+                        return true;
+                    }
 
                     QB.chat.muc.join(room_jid);
 
@@ -755,15 +757,17 @@ define([
                     unread++;
                     dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]');
 
+                    message.online = true;
+                    msg = Message.create(message);
                     // Don't show any notification if system message from current User
                     if (msg.sender_id !== User.contact.id) {
                         dialogGroupItem.find('.unread').text(unread);
                         DialogView.getUnreadCounter(dialog_id);
                     }
-                });
 
-                self.addItem(msg, true, true, true);
-                createAndShowNotification(msg, true);
+                    self.addItem(msg, true, true, true);
+                    createAndShowNotification(msg, true);
+                });
             }
         },
 
@@ -802,10 +806,12 @@ define([
 
         onDeliveredStatus: function(messageId, dialogId, userId) {
             self.addStatusMessages(messageId, dialogId, 'delivered', true);
+            updatedMessageModel(messageId, dialogId, 'delivered');
         },
 
         onReadStatus: function(messageId, dialogId, userId) {
             self.addStatusMessages(messageId, dialogId, 'displayed', true);
+            updatedMessageModel(messageId, dialogId, 'displayed');
         }
 
     };
@@ -902,25 +908,35 @@ define([
     }
 
     function createAndShowNotification(msg, isHiddenChat) {
-        var cancelNotify = !Settings.get('messages_notify'),
+        var dialogs = Entities.Collections.dialogs,
+            dialog = dialogs.get(msg.dialog_id),
+            cancelNotify = !Settings.get('messages_notify'),
             isNotMainTab = !SyncTabs.get(),
             isCurrentUser = (msg.sender_id === User.contact.id) ? true : false,
-            isExistent = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + msg.sender_id + '"]').length;
+            isDialog = $('.j-dialogItem[data-id="' + msg.sender_id + '"]').length,
+            isApsent = (+msg.notification_type === 7) && !isDialog,
+            options,
+            title,
+            params;
 
-        if (cancelNotify || isNotMainTab || isCurrentUser || !isExistent) {
+        if (cancelNotify || isNotMainTab || isCurrentUser || isApsent) {
             return false;
         }
 
-        var params = {
+        params = {
             'user': User,
-            'dialogs': ContactList.dialogs,
             'contacts': ContactList.contacts
         };
 
-        var title = Helpers.Notifications.getTitle(msg, params),
-            options = Helpers.Notifications.getOptions(msg, params);
+        if (dialog) {
+            params.roomName = dialog.get('room_name');
+            params.roomPhoto = dialog.get('room_photo');
+        }
 
-        if (QMCONFIG.notification && QBNotification.isSupported() && (isHiddenChat || !window.isQMAppActive)) {
+        title = Helpers.Notifications.getTitle(msg, params),
+        options = Helpers.Notifications.getOptions(msg, params);
+
+        if (QBNotification.isSupported() && isHiddenChat) {
             if (!QBNotification.needsPermission()) {
                 Helpers.Notifications.show(title, options);
             } else {
@@ -1010,6 +1026,26 @@ define([
 
         $lastMessage.html(lastMessage);
         $lastTime.html(time);
+    }
+
+    function updatedMessageModel(messageId, dialogId, param) {
+        var dialogs = Entities.Collections.dialogs,
+            dialog = dialogs.get(dialogId);
+
+        if (dialog && dialog.get('opened')) {
+            var messages = dialog.get('messages'),
+                message = messages.get(messageId);
+
+            if (message) {
+                var status = param === 'delivered' ? 'Delivered' : 'Seen';
+
+                message.set('status', status);
+            }
+        }
+    }
+
+    function makeJid(id) {
+        return QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
     }
 
     return MessageView;

@@ -211,34 +211,34 @@
                             <button class="clean-button j-clean-button" type="reset">✕</button>
                         </form>
 
-                        <div class="l-list-wrap scrollbar">
+                        <div class="l-list-wrap j-scrollbar_aside">
 
-                            <section id="requestsList" class="l-list is-hidden">
+                            <section id="requestsList" class="l-list j-aside_list_item is-hidden">
                                 <header class="l-list-header">
                                     <h3 class="l-list-header-title">Requests</h3>
                                 </header>
-                                <ul class="list j-requestsList"></ul>
+                                <ul class="list j-list j-requestsList"></ul>
                             </section>
 
-                            <section id="recentList" class="l-list is-hidden">
+                            <section id="recentList" class="l-list j-aside_list_item is-hidden">
                                 <header class="l-list-header">
                                     <h3 class="l-list-header-title">Recent</h3>
                                 </header>
-                                <ul class="list list_contextmenu j-friendsList j-recentList"></ul>
+                                <ul class="list list_contextmenu j-list j-recentList"></ul>
                             </section>
 
-                            <section id="historyList" class="l-list is-hidden">
+                            <section id="historyList" class="l-list j-aside_list_item is-hidden">
                                 <header class="l-list-header">
                                     <h3 class="l-list-header-title">History</h3>
                                 </header>
-                                <ul class="list list_contextmenu j-friendsList j-historyList"></ul>
+                                <ul class="list list_contextmenu j-list j-historyList"></ul>
                             </section>
 
-                            <section id="searchList" class="l-list is-hidden">
+                            <section id="searchList" class="l-list j-aside_list_item is-hidden">
                                 <header class="l-list-header">
                                     <h3 class="l-list-header-title">Search results</h3>
                                 </header>
-                                <ul class="list list_contextmenu j-searchList"></ul>
+                                <ul class="list list_contextmenu j-list j-searchList"></ul>
                                 <div class="note l-flexbox l-flexbox_column">
                                     <span class="text text_alert">Sorry...</span>
                                     <span class="text">No results found</span>
@@ -246,7 +246,7 @@
                                 <button class="search btn btn_search without_M">Global Search</button>
                             </section>
 
-                            <section id="emptyList" class="l-list note l-flexbox l-flexbox_column is-hidden">
+                            <section id="emptyList" class="l-list j-aside_list_item note l-flexbox l-flexbox_column is-hidden">
                                 <span class="text text_alert">Oops...</span>
                                 <span class="text">You don't have any contacts.</span>
                             </section>
@@ -260,9 +260,10 @@
                                 <img class="cap-anybody" src="images/anybody.png" alt="QuickBlox anybody">
                                 <button class="search btn btn_add btn_invite without_M">
                                     <div class="btn-icon btn-icon_invite"></div>Search for Friends</button>
-                                <!-- <button class="btn btn_add btn_share"><img class="btn-icon btn-icon_share" src="images/icon-fb.svg" alt="fb">Share on Facebook</button> -->
                             </div>
                         </section>
+
+                        <div id="chatWrap" class="l-workspace j-chatWrap is-hidden"></div>
 
                         <div class="chat_popover popover_gmap j-popover_const j-popover_gmap">
                             <button class="send_map j-send_map">SEND LOCATION</button>
@@ -409,7 +410,7 @@
         <section id="popupIncoming" class="popup incoming-call-popup is-open"></section>
 
         <section id="popupAttach" class="popup popup_attach">
-            <img class="attach-photo" src="" alt="attach">
+            <img class="attach-photo" src="images/photo_preloader.gif" alt="attach">
             <video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls autoplay preload="auto" data-setup="{}">
                 <source src="" type="video/mp4"/>
                 <source src="" type="video/webm"/>
@@ -554,8 +555,8 @@
                     <button class="btn_userProfile btn_userProfile_photo">Set Profile Photo</button>
                     <% if (user_tags) { %>
                         <button class="btn_userProfile btn_changePassword">Change password</button>
-                        <% } %>
-                            <input class="btn_userProfile_file" type="file" accept="image/jpeg,image/png,image/svg">
+                    <% } %>
+                    <input class="btn_userProfile_file" type="file" accept="image/jpeg,image/png,image/svg">
                 </div>
             </div>
             <div class="userProfile-chatStatus">Status</div>
@@ -614,12 +615,12 @@
         </section>
     </script>
 
-    <script id="chatHeaderTpl" type="text/template">
+    <script id="chatTpl" type="text/template">
         <% if (type === 3) { %>
-            <section class="l-workspace l-chat l-chat_private presence-listener j-chatItem" data-dialog="<%= dialog_id %>" data-id="<%= user_id %>" data-jid="<%= jid %>">
+            <section id="chat_<%= dialog_id %>" class="l-chat l-chat_private presence-listener j-chatItem" data-dialog="<%= dialog_id %>" data-id="<%= user_id %>" data-jid="<%= jid %>">
             <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
         <% } else { %>
-            <section class="l-workspace l-chat l-chat_group is-group j-chatItem" data-dialog="<%= dialog_id %>" data-jid="<%= jid %>">
+            <section id="chat_<%= dialog_id %>" class="l-chat l-chat_group is-group j-chatItem" data-dialog="<%= dialog_id %>" data-jid="<%= jid %>">
             <header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">
         <% } %>
             <div class="chat-title">
@@ -670,12 +671,12 @@
 
         <div class="chat-occupants-wrap j-chatOccupants"></div>
 
-        <section class="l-chat-content scrollbar_message"></section>
+        <section id="mCS_<%= dialog_id %>" class="l-chat-content j-scrollbar_message"></section>
 
         <footer class="l-chat-footer">
             <div class="footer_btn j-toBottom btn_to_bottom"></div>
             <form class="l-message j-message" action="#">
-                <div class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"></div>
+                <div id="textarea_<%= dialog_id %>" class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"><%= draft %></div>
                 <div class="footer_btn j-send_location btn_sendlocation <%= location %>" data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>
                 <input class="attachment" type="file" accept="image/*">
             </form>

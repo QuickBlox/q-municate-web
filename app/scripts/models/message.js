@@ -5,14 +5,18 @@
  *
  */
 define([
-    'quickblox'
+    'quickblox',
+    'Entities'
 ], function(
-    QB
+    QB,
+    Entities
 ) {
+    var self;
 
     function Message(app) {
         this.app = app;
-        this.skip = {};
+        this.skip = undefined;
+        self = this;
     }
 
     Message.prototype = {
@@ -20,11 +24,10 @@ define([
         download: function(dialog_id, callback, count, isAjaxDownloading) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
-                self = this,
                 limitCount,
                 skipCount;
 
-            if (self.skip[dialog_id] && self.skip[dialog_id] === count) {
+            if (self.skip === count) {
                 return false;
             }
 
@@ -42,27 +45,27 @@ define([
                 skip: skipCount || 0
             }, function(messages) {
                 if (isAjaxDownloading) {
+                    self.skip = skipCount;
                     DialogView.removeDataSpinner();
-                    self.skip[dialog_id] = count;
                 }
                 callback(messages);
             });
         },
 
-        create: function(params) {
-            var User = this.app.models.User,
-                message;
-
-            message = {
+        create: function(params, ajax) {
+            var message = {
                 id: (params.extension && params.extension.message_id) || params._id || params.id || null,
-                dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
-                body: params.body || params.message || null,
-                notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
+                body: params.body || params.message || '',
+                type: params.type || '',
                 date_sent: (params.extension && params.extension.date_sent) || params.date_sent,
+                read_ids: params.read_ids || [],
+                delivered_ids: params.delivered_ids || [],
+                notification_type: (params.extension && params.extension.notification_type) || params.notification_type || null,
+                dialog_id: (params.extension && params.extension.dialog_id) || params.chat_dialog_id,
                 read: params.read || false,
                 attachment: (params.extension && params.extension.attachments && params.extension.attachments[0]) ||
                     (params.attachments && params.attachments[0]) || params.attachment || null,
-                sender_id: params.sender_id || null,
+                sender_id: params.sender_id || params.userId || null,
                 recipient_id: params.recipient_id || (params.extension && params.extension.recipient_id) || null,
                 current_occupant_ids: (params.extension && params.extension.current_occupant_ids) || params.current_occupant_ids || null,
                 added_occupant_ids: (params.extension && params.extension.added_occupant_ids) || params.added_occupant_ids || null,
@@ -78,16 +81,25 @@ define([
                 callee: parseInt((params.extension && params.extension.callee)) || parseInt(params.callee) || null,
                 callDuration: (params.extension && params.extension.callDuration) || params.callDuration || null,
                 sessionID: (params.extension && params.extension.sessionID) || params.sessionID || null,
-                read_ids: params.read_ids || [],
-                delivered_ids: params.delivered_ids || [],
-                type: params.type || null,
+				latitude: (params.extension && params.extension.latitude) || params.latitude || null,
+                longitude: (params.extension && params.extension.longitude) || params.longitude || null,
                 stack: false,
-                latitude: (params.extension && params.extension.latitude) || params.latitude || null,
-                longitude: (params.extension && params.extension.longitude) || params.longitude || null
+                online: params.online || false,
+                status: ((params.extension && params.extension.notification_type) || params.notification_type) ? '' : 'Not delivered yet'
             };
 
-            if (message.attachment) {
+            if (message.attachment && message.attachment.size) {
                 message.attachment.size = parseInt(message.attachment.size);
+            }
+
+            for (var prop in message) {
+                if (message[prop] === null) {
+                    delete message[prop];
+                }
+            }
+
+            if (!ajax || message.notification_type) {
+                new Entities.Models.Message(message);
             }
 
             return message;
@@ -102,8 +114,7 @@ define([
                     var lastMessageSender = +prevMsg.attr('data-id'),
                         lastMessageDateSent = +prevMsg.find('.message-time').attr('data-time');
 
-
-                    sameUser = (curMsg.sender_id === lastMessageSender) ? true : false;
+                    sameUser = (curMsg.sender_id === lastMessageSender) ? (prevMsg.attr('id') ? true : false) : false;
                     sameTime = (Math.floor(curMsg.date_sent / 60) === Math.floor(lastMessageDateSent / 60)) ? true : false;
                 } else {
                     if (prevMsg.notification_type) {
@@ -117,34 +128,6 @@ define([
             }
 
             return stack;
-        },
-
-        update: function(message_ids, dialog_id, user_id) {
-            var QBApiCalls = this.app.service,
-                ContactList = this.app.models.ContactList,
-                dialog = ContactList.dialogs[dialog_id];
-
-            if (message_ids !== null) {
-                var unreadMessages = message_ids.split(','),
-                    unreadMessage;
-
-                for (var i = 0, len = unreadMessages.length; i < len; i++) {
-                    unreadMessage = unreadMessages[i];
-
-                    QB.chat.sendReadStatus({
-                        messageId: unreadMessage,
-                        userId: user_id,
-                        dialogId: dialog_id
-                    });
-                }
-
-                dialog.messages = [];
-            }
-
-            QBApiCalls.updateMessage(message_ids, {
-                chat_dialog_id: dialog_id,
-                read: 1
-            }, function() {});
         }
 
     };

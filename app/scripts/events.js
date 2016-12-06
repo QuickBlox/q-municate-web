@@ -65,19 +65,10 @@ define([
             window.isQMAppActive = true;
 
             $(window).focus(function() {
-                var dialogItem,
-                    dialog_id,
-                    dialog;
-
                 window.isQMAppActive = true;
 
-                dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected');
-                dialog_id = dialogItem[0] && dialogItem.data('dialog');
-                dialog = $('.dialog-item[data-dialog="' + dialog_id + '"] .contact');
-
-                if ($('.dialog-item[data-dialog="' + dialog_id + '"]').hasClass('is-selected')) {
-                    DialogView.htmlBuild(dialog);
-                }
+                var dialogItem = $('.l-list-wrap section:not(#searchList) .is-selected'),
+                    dialog_id = dialogItem[0] && dialogItem.data('dialog');
 
                 if (dialog_id) {
                     dialogItem.find('.unread').text('');
@@ -187,13 +178,15 @@ define([
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
-            $('.smiles-group').mCustomScrollbar({
-                theme: 'minimal-dark',
-                scrollInertia: 500,
-                mouseWheel: {
-                    scrollAmount: 'auto',
-                    deltaFactor: 'auto'
-                }
+            $('.smiles-group').niceScroll({
+                cursoropacitymax: 0.3,
+                railpadding: {
+                    right: 2
+                },
+                zindex: 1,
+                autohidemode: false,
+                cursorwidth: '6px',
+                enablekeyboard: false
             });
 
             $workspace.on('click', '.j-em', function() {
@@ -265,14 +258,6 @@ define([
                 }
             });
 
-            $workspace.on('mouseenter', '.j-showlocation', function() {
-                $(this).find('.popover_map').fadeIn(150);
-            });
-
-            $workspace.on('mouseleave', '.j-showlocation', function() {
-                $(this).find('.popover_map').fadeOut(100);
-            });
-
             $workspace.on('click', '.j-btn_input_location', function() {
                 var $self = $(this),
                     $gmap = $('.j-popover_gmap'),
@@ -299,7 +284,7 @@ define([
                 }
             });
 
-            $('body').on('keydown', function(e) {
+            $('body').on('keyup', function(e) {
                 if ((e.keyCode === 13) && $('.j-open_map').length) {
                     $('.j-send_map').click();
                 }
@@ -336,9 +321,13 @@ define([
             /* group chats
             ----------------------------------------------------- */
             $workspace.on('click', '.groupTitle', function() {
+                $scroll = $('.l-chat:visible').find('.j-scrollbar_message');
+
                 if ($('.l-chat:visible').find('.triangle_up').is('.is-hidden')) {
+                    $scroll.mCustomScrollbar('scrollTo','-=94');
                     setTriagle('up');
                 } else {
+                    $scroll.mCustomScrollbar('scrollTo','+=94');
                     setTriagle('down');
                 }
             });
@@ -814,29 +803,24 @@ define([
                     popup.removeClass('not-selected');
                     popup.find('.btn_popup_private').removeClass('is-hidden').siblings().addClass('is-hidden');
 
-                    if (obj.is('li:last')) popup.find('.list_contacts').mCustomScrollbar("scrollTo", "bottom");
-
+                    if (obj.is('li:last')) {
+                        popup.find('.list_contacts').mCustomScrollbar("scrollTo", "bottom");
+                    }
                 } else if (len >= 1) {
                     popup.removeClass('not-selected');
-                    if (popup.is('.add'))
+
+                    if (popup.is('.add')) {
                         popup.find('.btn_popup_add').removeClass('is-hidden').siblings().addClass('is-hidden');
-                    else
+                    } else {
                         popup.find('.btn_popup_group').removeClass('is-hidden').siblings().addClass('is-hidden');
+                    }
 
-                    if (obj.is('li:last')) popup.find('.list_contacts').mCustomScrollbar("scrollTo", "bottom");
-
+                    if (obj.is('li:last')) {
+                        popup.find('.list_contacts').mCustomScrollbar("scrollTo", "bottom");
+                    }
                 } else {
                     popup.addClass('not-selected');
                 }
-            });
-
-            $('.list_contextmenu').on('click', '.contact', function() {
-                var dataDialog = $('.l-list .list-item.is-selected').attr("data-dialog"),
-                    dataId = $('.l-list .list-item.is-selected').attr("data-id");
-
-                MessageView.clearTheListTyping();
-                DialogView.htmlBuild($(this));
-                Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
             $('#popupContacts .btn_popup_private').on('click', function() {
@@ -865,15 +849,19 @@ define([
                 DialogView.createGroupChat('add', dialog_id);
             });
 
-            $workspace.on('keydown', '.j-message', function(event) {
+            $workspace.on('keyup', '.j-message', function(event) {
                 var $self = $(this),
-                    jid = $self.parents('.l-chat').data('jid'),
-                    type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+                    $chat = $self.parents('.l-chat'),
+                    jid = $chat.data('jid'),
+                    type = $chat.is('.is-group') ? 'groupchat' : 'chat',
                     shiftKey = event.shiftKey,
                     code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
-                    val = $('.l-chat:visible .textarea').html().trim();
+                    isLoading = $chat.find('.spinner_bounce').length,
+                    val = $chat.find('.textarea').text().trim();
 
-                if (code === 13 && !shiftKey) {
+                if (isLoading || !val) {
+                    return false;
+                } else if (code === 13 && !shiftKey) {
                     MessageView.sendMessage($self);
                     $self.find('.textarea').empty();
                     removePopover();
@@ -911,7 +899,7 @@ define([
             /* A button for the scroll to the bottom of chat
             ------------------------------------------------------ */
             $workspace.on('click', '.j-toBottom', function() {
-                $('.l-chat:visible .scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+                $('.j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
                 $(this).hide();
             });
 
@@ -982,7 +970,7 @@ define([
 
                 $('.j-capBox').removeClass('is-hidden')
                     .siblings().removeClass('is-active');
-                $('.l-chat').addClass('is-hidden');
+                $('.j-chatWrap').addClass('is-hidden');
 
                 if ($label.length) {
                     $label.remove();
@@ -1092,7 +1080,14 @@ define([
         $('.j-popupDelete.is-overlay').removeData('id');
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();
-        if ($('video.attach-video')[0]) $('video.attach-video')[0].pause();
+
+        if ($('video.attach-video')[0]) {
+            $('video.attach-video')[0].pause();
+        }
+
+        if ($('img.attach-photo')[0]) {
+            $('img.attach-photo').attr('src', 'images/photo_preloader.gif');
+        }
     }
 
     function setAttachType(type) {

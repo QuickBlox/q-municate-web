@@ -1,16 +1,26 @@
 /* message */
 .message {
     padding: 10px 20px 10px 10px;
-    border-bottom: 1px solid #f2f2f2;
+    border-top: 1px solid #f2f2f2;
+}
+.message.without_border {
+    border: none;
 }
 .new_messages {
     padding: 15px 20px 15px 25px;
-    border-bottom: 1px solid #f2f2f2;
+    border-top: 1px solid #f2f2f2;
     font:600 16px 'Open Sans', sans-serif;
     color: #007de3;
 }
 .message_service {
     padding: 10px 20px 10px 10px;
+}
+.message.msg_preloader {
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    z-index: 10;
+    border: none;
 }
 .message_service:last-of-type .btn_request_again {
     display: inline-block;
@@ -19,7 +29,7 @@ article.message[data-status="typing"] {
     height: 100%;
     line-height: 100%;
     padding: 9px;
-    border-bottom: none;
+    border: none;
 }
 article.message[data-status="typing"] > div {
     display: inline-block;
@@ -124,7 +134,7 @@ article.message[data-status="typing"] > div {
     text-align: right;
 }
 .message-geo.with-geo {
-    background: image-url('ic_location_sm.svg') 50% 25% no-repeat;
+    background: url('../images/ic_location_sm.svg') 50% 25% no-repeat;
     cursor: pointer;
 }
 .message-avatar.request-button_pending {
