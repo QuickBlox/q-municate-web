@@ -349,16 +349,18 @@ define([
     // read all unread messages
     $(window).focus(function() {
         Helpers.Dialogs.setScrollToNewMessages();
+        
+        var dialogId = entities.active;
 
-        if (entities.active) {
-            entities.Collections.dialogs.readAll(entities.active);
+        if (dialogId) {
+            entities.Collections.dialogs.readAll(dialogId);
         }
     });
 
     // unselect all dialogs
     $('.j-home').on('click', function() {
         // clear active dialog id
-        entities.Collections.dialogs.saveDraft(entities.active);
+        entities.Collections.dialogs.saveDraft();
         entities.active = '';
     });
 
