@@ -931,17 +931,10 @@ define([
             params.roomName = dialog.get('room_name');
             params.roomPhoto = dialog.get('room_photo');
         }
-<<<<<<< HEAD
 
-        title = Helpers.Notifications.getTitle(msg, params),
+        title = Helpers.Notifications.getTitle(msg, params);
         options = Helpers.Notifications.getOptions(msg, params);
 
-=======
-
-        title = Helpers.Notifications.getTitle(msg, params),
-        options = Helpers.Notifications.getOptions(msg, params);
-
->>>>>>> ca0e3825388759512afc916dde881ada7fe3af2f
         if (QBNotification.isSupported() && isHiddenChat) {
             if (!QBNotification.needsPermission()) {
                 Helpers.Notifications.show(title, options);
