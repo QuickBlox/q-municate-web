@@ -349,7 +349,7 @@ define([
     // read all unread messages
     $(window).focus(function() {
         Helpers.Dialogs.setScrollToNewMessages();
-        
+
         var dialogId = entities.active;
 
         if (dialogId) {

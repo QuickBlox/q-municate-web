@@ -856,10 +856,9 @@ define([
                     type = $chat.is('.is-group') ? 'groupchat' : 'chat',
                     shiftKey = event.shiftKey,
                     code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
-                    isLoading = $chat.find('.spinner_bounce').length,
-                    val = $chat.find('.textarea').text().trim();
+                    isLoading = $chat.find('.spinner_bounce').length;
 
-                if (isLoading || !val) {
+                if (isLoading) {
                     return false;
                 } else if (code === 13 && !shiftKey) {
                     MessageView.sendMessage($self);
