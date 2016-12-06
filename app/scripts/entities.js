@@ -257,10 +257,11 @@ define([
         },
 
         saveDraft: function() {
-            if (entities.active) {
-                var dialog = this.get(entities.active),
-                    $chat = $('.chatView'),
-                    text = $chat.find('.textarea').text();
+            var dialogId = entities.active;
+
+            if (dialogId) {
+                var dialog = this.get(dialogId),
+                    text = $('#textarea_' + dialogId).text();
 
                 dialog.set('draft', text);
             }
@@ -357,7 +358,7 @@ define([
     // unselect all dialogs
     $('.j-home').on('click', function() {
         // clear active dialog id
-        entities.Collections.dialogs.saveDraft();
+        entities.Collections.dialogs.saveDraft(entities.active);
         entities.active = '';
     });
 

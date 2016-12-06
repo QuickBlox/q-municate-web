@@ -87,7 +87,7 @@ requirejs.config({
         Helpers: 'helpers',
         // templates
         QMHtml: 'qmhtml',
-        // entities (for refactoring)
+        // entities
         Entities: 'entities'
     }
 });
