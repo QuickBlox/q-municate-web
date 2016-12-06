@@ -33,9 +33,6 @@ module.exports = function(grunt) {
 
         sass: {
             dist: {
-                options: {
-                    style: 'expanded'
-                },
                 files: {
                     '<%= yeoman.app %>/.css/main.css': '<%= yeoman.app %>/styles/main.scss'
                 }
