@@ -739,15 +739,9 @@ define([
                 });
 
                 dialog = dialogs.get(dialog_id);
-<<<<<<< HEAD
 
                 Helpers.log('Dialog', dialog.toJSON());
 
-=======
-
-                Helpers.log('Dialog', dialog.toJSON());
-
->>>>>>> ca0e3825388759512afc916dde881ada7fe3af2f
                 ContactList.add(occupants_ids, null, function() {
                     // don't create a duplicate dialog in contact list
                     dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]')[0];
