@@ -284,7 +284,7 @@ define([
                 }
             });
 
-            $('body').on('keyup', function(e) {
+            $('body').on('keypress', function(e) {
                 if ((e.keyCode === 13) && $('.j-open_map').length) {
                     $('.j-send_map').click();
                 }
@@ -394,7 +394,7 @@ define([
                 removePopover();
             });
 
-            $('body').on('keyup', '.groupTitle .name_chat', function(event) {
+            $('body').on('keypress', '.groupTitle .name_chat', function(event) {
                 var $self = $(this),
                     code = event.keyCode;
 
@@ -849,20 +849,6 @@ define([
                 DialogView.createGroupChat('add', dialog_id);
             });
 
-            $workspace.on('keyup', '.j-message', function(event) {
-                var $self = $(this),
-                    $chat = $self.parents('.l-chat'),
-                    isLoading = $chat.find('.j-loading').length;
-
-                if (isLoading) {
-                    return false;
-                } else if (event.keyCode === 13 && !event.shiftKey) {
-                    MessageView.sendMessage($self);
-                    $self.find('.textarea').empty();
-                    removePopover();
-                }
-            });
-
             $workspace.on('click', '.j-btn_input_send', function() {
                 var $msg = $('.j-message:visible');
 
@@ -899,12 +885,31 @@ define([
             });
 
             // send typing statuses with keyup event
-            $workspace.on('keyup', '.j-message', function(event) {
+            $workspace.on('keypress', '.j-message', function(event) {
                 var $self = $(this),
-                    jid = $self.parents('.l-chat').data('jid'),
-                    type = $self.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
+                    isEnterKey = (event.keyCode === 13) ? true : false,
                     shiftKey = event.shiftKey,
-                    code = event.keyCode; // code=27 (Esc key), code=13 (Enter key)
+                    $chat = $self.parents('.l-chat'),
+                    jid = $chat.data('jid'),
+                    isLoading = $chat.find('.j-loading').length,
+                    isEmpty = !$chat.find('.textarea').html().length;
+
+                if (isEnterKey && (isLoading || isEmpty)) {
+                    return false;
+                } else if (isEnterKey && !shiftKey) {
+                    isStopTyping();
+                    MessageView.sendMessage($self);
+                    $self.find('.textarea').empty();
+                    removePopover();
+                    return false;
+                } else if (stopTyping === undefined) {
+                    isStartTyping();
+                    stopTyping = setTimeout(isStopTyping, 4000);
+                    retryTyping = setInterval(isStartTyping, 4000);
+                } else {
+                    clearTimeout(stopTyping);
+                    stopTyping = setTimeout(isStopTyping, 4000);
+                }
 
                 function isStartTyping() {
                     MessageView.sendTypingStatus(jid, true);
@@ -919,24 +924,13 @@ define([
 
                     MessageView.sendTypingStatus(jid, false);
                 }
-
-                if (code === 13 && !shiftKey) {
-                    isStopTyping();
-                } else if (stopTyping === undefined) {
-                    isStartTyping();
-                    stopTyping = setTimeout(isStopTyping, 4000);
-                    retryTyping = setInterval(isStartTyping, 4000);
-                } else {
-                    clearTimeout(stopTyping);
-                    stopTyping = setTimeout(isStopTyping, 4000);
-                }
             });
 
             $workspace.on('submit', '.j-message', function(event) {
                 return false;
             });
 
-            $workspace.on('keyup', '.j-message', function() {
+            $workspace.on('keypress', '.j-message', function() {
                 var $textarea = $('.l-chat:visible .textarea'),
                     $emj = $textarea.find('.j-em'),
                     val = $textarea.text().trim();
