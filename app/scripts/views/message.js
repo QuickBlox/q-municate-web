@@ -783,22 +783,22 @@ define([
                 if (clearTyping === undefined) {
                     clearTyping = setTimeout(function() {
                         typingList = [];
-                        stopShowTyping($chat, contact.full_name);
+                        stopShowTyping(contact.full_name);
                     }, 6000);
                 } else {
                     clearTimeout(clearTyping);
                     clearTyping = setTimeout(function() {
                         typingList = [];
-                        stopShowTyping($chat, contact.full_name);
+                        stopShowTyping(contact.full_name);
                     }, 6000);
                 }
 
                 if (isTyping) {
                     // display start typing status
-                    startShowTyping($chat, contact.full_name);
+                    startShowTyping(contact.full_name);
                 } else {
                     // stop display typing status
-                    stopShowTyping($chat, contact.full_name);
+                    stopShowTyping(contact.full_name);
                 }
             }
         },
@@ -843,7 +843,7 @@ define([
         $objDom.mCustomScrollbar('scrollTo', 'bottom');
     }
 
-    function stopShowTyping(chat, user) {
+    function stopShowTyping(user) {
         var index = typingList.indexOf(user);
 
         typingList.splice(index, 1); // removing current user from typing list
@@ -855,10 +855,10 @@ define([
             $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
         }
 
-        isTypingOrAreTyping(chat);
+        isTypingOrAreTyping();
     }
 
-    function startShowTyping(chat, user) {
+    function startShowTyping(user) {
         var form = $('article.message[data-status="typing"]').length > 0 ? true : false,
             html;
 
@@ -884,10 +884,10 @@ define([
             $('article.message[data-status="typing"] .message_typing').text(typingList.join(', '));
         }
 
-        isTypingOrAreTyping(chat);
+        isTypingOrAreTyping();
     }
 
-    function isTypingOrAreTyping(chat) {
+    function isTypingOrAreTyping() {
         if (typingList.length > 1) {
             $('div.is_or_are').text(' are typing');
         } else {
@@ -896,9 +896,8 @@ define([
     }
 
     function roomJidVerification(dialog_id) {
-        var roomJid = QB.chat.helpers.getRoomJidFromDialogId(dialog_id);
-
-        arrayString = roomJid.split('');
+        var roomJid = QB.chat.helpers.getRoomJidFromDialogId(dialog_id),
+            arrayString = roomJid.split('');
 
         if (arrayString[0] == '_') {
             roomJid = QMCONFIG.qbAccount.appId + roomJid.toString();
@@ -949,7 +948,7 @@ define([
     }
 
     function getLocationFromAttachment(attachment) {
-        var geodata = attachment.data,
+        var geodata = attachment.data.replace(/&#10;/gi, ''),
             escape,
             geocoords;
 

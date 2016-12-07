@@ -127,11 +127,11 @@ define([
             var spinnerBlock;
             if (isAjaxDownloading) {
                 spinnerBlock = '<div class="message message_service msg_preloader">' +
-                    '<div class="popup-elem spinner_bounce is-empty is-ajaxDownload">';
+                    '<div class="popup-elem j-loading spinner_bounce is-empty is-ajaxDownload">';
             } else if (groupchat) {
-                spinnerBlock = '<div class="popup-elem spinner_bounce is-creating">';
+                spinnerBlock = '<div class="popup-elem j-loading spinner_bounce is-creating">';
             } else {
-                spinnerBlock = '<div class="popup-elem spinner_bounce is-empty">';
+                spinnerBlock = '<div class="popup-elem j-loading spinner_bounce is-empty">';
             }
 
             spinnerBlock += '<div class="spinner_bounce-bounce1"></div>';

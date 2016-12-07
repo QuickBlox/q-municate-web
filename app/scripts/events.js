@@ -852,15 +852,11 @@ define([
             $workspace.on('keyup', '.j-message', function(event) {
                 var $self = $(this),
                     $chat = $self.parents('.l-chat'),
-                    jid = $chat.data('jid'),
-                    type = $chat.is('.is-group') ? 'groupchat' : 'chat',
-                    shiftKey = event.shiftKey,
-                    code = event.keyCode, // code=27 (Esc key), code=13 (Enter key)
-                    isLoading = $chat.find('.spinner_bounce').length;
+                    isLoading = $chat.find('.j-loading').length;
 
                 if (isLoading) {
                     return false;
-                } else if (code === 13 && !shiftKey) {
+                } else if (event.keyCode === 13 && !event.shiftKey) {
                     MessageView.sendMessage($self);
                     $self.find('.textarea').empty();
                     removePopover();
