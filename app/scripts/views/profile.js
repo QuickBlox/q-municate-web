@@ -119,5 +119,4 @@ define([
     });
 
     return ProfileView;
-
 });

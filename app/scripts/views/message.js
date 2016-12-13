@@ -948,11 +948,11 @@ define([
     }
 
     function getLocationFromAttachment(attachment) {
-        var geodata = attachment.data.replace(/&#10;/gi, ''),
-            escape,
+        var geodata = attachment.data,
             geocoords;
 
         if (geodata) {
+            geodata = geodata.replace(/&quot;/gi, '"').replace(/&#10;/gi, '');
             geocoords = JSON.parse(geodata);
         } else {
             // the old way for receive geo coordinates from attachments

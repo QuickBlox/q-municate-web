@@ -22,7 +22,8 @@ define([
     var Session,
         UserView,
         ContactListView,
-        User;
+        User,
+        Listeners;
 
     var timer;
 
@@ -30,13 +31,14 @@ define([
 
     function QBApiCalls(app) {
         this.app = app;
+        self = this;
 
         Session = this.app.models.Session;
         UserView = this.app.views.User;
         DialogView = this.app.views.Dialog;
         ContactListView = this.app.views.ContactList;
         User = this.app.models.User;
-        self = this;
+        Listeners = this.app.listeners;
     }
 
     QBApiCalls.prototype = {
@@ -325,6 +327,8 @@ define([
                         UserView.logout();
                         window.location.reload();
                     } else {
+                        Listeners.setChatState(true);
+
                         var eventParams = {
                             'chat_endpoint': QB.auth.service.qbInst.config.endpoints.chat,
                             'app_id': (QMCONFIG.qbAccount.appId).toString()
@@ -355,10 +359,8 @@ define([
                     }
                 }
 
-                DialogView.chatCallbacksInit();
-
-                $('.j-disconnect').removeClass('is-overlay')
-                    .parent('.j-overlay').removeClass('is-overlay');
+                Listeners.setQBHandlers();
+                Listeners.onReconnected();
             });
         },
 
