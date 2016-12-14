@@ -120,7 +120,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.9.6');
+        $('.j-appVersion').html('v. 1.9.7');
 
         // facebook sdk
         FB.init({
