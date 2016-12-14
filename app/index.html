@@ -559,7 +559,7 @@
                     </div>
                     <div style="clear:both"></div>
                     <button class="btn_userProfile btn_userProfile_photo">Set Profile Photo</button>
-                    <% if (user_tags) { %>
+                    <% if (!facebook_id || !twitter_digits_id) { %>
                         <button class="btn_userProfile btn_changePassword">Change password</button>
                     <% } %>
                     <input class="btn_userProfile_file" type="file" accept="image/jpeg,image/png,image/svg">
