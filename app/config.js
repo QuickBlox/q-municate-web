@@ -28,6 +28,8 @@ define(function() {
             caption: 'Choose user picture'
         },
 
+        stackMessages: 50,
+
         maxLimitFile: 10,
         maxVideoSize: 100,
 

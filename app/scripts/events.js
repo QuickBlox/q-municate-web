@@ -850,12 +850,19 @@ define([
             });
 
             $workspace.on('click', '.j-btn_input_send', function() {
-                var $msg = $('.j-message:visible');
+                var $msg = $('.j-message:visible'),
+                    isLoading = $('.j-loading').length;
 
-                MessageView.sendMessage($msg);
-                $msg.find('.textarea').empty();
+                if (!isLoading) {
+                    MessageView.sendMessage($msg);
+                    $msg.find('.textarea').empty();
+                }
+
                 removePopover();
+                
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
+
+                return false;
             });
 
             // show message status on hover event

@@ -6,20 +6,30 @@
  */
 define([
     'jquery',
+    'underscore',
     'config',
     'quickblox',
     'Helpers',
-    'digits'
+    'digits',
+    'models/person',
+    'views/profile',
+    'views/change_password',
+    'views/fb_import',
 ], function(
     $,
+    _,
     QMCONFIG,
     QB,
     Helpers,
-    Digits
+    Digits,
+    Person,
+    ProfileView,
+    ChangePassView,
+    FBImportView
 ) {
 
     var tempParams,
-        that,
+        self,
         isSecondTab;
 
     function User(app) {
@@ -27,10 +37,31 @@ define([
         this._is_import = null;
         this._remember = false;
         this._valid = false;
-        that = this;
+        self = this;
     }
 
     User.prototype = {
+
+        initProfile: function() {
+            currentUser = new Person(_.clone(self.contact), {
+                app: self.app,
+                parse: true
+            });
+
+            profileView = new ProfileView({
+                model: currentUser
+            });
+
+            changePassView = new ChangePassView({
+                model: currentUser
+            });
+
+            fbImportView = new FBImportView();
+
+            self.app.views.Profile = profileView;
+            self.app.views.ChangePass = changePassView;
+            self.app.views.FBImport = fbImportView;
+        },
 
         connectTwitterDigits: function() {
             if (isSecondTab) {
@@ -47,7 +78,7 @@ define([
                         'twitter_digits': onLogin.oauth_echo_headers
                     };
 
-                    that.providerConnect(params);
+                    self.providerConnect(params);
                 })
                 .fail(function(error) {
                     isSecondTab = false;
@@ -63,7 +94,7 @@ define([
                 }
             };
 
-            that.providerConnect(params);
+            self.providerConnect(params);
         },
 
         providerConnect: function(params, callback) {

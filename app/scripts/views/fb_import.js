@@ -25,7 +25,7 @@ define([
 
         render: function() {
             var template = this.$el.html(this.template());
-            
+
             $('.popups').append(template);
             this.delegateEvents(this.events);
             return this;
