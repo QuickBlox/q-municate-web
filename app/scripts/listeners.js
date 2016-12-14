@@ -22,9 +22,9 @@ define([
 
         this.setChatState = function(state) {
             if (typeof state === 'boolean') {
-                return chatConnection = state;
+                chatConnection = state;
             } else {
-                return chatConnection = navigator.onLine;
+                chatConnection = navigator.onLine;
             }
         };
 
@@ -75,12 +75,12 @@ define([
         },
 
         onDisconnected: function() {
-            switchToOfflineMode()
+            _switchToOfflineMode();
             self.setChatState(false);
         },
 
         onReconnected: function() {
-            switchToOnlineMode();
+            _switchToOnlineMode();
             self.setChatState(true);
         },
 
@@ -101,16 +101,19 @@ define([
 
         onNetworkStatus: function(status) {
             if (status === 'online' && self.getChatState()) {
-                switchToOnlineMode();
+                _switchToOnlineMode();
             } else {
-                switchToOfflineMode();
+                _switchToOfflineMode();
             }
         }
-    }
+    };
 
+    return Listeners;
+
+    //
     // Private functions
-
-    function switchToOfflineMode() {
+    //
+    function _switchToOfflineMode() {
         if ('div.popups.is-overlay') {
             $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         }
@@ -119,10 +122,8 @@ define([
             .parent('.j-overlay').addClass('is-overlay');
     }
 
-    function switchToOnlineMode() {
+    function _switchToOnlineMode() {
         $('.j-disconnect').removeClass('is-overlay')
             .parent('.j-overlay').removeClass('is-overlay');
     }
-
-    return Listeners;
 });

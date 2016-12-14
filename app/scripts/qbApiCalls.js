@@ -321,11 +321,11 @@ define([
                     password: password
                 }, function(err, res) {
                     if (err) {
-                        Helpers.log(err.detail);
+                        Helpers.log(err);
 
-                        fail(err.detail);
                         UserView.logout();
                         window.location.reload();
+                        fail(err.detail);
                     } else {
                         Listeners.setChatState(true);
 
@@ -351,16 +351,14 @@ define([
 
         reconnectChat: function() {
             self.connectChat(User.contact.user_jid, function(roster) {
-                var dialogs = Entities.Collections.dialogs;
-
-                for (var key in dialogs) {
-                    if (dialogs.get(key).get('type') === 2) {
-                        QB.chat.muc.join(dialogs.get(key).get('room_jid'));
-                    }
-                }
-
                 Listeners.setQBHandlers();
                 Listeners.onReconnected();
+
+                Entities.Collections.dialogs.each(function(dialog) {
+                    if (dialog.get('type') === 2) {
+                        QB.chat.muc.join(dialog.get('room_jid'));
+                    }
+                });
             });
         },
 
@@ -498,7 +496,6 @@ define([
         UserView.removeSpinner();
         $('section:visible .text_error').addClass('is-error').text(errMsg);
         $('section:visible input:password').val('');
-        $('section:visible .chroma-hash label').css('background-color', 'rgb(255, 255, 255)');
     };
 
     var failUser = function(err) {
