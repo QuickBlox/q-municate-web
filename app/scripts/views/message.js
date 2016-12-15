@@ -952,7 +952,9 @@ define([
             geocoords;
 
         if (geodata) {
-            geodata = geodata.replace(/&quot;/gi, '"').replace(/&#10;/gi, '');
+            geodata = geodata.replace(/&amp;/gi, '&')
+                             .replace(/&quot;/gi, '"')
+                             .replace(/&#10;/gi, '');
             geocoords = JSON.parse(geodata);
         } else {
             // the old way for receive geo coordinates from attachments
