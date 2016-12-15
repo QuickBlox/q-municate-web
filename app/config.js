@@ -28,6 +28,11 @@ define(function() {
             caption: 'Choose user picture'
         },
 
+
+        // Limit search results of messages. Useful for pagination.
+        stackMessages: 50,
+
+        // Max size (Mbite) for images and video files
         maxLimitFile: 10,
         maxVideoSize: 100,
 
@@ -60,6 +65,8 @@ define(function() {
 
         QBconf: {
             chatProtocol: {
+                // BOSH protocol = 1,
+                // WebSocket = 2
                 active: 2
             },
             debug: {

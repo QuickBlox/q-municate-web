@@ -22,7 +22,8 @@ define([
     var Session,
         UserView,
         ContactListView,
-        User;
+        User,
+        Listeners;
 
     var timer;
 
@@ -30,13 +31,14 @@ define([
 
     function QBApiCalls(app) {
         this.app = app;
+        self = this;
 
         Session = this.app.models.Session;
         UserView = this.app.views.User;
         DialogView = this.app.views.Dialog;
         ContactListView = this.app.views.ContactList;
         User = this.app.models.User;
-        self = this;
+        Listeners = this.app.listeners;
     }
 
     QBApiCalls.prototype = {
@@ -319,12 +321,14 @@ define([
                     password: password
                 }, function(err, res) {
                     if (err) {
-                        Helpers.log(err.detail);
+                        Helpers.log(err);
 
-                        fail(err.detail);
                         UserView.logout();
                         window.location.reload();
+                        fail(err.detail);
                     } else {
+                        Listeners.setChatState(true);
+
                         var eventParams = {
                             'chat_endpoint': QB.auth.service.qbInst.config.endpoints.chat,
                             'app_id': (QMCONFIG.qbAccount.appId).toString()
@@ -347,18 +351,14 @@ define([
 
         reconnectChat: function() {
             self.connectChat(User.contact.user_jid, function(roster) {
-                var dialogs = Entities.Collections.dialogs;
+                Listeners.setQBHandlers();
+                Listeners.onReconnected();
 
-                for (var key in dialogs) {
-                    if (dialogs.get(key).get('type') === 2) {
-                        QB.chat.muc.join(dialogs.get(key).get('room_jid'));
+                Entities.Collections.dialogs.each(function(dialog) {
+                    if (dialog.get('type') === 2) {
+                        QB.chat.muc.join(dialog.get('room_jid'));
                     }
-                }
-
-                DialogView.chatCallbacksInit();
-
-                $('.j-disconnect').removeClass('is-overlay')
-                    .parent('.j-overlay').removeClass('is-overlay');
+                });
             });
         },
 
@@ -496,7 +496,6 @@ define([
         UserView.removeSpinner();
         $('section:visible .text_error').addClass('is-error').text(errMsg);
         $('section:visible input:password').val('');
-        $('section:visible .chroma-hash label').css('background-color', 'rgb(255, 255, 255)');
     };
 
     var failUser = function(err) {

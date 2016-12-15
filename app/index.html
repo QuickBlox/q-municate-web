@@ -34,6 +34,12 @@
     <!-- endbuild -->
 </head>
 
+<script>
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        location.href = 'http://q-municate.com/';
+    }
+</script>
+
 <body class="is-welcome">
     <!--[if lt IE 10]>
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -553,7 +559,7 @@
                     </div>
                     <div style="clear:both"></div>
                     <button class="btn_userProfile btn_userProfile_photo">Set Profile Photo</button>
-                    <% if (user_tags) { %>
+                    <% if (!facebook_id || !twitter_digits_id) { %>
                         <button class="btn_userProfile btn_changePassword">Change password</button>
                     <% } %>
                     <input class="btn_userProfile_file" type="file" accept="image/jpeg,image/png,image/svg">

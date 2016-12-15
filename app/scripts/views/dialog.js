@@ -6,38 +6,29 @@
  */
 define([
     'jquery',
+    'underscore',
     'config',
     'quickblox',
     'Entities',
     'Helpers',
     'QMHtml',
     'minEmoji',
-    'underscore',
-    'models/person',
-    'views/profile',
-    'views/change_password',
-    'views/fb_import',
     'mCustomScrollbar',
     'nicescroll',
     'mousewheel'
 ], function(
     $,
+    _,
     QMCONFIG,
     QB,
     Entities,
     Helpers,
     QMHtml,
-    minEmoji,
-    _,
-    Person,
-    ProfileView,
-    ChangePassView,
-    FBImportView
+    minEmoji
 ) {
 
-    var User, Dialog, Message, ContactList;
+    var User, Dialog, Message, ContactList, Listeners;
     var unreadDialogs = {};
-    var currentUser, profileView, changePassView, fbImportView;
 
     var TITLE_NAME = 'Q-municate',
         FAVICON_COUNTER = 'images/favicon_counter.png',
@@ -49,77 +40,10 @@ define([
         Dialog = this.app.models.Dialog;
         Message = this.app.models.Message;
         ContactList = this.app.models.ContactList;
+        Listeners = this.app.listeners;
     }
 
     DialogView.prototype = {
-
-        // QBChat handlers
-        chatCallbacksInit: function() {
-            var self = this;
-
-            var ContactListView = this.app.views.ContactList,
-                MessageView = this.app.views.Message,
-                VideoChat = this.app.models.VideoChat,
-                VideoChatView = this.app.views.VideoChat;
-
-            QB.chat.onMessageListener         = MessageView.onMessage;
-            QB.chat.onMessageTypingListener   = MessageView.onMessageTyping;
-            QB.chat.onSystemMessageListener   = MessageView.onSystemMessage;
-            QB.chat.onDeliveredStatusListener = MessageView.onDeliveredStatus;
-            QB.chat.onReadStatusListener      = MessageView.onReadStatus;
-
-            QB.chat.onContactListListener      = ContactListView.onPresence;
-            QB.chat.onSubscribeListener        = ContactListView.onSubscribe;
-            QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
-            QB.chat.onRejectSubscribeListener  = ContactListView.onReject;
-
-            if (QB.webrtc) {
-                QB.webrtc.onCallListener          = VideoChatView.onCall;
-                QB.webrtc.onAcceptCallListener    = VideoChatView.onAccept;
-                QB.webrtc.onRejectCallListener    = VideoChatView.onReject;
-                QB.webrtc.onInvalidEventsListener = VideoChatView.onIgnored;
-                QB.webrtc.onStopCallListener      = VideoChatView.onStop;
-                QB.webrtc.onUpdateCallListener    = VideoChatView.onUpdateCall;
-                QB.webrtc.onRemoteStreamListener  = VideoChatView.onRemoteStream;
-                QB.webrtc.onCallStatsReport       = VideoChatView.onCallStatsReport;
-                QB.webrtc.onSessionCloseListener  = VideoChatView.onSessionCloseListener;
-                QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
-            }
-
-            QB.chat.onDisconnectedListener = function() {
-                if ('div.popups.is-overlay') {
-                    $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
-                }
-                $('.j-disconnect').addClass('is-overlay')
-                    .parent('.j-overlay').addClass('is-overlay');
-            };
-
-            QB.chat.onReconnectListener = function() {
-                $('.j-disconnect').removeClass('is-overlay')
-                    .parent('.j-overlay').removeClass('is-overlay');
-            };
-
-            QB.chat.onReconnectFailedListener = function(error) {
-                if (error) {
-                    self.app.service.reconnectChat();
-                }
-            };
-
-            currentUser = new Person(_.clone(User.contact), {
-                app: this.app,
-                parse: true
-            });
-            profileView = new ProfileView({
-                model: currentUser
-            });
-            changePassView = new ChangePassView({
-                model: currentUser
-            });
-            fbImportView = new FBImportView();
-            this.app.views.Profile = profileView;
-            this.app.views.ChangePass = changePassView;
-            this.app.views.FBImport = fbImportView;
-        },
 
         createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
             this.removeDataSpinner();
@@ -162,11 +86,11 @@ define([
 
         prepareDownloading: function(roster) {
             Helpers.log('QB SDK: Roster has been got', roster);
-            this.chatCallbacksInit();
+            Listeners.setQBHandlers();
+            User.initProfile();
             this.createDataSpinner();
             scrollbarAside();
             ContactList.saveRoster(roster);
-
             this.app.views.Settings.setUp(User.contact.id);
             this.app.models.SyncTabs.init(User.contact.id);
         },
@@ -649,7 +573,7 @@ define([
                 message,
                 count;
 
-            var MIN_STACK = 20,
+            var MIN_STACK = QMCONFIG.stackMessages,
                 MAX_STACK = 100,
                 lessThenMinStack = unreadCount < MIN_STACK,
                 moreThenMinStack = unreadCount > (MIN_STACK - 1),

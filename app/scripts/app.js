@@ -17,7 +17,7 @@ define([
     'VideoChatView', 'Events',
     'Helpers', 'QBApiCalls',
     'config', 'Entities',
-    'QMHtml'
+    'QMHtml', 'Listeners'
 ], function(
     $, User,
     Session, Settings,
@@ -31,10 +31,12 @@ define([
     VideoChatView, Events,
     Helpers, QBApiCalls,
     QMCONFIG, Entities,
-    QMHtml
+    QMHtml, Listeners
 ) {
 
     function QM() {
+        this.listeners = new Listeners(this);
+
         this.models = {
             User       : new User(this),
             Session    : new Session(this),
@@ -92,6 +94,7 @@ define([
             }
 
             this.events.init();
+            this.listeners.init();
 
             Helpers.log('App init', this);
         },

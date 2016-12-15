@@ -26,7 +26,8 @@
     max-width: 200px;
     height: 45px;
 }
-.last_message_preview {
+.last_message_preview,
+.last_message_preview > a {
     display: block;
     height: 25px;
     line-height: 25px;
@@ -36,8 +37,15 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-.list-item.is-selected .last_message_preview {
+.last_message_preview > a:hover {
+    opacity: initial;
+}
+.list-item.is-selected .last_message_preview,
+.list-item.is-selected .last_message_preview > a {
     color: #f5f5f5;
+}
+.last_message_preview > .em {
+    cursor: pointer;
 }
 /* avatar */
 .avatar {
@@ -304,8 +312,11 @@
     opacity: 1;
 }
 span.send-request {
-    min-width: 95px;
-    height: 100%;
+    display: inline-block;
+    min-width: 120px;
+    height: 45px;
+    line-height: 45px;
+    text-align: right;
 }
 .send-request img {
     float: right;
