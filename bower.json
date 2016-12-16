@@ -19,7 +19,8 @@
     "underscore": "^1.8.3",
     "googlemaps-amd": "^1.0.2",
     "balloon-css": "*",
-    "crypto-js-lib": "^3.1.2"
+    "crypto-js-lib": "^3.1.2",
+    "perfect-scrollbar": "^0.6.15"
   },
   "devDependencies": {}
 }

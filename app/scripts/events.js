@@ -11,6 +11,7 @@ define([
     'QMHtml',
     'LocationView',
     'minEmoji',
+    'perfectscrollbar',
     'mCustomScrollbar',
     'mousewheel'
 ], function(
@@ -19,7 +20,8 @@ define([
     Helpers,
     QMHtml,
     Location,
-    minEmoji
+    minEmoji,
+    Ps
 ) {
 
     var Dialog,
@@ -175,18 +177,15 @@ define([
                 $('.smiles-group_' + group).removeClass('is-hidden')
                     .siblings().addClass('is-hidden');
 
+                Ps.update(document.querySelector('.smiles-wrap'));
+
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
-            $('.smiles-group').niceScroll({
-                cursoropacitymax: 0.3,
-                railpadding: {
-                    right: 2
-                },
-                zindex: 1,
-                autohidemode: false,
-                cursorwidth: '6px',
-                enablekeyboard: false
+            Ps.initialize(document.querySelector('.smiles-wrap'), {
+                wheelSpeed: 1,
+                wheelPropagation: true,
+                minScrollbarLength: 20
             });
 
             $workspace.on('click', '.j-em', function() {
@@ -859,7 +858,7 @@ define([
                 }
 
                 removePopover();
-                
+
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
 
                 return false;

@@ -13,6 +13,7 @@ define([
     'Helpers',
     'QMHtml',
     'minEmoji',
+    'perfectscrollbar',
     'mCustomScrollbar',
     'nicescroll',
     'mousewheel'
@@ -24,9 +25,11 @@ define([
     Entities,
     Helpers,
     QMHtml,
-    minEmoji
+    minEmoji,
+    Ps
 ) {
 
+    var self;
     var User, Dialog, Message, ContactList, Listeners;
     var unreadDialogs = {};
 
@@ -35,6 +38,8 @@ define([
         FAVICON = 'images/favicon.png';
 
     function DialogView(app) {
+        self = this;
+
         this.app = app;
         User = this.app.models.User;
         Dialog = this.app.models.Dialog;
@@ -90,6 +95,7 @@ define([
             User.initProfile();
             this.createDataSpinner();
             scrollbarAside();
+            scrollbarSmile();
             ContactList.saveRoster(roster);
             this.app.views.Settings.setUp(User.contact.id);
             this.app.models.SyncTabs.init(User.contact.id);
@@ -135,8 +141,7 @@ define([
         },
 
         downloadDialogs: function(roster, ids) {
-            var self = this,
-                ContactListView = this.app.views.ContactList,
+            var ContactListView = this.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
                 rosterIds = Object.keys(roster),
                 notConfirmed,
@@ -277,8 +282,7 @@ define([
                 status,
                 icon,
                 name,
-                html,
-                self = this;
+                html;
 
             private_id = dialog_type === 3 ? occupants_ids[0] : null;
 
@@ -347,7 +351,6 @@ define([
                 occupants_ids = dialog.get('occupants_ids'),
                 $chatWrap = $('.j-chatWrap'),
                 $chatView = $('.chatView'),
-                self = this,
                 isCall,
                 chatTpl,
                 messageId,
@@ -389,8 +392,8 @@ define([
             }
 
             textAreaScrollbar('#textarea_'+dialog_id);
+            messageScrollbar('#mCS_'+dialog_id);
             self.createDataSpinner(true);
-            self.messageScrollbar($('#mCS_'+dialog_id));
             self.showChatWithNewMessages(dialog_id, unreadCount, messages);
 
             removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
@@ -439,41 +442,6 @@ define([
             }
         },
 
-        messageScrollbar: function($chatScroll) {
-            var self = this;
-
-            $chatScroll.mCustomScrollbar({
-                theme: 'minimal-dark',
-                scrollInertia: 'auto',
-                mouseWheel: {
-                    scrollAmount: 120,
-                    deltaFactor: 'auto'
-                },
-                callbacks: {
-                    onTotalScrollBack: function() {
-                        ajaxDownloading($chatScroll, self);
-                    },
-                    onTotalScroll: function() {
-                        var isBottom = Helpers.isBeginOfChat(),
-                            $currentDialog = $('.dialog-item.is-selected'),
-                            dialogId = $currentDialog.data('dialog');
-
-                        if (isBottom) {
-                            $('.j-toBottom').hide();
-                            $currentDialog.find('.unread').text('');
-                            self.decUnreadCounter(dialogId);
-                        }
-                    },
-                    onScroll: function() {
-                        var isBottom = Helpers.isBeginOfChat();
-                        if (!isBottom) {
-                            $('.j-toBottom').show();
-                        }
-                    }
-                },
-                live: 'on'
-            });
-        },
 
         createGroupChat: function(type, dialog_id) {
             var contacts = ContactList.contacts,
@@ -481,7 +449,6 @@ define([
                 occupants_ids = $('#popupContacts').data('existing_ids') || [],
                 groupName = occupants_ids.length > 0 ? [User.contact.full_name, contacts[occupants_ids[0]].full_name] : [User.contact.full_name],
                 occupants_names = !type && occupants_ids.length > 0 ? [contacts[occupants_ids[0]].full_name] : [],
-                self = this,
                 new_ids = [],
                 new_id, occupant,
                 roster = ContactList.roster,
@@ -568,7 +535,6 @@ define([
 
         showChatWithNewMessages: function(dialogId, unreadCount, messages) {
             var MessageView = this.app.views.Message,
-                self = this,
                 lastReaded,
                 message,
                 count;
@@ -631,7 +597,7 @@ define([
                     MessageView.addItem(message, null, null, message.recipient_id);
                 }
 
-                setScrollToNewMessages($('#mCS_'+dialogId));
+                setScrollToNewMessages('#mCS_'+dialogId);
 
                 setTimeout(function() {
                     self.removeDataSpinner();
@@ -645,19 +611,56 @@ define([
 
     /* Private
     ---------------------------------------------------------------------- */
-    function scrollbarAside() {
-        $('.j-scrollbar_aside').niceScroll({
-            cursoropacitymax: 0.3,
-            railpadding: {
-                top: 10,
-                bottom: 10,
-                right: 2,
-                left: 0
+    function messageScrollbar(selector) {
+        $(selector).mCustomScrollbar({
+            theme: 'minimal-dark',
+            scrollInertia: 0,
+            mouseWheel: {
+                scrollAmount: 120,
             },
-            zindex: 1,
-            cursorwidth: '6px',
-            enablekeyboard: false
+            callbacks: {
+                onTotalScrollBack: function() {
+                    ajaxDownloading(selector);
+                },
+                onTotalScroll: function() {
+                    var isBottom = Helpers.isBeginOfChat(),
+                    $currentDialog = $('.dialog-item.is-selected'),
+                    dialogId = $currentDialog.data('dialog');
+
+                    if (isBottom) {
+                        $('.j-toBottom').hide();
+                        $currentDialog.find('.unread').text('');
+                        self.decUnreadCounter(dialogId);
+                    }
+                },
+                onScroll: function() {
+                    var isBottom = Helpers.isBeginOfChat();
+                    if (!isBottom) {
+                        $('.j-toBottom').show();
+                    }
+                }
+            }
         });
+    }
+
+    function scrollbarAside(update) {
+        var sidebar = document.getElementById('aside_container');
+
+        if (update) {
+            Ps.update(sidebar);
+
+            return true;
+        }
+
+        Ps.initialize(sidebar, {
+            wheelSpeed: 1,
+            wheelPropagation: true,
+            minScrollbarLength: 20
+        });
+    }
+
+    function scrollbarSmile() {
+
     }
 
     function textAreaScrollbar(selector) {
@@ -668,14 +671,17 @@ define([
                 bottom: 3,
                 right: -13
             },
-            zindex: 1,
+            smoothscroll: false,
+            enablemouselockapi: false,
             cursorwidth: '6px',
+            autohidemode: "scroll",
+            enabletranslate3d: false,
             enablekeyboard: false
         });
     }
 
     // ajax downloading of data through scroll
-    function ajaxDownloading($chatScroll, self) {
+    function ajaxDownloading(selector) {
         var MessageView = self.app.views.Message,
             $chat = $('.j-chatItem:visible'),
             dialog_id = $chat.data('dialog'),
@@ -693,7 +699,7 @@ define([
                 MessageView.addItem(message, true);
 
                 if ((i + 1) === len) {
-                    $chatScroll.mCustomScrollbar('scrollTo', '#'+firstMsgId);
+                    $(selector).mCustomScrollbar('scrollTo', '#'+firstMsgId);
                 }
             }
         }, count, 'ajax');
@@ -725,7 +731,7 @@ define([
         $chatContainer.prepend($newMessages);
     }
 
-    function setScrollToNewMessages($chatScroll) {
+    function setScrollToNewMessages(selector) {
         var $chat = $('.j-chatItem:visible'),
             isBottom = Helpers.isBeginOfChat(),
             isScrollDragger = $chat.find('.mCSB_draggerContainer').length;
@@ -740,7 +746,7 @@ define([
         }
 
         function scrollToThrArea(area) {
-            $chatScroll.mCustomScrollbar('scrollTo', area);
+            $(selector).mCustomScrollbar('scrollTo', area);
         }
     }
 
