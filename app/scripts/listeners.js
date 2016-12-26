@@ -18,7 +18,7 @@ define([
         self = this;
         this.app = app;
 
-        var chatConnection;
+        var chatConnection = navigator.onLine;
 
         this.setChatState = function(state) {
             if (typeof state === 'boolean') {
@@ -36,8 +36,10 @@ define([
     Listeners.prototype = {
 
         init: function() {
-            window.addEventListener('online',  self._onNetworkStatusListener);
+            window.addEventListener('online', self._onNetworkStatusListener);
             window.addEventListener('offline', self._onNetworkStatusListener);
+            document.querySelector('.j-scrollbar_aside')
+                    .addEventListener('ps-y-reach-end', self._onNextDilogsList);
         },
 
         setQBHandlers: function() {
@@ -91,7 +93,7 @@ define([
             }
         },
 
-        _onNetworkStatusListener: function(event) {
+        _onNetworkStatusListener: function() {
             var condition = navigator.onLine ? 'online' : 'offline';
 
             if (typeof self.onNetworkStatus === 'function' && condition) {
@@ -99,7 +101,12 @@ define([
             }
         },
 
+        _onNextDilogsList: function() {
+
+        },
+
         onNetworkStatus: function(status) {
+            console.info(status, self.getChatState());
             if (status === 'online' && self.getChatState()) {
                 _switchToOnlineMode();
             } else {

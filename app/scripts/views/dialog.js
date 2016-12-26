@@ -95,7 +95,6 @@ define([
             User.initProfile();
             this.createDataSpinner();
             scrollbarAside();
-            scrollbarSmile();
             ContactList.saveRoster(roster);
             this.app.views.Settings.setUp(User.contact.id);
             this.app.models.SyncTabs.init(User.contact.id);
@@ -648,7 +647,6 @@ define([
 
         if (update) {
             Ps.update(sidebar);
-
             return true;
         }
 
@@ -657,10 +655,6 @@ define([
             wheelPropagation: true,
             minScrollbarLength: 20
         });
-    }
-
-    function scrollbarSmile() {
-
     }
 
     function textAreaScrollbar(selector) {
