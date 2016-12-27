@@ -1068,10 +1068,10 @@ define([
 
             if (urlCache[url] === 'error' || !isValidUrl) {
                 return false;
-            } else {
-                ogBlock = $('<a class="og_block" href="'+ url +'" target="_blank"></a>');
-                $messageBody.append(ogBlock);
             }
+
+            ogBlock = $('<a class="og_block" href="'+ url +'" target="_blank"></a>');
+            $messageBody.append(ogBlock);
 
             if (urlCache[url]) {
                 ogInfo = QMHtml.Messages.urlPreview(urlCache[url]);
@@ -1081,7 +1081,7 @@ define([
                     if (result && (result.ogTitle || result.ogDescription)) {
                         params = {
                             title: result.ogTitle || result.ogUrl || '',
-                            description: result.ogDescription || result.ogUrl || '',
+                            description: result.ogDescription || result.ogUrl || url,
                             picture: result.ogImage && result.ogImage.url || ''
                         };
 
