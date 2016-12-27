@@ -1066,7 +1066,7 @@ define([
             url = $hyperText.first().attr('href');
             isValidUrl = Helpers.isValidUrl(url);
 
-            if (urlCache[url] === 'error' && !isValidUrl) {
+            if (urlCache[url] === 'error' || !isValidUrl) {
                 return false;
             } else {
                 ogBlock = $('<a class="og_block" href="'+ url +'" target="_blank"></a>');
@@ -1079,14 +1079,13 @@ define([
             } else {
                 Helpers.getOpenGraphInfo(url, function(error, result) {
                     if (result && (result.ogTitle || result.ogDescription)) {
-                        urlCache[url] = params;
-
                         params = {
                             title: result.ogTitle || result.ogUrl || '',
                             description: result.ogDescription || result.ogUrl || '',
                             picture: result.ogImage && result.ogImage.url || ''
                         };
 
+                        urlCache[url] = params;
                         ogInfo = QMHtml.Messages.urlPreview(params);
                         $messageBody.find('.og_block').append(ogInfo);
                     } else {
