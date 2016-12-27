@@ -190,7 +190,7 @@ define([
                     '</div>'+
                     '<% if (picture) { %>'+
                         '<div class="og_image">'+
-                            '<img src="<%=picture%>" alt="og_image">'+
+                            '<img src="<%=picture%>" alt="og_pic">'+
                         '</div>'+
                     '<% } %>'
                 )(params);
