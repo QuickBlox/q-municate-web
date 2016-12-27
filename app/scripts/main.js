@@ -53,6 +53,7 @@ requirejs.config({
         timeago: '../bower_components/jquery-timeago/jquery.timeago',
         minEmoji: '../vendor/emoji/js/minEmoji',
         nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
+        perfectscrollbar: '../bower_components/perfect-scrollbar/js/perfect-scrollbar.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
 
         // Q-municate application
@@ -120,7 +121,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.9.10');
+        $('.j-appVersion').html('v. 1.9.12');
 
         // facebook sdk
         FB.init({

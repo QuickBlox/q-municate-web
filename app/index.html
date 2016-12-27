@@ -8,9 +8,18 @@
 
     <meta property="og:title" content="Q-municate" />
     <meta property="og:url" content="https://qm.quickblox.com/" />
-    <meta property="og:image" content="http://qm.quickblox.com/images/logo-qmunicate.svg" />
-    <meta property="og:image:secure_url" content="https://qm.quickblox.com/images/logo-qmunicate.svg" />
+    <meta property="og:image:secure_url" content="https://qm.quickblox.com/images/qm-logo.svg" />
+    <meta property="og:image" content="http://qm.quickblox.com/images/qm-logo.svg" />
     <meta property="og:description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox" />
+
+    <meta itemprop="name" content="Q-municate" />
+    <meta itemprop="description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox" />
+    <meta itemprop="image" content="https://qm.quickblox.com/images/qm-logo.svg" />
+
+    <meta name="twitter:domain" content="https://qm.quickblox.com/" />
+    <meta name="twitter:title" content="Q-municate">
+    <meta name="twitter:description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox" />
+    <meta name="twitter:image:src" content="https://qm.quickblox.com/images/qm-logo.svg" />
 
     <title>Q-municate</title>
     <meta name="description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox">
@@ -22,6 +31,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
     <!-- build:css styles/build.css -->
     <link rel="stylesheet" href="bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="bower_components/perfect-scrollbar/css/perfect-scrollbar.min.css">
     <link rel="stylesheet" href="bower_components/progressbar.js/css/lib/control/progressbar.css">
     <link rel="stylesheet" href="vendor/emoji/css/minEmoji.css">
     <link rel="stylesheet" href="bower_components/balloon-css/balloon.min.css">
@@ -217,7 +227,7 @@
                             <button class="clean-button j-clean-button" type="reset">✕</button>
                         </form>
 
-                        <div class="l-list-wrap j-scrollbar_aside">
+                        <div id="aside_container" class="l-list-wrap j-scrollbar_aside">
 
                             <section id="requestsList" class="l-list j-aside_list_item is-hidden">
                                 <header class="l-list-header">
@@ -256,6 +266,7 @@
                                 <span class="text text_alert">Oops...</span>
                                 <span class="text">You don't have any contacts.</span>
                             </section>
+
                         </div>
                     </aside>
 

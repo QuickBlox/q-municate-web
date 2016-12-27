@@ -32,6 +32,7 @@ define([
 
     var User, Message, ContactList, Dialog, Settings;
     var clearTyping, typingList = []; // for typing statuses
+    var urlCache = {};
     var self;
 
     function MessageView(app) {
@@ -288,6 +289,7 @@ define([
                         break;
 
                     default:
+
                         status = isOnline ? message.status : 'Not delivered yet';
 
                         if (message.sender_id === User.contact.id) {
@@ -357,6 +359,7 @@ define([
                 if (isCallback) {
                     if (isMessageListener) {
                         $chat.find('.l-chat-content .mCSB_container').append(html);
+                        getUrlPreview(message.id);
                         smartScroll(isBottom);
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
@@ -367,6 +370,7 @@ define([
                     } else {
                         $chat.find('.l-chat-content').prepend(html);
                     }
+                    getUrlPreview(message.id);
                     smartScroll(true);
                 }
 
@@ -380,6 +384,7 @@ define([
                         imgUrl: imgUrl
                     });
                 }
+
 
                 if ((message.sender_id == User.contact.id) && (message.delivered_ids.length > 0)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'delivered', false);
@@ -1046,6 +1051,50 @@ define([
 
     function makeJid(id) {
         return QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
+    }
+
+    function getUrlPreview(id) {
+        var $messageBody = $('#' + id + '.message').find('.message-body'),
+            $hyperText = $messageBody.find('a'),
+            isValidUrl,
+            ogBlock,
+            ogInfo,
+            params,
+            url;
+
+        if ($hyperText.length) {
+            url = $hyperText.first().attr('href');
+            isValidUrl = Helpers.isValidUrl(url);
+
+            if (urlCache[url] === 'error' || !isValidUrl) {
+                return false;
+            } else {
+                ogBlock = $('<a class="og_block" href="'+ url +'" target="_blank"></a>');
+                $messageBody.append(ogBlock);
+            }
+
+            if (urlCache[url]) {
+                ogInfo = QMHtml.Messages.urlPreview(urlCache[url]);
+                $messageBody.find('.og_block').append(ogInfo);
+            } else {
+                Helpers.getOpenGraphInfo(url, function(error, result) {
+                    if (result && (result.ogTitle || result.ogDescription)) {
+                        params = {
+                            title: result.ogTitle || result.ogUrl || '',
+                            description: result.ogDescription || result.ogUrl || '',
+                            picture: result.ogImage && result.ogImage.url || ''
+                        };
+
+                        urlCache[url] = params;
+                        ogInfo = QMHtml.Messages.urlPreview(params);
+                        $messageBody.find('.og_block').append(ogInfo);
+                    } else {
+                        urlCache[url] = 'error';
+                        ogBlock.remove();
+                    }
+                });
+            }
+        }
     }
 
     return MessageView;

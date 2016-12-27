@@ -344,13 +344,18 @@ define([
     Helpers.getOpenGraphInfo = function(url, callback) {
         $.ajax({
             'url': 'https://ogs.quickblox.com/?url=' + url,
-            success: function(data, status, jqHXR) {
-                callback(data);
-            },
             error: function(jqHXR, status, error) {
-                console.error(error);
+                callback(error, null);
+            },
+            success: function(data, status, jqHXR) {
+                callback(null, data);
             }
         });
+    };
+
+    Helpers.isValidUrl = function(url) {
+        var validator = /^(?:([a-z]+):(?:([a-z]*):)?\/\/)?(?:([^:@]*)(?::([^:@]*))?@)?((?:[a-z0-9_-]+\.)+[a-z]{2,}|localhost|(?:(?:[01]?\d\d?|2[0-4]\d|25[0-5])\.){3}(?:(?:[01]?\d\d?|2[0-4]\d|25[0-5])))(?::(\d+))?(?:([^:\?\#]+))?(?:\?([^\#]+))?(?:\#([^\s]+))?$/i;
+        return validator.test(url);
     };
 
     return Helpers;
