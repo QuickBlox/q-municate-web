@@ -5,20 +5,22 @@ define([
     'config',
     'quickblox',
     'Helpers',
+    'perfectscrollbar'
 ], function(
     $,
     QMCONFIG,
     QB,
-    Helpers
+    Helpers,
+    Ps
 ) {
     var self;
-    var currentUser, profileView, changePassView, fbImportView;
 
     function Listeners(app) {
         self = this;
         this.app = app;
 
         var chatConnection = navigator.onLine;
+        var active = false;
 
         this.setChatState = function(state) {
             if (typeof state === 'boolean') {
@@ -38,8 +40,6 @@ define([
         init: function() {
             window.addEventListener('online', self._onNetworkStatusListener);
             window.addEventListener('offline', self._onNetworkStatusListener);
-            document.querySelector('.j-scrollbar_aside')
-                    .addEventListener('ps-y-reach-end', self._onNextDilogsList);
         },
 
         setQBHandlers: function() {
@@ -76,6 +76,16 @@ define([
             }
         },
 
+        listenToPsTotalEnd: function(onOrOff) {
+            var scroll = document.querySelector('.j-scrollbar_aside');
+
+            if (onOrOff) {
+                scroll.addEventListener('ps-y-reach-end', self._onNextDilogsList);
+            } else {
+                scroll.removeEventListener('ps-y-reach-end', self._onNextDilogsList);
+            }
+        },
+
         onDisconnected: function() {
             _switchToOfflineMode();
             self.setChatState(false);
@@ -102,11 +112,26 @@ define([
         },
 
         _onNextDilogsList: function() {
+            if (self.activePsListener) {
+                self.listenToPsTotalEnd(false);
 
+                var DialogView = self.app.views.Dialog,
+                    roster = self.app.models.ContactList.roster;
+
+                DialogView.downloadDialogs(null, function() {
+                    self.listenToPsTotalEnd(true);
+                    self._onUpdatePerfectScroll();
+                });
+            } else {
+                self.activePsListener = true;
+            }
+        },
+
+        _onUpdatePerfectScroll: function() {
+            Ps.update(document.querySelector('.j-scrollbar_aside'));
         },
 
         onNetworkStatus: function(status) {
-            console.info(status, self.getChatState());
             if (status === 'online' && self.getChatState()) {
                 _switchToOnlineMode();
             } else {

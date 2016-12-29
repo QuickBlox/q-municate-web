@@ -28,7 +28,6 @@ define(function() {
             caption: 'Choose user picture'
         },
 
-
         // Limit search results of messages. Useful for pagination.
         stackMessages: 50,
 
@@ -82,5 +81,4 @@ define(function() {
     };
 
     return QMCONFIG;
-
 });

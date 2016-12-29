@@ -1055,7 +1055,7 @@ define([
 
     function getUrlPreview(id) {
         var $messageBody = $('#' + id + '.message').find('.message-body'),
-            $hyperText = $messageBody.find('a'),
+            $hyperText = $messageBody.find('a:not(a.open_googlemaps)'),
             isValidUrl,
             ogBlock,
             ogInfo,

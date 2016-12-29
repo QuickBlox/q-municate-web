@@ -93,7 +93,7 @@ define([
             Helpers.log('QB SDK: Roster has been got', roster);
             Listeners.setQBHandlers();
             User.initProfile();
-            this.createDataSpinner();
+            self.createDataSpinner();
             scrollbarAside();
             ContactList.saveRoster(roster);
             this.app.views.Settings.setUp(User.contact.id);
@@ -139,9 +139,19 @@ define([
             $('.mediacall-info-duration').text('');
         },
 
-        downloadDialogs: function(roster, ids) {
+        // for save dialogs' loading parametrs in this module
+        skipCount: 0,
+        totalEntries: 0,
+
+        downloadDialogs: function(ids, callback) {
+            if (self.skipCount > self.totalEntries) {
+                return false;
+            }
+
             var ContactListView = this.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+                dialogsCollection = Entities.Collections.dialogs,
+                roster = ContactList.roster,
                 rosterIds = Object.keys(roster),
                 notConfirmed,
                 private_id,
@@ -151,20 +161,24 @@ define([
                 occupants_ids,
                 chat;
 
-            Dialog.download(function(dialogs) {
-                self.removeDataSpinner();
+            var params = {
+                sort_desc: 'last_message_date_sent',
+                skip: self.skipCount || 0,
+                limit: 50
+            };
+
+            Dialog.download(params, function(result) {
+                dialogs = result.items;
+                self.skipCount += result.limit;
+                self.totalEntries = result.total_entries;
 
                 if (dialogs.length > 0) {
-
                     occupants_ids = _.uniq(_.flatten(_.pluck(dialogs, 'occupants_ids'), true));
-
                     // updating of Contact List whereto are included all people
                     // with which maybe user will be to chat (there aren't only his friends)
                     ContactList.add(occupants_ids, null, function() {
-
                         for (var i = 0, len = dialogs.length; i < len; i++) {
                             dialogId = Dialog.create(dialogs[i]);
-                            dialogsCollection = Entities.Collections.dialogs;
                             dialog = dialogsCollection.get(dialogId);
 
                             // don't create a duplicate dialog in contact list
@@ -219,7 +233,11 @@ define([
                 }
 
                 self.getAllUsers(rosterIds);
+                self.removeDataSpinner();
 
+                if (typeof callback === 'function') {
+                    callback();
+                }
             });
         },
 
@@ -642,19 +660,16 @@ define([
         });
     }
 
-    function scrollbarAside(update) {
+    function scrollbarAside() {
         var sidebar = document.getElementById('aside_container');
-
-        if (update) {
-            Ps.update(sidebar);
-            return true;
-        }
 
         Ps.initialize(sidebar, {
             wheelSpeed: 1,
             wheelPropagation: true,
             minScrollbarLength: 20
         });
+
+        Listeners.listenToPsTotalEnd(true);
     }
 
     function textAreaScrollbar(selector) {

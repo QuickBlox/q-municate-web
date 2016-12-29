@@ -367,14 +367,13 @@ define([
                 QB.chat.dialog.list(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
-
                     } else {
                         Helpers.log('QB SDK: Dialogs is found', res);
 
                         Session.update({
                             date: new Date()
                         });
-                        callback(res.items);
+                        callback(res);
                     }
                 });
             });

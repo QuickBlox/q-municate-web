@@ -24,12 +24,10 @@ define([
 
     Dialog.prototype = {
 
-        download: function(callback) {
+        download: function(params, callback) {
             var QBApiCalls = this.app.service;
 
-            QBApiCalls.listDialogs({
-                sort_desc: 'last_message_date_sent'
-            }, function(dialogs) {
+            QBApiCalls.listDialogs(params, function(dialogs) {
                 callback(dialogs);
             });
         },
@@ -134,7 +132,7 @@ define([
                         id: msgId
                     }, function() {
                         dialog.set('occupants_ids', occupants_ids);
-                        
+
                         DialogView.addDialogItem(dialog);
                         // send invites for all occupants
                         for (var i = 0, len = occupants_ids.length, id; i < len; i++) {

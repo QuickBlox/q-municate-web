@@ -136,7 +136,7 @@ define([
                     if (!self._is_import && isFB) {
                         self.import(roster, user);
                     } else {
-                        DialogView.downloadDialogs(roster);
+                        DialogView.downloadDialogs();
                     }
                 });
             }
@@ -167,14 +167,14 @@ define([
                         }
 
                         if (ids.length > 0) {
-                            DialogView.downloadDialogs(roster, ids);
+                            DialogView.downloadDialogs(ids);
                         } else {
-                            DialogView.downloadDialogs(roster);
+                            DialogView.downloadDialogs();
                         }
                     });
 
                 } else {
-                    DialogView.downloadDialogs(roster);
+                    DialogView.downloadDialogs();
                 }
                 self._is_import = '1';
                 self.updateQBUser(user);
@@ -235,7 +235,7 @@ define([
                                 } else {
                                     UserView.successFormCallback();
                                     DialogView.prepareDownloading(roster);
-                                    DialogView.downloadDialogs(roster);
+                                    DialogView.downloadDialogs();
                                 }
                             });
                         });
@@ -266,7 +266,7 @@ define([
 
                     UserView.successFormCallback();
                     DialogView.prepareDownloading(roster);
-                    DialogView.downloadDialogs(roster);
+                    DialogView.downloadDialogs();
 
                     custom_data = JSON.stringify({
                         avatar_url: blob.path
@@ -308,7 +308,7 @@ define([
                             self.rememberMe();
                             UserView.successFormCallback();
                             DialogView.prepareDownloading(roster);
-                            DialogView.downloadDialogs(roster);
+                            DialogView.downloadDialogs();
                         });
                     });
                 }, true);
@@ -381,7 +381,7 @@ define([
                     self.rememberMe();
                     UserView.successFormCallback();
                     DialogView.prepareDownloading(roster);
-                    DialogView.downloadDialogs(roster);
+                    DialogView.downloadDialogs();
                 });
             });
         },

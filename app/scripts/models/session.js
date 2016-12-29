@@ -37,9 +37,9 @@ define([
                     this.authParams = params.authParams;
                 }
                 if (params.date) {
-                    // set QB session expiration through 2 minutes
+                    // set QB session expiration through 5 minutes
                     date = params.date;
-                    date.setMinutes(date.getMinutes() + 2);
+                    date.setMinutes(date.getMinutes() + 5);
                     this.expirationTime = date.toISOString();
                 }
                 if (this._remember) {
