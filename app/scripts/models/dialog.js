@@ -27,8 +27,8 @@ define([
         download: function(params, callback) {
             var QBApiCalls = this.app.service;
 
-            QBApiCalls.listDialogs(params, function(dialogs) {
-                callback(dialogs);
+            QBApiCalls.listDialogs(params, function(result) {
+                callback(result);
             });
         },
 

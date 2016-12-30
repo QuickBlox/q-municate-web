@@ -207,7 +207,7 @@ define([
 
                     });
 
-                } else if (skip === 0) {
+                } else if (!skip) {
                     $('#emptyList').removeClass('is-hidden');
                 }
 

@@ -169,6 +169,7 @@ define([
             ----------------------------------------------------- */
             $('.smiles-tab').on('click', function() {
                 var $self = $(this),
+                    smile = document.querySelector('.smiles-wrap'),
                     group = $self.data('group');
 
                 $self.addClass('is-actived')
@@ -177,7 +178,8 @@ define([
                 $('.smiles-group_' + group).removeClass('is-hidden')
                     .siblings().addClass('is-hidden');
 
-                Ps.update(document.querySelector('.smiles-wrap'));
+                smile.scrollTop = 0;
+                Ps.update(smile);
 
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
@@ -699,6 +701,7 @@ define([
 
             $('.localSearch').on('keyup search submit', function(event) {
                 var $self = $(this),
+                    scrollbar = document.querySelector('.j-scrollbar_aside'),
                     isText = $self.find('.form-input-search').val().length,
                     $cleanButton = $self.find('.j-clean-button'),
                     isNoBtn = $cleanButton.is(':hidden'),
@@ -711,6 +714,8 @@ define([
                     } else {
                         UserView.friendsSearch($self);
                     }
+
+                    Ps.update(scrollbar);
                 }
 
                 if (isText && isNoBtn) {
