@@ -76,16 +76,6 @@ define([
             }
         },
 
-        listenToPsTotalEnd: function(onOrOff) {
-            var scroll = document.querySelector('.j-scrollbar_aside');
-
-            if (onOrOff) {
-                scroll.addEventListener('ps-y-reach-end', self._onNextDilogsList);
-            } else {
-                scroll.removeEventListener('ps-y-reach-end', self._onNextDilogsList);
-            }
-        },
-
         onDisconnected: function() {
             _switchToOfflineMode();
             self.setChatState(false);
@@ -109,26 +99,6 @@ define([
             if (typeof self.onNetworkStatus === 'function' && condition) {
                 self.onNetworkStatus(condition);
             }
-        },
-
-        _onNextDilogsList: function() {
-            if (self.activePsListener) {
-                self.listenToPsTotalEnd(false);
-
-                var DialogView = self.app.views.Dialog,
-                    roster = self.app.models.ContactList.roster;
-
-                DialogView.downloadDialogs(null, function() {
-                    self.listenToPsTotalEnd(true);
-                    self._onUpdatePerfectScroll();
-                });
-            } else {
-                self.activePsListener = true;
-            }
-        },
-
-        _onUpdatePerfectScroll: function() {
-            Ps.update(document.querySelector('.j-scrollbar_aside'));
         },
 
         onNetworkStatus: function(status) {

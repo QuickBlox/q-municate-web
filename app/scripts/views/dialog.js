@@ -139,38 +139,27 @@ define([
             $('.mediacall-info-duration').text('');
         },
 
-        // for save dialogs' loading parametrs in this module
-        skipCount: 0,
-        totalEntries: 0,
-
-        downloadDialogs: function(ids, callback) {
-            if (self.skipCount > self.totalEntries) {
-                return false;
-            }
-
+        downloadDialogs: function(ids, skip) {
             var ContactListView = this.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
                 dialogsCollection = Entities.Collections.dialogs,
                 roster = ContactList.roster,
                 rosterIds = Object.keys(roster),
+                occupants_ids,
                 notConfirmed,
                 private_id,
                 dialogId,
                 dialogs,
                 dialog,
-                occupants_ids,
                 chat;
 
-            var params = {
-                sort_desc: 'last_message_date_sent',
-                skip: self.skipCount || 0,
-                limit: 50
-            };
+            params = {
+                'sort_desc': 'last_message_date_sent',
+                'skip': skip || 0
+            },
 
             Dialog.download(params, function(result) {
                 dialogs = result.items;
-                self.skipCount += result.limit;
-                self.totalEntries = result.total_entries;
 
                 if (dialogs.length > 0) {
                     occupants_ids = _.uniq(_.flatten(_.pluck(dialogs, 'occupants_ids'), true));
@@ -218,7 +207,7 @@ define([
 
                     });
 
-                } else {
+                } else if (skip === 0) {
                     $('#emptyList').removeClass('is-hidden');
                 }
 
@@ -235,8 +224,8 @@ define([
                 self.getAllUsers(rosterIds);
                 self.removeDataSpinner();
 
-                if (typeof callback === 'function') {
-                    callback();
+                if (result.total_entries >= (result.limit + result.skip)) {
+                    self.downloadDialogs(ids, (result.limit + result.skip));
                 }
             });
         },
@@ -668,8 +657,6 @@ define([
             wheelPropagation: true,
             minScrollbarLength: 20
         });
-
-        Listeners.listenToPsTotalEnd(true);
     }
 
     function textAreaScrollbar(selector) {
