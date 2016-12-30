@@ -699,8 +699,7 @@ define([
 
             $('.localSearch').on('keyup search submit', function(event) {
                 var $self = $(this),
-                    text = $self.find('.form-input-search').val()
-                    isText = text.length,
+                    isText = $self.find('.form-input-search').val().length,
                     $cleanButton = $self.find('.j-clean-button'),
                     isNoBtn = $cleanButton.is(':hidden'),
                     type = event.type,
@@ -713,28 +712,6 @@ define([
                         UserView.friendsSearch($self);
                     }
                 }
-                // 
-                // if (DialogView.skipCount >= DialogView.totalEntries) {
-                //     if (code === 13) {
-                //         clearTimeout(keyupSearch);
-                //         startSearch();
-                //     } else if (keyupSearch === undefined) {
-                //         keyupSearch = setTimeout(function() {
-                //             startSearch();
-                //         }, (code === 8) ? 0 : 1000);
-                //     } else {
-                //         clearTimeout(keyupSearch);
-                //         keyupSearch = setTimeout(function() {
-                //             startSearch();
-                //         }, 1000);
-                //     }
-                //
-                //     function startSearch() {
-                //         keyupSearch = undefined;
-                //         console.info(text);
-                //         DialogView.downloadDialogs(null, null, text);
-                //     }
-                // }
 
                 if (isText && isNoBtn) {
                     $cleanButton.show();
