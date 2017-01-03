@@ -142,9 +142,12 @@ define([
         downloadDialogs: function(ids, skip) {
             var ContactListView = this.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+                parametr = !skip ? null : 'old_dialog',
                 dialogsCollection = Entities.Collections.dialogs,
                 roster = ContactList.roster,
                 rosterIds = Object.keys(roster),
+                totalEntries,
+                localEntries,
                 occupants_ids,
                 notConfirmed,
                 private_id,
@@ -160,6 +163,8 @@ define([
 
             Dialog.download(params, function(result) {
                 dialogs = result.items;
+                totalEntries = result.total_entries;
+                localEntries = result.limit + result.skip;
 
                 if (dialogs.length > 0) {
                     occupants_ids = _.uniq(_.flatten(_.pluck(dialogs, 'occupants_ids'), true));
@@ -195,7 +200,7 @@ define([
                                 continue;
                             }
 
-                            self.addDialogItem(dialog, true);
+                            self.addDialogItem(dialog, true, parametr);
                         }
 
                         if ($('#requestsList').is('.is-hidden') &&
@@ -224,10 +229,25 @@ define([
                 self.getAllUsers(rosterIds);
                 self.removeDataSpinner();
 
-                if (result.total_entries >= (result.limit + result.skip)) {
-                    self.downloadDialogs(ids, (result.limit + result.skip));
+                if (totalEntries >= localEntries) {
+                    self.downloadDialogs(ids, localEntries);
                 }
             });
+        },
+
+        showOldHistory: function(callback) {
+            var hiddenDialogs = $('#oldHistoryList ul').children('.j-dialogItem'),
+                visibleDialogs = $('#historyList ul'),
+                total = hiddenDialogs.length,
+                limit = total > 100 ? 100 : total,
+                offListener = false;
+
+            if (total === limit) {
+                offListener = true;
+            }
+
+            visibleDialogs.append(hiddenDialogs.slice(0, limit));
+            callback(offListener);
         },
 
         getAllUsers: function(rosterIds) {
@@ -266,7 +286,7 @@ define([
             $('.l-list ul').html('');
         },
 
-        addDialogItem: function(dialog, isDownload, isNew) {
+        addDialogItem: function(dialog, isDownload, parametr) {
             if (!dialog) {
                 Helpers.log('Dialog is undefined');
                 return false;
@@ -321,7 +341,9 @@ define([
             startOfCurrentDay.setHours(0, 0, 0, 0);
 
             // checking if this dialog is recent OR no
-            if (!last_message_date_sent || new Date(last_message_date_sent * 1000) > startOfCurrentDay || isNew) {
+            if (!last_message_date_sent ||
+                new Date(last_message_date_sent * 1000) > startOfCurrentDay ||
+                parametr === 'new_dialog') {
                 if (isDownload) {
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
                 } else if (!$('#searchList').is(':visible')) {
@@ -329,6 +351,8 @@ define([
                 } else {
                     $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
                 }
+            } else if (parametr === 'old_dialog') {
+                $('#oldHistoryList').find('ul').append(html);
             } else if (!$('#searchList').is(':visible')) {
                 $('#historyList').removeClass('is-hidden').find('ul').append(html);
             }
@@ -657,6 +681,8 @@ define([
             wheelPropagation: true,
             minScrollbarLength: 20
         });
+
+        Listeners.listenToPsTotalEnd(true);
     }
 
     function textAreaScrollbar(selector) {

@@ -289,7 +289,7 @@ define([
                 $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
                 $('#searchList ul').html('').add('#searchList .note').removeClass('is-hidden');
 
-                $('#recentList, #historyList').find('.dialog-item').each(function() {
+                $('#recentList, #historyList, #oldHistoryList').find('.dialog-item').each(function() {
                     var name = $(this).find('.name').text().toLowerCase(),
                         li = $(this).clone();
 

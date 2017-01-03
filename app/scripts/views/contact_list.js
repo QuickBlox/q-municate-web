@@ -205,7 +205,7 @@ define([
 
             if (notConfirmed[id] && requestItem.length) {
                 changeRequestStatus('Request accepted');
-                self.sendConfirm(jid, true);
+                self.sendConfirm(jid, 'new_dialog');
             } else {
                 if (!isChat) {
                     changeRequestStatus('Request Sent');
@@ -213,7 +213,7 @@ define([
 
                 if (dialog_id) {
                     if (!$dialogItem.length) {
-                        Dialog.createPrivate(jid, true, dialog_id);
+                        Dialog.createPrivate(jid, 'new_dialog', dialog_id);
                     }
                 } else {
                     QB.chat.roster.add(jid, function() {
