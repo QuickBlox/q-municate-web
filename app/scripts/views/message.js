@@ -102,8 +102,8 @@ define([
 
                 switch (type) {
                     case '1':
-                        occupants_ids = _.without(message.current_occupant_ids.split(',').map(Number), contact.id);
-                        occupants_names = Helpers.Messages.getOccupantsNames(occupants_ids, User, contacts);
+                        added_occupant_ids = _.without(message.added_occupant_ids.split(',').map(Number), contact.id);
+                        occupants_names = Helpers.Messages.getOccupantsNames(added_occupant_ids, User, contacts);
 
                         html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_pending"></span>';

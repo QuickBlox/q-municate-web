@@ -146,6 +146,7 @@ define([
                                     room_name: dialog.get('room_name'),
                                     room_updated_date: time,
                                     current_occupant_ids: res.occupants_ids.join(),
+                                    added_occupant_ids: params.occupants_ids,
                                     type: 2
                                 }
                             });
@@ -220,6 +221,7 @@ define([
                                 room_photo: dialog.get('room_photo'),
                                 room_updated_date: time,
                                 current_occupant_ids: res.occupants_ids.join(),
+                                added_occupant_ids: params.new_ids.join(),
                                 type: 2
                             }
                         });
@@ -344,7 +346,8 @@ define([
             var QBApiCalls = this.app.service,
                 User = this.app.models.User,
                 self = this,
-                time = Math.floor(Date.now() / 1000);
+                time = Math.floor(Date.now() / 1000),
+                dialogId = dialog.get('id');
 
             // send notification about leave
             QB.chat.send(dialog.get('room_jid'), {
@@ -356,13 +359,17 @@ define([
                     notification_type: '2',
                     current_occupant_ids: dialog.get('occupants_ids').join(),
                     deleted_occupant_ids: User.contact.id,
-                    dialog_id: dialog.get('id'),
+                    dialog_id: dialogId,
                     room_updated_date: time,
                     dialog_update_info: 3
                 }
             });
 
-            QBApiCalls.updateDialog(dialog.get('id'), {
+            if (Entities.active === dialogId) {
+                Entities.active = '';
+            }
+
+            QBApiCalls.updateDialog(dialogId, {
                 pull_all: {
                     occupants_ids: [User.contact.id]
                 }
