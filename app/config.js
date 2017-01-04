@@ -3,8 +3,6 @@ define(function() {
 
     var QMCONFIG = {
 
-        version: '1.9.15',
-
         qbAccount: {
             appId: 36125,
             authKey: 'gOGVNO4L9cBwkPE',
