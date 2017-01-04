@@ -131,6 +131,7 @@ define([
         },
 
         logoutWithClearData: function() {
+            scrollbarAside(true);
             unreadDialogs = {};
             $('title').text(TITLE_NAME);
             $('link[rel="icon"]').remove();
@@ -673,16 +674,20 @@ define([
         });
     }
 
-    function scrollbarAside() {
+    function scrollbarAside(destroy) {
         var sidebar = document.getElementById('aside_container');
 
-        Ps.initialize(sidebar, {
-            wheelSpeed: 1,
-            wheelPropagation: true,
-            minScrollbarLength: 20
-        });
+        if (destroy) {
+            Ps.destroy(sidebar);
+        } else {
+            Ps.initialize(sidebar, {
+                wheelSpeed: 1,
+                wheelPropagation: true,
+                minScrollbarLength: 20
+            });
 
-        Listeners.listenToPsTotalEnd(true);
+            Listeners.listenToPsTotalEnd(true);
+        }
     }
 
     function textAreaScrollbar(selector) {

@@ -272,8 +272,9 @@ define([
 
             User.logout(function() {
                 switchOnWelcomePage();
-                $('.j-capBox').removeClass('is-hidden')
-                    .siblings().removeClass('is-active');
+                $('.j-capBox').removeClass('is-hidden');
+                $('.j-chatWrap').addClass('is-hidden');
+                $('.j-popover_const').removeClass('is-active');
                 $('.l-chat').remove();
                 Helpers.log('current User and Session were destroyed');
                 DialogView.logoutWithClearData();
