@@ -94,7 +94,7 @@ define([
                         'size': [380, 200]
                     }) : null,
                     mapAttachLink = geoCoords ? Location.getMapUrl(geoCoords) : null,
-                    recipient = contacts[recipientId] || null,
+                    recipient = message.recipient_id && contacts[message.recipient_id] || null,
                     occupants_names = '',
                     occupants_ids,
                     status,
@@ -674,7 +674,7 @@ define([
                     contacts[id] = Contact.create(user);
                 });
             } else {
-                self.addItem(msg, true, true, id);
+                self.addItem(msg, true, true);
             }
 
             if (notification_type === '5' && isNotMyUser && isExistent) {
@@ -770,7 +770,7 @@ define([
                         DialogView.getUnreadCounter(dialog_id);
                     }
 
-                    self.addItem(msg, true, true, true);
+                    self.addItem(msg, true, true);
                     createAndShowNotification(msg, true);
                 });
             }

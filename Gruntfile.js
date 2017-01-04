@@ -213,7 +213,8 @@ module.exports = function(grunt) {
                         authKey: 'WzrAY7vrGmbgFfP',
                         authSecret: 'xS2uerEveGHmEun',
                         debugQM: '0',
-                        debugQB: '0'
+                        debugQB: '0',
+                        version: '1.9.0'
                     }
                 },
                 src: '<%= yeoman.app %>/configs/environment.js',
@@ -226,7 +227,8 @@ module.exports = function(grunt) {
                         authKey: 'gOGVNO4L9cBwkPE',
                         authSecret: 'JdqsMHCjHVYkVxV',
                         debugQM: '1',
-                        debugQB: '1'
+                        debugQB: '1',
+                        version: '1.9.16'
                     }
                 },
                 src: '<%= yeoman.app %>/configs/environment.js',

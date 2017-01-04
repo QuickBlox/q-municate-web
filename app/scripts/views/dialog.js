@@ -624,7 +624,7 @@ define([
                         }
                     }
 
-                    MessageView.addItem(message, null, null, message.recipient_id);
+                    MessageView.addItem(message, null, null);
                 }
 
                 setScrollToNewMessages('#mCS_'+dialogId);
@@ -718,7 +718,7 @@ define([
                 message = Message.create(messages[i], 'ajax');
                 message.stack = Message.isStack(false, messages[i], messages[i + 1]);
 
-                MessageView.addItem(message, true);
+                MessageView.addItem(message, true, null);
 
                 if ((i + 1) === len) {
                     $(selector).mCustomScrollbar('scrollTo', '#'+firstMsgId);
