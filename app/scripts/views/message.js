@@ -363,6 +363,7 @@ define([
                         smartScroll(isBottom);
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
+                        getUrlPreview(message.id);
                     }
                 } else {
                     if ($chat.find('.l-chat-content .mCSB_container')[0]) {
