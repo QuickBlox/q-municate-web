@@ -1067,7 +1067,7 @@ define([
             url = $hyperText.first().attr('href');
             isValidUrl = Helpers.isValidUrl(url);
 
-            if (urlCache[url] === 'error' || !isValidUrl) {
+            if (urlCache[url] === null || !isValidUrl) {
                 return false;
             }
 
@@ -1083,7 +1083,7 @@ define([
                         params = {
                             title: result.ogTitle || result.ogUrl || '',
                             description: result.ogDescription || result.ogUrl || url,
-                            picture: result.ogImage && result.ogImage.url || ''
+                            picture: _getValidImagePath(url, result.ogImage) || ''
                         };
 
                         urlCache[url] = params;
@@ -1094,13 +1094,24 @@ define([
                             picture: ''
                         };
 
-                        urlCache[url] = 'error';
+                        urlCache[url] = null;
                     }
 
                     ogInfo = QMHtml.Messages.urlPreview(params);
                     $messageBody.find('.og_block').append(ogInfo);
                 });
             }
+        }
+
+        function _getValidImagePath(url, imgObj) {
+            var imagePath = imgObj && imgObj.url || '';
+
+            if ((imagePath.indexOf('/') === 0) &&
+                (imagePath.indexOf('//') !== 0)) {
+                imagePath = url + imagePath;
+            }
+
+            return imagePath;
         }
     }
 
