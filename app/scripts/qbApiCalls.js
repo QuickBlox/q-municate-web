@@ -329,15 +329,12 @@ define([
                     } else {
                         Listeners.setChatState(true);
 
-                        var eventParams = {
-                            'chat_endpoint': QB.auth.service.qbInst.config.endpoints.chat,
-                            'app_id': (QMCONFIG.qbAccount.appId).toString()
-                        };
-                        FlurryAgent.logEvent("Connect_to_chat", eventParams);
+                        startFlurryAgent();
 
                         Session.update({
                             date: new Date()
                         });
+
                         setRecoverySessionInterval();
                         callback(res);
 
@@ -489,6 +486,15 @@ define([
                 }
             });
         }, 3600 * 1000);
+    }
+
+    function startFlurryAgent() {
+        var eventParams = {
+            'chat_endpoint': QB.auth.service.qbInst.config.endpoints.chat,
+            'app_id': (QMCONFIG.qbAccount.appId).toString()
+        };
+
+        FlurryAgent.logEvent("Connect_to_chat", eventParams);
     }
 
     var fail = function(errMsg) {
