@@ -132,10 +132,12 @@ define([
         },
 
         onNetworkStatus: function(status) {
-            if (status === 'online' && self.getChatState()) {
-                _switchToOnlineMode();
-            } else {
-                _switchToOfflineMode();
+            if (self.getChatState()) {            
+                if (status === 'online') {
+                    _switchToOnlineMode();
+                } else {
+                    _switchToOfflineMode();
+                }
             }
         }
     };
