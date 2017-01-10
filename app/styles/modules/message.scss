@@ -211,7 +211,7 @@ article.message[data-status="typing"] > div {
     opacity: none;
 }
 // OpenGraph information
-a.og_block {
+.message-body .og_block {
     color: #000;
     display: block;
     width: 100%;
@@ -219,11 +219,11 @@ a.og_block {
     border-left: 3px solid #1cba48;
     margin-top: 5px;
 }
-a.og_block:hover {
+.message-body .og_block:hover {
     opacity: 1;
     background-color: #fdfdfd;
 }
-div.og_info {
+.og_info {
     height: 100%;
     width: 80%;
     padding-left: 10px;
@@ -231,7 +231,7 @@ div.og_info {
     display: inline-block;
     vertical-align: top;
 }
-h4.og_title {
+.og_title {
     margin-top: 3px;
     height: 20px;
     width: 100%;
@@ -242,7 +242,7 @@ h4.og_title {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-span.og_description {
+.og_description {
     margin-top: 2px;
     max-height: 55px;
     width: 100%;
@@ -254,12 +254,12 @@ span.og_description {
     white-space: pre-wrap;
     text-overflow: ellipsis;
 }
-div.og_image {
+.og_image {
     max-width: 20%;
     display: inline-block;
     vertical-align: top;
 }
-div.og_image > img {
+.og_image > img {
     max-height: 80px;
     max-width: 100%;
 }

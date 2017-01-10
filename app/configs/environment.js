@@ -28,10 +28,10 @@ define(function() {
             caption: 'Choose user picture'
         },
 
-        // Limit search results of messages. Useful for pagination.
+        // Loadable limit of messages by one request. Useful for pagination.
         stackMessages: 50,
 
-        // Max size (Mbite) for images and video files
+        // Max size (Mbite) of upload an image / video files
         maxLimitFile: 10,
         maxVideoSize: 100,
 

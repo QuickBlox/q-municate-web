@@ -43,20 +43,20 @@ define([
     User.prototype = {
 
         initProfile: function() {
-            currentUser = new Person(_.clone(self.contact), {
+            var currentUser = new Person(_.clone(self.contact), {
                 app: self.app,
                 parse: true
             });
 
-            profileView = new ProfileView({
+            var profileView = new ProfileView({
                 model: currentUser
             });
 
-            changePassView = new ChangePassView({
+            var changePassView = new ChangePassView({
                 model: currentUser
             });
 
-            fbImportView = new FBImportView();
+            var fbImportView = new FBImportView();
 
             self.app.views.Profile = profileView;
             self.app.views.ChangePass = changePassView;
