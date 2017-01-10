@@ -6,120 +6,49 @@
  */
 define([
     'jquery',
+    'underscore',
     'config',
     'quickblox',
     'Entities',
     'Helpers',
     'QMHtml',
     'minEmoji',
-    'underscore',
-    'models/person',
-    'views/profile',
-    'views/change_password',
-    'views/fb_import',
+    'perfectscrollbar',
     'mCustomScrollbar',
     'nicescroll',
     'mousewheel'
 ], function(
     $,
+    _,
     QMCONFIG,
     QB,
     Entities,
     Helpers,
     QMHtml,
     minEmoji,
-    _,
-    Person,
-    ProfileView,
-    ChangePassView,
-    FBImportView
+    Ps
 ) {
 
-    var User, Dialog, Message, ContactList;
+    var self;
+    var User, Dialog, Message, ContactList, Listeners;
     var unreadDialogs = {};
-    var currentUser, profileView, changePassView, fbImportView;
 
     var TITLE_NAME = 'Q-municate',
         FAVICON_COUNTER = 'images/favicon_counter.png',
         FAVICON = 'images/favicon.png';
 
     function DialogView(app) {
+        self = this;
+
         this.app = app;
         User = this.app.models.User;
         Dialog = this.app.models.Dialog;
         Message = this.app.models.Message;
         ContactList = this.app.models.ContactList;
+        Listeners = this.app.listeners;
     }
 
     DialogView.prototype = {
-
-        // QBChat handlers
-        chatCallbacksInit: function() {
-            var self = this;
-
-            var ContactListView = this.app.views.ContactList,
-                MessageView = this.app.views.Message,
-                VideoChat = this.app.models.VideoChat,
-                VideoChatView = this.app.views.VideoChat;
-
-            QB.chat.onMessageListener         = MessageView.onMessage;
-            QB.chat.onMessageTypingListener   = MessageView.onMessageTyping;
-            QB.chat.onSystemMessageListener   = MessageView.onSystemMessage;
-            QB.chat.onDeliveredStatusListener = MessageView.onDeliveredStatus;
-            QB.chat.onReadStatusListener      = MessageView.onReadStatus;
-
-            QB.chat.onContactListListener      = ContactListView.onPresence;
-            QB.chat.onSubscribeListener        = ContactListView.onSubscribe;
-            QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;
-            QB.chat.onRejectSubscribeListener  = ContactListView.onReject;
-
-            if (QB.webrtc) {
-                QB.webrtc.onCallListener          = VideoChatView.onCall;
-                QB.webrtc.onAcceptCallListener    = VideoChatView.onAccept;
-                QB.webrtc.onRejectCallListener    = VideoChatView.onReject;
-                QB.webrtc.onInvalidEventsListener = VideoChatView.onIgnored;
-                QB.webrtc.onStopCallListener      = VideoChatView.onStop;
-                QB.webrtc.onUpdateCallListener    = VideoChatView.onUpdateCall;
-                QB.webrtc.onRemoteStreamListener  = VideoChatView.onRemoteStream;
-                QB.webrtc.onCallStatsReport       = VideoChatView.onCallStatsReport;
-                QB.webrtc.onSessionCloseListener  = VideoChatView.onSessionCloseListener;
-                QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
-            }
-
-            QB.chat.onDisconnectedListener = function() {
-                if ('div.popups.is-overlay') {
-                    $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
-                }
-                $('.j-disconnect').addClass('is-overlay')
-                    .parent('.j-overlay').addClass('is-overlay');
-            };
-
-            QB.chat.onReconnectListener = function() {
-                $('.j-disconnect').removeClass('is-overlay')
-                    .parent('.j-overlay').removeClass('is-overlay');
-            };
-
-            QB.chat.onReconnectFailedListener = function(error) {
-                if (error) {
-                    self.app.service.reconnectChat();
-                }
-            };
-
-            currentUser = new Person(_.clone(User.contact), {
-                app: this.app,
-                parse: true
-            });
-            profileView = new ProfileView({
-                model: currentUser
-            });
-            changePassView = new ChangePassView({
-                model: currentUser
-            });
-            fbImportView = new FBImportView();
-            this.app.views.Profile = profileView;
-            this.app.views.ChangePass = changePassView;
-            this.app.views.FBImport = fbImportView;
-        },
 
         createDataSpinner: function(chat, groupchat, isAjaxDownloading) {
             this.removeDataSpinner();
@@ -162,11 +91,11 @@ define([
 
         prepareDownloading: function(roster) {
             Helpers.log('QB SDK: Roster has been got', roster);
-            this.chatCallbacksInit();
-            this.createDataSpinner();
+            Listeners.setQBHandlers();
+            User.initProfile();
+            self.createDataSpinner();
             scrollbarAside();
             ContactList.saveRoster(roster);
-
             this.app.views.Settings.setUp(User.contact.id);
             this.app.models.SyncTabs.init(User.contact.id);
         },
@@ -202,6 +131,7 @@ define([
         },
 
         logoutWithClearData: function() {
+            scrollbarAside(true);
             unreadDialogs = {};
             $('title').text(TITLE_NAME);
             $('link[rel="icon"]').remove();
@@ -210,33 +140,40 @@ define([
             $('.mediacall-info-duration').text('');
         },
 
-        downloadDialogs: function(roster, ids) {
-            var self = this,
-                ContactListView = this.app.views.ContactList,
+        downloadDialogs: function(ids, skip) {
+            var ContactListView = this.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
+                parametr = !skip ? null : 'old_dialog',
+                dialogsCollection = Entities.Collections.dialogs,
+                roster = ContactList.roster,
                 rosterIds = Object.keys(roster),
+                totalEntries,
+                localEntries,
+                occupants_ids,
                 notConfirmed,
                 private_id,
                 dialogId,
                 dialogs,
                 dialog,
-                occupants_ids,
                 chat;
 
-            Dialog.download(function(dialogs) {
-                self.removeDataSpinner();
+            params = {
+                'sort_desc': 'last_message_date_sent',
+                'skip': skip || 0
+            },
+
+            Dialog.download(params, function(result) {
+                dialogs = result.items;
+                totalEntries = result.total_entries;
+                localEntries = result.limit + result.skip;
 
                 if (dialogs.length > 0) {
-
                     occupants_ids = _.uniq(_.flatten(_.pluck(dialogs, 'occupants_ids'), true));
-
                     // updating of Contact List whereto are included all people
                     // with which maybe user will be to chat (there aren't only his friends)
                     ContactList.add(occupants_ids, null, function() {
-
                         for (var i = 0, len = dialogs.length; i < len; i++) {
                             dialogId = Dialog.create(dialogs[i]);
-                            dialogsCollection = Entities.Collections.dialogs;
                             dialog = dialogsCollection.get(dialogId);
 
                             // don't create a duplicate dialog in contact list
@@ -264,7 +201,7 @@ define([
                                 continue;
                             }
 
-                            self.addDialogItem(dialog, true);
+                            self.addDialogItem(dialog, true, parametr);
                         }
 
                         if ($('#requestsList').is('.is-hidden') &&
@@ -276,7 +213,7 @@ define([
 
                     });
 
-                } else {
+                } else if (!skip) {
                     $('#emptyList').removeClass('is-hidden');
                 }
 
@@ -291,8 +228,27 @@ define([
                 }
 
                 self.getAllUsers(rosterIds);
+                self.removeDataSpinner();
 
+                if (totalEntries >= localEntries) {
+                    self.downloadDialogs(ids, localEntries);
+                }
             });
+        },
+
+        showOldHistory: function(callback) {
+            var hiddenDialogs = $('#oldHistoryList ul').children('.j-dialogItem'),
+                visibleDialogs = $('#historyList ul'),
+                total = hiddenDialogs.length,
+                limit = total > 100 ? 100 : total,
+                offListener = false;
+
+            if (total === limit) {
+                offListener = true;
+            }
+
+            visibleDialogs.append(hiddenDialogs.slice(0, limit));
+            callback(offListener);
         },
 
         getAllUsers: function(rosterIds) {
@@ -331,7 +287,7 @@ define([
             $('.l-list ul').html('');
         },
 
-        addDialogItem: function(dialog, isDownload, isNew) {
+        addDialogItem: function(dialog, isDownload, parametr) {
             if (!dialog) {
                 Helpers.log('Dialog is undefined');
                 return false;
@@ -353,8 +309,7 @@ define([
                 status,
                 icon,
                 name,
-                html,
-                self = this;
+                html;
 
             private_id = dialog_type === 3 ? occupants_ids[0] : null;
 
@@ -387,7 +342,9 @@ define([
             startOfCurrentDay.setHours(0, 0, 0, 0);
 
             // checking if this dialog is recent OR no
-            if (!last_message_date_sent || new Date(last_message_date_sent * 1000) > startOfCurrentDay || isNew) {
+            if (!last_message_date_sent ||
+                new Date(last_message_date_sent * 1000) > startOfCurrentDay ||
+                parametr === 'new_dialog') {
                 if (isDownload) {
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
                 } else if (!$('#searchList').is(':visible')) {
@@ -395,6 +352,8 @@ define([
                 } else {
                     $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
                 }
+            } else if (parametr === 'old_dialog') {
+                $('#oldHistoryList').find('ul').append(html);
             } else if (!$('#searchList').is(':visible')) {
                 $('#historyList').removeClass('is-hidden').find('ul').append(html);
             }
@@ -423,7 +382,6 @@ define([
                 occupants_ids = dialog.get('occupants_ids'),
                 $chatWrap = $('.j-chatWrap'),
                 $chatView = $('.chatView'),
-                self = this,
                 isCall,
                 chatTpl,
                 messageId,
@@ -465,8 +423,8 @@ define([
             }
 
             textAreaScrollbar('#textarea_'+dialog_id);
+            messageScrollbar('#mCS_'+dialog_id);
             self.createDataSpinner(true);
-            self.messageScrollbar($('#mCS_'+dialog_id));
             self.showChatWithNewMessages(dialog_id, unreadCount, messages);
 
             removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
@@ -515,41 +473,6 @@ define([
             }
         },
 
-        messageScrollbar: function($chatScroll) {
-            var self = this;
-
-            $chatScroll.mCustomScrollbar({
-                theme: 'minimal-dark',
-                scrollInertia: 'auto',
-                mouseWheel: {
-                    scrollAmount: 120,
-                    deltaFactor: 'auto'
-                },
-                callbacks: {
-                    onTotalScrollBack: function() {
-                        ajaxDownloading($chatScroll, self);
-                    },
-                    onTotalScroll: function() {
-                        var isBottom = Helpers.isBeginOfChat(),
-                            $currentDialog = $('.dialog-item.is-selected'),
-                            dialogId = $currentDialog.data('dialog');
-
-                        if (isBottom) {
-                            $('.j-toBottom').hide();
-                            $currentDialog.find('.unread').text('');
-                            self.decUnreadCounter(dialogId);
-                        }
-                    },
-                    onScroll: function() {
-                        var isBottom = Helpers.isBeginOfChat();
-                        if (!isBottom) {
-                            $('.j-toBottom').show();
-                        }
-                    }
-                },
-                live: 'on'
-            });
-        },
 
         createGroupChat: function(type, dialog_id) {
             var contacts = ContactList.contacts,
@@ -557,7 +480,6 @@ define([
                 occupants_ids = $('#popupContacts').data('existing_ids') || [],
                 groupName = occupants_ids.length > 0 ? [User.contact.full_name, contacts[occupants_ids[0]].full_name] : [User.contact.full_name],
                 occupants_names = !type && occupants_ids.length > 0 ? [contacts[occupants_ids[0]].full_name] : [],
-                self = this,
                 new_ids = [],
                 new_id, occupant,
                 roster = ContactList.roster,
@@ -644,12 +566,11 @@ define([
 
         showChatWithNewMessages: function(dialogId, unreadCount, messages) {
             var MessageView = this.app.views.Message,
-                self = this,
                 lastReaded,
                 message,
                 count;
 
-            var MIN_STACK = 20,
+            var MIN_STACK = QMCONFIG.stackMessages,
                 MAX_STACK = 100,
                 lessThenMinStack = unreadCount < MIN_STACK,
                 moreThenMinStack = unreadCount > (MIN_STACK - 1),
@@ -704,10 +625,10 @@ define([
                         }
                     }
 
-                    MessageView.addItem(message, null, null, message.recipient_id);
+                    MessageView.addItem(message, null, null);
                 }
 
-                setScrollToNewMessages($('#mCS_'+dialogId));
+                setScrollToNewMessages('#mCS_'+dialogId);
 
                 setTimeout(function() {
                     self.removeDataSpinner();
@@ -721,19 +642,52 @@ define([
 
     /* Private
     ---------------------------------------------------------------------- */
-    function scrollbarAside() {
-        $('.j-scrollbar_aside').niceScroll({
-            cursoropacitymax: 0.3,
-            railpadding: {
-                top: 10,
-                bottom: 10,
-                right: 2,
-                left: 0
+    function messageScrollbar(selector) {
+        $(selector).mCustomScrollbar({
+            theme: 'minimal-dark',
+            scrollInertia: 0,
+            mouseWheel: {
+                scrollAmount: 120,
             },
-            zindex: 1,
-            cursorwidth: '6px',
-            enablekeyboard: false
+            callbacks: {
+                onTotalScrollBack: function() {
+                    ajaxDownloading(selector);
+                },
+                onTotalScroll: function() {
+                    var isBottom = Helpers.isBeginOfChat(),
+                    $currentDialog = $('.dialog-item.is-selected'),
+                    dialogId = $currentDialog.data('dialog');
+
+                    if (isBottom) {
+                        $('.j-toBottom').hide();
+                        $currentDialog.find('.unread').text('');
+                        self.decUnreadCounter(dialogId);
+                    }
+                },
+                onScroll: function() {
+                    var isBottom = Helpers.isBeginOfChat();
+                    if (!isBottom) {
+                        $('.j-toBottom').show();
+                    }
+                }
+            }
         });
+    }
+
+    function scrollbarAside(destroy) {
+        var sidebar = document.getElementById('aside_container');
+
+        if (destroy) {
+            Ps.destroy(sidebar);
+        } else {
+            Ps.initialize(sidebar, {
+                wheelSpeed: 1,
+                wheelPropagation: true,
+                minScrollbarLength: 20
+            });
+
+            Listeners.listenToPsTotalEnd(true);
+        }
     }
 
     function textAreaScrollbar(selector) {
@@ -744,14 +698,17 @@ define([
                 bottom: 3,
                 right: -13
             },
-            zindex: 1,
+            smoothscroll: false,
+            enablemouselockapi: false,
             cursorwidth: '6px',
+            autohidemode: "scroll",
+            enabletranslate3d: false,
             enablekeyboard: false
         });
     }
 
     // ajax downloading of data through scroll
-    function ajaxDownloading($chatScroll, self) {
+    function ajaxDownloading(selector) {
         var MessageView = self.app.views.Message,
             $chat = $('.j-chatItem:visible'),
             dialog_id = $chat.data('dialog'),
@@ -766,10 +723,10 @@ define([
                 message = Message.create(messages[i], 'ajax');
                 message.stack = Message.isStack(false, messages[i], messages[i + 1]);
 
-                MessageView.addItem(message, true);
+                MessageView.addItem(message, true, null);
 
                 if ((i + 1) === len) {
-                    $chatScroll.mCustomScrollbar('scrollTo', '#'+firstMsgId);
+                    $(selector).mCustomScrollbar('scrollTo', '#'+firstMsgId);
                 }
             }
         }, count, 'ajax');
@@ -801,7 +758,7 @@ define([
         $chatContainer.prepend($newMessages);
     }
 
-    function setScrollToNewMessages($chatScroll) {
+    function setScrollToNewMessages(selector) {
         var $chat = $('.j-chatItem:visible'),
             isBottom = Helpers.isBeginOfChat(),
             isScrollDragger = $chat.find('.mCSB_draggerContainer').length;
@@ -816,7 +773,7 @@ define([
         }
 
         function scrollToThrArea(area) {
-            $chatScroll.mCustomScrollbar('scrollTo', area);
+            $(selector).mCustomScrollbar('scrollTo', area);
         }
     }
 

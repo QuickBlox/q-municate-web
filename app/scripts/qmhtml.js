@@ -180,6 +180,22 @@ define([
             $('article#' + params.id).find('.message-geo')
                 .addClass('with-geo')
                 .append(htmlTemplate);
+        },
+
+        urlPreview: function(params) {
+            var htmlTemplate = _.template(
+                    '<div class="og_info">'+
+                        '<h4 class="og_title"><%=title%></h4>'+
+                        '<span class="og_description"><%=description%></span>'+
+                    '</div>'+
+                    '<% if (picture) { %>'+
+                        '<div class="og_image">'+
+                            '<img src="<%=picture%>" alt="og_pic">'+
+                        '</div>'+
+                    '<% } %>'
+                )(params);
+
+            return htmlTemplate;
         }
 
     };

@@ -27,7 +27,6 @@ define([
     ContactList.prototype = {
 
         saveRoster: function(roster) {
-            // sessionStorage.setItem('QM.roster', JSON.stringify(roster));
             this.roster = roster;
         },
 

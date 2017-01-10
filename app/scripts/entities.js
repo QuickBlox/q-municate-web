@@ -5,12 +5,14 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'config',
     'quickblox',
     'Helpers'
 ], function(
     $,
     _,
     Backbone,
+    QMCONFIG,
     QB,
     Helpers
 ) {
@@ -117,13 +119,14 @@ define([
 
         // keep count for messages collection
         keepCountOfMessages: function() {
-            var dialogId = this.models[0].get('dialog_id'),
+            var stack = QMCONFIG.stackMessages,
+                dialogId = this.models[0].get('dialog_id'),
                 dialog = entities.Collections.dialogs.get(dialogId),
                 unreadCount = dialog.get('unread_count');
 
             if (
-                ((this.length > 20) && (unreadCount < 20)) ||
-                ((unreadCount >= 20) && (this.length > ++unreadCount))
+                ((this.length > stack) && (unreadCount < stack)) ||
+                ((unreadCount >= stack) && (this.length > ++unreadCount))
             ) {
                 this.pop();
             }
@@ -200,10 +203,11 @@ define([
             var messages = this.get('messages'),
                 curCount = this.get('unread_count'),
                 preCount = this.previous('unread_count'),
+                stack = QMCONFIG.stackMessages,
                 msgCount = messages.length;
 
             if (+curCount === 0) {
-                for (var i = 0; i < (msgCount - 20); i++) {
+                for (var i = 0; i < (msgCount - stack); i++) {
                     messages.pop();
                 }
             }

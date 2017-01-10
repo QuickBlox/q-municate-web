@@ -57,13 +57,11 @@ article.message[data-status="typing"] > div {
 .message-content {
     padding-left: 15px;
     width: 450px;
-    max-width: 450px;
     color: #333;
     word-wrap: break-word;
 }
 .message_attach .message-content {
     width: 450px;
-    max-width: 450px;
 }
 .message-author {
     margin-bottom: 10px;
@@ -81,6 +79,7 @@ article.message[data-status="typing"] > div {
 .message-body {
     position: relative;
     white-space: pre-wrap;
+    width: 100%;
 }
 .message-body p {
     margin-bottom: 10px;
@@ -93,6 +92,7 @@ article.message[data-status="typing"] > div {
 }
 .message-content.indent {
     padding-left: 60px;
+    width: 495px;
 }
 .message-info {
     width: 140px;
@@ -209,4 +209,57 @@ article.message[data-status="typing"] > div {
 }
 .changePic:hover {
     opacity: none;
+}
+// OpenGraph information
+.message-body .og_block {
+    color: #000;
+    display: block;
+    width: 100%;
+    height: 80px;
+    border-left: 3px solid #1cba48;
+    margin-top: 5px;
+}
+.message-body .og_block:hover {
+    opacity: 1;
+    background-color: #fdfdfd;
+}
+.og_info {
+    height: 100%;
+    width: 80%;
+    padding-left: 10px;
+    padding-right: 5px;
+    display: inline-block;
+    vertical-align: top;
+}
+.og_title {
+    margin-top: 3px;
+    height: 20px;
+    width: 100%;
+    display: block;
+    line-height: 20px;
+    font-size: 14px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.og_description {
+    margin-top: 2px;
+    max-height: 55px;
+    width: 100%;
+    display: block;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: pre-wrap;
+    text-overflow: ellipsis;
+}
+.og_image {
+    max-width: 20%;
+    display: inline-block;
+    vertical-align: top;
+}
+.og_image > img {
+    max-height: 80px;
+    max-width: 100%;
 }

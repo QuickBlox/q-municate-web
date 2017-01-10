@@ -32,6 +32,7 @@ define([
 
     var User, Message, ContactList, Dialog, Settings;
     var clearTyping, typingList = []; // for typing statuses
+    var urlCache = {};
     var self;
 
     function MessageView(app) {
@@ -93,7 +94,7 @@ define([
                         'size': [380, 200]
                     }) : null,
                     mapAttachLink = geoCoords ? Location.getMapUrl(geoCoords) : null,
-                    recipient = contacts[recipientId] || null,
+                    recipient = message.recipient_id && contacts[message.recipient_id] || null,
                     occupants_names = '',
                     occupants_ids,
                     status,
@@ -101,8 +102,8 @@ define([
 
                 switch (type) {
                     case '1':
-                        occupants_ids = _.without(message.current_occupant_ids.split(',').map(Number), contact.id);
-                        occupants_names = Helpers.Messages.getOccupantsNames(occupants_ids, User, contacts);
+                        added_occupant_ids = _.without(message.added_occupant_ids.split(',').map(Number), contact.id);
+                        occupants_names = Helpers.Messages.getOccupantsNames(added_occupant_ids, User, contacts);
 
                         html = '<article class="message message_service l-flexbox l-flexbox_alignstretch" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         html += '<span class="message-avatar request-button_pending"></span>';
@@ -288,6 +289,7 @@ define([
                         break;
 
                     default:
+
                         status = isOnline ? message.status : 'Not delivered yet';
 
                         if (message.sender_id === User.contact.id) {
@@ -357,9 +359,11 @@ define([
                 if (isCallback) {
                     if (isMessageListener) {
                         $chat.find('.l-chat-content .mCSB_container').append(html);
+                        getUrlPreview(message.id);
                         smartScroll(isBottom);
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
+                        getUrlPreview(message.id);
                     }
                 } else {
                     if ($chat.find('.l-chat-content .mCSB_container')[0]) {
@@ -367,6 +371,7 @@ define([
                     } else {
                         $chat.find('.l-chat-content').prepend(html);
                     }
+                    getUrlPreview(message.id);
                     smartScroll(true);
                 }
 
@@ -380,6 +385,7 @@ define([
                         imgUrl: imgUrl
                     });
                 }
+
 
                 if ((message.sender_id == User.contact.id) && (message.delivered_ids.length > 0)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'delivered', false);
@@ -668,7 +674,7 @@ define([
                     contacts[id] = Contact.create(user);
                 });
             } else {
-                self.addItem(msg, true, true, id);
+                self.addItem(msg, true, true);
             }
 
             if (notification_type === '5' && isNotMyUser && isExistent) {
@@ -764,7 +770,7 @@ define([
                         DialogView.getUnreadCounter(dialog_id);
                     }
 
-                    self.addItem(msg, true, true, true);
+                    self.addItem(msg, true, true);
                     createAndShowNotification(msg, true);
                 });
             }
@@ -948,11 +954,13 @@ define([
     }
 
     function getLocationFromAttachment(attachment) {
-        var geodata = attachment.data.replace(/&#10;/gi, ''),
-            escape,
+        var geodata = attachment.data,
             geocoords;
 
         if (geodata) {
+            geodata = geodata.replace(/&amp;/gi, '&')
+                             .replace(/&quot;/gi, '"')
+                             .replace(/&#10;/gi, '');
             geocoords = JSON.parse(geodata);
         } else {
             // the old way for receive geo coordinates from attachments
@@ -1044,6 +1052,67 @@ define([
 
     function makeJid(id) {
         return QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId);
+    }
+
+    function getUrlPreview(id) {
+        var $messageBody = $('#' + id + '.message').find('.message-body'),
+            $hyperText = $messageBody.find('a:not(a.open_googlemaps)'),
+            isValidUrl,
+            ogBlock,
+            ogInfo,
+            params,
+            url;
+
+        if ($hyperText.length) {
+            url = $hyperText.first().attr('href');
+            isValidUrl = Helpers.isValidUrl(url);
+
+            if (urlCache[url] === null || !isValidUrl) {
+                return false;
+            }
+
+            ogBlock = $('<a class="og_block" href="'+ url +'" target="_blank"></a>');
+            $messageBody.append(ogBlock);
+
+            if (urlCache[url]) {
+                ogInfo = QMHtml.Messages.urlPreview(urlCache[url]);
+                $messageBody.find('.og_block').append(ogInfo);
+            } else {
+                Helpers.getOpenGraphInfo(url, function(error, result) {
+                    if (result && (result.ogTitle || result.ogDescription)) {
+                        params = {
+                            title: result.ogTitle || result.ogUrl || '',
+                            description: result.ogDescription || result.ogUrl || url,
+                            picture: _getValidImagePath(url, result.ogImage) || ''
+                        };
+
+                        urlCache[url] = params;
+                    } else {
+                        params = {
+                            title: '',
+                            description: url,
+                            picture: ''
+                        };
+
+                        urlCache[url] = null;
+                    }
+
+                    ogInfo = QMHtml.Messages.urlPreview(params);
+                    $messageBody.find('.og_block').append(ogInfo);
+                });
+            }
+        }
+
+        function _getValidImagePath(url, imgObj) {
+            var imagePath = imgObj && imgObj.url || '';
+
+            if ((imagePath.indexOf('/') === 0) &&
+                (imagePath.indexOf('//') !== 0)) {
+                imagePath = url + imagePath;
+            }
+
+            return imagePath;
+        }
     }
 
     return MessageView;

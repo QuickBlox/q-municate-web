@@ -198,24 +198,22 @@ define([
                 requestItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 time = Math.floor(Date.now() / 1000),
-                $buttonRequest,
                 copyDialogItem,
                 message,
                 self = this;
 
-            if (!isChat) {
-                $buttonRequest = $objDom.find('.j-sendRequest');
 
-                $buttonRequest.after('<span class="send-request l-flexbox">Request Sent</span>');
-                $buttonRequest.remove();
-            }
-
-            if (notConfirmed[id] && requestItem[0]) {
-                self.sendConfirm(requestItem);
+            if (notConfirmed[id] && requestItem.length) {
+                changeRequestStatus('Request accepted');
+                self.sendConfirm(jid, 'new_dialog');
             } else {
+                if (!isChat) {
+                    changeRequestStatus('Request Sent');
+                }
+
                 if (dialog_id) {
                     if (!$dialogItem.length) {
-                        Dialog.createPrivate(jid, true, dialog_id);
+                        Dialog.createPrivate(jid, 'new_dialog', dialog_id);
                     }
                 } else {
                     QB.chat.roster.add(jid, function() {
@@ -259,6 +257,13 @@ define([
             if ($('#searchList').is(':hidden')) {
                 $('#recentList').removeClass('is-hidden');
                 Helpers.Dialogs.isSectionEmpty($('.j-recentList'));
+            }
+
+            function changeRequestStatus(text) {
+                var $buttonRequest = $objDom.find('.j-sendRequest');
+
+                $buttonRequest.after('<span class="send-request l-flexbox">' + text + '</span>');
+                $buttonRequest.remove();
             }
         },
 

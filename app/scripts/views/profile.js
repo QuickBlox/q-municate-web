@@ -62,9 +62,17 @@ define([
 
         editProfile: function(event) {
             var obj = $(event.target),
+                isError,
                 params;
 
             if (obj.is('.' + this.className)) {
+                isError = this.$el.find('.userProfile-errors').text().trim();
+
+                if (isError) {
+                    this.remove();
+                    this.closePopup();
+                }
+
                 params = {
                     full_name: this.$el.find('.userProfile-filename').val().trim(),
                     phone: this.$el.find('.userProfile-phone').val().trim(),
@@ -76,13 +84,13 @@ define([
                     validate: true
                 });
 
-                Helpers.log(this.model);
-
                 if (!this.model.validationError) {
                     this.model.update();
                     this.remove();
                     this.closePopup();
                 }
+
+                Helpers.log(this.model);
             } else {
                 return;
             }
@@ -119,5 +127,4 @@ define([
     });
 
     return ProfileView;
-
 });

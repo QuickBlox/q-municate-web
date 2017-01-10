@@ -6,20 +6,30 @@
  */
 define([
     'jquery',
+    'underscore',
     'config',
     'quickblox',
     'Helpers',
-    'digits'
+    'digits',
+    'models/person',
+    'views/profile',
+    'views/change_password',
+    'views/fb_import',
 ], function(
     $,
+    _,
     QMCONFIG,
     QB,
     Helpers,
-    Digits
+    Digits,
+    Person,
+    ProfileView,
+    ChangePassView,
+    FBImportView
 ) {
 
     var tempParams,
-        that,
+        self,
         isSecondTab;
 
     function User(app) {
@@ -27,10 +37,31 @@ define([
         this._is_import = null;
         this._remember = false;
         this._valid = false;
-        that = this;
+        self = this;
     }
 
     User.prototype = {
+
+        initProfile: function() {
+            var currentUser = new Person(_.clone(self.contact), {
+                app: self.app,
+                parse: true
+            });
+
+            var profileView = new ProfileView({
+                model: currentUser
+            });
+
+            var changePassView = new ChangePassView({
+                model: currentUser
+            });
+
+            var fbImportView = new FBImportView();
+
+            self.app.views.Profile = profileView;
+            self.app.views.ChangePass = changePassView;
+            self.app.views.FBImport = fbImportView;
+        },
 
         connectTwitterDigits: function() {
             if (isSecondTab) {
@@ -47,7 +78,7 @@ define([
                         'twitter_digits': onLogin.oauth_echo_headers
                     };
 
-                    that.providerConnect(params);
+                    self.providerConnect(params);
                 })
                 .fail(function(error) {
                     isSecondTab = false;
@@ -63,7 +94,7 @@ define([
                 }
             };
 
-            that.providerConnect(params);
+            self.providerConnect(params);
         },
 
         providerConnect: function(params, callback) {
@@ -105,7 +136,7 @@ define([
                     if (!self._is_import && isFB) {
                         self.import(roster, user);
                     } else {
-                        DialogView.downloadDialogs(roster);
+                        DialogView.downloadDialogs();
                     }
                 });
             }
@@ -136,14 +167,14 @@ define([
                         }
 
                         if (ids.length > 0) {
-                            DialogView.downloadDialogs(roster, ids);
+                            DialogView.downloadDialogs(ids);
                         } else {
-                            DialogView.downloadDialogs(roster);
+                            DialogView.downloadDialogs();
                         }
                     });
 
                 } else {
-                    DialogView.downloadDialogs(roster);
+                    DialogView.downloadDialogs();
                 }
                 self._is_import = '1';
                 self.updateQBUser(user);
@@ -204,7 +235,7 @@ define([
                                 } else {
                                     UserView.successFormCallback();
                                     DialogView.prepareDownloading(roster);
-                                    DialogView.downloadDialogs(roster);
+                                    DialogView.downloadDialogs();
                                 }
                             });
                         });
@@ -235,7 +266,7 @@ define([
 
                     UserView.successFormCallback();
                     DialogView.prepareDownloading(roster);
-                    DialogView.downloadDialogs(roster);
+                    DialogView.downloadDialogs();
 
                     custom_data = JSON.stringify({
                         avatar_url: blob.path
@@ -277,7 +308,7 @@ define([
                             self.rememberMe();
                             UserView.successFormCallback();
                             DialogView.prepareDownloading(roster);
-                            DialogView.downloadDialogs(roster);
+                            DialogView.downloadDialogs();
                         });
                     });
                 }, true);
@@ -350,7 +381,7 @@ define([
                     self.rememberMe();
                     UserView.successFormCallback();
                     DialogView.prepareDownloading(roster);
-                    DialogView.downloadDialogs(roster);
+                    DialogView.downloadDialogs();
                 });
             });
         },

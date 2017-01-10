@@ -28,6 +28,10 @@ define(function() {
             caption: 'Choose user picture'
         },
 
+        // Loadable limit of messages by one request. Useful for pagination.
+        stackMessages: 50,
+
+        // Max size (Mbite) of upload an image / video files
         maxLimitFile: 10,
         maxVideoSize: 100,
 
@@ -60,6 +64,8 @@ define(function() {
 
         QBconf: {
             chatProtocol: {
+                // BOSH protocol = 1,
+                // WebSocket = 2
                 active: 2
             },
             debug: {

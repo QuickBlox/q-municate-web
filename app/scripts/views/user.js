@@ -272,8 +272,9 @@ define([
 
             User.logout(function() {
                 switchOnWelcomePage();
-                $('.j-capBox').removeClass('is-hidden')
-                    .siblings().removeClass('is-active');
+                $('.j-capBox').removeClass('is-hidden');
+                $('.j-chatWrap').addClass('is-hidden');
+                $('.j-popover_const').removeClass('is-active');
                 $('.l-chat').remove();
                 Helpers.log('current User and Session were destroyed');
                 DialogView.logoutWithClearData();
@@ -289,7 +290,7 @@ define([
                 $('#searchList').removeClass('is-hidden').siblings('section').addClass('is-hidden');
                 $('#searchList ul').html('').add('#searchList .note').removeClass('is-hidden');
 
-                $('#recentList, #historyList').find('.dialog-item').each(function() {
+                $('#recentList, #historyList, #oldHistoryList').find('.dialog-item').each(function() {
                     var name = $(this).find('.name').text().toLowerCase(),
                         li = $(this).clone();
 

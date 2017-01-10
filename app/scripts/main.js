@@ -44,7 +44,7 @@ requirejs.config({
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
         handlebars: '../bower_components/handlebars/handlebars',
-        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.4.0/quickblox.min',
+        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.5.0/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
@@ -53,6 +53,7 @@ requirejs.config({
         timeago: '../bower_components/jquery-timeago/jquery.timeago',
         minEmoji: '../vendor/emoji/js/minEmoji',
         nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
+        perfectscrollbar: '../bower_components/perfect-scrollbar/js/perfect-scrollbar.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
 
         // Q-municate application
@@ -85,6 +86,8 @@ requirejs.config({
         Events: 'events',
         // helpers
         Helpers: 'helpers',
+        // custom listeners
+        Listeners: 'listeners',
         // templates
         QMHtml: 'qmhtml',
         // entities
@@ -118,7 +121,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.9.0');
+        $('.j-appVersion').html('v. 1.10.0');
 
         // facebook sdk
         FB.init({

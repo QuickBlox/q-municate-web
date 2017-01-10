@@ -11,6 +11,7 @@ define([
     'QMHtml',
     'LocationView',
     'minEmoji',
+    'perfectscrollbar',
     'mCustomScrollbar',
     'mousewheel'
 ], function(
@@ -19,7 +20,8 @@ define([
     Helpers,
     QMHtml,
     Location,
-    minEmoji
+    minEmoji,
+    Ps
 ) {
 
     var Dialog,
@@ -167,6 +169,7 @@ define([
             ----------------------------------------------------- */
             $('.smiles-tab').on('click', function() {
                 var $self = $(this),
+                    smile = document.querySelector('.smiles-wrap'),
                     group = $self.data('group');
 
                 $self.addClass('is-actived')
@@ -175,18 +178,16 @@ define([
                 $('.smiles-group_' + group).removeClass('is-hidden')
                     .siblings().addClass('is-hidden');
 
+                smile.scrollTop = 0;
+                Ps.update(smile);
+
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
-            $('.smiles-group').niceScroll({
-                cursoropacitymax: 0.3,
-                railpadding: {
-                    right: 2
-                },
-                zindex: 1,
-                autohidemode: false,
-                cursorwidth: '6px',
-                enablekeyboard: false
+            Ps.initialize(document.querySelector('.smiles-wrap'), {
+                wheelSpeed: 1,
+                wheelPropagation: true,
+                minScrollbarLength: 20
             });
 
             $workspace.on('click', '.j-em', function() {
@@ -700,6 +701,7 @@ define([
 
             $('.localSearch').on('keyup search submit', function(event) {
                 var $self = $(this),
+                    scrollbar = document.querySelector('.j-scrollbar_aside'),
                     isText = $self.find('.form-input-search').val().length,
                     $cleanButton = $self.find('.j-clean-button'),
                     isNoBtn = $cleanButton.is(':hidden'),
@@ -712,6 +714,8 @@ define([
                     } else {
                         UserView.friendsSearch($self);
                     }
+
+                    Ps.update(scrollbar);
                 }
 
                 if (isText && isNoBtn) {
@@ -850,12 +854,19 @@ define([
             });
 
             $workspace.on('click', '.j-btn_input_send', function() {
-                var $msg = $('.j-message:visible');
+                var $msg = $('.j-message:visible'),
+                    isLoading = $('.j-loading').length;
 
-                MessageView.sendMessage($msg);
-                $msg.find('.textarea').empty();
+                if (!isLoading) {
+                    MessageView.sendMessage($msg);
+                    $msg.find('.textarea').empty();
+                }
+
                 removePopover();
+
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
+
+                return false;
             });
 
             // show message status on hover event

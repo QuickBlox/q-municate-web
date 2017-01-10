@@ -5,9 +5,11 @@
  *
  */
 define([
+    'config',
     'quickblox',
     'Entities'
 ], function(
+    QMCONFIG,
     QB,
     Entities
 ) {
@@ -24,7 +26,7 @@ define([
         download: function(dialog_id, callback, count, isAjaxDownloading) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
-                limitCount,
+                limitCount = QMCONFIG.stackMessages,
                 skipCount;
 
             if (self.skip === count) {
@@ -41,7 +43,7 @@ define([
             QBApiCalls.listMessages({
                 chat_dialog_id: dialog_id,
                 sort_desc: 'date_sent',
-                limit: limitCount || 20,
+                limit: limitCount,
                 skip: skipCount || 0
             }, function(messages) {
                 if (isAjaxDownloading) {
