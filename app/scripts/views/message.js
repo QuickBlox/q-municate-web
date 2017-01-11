@@ -1055,52 +1055,50 @@ define([
     }
 
     function getUrlPreview(id) {
-        var $messageBody = $('#' + id + '.message').find('.message-body'),
-            $hyperText = $messageBody.find('a:not(a.open_googlemaps)'),
-            isValidUrl,
-            ogBlock,
-            ogInfo,
-            params,
-            url;
+        var $hyperText = $('#' + id + '.message').find('.message-body a:not(a.open_googlemaps)');
 
         if ($hyperText.length) {
-            url = $hyperText.first().attr('href');
-            isValidUrl = Helpers.isValidUrl(url);
+            $hyperText.each(function(index) {
+                if (index === 5) return false;
 
-            if (urlCache[url] === null || !isValidUrl) {
-                return false;
-            }
+                var $this = $(this),
+                    url = $this.attr('href'),
+                    params;
 
-            ogBlock = $('<a class="og_block" href="'+ url +'" target="_blank"></a>');
-            $messageBody.append(ogBlock);
+                if (Helpers.isImageUrl(url)) {
+                    $this.addClass('image_preview')
+                         .html('<img src="'+ url +'" alt="picture"/>');
+                } else if (urlCache[url] !== null && Helpers.isValidUrl(url)) {
+                    $this.addClass('og_block');
 
-            if (urlCache[url]) {
-                ogInfo = QMHtml.Messages.urlPreview(urlCache[url]);
-                $messageBody.find('.og_block').append(ogInfo);
-            } else {
-                Helpers.getOpenGraphInfo(url, function(error, result) {
-                    if (result && (result.ogTitle || result.ogDescription)) {
-                        params = {
-                            title: result.ogTitle || result.ogUrl || '',
-                            description: result.ogDescription || result.ogUrl || url,
-                            picture: _getValidImagePath(url, result.ogImage) || ''
-                        };
-
-                        urlCache[url] = params;
+                    if (urlCache[url]) {
+                        $this.html(QMHtml.Messages.urlPreview(urlCache[url]));
                     } else {
-                        params = {
-                            title: '',
-                            description: url,
-                            picture: ''
-                        };
+                        Helpers.getOpenGraphInfo(url, function(error, result) {
+                            if (result && (result.ogTitle || result.ogDescription)) {
+                                params = {
+                                    title: result.ogTitle || result.ogUrl || '',
+                                    description: result.ogDescription || result.ogUrl || url,
+                                    picture: _getValidImagePath(url, result.ogImage) || ''
+                                };
 
-                        urlCache[url] = null;
+                                urlCache[url] = params;
+                            } else {
+                                params = {
+                                    title: '',
+                                    description: url,
+                                    picture: ''
+                                };
+
+                                urlCache[url] = null;
+                            }
+
+                            $this.html(QMHtml.Messages.urlPreview(params));
+                        });
                     }
+                }
+            });
 
-                    ogInfo = QMHtml.Messages.urlPreview(params);
-                    $messageBody.find('.og_block').append(ogInfo);
-                });
-            }
         }
 
         function _getValidImagePath(url, imgObj) {

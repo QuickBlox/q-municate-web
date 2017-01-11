@@ -184,10 +184,8 @@ define([
 
         urlPreview: function(params) {
             var htmlTemplate = _.template(
-                    '<div class="og_info">'+
-                        '<h4 class="og_title"><%=title%></h4>'+
-                        '<span class="og_description"><%=description%></span>'+
-                    '</div>'+
+                    '<h4 class="og_title"><%=title%></h4>'+
+                    '<span class="og_description"><%=description%></span>'+
                     '<% if (picture) { %>'+
                         '<div class="og_image">'+
                             '<img src="<%=picture%>" alt="og_pic">'+

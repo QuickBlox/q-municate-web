@@ -358,5 +358,9 @@ define([
         return validator.test(url);
     };
 
+    Helpers.isImageUrl = function(url) {
+        return /.svg|.png|.jpg|.jpeg|.gif/i.test(url);
+    };
+
     return Helpers;
 });
