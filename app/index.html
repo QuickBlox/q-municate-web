@@ -430,17 +430,16 @@
 
         <section id="popupIncoming" class="popup incoming-call-popup is-open"></section>
 
-        <section id="popupAttach" class="popup popup_attach">
-            <img class="attach-photo" src="images/photo_preloader.gif" alt="attach">
-            <video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls autoplay preload="auto" data-setup="{}">
-                <source src="" type="video/mp4"/>
-                <source src="" type="video/webm"/>
-            </video>
-            <div class="attach-description l-flexbox l-flexbox_flexbetween">
-                <span class="attach-name"></span>
-                <a class="attach-download" href="" target="_blank" download="">Download</a>
-            </div>
-        </section>
+        <!--<section id="popupAttach" class="popup popup_attach">-->
+            <!--<img class="attach-photo" src="images/photo_preloader.gif" alt="attach">-->
+            <!--<video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls autoplay preload="auto" data-setup="{}">-->
+                <!--<source src="" type="video/mp4"/>-->
+            <!--</video>-->
+            <!--<div class="attach-description l-flexbox l-flexbox_flexbetween">-->
+                <!--<span class="attach-name"></span>-->
+                <!--<a class="attach-download" href="" target="_blank" download="">Download</a>-->
+            <!--</div>-->
+        <!--</section>-->
 
         <section id="popupAvatar" class="popup popup_avatar j-popupAvatar">
             <img class="avatar-pic j-avatarPic" alt="avatar">
@@ -699,7 +698,7 @@
             <form class="l-message j-message" action="#">
                 <div id="textarea_<%= dialog_id %>" class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"><%= draft %></div>
                 <div class="footer_btn j-send_location btn_sendlocation <%= location %>" data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>
-                <input class="attachment" type="file" accept="image/*">
+                <input class="attachment" type="file" accept="image/*,video/mp4,audio/mp3">
             </form>
             <div class="j-typing l-typing"></div>
             <div class="l-input-menu">

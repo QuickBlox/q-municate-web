@@ -981,6 +981,16 @@ define([
                 return false;
             });
 
+            $workspace.on('click', '.video_player', function() {
+                var $self = $(this)[0];
+
+                if ($self.paused || $self.ended) {
+                    $self.play();
+                } else {
+                    $self.pause();
+                }
+            });
+
             /* temporary events
             ----------------------------------------------------- */
             $('#share').on('click', function(event) {

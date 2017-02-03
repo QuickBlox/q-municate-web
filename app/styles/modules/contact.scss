@@ -12,9 +12,8 @@
 }
 .contact-avatar.avatar {
     margin-right: 15px;
-    width: 45px;
-    max-width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
 }
 .list-item .contact-avatar.avatar {
     margin-right: 10px;
@@ -31,7 +30,7 @@
     display: block;
     height: 25px;
     line-height: 25px;
-    font-size: 15px;
+    font-size: 14px;
     color: #959595;
     overflow: hidden;
     white-space: nowrap;
@@ -49,9 +48,9 @@
 }
 /* avatar */
 .avatar {
-    width: 45px;
-    min-width: 45px;
-    height: 45px;
+    width: 50px;
+    min-width: 32px;
+    height: 50px;
     border-radius: 50%;
     background-size: cover;
     background-position: 50%;
@@ -63,9 +62,10 @@
 }
 /* name */
 .name {
+    font-family: Roboto, sans-serif;
     font-size: 16px;
     line-height: 20px;
-    color: #333;
+    color: #778594;
     max-width: 180px;
     overflow: hidden;
     white-space: nowrap;
@@ -84,7 +84,7 @@
     color: #999;
 }
 .name_chat {
-    font-size: 20px;
+    font-size: 16px;
     line-height: 24px;
     max-width: 455px;
 }
@@ -105,8 +105,8 @@
 .list-item .status {
     border-color: #fff;
     position: absolute;
-    top: 38px;
-    left: 37px;
+    top: 36px;
+    left: 32px;
 }
 .list-item:hover .status {
     border-color: #f2f2f2;
@@ -184,7 +184,7 @@
     opacity: 1;
 }
 .last_time_preview {
-    font-size: 13px;
+    font-size: 12px;
     color: #959595;
     position: absolute;
     right: 15px;
@@ -248,34 +248,34 @@
     border-radius: 50%;
 }
 .request-call {
-    margin-left: 14px;
+    margin-left: 7px;
     width: 25px;
     min-width: 25px;
     height: 21px;
 }
 .request-video_incoming {
-    background: url('../images/icon-video-incoming.svg') no-repeat left bottom;
+    background: url('../images/icon-video-incoming.svg') no-repeat center;
 }
 .request-video_outgoing {
-    background: url('../images/icon-video-outgoing.svg') no-repeat left bottom;
+    background: url('../images/icon-video-outgoing.svg') no-repeat center;
 }
 .request-video_missed {
-    background: url('../images/icon-video-missed.svg') no-repeat left bottom;
+    background: url('../images/icon-video-missed.svg') no-repeat center;
 }
 .request-video_ended {
-    background: url('../images/icon-video-ended.svg') no-repeat left bottom;
+    background: url('../images/icon-video-ended.svg') no-repeat center;
 }
 .request-audio_incoming {
-    background: url('../images/icon-audio-incoming.svg') no-repeat left bottom;
+    background: url('../images/icon-audio-incoming.svg') no-repeat center;
 }
 .request-audio_outgoing {
-    background: url('../images/icon-audio-outgoing.svg') no-repeat left bottom;
+    background: url('../images/icon-audio-outgoing.svg') no-repeat center;
 }
 .request-audio_missed {
-    background: url('../images/icon-audio-missed.svg') no-repeat left bottom;
+    background: url('../images/icon-audio-missed.svg') no-repeat center;
 }
 .request-audio_ended {
-    background: url('../images/icon-audio-ended.svg') no-repeat left bottom;
+    background: url('../images/icon-audio-ended.svg') no-repeat center;
 }
 .request-button_pending:after {
     content: 'i';

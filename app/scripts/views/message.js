@@ -59,9 +59,8 @@ define([
             }
         },
 
-        addItem: function(message, isCallback, isMessageListener, recipientId) {
-            var DialogView = this.app.views.Dialog,
-                ContactListMsg = this.app.models.ContactList,
+        addItem: function(message, isCallback, isMessageListener) {
+            var ContactListMsg = this.app.models.ContactList,
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
                 isBottom = Helpers.isBeginOfChat(),
                 isOnline = message.online;
@@ -96,6 +95,7 @@ define([
                     mapAttachLink = geoCoords ? Location.getMapUrl(geoCoords) : null,
                     recipient = message.recipient_id && contacts[message.recipient_id] || null,
                     occupants_names = '',
+                    added_occupant_ids,
                     occupants_ids,
                     status,
                     html;
@@ -310,49 +310,35 @@ define([
                         if (attachType && attachType.indexOf('image') > -1) {
                             html += '<div class="message-body">';
                             html += '<div class="preview preview-photo" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '">';
-                            html += '<img id="attach_' + message.id + '" src="' + attachUrl + '" alt="attach">';
-                            html += '</div></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
+                            html += '<img id="attach_' + message.id + '" src="' + attachUrl + '" alt="attach"></div></div></div>';
                         } else if (attachType && attachType.indexOf('audio') > -1) {
-                            html += '<div class="message-body">';
-                            html += message.attachment.name + '<br><br>';
-                            html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
-                            html += '<audio id="attach_' + message.id + '" src="' + attachUrl + '" controls class="attach-audio"></audio></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
+                            html += '<div class="message-body">' + message.attachment.name + '<br><br>';
+                            html += '<audio id="audio_' + message.id + '" controls class="audio_player">'+
+                                        '<source src="' + attachUrl + '" type="audio/mpeg">'+
+                                    '</audio></div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
-                            html += '<div class="message-body">';
-                            html += message.attachment.name + '<br><br>';
-                            html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
-                            html += '<div id="attach_' + message.id + '" class="preview preview-video" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '"></div></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
+                            html += '<div class="message-body">'+ message.attachment.name + '<br><br>';
+                            html += '<div><div class="playPause"></div>'+
+                                    '<video id="video_' + message.id + '" class="video_player" controls>'+
+                                        '<source src="' + attachUrl + '" type="video/mp4">'+
+                                    '</video></div></div></div>';
                         } else if (attachType && attachType.indexOf('location') > -1) {
                             html += '<div class="message-body">';
                             html += '<a class="open_googlemaps" href="' + mapAttachLink + '" target="_blank">';
                             html += '<img id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map"></a></div></div>';
-                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
                         } else if (attachType) {
                             html += '<div class="message-body">';
                             html += '<a id="attach_' + message.id + '" class="attach-file" href="' + attachUrl + '" download="' + message.attachment.name + '">' + message.attachment.name + '</a>';
                             html += '<span class="attach-size">' + getFileSize(message.attachment.size) + '</span></div></div>';
-                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
                         } else {
-                            html += '<div class="message-body">' + minEmoji(Helpers.Messages.parser(message.body)) + '</div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
+                            html += '<div class="message-body">' + minEmoji(Helpers.Messages.parser(message.body)) + '</div></div>';
                         }
 
+                        html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
+                        html += '<div class="message-status is-hidden">'+ status +'</div>';
+                        html += '<div class="message-geo j-showlocation"></div></div>';
                         html += '</div></div></article>';
+
                         break;
                 }
 
@@ -435,7 +421,6 @@ define([
                 type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 $newMessages = $('.j-newMessages[data-dialog="' + dialog_id + '"]'),
-                dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
                 locationIsActive = ($('.j-send_location').hasClass('btn_active') && localStorage['QM.latitude'] && localStorage['QM.longitude']),
                 lastMessage,
                 message,
@@ -525,7 +510,6 @@ define([
                 dialog_id = message.extension && message.extension.dialog_id,
                 recipient_id = message.recipient_id || message.extension && message.extension.recipient_id || null,
                 recipient_jid = recipient_id ? makeJid(recipient_id) : null,
-                room_jid = roomJidVerification(dialog_id),
                 room_name = message.extension && message.extension.room_name,
                 room_photo = message.extension && message.extension.room_photo,
                 deleted_id = message.extension && message.extension.deleted_occupant_ids,
@@ -533,7 +517,6 @@ define([
                 occupants_ids = message.extension && message.extension.current_occupant_ids,
                 dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
                 contactRequest = $('.j-incommingContactRequest[data-jid="' + makeJid(id) + '"]'),
-                dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden') || !$chat.length,
                 isExistent = dialogItem.length ? true : (contactRequest.length ? true : false),
@@ -550,12 +533,9 @@ define([
                 $label = $chat.find('.j-newMessages'),
                 isNewMessages = $label.length,
                 dialog = dialogs.get(dialog_id),
-                copyDialogItem,
                 lastMessage,
                 occupants,
                 occupant,
-                blobObj,
-                msgArr,
                 msg;
 
             typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
@@ -725,7 +705,6 @@ define([
                 dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-                audioSignal = $('#newMessageSignal')[0],
                 dialogs = Entities.Collections.dialogs,
                 dialog,
                 msg;
@@ -1055,7 +1034,7 @@ define([
     }
 
     function getUrlPreview(id) {
-        var $hyperText = $('#' + id + '.message').find('.message-body a:not(a.open_googlemaps)');
+        var $hyperText = $('#' + id + '.message').find('.message-body a:not(a.open_googlemaps, a.file-download)');
 
         if ($hyperText.length) {
             $hyperText.each(function(index) {
@@ -1074,12 +1053,15 @@ define([
                     if (urlCache[url]) {
                         $this.html(QMHtml.Messages.urlPreview(urlCache[url]));
                     } else {
-                        Helpers.getOpenGraphInfo(url, function(error, result) {
+                        Helpers.getOpenGraphInfo({
+                            'url': url,
+                            'token': JSON.parse(localStorage['QM.session']).token
+                        }, function(error, result) {
                             if (result && (result.ogTitle || result.ogDescription)) {
                                 params = {
                                     title: result.ogTitle || result.ogUrl || '',
                                     description: result.ogDescription || result.ogUrl || url,
-                                    picture: _getValidImagePath(url, result.ogImage) || ''
+                                    picture: result.ogImage && result.ogImage.url || ''
                                 };
 
                                 urlCache[url] = params;
@@ -1099,17 +1081,6 @@ define([
                 }
             });
 
-        }
-
-        function _getValidImagePath(url, imgObj) {
-            var imagePath = imgObj && imgObj.url || '';
-
-            if ((imagePath.indexOf('/') === 0) &&
-                (imagePath.indexOf('//') !== 0)) {
-                imagePath = url + imagePath;
-            }
-
-            return imagePath;
         }
     }
 
