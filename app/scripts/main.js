@@ -39,7 +39,6 @@ requirejs.config({
         gmaps: 'https://cdnjs.cloudflare.com/ajax/libs/gmaps.js/0.4.24/gmaps.min',
         digits: 'https://cdn.digits.com/1/sdk',
         cryptojs: '../bower_components/crypto-js-lib/rollups/aes',
-        videojs: 'https://vjs.zencdn.net/5.11.6/video',
         jquery: '../bower_components/jquery/dist/jquery',
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',

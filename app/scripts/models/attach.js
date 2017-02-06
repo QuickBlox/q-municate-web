@@ -21,8 +21,8 @@ define([
     Attach.prototype = {
 
         upload: function(file, callback) {
-            var QBApiCalls = this.app.service,
-                self = this;
+            var self = this,
+                QBApiCalls = self.app.service;
 
             QBApiCalls.createBlob({
                 'file': file,
@@ -36,7 +36,7 @@ define([
             var type = blob.content_type.indexOf('image/') === 0 ? 'image' :
                 blob.content_type.indexOf('audio/') === 0 ? 'audio' :
                 blob.content_type.indexOf('video/') === 0 ? 'video' :
-                'photo';
+                'file';
 
             return {
                 'type': type,

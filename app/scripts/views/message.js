@@ -312,13 +312,14 @@ define([
                             html += '<div class="preview preview-photo" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '">';
                             html += '<img id="attach_' + message.id + '" src="' + attachUrl + '" alt="attach"></div></div></div>';
                         } else if (attachType && attachType.indexOf('audio') > -1) {
-                            html += '<div class="message-body">' + message.attachment.name + '<br><br>';
+                            html += '<div class="message-body"><div class="media_title">' + message.attachment.name + '</div>';
                             html += '<audio id="audio_' + message.id + '" controls class="audio_player">'+
                                         '<source src="' + attachUrl + '" type="audio/mpeg">'+
-                                    '</audio></div></div>';
+                                    '</audio>';
+                            html += '</div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
-                            html += '<div class="message-body">'+ message.attachment.name + '<br><br>';
-                            html += '<div><div class="playPause"></div>'+
+                            html += '<div class="message-body"><div class="media_title">'+ message.attachment.name + '</div>';
+                            html += '<div><div class="play_btn j-play_btn"></div>'+
                                     '<video id="video_' + message.id + '" class="video_player" controls>'+
                                         '<source src="' + attachUrl + '" type="video/mp4">'+
                                     '</video></div></div></div>';
@@ -326,7 +327,7 @@ define([
                             html += '<div class="message-body">';
                             html += '<a class="open_googlemaps" href="' + mapAttachLink + '" target="_blank">';
                             html += '<img id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map"></a></div></div>';
-                        } else if (attachType) {
+                        } else if (attachType && attachType.indexOf('file') > -1) {
                             html += '<div class="message-body">';
                             html += '<a id="attach_' + message.id + '" class="attach-file" href="' + attachUrl + '" download="' + message.attachment.name + '">' + message.attachment.name + '</a>';
                             html += '<span class="attach-size">' + getFileSize(message.attachment.size) + '</span></div></div>';
@@ -371,7 +372,6 @@ define([
                         imgUrl: imgUrl
                     });
                 }
-
 
                 if ((message.sender_id == User.contact.id) && (message.delivered_ids.length > 0)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'delivered', false);

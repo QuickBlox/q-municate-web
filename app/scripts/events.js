@@ -982,13 +982,20 @@ define([
             });
 
             $workspace.on('click', '.video_player', function() {
-                var $self = $(this)[0];
+                var $self = $(this)[0],
+                    $btn = $('.j-play_btn');
 
                 if ($self.paused || $self.ended) {
                     $self.play();
+                    $btn.fadeOut(200);
                 } else {
                     $self.pause();
+                    $btn.fadeIn(200);
                 }
+
+                $self.onended = function() {
+                    $btn.fadeIn(200);
+                };
             });
 
             /* temporary events

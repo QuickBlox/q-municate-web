@@ -5,14 +5,12 @@ define([
     'jquery',
     'quickblox',
     'config',
-    'QBNotification',
-    'SessionModule'
+    'QBNotification'
 ], function(
     $,
     QB,
     QMCONFIG,
-    QBNotification,
-    Session
+    QBNotification
 ) {
 
     var Helpers = {};

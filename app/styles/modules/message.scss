@@ -67,7 +67,7 @@ article.message[data-status="typing"] > div {
     word-wrap: break-word;
 }
 .message_attach .message-content {
-    width: 480px;
+    width: 460px;
 }
 .message-author {
     margin-bottom: 4px;
@@ -305,9 +305,20 @@ article.message[data-status="typing"] > div {
     width: 400px;
     height: 225px
 }
-.playPause {
-
-    width: 44px;
-    height: 44px;
+.media_title {
+    font-weight: 500;
+    height: 26px;
+    line-height: 26px;
+    width: 400px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.play_btn {
+    position: absolute;
+    top: 105px;
+    left: 178px;
+    width: 45px;
+    height: 45px;
     background: url('../images/ic-play-video.svg') no-repeat center;
 }
