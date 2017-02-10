@@ -368,8 +368,7 @@ define([
         htmlBuild: function(objDom, messages) {
             Entities.Collections.dialogs.saveDraft();
 
-            var MessageView = this.app.views.Message,
-                contacts = ContactList.contacts,
+            var contacts = ContactList.contacts,
                 dialogs = Entities.Collections.dialogs,
                 roster = ContactList.roster,
                 parent = objDom.parent(),
@@ -383,12 +382,8 @@ define([
                 $chatWrap = $('.j-chatWrap'),
                 $chatView = $('.chatView'),
                 isCall,
-                chatTpl,
-                messageId,
                 location,
                 status,
-                msgArr,
-                userId,
                 html,
                 icon,
                 name,
@@ -481,8 +476,6 @@ define([
                 groupName = occupants_ids.length > 0 ? [User.contact.full_name, contacts[occupants_ids[0]].full_name] : [User.contact.full_name],
                 occupants_names = !type && occupants_ids.length > 0 ? [contacts[occupants_ids[0]].full_name] : [],
                 new_ids = [],
-                new_id, occupant,
-                roster = ContactList.roster,
                 chat = $('.l-chat[data-dialog="' + dialog_id + '"]');
 
             for (var i = 0, len = new_members.length, name; i < len; i++) {
@@ -643,20 +636,23 @@ define([
     /* Private
     ---------------------------------------------------------------------- */
     function messageScrollbar(selector) {
+        var isBottom;
+
         $(selector).mCustomScrollbar({
             theme: 'minimal-dark',
             scrollInertia: 0,
             mouseWheel: {
-                scrollAmount: 120,
+                scrollAmount: 120
             },
             callbacks: {
                 onTotalScrollBack: function() {
                     ajaxDownloading(selector);
                 },
                 onTotalScroll: function() {
-                    var isBottom = Helpers.isBeginOfChat(),
-                    $currentDialog = $('.dialog-item.is-selected'),
-                    dialogId = $currentDialog.data('dialog');
+                    var $currentDialog = $('.dialog-item.is-selected'),
+                        dialogId = $currentDialog.data('dialog');
+
+                    isBottom = Helpers.isBeginOfChat();
 
                     if (isBottom) {
                         $('.j-toBottom').hide();
@@ -665,10 +661,14 @@ define([
                     }
                 },
                 onScroll: function() {
-                    var isBottom = Helpers.isBeginOfChat();
+                    isBottom = Helpers.isBeginOfChat();
+
                     if (!isBottom) {
                         $('.j-toBottom').show();
                     }
+
+                    Listeners.setChatViewPosition($(this).find('.mCSB_container').offset().top);
+                    isNeedToStopTheVideo();
                 }
             }
         });
@@ -783,6 +783,18 @@ define([
         if ($label.length && (dialogId !== curDialogId)) {
             $label.remove();
         }
+    }
+    
+    function isNeedToStopTheVideo() {
+        $('.j-videoPlayer').each(function(index, element) {
+            var $element = $(element);
+
+            if (!element.paused) {
+                if (($element.offset().top <= 0) || ($element.offset().top >= 750)) {
+                    element.pause();
+                }
+            }
+        });
     }
 
     return DialogView;

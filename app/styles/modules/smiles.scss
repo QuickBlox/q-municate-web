@@ -8,6 +8,7 @@
 }
 .smiles-tab_people {
     background: url('../images/smiles-group/people.svg') no-repeat center;
+    border-top-left-radius: 5px;
 }
 .smiles-tab_nature {
     background: url('../images/smiles-group/nature.svg') no-repeat center;
@@ -22,19 +23,20 @@
     background: url('../images/smiles-group/symbols.svg') no-repeat center;
 }
 .smiles-tab_people.is-actived {
-    background: url('../images/smiles-group/people_active.svg') no-repeat center, #0c7bbb;
+    background: url('../images/smiles-group/people_active.svg') no-repeat center, #17d04b;
+    border-top-left-radius: 5px;
 }
 .smiles-tab_nature.is-actived {
-    background: url('../images/smiles-group/nature_active.svg') no-repeat center, #0c7bbb;
+    background: url('../images/smiles-group/nature_active.svg') no-repeat center, #17d04b;
 }
 .smiles-tab_objects.is-actived {
-    background: url('../images/smiles-group/objects_active.svg') no-repeat center, #0c7bbb;
+    background: url('../images/smiles-group/objects_active.svg') no-repeat center, #17d04b;
 }
 .smiles-tab_places.is-actived {
-    background: url('../images/smiles-group/places_active.svg') no-repeat center, #0c7bbb;
+    background: url('../images/smiles-group/places_active.svg') no-repeat center, #17d04b;
 }
 .smiles-tab_symbols.is-actived {
-    background: url('../images/smiles-group/symbols_active.svg') no-repeat center, #0c7bbb;
+    background: url('../images/smiles-group/symbols_active.svg') no-repeat center, #17d04b;
 }
 .smiles-wrap {
     height: calc(100% - 38px);

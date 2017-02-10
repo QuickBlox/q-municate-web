@@ -20,7 +20,7 @@
     -webkit-transform: translate(-50%, 0);
     top: 100%;
     border: 1px solid #f2f2f2;
-    box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
+    box-shadow: 0 0 10px 3px rgba(240, 240, 240, 1);
 }
 .list-actions_contacts {
     margin: -15px auto 0;
@@ -39,7 +39,7 @@
     right: 0;
 }
 .list-actions .list-item {
-    height: auto;
+    height: 32px;
 }
 .list-actions .list-item:last-child {
     border-bottom: 0;
@@ -47,9 +47,10 @@
 .list-actions-action {
     display: block;
     padding: 0 10px;
-    font-size: 16px;
-    line-height: 40px;
-    color: #333;
+    font-size: 15px;
+    line-height: 32px;
+    color: #4a4a4a;
+    font-family: Roboto, sans-serif;
 }
 .list-actions-action:hover {
     opacity: 1;

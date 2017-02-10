@@ -18,9 +18,10 @@ define([
     function Listeners(app) {
         self = this;
         this.app = app;
+        this.blockChatViewPosition = false;
 
         var chatConnection = navigator.onLine;
-        var active = false;
+        var position = 0;
 
         this.setChatState = function(state) {
             if (typeof state === 'boolean') {
@@ -33,6 +34,29 @@ define([
         this.getChatState = function() {
             return chatConnection;
         };
+
+        this.setChatViewPosition = function(value) {
+            if (!self.blockChatViewPosition) {
+                position = value;
+            }
+
+            self.blockChatViewPosition = false;
+        };
+
+        this.getChatViewPosition = function() {
+            var direction = '',
+                value = 0;
+
+            if (position < 0) {
+                direction = '-=';
+                value -= position;
+            } else {
+                direction = '+=';
+                value += position;
+            }
+
+            return (direction + value);
+        };
     }
 
     Listeners.prototype = {
@@ -40,6 +64,10 @@ define([
         init: function() {
             window.addEventListener('online', self._onNetworkStatusListener);
             window.addEventListener('offline', self._onNetworkStatusListener);
+
+            document.addEventListener('webkitfullscreenchange', self.onFullScreenChange);
+            document.addEventListener('mozfullscreenchange', self.onFullScreenChange);
+            document.addEventListener('fullscreenchange', self.onFullScreenChange);
         },
 
         setQBHandlers: function() {
@@ -137,6 +165,26 @@ define([
                     _switchToOnlineMode();
                 } else {
                     _switchToOfflineMode();
+                }
+            }
+        },
+
+        onFullScreenChange: function(event) {
+            var fullscreenElement = document.fullscreenElement ||
+                                    document.mozFullscreenElement ||
+                                    document.webkitFullscreenElement,
+                fullscreenEnabled = document.fullscreenEnabled ||
+                                    document.mozFullscreenEnabled ||
+                                    document.webkitFullscreenEnabled,
+                isVideoElementTag = event.target.tagName === 'VIDEO';
+
+            if (fullscreenEnabled && isVideoElementTag) {
+                var $scroll = $('.j-chatItem:visible').find('.j-scrollbar_message');
+
+                if (fullscreenElement) {
+                    self.blockChatViewPosition = true;
+                } else {
+                    $scroll.mCustomScrollbar('scrollTo', self.getChatViewPosition());
                 }
             }
         }

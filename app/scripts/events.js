@@ -563,6 +563,33 @@ define([
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
+            $workspace.on('click', '.j-start_record', function() {
+                var $self = $(this),
+                    bool = $self.is('.is-active');
+                    $recordTime = $('.j-time_record');
+
+                if (!bool) {
+                    $self.addClass('is-active');
+                    $recordTime.html('00:01');
+                    console.info('FINISH RECORD');
+                } else {
+                    $self.removeClass('is-active');
+                    $recordTime.html('RECORD');
+                    console.info('START RECORD');
+                }
+            });
+
+            $workspace.on('click', '.j-btn_audio_record', function() {
+                var $self = $(this),
+                    bool = $self.is('.is-active');
+
+                removePopover();
+
+                if (!bool) {
+                    $self.addClass('is-active');
+                    $('.j-popover_record').addClass('is-active');
+                }
+            });
             /* popups
             ----------------------------------------------------- */
             $('.header-links-item').on('click', '#logout', function(event) {
@@ -982,20 +1009,13 @@ define([
             });
 
             $workspace.on('click', '.video_player', function() {
-                var $self = $(this)[0],
-                    $btn = $('.j-play_btn');
+                var $self = $(this)[0];
 
                 if ($self.paused || $self.ended) {
                     $self.play();
-                    $btn.fadeOut(200);
                 } else {
                     $self.pause();
-                    $btn.fadeIn(200);
                 }
-
-                $self.onended = function() {
-                    $btn.fadeIn(200);
-                };
             });
 
             /* temporary events
@@ -1030,7 +1050,9 @@ define([
             '.j-btn_input_smile, .j-btn_input_smile *, .textarea, ' +
             '.textarea *, .j-popover_smile, .j-popover_smile *, ' +
             '.j-popover_gmap, .j-popover_gmap *, .j-btn_input_location, ' +
-            '.j-btn_input_location *',
+            '.j-btn_input_location *' +
+            '.j-popover_record, .j-popover_record *, .j-btn_audio_record, ' +
+            '.j-btn_audio_record *',
             googleImage = objDom.context.src && objDom.context.src.indexOf('/maps.gstatic.com/mapfiles/api-3/images/mapcnt6.png') || null;
 
         if (objDom.is(selectors) || e.which === 3 || googleImage === 7) {

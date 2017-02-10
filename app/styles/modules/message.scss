@@ -72,7 +72,6 @@ article.message[data-status="typing"] > div {
 .message-author {
     margin-bottom: 4px;
     max-width: 400px;
-    height: 20px;
     font-size: 14px;
     font-weight: 500;
     line-height: 20px;
@@ -81,7 +80,7 @@ article.message[data-status="typing"] > div {
 }
 .message_service .message-author {
     margin-bottom: 0;
-    line-height: 22px;
+    line-height: 20px;
 }
 .message_attach_row .message-author {
     line-height: 37px;
