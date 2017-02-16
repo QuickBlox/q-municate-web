@@ -11,6 +11,7 @@
 @import "modules/webrtc";
 @import "modules/profile";
 @import "modules/settings";
+@import "modules/recorder";
 /* scrollbar */
 .mCS-autoHide > .mCustomScrollBox ~ .mCSB_scrollTools {
     opacity: 1;
@@ -143,7 +144,7 @@
     bottom: -12px;
 }
 .popover_smile .coner {
-    right: 113px;
+    right: 118px;
 }
 .icon_coner {
     background: #fff;
@@ -165,43 +166,7 @@
     padding: 5px;
 }
 .popover_gmap .coner {
-    right: 82px;
-}
-////
-.popover_record {
-    width: 130px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-}
-.popover_record {
-    bottom: 40px;
-    right: 102px;
-}
-.start_record,
-.start_record:hover,
-.start_record:focus {
-    width: 16px;
-    height: 16px;
-    margin: 0 13px;
-    background-color: #f54a4a;
-    border-radius: 100%;
-}
-.start_record.is-active {
-    border-radius: initial;
-}
-.record_title {
-    font-family: Roboto, sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    color: #6b7988;
-    line-height: 16px;
-}
-.time_record {
-    display: none;
-}
-.popover_record .coner {
-    right: 53px;
+    right: 87px;
 }
 /* no connect */
 .no-connection {

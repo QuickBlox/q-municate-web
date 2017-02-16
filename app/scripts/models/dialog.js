@@ -281,7 +281,6 @@ define([
 
         changeAvatar: function(dialog_id, objDom, callback) {
             var QBApiCalls = this.app.service,
-                ContactList = this.app.models.ContactList,
                 Attach = this.app.models.Attach,
                 AttachView = this.app.views.Attach,
                 file = objDom[0].files[0] || null,
@@ -342,40 +341,33 @@ define([
             }
         },
 
-        leaveChat: function(dialog, callback) {
+        deleteChat: function(dialog) {
             var QBApiCalls = this.app.service,
                 User = this.app.models.User,
-                self = this,
-                time = Math.floor(Date.now() / 1000),
-                dialogId = dialog.get('id');
+                dialogId = dialog.get('id'),
+                dialogType = dialog.get('type');
 
             // send notification about leave
-            QB.chat.send(dialog.get('room_jid'), {
-                type: 'groupchat',
-                body: 'Notification message',
-                extension: {
-                    date_sent: time,
-                    save_to_history: 1,
-                    notification_type: '2',
-                    current_occupant_ids: dialog.get('occupants_ids').join(),
-                    deleted_occupant_ids: User.contact.id,
-                    dialog_id: dialogId,
-                    room_updated_date: time,
-                    dialog_update_info: 3
-                }
-            });
+            if (dialogType === 2) {
+                var time = Math.floor(Date.now() / 1000);
 
-            if (Entities.active === dialogId) {
-                Entities.active = '';
+                QB.chat.send(dialog.get('room_jid'), {
+                    type: 'groupchat',
+                    body: 'Notification message',
+                    extension: {
+                        date_sent: time,
+                        save_to_history: 1,
+                        notification_type: '2',
+                        current_occupant_ids: dialog.get('occupants_ids').join(),
+                        deleted_occupant_ids: User.contact.id,
+                        dialog_id: dialogId,
+                        room_updated_date: time,
+                        dialog_update_info: 3
+                    }
+                });
             }
 
-            QBApiCalls.updateDialog(dialogId, {
-                pull_all: {
-                    occupants_ids: [User.contact.id]
-                }
-            }, function() {
-                callback();
-            });
+            QBApiCalls.deleteDialog(dialogId);
         }
 
     };

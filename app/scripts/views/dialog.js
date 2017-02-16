@@ -526,35 +526,44 @@ define([
 
         leaveGroupChat: function(dialogParam, sameUser) {
             var dialogs = Entities.Collections.dialogs,
-                dialog_id = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
-                dialog = dialogs.get(dialog_id),
-                li = $('.dialog-item[data-dialog="' + dialog_id + '"]'),
-                chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
-                list = li.parents('ul');
+                dialogId = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
+                dialog = dialogs.get(dialogId);
 
-            if (sameUser) {
-                removeDialogItem();
-            } else {
-                Dialog.leaveChat(dialog, function() {
-                    removeDialogItem();
-                });
+            if (!sameUser) {
+                Dialog.deleteChat(dialog);
             }
 
-            function removeDialogItem() {
-                li.remove();
-                Helpers.Dialogs.isSectionEmpty(list);
+            self.removeDialogItem(dialogId);
+        },
 
-                // delete chat section
-                if (chat.is(':visible')) {
-                    $('.j-capBox').removeClass('is-hidden')
-                        .siblings().removeClass('is-active');
+        removeDialogItem: function(dialogId) {
+            var dialogs = Entities.Collections.dialogs,
+                $dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]'),
+                $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
+                $dialogList = $dialogItem.parents('ul');
 
-                    $('.j-chatWrap').addClass('is-hidden')
-                        .children().remove();
-                }
+            $dialogItem.remove();
 
+            Helpers.Dialogs.isSectionEmpty($dialogList);
+
+            // delete chat section
+            if ($chat.is(':visible')) {
+                $('.j-capBox').removeClass('is-hidden')
+                    .siblings().removeClass('is-active');
+
+                $('.j-chatWrap').addClass('is-hidden')
+                    .children().remove();
             }
 
+            if (Entities.active === dialogId) {
+                Entities.active = '';
+            }
+
+            if ($chat.length > 0) {
+                $chat.remove();
+            }
+
+            dialogs.remove(dialogId);
         },
 
         showChatWithNewMessages: function(dialogId, unreadCount, messages) {

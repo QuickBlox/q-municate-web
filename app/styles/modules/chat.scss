@@ -1,5 +1,5 @@
 /* chat */
-.groupTitle {
+.groupTitle > * {
     cursor: pointer;
 }
 .chat-title {
@@ -25,6 +25,9 @@
     visibility: hidden;
     opacity: 0;
     transition: all 0.1s;
+}
+.chat-occupants-wrap.is-overlay {
+    z-index: initial;
 }
 .chat-occupants {
     position: static !important;

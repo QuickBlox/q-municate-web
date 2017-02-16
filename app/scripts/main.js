@@ -70,6 +70,7 @@ requirejs.config({
         VideoChatModule: 'models/videochat',
         CursorModule: 'models/custom_cursor',
         SyncTabsModule: 'models/sync_tabs',
+        VoiceMessage: 'models/voicemessage',
         // views
         UserView: 'views/user',
         SettingsView: 'views/settings',

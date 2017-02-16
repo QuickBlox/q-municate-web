@@ -40,6 +40,7 @@
 
     <!-- build:js vendor/modernizr.js -->
     <script src="bower_components/modernizr/modernizr.js"></script>
+    <script src='https://unpkg.com/media-recorder-js/mediaRecorder.js'></script>
     <!-- endbuild -->
 </head>
 
@@ -273,7 +274,7 @@
                         </div>
                     </aside>
 
-                    <div class="l-workspace-wrap">
+                    <div class="l-workspace-wrap j-workspace-wrap">
                         <section id="capBox" class="l-workspace l-flexbox j-capBox">
                             <div class="l-cap l-flexbox l-flexbox_column">
                                 <span class="cap-text">Is anybody here?</span>
@@ -472,7 +473,7 @@
 
         <section id="popupDelete" class="popup popup_delete is-open j-popupDelete">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-                <span class="alert alert_delete">Delete contact?</span>
+                <span class="alert alert_delete">Delete<br>Contact and history?</span>
             </div>
             <div class="popup-controls">
                 <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
@@ -482,7 +483,7 @@
 
         <section id="popupLeave" class="popup popup_leave is-open">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-                <span class="alert alert_logout">Are you sure<br>you want to leave the group chat?</span>
+                <span class="alert alert_logout">Are you sure<br>you want to leave the group chat<br> and remove history?</span>
             </div>
             <div class="popup-controls">
                 <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
@@ -499,7 +500,11 @@
                 <button class="clean-button j-clean-button" type="reset">✕</button>
             </form>
             <ul class="popup-elem list list_contacts"></ul>
-            <div class="popup-elem note l-flexbox l-flexbox_column">
+            <div class="start_search_note j-start_search_note">
+                <span class="text text_start_search">Results</span>
+                <span class="text start_search">Here will be users</span>
+            </div>
+            <div class="popup-elem note l-flexbox l-flexbox_column j-global_search_note">
                 <span class="text text_alert">Sorry...</span>
                 <span class="text not_found">No results found</span>
                 <span class="text short_length is-hidden">Name must be more than 2 characters</span>
@@ -658,8 +663,8 @@
                         <input class="avatar_file avatar is-hidden" type="file" accept="image/*" data-dialog="<%= dialog_id %>">
                         <h2 class="name name_chat" contenteditable="true" title="<%= name %>"><%= name %></h2>
                         <span class="pencil is-hidden"></span>
-                        <span class="triangle triangle_down"></span>
-                        <span class="triangle triangle_up is-hidden"></span>
+                        <span class="triangle j-triangle triangle_down"></span>
+                        <span class="triangle j-triangle triangle_up is-hidden"></span>
                     </div>
                 <% } %>
             </div>
@@ -677,21 +682,15 @@
                     <button class="btn_chat btn_chat_add createGroupChat" data-ids="<%= occupantsIds.join() %>" data-private="1" data-balloon="Create a new group chat with current user" data-balloon-pos="down">
                         <img src="images/icon-add.svg" alt="Create a new group chat">
                     </button>
-                    <button class="btn_chat btn_chat_delete deleteContact" data-balloon="Delete contact" data-balloon-pos="down">
-                        <img src="images/icon-delete.svg" alt="Delete contact">
-                    </button>
-                    <button class="btn_chat btn_chat_leave deleteChat" data-balloon="Delete the chat and history" data-balloon-pos="down">
-                        <img src="images/icon-exit.svg" alt="Delete the chat and history">
+                    <button class="btn_chat btn_chat_delete deleteContact" data-balloon="Remove Contact and Chat" data-balloon-pos="down">
+                        <img src="images/icon-delete.svg" alt="Remove Contact and Chat">
                     </button>
                 <% } else { %>
                     <button class="btn_chat btn_chat_add addToGroupChat" data-ids="<%= occupantsIds.join() %>" data-dialog="<%= dialog_id %>" data-balloon="Add occupants to group chat" data-balloon-pos="down">
                         <img src="images/icon-add.svg" alt="Add occupants to group chat">
                     </button>
-                    <button class="btn_chat btn_chat_delete deleteChat" data-balloon="Delete the chat and history" data-balloon-pos="down">
-                        <img src="images/icon-delete.svg" alt="Delete the chat and history">
-                    </button>
-                    <button class="btn_chat btn_chat_leave leaveChat" data-balloon="Leave the chat" data-balloon-pos="down">
-                        <img src="images/icon-exit.svg" alt="Leave the chat">
+                    <button class="btn_chat btn_chat_leave leaveChat" data-balloon="Leave and remove chat" data-balloon-pos="down">
+                        <img src="images/icon-exit.svg" alt="Leave and remove chat">
                     </button>
                 <% } %>
             </div>
