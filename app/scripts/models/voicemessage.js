@@ -1,10 +1,15 @@
 /**
  * AudioRecorder
  */
-define(['Helpers'], function(Helpers) {
+define([
+    'Helpers',
+    'QBMediaRecorder'
+], function(
+    Helpers,
+    QBMediaRecorder
+) {
     'use strict';
 
-    var QBMediaRecorder = qbMediaRecorder;
     var self;
 
     function VoiceMessage(app) {
@@ -23,7 +28,7 @@ define(['Helpers'], function(Helpers) {
 
     VoiceMessage.prototype = {
         init: function() {
-            if (qbMediaRecorder.isAvailable()) {
+            if (QBMediaRecorder.isAvailable()) {
                 self._initRecorder();
             } else {
                 self._blockRecorder();
