@@ -191,12 +191,12 @@
     z-index: 2;
     background-color: #fff;
     position: relative;
-    height: 80px;
+    height: 70px;
     padding-left: 20px;
     border-bottom: 2px solid #00bf28;
 }
 .l-content {
-    height: calc(100% - 80px);
+    height: calc(100% - 70px);
 }
 .l-sidebar {
     width: 330px;
@@ -206,11 +206,11 @@
 .l-search {
     z-index: 1;
     background-color: #fff;
-    height: 60px;
-    padding: 15px;
+    height: 50px;
+    padding: 10px;
 }
 .l-list-wrap {
-    height: calc(100% - 60px);
+    height: calc(100% - 50px);
     padding-bottom: 20px;
     position: relative;
 }
@@ -271,27 +271,26 @@
 }
 .l-chat-header {
     z-index: 1;
-    background-color: #fff;
     position: relative;
-    height: 60px;
-    padding: 0 10px;
+    height: 50px;
+    padding: 0 20px;
     background: #f8f8f8;
     border-bottom: 1px solid #f2f2f2;
 }
 .l-chat-content {
     position: relative;
-    height: calc(100% - 150px);
+    height: calc(100% - 140px);
     overflow-y: auto;
 }
 .l-chat_group .l-chat-content {
-    height: calc(100% - 150px);
+    height: calc(100% - 140px);
 }
 .is-request .l-chat-content {
-    height: calc(100% - 60px);
+    height: calc(100% - 50px);
 }
 .l-chat_group .l-chat-content_min {
     margin-top: 94px;
-    height: calc(100% - 244px);
+    height: calc(100% - 234px);
 }
 .l-chat-footer {
     z-index: 1;
@@ -308,9 +307,9 @@
 .l-typing {
     display: inline-block;
     vertical-align: top;
-    font-size: 15px;
+    font-size: 13px;
     height: 34px;
-    width: 490px;
+    width: 475px;
 }
 .l-input-menu {
     display: inline-block;
@@ -318,7 +317,7 @@
     text-align: -moz-left;
     text-align: center;
     height: 33px;
-    width: 160px;
+    width: 170px;
     position: relative;
 }
 .l-input-menu .l-input-buttons {

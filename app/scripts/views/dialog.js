@@ -368,8 +368,7 @@ define([
         htmlBuild: function(objDom, messages) {
             Entities.Collections.dialogs.saveDraft();
 
-            var MessageView = this.app.views.Message,
-                contacts = ContactList.contacts,
+            var contacts = ContactList.contacts,
                 dialogs = Entities.Collections.dialogs,
                 roster = ContactList.roster,
                 parent = objDom.parent(),
@@ -383,12 +382,8 @@ define([
                 $chatWrap = $('.j-chatWrap'),
                 $chatView = $('.chatView'),
                 isCall,
-                chatTpl,
-                messageId,
                 location,
                 status,
-                msgArr,
-                userId,
                 html,
                 icon,
                 name,
@@ -481,8 +476,6 @@ define([
                 groupName = occupants_ids.length > 0 ? [User.contact.full_name, contacts[occupants_ids[0]].full_name] : [User.contact.full_name],
                 occupants_names = !type && occupants_ids.length > 0 ? [contacts[occupants_ids[0]].full_name] : [],
                 new_ids = [],
-                new_id, occupant,
-                roster = ContactList.roster,
                 chat = $('.l-chat[data-dialog="' + dialog_id + '"]');
 
             for (var i = 0, len = new_members.length, name; i < len; i++) {
@@ -533,35 +526,44 @@ define([
 
         leaveGroupChat: function(dialogParam, sameUser) {
             var dialogs = Entities.Collections.dialogs,
-                dialog_id = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
-                dialog = dialogs.get(dialog_id),
-                li = $('.dialog-item[data-dialog="' + dialog_id + '"]'),
-                chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
-                list = li.parents('ul');
+                dialogId = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
+                dialog = dialogs.get(dialogId);
 
-            if (sameUser) {
-                removeDialogItem();
-            } else {
-                Dialog.leaveChat(dialog, function() {
-                    removeDialogItem();
-                });
+            if (!sameUser) {
+                Dialog.deleteChat(dialog);
             }
 
-            function removeDialogItem() {
-                li.remove();
-                Helpers.Dialogs.isSectionEmpty(list);
+            self.removeDialogItem(dialogId);
+        },
 
-                // delete chat section
-                if (chat.is(':visible')) {
-                    $('.j-capBox').removeClass('is-hidden')
-                        .siblings().removeClass('is-active');
+        removeDialogItem: function(dialogId) {
+            var dialogs = Entities.Collections.dialogs,
+                $dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]'),
+                $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
+                $dialogList = $dialogItem.parents('ul');
 
-                    $('.j-chatWrap').addClass('is-hidden')
-                        .children().remove();
-                }
+            $dialogItem.remove();
 
+            Helpers.Dialogs.isSectionEmpty($dialogList);
+
+            // delete chat section
+            if ($chat.is(':visible')) {
+                $('.j-capBox').removeClass('is-hidden')
+                    .siblings().removeClass('is-active');
+
+                $('.j-chatWrap').addClass('is-hidden')
+                    .children().remove();
             }
 
+            if (Entities.active === dialogId) {
+                Entities.active = '';
+            }
+
+            if ($chat.length > 0) {
+                $chat.remove();
+            }
+
+            dialogs.remove(dialogId);
         },
 
         showChatWithNewMessages: function(dialogId, unreadCount, messages) {
@@ -643,20 +645,23 @@ define([
     /* Private
     ---------------------------------------------------------------------- */
     function messageScrollbar(selector) {
+        var isBottom;
+
         $(selector).mCustomScrollbar({
             theme: 'minimal-dark',
             scrollInertia: 0,
             mouseWheel: {
-                scrollAmount: 120,
+                scrollAmount: 120
             },
             callbacks: {
                 onTotalScrollBack: function() {
                     ajaxDownloading(selector);
                 },
                 onTotalScroll: function() {
-                    var isBottom = Helpers.isBeginOfChat(),
-                    $currentDialog = $('.dialog-item.is-selected'),
-                    dialogId = $currentDialog.data('dialog');
+                    var $currentDialog = $('.dialog-item.is-selected'),
+                        dialogId = $currentDialog.data('dialog');
+
+                    isBottom = Helpers.isBeginOfChat();
 
                     if (isBottom) {
                         $('.j-toBottom').hide();
@@ -665,10 +670,14 @@ define([
                     }
                 },
                 onScroll: function() {
-                    var isBottom = Helpers.isBeginOfChat();
+                    isBottom = Helpers.isBeginOfChat();
+
                     if (!isBottom) {
                         $('.j-toBottom').show();
                     }
+
+                    Listeners.setChatViewPosition($(this).find('.mCSB_container').offset().top);
+                    isNeedToStopTheVideo();
                 }
             }
         });
@@ -783,6 +792,18 @@ define([
         if ($label.length && (dialogId !== curDialogId)) {
             $label.remove();
         }
+    }
+    
+    function isNeedToStopTheVideo() {
+        $('.j-videoPlayer').each(function(index, element) {
+            var $element = $(element);
+
+            if (!element.paused) {
+                if (($element.offset().top <= 0) || ($element.offset().top >= 750)) {
+                    element.pause();
+                }
+            }
+        });
     }
 
     return DialogView;

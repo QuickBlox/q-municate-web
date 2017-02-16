@@ -341,16 +341,18 @@ define([
         $popup.add('.popups').addClass('is-overlay');
     };
 
-    Helpers.getOpenGraphInfo = function(url, callback) {
-        $.ajax({
-            'url': 'https://ogs.quickblox.com/?url=' + url,
+    Helpers.getOpenGraphInfo = function(params, callback) {
+        var ajaxCall = {
+            url: 'https://ogs.quickblox.com/?url=' + params.url + '&token=' + params.token,
             error: function(jqHXR, status, error) {
                 callback(error, null);
             },
             success: function(data, status, jqHXR) {
                 callback(null, data);
             }
-        });
+        };
+
+        $.ajax(ajaxCall);
     };
 
     Helpers.isValidUrl = function(url) {

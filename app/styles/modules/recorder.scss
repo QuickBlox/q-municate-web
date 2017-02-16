@@ -1,0 +1,34 @@
+/* recorder */
+.chat_popover.popover_record {
+  width: 130px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  bottom: 40px;
+  right: 107px;
+}
+.start_record,
+.start_record:hover,
+.start_record:focus {
+  width: 16px;
+  height: 16px;
+  margin: 0 13px;
+  background-color: #f54a4a;
+  border-radius: 100%;
+}
+.start_record.is-active {
+  border-radius: initial;
+}
+.record_title {
+  font-family: Roboto, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #6b7988;
+  line-height: 16px;
+}
+.time_record {
+  display: none;
+}
+.popover_record .coner {
+  right: 53px;
+}

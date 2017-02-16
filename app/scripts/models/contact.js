@@ -44,7 +44,7 @@ define([
         avatar = contact.custom_data && JSON.parse(contact.custom_data).avatar_url;
         if (!avatar) {
             if (contact.facebook_id) {
-                avatar = 'https://graph.facebook.com/v2.2/' + contact.facebook_id + '/picture?width=240&height=240';
+                avatar = 'https://graph.facebook.com/v2.7/' + contact.facebook_id + '/picture?width=240&height=240';
             } else {
                 avatar = QMCONFIG.defAvatar.url;
             }

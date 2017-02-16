@@ -24,9 +24,11 @@ define([
     Ps
 ) {
 
-    var Dialog,
+    var User,
+        Dialog,
         Cursor,
         UserView,
+        ContactList,
         ContactListView,
         DialogView,
         MessageView,
@@ -321,16 +323,19 @@ define([
 
             /* group chats
             ----------------------------------------------------- */
-            $workspace.on('click', '.groupTitle', function() {
-                $scroll = $('.l-chat:visible').find('.j-scrollbar_message');
+            $workspace.on('click', '.j-triangle', function() {
+                var $chat = $('.l-chat:visible'),
+                    $scroll = $chat.find('.j-scrollbar_message');
 
-                if ($('.l-chat:visible').find('.triangle_up').is('.is-hidden')) {
+                if ($chat.find('.triangle_up').is('.is-hidden')) {
                     $scroll.mCustomScrollbar('scrollTo','-=94');
                     setTriagle('up');
                 } else {
                     $scroll.mCustomScrollbar('scrollTo','+=94');
                     setTriagle('down');
                 }
+
+                return false;
             });
 
             $workspace.on('click', '.groupTitle .addToGroupChat', function(event) {
@@ -342,7 +347,7 @@ define([
                 ContactListView.addContactsToChat($self, 'add', dialog_id);
             });
 
-            $workspace.on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
+            $workspace.on('click', '.groupTitle .leaveChat, .groupTitle .avatar, .groupTitle .name_chat', function(event) {
                 event.stopPropagation();
             });
 
@@ -563,11 +568,33 @@ define([
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
+            $workspace.on('click', '.j-btn_audio_record', function() {
+                var $self = $(this),
+                    bool = $self.is('.is-active');
+
+                removePopover();
+
+                if (!bool) {
+                    $self.addClass('is-active');
+                    $('.j-popover_record').addClass('is-active');
+                }
+            });
             /* popups
             ----------------------------------------------------- */
             $('.header-links-item').on('click', '#logout', function(event) {
                 event.preventDefault();
                 openPopup($('#popupLogout'));
+            });
+
+            $('.list, .l-workspace-wrap').on('click', '.deleteChat', function() {
+                closePopup();
+
+                var $popup = $('#popupDeleteChat');
+
+                $popup.find('#deleteChatConfirm').data('dialog', $(this).data('dialog'));
+                $popup.add('.popups').addClass('is-overlay');
+
+                return false;
             });
 
             $('body').on('click', '.deleteContact', function(event) {
@@ -741,7 +768,6 @@ define([
                 } else {
                     UserView.friendsSearch($form);
                 }
-
 
                 return false;
             });
@@ -981,6 +1007,16 @@ define([
                 return false;
             });
 
+            $workspace.on('click', '.video_player', function() {
+                var $self = $(this)[0];
+
+                if ($self.paused || $self.ended) {
+                    $self.play();
+                } else {
+                    $self.pause();
+                }
+            });
+
             /* temporary events
             ----------------------------------------------------- */
             $('#share').on('click', function(event) {
@@ -1013,7 +1049,9 @@ define([
             '.j-btn_input_smile, .j-btn_input_smile *, .textarea, ' +
             '.textarea *, .j-popover_smile, .j-popover_smile *, ' +
             '.j-popover_gmap, .j-popover_gmap *, .j-btn_input_location, ' +
-            '.j-btn_input_location *',
+            '.j-btn_input_location *, ' +
+            '.j-popover_record, .j-popover_record *, .j-btn_audio_record, ' +
+            '.j-btn_audio_record *',
             googleImage = objDom.context.src && objDom.context.src.indexOf('/maps.gstatic.com/mapfiles/api-3/images/mapcnt6.png') || null;
 
         if (objDom.is(selectors) || e.which === 3 || googleImage === 7) {

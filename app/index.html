@@ -27,7 +27,6 @@
     <link rel="icon" href="images/favicon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
-    <link rel="stylesheet" href="https://vjs.zencdn.net/5.11.6/video-js.css">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
     <!-- build:css styles/build.css -->
     <link rel="stylesheet" href="bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
@@ -41,6 +40,7 @@
 
     <!-- build:js vendor/modernizr.js -->
     <script src="bower_components/modernizr/modernizr.js"></script>
+    <script src='https://unpkg.com/media-recorder-js/mediaRecorder.js'></script>
     <!-- endbuild -->
 </head>
 
@@ -274,7 +274,7 @@
                         </div>
                     </aside>
 
-                    <div class="l-workspace-wrap">
+                    <div class="l-workspace-wrap j-workspace-wrap">
                         <section id="capBox" class="l-workspace l-flexbox j-capBox">
                             <div class="l-cap l-flexbox l-flexbox_column">
                                 <span class="cap-text">Is anybody here?</span>
@@ -288,6 +288,12 @@
 
                         <div class="chat_popover popover_gmap j-popover_const j-popover_gmap">
                             <button class="send_map j-send_map">SEND LOCATION</button>
+                            <div class="coner"><i class="icon_coner"></i></div>
+                        </div>
+
+                        <div class="chat_popover popover_record j-popover_const j-popover_record">
+                            <button class="start_record j-start_record"></button>
+                            <div class="record_title j-time_record">RECORD</div>
                             <div class="coner"><i class="icon_coner"></i></div>
                         </div>
 
@@ -432,10 +438,6 @@
 
         <section id="popupAttach" class="popup popup_attach">
             <img class="attach-photo" src="images/photo_preloader.gif" alt="attach">
-            <video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls autoplay preload="auto" data-setup="{}">
-                <source src="" type="video/mp4"/>
-                <source src="" type="video/webm"/>
-            </video>
             <div class="attach-description l-flexbox l-flexbox_flexbetween">
                 <span class="attach-name"></span>
                 <a class="attach-download" href="" target="_blank" download="">Download</a>
@@ -471,7 +473,7 @@
 
         <section id="popupDelete" class="popup popup_delete is-open j-popupDelete">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-                <span class="alert alert_delete">Delete contact?</span>
+                <span class="alert alert_delete">Delete<br>Contact and history?</span>
             </div>
             <div class="popup-controls">
                 <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
@@ -481,7 +483,7 @@
 
         <section id="popupLeave" class="popup popup_leave is-open">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-                <span class="alert alert_logout">Are you sure<br>you want to leave the group chat?</span>
+                <span class="alert alert_logout">Are you sure<br>you want to leave the group chat<br> and remove history?</span>
             </div>
             <div class="popup-controls">
                 <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
@@ -498,7 +500,11 @@
                 <button class="clean-button j-clean-button" type="reset">✕</button>
             </form>
             <ul class="popup-elem list list_contacts"></ul>
-            <div class="popup-elem note l-flexbox l-flexbox_column">
+            <div class="start_search_note j-start_search_note">
+                <span class="text text_start_search">Results</span>
+                <span class="text start_search">Here will be users</span>
+            </div>
+            <div class="popup-elem note l-flexbox l-flexbox_column j-global_search_note">
                 <span class="text text_alert">Sorry...</span>
                 <span class="text not_found">No results found</span>
                 <span class="text short_length is-hidden">Name must be more than 2 characters</span>
@@ -657,34 +663,34 @@
                         <input class="avatar_file avatar is-hidden" type="file" accept="image/*" data-dialog="<%= dialog_id %>">
                         <h2 class="name name_chat" contenteditable="true" title="<%= name %>"><%= name %></h2>
                         <span class="pencil is-hidden"></span>
-                        <span class="triangle triangle_down"></span>
-                        <span class="triangle triangle_up is-hidden"></span>
+                        <span class="triangle j-triangle triangle_down"></span>
+                        <span class="triangle j-triangle triangle_up is-hidden"></span>
                     </div>
                 <% } %>
             </div>
             <div class="chat-controls">
                 <% if (type === 3) { %>
-                    <button class="btn_chat btn_chat_videocall videoCall">
+                    <button class="btn_chat btn_chat_videocall videoCall" data-balloon="Make a video call" data-balloon-pos="down">
                         <img src="images/icon-videocall.svg" alt="Make a Video Call">
                     </button>
-                    <button class="btn_chat btn_chat_audiocall audioCall">
+                    <button class="btn_chat btn_chat_audiocall audioCall" data-balloon="Make a audio call" data-balloon-pos="down">
                         <img src="images/icon-audiocall.svg" alt="Make a Audio Call">
                     </button>
-                    <button class="btn_chat btn_chat_add createGroupChat" data-ids="<%= occupantsIds.join() %>" data-private="1">
-                        <img src="images/icon-add.svg" alt="Create group chat">
-                    </button>
-                    <button class="btn_chat btn_chat_profile userDetails" data-id="<%= user_id %>">
+                    <button class="btn_chat btn_chat_profile userDetails" data-id="<%= user_id %>" data-balloon="Show user profile" data-balloon-pos="down">
                         <img src="images/icon-profile.svg" alt="Show user profile">
                     </button>
-                    <button class="btn_chat btn_chat_delete deleteContact">
-                        <img src="images/icon-delete.svg" alt="Delete contact">
+                    <button class="btn_chat btn_chat_add createGroupChat" data-ids="<%= occupantsIds.join() %>" data-private="1" data-balloon="Create a new group chat with current user" data-balloon-pos="down">
+                        <img src="images/icon-add.svg" alt="Create a new group chat">
+                    </button>
+                    <button class="btn_chat btn_chat_delete deleteContact" data-balloon="Remove Contact and Chat" data-balloon-pos="down">
+                        <img src="images/icon-delete.svg" alt="Remove Contact and Chat">
                     </button>
                 <% } else { %>
-                    <button class="btn_chat btn_chat_add addToGroupChat" data-ids="<%= occupantsIds.join() %>" data-dialog="<%= dialog_id %>">
+                    <button class="btn_chat btn_chat_add addToGroupChat" data-ids="<%= occupantsIds.join() %>" data-dialog="<%= dialog_id %>" data-balloon="Add occupants to group chat" data-balloon-pos="down">
                         <img src="images/icon-add.svg" alt="Add occupants to group chat">
                     </button>
-                    <button class="btn_chat btn_chat_delete leaveChat">
-                        <img src="images/icon-delete.svg" alt="Leave chat">
+                    <button class="btn_chat btn_chat_leave leaveChat" data-balloon="Leave and remove chat" data-balloon-pos="down">
+                        <img src="images/icon-exit.svg" alt="Leave and remove chat">
                     </button>
                 <% } %>
             </div>
@@ -698,11 +704,12 @@
             <div class="footer_btn j-toBottom btn_to_bottom"></div>
             <form class="l-message j-message" action="#">
                 <div id="textarea_<%= dialog_id %>" class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"><%= draft %></div>
-                <div class="footer_btn j-send_location btn_sendlocation <%= location %>" data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>
-                <input class="attachment" type="file" accept="image/*">
+                <div class="footer_btn j-send_location btn_sendlocation <%= location %>" data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="left"></div>
+                <input class="attachment" type="file" accept="image/*,video/mp4,audio/mp3">
             </form>
             <div class="j-typing l-typing"></div>
             <div class="l-input-menu">
+                <div class="footer_btn l-input-buttons btn_audio_record j-btn_audio_record" data-balloon="Record audio" data-balloon-pos="up"></div>
                 <div class="footer_btn l-input-buttons btn_input_smile j-btn_input_smile" data-balloon="Add smiles" data-balloon-pos="up"></div>
                 <div class="footer_btn l-input-buttons btn_input_location j-btn_input_location" data-balloon="Send location" data-balloon-pos="up"></div>
                 <div class="footer_btn l-input-buttons btn_input_attach j-btn_input_attach" data-balloon="Send attachment file" data-balloon-pos="up"></div>

@@ -48,24 +48,11 @@ define([
                 fileSize = file.size,
                 fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
                 fileSizeUnit = fileSize > (1024 * 1024) ? 'MB' : 'KB',
-                type = file.type.indexOf('image/') === 0 ? 'image' :
-                    file.type.indexOf('audio/') === 0 ? 'audio' :
-                    file.type.indexOf('video/') === 0 ? 'video' : 'photo',
-                maxSize = ((type === 'video') ? QMCONFIG.maxVideoSize :
-                    QMCONFIG.maxLimitFile) * 1024 * 1024,
                 errMsg,
                 html;
 
             if (file) {
-                if (file.name.length > 100) {
-                    errMsg = QMCONFIG.errors.fileName;
-                } else if (file.size > maxSize) {
-                    if (type === 'video') {
-                        errMsg = QMCONFIG.errors.videoSize;
-                    } else {
-                        errMsg = QMCONFIG.errors.fileSize;
-                    }
-                }
+                errMsg = self.validateFile(file);
 
                 if (errMsg) {
                     self.pastErrorMessage(errMsg, objDom, chat);
@@ -243,6 +230,44 @@ define([
                     Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
                 }
             }
+        },
+
+        validateFile: function(file) {
+            var errMsg,
+                maxSize,
+                fullType,
+                type;
+
+            fullType = file.type;
+            type = file.type.indexOf('image/') === 0 ? 'image' :
+                   file.type.indexOf('audio/') === 0 ? 'audio' :
+                   file.type.indexOf('video/') === 0 ? 'video' : 'file';
+
+            if (type === 'video' || type === 'audio') {
+                maxSize = QMCONFIG.maxLimitMediaFile * 1024 * 1024;
+            } else {
+                maxSize = QMCONFIG.maxLimitFile * 1024 * 1024;
+            }
+
+            if (file.name.length > 100) {
+                errMsg = QMCONFIG.errors.fileName;
+            } else if (file.size > maxSize) {
+                if (type === 'video') {
+                    errMsg = QMCONFIG.errors.videoSize;
+                } else {
+                    errMsg = QMCONFIG.errors.fileSize;
+                }
+            }
+
+            if (type === 'video' && fullType !== 'video/mp4') {
+                errMsg = 'This video format is not supported, only *.mp4';
+            } else if (type === 'audio' && fullType !== 'audio/mp3') {
+                errMsg = 'This audio format is not supported, only *.mp3';
+            } else if (type === 'file') {
+                errMsg = 'This file format isn\'t supported';
+            }
+
+            return errMsg;
         }
 
     };

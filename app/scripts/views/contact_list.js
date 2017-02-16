@@ -23,6 +23,7 @@ define([
     QMHtml,
     _
 ) {
+    var self;
 
     var Dialog,
         Message,
@@ -35,7 +36,7 @@ define([
         Message = this.app.models.Message;
         ContactList = this.app.models.ContactList;
         User = this.app.models.User;
-        that = this;
+        self = this;
 
         scrollbarContacts();
     }
@@ -63,41 +64,49 @@ define([
             var popup = $('#popupSearch');
 
             openPopup(popup);
-            popup.find('.popup-elem').addClass('is-hidden').siblings('form').find('input').val('');
+            popup.find('.popup-elem')
+                 .addClass('is-hidden')
+                 .siblings('form')
+                 .find('input')
+                 .val('');
             popup.find('.mCSB_container').empty();
         },
 
-        globalSearch: function(form) {
+        globalSearch: function($form) {
             var self = this,
-                popup = form.parent(),
-                list = popup.find('ul:first.list_contacts'),
-                val = form.find('input[type="search"]').val().trim(),
+                $popup = $form.parent(),
+                $list = $popup.find('ul:first.list_contacts'),
+                $firstNote = $popup.find('.j-start_search_note'),
+                val = $form.find('input[type="search"]').val().trim(),
                 len = val.length;
 
             if (len > 0) {
+                $firstNote.addClass('is-hidden');
                 // display "Name must be more than 2 characters" or "No results found"
                 if (len < 3) {
-                    popup.find('.popup-elem .not_found').addClass('is-hidden');
-                    popup.find('.popup-elem .short_length').removeClass('is-hidden');
+                    $popup.find('.popup-elem .not_found').addClass('is-hidden');
+                    $popup.find('.popup-elem .short_length').removeClass('is-hidden');
                 } else {
-                    popup.find('.popup-elem .not_found').removeClass('is-hidden');
-                    popup.find('.popup-elem .short_length').addClass('is-hidden');
+                    $popup.find('.popup-elem .not_found').removeClass('is-hidden');
+                    $popup.find('.popup-elem .short_length').addClass('is-hidden');
                 }
 
-                scrollbar(list, self);
-                self.createDataSpinner(list);
+                scrollbar($list, self);
+                self.createDataSpinner($list);
 
                 sessionStorage.setItem('QM.search.value', val);
                 sessionStorage.setItem('QM.search.page', 1);
 
                 ContactList.globalSearch(function(results) {
-                    createListResults(list, results, self);
+                    createListResults($list, results, self);
                 });
+            } else {
+                $firstNote.removeClass('is-hidden');
             }
 
-            form.find('input').prop('disabled', false).val(val);
-            popup.find('.popup-elem').addClass('is-hidden');
-            popup.find('.mCSB_container').empty();
+            $form.find('input').prop('disabled', false).val(val);
+            $popup.find('.popup-elem').addClass('is-hidden');
+            $popup.find('.mCSB_container').empty();
 
             $('.popup:visible .spinner_bounce')
                 .removeClass('is-hidden')
@@ -399,15 +408,16 @@ define([
         },
 
         sendDelete: function(id, isClick) {
-            var contacts = ContactList.contacts,
+            var DialogView = self.app.views.Dialog,
                 dialogs = Entities.Collections.dialogs,
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 li = $('.dialog-item[data-id="' + id + '"]'),
-                $chat = $('.l-chat[data-id="' + id + '"]'),
                 list = li.parents('ul.j-list'),
-                dialog_id = li.data('dialog'),
+                dialogId = li.data('dialog'),
                 roster = ContactList.roster,
-                time = Math.floor(Date.now() / 1000);
+                dialog = dialogs.get(dialogId),
+                time = Math.floor(Date.now() / 1000),
+                $mediacall = $('.mediacall');
 
             // update roster
             delete roster[id];
@@ -419,34 +429,21 @@ define([
                     sendContactRequest({
                         jid: jid,
                         date_sent: time,
-                        dialog_id: dialog_id,
+                        dialog_id: dialogId,
                         save_to_history: 1,
-                        notification_type: '7',
+                        notification_type: '7'
                     });
                 });
+
+                Dialog.deleteChat(dialog);
             }
 
-            li.remove();
-            Helpers.Dialogs.isSectionEmpty(list);
-
-            // delete chat section
-            if ($chat.is(':visible')) {
-                $('.j-capBox').removeClass('is-hidden')
-                    .siblings().removeClass('is-active');
-
-                $('.j-chatWrap').addClass('is-hidden')
-                    .children().remove();
-            }
-            if ($chat.length > 0) {
-                $chat.remove();
+            if ($mediacall.length > 0) {
+                $mediacall.find('.btn_hangup').click();
             }
 
-            if (Entities.active === dialog_id) {
-                Entities.active = '';
-            }
-            dialogs.remove(dialog_id);
-
-            that.app.views.Dialog.decUnreadCounter(dialog_id);
+            DialogView.removeDialogItem(dialogId);
+            DialogView.decUnreadCounter(dialogId);
         },
 
         // callbacks
