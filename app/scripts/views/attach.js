@@ -244,9 +244,9 @@ define([
                    file.type.indexOf('video/') === 0 ? 'video' : 'file';
 
             if (type === 'video' || type === 'audio') {
-                maxSize = QMCONFIG.maxLimitMediaFile * 1024 * 1024
+                maxSize = QMCONFIG.maxLimitMediaFile * 1024 * 1024;
             } else {
-                maxSize = QMCONFIG.maxLimitFile * 1024 * 1024
+                maxSize = QMCONFIG.maxLimitFile * 1024 * 1024;
             }
 
             if (file.name.length > 100) {

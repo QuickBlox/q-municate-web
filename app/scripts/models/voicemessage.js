@@ -4,6 +4,7 @@
 define(['Helpers'], function(Helpers) {
     'use strict';
 
+    var QBMediaRecorder = qbMediaRecorder;
     var self;
 
     function VoiceMessage(app) {
@@ -49,7 +50,7 @@ define(['Helpers'], function(Helpers) {
             self.timerEl = document.querySelector('.j-time_record');
             self.controlEl = document.querySelector('.j-start_record');
 
-            self.recorder = new qbMediaRecorder(options);
+            self.recorder = new QBMediaRecorder(options);
             self.active = true;
 
             self._initHandler();

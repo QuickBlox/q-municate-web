@@ -417,7 +417,7 @@ define([
                 roster = ContactList.roster,
                 dialog = dialogs.get(dialogId),
                 time = Math.floor(Date.now() / 1000),
-                $mediacall = $('.mediacall');;
+                $mediacall = $('.mediacall');
 
             // update roster
             delete roster[id];
