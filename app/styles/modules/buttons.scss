@@ -207,20 +207,6 @@ button.btn.btn_search:hover {
     display: none;
     cursor: pointer;
 }
-.btn_sendlocation {
-    text-align: center;
-    position: absolute;
-    top: 14px;
-    right: 15px;
-    display: block;
-    width: 26px;
-    height: 26px;
-    background: url('../images/ic-hidden-location.svg') 50% no-repeat;
-    background-size: contain;
-}
-.btn_sendlocation.btn_active {
-    background: url('../images/ic-active-location.svg');
-}
 .btn_sendlocation[data-balloon-length="small"]:after {
     width: 110px;
 }
@@ -232,9 +218,19 @@ button.btn.btn_search:hover {
     width: 34px;
     height: 34px;
 }
+.btn_sendlocation {
+    position: relative;
+    width: 24px;
+    background-size: contain;
+    background: url('../images/ic-hidden-location.svg') 50% no-repeat;
+}
+.btn_sendlocation.btn_active {
+    background: url('../images/ic-active-location.svg') 50% no-repeat;
+}
 .btn_audio_record {
     position: relative;
     width: 16px;
+    background-size: contain;
     background: url('../images/ic_mic.svg') 50% no-repeat;
 }
 .btn_audio_record.is-active {
@@ -243,6 +239,7 @@ button.btn.btn_search:hover {
 .btn_input_smile {
     position: relative;
     width: 20px;
+    background-size: contain;
     background: url('../images/ic_smile.svg') 50% no-repeat;
 }
 .btn_input_smile.is-active {
@@ -250,7 +247,8 @@ button.btn.btn_search:hover {
 }
 .btn_input_location {
     position: relative;
-    width: 14px;
+    width: 20px;
+    background-size: contain;
     background: url('../images/ic_send_location.svg') 50% no-repeat;
 }
 .btn_input_location.is-active {
@@ -259,14 +257,19 @@ button.btn.btn_search:hover {
 .btn_input_attach {
     position: relative;
     width: 20px;
+    background-size: contain;
     background: url('../images/ic_attach.svg') 50% no-repeat;
 }
 .btn_input_send {
-    vertical-align: inherit;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    font-size: 15px;
-    color: #17d04b;
+    text-align: center;
+    position: absolute;
+    top: 14px;
+    right: 15px;
+    display: block;
+    width: 26px;
+    height: 26px;
+    background: url(../images/ic-send.svg) 50% no-repeat;
+    background-size: contain;
 }
 .btn_to_bottom {
     position: absolute;

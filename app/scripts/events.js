@@ -586,17 +586,7 @@ define([
                 openPopup($('#popupLogout'));
             });
 
-            $('.list, .l-workspace-wrap').on('click', '.deleteChat', function() {
-                closePopup();
-
-                var $popup = $('#popupDeleteChat');
-
-                $popup.find('#deleteChatConfirm').data('dialog', $(this).data('dialog'));
-                $popup.add('.popups').addClass('is-overlay');
-
-                return false;
-            });
-
+            // delete contact
             $('body').on('click', '.deleteContact', function(event) {
                 event.preventDefault();
                 closePopup();
@@ -606,36 +596,58 @@ define([
                     id = parents.data('id') || $that.data('id');
 
                 if (parents.is('.popup_details')) {
-                    openPopup($('#popupDelete'), id, null, true);
+                    openPopup($('.j-popupDeleteContact'), id, null, true);
                 } else {
-                    openPopup($('#popupDelete'), id);
+                    openPopup($('.j-popupDeleteContact'), id);
                 }
             });
 
-            $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {
-                event.preventDefault();
-                var $self = $(this),
-                    parent = $self.parents('.presence-listener')[0] ? $self.parents('.presence-listener') : $self.parents('.is-group'),
-                    dialog_id = parent.data('dialog');
-
-                openPopup($('#popupLeave'), null, dialog_id);
-            });
-
-            $('#logoutConfirm').on('click', function() {
-                localStorage.setItem('QM.' + User.contact.id + '_logOut', true);
-                UserView.logout();
-            });
-
-            $('.j-deleteConfirm').on('click', function() {
-                var id = $(this).parents('.j-popupDelete').data('id');
+            $('.j-deleteContactConfirm').on('click', function() {
+                var id = $(this).parents('.j-popupDeleteContact').data('id');
 
                 ContactListView.sendDelete(id, true);
                 Helpers.log('delete contact');
             });
 
-            $('#leaveConfirm').on('click', function() {
-                Helpers.log('leave chat');
-                DialogView.leaveGroupChat($(this));
+            // delete chat
+            $('.list, .l-workspace-wrap').on('click', '.deleteChat', function() {
+                closePopup();
+
+                var $self = $(this),
+                    parent = $self.parents('.presence-listener')[0] ? $self.parents('.presence-listener') : $self.parents('.is-group'),
+                    dialog_id = parent.data('dialog');
+
+                openPopup($('.j-popupDeleteChat'), null, dialog_id);
+
+                return false;
+            });
+
+            $('.j-deleteChatConfirm').on('click', function() {
+                Helpers.log('Delete chat');
+                DialogView.deleteChat($(this));
+            });
+
+            // leave group chat
+            $('.list, .l-workspace-wrap').on('click', '.leaveChat', function() {
+                closePopup();
+
+                var $self = $(this),
+                    parent = $self.parents('.presence-listener')[0] ? $self.parents('.presence-listener') : $self.parents('.is-group'),
+                    dialog_id = parent.data('dialog');
+
+                openPopup($('.j-popupLeaveChat'), null, dialog_id);
+
+                return false;
+            });
+
+            $('.j-leaveChatConfirm').on('click', function() {
+                Helpers.log('Leave chat');
+                DialogView.deleteChat($(this), null, true);
+            });
+
+            $('#logoutConfirm').on('click', function() {
+                localStorage.setItem('QM.' + User.contact.id + '_logOut', true);
+                UserView.logout();
             });
 
             $('.popup-control-button, .btn_popup_private').on('click', function(event) {
@@ -1090,11 +1102,12 @@ define([
         // if it was the delete action
         if (id) {
             objDom.attr('data-id', id);
-            objDom.find('#deleteConfirm').data('id', id);
+            objDom.find('#deleteContactConfirm').data('id', id);
         }
         // if it was the leave action
         if (dialog_id) {
-            objDom.find('#leaveConfirm').data('dialog', dialog_id);
+            objDom.find('.j-leaveChatConfirm').data('dialog', dialog_id);
+            objDom.find('.j-deleteChatConfirm').data('dialog', dialog_id);
         }
         if (isProfile) {
             objDom.find('.popup-control-button_cancel').attr('data-isprofile', true);
@@ -1115,6 +1128,7 @@ define([
     }
 
     function closePopup() {
+        $('.j-popupDeleteContact.is-overlay').removeData('id');
         $('.j-popupDelete.is-overlay').removeData('id');
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();

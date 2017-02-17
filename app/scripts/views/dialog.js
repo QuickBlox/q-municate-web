@@ -524,19 +524,19 @@ define([
             }
         },
 
-        leaveGroupChat: function(dialogParam, sameUser) {
+        deleteChat: function(dialogParam, sameUser, justLeave) {
             var dialogs = Entities.Collections.dialogs,
                 dialogId = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
                 dialog = dialogs.get(dialogId);
 
             if (!sameUser) {
-                Dialog.deleteChat(dialog);
+                Dialog.deleteChat(dialog, justLeave);
             }
 
-            self.removeDialogItem(dialogId);
+            self.removeDialogItem(dialogId, justLeave);
         },
 
-        removeDialogItem: function(dialogId) {
+        removeDialogItem: function(dialogId, justLeave) {
             var dialogs = Entities.Collections.dialogs,
                 $dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]'),
                 $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
@@ -563,7 +563,9 @@ define([
                 $chat.remove();
             }
 
-            dialogs.remove(dialogId);
+            if (!justLeave) {
+                dialogs.remove(dialogId);
+            }
         },
 
         showChatWithNewMessages: function(dialogId, unreadCount, messages) {

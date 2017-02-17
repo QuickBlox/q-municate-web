@@ -312,19 +312,16 @@
     width: 475px;
 }
 .l-input-menu {
-    display: inline-block;
+    display: inline-flex;
+    justify-content: space-around;
     vertical-align: top;
     text-align: -moz-left;
     text-align: center;
     height: 33px;
-    width: 170px;
+    width: 168px;
     position: relative;
 }
 .l-input-menu .l-input-buttons {
-    display: inline-block;
-    margin-right: 10px;
+    display: block;
     height: 100%;
-}
-.l-input-menu .l-input-buttons:last-child {
-    margin-right: 0;
 }

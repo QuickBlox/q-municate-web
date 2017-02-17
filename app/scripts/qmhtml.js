@@ -108,6 +108,7 @@ define([
                 htmlStr = '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="<%=occupantsIds%>" ' +
                     'data-dialog="<%=dialogId%>" href="#">Add people</a></li>';
             }
+                htmlStr += '<li class="list-item"><a class="deleteChat list-actions-action" data-group="true" href="#">Remove chat</a></li>';
 
             if (params.dialogType === 3) {
                 htmlStr += '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=ids%>" href="#">Profile</a></li>' +
@@ -153,7 +154,7 @@ define([
             }
 
             htmlStr += '<button class="btn_userDetails <%=roster%> writeMessage"><img src="images/icon-message.png" alt="videocall">Message</button>' +
-                '<button class="btn_userDetails <%=roster%> deleteContact"><img src="images/icon-delete.svg" alt="videocall">Delete</button>';
+                '<button class="btn_userDetails <%=roster%> deleteContact"><img src="images/icon-profile-delete.svg" alt="videocall">Delete</button>';
 
             $html.empty();
             $html.append(_.template(htmlStr)(params));

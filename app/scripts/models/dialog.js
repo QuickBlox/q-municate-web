@@ -341,7 +341,7 @@ define([
             }
         },
 
-        deleteChat: function(dialog) {
+        deleteChat: function(dialog, justLeave) {
             var QBApiCalls = this.app.service,
                 User = this.app.models.User,
                 dialogId = dialog.get('id'),
@@ -367,7 +367,19 @@ define([
                 });
             }
 
-            QBApiCalls.deleteDialog(dialogId);
+            if (justLeave) {
+                QBApiCalls.updateDialog(dialogId, {
+                    pull_all: {
+                        occupants_ids: [User.contact.id]
+                    }
+                }, function (res) {
+                    Helpers.log(res);
+                });
+            } else {
+                QBApiCalls.deleteDialog(dialogId, function (res) {
+                    Helpers.log(res);
+                });
+            }
         }
 
     };

@@ -610,7 +610,7 @@ define([
                 }
 
                 if (deleted_id && (deleted_id[0] === User.contact.id)) {
-                    DialogView.leaveGroupChat(dialog_id, true);
+                    DialogView.deleteChat(dialog_id, true);
                     DialogView.decUnreadCounter(dialog_id);
                     dialogs.remove(dialog);
                 }

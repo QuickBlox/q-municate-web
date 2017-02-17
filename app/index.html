@@ -470,23 +470,33 @@
             </div>
         </section>
 
-        <section id="popupDelete" class="popup popup_delete is-open j-popupDelete">
+        <section id="popupDeleteContact" class="popup popup_delete is-open j-popupDeleteContact">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-                <span class="alert alert_delete">Delete<br>Contact and history?</span>
+                <span class="alert alert_delete">Delete Contact?</span>
             </div>
             <div class="popup-controls">
                 <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
-                <a id="deleteConfirm" class="popup-control-button popup-control-button_ok j-deleteConfirm" href="#">Ok</a>
+                <a id="deleteContactConfirm" class="popup-control-button popup-control-button_ok j-deleteContactConfirm" href="#">Ok</a>
             </div>
         </section>
 
-        <section id="popupLeave" class="popup popup_leave is-open">
+        <section id="popupDeleteChat" class="popup popup_delete is-open j-popupDeleteChat">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-                <span class="alert alert_logout">Are you sure<br>you want to leave the group chat<br> and remove history?</span>
+                <span class="alert alert_delete">Are you sure<br>you want to remove chat?</span>
             </div>
             <div class="popup-controls">
                 <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
-                <a id="leaveConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
+                <a id="deleteChatConfirm" class="popup-control-button popup-control-button_ok j-deleteChatConfirm" href="#">Ok</a>
+            </div>
+        </section>
+
+        <section id="popupLeaveChat" class="popup popup_leave is-open j-popupLeaveChat">
+            <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
+                <span class="alert alert_logout">Are you sure<br>you want to leave the group chat?</span>
+            </div>
+            <div class="popup-controls">
+                <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
+                <a id="leaveChatConfirm" class="popup-control-button popup-control-button_ok j-leaveChatConfirm" href="#">Ok</a>
             </div>
         </section>
 
@@ -681,15 +691,21 @@
                     <button class="btn_chat btn_chat_add createGroupChat" data-ids="<%= occupantsIds.join() %>" data-private="1" data-balloon="Create a new group chat with current user" data-balloon-pos="down">
                         <img src="images/icon-add.svg" alt="Create a new group chat">
                     </button>
-                    <button class="btn_chat btn_chat_delete deleteContact" data-balloon="Remove Contact and Chat" data-balloon-pos="down">
-                        <img src="images/icon-delete.svg" alt="Remove Contact and Chat">
+                    <button class="btn_chat btn_chat_delete deleteContact" data-balloon="Remove contact" data-balloon-pos="down">
+                        <img src="images/icon-profile-delete.svg" alt="Remove contact">
+                    </button>
+                    <button class="btn_chat btn_chat_delete deleteChat" data-balloon="Remove chat" data-balloon-pos="down">
+                        <img src="images/icon-delete.svg" alt="Remove chat">
                     </button>
                 <% } else { %>
                     <button class="btn_chat btn_chat_add addToGroupChat" data-ids="<%= occupantsIds.join() %>" data-dialog="<%= dialog_id %>" data-balloon="Add occupants to group chat" data-balloon-pos="down">
                         <img src="images/icon-add.svg" alt="Add occupants to group chat">
                     </button>
-                    <button class="btn_chat btn_chat_leave leaveChat" data-balloon="Leave and remove chat" data-balloon-pos="down">
-                        <img src="images/icon-exit.svg" alt="Leave and remove chat">
+                    <button class="btn_chat btn_chat_delete deleteChat" data-balloon="Leave and remove chat" data-balloon-pos="down">
+                        <img src="images/icon-delete.svg" alt="Leave and remove chat">
+                    </button>
+                    <button class="btn_chat btn_chat_leave leaveChat" data-balloon="Leave chat" data-balloon-pos="down">
+                        <img src="images/icon-exit.svg" alt="Leave chat">
                     </button>
                 <% } %>
             </div>
@@ -703,7 +719,7 @@
             <div class="footer_btn j-toBottom btn_to_bottom"></div>
             <form class="l-message j-message" action="#">
                 <div id="textarea_<%= dialog_id %>" class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"><%= draft %></div>
-                <div class="footer_btn j-send_location btn_sendlocation <%= location %>" data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="left"></div>
+                <button class="footer_btn l-input-buttons btn_input_send j-btn_input_send" data-balloon="Send message" data-balloon-pos="up"></button>
                 <input class="attachment" type="file" accept="image/*,video/mp4,audio/mp3">
             </form>
             <div class="j-typing l-typing"></div>
@@ -711,8 +727,8 @@
                 <div class="footer_btn l-input-buttons btn_audio_record j-btn_audio_record" data-balloon="Record audio" data-balloon-pos="up"></div>
                 <div class="footer_btn l-input-buttons btn_input_smile j-btn_input_smile" data-balloon="Add smiles" data-balloon-pos="up"></div>
                 <div class="footer_btn l-input-buttons btn_input_location j-btn_input_location" data-balloon="Send location" data-balloon-pos="up"></div>
+                <div class="footer_btn l-input-buttons btn_sendlocation j-send_location <%= location %>" data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>
                 <div class="footer_btn l-input-buttons btn_input_attach j-btn_input_attach" data-balloon="Send attachment file" data-balloon-pos="up"></div>
-                <button class="footer_btn l-input-buttons btn_input_send j-btn_input_send" data-balloon="Send message" data-balloon-pos="up">SEND</button>
             </div>
         </footer>
         </section>
