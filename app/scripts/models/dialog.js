@@ -61,7 +61,6 @@ define([
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
                 ContactList = this.app.models.ContactList,
-                User = this.app.models.User,
                 id = QB.chat.helpers.getIdFromNode(jid),
                 self = this;
 
@@ -111,7 +110,6 @@ define([
                 DialogView = this.app.views.Dialog,
                 ContactList = this.app.models.ContactList,
                 contacts = ContactList.contacts,
-                User = this.app.models.User,
                 self = this;
 
             QBApiCalls.createDialog(params, function(res) {
@@ -180,10 +178,8 @@ define([
 
         updateGroup: function(occupants_names, params, callback) {
             var QBApiCalls = this.app.service,
-                DialogView = this.app.views.Dialog,
                 ContactList = this.app.models.ContactList,
                 contacts = ContactList.contacts,
-                User = this.app.models.User,
                 self = this;
 
             QBApiCalls.updateDialog(params.dialog_id, {
@@ -250,7 +246,6 @@ define([
 
         changeName: function(dialog_id, name) {
             var QBApiCalls = this.app.service,
-                ContactList = this.app.models.ContactList,
                 self = this;
 
             QBApiCalls.updateDialog(dialog_id, {
@@ -343,14 +338,14 @@ define([
 
         deleteChat: function(dialog, justLeave) {
             var QBApiCalls = this.app.service,
+                dialogs = Entities.Collections.dialogs,
                 User = this.app.models.User,
                 dialogId = dialog.get('id'),
-                dialogType = dialog.get('type');
+                dialogType = dialog.get('type'),
+                time = Math.floor(Date.now() / 1000);
 
             // send notification about leave
             if (dialogType === 2) {
-                var time = Math.floor(Date.now() / 1000);
-
                 QB.chat.send(dialog.get('room_jid'), {
                     type: 'groupchat',
                     body: 'Notification message',
@@ -366,6 +361,9 @@ define([
                     }
                 });
             }
+
+            dialogs.remove(dialogId);
+            console.info(dialog.get(dialogId));
 
             if (justLeave) {
                 QBApiCalls.updateDialog(dialogId, {

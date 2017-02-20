@@ -93,7 +93,7 @@ define([
                         'size': [380, 200]
                     }) : null,
                     mapAttachLink = geoCoords ? Location.getMapUrl(geoCoords) : null,
-                    recipient = message.recipient_id && contacts[message.recipient_id] || null,
+                    recipientFullName = message.recipient_id && contacts[message.recipient_id] && contacts[message.recipient_id].full_name || 'this user',
                     occupants_names = '',
                     added_occupant_ids,
                     occupants_ids,
@@ -207,7 +207,7 @@ define([
                         html += '<div class="message-content">';
 
                         if (message.sender_id === User.contact.id) {
-                            html += '<h4 class="message-author">You have deleted ' + recipient.full_name + ' from your contact list';
+                            html += '<h4 class="message-author">You have deleted ' + recipientFullName + ' from your contact list';
                         } else {
                             html += '<h4 class="message-author">You have been deleted from the contact list</h4>';
                             html += '<button class="btn btn_request_again btn_request_again_delete j-requestAgain">';
@@ -534,6 +534,14 @@ define([
                 occupant,
                 msg;
 
+            if (!dialog && roster[id] && (roster[id].subscription === 'both')) {
+                Dialog.download({'_id': dialog_id}, function(results) {
+                    var newDialogId = Dialog.create(results.items[0]);
+
+                    DialogView.addDialogItem(dialogs.get(newDialogId), null, true);
+                });
+            }
+
             typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
             typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
             typeof occupants_ids === "string" ? occupants_ids = occupants_ids.split(',').map(Number) : null;
@@ -716,7 +724,7 @@ define([
                     room_updated_date: room_updated_at,
                     xmpp_room_jid: room_jid,
                     unread_count: 1,
-                    opened: true
+                    opened: false
                 });
 
                 dialog = dialogs.get(dialog_id);

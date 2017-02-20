@@ -4,11 +4,13 @@
 define([
     'jquery',
     'quickblox',
+    'underscore',
     'config',
     'QBNotification'
 ], function(
     $,
     QB,
+    _,
     QMCONFIG,
     QBNotification
 ) {
@@ -28,7 +30,6 @@ define([
         getTitle: function(message, params) {
             var contacts = params.contacts,
                 roomName = params.roomName,
-                roomPhoto = params.roomPhoto,
                 contact = contacts[message.sender_id],
                 title;
 
@@ -40,7 +41,6 @@ define([
         getOptions: function(message, params) {
             var myUser = params.user,
                 contacts = params.contacts,
-                roomName = params.roomName,
                 roomPhoto = params.roomPhoto,
                 contact = contacts[message.sender_id],
                 chatType = message.type,

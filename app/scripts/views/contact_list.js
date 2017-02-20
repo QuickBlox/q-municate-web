@@ -400,7 +400,7 @@ define([
                         date_sent: time,
                         dialog_id: hiddenDialogs[id],
                         save_to_history: 1,
-                        notification_type: '6',
+                        notification_type: '6'
                     });
                 });
             }

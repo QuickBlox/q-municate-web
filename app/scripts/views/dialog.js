@@ -533,12 +533,11 @@ define([
                 Dialog.deleteChat(dialog, justLeave);
             }
 
-            self.removeDialogItem(dialogId, justLeave);
+            self.removeDialogItem(dialogId);
         },
 
-        removeDialogItem: function(dialogId, justLeave) {
-            var dialogs = Entities.Collections.dialogs,
-                $dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]'),
+        removeDialogItem: function(dialogId) {
+            var $dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]'),
                 $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
                 $dialogList = $dialogItem.parents('ul');
 
@@ -562,10 +561,22 @@ define([
             if ($chat.length > 0) {
                 $chat.remove();
             }
+        },
 
-            if (!justLeave) {
-                dialogs.remove(dialogId);
+        removeForbidenDialog: function(dialogId) {
+            var dialogs = Entities.Collections.dialogs,
+                $mediacall = $('.mediacall');
+
+            if ($mediacall.length > 0) {
+                $mediacall.find('.btn_hangup').click();
             }
+
+            this.removeDialogItem(dialogId);
+            this.decUnreadCounter(dialogId);
+
+            dialogs.remove(dialogId);
+
+            return false;
         },
 
         showChatWithNewMessages: function(dialogId, unreadCount, messages) {
@@ -597,7 +608,13 @@ define([
             } else {
                 messages = [];
 
-                Message.download(dialogId, function(response) {
+                Message.download(dialogId, function(response, error) {
+                    if (error && error.code === 403) {
+                        self.removeForbidenDialog(dialogId);
+
+                        return false;
+                    }
+
                     _.each(response, function(item) {
                         messages.push(Message.create(item));
                     });
@@ -722,15 +739,21 @@ define([
     function ajaxDownloading(selector) {
         var MessageView = self.app.views.Message,
             $chat = $('.j-chatItem:visible'),
-            dialog_id = $chat.data('dialog'),
+            dialogId = $chat.data('dialog'),
             messages = $chat.find('.message'),
             firstMsgId = messages.first().attr('id'),
             count = messages.length,
             message;
 
 
-        Message.download(dialog_id, function(messages) {
+        Message.download(dialogId, function(messages, error) {
             for (var i = 0, len = messages.length; i < len; i++) {
+                if (error && error.code === 403) {
+                    self.removeForbidenDialog(dialogId);
+
+                    return false;
+                }
+
                 message = Message.create(messages[i], 'ajax');
                 message.stack = Message.isStack(false, messages[i], messages[i + 1]);
 

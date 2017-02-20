@@ -433,7 +433,7 @@ define([
                 QB.chat.message.list(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
-
+                        callback(null, err);
                     } else {
                         Helpers.log('QB SDK: Messages is found', res);
 

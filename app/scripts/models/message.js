@@ -45,11 +45,17 @@ define([
                 sort_desc: 'date_sent',
                 limit: limitCount,
                 skip: skipCount || 0
-            }, function(messages) {
+            }, function(messages, error) {
+                if (error) {
+                    callback(null, error);
+                    return false;
+                }
+
                 if (isAjaxDownloading) {
                     self.skip = skipCount;
                     DialogView.removeDataSpinner();
                 }
+
                 callback(messages);
             });
         },
