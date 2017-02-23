@@ -70,8 +70,7 @@ define([
 
         _startStream: function (callback) {
             navigator.mediaDevices.getUserMedia({
-                audio: true,
-                video: false
+                audio: true
             }).then(function(stream) {
                 self.stream = stream;
                 callback();

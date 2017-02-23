@@ -363,7 +363,6 @@ define([
             }
 
             dialogs.remove(dialogId);
-            console.info(dialog.get(dialogId));
 
             if (justLeave) {
                 QBApiCalls.updateDialog(dialogId, {

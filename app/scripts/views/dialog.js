@@ -314,8 +314,8 @@ define([
             private_id = dialog_type === 3 ? occupants_ids[0] : null;
 
             try {
-                icon = private_id ? contacts[private_id].avatar_url : (room_photo || QMCONFIG.defAvatar.group_url);
-                name = private_id ? contacts[private_id].full_name : room_name;
+                icon = (private_id && contacts[private_id]) ? contacts[private_id].avatar_url : (room_photo || QMCONFIG.defAvatar.group_url);
+                name = (private_id && contacts[private_id]) ? contacts[private_id].full_name : room_name;
                 status = roster[private_id] ? roster[private_id] : null;
             } catch (error) {
                 console.error(error);
@@ -341,9 +341,21 @@ define([
             startOfCurrentDay = new Date();
             startOfCurrentDay.setHours(0, 0, 0, 0);
 
+            // remove duplicate
+            var $dialogItem = $('.j-dialogItem[data-dialog="'+dialog_id+'"]');
+
+            if ($dialogItem.length) {
+                $dialogItem.remove();
+            }
+
             // checking if this dialog is recent OR no
             if (!last_message_date_sent ||
+<<<<<<< Updated upstream
                 new Date(last_message_date_sent * 1000) > startOfCurrentDay ||
+=======
+                (new Date(last_message_date_sent * 1000) > startOfCurrentDay) ||
+
+>>>>>>> Stashed changes
                 parametr === 'new_dialog') {
                 if (isDownload) {
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
@@ -544,6 +556,20 @@ define([
             $dialogItem.remove();
 
             Helpers.Dialogs.isSectionEmpty($dialogList);
+<<<<<<< Updated upstream
+
+            // delete chat section
+            if ($chat.is(':visible')) {
+                $('.j-capBox').removeClass('is-hidden')
+                    .siblings().removeClass('is-active');
+
+                $('.j-chatWrap').addClass('is-hidden')
+                    .children().remove();
+            }
+
+            if (Entities.active === dialogId) {
+                Entities.active = '';
+=======
 
             // delete chat section
             if ($chat.is(':visible')) {
@@ -560,6 +586,7 @@ define([
 
             if ($chat.length > 0) {
                 $chat.remove();
+>>>>>>> Stashed changes
             }
         },
 
@@ -574,6 +601,25 @@ define([
             this.removeDialogItem(dialogId);
             this.decUnreadCounter(dialogId);
 
+<<<<<<< Updated upstream
+            if ($chat.length > 0) {
+                $chat.remove();
+            }
+        },
+
+        removeForbidenDialog: function(dialogId) {
+            var dialogs = Entities.Collections.dialogs,
+                $mediacall = $('.mediacall');
+
+            if ($mediacall.length > 0) {
+                $mediacall.find('.btn_hangup').click();
+            }
+
+            this.removeDialogItem(dialogId);
+            this.decUnreadCounter(dialogId);
+
+=======
+>>>>>>> Stashed changes
             dialogs.remove(dialogId);
 
             return false;
