@@ -350,12 +350,8 @@ define([
 
             // checking if this dialog is recent OR no
             if (!last_message_date_sent ||
-<<<<<<< Updated upstream
-                new Date(last_message_date_sent * 1000) > startOfCurrentDay ||
-=======
                 (new Date(last_message_date_sent * 1000) > startOfCurrentDay) ||
 
->>>>>>> Stashed changes
                 parametr === 'new_dialog') {
                 if (isDownload) {
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
@@ -556,20 +552,6 @@ define([
             $dialogItem.remove();
 
             Helpers.Dialogs.isSectionEmpty($dialogList);
-<<<<<<< Updated upstream
-
-            // delete chat section
-            if ($chat.is(':visible')) {
-                $('.j-capBox').removeClass('is-hidden')
-                    .siblings().removeClass('is-active');
-
-                $('.j-chatWrap').addClass('is-hidden')
-                    .children().remove();
-            }
-
-            if (Entities.active === dialogId) {
-                Entities.active = '';
-=======
 
             // delete chat section
             if ($chat.is(':visible')) {
@@ -586,11 +568,10 @@ define([
 
             if ($chat.length > 0) {
                 $chat.remove();
->>>>>>> Stashed changes
             }
         },
 
-        removeForbidenDialog: function(dialogId) {
+        removeForbiddenDialog: function(dialogId) {
             var dialogs = Entities.Collections.dialogs,
                 $mediacall = $('.mediacall');
 
@@ -601,25 +582,6 @@ define([
             this.removeDialogItem(dialogId);
             this.decUnreadCounter(dialogId);
 
-<<<<<<< Updated upstream
-            if ($chat.length > 0) {
-                $chat.remove();
-            }
-        },
-
-        removeForbidenDialog: function(dialogId) {
-            var dialogs = Entities.Collections.dialogs,
-                $mediacall = $('.mediacall');
-
-            if ($mediacall.length > 0) {
-                $mediacall.find('.btn_hangup').click();
-            }
-
-            this.removeDialogItem(dialogId);
-            this.decUnreadCounter(dialogId);
-
-=======
->>>>>>> Stashed changes
             dialogs.remove(dialogId);
 
             return false;
@@ -656,7 +618,7 @@ define([
 
                 Message.download(dialogId, function(response, error) {
                     if (error && error.code === 403) {
-                        self.removeForbidenDialog(dialogId);
+                        self.removeForbiddenDialog(dialogId);
 
                         return false;
                     }
@@ -795,7 +757,7 @@ define([
         Message.download(dialogId, function(messages, error) {
             for (var i = 0, len = messages.length; i < len; i++) {
                 if (error && error.code === 403) {
-                    self.removeForbidenDialog(dialogId);
+                    self.removeForbiddenDialog(dialogId);
 
                     return false;
                 }
