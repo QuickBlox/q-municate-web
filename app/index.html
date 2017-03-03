@@ -293,6 +293,7 @@
                         <div class="chat_popover popover_record j-popover_const j-popover_record">
                             <button class="start_record j-start_record"></button>
                             <div class="record_title j-time_record">RECORD</div>
+                            <button class="cancel_record j-cancel_record"></button>
                             <div class="coner"><i class="icon_coner"></i></div>
                         </div>
 
@@ -552,23 +553,23 @@
     </div>
 
     <audio id="newMessageSignal">
-        <source src="audio/new_message.ogg"></source>
-        <source src="audio/new_message.mp3"></source>
+        <source src="audio/new_message.ogg" />
+        <source src="audio/new_message.mp3" />
     </audio>
 
     <audio id="callingSignal" loop>
-        <source src="audio/calling.ogg"></source>
-        <source src="audio/calling.mp3"></source>
+        <source src="audio/calling.ogg" />
+        <source src="audio/calling.mp3" />
     </audio>
 
     <audio id="ringtoneSignal" loop>
-        <source src="audio/ringtone.ogg"></source>
-        <source src="audio/ringtone.mp3"></source>
+        <source src="audio/ringtone.ogg" />
+        <source src="audio/ringtone.mp3" />
     </audio>
 
     <audio id="endCallSignal">
-        <source src="audio/end_of_call.ogg"></source>
-        <source src="audio/end_of_call.mp3"></source>
+        <source src="audio/end_of_call.ogg" />
+        <source src="audio/end_of_call.mp3" />
     </audio>
 
     <div id="fb-root"></div>
@@ -720,7 +721,7 @@
             <form class="l-message j-message" action="#">
                 <div id="textarea_<%= dialog_id %>" class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"><%= draft %></div>
                 <button class="footer_btn l-input-buttons btn_input_send j-btn_input_send" data-balloon="Send message" data-balloon-pos="up"></button>
-                <input class="attachment" type="file" accept="image/*,video/mp4,audio/mp3">
+                <input class="attachment j-attachment" type="file" accept="image/*,video/mp4,audio/mp3">
             </form>
             <div class="j-typing l-typing"></div>
             <div class="l-input-menu">

@@ -41,13 +41,15 @@ define([
 
     AttachView.prototype = {
 
-        changeInput: function(objDom) {
-            var file = objDom[0].files[0] || null,
+        changeInput: function(objDom, recordedAudioFile) {
+            var file = objDom ? objDom[0].files[0] : (recordedAudioFile ? recordedAudioFile : null),
+                input = objDom ? objDom : null,
                 chat = $('.l-chat:visible .l-chat-content .mCSB_container'),
                 id = _.uniqueId(),
                 fileSize = file.size,
                 fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
                 fileSizeUnit = fileSize > (1024 * 1024) ? 'MB' : 'KB',
+                metaData = {},
                 errMsg,
                 html;
 
@@ -55,7 +57,7 @@ define([
                 errMsg = self.validateFile(file);
 
                 if (errMsg) {
-                    self.pastErrorMessage(errMsg, objDom, chat);
+                    self.pastErrorMessage(errMsg, input, chat);
                 } else {
                     html = QMHtml.Attach.attach({
                         'fileName': file.name,
@@ -66,17 +68,26 @@ define([
                 }
 
                 chat.append(html);
-                objDom.val('');
+
+                if (input) {
+                    input.val('');
+                }
+
+                metaData.size = file.size || null;
+                metaData.width = file.width || null;
+                metaData.height = file.height || null;
+                metaData.duration = file.duration || null;
+
                 fixScroll();
                 if (file.type.indexOf('image') > -1) {
                     Attach.crop(file, {
                         w: 1000,
                         h: 1000
                     }, function(blob) {
-                        self.createProgressBar(id, fileSizeCrop, fileSize, blob);
+                        self.createProgressBar(id, fileSizeCrop, metaData, blob);
                     });
                 } else {
-                    self.createProgressBar(id, fileSizeCrop, fileSize, file);
+                    self.createProgressBar(id, fileSizeCrop, metaData, file);
                 }
             }
         },
@@ -87,16 +98,20 @@ define([
             });
 
             chat.append(html);
-            objDom.val('');
+
+            if (objDom) {
+                objDom.val('');
+            }
 
             fixScroll();
 
             return false;
         },
 
-        createProgressBar: function(id, fileSizeCrop, fileSize, file) {
+        createProgressBar: function(id, fileSizeCrop, metaData, file) {
             var progressBar = new ProgressBar('progress_' + id),
                 $chatItem = $('.j-chatItem'),
+                fileSize = metaData.size,
                 percent = 5,
                 isUpload = false,
                 part,
@@ -123,7 +138,7 @@ define([
             Attach.upload(file, function(blob) {
                 Helpers.log('Blob:', blob);
 
-                self.sendMessage($chatItem, blob, fileSize);
+                self.sendMessage($chatItem, blob, metaData);
                 isUpload = true;
 
                 if ($('#progress_' + id).length > 0) {
@@ -156,7 +171,7 @@ define([
             objDom.parents('article').remove();
         },
 
-        sendMessage: function(chat, blob, size, mapCoords) {
+        sendMessage: function(chat, blob, metaData, mapCoords) {
             var MessageView = this.app.views.Message,
                 jid = chat.data('jid'),
                 id = chat.data('id'),
@@ -177,7 +192,7 @@ define([
                     'data': mapCoords
                 };
             } else {
-                attach = Attach.create(blob, size);
+                attach = Attach.create(blob, metaData);
             }
 
             msg = {

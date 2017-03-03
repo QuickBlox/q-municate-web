@@ -2,10 +2,14 @@
  * AudioRecorder
  */
 define([
+    'config',
     'Helpers',
+    'lamejs',
     'QBMediaRecorder'
 ], function(
+    QMCONFIG,
     Helpers,
+    lamejs,
     QBMediaRecorder
 ) {
     'use strict';
@@ -16,12 +20,37 @@ define([
         this.app = app;
 
         self = this;
+        self.send = true;
         self.active = false;
         self.stream = null;
         self.timerID = undefined;
-        self.chatEl = undefined;
-        self.timerEl = undefined;
-        self.controlEl = undefined;
+
+        self.ui = {
+            chat: undefined,
+            timer: undefined,
+            control: undefined,
+            cancel: undefined
+        };
+
+        self._duration = {
+            timeMarkStart: 0,
+            timeMarkEnd: 0,
+
+            start: function() {
+                this.reset();
+                this.timeMarkStart = performance.now();
+            },
+            end: function() {
+                this.timeMarkEnd = performance.now();
+            },
+            get: function() {
+                return Math.round( (this.timeMarkEnd - this.timeMarkStart) / 1000 );
+            },
+            reset: function() {
+                this.timeMarkStart = 0;
+                this.timeMarkEnd = 0;
+            }
+        };
 
         self.init();
     }
@@ -38,22 +67,20 @@ define([
         _initRecorder: function() {
             var options = {
                 onstart: function onStart() {
+                    self._duration.start();
                     self._startTimer();
                 },
                 onstop: function onStop(blob) {
                     self._stopTimer();
-
-                    // TODO: for testing
-                    self.useBlob(blob);
-                    self.recorder.download('Audio record - ' + new Date().toString());
+                    self.sendRecord(blob);
                 },
-                mimeType: 'audio',
-                ignoreMutedMedia: true
+                mimeType: 'audio/mp3'
             };
 
-            self.chatEl = document.querySelector('.j-workspace-wrap');
-            self.timerEl = document.querySelector('.j-time_record');
-            self.controlEl = document.querySelector('.j-start_record');
+            self.ui.chat = document.querySelector('.j-workspace-wrap');
+            self.ui.timer = document.querySelector('.j-time_record');
+            self.ui.control = document.querySelector('.j-start_record');
+            self.ui.cancel = document.querySelector('.j-cancel_record');
 
             self.recorder = new QBMediaRecorder(options);
             self.active = true;
@@ -86,12 +113,19 @@ define([
         },
 
         _startTimer: function() {
-            var time = 0,
+            var step = 0,
+                time = 0,
                 min,
                 sec;
 
             self.timerID = setInterval(function() {
-                self.timerEl.innerHTML = timerValue();
+                ++step;
+
+                self.ui.timer.innerHTML = timerValue();
+
+                if (step === QMCONFIG.MAX_RECORD_TIME) {
+                    self.ui.control.click();
+                }
             }, 1000);
 
             function timerValue() {
@@ -112,21 +146,26 @@ define([
         },
 
         _initHandler: function () {
-            self.chatEl.addEventListener('click', function(event) {
-                var targetEl = event.target;
+            self.ui.chat.addEventListener('click', function(event) {
+                var target = event.target,
+                    controlElClassList = self.ui.control.classList;
 
-                if (targetEl === self.controlEl) {
-                    var elemClassList = targetEl.classList;
-
-                    if (elemClassList.contains('is-active')) {
-                        elemClassList.remove('is-active');
+                if (target === self.ui.control) {
+                    if (controlElClassList.contains('is-active')) {
+                        controlElClassList.remove('is-active');
                         self.stopRecord();
-                        self.timerEl.innerHTML = 'RECORD';
+                        self.ui.timer.innerHTML = 'RECORD';
                     } else {
-                        elemClassList.add('is-active');
+                        controlElClassList.add('is-active');
                         self.startRecord();
-                        self.timerEl.innerHTML = '00:00';
+                        self.ui.timer.innerHTML = '00:00';
                     }
+                }
+
+                if (target === self.ui.cancel) {
+                    controlElClassList.remove('is-active');
+                    self.cancelRecord();
+                    self.ui.timer.innerHTML = 'RECORD';
                 }
 
                 return false;
@@ -134,19 +173,39 @@ define([
         },
 
         startRecord: function() {
+            self.send = true;
             self._startStream(function() {
                 self.recorder.start(self.stream);
             });
         },
 
         stopRecord: function() {
+            self._duration.end();
             self.recorder.stop();
             self._stopStream();
             self.stream = null;
         },
 
-        useBlob: function(blob) {
-            console.info(blob);
+        cancelRecord: function() {
+            self._duration.reset();
+            self.send = false;
+            self.stopRecord();
+        },
+
+        sendRecord: function(blob) {
+            if (!self.send) {
+                self.send = true;
+                return;
+            }
+
+            var recordedAudioFile = new File([blob], 'Voicemessage', {
+                type: blob.type,
+                lastModified: Date.now()
+            });
+
+            recordedAudioFile.duration = self._duration.get();
+
+            self.app.views.Attach.changeInput(null, recordedAudioFile);
         }
     };
 

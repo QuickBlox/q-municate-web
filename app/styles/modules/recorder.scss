@@ -4,26 +4,37 @@
   height: 45px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   bottom: 40px;
   right: 103px;
+  padding: 0 8px;
 }
 .start_record,
 .start_record:hover,
 .start_record:focus {
   width: 16px;
   height: 16px;
-  margin: 0 13px;
   background-color: #f54a4a;
   border-radius: 100%;
+}
+.cancel_record,
+.cancel_record:hover,
+.cancel_record:focus {
+  width: 16px;
+  height: 16px;
+  background: url('../images/ic_cancel_record.svg') no-repeat center;
 }
 .start_record.is-active {
   border-radius: initial;
 }
 .record_title {
+  height: 16px;
+  width: 65px;
   font-family: Roboto, sans-serif;
   font-size: 15px;
   font-weight: 500;
   color: #6b7988;
+  text-align: center;
   line-height: 16px;
 }
 .time_record {

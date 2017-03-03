@@ -35,6 +35,9 @@ define(function() {
         maxLimitFile: 10,
         maxLimitMediaFile: 100,
 
+        // Max time of file's record
+        MAX_RECORD_TIME: 30,
+
         patterns: {
             name: ".{3,50}",
             password: ".{8,40}"

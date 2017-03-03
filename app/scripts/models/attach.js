@@ -6,12 +6,10 @@
  */
 define([
     'loadImage',
-    'canvasToBlob',
-    'quickblox'
+    'canvasToBlob'
 ], function(
     loadImage,
-    dataURLtoBlob,
-    QB
+    dataURLtoBlob
 ) {
 
     function Attach(app) {
@@ -32,7 +30,7 @@ define([
             });
         },
 
-        create: function(blob, size) {
+        create: function(blob, metaData) {
             var type = blob.content_type.indexOf('image/') === 0 ? 'image' :
                 blob.content_type.indexOf('audio/') === 0 ? 'audio' :
                 blob.content_type.indexOf('video/') === 0 ? 'video' :
@@ -40,11 +38,13 @@ define([
 
             return {
                 'type': type,
-                'url': QB.content.publicUrl(blob.uid) || null,
                 'id': blob.uid,
                 'name': blob.name,
-                'size': size,
-                'content-type': blob.content_type
+                'content-type': blob.content_type,
+                'duration': metaData.duration,
+                'height': metaData.height,
+                'width': metaData.width,
+                'size': metaData.size
             };
         },
 

@@ -54,7 +54,8 @@ requirejs.config({
         nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
         perfectscrollbar: '../bower_components/perfect-scrollbar/js/perfect-scrollbar.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
-        QBMediaRecorder: 'https://unpkg.com/media-recorder-js/mediaRecorder',
+        lamejs: '../bower_components/lamejs/lame.min',
+        QBMediaRecorder: '../bower_components/mediaRecorder/mediaRecorder',
 
         // Q-municate application
         config: '../configs/main_config',
