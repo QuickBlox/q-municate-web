@@ -49,7 +49,7 @@ define([
                 fileSize = file.size,
                 fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
                 fileSizeUnit = fileSize > (1024 * 1024) ? 'MB' : 'KB',
-                metaData = {},
+                metadata = readMetaData(file),
                 errMsg,
                 html;
 
@@ -73,21 +73,17 @@ define([
                     input.val('');
                 }
 
-                metaData.size = file.size || null;
-                metaData.width = file.width || null;
-                metaData.height = file.height || null;
-                metaData.duration = file.duration || null;
-
                 fixScroll();
+
                 if (file.type.indexOf('image') > -1) {
                     Attach.crop(file, {
                         w: 1000,
                         h: 1000
                     }, function(blob) {
-                        self.createProgressBar(id, fileSizeCrop, metaData, blob);
+                        self.createProgressBar(id, fileSizeCrop, metadata, blob);
                     });
                 } else {
-                    self.createProgressBar(id, fileSizeCrop, metaData, file);
+                    self.createProgressBar(id, fileSizeCrop, metadata, file);
                 }
             }
         },
@@ -291,6 +287,51 @@ define([
     ---------------------------------------------------------------------- */
     function fixScroll() {
         $('.l-chat:visible .j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+    }
+
+    function readMetaData(file) {
+        var _URL = window.URL || window.webkitURL,
+            metadata = Object.create(null),
+            type = file.type.indexOf('image/') === 0 ? 'image' :
+                   file.type.indexOf('audio/') === 0 ? 'audio' :
+                   file.type.indexOf('video/') === 0 ? 'video' : 'file';
+
+        switch (type) {
+            case 'image':
+                var image = new Image();
+
+                image.src = URL.createObjectURL(file);
+                image.onload = function() {
+                    metadata.width = this.width;
+                    metadata.height = this.height;
+                };
+                break;
+
+            case 'audio':
+                var audio = new Audio();
+
+                audio.src = URL.createObjectURL(file);
+                audio.onloadedmetadata = function() {
+                    metadata.duration = this.duration;
+                };
+                break;
+
+            case 'video':
+                var video = document.createElement('video');
+
+                video.src = _URL.createObjectURL(file);
+                video.onloadedmetadata = function() {
+                    metadata.width = this.videoWidth;
+                    metadata.height = this.videoHeight;
+                    metadata.duration = this.duration;
+                };
+                break;
+
+            default:
+                break;
+        }
+
+        return metadata;
     }
 
     return AttachView;
