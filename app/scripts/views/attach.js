@@ -291,7 +291,7 @@ define([
 
     function readMetaData(file) {
         var _URL = window.URL || window.webkitURL,
-            metadata = Object.create(null),
+            metadata = { 'size': file.size },
             type = file.type.indexOf('image/') === 0 ? 'image' :
                    file.type.indexOf('audio/') === 0 ? 'audio' :
                    file.type.indexOf('video/') === 0 ? 'video' : 'file';
