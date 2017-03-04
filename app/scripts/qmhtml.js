@@ -149,12 +149,21 @@ define([
 
             if (roster.subscription !== 'none' && roster.ask === null) {
                 params.roster = '';
-                htmlStr = '<button class="btn_userDetails writeMessage videoCall"><img src="images/icon-videocall.svg" alt="videocall">Video Call</button>' +
-                    '<button class="btn_userDetails writeMessage audioCall"><img src="images/icon-audiocall.svg" alt="videocall">Call</button>';
+                htmlStr =
+                    '<div class="btn_userDetails writeMessage videoCall">' +
+                    '<div class="ic_videoCall ic_userDetails">' +
+                    '<img src="images/icon-videocall.svg" alt="videocall"></div>Make video call</div>' +
+                    '<div class="btn_userDetails writeMessage audioCall">' +
+                    '<div class="ic_audioCall ic_userDetails">' +
+                    '<img src="images/icon-audiocall.svg" alt="videocall"></div>Make audio call</div>';
             }
 
-            htmlStr += '<button class="btn_userDetails <%=roster%> writeMessage"><img src="images/icon-message.png" alt="videocall">Message</button>' +
-                '<button class="btn_userDetails <%=roster%> deleteContact"><img src="images/icon-profile-delete.svg" alt="videocall">Delete</button>';
+            htmlStr += '<div class="btn_userDetails <%=roster%> writeMessage">' +
+                '<div class="ic_writeMessage ic_userDetails">' +
+                '<img src="images/icon-message.png" alt="videocall"></div>Send message</div>' +
+                '<div class="btn_userDetails <%=roster%> deleteContact">' +
+                '<div class="ic_deleteContact ic_userDetails">' +
+                '<img src="images/icon-profile-delete.svg" alt="videocall"></div>Remove contact and chat</div>';
 
             $html.empty();
             $html.append(_.template(htmlStr)(params));
