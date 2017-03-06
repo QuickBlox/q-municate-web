@@ -300,7 +300,7 @@ define([
             case 'image':
                 var image = new Image();
 
-                image.src = URL.createObjectURL(file);
+                image.src = _URL.createObjectURL(file);
                 image.onload = function() {
                     metadata.width = this.width;
                     metadata.height = this.height;
@@ -310,7 +310,7 @@ define([
             case 'audio':
                 var audio = new Audio();
 
-                audio.src = URL.createObjectURL(file);
+                audio.src = _URL.createObjectURL(file);
                 audio.onloadedmetadata = function() {
                     metadata.duration = this.duration;
                 };
