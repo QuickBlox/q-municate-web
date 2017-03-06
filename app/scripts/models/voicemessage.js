@@ -44,7 +44,7 @@ define([
                 this.timeMarkEnd = performance.now();
             },
             get: function() {
-                return Math.round( (this.timeMarkEnd - this.timeMarkStart) / 1000 );
+                return (this.timeMarkEnd - this.timeMarkStart) / 1000;
             },
             reset: function() {
                 this.timeMarkStart = 0;
@@ -107,6 +107,10 @@ define([
         },
 
         _stopStream: function () {
+            if (!self.stream) {
+                return;
+            }
+
             self.stream.getTracks().forEach(function(track) {
                 track.stop();
             });
@@ -187,9 +191,11 @@ define([
         },
 
         cancelRecord: function() {
-            self._duration.reset();
-            self.send = false;
-            self.stopRecord();
+            if (self.stream) {
+                self._duration.reset();
+                self.send = false;
+                self.stopRecord();
+            }
         },
 
         sendRecord: function(blob) {

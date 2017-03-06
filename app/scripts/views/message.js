@@ -100,6 +100,15 @@ define([
                     status,
                     html;
 
+                if (attachType) {
+                    var attachParams = {
+                        id: message.id,
+                        height: message.attachment.height || null,
+                        width: message.attachment.width || null,
+                        type: attachType
+                    };
+                }
+
                 switch (type) {
                     case '1':
                         added_occupant_ids = _.without(message.added_occupant_ids.split(',').map(Number), contact.id);
@@ -309,8 +318,8 @@ define([
 
                         if (attachType && attachType.indexOf('image') > -1) {
                             html += '<div class="message-body">';
-                            html += '<div class="preview preview-photo" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '">';
-                            html += '<img id="attach_' + message.id + '" src="' + attachUrl + '" alt="attach"></div></div></div>';
+                            html += '<div id="image_' + message.id + '" class="preview preview-photo" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '">';
+                            html += '<img src="' + attachUrl + '" alt="attach"></div></div></div>';
                         } else if (attachType && attachType.indexOf('audio') > -1) {
                             html += '<div class="message-body"><div class="media_title">' + message.attachment.name + '</div>';
                             html += '<audio id="audio_' + message.id + '" controls class="audio_player">'+
@@ -344,10 +353,12 @@ define([
                 if (isCallback) {
                     if (isMessageListener) {
                         $chat.find('.l-chat-content .mCSB_container').append(html);
+                        setAttachSize(attachParams);
                         getUrlPreview(message.id);
                         smartScroll(isBottom);
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
+                        setAttachSize(attachParams);
                         getUrlPreview(message.id);
                     }
                 } else {
@@ -356,6 +367,7 @@ define([
                     } else {
                         $chat.find('.l-chat-content').prepend(html);
                     }
+                    setAttachSize(attachParams);
                     getUrlPreview(message.id);
                     smartScroll(true);
                 }
@@ -1096,6 +1108,28 @@ define([
                 $message.append($elem);
             });
 
+        }
+    }
+
+    function setAttachSize(params) {
+        if (!(params && params.width && params.height)) {
+            return;
+        }
+
+        var width = Number(params.width),
+            height = Number(params.height),
+            $container;
+
+        if (params.type && params.type.indexOf('image') > -1) {
+            $container = $('#image_' + params.id);
+        } else if (params.type && params.type.indexOf('video') > -1) {
+            $container = $('#video_' + params.id);
+        }
+
+        if (height < 215) {
+            $container.height(height);
+        } else if ((height > width) && (height > 285)) {
+            $container.height(285);
         }
     }
 
