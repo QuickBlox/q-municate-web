@@ -97,11 +97,12 @@ define([
                     occupants_names = '',
                     added_occupant_ids,
                     occupants_ids,
+                    attachParams,
                     status,
                     html;
 
                 if (attachType) {
-                    var attachParams = {
+                    attachParams = {
                         id: message.id,
                         height: message.attachment.height || null,
                         width: message.attachment.width || null,
