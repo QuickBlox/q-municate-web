@@ -74,7 +74,7 @@ define([
                     self._stopTimer();
                     self.sendRecord(blob);
                 },
-                mimeType: 'audio/mp3'
+                mimeType: 'audio'
             };
 
             self.ui.chat = document.querySelector('.j-workspace-wrap');
@@ -101,7 +101,7 @@ define([
             }).then(function(stream) {
                 console.info(stream);
                 self.stream = stream;
-                self.recorder.start(self.stream);
+                self.recorder.start(stream);
             }).catch(function(err) {
                 console.error(err);
             });
