@@ -95,12 +95,12 @@ define([
             Helpers.log('Recorder isn\'t supported is this browser');
         },
 
-        _startStream: function (callback) {
+        _startStream: function () {
             navigator.mediaDevices.getUserMedia({
                 audio: true
             }).then(function(stream) {
                 self.stream = stream;
-                callback();
+                self.recorder.start(self.stream);
             }).catch(function(err) {
                 console.error(err);
             });
@@ -178,9 +178,7 @@ define([
 
         startRecord: function() {
             self.send = true;
-            self._startStream(function() {
-                self.recorder.start(self.stream);
-            });
+            self._startStream();
         },
 
         stopRecord: function() {
