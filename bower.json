@@ -20,7 +20,7 @@
     "crypto-js-lib": "^3.1.2",
     "perfect-scrollbar": "^0.6.15",
     "lamejs": "*",
-    "media-recorder-js": "^1.0.0"
+    "media-recorder-js": "^1.0.1"
   },
   "devDependencies": {}
 }

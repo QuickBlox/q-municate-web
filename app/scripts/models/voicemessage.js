@@ -74,7 +74,7 @@ define([
                     self._stopTimer();
                     self.sendRecord(blob);
                 },
-                mimeType: 'audio'
+                mimeType: 'audio/mp3'
             };
 
             self.ui.chat = document.querySelector('.j-workspace-wrap');
@@ -99,9 +99,8 @@ define([
             navigator.mediaDevices.getUserMedia({
                 audio: true
             }).then(function(stream) {
-                console.info(stream);
                 self.stream = stream;
-                self.recorder.start(stream);
+                self.recorder.start(self.stream);
             }).catch(function(err) {
                 console.error(err);
             });
