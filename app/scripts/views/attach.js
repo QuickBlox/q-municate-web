@@ -49,7 +49,7 @@ define([
                 fileSize = file.size,
                 fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
                 fileSizeUnit = fileSize > (1024 * 1024) ? 'MB' : 'KB',
-                metadata = readMetaData(file),
+                metadata = readmetadata(file),
                 errMsg,
                 html;
 
@@ -104,10 +104,10 @@ define([
             return false;
         },
 
-        createProgressBar: function(id, fileSizeCrop, metaData, file) {
+        createProgressBar: function(id, fileSizeCrop, metadata, file) {
             var progressBar = new ProgressBar('progress_' + id),
                 $chatItem = $('.j-chatItem'),
-                fileSize = metaData.size,
+                fileSize = metadata.size,
                 percent = 5,
                 isUpload = false,
                 part,
@@ -134,7 +134,7 @@ define([
             Attach.upload(file, function(blob) {
                 Helpers.log('Blob:', blob);
 
-                self.sendMessage($chatItem, blob, metaData);
+                self.sendMessage($chatItem, blob, metadata);
                 isUpload = true;
 
                 if ($('#progress_' + id).length > 0) {
@@ -167,7 +167,7 @@ define([
             objDom.parents('article').remove();
         },
 
-        sendMessage: function(chat, blob, metaData, mapCoords) {
+        sendMessage: function(chat, blob, metadata, mapCoords) {
             var MessageView = this.app.views.Message,
                 jid = chat.data('jid'),
                 id = chat.data('id'),
@@ -188,7 +188,7 @@ define([
                     'data': mapCoords
                 };
             } else {
-                attach = Attach.create(blob, metaData);
+                attach = Attach.create(blob, metadata);
             }
 
             msg = {
@@ -289,7 +289,7 @@ define([
         $('.l-chat:visible .j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
     }
 
-    function readMetaData(file) {
+    function readmetadata(file) {
         var _URL = window.URL || window.webkitURL,
             metadata = { 'size': file.size },
             type = file.type.indexOf('image/') === 0 ? 'image' :
@@ -312,7 +312,7 @@ define([
 
                 audio.src = _URL.createObjectURL(file);
                 audio.onloadedmetadata = function() {
-                    metadata.duration = this.duration;
+                    metadata.duration = Math.floor(this.duration);
                 };
                 break;
 
@@ -323,7 +323,7 @@ define([
                 video.onloadedmetadata = function() {
                     metadata.width = this.videoWidth;
                     metadata.height = this.videoHeight;
-                    metadata.duration = this.duration;
+                    metadata.duration = Math.floor(this.duration);
                 };
                 break;
 

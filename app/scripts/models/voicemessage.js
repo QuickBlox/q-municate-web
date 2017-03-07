@@ -44,7 +44,7 @@ define([
                 this.timeMarkEnd = performance.now();
             },
             get: function() {
-                return (this.timeMarkEnd - this.timeMarkStart) / 1000;
+                return Math.floor( (this.timeMarkEnd - this.timeMarkStart) / 1000 );
             },
             reset: function() {
                 this.timeMarkStart = 0;

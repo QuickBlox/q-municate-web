@@ -30,7 +30,7 @@ define([
             });
         },
 
-        create: function(blob, metaData) {
+        create: function(blob, metadata) {
             var type = blob.content_type.indexOf('image/') === 0 ? 'image' :
                 blob.content_type.indexOf('audio/') === 0 ? 'audio' :
                 blob.content_type.indexOf('video/') === 0 ? 'video' :
@@ -41,10 +41,10 @@ define([
                 'id': blob.uid,
                 'name': blob.name,
                 'content-type': blob.content_type,
-                'duration': metaData.duration,
-                'height': metaData.height,
-                'width': metaData.width,
-                'size': metaData.size
+                'duration': metadata.duration,
+                'height': metadata.height,
+                'width': metadata.width,
+                'size': metadata.size
             };
         },
 
