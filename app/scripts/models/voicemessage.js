@@ -99,6 +99,7 @@ define([
             navigator.mediaDevices.getUserMedia({
                 audio: true
             }).then(function(stream) {
+                console.info(stream);
                 self.stream = stream;
                 self.recorder.start(self.stream);
             }).catch(function(err) {
