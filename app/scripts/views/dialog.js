@@ -351,8 +351,8 @@ define([
             // checking if this dialog is recent OR no
             if (!last_message_date_sent ||
                 (new Date(last_message_date_sent * 1000) > startOfCurrentDay) ||
-
                 parametr === 'new_dialog') {
+
                 if (isDownload) {
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
                 } else if (!$('#searchList').is(':visible')) {
@@ -475,7 +475,6 @@ define([
                 }
             }
         },
-
 
         createGroupChat: function(type, dialog_id) {
             var contacts = ContactList.contacts,

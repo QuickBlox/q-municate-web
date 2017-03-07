@@ -22,6 +22,7 @@ define([
         this.app = app;
     }
 
+    //noinspection JSAnnotator
     Dialog.prototype = {
 
         download: function(params, callback) {
@@ -61,7 +62,7 @@ define([
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
                 ContactList = this.app.models.ContactList,
-                id = QB.chat.helpers.getIdFromNode(jid),
+                id = (jid.indexOf('@') > -1) ? QB.chat.helpers.getIdFromNode(jid) : jid,
                 self = this;
 
             if (dialog_id) {
@@ -173,6 +174,24 @@ define([
 
                 });
 
+            });
+        },
+
+        restorePrivateDialog(id) {
+            var QBApiCalls = this.app.service,
+                DialogView = this.app.views.Dialog,
+                self = this;
+
+            QBApiCalls.createDialog({
+                type: 3,
+                occupants_ids: id
+            }, function(res) {
+                var dialogs = Entities.Collections.dialogs,
+                    dialogId = self.create(res),
+                    dialog = dialogs.get(dialogId);
+
+                DialogView.addDialogItem(dialog, null, 'new_dialog');
+                $('.j-dialogItem[data-id="' + id + '"] .contact').click();
             });
         },
 

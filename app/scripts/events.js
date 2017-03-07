@@ -867,9 +867,13 @@ define([
 
             $('#popupContacts .btn_popup_private').on('click', function() {
                 var id = $('#popupContacts .is-chosen').data('id'),
-                    dialogItem = $('.dialog-item[data-id="' + id + '"]').find('.contact');
+                    dialogItem = $('.j-dialogItem[data-id="' + id + '"]').find('.contact');
 
-                DialogView.htmlBuild(dialogItem);
+                if (dialogItem.length) {
+                    DialogView.htmlBuild(dialogItem);
+                } else {
+                    Dialog.restorePrivateDialog(id);
+                }
             });
 
             $('body').on('click', '.writeMessage', function(event) {
