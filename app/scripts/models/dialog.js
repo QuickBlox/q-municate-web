@@ -58,12 +58,14 @@ define([
             return dialog.id;
         },
 
-        createPrivate: function(jid, isNew, dialog_id) {
-            var QBApiCalls = this.app.service,
+        createPrivate: function(idOrJid, isNew, dialog_id) {
+            var self = this,
+                QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
                 ContactList = this.app.models.ContactList,
-                id = (jid.indexOf('@') > -1) ? QB.chat.helpers.getIdFromNode(jid) : jid,
-                self = this;
+                id;
+
+            id = (idOrJid.indexOf('@') > -1) ? QB.chat.helpers.getIdFromNode(idOrJid) : idOrJid;
 
             if (dialog_id) {
                 QB.chat.dialog.list({ _id: dialog_id }, function(err, resDialogs) {
@@ -177,7 +179,7 @@ define([
             });
         },
 
-        restorePrivateDialog(id) {
+        restorePrivateDialog: function(id) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
                 self = this;
