@@ -278,7 +278,6 @@ define([
 
         sendConfirm: function(jid, isClick) {
             var DialogView = this.app.views.Dialog,
-                MessageView = this.app.views.Message,
                 $objDom = $('.j-incommingContactRequest[data-jid="' + jid + '"]'),
                 id = QB.chat.helpers.getIdFromNode(jid),
                 $chat = $('.l-chat[data-id="' + id + '"]'),
@@ -302,14 +301,6 @@ define([
             if ($chat.length) {
                 $chat.removeClass('is-request');
             }
-
-            // update roster
-            roster[id] = {
-                'subscription': 'from',
-                'ask': 'subscribe'
-            };
-
-            ContactList.saveRoster(roster);
 
             // update notConfirmed people list
             delete notConfirmed[id];
@@ -345,6 +336,13 @@ define([
                     });
                 });
             }
+
+            // update roster
+            roster[id] = {
+                'subscription': 'both',
+                'ask': null
+            };
+            ContactList.saveRoster(roster);
 
             // delete duplicate contact item
             li = $('.dialog-item[data-id="' + id + '"]');
@@ -452,11 +450,9 @@ define([
             var html,
                 contacts = ContactList.contacts,
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-                roster = ContactList.roster,
                 $dialogItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
                 $isCurrentItem = $('#recentList .list-item[data-id="' + id + '"]'),
                 recentList = $isCurrentItem.parents('ul.j-recentList'),
-                dialog_id = $isCurrentItem.data('dialog'),
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
             if ($dialogItem.length) {

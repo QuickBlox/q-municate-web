@@ -9,6 +9,24 @@
   right: 103px;
   padding: 0 8px;
 }
+.record_progress_container {
+  position: absolute;
+  left: 2px;
+  height: 39px;
+  width: 124px;
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 1;
+}
+.record_progress {
+  height: 100%;
+  width: 0;
+  background-color: #dedede;
+}
+.record_progress.is-active {
+  width: 100%;
+  transition: 30s linear;
+}
 .start_record,
 .start_record:hover,
 .start_record:focus {
@@ -16,16 +34,27 @@
   height: 16px;
   background-color: #f54a4a;
   border-radius: 100%;
+  z-index: 2;
 }
-.cancel_record,
-.cancel_record:hover,
-.cancel_record:focus {
-  width: 16px;
-  height: 16px;
-  background: url('../images/ic_cancel_record.svg') no-repeat center;
-}
+
 .start_record.is-active {
   border-radius: initial;
+}
+.cancel_record_container {
+  width: 16px;
+  height: 16px;
+  z-index: 2;
+}
+.cancel_record {
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: url('../images/ic_cancel_record.svg') no-repeat center;
+}
+.cancel_record.is-active,
+.cancel_record.is-active:hover,
+.cancel_record.is-active:focus {
+  display: block;
 }
 .record_title {
   height: 16px;
@@ -36,9 +65,15 @@
   color: #6b7988;
   text-align: center;
   line-height: 16px;
+  cursor: default;
+  z-index: 2;
+}
+.record_title.is-ready {
+  cursor: pointer;
 }
 .time_record {
   display: none;
+  z-index: 2;
 }
 .popover_record .coner {
   right: 53px;

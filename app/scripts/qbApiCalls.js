@@ -314,7 +314,7 @@ define([
 
         connectChat: function(jid, callback) {
             this.checkSession(function(res) {
-                var password = Session.token;
+                var password = '123123123';
 
                 QB.chat.connect({
                     jid: jid,

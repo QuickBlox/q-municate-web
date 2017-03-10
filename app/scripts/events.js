@@ -588,7 +588,6 @@ define([
 
             // delete contact
             $('body').on('click', '.deleteContact', function(event) {
-                event.preventDefault();
                 closePopup();
 
                 var $that = $(this),
@@ -600,6 +599,8 @@ define([
                 } else {
                     openPopup($('.j-popupDeleteContact'), id);
                 }
+
+                return false;
             });
 
             $('.j-deleteContactConfirm').on('click', function() {
@@ -1105,8 +1106,8 @@ define([
     function openPopup(objDom, id, dialog_id, isProfile) {
         // if it was the delete action
         if (id) {
-            objDom.attr('data-id', id);
-            objDom.find('#deleteContactConfirm').data('id', id);
+            objDom.data('id', id);
+            objDom.find('.j-deleteContactConfirm').data('id', id);
         }
         // if it was the leave action
         if (dialog_id) {

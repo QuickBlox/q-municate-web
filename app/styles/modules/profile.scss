@@ -89,9 +89,6 @@
     justify-content: center;
     width: 50px;
 }
-.btn_userDetails.ask_subscription {
-    padding: 0 70px;
-}
 .btn_userDetails img {
     vertical-align: text-bottom;
 }
@@ -200,15 +197,11 @@ input.userProfile-phone.without_M[type=text]:focus:not([readonly]) {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-.userProfile-field_phone {
-    padding: 0 0 0 20px;
-}
 .userProfile-edit:hover {
     background: url('../images/icon-pencil.svg') no-repeat 430px center, #f8f8f8;
 }
 .btn_userProfile_connect {
     position: absolute;
-    top: 14px;
     right: 20px;
 }
 .changePass-errors,

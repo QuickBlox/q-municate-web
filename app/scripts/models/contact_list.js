@@ -124,7 +124,6 @@ define([
         getResults: function(data) {
             var Contact = this.app.models.Contact,
                 User = this.app.models.User,
-                self = this,
                 contacts = [],
                 contact;
 

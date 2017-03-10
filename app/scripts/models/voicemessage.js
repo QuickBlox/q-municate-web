@@ -22,34 +22,17 @@ define([
         self = this;
         self.send = true;
         self.active = false;
+        self.blob = null;
         self.stream = null;
         self.timerID = undefined;
 
         self.ui = {
             chat: undefined,
-            timer: undefined,
+            title: undefined,
             control: undefined,
-            cancel: undefined
-        };
-
-        self._duration = {
-            timeMarkStart: 0,
-            timeMarkEnd: 0,
-
-            start: function() {
-                this.reset();
-                this.timeMarkStart = performance.now();
-            },
-            end: function() {
-                this.timeMarkEnd = performance.now();
-            },
-            get: function() {
-                return Math.floor( (this.timeMarkEnd - this.timeMarkStart) / 1000 );
-            },
-            reset: function() {
-                this.timeMarkStart = 0;
-                this.timeMarkEnd = 0;
-            }
+            cancel: undefined,
+            progress: undefined,
+            send: undefined
         };
 
         self.init();
@@ -67,20 +50,20 @@ define([
         _initRecorder: function() {
             var options = {
                 onstart: function onStart() {
-                    self._duration.start();
                     self._startTimer();
                 },
                 onstop: function onStop(blob) {
                     self._stopTimer();
-                    self.sendRecord(blob);
+                    self.blob = blob;
                 },
                 mimeType: 'audio/mp3'
             };
 
             self.ui.chat = document.querySelector('.j-workspace-wrap');
-            self.ui.timer = document.querySelector('.j-time_record');
+            self.ui.title = document.querySelector('.j-record_title');
             self.ui.control = document.querySelector('.j-start_record');
             self.ui.cancel = document.querySelector('.j-cancel_record');
+            self.ui.progress = document.querySelector('.record_progress');
 
             self.recorder = new QBMediaRecorder(options);
             self.active = true;
@@ -125,7 +108,7 @@ define([
             self.timerID = setInterval(function() {
                 ++step;
 
-                self.ui.timer.innerHTML = timerValue();
+                self.ui.title.innerHTML = timerValue();
 
                 if (step === QMCONFIG.MAX_RECORD_TIME) {
                     self.ui.control.click();
@@ -152,37 +135,64 @@ define([
         _initHandler: function () {
             self.ui.chat.addEventListener('click', function(event) {
                 var target = event.target,
-                    controlElClassList = self.ui.control.classList;
+                    controlElClassList = self.ui.control.classList,
+                    progressElClassList = self.ui.progress.classList,
+                    cancelElClassList = self.ui.cancel.classList,
+                    titleElClassList = self.ui.title.classList;
 
                 if (target === self.ui.control) {
                     if (controlElClassList.contains('is-active')) {
-                        controlElClassList.remove('is-active');
                         self.stopRecord();
-                        self.ui.timer.innerHTML = 'RECORD';
+                        controlElClassList.remove('is-active');
+                        progressElClassList.remove('is-active');
+                        titleElClassList.add('is-ready');
+                        self.ui.title.innerHTML = 'SEND';
+                        self.ui.send = self.ui.title;
                     } else {
-                        controlElClassList.add('is-active');
                         self.startRecord();
-                        self.ui.timer.innerHTML = '00:00';
+                        controlElClassList.add('is-active');
+                        progressElClassList.add('is-active');
+                        cancelElClassList.add('is-active');
+                        self.ui.title.innerHTML = '00:00';
                     }
                 }
 
                 if (target === self.ui.cancel) {
-                    controlElClassList.remove('is-active');
                     self.cancelRecord();
-                    self.ui.timer.innerHTML = 'RECORD';
+                    controlElClassList.remove('is-active');
+                    progressElClassList.remove('is-active');
+                    cancelElClassList.remove('is-active');
+                    titleElClassList.remove('is-ready');
+                    self.ui.title.innerHTML = 'RECORD';
+                }
+
+                if ( (target === self.ui.send) && self.blob ) {
+                    self.sendRecord();
+                    cancelElClassList.remove('is-active');
+                    titleElClassList.remove('is-ready');
+                    self.ui.title.innerHTML = 'RECORD';
+                    self.ui.send = undefined;
                 }
 
                 return false;
             });
         },
 
+        resetRecord: function() {
+            self.cancelRecord();
+            self.ui.control.classList.remove('is-active');
+            self.ui.progress.classList.remove('is-active');
+            self.ui.cancel.classList.remove('is-active');
+            self.ui.title.classList.remove('is-ready');
+            self.ui.title.innerHTML = 'RECORD';
+        },
+
         startRecord: function() {
-            self.send = true;
+            self.blob = null;
             self._startStream();
         },
 
         stopRecord: function() {
-            self._duration.end();
             self.recorder.stop();
             self._stopStream();
             self.stream = null;
@@ -190,26 +200,25 @@ define([
 
         cancelRecord: function() {
             if (self.stream) {
-                self._duration.reset();
-                self.send = false;
+                self._stopStream();
                 self.stopRecord();
             }
+            self.blob = null;
         },
 
-        sendRecord: function(blob) {
-            if (!self.send) {
-                self.send = true;
+        sendRecord: function() {
+            if (!self.blob) {
                 return;
             }
 
-            var recordedAudioFile = new File([blob], 'Voicemessage', {
-                type: blob.type,
+            var recordedAudioFile = new File([self.blob], 'Voicemessage', {
+                type: self.blob.type,
                 lastModified: Date.now()
             });
 
-            recordedAudioFile.duration = self._duration.get();
-
             self.app.views.Attach.changeInput(null, recordedAudioFile);
+
+            self.blob = null;
         }
     };
 

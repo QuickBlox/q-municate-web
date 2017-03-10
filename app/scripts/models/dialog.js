@@ -89,7 +89,7 @@ define([
 
                 // send notification about subscribe
                 if (isClick) {
-                    QB.chat.send(jid, {
+                    QB.chat.send(id, {
                         type: 'chat',
                         body: 'Contact request',
                         extension: {
