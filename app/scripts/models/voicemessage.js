@@ -63,7 +63,7 @@ define([
             self.ui.title = document.querySelector('.j-record_title');
             self.ui.control = document.querySelector('.j-start_record');
             self.ui.cancel = document.querySelector('.j-cancel_record');
-            self.ui.progress = document.querySelector('.record_progress');
+            self.ui.progress = document.querySelector('.j-record_progress');
 
             self.recorder = new QBMediaRecorder(options);
             self.active = true;
@@ -200,7 +200,6 @@ define([
 
         cancelRecord: function() {
             if (self.stream) {
-                self._stopStream();
                 self.stopRecord();
             }
             self.blob = null;
