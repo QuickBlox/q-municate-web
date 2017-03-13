@@ -20,8 +20,8 @@ define([
         this.app = app;
 
         self = this;
-        self.send = true;
         self.active = false;
+        self.supported = false;
         self.blob = null;
         self.stream = null;
         self.timerID = undefined;
@@ -31,8 +31,7 @@ define([
             title: undefined,
             control: undefined,
             cancel: undefined,
-            progress: undefined,
-            send: undefined
+            progress: undefined
         };
 
         self.init();
@@ -42,8 +41,9 @@ define([
         init: function() {
             if (QBMediaRecorder.isAvailable()) {
                 self._initRecorder();
+                self.supported = true;
             } else {
-                self._blockRecorder();
+                self.supported = false;
             }
         },
 
@@ -64,27 +64,33 @@ define([
             self.ui.control = document.querySelector('.j-start_record');
             self.ui.cancel = document.querySelector('.j-cancel_record');
             self.ui.progress = document.querySelector('.j-record_progress');
-
             self.recorder = new QBMediaRecorder(options);
-            self.active = true;
-
             self._initHandler();
 
             Helpers.log('Recorder\'s ready to use');
         },
 
-        _blockRecorder: function() {
-            self.active = false;
+        blockRecorder: function() {
+            var recorder = document.querySelector('.j-btn_audio_record');
+
+            if ( recorder ) {
+                recorder.classList.remove('is-active');
+                recorder.disabled = true;
+                recorder.style.opacity = 0.4;
+            }
+
             Helpers.log('Recorder isn\'t supported is this browser');
         },
 
-        _startStream: function () {
+        _startStream: function (callback) {
             navigator.mediaDevices.getUserMedia({
                 audio: true
             }).then(function(stream) {
                 self.stream = stream;
-                self.recorder.start(self.stream);
+                callback();
             }).catch(function(err) {
+                self.blockRecorder();
+                self.resetRecord();
                 console.error(err);
             });
         },
@@ -140,12 +146,12 @@ define([
                     cancelElClassList = self.ui.cancel.classList,
                     titleElClassList = self.ui.title.classList;
 
-                if (target === self.ui.control) {
-                    if (controlElClassList.contains('is-active')) {
+                if ( target === self.ui.control ) {
+                    if ( controlElClassList.contains('is-active') ) {
                         self.stopRecord();
                         controlElClassList.remove('is-active');
                         progressElClassList.remove('is-active');
-                        titleElClassList.add('is-ready');
+                        titleElClassList.add('is-ready-to-send');
                         self.ui.title.innerHTML = 'SEND';
                         self.ui.send = self.ui.title;
                     } else {
@@ -157,39 +163,61 @@ define([
                     }
                 }
 
-                if (target === self.ui.cancel) {
+                if ( target === self.ui.cancel ) {
                     self.cancelRecord();
                     controlElClassList.remove('is-active');
                     progressElClassList.remove('is-active');
                     cancelElClassList.remove('is-active');
-                    titleElClassList.remove('is-ready');
+                    titleElClassList.remove('is-ready-to-send');
                     self.ui.title.innerHTML = 'RECORD';
                 }
 
-                if ( (target === self.ui.send) && self.blob ) {
-                    self.sendRecord();
-                    cancelElClassList.remove('is-active');
-                    titleElClassList.remove('is-ready');
-                    self.ui.title.innerHTML = 'RECORD';
-                    self.ui.send = undefined;
+                if (target === self.ui.title) {
+                    if ( titleElClassList.contains('is-ready-to-send') && self.blob ) {
+                        self.sendRecord();
+                        self.resetRecord();
+                    } else {
+                        self.ui.control.click();
+                    }
                 }
 
                 return false;
             });
         },
 
+        _toggleActiveState: function(bool) {
+            var buttons = document.querySelectorAll('.j-footer_btn'),
+                textarea = document.querySelector('.textarea'),
+                selectable = !bool,
+                opacityLevel = bool ? 0.4 : 1;
+
+            self.active = bool;
+
+            textarea.setAttribute('contenteditable', selectable);
+            buttons.forEach(function(elem) {
+                elem.disabled = bool;
+                elem.style.opacity = opacityLevel;
+            });
+        },
+
         resetRecord: function() {
+            document.querySelector('.j-popover_record').classList.remove('is-active');
+
             self.cancelRecord();
             self.ui.control.classList.remove('is-active');
             self.ui.progress.classList.remove('is-active');
             self.ui.cancel.classList.remove('is-active');
-            self.ui.title.classList.remove('is-ready');
+            self.ui.title.classList.remove('is-ready-to-send');
             self.ui.title.innerHTML = 'RECORD';
+            self._toggleActiveState(false);
         },
 
         startRecord: function() {
             self.blob = null;
-            self._startStream();
+            self._startStream(function() {
+                self.recorder.start(self.stream);
+                self._toggleActiveState(true);
+            });
         },
 
         stopRecord: function() {
@@ -203,6 +231,7 @@ define([
                 self.stopRecord();
             }
             self.blob = null;
+            self._toggleActiveState(false);
         },
 
         sendRecord: function() {
@@ -216,8 +245,8 @@ define([
             });
 
             self.app.views.Attach.changeInput(null, recordedAudioFile);
-
             self.blob = null;
+            self._toggleActiveState(false);
         }
     };
 
