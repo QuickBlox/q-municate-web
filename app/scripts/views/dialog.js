@@ -30,7 +30,14 @@ define([
 ) {
 
     var self;
-    var User, Dialog, Message, ContactList, Listeners;
+
+    var User,
+        Dialog,
+        Message,
+        ContactList,
+        VoiceMessage,
+        Listeners;
+
     var unreadDialogs = {};
 
     var TITLE_NAME = 'Q-municate',
@@ -45,6 +52,7 @@ define([
         Dialog = this.app.models.Dialog;
         Message = this.app.models.Message;
         ContactList = this.app.models.ContactList;
+        VoiceMessage = this.app.models.VoiceMessage;
         Listeners = this.app.listeners;
     }
 
@@ -439,6 +447,9 @@ define([
             localStorage.removeItem(readBadge);
             localStorage.setItem(readBadge, dialog_id);
 
+            // reset recorder state
+            VoiceMessage.resetRecord();
+
             function buildChat() {
                 new Entities.Models.Chat({
                     'occupantsIds': occupants_ids,
@@ -472,6 +483,11 @@ define([
 
                 if (dialog.get('type') === 3 && (!status || status.subscription === 'none')) {
                     $('.l-chat:visible').addClass('is-request');
+                }
+
+                // block recorder if isn't supported
+                if (!VoiceMessage.supported) {
+                    VoiceMessage.blockRecorder();
                 }
             }
         },

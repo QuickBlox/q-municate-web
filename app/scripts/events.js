@@ -571,7 +571,6 @@ define([
             });
 
             $workspace.on('click', '.j-btn_audio_record', function() {
-                // if (VoiceMessage.supported) {
                 var $self = $(this),
                     bool = $self.is('.is-active');
 
@@ -582,6 +581,7 @@ define([
                     $('.j-popover_record').addClass('is-active');
                 }
             });
+
             /* popups
             ----------------------------------------------------- */
             $('.header-links-item').on('click', '#logout', function(event) {
@@ -590,7 +590,7 @@ define([
             });
 
             // delete contact
-            $('body').on('click', '.deleteContact', function(event) {
+            $('body').on('click', '.deleteContact', function() {
                 closePopup();
 
                 var $that = $(this),
@@ -986,10 +986,16 @@ define([
             $(document).on('keypress', function(event) {
                 if ( event.keyCode === 13 && $('.j-popover_record').hasClass('is-active') ) {
                     $('.j-record_title').click();
-                } 
+                }
             });
 
-            $workspace.on('submit', '.j-message', function(event) {
+            $workspace.on('click', '.j-message', function() {
+                if ( $('.j-popover_record').hasClass('is-active') ) {
+                    removePopover();
+                }
+            });
+
+            $workspace.on('submit', '.j-message', function() {
                 return false;
             });
 
@@ -1029,6 +1035,8 @@ define([
                 }
 
                 $selected.removeClass('is-selected');
+
+                VoiceMessage.resetRecord();
 
                 return false;
             });
@@ -1080,10 +1088,6 @@ define([
                 '.j-btn_audio_record *',
             googleImage = objDom.context.src && objDom.context.src.indexOf('/maps.gstatic.com/mapfiles/api-3/images/mapcnt6.png') || null;
 
-        if ($('.j-start_record').hasClass('is-active')) {
-            return false;
-        }
-
         if (objDom.is(selectors) || e.which === 3 || googleImage === 7) {
             return false;
         } else {
@@ -1103,16 +1107,17 @@ define([
     function removePopover() {
         var $openMap = $('.j-open_map');
 
+        if ( $('.j-start_record').hasClass('is-active') ||
+             $('.j-start_record').hasClass('is-send') ) {
+            return false;
+        }
+
         $('.is-contextmenu').removeClass('is-contextmenu');
         $('.is-active').removeClass('is-active');
         $('.popover').remove();
 
         if ($openMap.length) {
             $openMap.remove();
-        }
-
-        if ($('#mCSB_8_container').is(':visible')) {
-            $('#mCSB_8_container')[0].style.paddingBottom = '0';
         }
     }
 

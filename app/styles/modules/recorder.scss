@@ -39,9 +39,14 @@
   border-radius: 100%;
   z-index: 2;
 }
-
 .start_record.is-active {
   border-radius: initial;
+}
+.start_record.is-send {
+  width: 20px;
+  height: 20px;
+  background: url('../images/ic_send_record.svg') no-repeat center;
+  background-size: contain;
 }
 .cancel_record_container {
   width: 20px;
@@ -62,7 +67,7 @@
 }
 .record_title {
   height: 16px;
-  width: 65px;
+  width: 150px;
   font-family: Roboto, sans-serif;
   font-size: 15px;
   font-weight: 500;

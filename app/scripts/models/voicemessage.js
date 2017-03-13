@@ -40,8 +40,8 @@ define([
     VoiceMessage.prototype = {
         init: function() {
             if (QBMediaRecorder.isAvailable()) {
-                self._initRecorder();
                 self.supported = true;
+                self._initRecorder();
             } else {
                 self.supported = false;
             }
@@ -64,7 +64,9 @@ define([
             self.ui.control = document.querySelector('.j-start_record');
             self.ui.cancel = document.querySelector('.j-cancel_record');
             self.ui.progress = document.querySelector('.j-record_progress');
+
             self.recorder = new QBMediaRecorder(options);
+
             self._initHandler();
 
             Helpers.log('Recorder\'s ready to use');
@@ -73,10 +75,11 @@ define([
         blockRecorder: function() {
             var recorder = document.querySelector('.j-btn_audio_record');
 
-            if ( recorder ) {
+            if (recorder) {
                 recorder.classList.remove('is-active');
                 recorder.disabled = true;
                 recorder.style.opacity = 0.4;
+                recorder.setAttribute('data-balloon', 'Recorder unavailable');
             }
 
             Helpers.log('Recorder isn\'t supported is this browser');
@@ -89,7 +92,6 @@ define([
                 self.stream = stream;
                 callback();
             }).catch(function(err) {
-                self.blockRecorder();
                 self.resetRecord();
                 console.error(err);
             });
@@ -143,42 +145,47 @@ define([
                 var target = event.target,
                     controlElClassList = self.ui.control.classList,
                     progressElClassList = self.ui.progress.classList,
-                    cancelElClassList = self.ui.cancel.classList,
-                    titleElClassList = self.ui.title.classList;
+                    cancelElClassList = self.ui.cancel.classList;
 
-                if ( target === self.ui.control ) {
-                    if ( controlElClassList.contains('is-active') ) {
+                // recorder's controls
+                if ( target === self.ui.control || target === self.ui.title ) {
+                    // send recorded voicemessage as attachment
+                    if ( controlElClassList.contains('is-send') && self.blob ) {
+                        self.sendRecord();
+                        self.resetRecord();
+                    // stop recorder and prepare to sending
+                    } else if ( controlElClassList.contains('is-active') ) {
                         self.stopRecord();
-                        controlElClassList.remove('is-active');
+
                         progressElClassList.remove('is-active');
-                        titleElClassList.add('is-ready-to-send');
+                        controlElClassList.remove('is-active');
+                        controlElClassList.add('is-send');
                         self.ui.title.innerHTML = 'SEND';
+
                         self.ui.send = self.ui.title;
+                    // start recorder
                     } else {
                         self.startRecord();
+
+                        controlElClassList.remove('is-send');
                         controlElClassList.add('is-active');
                         progressElClassList.add('is-active');
                         cancelElClassList.add('is-active');
+
                         self.ui.title.innerHTML = '00:00';
                     }
                 }
 
+                // cancel recording
                 if ( target === self.ui.cancel ) {
                     self.cancelRecord();
+
                     controlElClassList.remove('is-active');
+                    controlElClassList.remove('is-send');
                     progressElClassList.remove('is-active');
                     cancelElClassList.remove('is-active');
-                    titleElClassList.remove('is-ready-to-send');
-                    self.ui.title.innerHTML = 'RECORD';
-                }
 
-                if (target === self.ui.title) {
-                    if ( titleElClassList.contains('is-ready-to-send') && self.blob ) {
-                        self.sendRecord();
-                        self.resetRecord();
-                    } else {
-                        self.ui.control.click();
-                    }
+                    self.ui.title.innerHTML = 'RECORD';
                 }
 
                 return false;
@@ -187,13 +194,14 @@ define([
 
         _toggleActiveState: function(bool) {
             var buttons = document.querySelectorAll('.j-footer_btn'),
-                textarea = document.querySelector('.textarea'),
-                selectable = !bool,
+                textarea = document.querySelector('.j-textarea'),
+                contenteditable = !bool,
                 opacityLevel = bool ? 0.4 : 1;
 
+            // send recording state
             self.active = bool;
-
-            textarea.setAttribute('contenteditable', selectable);
+            // disable footer buttons
+            textarea.setAttribute('contenteditable', contenteditable);
             buttons.forEach(function(elem) {
                 elem.disabled = bool;
                 elem.style.opacity = opacityLevel;
@@ -201,15 +209,19 @@ define([
         },
 
         resetRecord: function() {
+            // close recorder's popover
             document.querySelector('.j-popover_record').classList.remove('is-active');
             document.querySelector('.j-btn_audio_record').classList.remove('is-active');
 
-            self.cancelRecord();
+            // reset recorder's elements to start position
+            self.ui.control.classList.remove('is-send');
             self.ui.control.classList.remove('is-active');
             self.ui.progress.classList.remove('is-active');
             self.ui.cancel.classList.remove('is-active');
-            self.ui.title.classList.remove('is-ready-to-send');
             self.ui.title.innerHTML = 'RECORD';
+
+            // cancel recording and change state
+            self.cancelRecord();
             self._toggleActiveState(false);
         },
 
@@ -240,12 +252,15 @@ define([
                 return;
             }
 
+            // prepare file from blob object
             var recordedAudioFile = new File([self.blob], 'Voicemessage', {
                 type: self.blob.type,
                 lastModified: Date.now()
             });
 
+            // send file as attachment
             self.app.views.Attach.changeInput(null, recordedAudioFile);
+
             self.blob = null;
             self._toggleActiveState(false);
         }
