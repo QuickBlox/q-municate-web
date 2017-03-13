@@ -202,6 +202,7 @@ define([
 
         resetRecord: function() {
             document.querySelector('.j-popover_record').classList.remove('is-active');
+            document.querySelector('.j-btn_audio_record').classList.remove('is-active');
 
             self.cancelRecord();
             self.ui.control.classList.remove('is-active');
