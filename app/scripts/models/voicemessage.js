@@ -85,6 +85,7 @@ define([
                 self.stream = stream;
                 self.recorder.start(self.stream);
             }).catch(function(err) {
+                self.resetRecord();
                 console.error(err);
             });
         },
