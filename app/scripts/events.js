@@ -34,7 +34,8 @@ define([
         MessageView,
         AttachView,
         VideoChatView,
-        SettingsView;
+        SettingsView,
+        VoiceMessage;
 
     var chatName,
         editedChatName,
@@ -61,6 +62,7 @@ define([
         AttachView = this.app.views.Attach;
         VideoChatView = this.app.views.VideoChat;
         SettingsView = this.app.views.Settings;
+        VoiceMessage = this.app.models.VoiceMessage;
     }
 
     Events.prototype = {
@@ -569,6 +571,7 @@ define([
             });
 
             $workspace.on('click', '.j-btn_audio_record', function() {
+                // if (VoiceMessage.supported) {
                 var $self = $(this),
                     bool = $self.is('.is-active');
 
@@ -980,6 +983,12 @@ define([
                 }
             });
 
+            $(document).on('keypress', function(event) {
+                if ( event.keyCode === 13 && $('.j-popover_record').hasClass('is-active') ) {
+                    $('.j-record_title').click();
+                } 
+            });
+
             $workspace.on('submit', '.j-message', function(event) {
                 return false;
             });
@@ -1063,13 +1072,17 @@ define([
     function clickBehaviour(e) {
         var objDom = $(e.target),
             selectors = '#profile, #profile *, .occupant, .occupant *, ' +
-            '.j-btn_input_smile, .j-btn_input_smile *, .textarea, ' +
-            '.textarea *, .j-popover_smile, .j-popover_smile *, ' +
-            '.j-popover_gmap, .j-popover_gmap *, .j-btn_input_location, ' +
-            '.j-btn_input_location *, ' +
-            '.j-popover_record, .j-popover_record *, .j-btn_audio_record, ' +
-            '.j-btn_audio_record *',
+                '.j-btn_input_smile, .j-btn_input_smile *, .textarea, ' +
+                '.textarea *, .j-popover_smile, .j-popover_smile *, ' +
+                '.j-popover_gmap, .j-popover_gmap *, .j-btn_input_location, ' +
+                '.j-btn_input_location *, ' +
+                '.j-popover_record, .j-popover_record *, .j-btn_audio_record, ' +
+                '.j-btn_audio_record *',
             googleImage = objDom.context.src && objDom.context.src.indexOf('/maps.gstatic.com/mapfiles/api-3/images/mapcnt6.png') || null;
+
+        if ($('.j-start_record').hasClass('is-active')) {
+            return false;
+        }
 
         if (objDom.is(selectors) || e.which === 3 || googleImage === 7) {
             return false;
