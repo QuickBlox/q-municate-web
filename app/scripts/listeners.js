@@ -112,7 +112,7 @@ define([
                         element.pause();
                     }
                 });
-            }
+            };
         },
 
         listenToPsTotalEnd: function(onOrOff) {
