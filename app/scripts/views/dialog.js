@@ -477,6 +477,7 @@ define([
                         }
                     }
                     html += '</div>';
+
                 }
 
                 $('.l-chat[data-dialog="' + dialog_id + '"] .j-chatOccupants').append($(html));

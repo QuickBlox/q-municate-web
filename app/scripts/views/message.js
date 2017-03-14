@@ -30,10 +30,19 @@ define([
     Entities
 ) {
 
-    var User, Message, ContactList, Dialog, Settings;
-    var clearTyping, typingList = []; // for typing statuses
-    var urlCache = {};
     var self;
+
+    var User,
+        Message,
+        ContactList,
+        Dialog,
+        SyncTabs,
+        Settings;
+
+    var clearTyping,
+        typingList = []; // for typing statuses
+
+    var urlCache = {};
 
     function MessageView(app) {
         this.app = app;
@@ -60,10 +69,13 @@ define([
         },
 
         addItem: function(message, isCallback, isMessageListener) {
-            var ContactListMsg = this.app.models.ContactList,
+            var Contact = this.app.models.Contact,
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
                 isBottom = Helpers.isBeginOfChat(),
-                isOnline = message.online;
+                isOnline = message.online,
+                senderID = message.sender_id,
+                contacts = ContactList.contacts,
+                contact;
 
             if (isCallback && isMessageListener) {
                 updateDialogItem(message);
@@ -77,11 +89,18 @@ define([
                 return true;
             }
 
-            this.checkSenderId(message.sender_id, function() {
+            if (senderID === User.contact.id) {
+                contact = User.contact;
+            } else {
+                if (!contacts[senderID]) {
+                    contacts[senderID] = Contact.create( { 'id': senderID } );
+                }
 
-                var contacts = ContactListMsg.contacts,
-                    contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
-                    type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
+                contact = contacts[senderID];
+            }
+
+            this.checkSenderId(senderID, function() {
+                var type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
                     attachType = message.attachment && message.attachment['content-type'] || message.attachment && message.attachment.type || null,
                     attachUrl = message.attachment && (QB.content.privateUrl(message.attachment.id) || message.attachment.url || null),
                     geolocation = (message.latitude && message.longitude) ? {
@@ -100,6 +119,7 @@ define([
                     attachParams,
                     status,
                     html;
+
 
                 if (attachType) {
                     attachParams = {
@@ -384,13 +404,17 @@ define([
                     });
                 }
 
+                if (attachParams) {
+                    self.updateMediaElement(attachParams);
+                }
+
                 if ((message.sender_id == User.contact.id) && (message.delivered_ids.length > 0)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'delivered', false);
                 }
+
                 if ((message.sender_id == User.contact.id) && (message.read_ids.length > 1)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'displayed', false);
                 }
-
             });
 
         },
@@ -813,6 +837,16 @@ define([
         onReadStatus: function(messageId, dialogId, userId) {
             self.addStatusMessages(messageId, dialogId, 'displayed', true);
             updatedMessageModel(messageId, dialogId, 'displayed');
+        },
+
+        updateMediaElement: function(params) {
+            var Listeners = this.app.listeners;
+
+            if (params.type && params.type.indexOf('audio') > -1) {
+                Listeners.listenToMediaElement('#audio_' + params.id);
+            } else if (params.type && params.type.indexOf('video') > -1) {
+                Listeners.listenToMediaElement('#video_' + params.id);
+            }
         }
 
     };

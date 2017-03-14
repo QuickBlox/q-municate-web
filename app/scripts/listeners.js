@@ -104,6 +104,17 @@ define([
             }
         },
 
+        listenToMediaElement: function(selector) {
+            document.querySelector(selector).onplay = function(event) {
+                // pause all media sources except started one
+                document.querySelectorAll('.audio_player, .video_player').forEach(function(element) {
+                    if ( (element !== event.target) && !element.paused ) {
+                        element.pause();
+                    }
+                });
+            }
+        },
+
         listenToPsTotalEnd: function(onOrOff) {
             var scroll = document.querySelector('.j-scrollbar_aside');
 
