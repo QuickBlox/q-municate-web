@@ -191,9 +191,11 @@ define([
                 attach = Attach.create(blob, metadata);
             }
 
+            var text = (attach.type === 'location') ? 'Location' : (attach.name === 'Voice message') ? 'Voice message' : 'Attachment';
+
             msg = {
                 'type': type,
-                'body': attach.type === 'location' ? 'Location' : 'Attachment',
+                'body': text,
                 'extension': {
                     'save_to_history': 1,
                     'dialog_id': dialog_id,

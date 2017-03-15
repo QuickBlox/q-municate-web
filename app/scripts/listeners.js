@@ -108,8 +108,9 @@ define([
             document.querySelector(selector).onplay = function(event) {
                 // pause all media sources except started one
                 document.querySelectorAll('.audio_player, .video_player').forEach(function(element) {
-                    if ( (element !== event.target) && !element.paused ) {
+                    if (element !== event.target) {
                         element.pause();
+                        element.currentTime = 0;
                     }
                 });
             };

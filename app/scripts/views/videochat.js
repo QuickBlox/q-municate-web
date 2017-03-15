@@ -75,6 +75,9 @@ define([
                 QMHtml.VideoChat.noWebRTC();
             }
 
+            // remove contextmenu after start call
+            $('.is-contextmenu').removeClass('is-contextmenu');
+
             return false;
         });
 

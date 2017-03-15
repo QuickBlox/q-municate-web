@@ -82,5 +82,20 @@
   z-index: 2;
 }
 .popover_record .coner {
-  right: 142px;
+  right: 140px;
+}
+.btn_audio_record[data-balloon-length=medium]:after {
+  width: 170px;
+}
+.btn_audio_record {
+  position: relative;
+  width: 20px;
+  background-size: contain;
+  background: url('../images/ic_mic.svg') 50% no-repeat;
+}
+.btn_audio_record.is-active {
+  background: url('../images/ic_mic_active.svg') 50% no-repeat;
+}
+.btn_audio_record.is-unavailable {
+  background: url('../images/ic_mic_off.svg') 50% no-repeat;
 }

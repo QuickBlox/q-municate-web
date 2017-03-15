@@ -223,15 +223,6 @@ button.btn.btn_search:hover {
 .btn_sendlocation.btn_active {
     background: url('../images/ic-active-location.svg') 50% no-repeat;
 }
-.btn_audio_record {
-    position: relative;
-    width: 16px;
-    background-size: contain;
-    background: url('../images/ic_mic.svg') 50% no-repeat;
-}
-.btn_audio_record.is-active {
-    background: url('../images/ic_mic_active.svg') 50% no-repeat;
-}
 .btn_input_smile {
     position: relative;
     width: 20px;

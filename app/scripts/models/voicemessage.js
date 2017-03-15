@@ -72,14 +72,16 @@ define([
             Helpers.log('Recorder\'s ready to use');
         },
 
-        blockRecorder: function() {
-            var recorder = document.querySelector('.j-btn_audio_record');
+        blockRecorder: function(message) {
+            var recorder = document.querySelector('.j-btn_audio_record'),
+                error = message ? ' (microphone wasn\'t found)' : '';
 
             if (recorder) {
-                recorder.classList.remove('is-active');
                 recorder.disabled = true;
-                recorder.style.opacity = 0.4;
-                recorder.setAttribute('data-balloon', 'Recorder unavailable');
+                recorder.classList.remove('is-active');
+                recorder.classList.add('is-unavailable');
+                recorder.setAttribute('data-balloon-length', 'medium');
+                recorder.setAttribute('data-balloon', 'Recorder unavailable' + error);
             }
 
             Helpers.log('Recorder isn\'t supported is this browser');
@@ -93,6 +95,7 @@ define([
                 callback();
             }).catch(function(err) {
                 self.resetRecord();
+                self.blockRecorder(true);
                 console.error(err);
             });
         },
@@ -209,9 +212,14 @@ define([
         },
 
         resetRecord: function() {
+            var popover = document.querySelector('.j-popover_record'),
+                button = document.querySelector('.j-btn_audio_record');
+
             // close recorder's popover
-            document.querySelector('.j-popover_record').classList.remove('is-active');
-            document.querySelector('.j-btn_audio_record').classList.remove('is-active');
+            popover.classList.remove('is-active');
+            button.classList.remove('is-active');
+            button.setAttribute('data-balloon', 'Record audio');
+            button.removeAttribute('data-balloon-length');
 
             // reset recorder's elements to start position
             self.ui.control.classList.remove('is-send');
@@ -253,7 +261,7 @@ define([
             }
 
             // prepare file from blob object
-            var recordedAudioFile = new File([self.blob], 'Voicemessage', {
+            var recordedAudioFile = new File([self.blob], 'Voice message', {
                 type: self.blob.type,
                 lastModified: Date.now()
             });

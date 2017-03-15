@@ -349,7 +349,7 @@ define([
                 ContactListView.addContactsToChat($self, 'add', dialog_id);
             });
 
-            $workspace.on('click', '.groupTitle .leaveChat, .groupTitle .avatar, .groupTitle .name_chat', function(event) {
+            $workspace.on('click', '.groupTitle .leaveChat, .groupTitle .avatar', function(event) {
                 event.stopPropagation();
             });
 
@@ -359,6 +359,8 @@ define([
                 var $chat = $('.l-chat:visible');
                 $chat.find('.triangle:visible').addClass('is-hover')
                     .siblings('.pencil').removeClass('is-hidden');
+
+                return false;
             });
 
             $workspace.on('mouseleave', '.groupTitle .name_chat', function() {
@@ -368,6 +370,8 @@ define([
                     $chat.find('.triangle.is-hover').removeClass('is-hover')
                         .siblings('.pencil').addClass('is-hidden');
                 }
+
+                return false;
             });
 
             $(document.body).on('click', function() {
@@ -1097,14 +1101,15 @@ define([
     function removePopover() {
         var $openMap = $('.j-open_map');
 
+        $('.is-contextmenu').removeClass('is-contextmenu');
+        $('.popover').remove();
+
         if ( $('.j-start_record').hasClass('is-active') ||
              $('.j-start_record').hasClass('is-send') ) {
             return false;
         }
 
-        $('.is-contextmenu').removeClass('is-contextmenu');
         $('.is-active').removeClass('is-active');
-        $('.popover').remove();
 
         if ($openMap.length) {
             $openMap.remove();
