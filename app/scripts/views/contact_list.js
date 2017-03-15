@@ -278,7 +278,7 @@ define([
 
         sendConfirm: function(jid, isClick) {
             var DialogView = this.app.views.Dialog,
-                $objDom = $('.j-incommingContactRequest[data-jid="' + jid + '"]'),
+                $objDom = $('.j-incomingContactRequest[data-jid="' + jid + '"]'),
                 id = QB.chat.helpers.getIdFromNode(jid),
                 $chat = $('.l-chat[data-id="' + id + '"]'),
                 list = $objDom.parents('ul.j-requestsList'),
@@ -367,7 +367,7 @@ define([
 
         sendReject: function(jid, isClick) {
             var id = QB.chat.helpers.getIdFromNode(jid),
-                $objDom = $('.j-incommingContactRequest[data-jid="' + jid + '"]'),
+                $objDom = $('.j-incomingContactRequest[data-jid="' + jid + '"]'),
                 list = $objDom.parents('ul.j-requestsList'),
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
@@ -453,7 +453,9 @@ define([
                 $dialogItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
                 $isCurrentItem = $('#recentList .list-item[data-id="' + id + '"]'),
                 recentList = $isCurrentItem.parents('ul.j-recentList'),
-                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
+                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+                $requestList = $('.j-requestsList'),
+                duplicate;
 
             if ($dialogItem.length) {
                 return true;
@@ -464,7 +466,9 @@ define([
             ContactList.saveNotConfirmed(notConfirmed);
 
             ContactList.add([id], null, function() {
-                html = '<li class="list-item j-incommingContactRequest" data-jid="' + jid + '">';
+                duplicate = $requestList.find('.j-incomingContactRequest[data-jid="' + jid + '"]').length;
+
+                html = '<li class="list-item j-incomingContactRequest" data-jid="' + jid + '">';
                 html += '<a class="contact l-flexbox" href="#">';
                 html += '<div class="l-flexbox_inline">';
                 html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + (typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '') + ')" data-id="' + id + '"></div>';
@@ -474,7 +478,11 @@ define([
                 html += '<button class="request-button request-button_ok j-requestConfirm">&#10003;</button>';
                 html += '</div></a></li>';
 
-                $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
+                if (!duplicate) {
+                    $requestList.prepend(html);
+                }
+
+                $('#requestsList').removeClass('is-hidden');
                 $('#emptyList').addClass('is-hidden');
             }, 'subscribe');
 

@@ -549,7 +549,7 @@ define([
                 new_ids = message.extension && message.extension.added_occupant_ids,
                 occupants_ids = message.extension && message.extension.current_occupant_ids,
                 dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
-                contactRequest = $('.j-incommingContactRequest[data-jid="' + makeJid(id) + '"]'),
+                contactRequest = $('.j-incomingContactRequest[data-jid="' + makeJid(id) + '"]'),
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden') || !$chat.length,
                 isExistent = dialogItem.length ? true : (contactRequest.length ? true : false),

@@ -548,13 +548,13 @@ define([
             }
         },
 
-        deleteChat: function(dialogParam, sameUser, justLeave) {
+        deleteChat: function(dialogParam, sameUser) {
             var dialogs = Entities.Collections.dialogs,
                 dialogId = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
                 dialog = dialogs.get(dialogId);
 
             if (!sameUser) {
-                Dialog.deleteChat(dialog, justLeave);
+                Dialog.deleteChat(dialog);
             }
 
             self.removeDialogItem(dialogId);

@@ -635,24 +635,6 @@ define([
                 DialogView.deleteChat($(this));
             });
 
-            // leave group chat
-            $('.list, .l-workspace-wrap').on('click', '.leaveChat', function() {
-                closePopup();
-
-                var $self = $(this),
-                    parent = $self.parents('.presence-listener')[0] ? $self.parents('.presence-listener') : $self.parents('.is-group'),
-                    dialog_id = parent.data('dialog');
-
-                openPopup($('.j-popupLeaveChat'), null, dialog_id);
-
-                return false;
-            });
-
-            $('.j-leaveChatConfirm').on('click', function() {
-                Helpers.log('Leave chat');
-                DialogView.deleteChat($(this), null, true);
-            });
-
             $('#logoutConfirm').on('click', function() {
                 localStorage.setItem('QM.' + User.contact.id + '_logOut', true);
                 UserView.logout();
@@ -816,14 +798,14 @@ define([
             });
 
             $('.list').on('click', '.j-requestConfirm', function() {
-                var jid = $(this).parents('.j-incommingContactRequest').data('jid');
+                var jid = $(this).parents('.j-incomingContactRequest').data('jid');
 
                 ContactListView.sendConfirm(jid, true);
                 Helpers.log('send confirm');
             });
 
             $('.list').on('click', '.j-requestCancel', function() {
-                var jid = $(this).parents('.j-incommingContactRequest').data('jid');
+                var jid = $(this).parents('.j-incomingContactRequest').data('jid');
 
                 ContactListView.sendReject(jid, true);
                 Helpers.log('send reject');
@@ -1122,9 +1104,7 @@ define([
             objDom.data('id', id);
             objDom.find('.j-deleteContactConfirm').data('id', id);
         }
-        // if it was the leave action
         if (dialog_id) {
-            objDom.find('.j-leaveChatConfirm').data('dialog', dialog_id);
             objDom.find('.j-deleteChatConfirm').data('dialog', dialog_id);
         }
         if (isProfile) {

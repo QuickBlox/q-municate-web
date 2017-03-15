@@ -43,13 +43,13 @@ define([
 
         changeInput: function(objDom, recordedAudioFile) {
             var file = objDom ? objDom[0].files[0] : (recordedAudioFile ? recordedAudioFile : null),
-                input = objDom ? objDom : null,
+                input = recordedAudioFile ? objDom : null,
                 chat = $('.l-chat:visible .l-chat-content .mCSB_container'),
                 id = _.uniqueId(),
                 fileSize = file.size,
                 fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
                 fileSizeUnit = fileSize > (1024 * 1024) ? 'MB' : 'KB',
-                metadata = readmetadata(file),
+                metadata = readMetadata(file),
                 errMsg,
                 html;
 
@@ -191,11 +191,9 @@ define([
                 attach = Attach.create(blob, metadata);
             }
 
-            var text = (attach.type === 'location') ? 'Location' : (attach.name === 'Voice message') ? 'Voice message' : 'Attachment';
-
             msg = {
                 'type': type,
-                'body': text,
+                'body': getAttachmentText(),
                 'extension': {
                     'save_to_history': 1,
                     'dialog_id': dialog_id,
@@ -242,6 +240,34 @@ define([
                     $('#recentList').removeClass('is-hidden');
                     Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
                 }
+            }
+
+            function getAttachmentText() {
+                var text;
+
+                switch (attach.type) {
+                    case 'location':
+                        text = 'Location';
+                        break;
+
+                    case 'image':
+                        text = 'Image attachment';
+                        break;
+
+                    case 'audio':
+                        text = 'Audio attachment';
+                        break;
+
+                    case 'video':
+                        text = 'Video attachment';
+                        break;
+
+                    default:
+                        text = 'Attachment';
+                        break;
+                }
+
+                return text;
             }
         },
 
@@ -291,7 +317,7 @@ define([
         $('.l-chat:visible .j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
     }
 
-    function readmetadata(file) {
+    function readMetadata(file) {
         var _URL = window.URL || window.webkitURL,
             metadata = { 'size': file.size },
             type = file.type.indexOf('image/') === 0 ? 'image' :

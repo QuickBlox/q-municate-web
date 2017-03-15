@@ -357,7 +357,7 @@ define([
             }
         },
 
-        deleteChat: function(dialog, justLeave) {
+        deleteChat: function(dialog) {
             var QBApiCalls = this.app.service,
                 dialogs = Entities.Collections.dialogs,
                 User = this.app.models.User,
@@ -385,19 +385,9 @@ define([
 
             dialogs.remove(dialogId);
 
-            if (justLeave) {
-                QBApiCalls.updateDialog(dialogId, {
-                    pull_all: {
-                        occupants_ids: [User.contact.id]
-                    }
-                }, function (res) {
-                    Helpers.log(res);
-                });
-            } else {
-                QBApiCalls.deleteDialog(dialogId, function (res) {
-                    Helpers.log(res);
-                });
-            }
+            QBApiCalls.deleteDialog(dialogId, function (res) {
+                Helpers.log(res);
+            });
         }
 
     };

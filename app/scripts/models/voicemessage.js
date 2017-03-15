@@ -218,6 +218,7 @@ define([
             // close recorder's popover
             popover.classList.remove('is-active');
             button.classList.remove('is-active');
+            button.classList.remove('is-unavailable');
             button.setAttribute('data-balloon', 'Record audio');
             button.removeAttribute('data-balloon-length');
 
