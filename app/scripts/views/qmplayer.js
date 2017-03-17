@@ -14,7 +14,7 @@ define([
 
     QMPlayer.Model = Backbone.Model.extend({
         defaults: {
-            id: 0,
+            id: '',
             name: '',
             source: ''
         },
