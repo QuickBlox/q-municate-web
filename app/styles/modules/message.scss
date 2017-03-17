@@ -95,7 +95,6 @@ article.message[data-status="typing"] > div {
     text-align: left;
     color: #4a4a4a;
     position: relative;
-    white-space: pre-wrap;
     width: 100%;
 }
 .message-body p {
@@ -297,7 +296,7 @@ article.message[data-status="typing"] > div {
     width: 8px;
 }
 .audio_player {
-    width: 400px;
+    margin-top: 10px;
 }
 .video_player {
     background-color: #000;

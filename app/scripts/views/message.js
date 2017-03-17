@@ -126,7 +126,9 @@ define([
                         id: message.id,
                         height: message.attachment.height || null,
                         width: message.attachment.width || null,
-                        type: attachType
+                        name: message.attachment.name,
+                        type: attachType,
+                        url: attachUrl
                     };
                 }
 
@@ -342,10 +344,7 @@ define([
                             html += '<div id="image_' + message.id + '" class="preview preview-photo" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '">';
                             html += '<img src="' + attachUrl + '" alt="attach"></div></div></div>';
                         } else if (attachType && attachType.indexOf('audio') > -1) {
-                            html += '<div class="message-body"><div class="media_title">' + message.attachment.name + '</div>';
-                            html += '<audio id="audio_' + message.id + '" controls class="audio_player">'+
-                                        '<source src="' + attachUrl + '" type="audio/mpeg">'+
-                                    '</audio></div></div>';
+                            html += '<div class="message-body"><div id="audio_player_' + message.id + '" class="audio_player"></div></div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
                             html += '<div class="message-body"><div class="media_title">'+ message.attachment.name + '</div>';
                             html += '<video id="video_' + message.id + '" class="video_player j-videoPlayer" controls>'+
@@ -415,6 +414,7 @@ define([
                 if ((message.sender_id == User.contact.id) && (message.read_ids.length > 1)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'displayed', false);
                 }
+
             });
 
         },
@@ -840,9 +840,16 @@ define([
         },
 
         updateMediaElement: function(params) {
-            var Listeners = this.app.listeners;
+            var Listeners = this.app.listeners,
+                QMPlayer = self.app.QMPlayer.Model;
 
             if (params.type && params.type.indexOf('audio') > -1) {
+                new QMPlayer({
+                    id: params.id,
+                    name: params.name,
+                    source: params.url
+                });
+
                 Listeners.listenToMediaElement('#audio_' + params.id);
             } else if (params.type && params.type.indexOf('video') > -1) {
                 Listeners.listenToMediaElement('#video_' + params.id);

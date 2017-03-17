@@ -93,7 +93,9 @@ requirejs.config({
         // templates
         QMHtml: 'qmhtml',
         // entities
-        Entities: 'entities'
+        Entities: 'entities',
+        // QM Player
+        QMPlayer: 'views/qmplayer'
     }
 });
 
@@ -123,7 +125,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.11.6');
+        $('.j-appVersion').html('v. 1.11.7');
 
         // facebook sdk
         FB.init({

@@ -1,0 +1,108 @@
+/* QMPlayer */
+.qm_audio_player {
+  width: 330px;
+  height: 36px;
+}
+.qm_player_main_container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.qm_player_control_container {
+  width: 36px;
+  height: 36px;
+  display: inline-block;
+  position: relative;
+}
+
+.qm_player_control {
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.qm_player_control.is-playing {
+  background-image: url("../images/pause-ic.svg");
+}
+
+.qm_player_control.is-paused {
+  background-image: url("../images/play-ic.svg");
+}
+
+.qm_player_filler {
+  width: 50%;
+  height: 100%;
+  background-color: #eff1f2;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.qm_player_filler.is-actived {
+  background-color: #dfe3e5;
+}
+
+.qm_player_wrap {
+  position: relative;
+  width: 200px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #eff1f2;
+  overflow: hidden;
+  border-radius: 0 36px 36px 0;
+}
+
+.qm_player_font {
+  color: #778594;
+  font-family: Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.qm_player_name {
+  max-width: 130px;
+  text-align: left;
+  margin-left: 11px;
+  z-index: 2;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.qm_player_time {
+  max-width: 40px;
+  text-align: right;
+  margin-right: 13px;
+  z-index: 2;
+}
+
+.qm_player_progress {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: #dfe3e5;
+  z-index: 1;
+}
+
+.qm_player_setter {
+  width: 200px;
+  height: 36px;
+  position: absolute;
+  left: 36px;
+  top: 0;
+  z-index: 3;
+}
+
+.qm_player_download {
+  margin-left: 17px;
+}

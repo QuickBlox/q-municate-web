@@ -105,9 +105,9 @@ define([
         },
 
         listenToMediaElement: function(selector) {
-            document.querySelector(selector).onplay = function(event) {
+            document.querySelector(selector).onplaying = function(event) {
                 // pause all media sources except started one
-                document.querySelectorAll('.audio_player, .video_player').forEach(function(element) {
+                document.querySelectorAll('.j-audioPlayer, .j-videoPlayer').forEach(function(element) {
                     if (element !== event.target) {
                         element.pause();
                         element.currentTime = 0;

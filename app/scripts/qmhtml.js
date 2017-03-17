@@ -241,5 +241,7 @@ define([
 
     };
 
+    QMHtml.qmplayer
+
     return QMHtml;
 });
