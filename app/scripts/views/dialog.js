@@ -565,6 +565,9 @@ define([
                 $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
                 $dialogList = $dialogItem.parents('ul');
 
+            // reset recorder state
+            VoiceMessage.resetRecord();
+
             $dialogItem.remove();
 
             Helpers.Dialogs.isSectionEmpty($dialogList);
