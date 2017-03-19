@@ -413,7 +413,7 @@ define([
                 list = li.parents('ul.j-list'),
                 dialogId = li.data('dialog'),
                 roster = ContactList.roster,
-                dialog = dialogs.get(dialogId),
+                dialog = dialogId ? dialogs.get(dialogId) : null,
                 time = Math.floor(Date.now() / 1000),
                 $mediacall = $('.mediacall');
 
@@ -433,15 +433,19 @@ define([
                     });
                 });
 
-                Dialog.deleteChat(dialog);
+                if (dialogId) {
+                    Dialog.deleteChat(dialog);
+                }
             }
 
             if ($mediacall.length > 0) {
                 $mediacall.find('.btn_hangup').click();
             }
 
-            DialogView.removeDialogItem(dialogId);
-            DialogView.decUnreadCounter(dialogId);
+            if (dialogId) {
+                DialogView.removeDialogItem(dialogId);
+                DialogView.decUnreadCounter(dialogId);
+            }
         },
 
         // callbacks
