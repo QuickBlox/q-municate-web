@@ -571,7 +571,7 @@ define([
                 occupant,
                 msg;
 
-            if (!dialog && roster[id] && (roster[id].subscription === 'both')) {
+            if (!dialog && roster[id] && roster[id].subscription) {
                 Dialog.download({'_id': dialog_id}, function(results) {
                     var newDialogId = Dialog.create(results.items[0]);
 

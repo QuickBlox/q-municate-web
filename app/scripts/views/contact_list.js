@@ -520,12 +520,15 @@ define([
                 dialogItem = $('.presence-listener[data-id="' + id + '"]'),
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 request = $('#requestsList .list-item[data-jid="' + jid + '"]'),
+                chatIsActive = $('.j-chatItem[data-id="' + id + '"]').is(':visible'),
                 list = request && request.parents('ul'),
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
             // reset recorder state
-            VoiceMessage.resetRecord();
+            if (chatIsActive) {
+                VoiceMessage.resetRecord();
+            }
 
             // update roster
             roster[id] = {

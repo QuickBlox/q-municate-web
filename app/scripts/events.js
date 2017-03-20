@@ -594,7 +594,7 @@ define([
             });
 
             // delete contact
-            $('body').on('click', '.deleteContact', function() {
+            $('body').on('click', '.j-deleteContact', function() {
                 closePopup();
 
                 var $that = $(this),
@@ -618,7 +618,7 @@ define([
             });
 
             // delete chat
-            $('.list, .l-workspace-wrap').on('click', '.deleteChat', function() {
+            $('.list, .l-workspace-wrap').on('click', '.j-deleteChat', function() {
                 closePopup();
 
                 var $self = $(this),
