@@ -943,7 +943,7 @@ define([
         return roomJid;
     }
 
-    function createAndShowNotification(msg, isHiddenChat, isFriend) {
+    function createAndShowNotification(msg, isHiddenChat) {
         var dialogs = Entities.Collections.dialogs,
             dialog = dialogs.get(msg.dialog_id),
             cancelNotify = !Settings.get('messages_notify'),
