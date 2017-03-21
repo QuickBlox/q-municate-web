@@ -411,7 +411,8 @@ define([
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 li = $('.dialog-item[data-id="' + id + '"]'),
                 list = li.parents('ul.j-list'),
-                dialogId = li.data('dialog'),
+                hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
+                dialogId = li.data('dialog') || hiddenDialogs[id] || null,
                 roster = ContactList.roster,
                 dialog = dialogId ? dialogs.get(dialogId) : null,
                 time = Math.floor(Date.now() / 1000),
@@ -453,6 +454,7 @@ define([
         onSubscribe: function(id) {
             var html,
                 contacts = ContactList.contacts,
+                currentRoster = ContactList.roster[id],
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 $dialogItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
                 $isCurrentItem = $('#recentList .list-item[data-id="' + id + '"]'),
@@ -488,6 +490,10 @@ define([
 
                 $('#requestsList').removeClass('is-hidden');
                 $('#emptyList').addClass('is-hidden');
+
+                if (currentRoster) {
+                    self.autoConfirm(id);
+                }
             }, 'subscribe');
 
             if ($isCurrentItem.length) {
@@ -572,6 +578,24 @@ define([
                 if (dialogItem.is('.popup_details')) {
                     dialogItem.find('.status_text').text('Online');
                 }
+            }
+        },
+
+        autoConfirm: function(id) {
+            var jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+                hiddenDialogs = notConfirmed[id] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : null,
+                dialogId = hiddenDialogs[id] || null,
+                activeId = Entities.active,
+                dialogs = Entities.Collections.dialogs,
+                dialog = dialogId ? dialogs.get(dialogId) : null;
+
+            self.sendConfirm(jid, true);
+
+            if (activeId === dialogId) {
+                Entities.active = '';
+                dialog.set({'opened': false});
+                $('.j-dialogItem[data-dialog="' + dialogId + '"] > .contact').click();
             }
         }
 
