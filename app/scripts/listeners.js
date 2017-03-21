@@ -96,6 +96,7 @@ define([
                 QB.webrtc.onRejectCallListener    = VideoChatView.onReject;
                 QB.webrtc.onInvalidEventsListener = VideoChatView.onIgnored;
                 QB.webrtc.onStopCallListener      = VideoChatView.onStop;
+
                 QB.webrtc.onUpdateCallListener    = VideoChatView.onUpdateCall;
                 QB.webrtc.onRemoteStreamListener  = VideoChatView.onRemoteStream;
                 QB.webrtc.onCallStatsReport       = VideoChatView.onCallStatsReport;

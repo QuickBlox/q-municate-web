@@ -563,7 +563,13 @@ define([
         removeDialogItem: function(dialogId) {
             var $dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]'),
                 $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
+                chatIsActive = $chat.is(':visible'),
                 $dialogList = $dialogItem.parents('ul');
+
+            // reset recorder state
+            if (chatIsActive) {
+                VoiceMessage.resetRecord();
+            }
 
             $dialogItem.remove();
 
