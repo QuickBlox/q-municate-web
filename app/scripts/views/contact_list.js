@@ -211,7 +211,6 @@ define([
                 message,
                 self = this;
 
-
             if (notConfirmed[id] && requestItem.length) {
                 changeRequestStatus('Request accepted');
                 self.sendConfirm(jid, 'new_dialog');
@@ -355,7 +354,7 @@ define([
             dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]');
             copyDialogItem = dialogItem.clone();
             dialogItem.remove();
-            $('#recentList ul').prepend(copyDialogItem);
+            $('.j-recentList').prepend(copyDialogItem);
             if ($('#searchList').is(':hidden')) {
                 $('#recentList').removeClass('is-hidden');
                 Helpers.Dialogs.isSectionEmpty($('.j-recentList'));
@@ -368,7 +367,6 @@ define([
         sendReject: function(jid, isClick) {
             var id = QB.chat.helpers.getIdFromNode(jid),
                 $objDom = $('.j-incomingContactRequest[data-jid="' + jid + '"]'),
-                list = $objDom.parents('ul.j-requestsList'),
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
@@ -376,7 +374,7 @@ define([
 
             $objDom.remove();
 
-            Helpers.Dialogs.isSectionEmpty(list);
+            Helpers.Dialogs.isSectionEmpty($('.j-requestsList'));
 
             // update roster
             roster[id] = {
@@ -450,22 +448,14 @@ define([
         },
 
         // callbacks
-
         onSubscribe: function(id) {
             var html,
                 contacts = ContactList.contacts,
-                currentRoster = ContactList.roster[id],
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-                $dialogItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
-                $isCurrentItem = $('#recentList .list-item[data-id="' + id + '"]'),
-                recentList = $isCurrentItem.parents('ul.j-recentList'),
-                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 $requestList = $('.j-requestsList'),
+                $recentList = $('.j-recentList'),
+                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 duplicate;
-
-            if ($dialogItem.length) {
-                return true;
-            }
 
             // update notConfirmed people list
             notConfirmed[id] = true;
@@ -491,15 +481,12 @@ define([
                 $('#requestsList').removeClass('is-hidden');
                 $('#emptyList').addClass('is-hidden');
 
-                if (currentRoster) {
+                if ($recentList.find('.list-item[data-id="' + id + '"]').length) {
+                    $recentList.find('.list-item[data-id="' + id + '"]').remove();
                     self.autoConfirm(id);
+                    Helpers.Dialogs.isSectionEmpty($recentList);
                 }
             }, 'subscribe');
-
-            if ($isCurrentItem.length) {
-                $isCurrentItem.remove();
-                Helpers.Dialogs.isSectionEmpty(recentList);
-            }
         },
 
         onConfirm: function(id) {
@@ -590,7 +577,7 @@ define([
                 dialogs = Entities.Collections.dialogs,
                 dialog = dialogId ? dialogs.get(dialogId) : null;
 
-            self.sendConfirm(jid, true);
+            self.sendConfirm(jid, 'new_dialog');
 
             if (activeId === dialogId) {
                 Entities.active = '';

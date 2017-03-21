@@ -37,7 +37,7 @@ define([
             var id = this.model.get('id');
 
             this.render(id);
-            this.livenUp(id);
+            this.start(id);
         },
 
         render: function(id) {
@@ -47,12 +47,12 @@ define([
             document.querySelector('#audio_player_' + id).innerHTML = qmplayerEl;
         },
 
-        livenUp: function(id) {
-            new QMPlayer.start(id);
+        start: function(id) {
+            new QMPlayer.init(id);
         }
     });
 
-    QMPlayer.start = function(id) {
+    QMPlayer.init = function(id) {
         var audioEl = document.querySelector('#audio_' + id),
             controlEl = document.querySelector('#qm_player_control_' + id),
             fillerEl = document.querySelector('#qm_player_filler_' + id),

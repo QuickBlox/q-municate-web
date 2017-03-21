@@ -552,9 +552,9 @@ define([
                 contactRequest = $('.j-incomingContactRequest[data-jid="' + makeJid(id) + '"]'),
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden') || !$chat.length,
-                isExistent = dialogItem.length ? true : (contactRequest.length ? true : false),
-                unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 roster = ContactList.roster,
+                isExistent = dialogItem.length ? true : (contactRequest.length ? true : (roster[id] ? true : false)),
+                unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
                 isOfflineStorage = message.delay,
                 selected = $('[data-dialog = ' + dialog_id + ']').is('.is-selected'),
@@ -707,7 +707,7 @@ define([
                 isSoundOn = Settings.get('sounds_notify'),
                 isMainTab = SyncTabs.get();
 
-            if (roster[id]) {
+            if (isExistent) {
                 createAndShowNotification(msg, isHidden);
             }
 
