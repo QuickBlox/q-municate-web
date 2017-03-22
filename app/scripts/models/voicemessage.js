@@ -212,9 +212,14 @@ define([
             });
         },
 
-        resetRecord: function() {
+        resetRecord: function(dialogId) {
             var popover = document.querySelector('.j-popover_record'),
-                button = document.querySelector('.j-btn_audio_record');
+                button = document.querySelector('.j-btn_audio_record'),
+                activeDialogId = self.app.entities.active;
+
+            if (dialogId && (dialogId !== activeDialogId)) {
+                return false;
+            }
 
             // close recorder's popover
             popover.classList.remove('is-active');

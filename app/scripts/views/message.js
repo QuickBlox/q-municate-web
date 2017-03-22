@@ -553,7 +553,12 @@ define([
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden') || !$chat.length,
                 roster = ContactList.roster,
-                isExistent = dialogItem.length ? true : (contactRequest.length ? true : (roster[id] ? true : false)),
+                isExistent = dialogItem.length ? true :
+                    (contactRequest.length ? true :
+                        (roster[id] ? true :
+                            (notification_type == '4')
+                        )
+                    ),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
                 isOfflineStorage = message.delay,

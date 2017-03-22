@@ -1012,6 +1012,8 @@ define([
                     dialogId = $selected.data('dialog'),
                     $label = $('.j-newMessages[data-dialog="' + dialogId + '"]');
 
+                VoiceMessage.resetRecord();
+
                 $('.j-capBox').removeClass('is-hidden')
                     .siblings().removeClass('is-active');
                 $('.j-chatWrap').addClass('is-hidden');
@@ -1021,8 +1023,6 @@ define([
                 }
 
                 $selected.removeClass('is-selected');
-
-                VoiceMessage.resetRecord();
 
                 return false;
             });

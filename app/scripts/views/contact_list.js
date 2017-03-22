@@ -362,6 +362,8 @@ define([
 
             dialogItem = $('.presence-listener[data-id="' + id + '"]');
             dialogItem.find('.status').removeClass('status_request');
+
+            DialogView.decUnreadCounter(dialogId);
         },
 
         sendReject: function(jid, isClick) {
@@ -401,10 +403,12 @@ define([
                 });
             }
 
+            DialogView.decUnreadCounter(hiddenDialogs[id]);
         },
 
         sendDelete: function(id, isClick) {
             var DialogView = self.app.views.Dialog,
+                VoiceMessage = self.app.models.VoiceMessage,
                 dialogs = Entities.Collections.dialogs,
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 li = $('.dialog-item[data-id="' + id + '"]'),
@@ -419,6 +423,9 @@ define([
             // update roster
             delete roster[id];
             ContactList.saveRoster(roster);
+
+            // reset recorder state
+            VoiceMessage.resetRecord(dialogId);
 
             // send notification about reject
             if (isClick) {
@@ -513,15 +520,12 @@ define([
                 dialogItem = $('.presence-listener[data-id="' + id + '"]'),
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 request = $('#requestsList .list-item[data-jid="' + jid + '"]'),
-                chatIsActive = $('.j-chatItem[data-id="' + id + '"]').is(':visible'),
                 list = request && request.parents('ul'),
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
 
             // reset recorder state
-            if (chatIsActive) {
-                VoiceMessage.resetRecord();
-            }
+            VoiceMessage.resetRecord(dialogItem.data('dialog'));
 
             // update roster
             roster[id] = {

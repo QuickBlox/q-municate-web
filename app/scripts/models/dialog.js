@@ -359,15 +359,11 @@ define([
 
         deleteChat: function(dialog) {
             var QBApiCalls = this.app.service,
-                VoiceMessage = this.app.models.VoiceMessage;
                 dialogs = Entities.Collections.dialogs,
                 User = this.app.models.User,
                 dialogId = dialog.get('id'),
                 dialogType = dialog.get('type'),
                 time = Math.floor(Date.now() / 1000);
-
-            // reset recorder state
-            VoiceMessage.resetRecord();
 
             // send notification about leave
             if (dialogType === 2) {
