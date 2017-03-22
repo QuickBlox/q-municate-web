@@ -42,8 +42,7 @@ define([
     AttachView.prototype = {
 
         changeInput: function(objDom, recordedAudioFile) {
-            var file = objDom ? objDom[0].files[0] : (recordedAudioFile ? recordedAudioFile : null),
-                input = recordedAudioFile ? objDom : null,
+            var file = recordedAudioFile ? recordedAudioFile : objDom[0].files[0],
                 chat = $('.l-chat:visible .l-chat-content .mCSB_container'),
                 id = _.uniqueId(),
                 fileSize = file.size,
@@ -57,7 +56,7 @@ define([
                 errMsg = self.validateFile(file);
 
                 if (errMsg) {
-                    self.pastErrorMessage(errMsg, input, chat);
+                    self.pastErrorMessage(errMsg, objDom, chat);
                 } else {
                     html = QMHtml.Attach.attach({
                         'fileName': file.name,
@@ -69,8 +68,8 @@ define([
 
                 chat.append(html);
 
-                if (input) {
-                    input.val('');
+                if (objDom) {
+                    objDom.val('');
                 }
 
                 fixScroll();
@@ -300,7 +299,8 @@ define([
 
             if (type === 'video' && fullType !== 'video/mp4') {
                 errMsg = 'This video format is not supported, only *.mp4';
-            } else if (type === 'audio' && fullType !== 'audio/mp3') {
+            } else if (type === 'audio' &&
+                (fullType !== 'audio/mp3' || fullType !== 'audio/mpeg')) {
                 errMsg = 'This audio format is not supported, only *.mp3';
             } else if (type === 'file') {
                 errMsg = 'This file format isn\'t supported';
