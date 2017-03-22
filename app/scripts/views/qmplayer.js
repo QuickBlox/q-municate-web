@@ -55,23 +55,11 @@ define([
     QMPlayer.init = function(id) {
         var audioEl = document.querySelector('#audio_' + id),
             controlEl = document.querySelector('#qm_player_control_' + id),
-            fillerEl = document.querySelector('#qm_player_filler_' + id),
             setterEl = document.querySelector('#qm_player_setter_' + id),
             progressEl = document.querySelector('#qm_player_progress_' + id),
             timeEl = document.querySelector('#qm_player_time_' + id),
-            fullLength = document.querySelector('#qm_player_wrap_' + id).offsetWidth;
-
-        var setTime = function(time) {
-            var min,
-                sec;
-
-            min = Math.floor(time / 60);
-            min = min >= 10 ? min : '0' + min;
-            sec = Math.floor(time % 60);
-            sec = sec >= 10 ? sec : '0' + sec;
-
-            timeEl.innerHTML = ( min + ':' + sec );
-        };
+            fullLength = document.querySelector('#qm_player_wrap_' + id).offsetWidth,
+            durationTime;
 
         setterEl.onclick = function(e) {
             audioEl.currentTime = audioEl.duration * (e.offsetX / fullLength);
@@ -80,7 +68,6 @@ define([
         controlEl.onclick = function() {
             if (this.classList.contains('is-paused')) {
                 audioEl.play();
-                fillerEl.classList.add('is-actived');
                 controlEl.classList.add('is-playing');
                 controlEl.classList.remove('is-paused');
             } else {
@@ -98,17 +85,30 @@ define([
         };
 
         audioEl.oncanplay = function() {
-            setTime(audioEl.duration);
+            durationTime = setTime(audioEl.duration);
+            timeEl.innerHTML = '00:00 / ' + durationTime;
         };
 
         audioEl.ontimeupdate = function() {
-            var time = audioEl.currentTime,
+            var currentTime = setTime(audioEl.currentTime),
                 length = Math.round(fullLength * (audioEl.currentTime / audioEl.duration));
 
-            setTime(time);
+            timeEl.innerHTML = currentTime + ' / ' + durationTime;
 
             progressEl.style.width = length + 'px';
         };
+
+        function setTime(time) {
+            var min,
+                sec;
+
+            min = Math.floor(time / 60);
+            min = min >= 10 ? min : '0' + min;
+            sec = Math.floor(time % 60);
+            sec = sec >= 10 ? sec : '0' + sec;
+
+            return (min + ':' + sec);
+        }
     };
 
     return QMPlayer;
