@@ -571,7 +571,7 @@ define([
                 occupant,
                 msg;
 
-            if (!dialog && roster[id] && roster[id].subscription) {
+            if (!dialog && roster[id] && notification_type !== '4') {
                 Dialog.download({'_id': dialog_id}, function(results) {
                     var newDialogId = Dialog.create(results.items[0]);
 
