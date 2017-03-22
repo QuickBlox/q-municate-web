@@ -49,16 +49,17 @@
     color: #999;
     display: inline-block;
     word-break: break-all;
-    /*white-space: pre;*/
 }
 .userDetails-chatStatus,
 .userProfile-chatStatus {
     width: 100%;
     background: #f2f2f2;
     font-size: 16px;
-    line-height: 30px;
+    height: 30px;
     color: #999;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .userDetails-chatStatus .status_online {
     display: inline-block;
@@ -66,34 +67,38 @@
     margin-right: 7px;
 }
 .userDetails-controls {
-    border-bottom: 1px solid #f2f2f2;
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
 }
 .btn_userDetails {
+    display: flex;
+    align-items: center;
     padding: 0 15px;
     font-size: 16px;
-    line-height: 60px;
+    height: 40px;
+    width: 100%;
+    font-family: "Roboto", sans-serif;
     color: #333;
-    border-right: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f2f2f2;
+    cursor: pointer;
 }
-.btn_userDetails.ask_subscription {
-    padding: 0 70px;
-}
-.btn_userDetails:last-child {
-    border-right: 0;
+.ic_userDetails {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
 }
 .btn_userDetails img {
-    margin-right: 10px;
     vertical-align: text-bottom;
-}
-.btn_userDetails:first-child img {
-    margin-right: 13px;
-    vertical-align: text-top;
 }
 .userDetails-field,
 .userProfile-field {
-    padding: 0 40px 0 20px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
     font-size: 15px;
-    line-height: 60px;
+    height: 40px;
 }
 .userDetails-label {
     margin-right: 12px;
@@ -192,15 +197,11 @@ input.userProfile-phone.without_M[type=text]:focus:not([readonly]) {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-.userProfile-field_phone {
-    padding: 0 0 0 20px;
-}
 .userProfile-edit:hover {
     background: url('../images/icon-pencil.svg') no-repeat 430px center, #f8f8f8;
 }
 .btn_userProfile_connect {
     position: absolute;
-    top: 14px;
     right: 20px;
 }
 .changePass-errors,

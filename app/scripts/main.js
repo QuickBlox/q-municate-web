@@ -39,7 +39,6 @@ requirejs.config({
         gmaps: 'https://cdnjs.cloudflare.com/ajax/libs/gmaps.js/0.4.24/gmaps.min',
         digits: 'https://cdn.digits.com/1/sdk',
         cryptojs: '../bower_components/crypto-js-lib/rollups/aes',
-        videojs: 'https://vjs.zencdn.net/5.11.6/video',
         jquery: '../bower_components/jquery/dist/jquery',
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
@@ -55,6 +54,8 @@ requirejs.config({
         nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
         perfectscrollbar: '../bower_components/perfect-scrollbar/js/perfect-scrollbar.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
+        lamejs: '../bower_components/lamejs/lame.min',
+        QBMediaRecorder: '../bower_components/media-recorder-js/mediaRecorder',
 
         // Q-municate application
         config: '../configs/main_config',
@@ -71,6 +72,7 @@ requirejs.config({
         VideoChatModule: 'models/videochat',
         CursorModule: 'models/custom_cursor',
         SyncTabsModule: 'models/sync_tabs',
+        VoiceMessage: 'models/voicemessage',
         // views
         UserView: 'views/user',
         SettingsView: 'views/settings',
@@ -91,7 +93,9 @@ requirejs.config({
         // templates
         QMHtml: 'qmhtml',
         // entities
-        Entities: 'entities'
+        Entities: 'entities',
+        // QM Player
+        QMPlayer: 'views/qmplayer'
     }
 });
 
@@ -121,7 +125,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.10.0');
+        $('.j-appVersion').html('v. 1.11.0');
 
         // facebook sdk
         FB.init({

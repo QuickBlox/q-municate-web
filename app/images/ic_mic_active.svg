@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="19px" viewBox="0 0 14 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>ACB893F5-D958-4A26-A2F1-A0967FF0E168</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Tex-Input/Regular" transform="translate(-427.000000, -62.000000)">
+            <g id="ic_mic">
+                <g transform="translate(422.000000, 60.000000)">
+                    <polygon id="Bounds" points="0 0 24 0 24 24 0 24"></polygon>
+                    <path d="M12,14 C13.66,14 14.99,12.66 14.99,11 L15,5 C15,3.34 13.66,2 12,2 C10.34,2 9,3.34 9,5 L9,11 C9,12.66 10.34,14 12,14 L12,14 Z M17.3,11 C17.3,14 14.76,16.1 12,16.1 C9.24,16.1 6.7,14 6.7,11 L5,11 C5,14.41 7.72,17.23 11,17.72 L11,21 L13,21 L13,17.72 C16.28,17.24 19,14.42 19,11 L17.3,11 L17.3,11 Z" id="Icon" fill="#17D04B"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

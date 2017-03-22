@@ -132,11 +132,10 @@ button.btn.btn_add,
 button.btn.btn_add:focus,
 button.btn.btn_add:hover {
     width: 300px;
-    font-size: 20px;
-    border-radius: 56px;
-    height: 56px;
-    line-height: 100%;
-    vertical-align: middle;
+    font-size: 19px;
+    border-radius: 50px;
+    height: 48px;
+    min-height: 45px;
 }
 button.btn_invite,
 button.btn_invite:focus,
@@ -191,7 +190,11 @@ button.btn.btn_search:hover {
     margin: 0 auto;
 }
 .btn_chat {
-    margin-right: 15px;
+    margin-right: 8px;
+    max-width: 25px;
+    max-height: 25px;
+    display: inline-block;
+    vertical-align: bottom;
 }
 .btn_chat:last-child {
     margin-right: 0;
@@ -199,24 +202,6 @@ button.btn.btn_search:hover {
 .btn_chat_videocall {
     position: relative;
     top: -2px;
-}
-.footer_btn {
-    display: none;
-    cursor: pointer;
-}
-.btn_sendlocation {
-    text-align: center;
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    display: block;
-    width: 34px;
-    height: 34px;
-    background: url('../images/ic_location_off.svg') 50% no-repeat;
-    background-size: contain;
-}
-.btn_sendlocation.btn_active {
-    background: url('../images/ic_location_on.svg');
 }
 .btn_sendlocation[data-balloon-length="small"]:after {
     width: 110px;
@@ -229,9 +214,19 @@ button.btn.btn_search:hover {
     width: 34px;
     height: 34px;
 }
+.btn_sendlocation {
+    position: relative;
+    width: 24px;
+    background-size: contain;
+    background: url('../images/ic-hidden-location.svg') 50% no-repeat;
+}
+.btn_sendlocation.btn_active {
+    background: url('../images/ic-active-location.svg') 50% no-repeat;
+}
 .btn_input_smile {
     position: relative;
     width: 20px;
+    background-size: contain;
     background: url('../images/ic_smile.svg') 50% no-repeat;
 }
 .btn_input_smile.is-active {
@@ -239,7 +234,8 @@ button.btn.btn_search:hover {
 }
 .btn_input_location {
     position: relative;
-    width: 14px;
+    width: 20px;
+    background-size: contain;
     background: url('../images/ic_send_location.svg') 50% no-repeat;
 }
 .btn_input_location.is-active {
@@ -248,14 +244,19 @@ button.btn.btn_search:hover {
 .btn_input_attach {
     position: relative;
     width: 20px;
+    background-size: contain;
     background: url('../images/ic_attach.svg') 50% no-repeat;
 }
 .btn_input_send {
-    vertical-align: inherit;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    color: #007de3;
+    text-align: center;
+    position: absolute;
+    top: 14px;
+    right: 15px;
+    display: block;
+    width: 26px;
+    height: 26px;
+    background: url(../images/ic-send.svg) 50% no-repeat;
+    background-size: contain;
 }
 .btn_to_bottom {
     position: absolute;
@@ -281,10 +282,14 @@ button.btn.btn_search:hover {
 .btn_request_again {
     display: none;
     margin-left: 20px;
-    padding: 0 15px 0 8px;
+    margin-top: 6px;
+    height: 29px;
+    padding: 5px 10px;
     font-size: 14px;
-    line-height: 28px;
-    color: #333;
+    font-weight: 600;
+    font-family: "Roboto", sans-serif;
+    color: #4a4a4a;
+    line-height: 19px;
     background: #f2f2f2;
     border: 1px solid #f2f2f2;
     border-radius: 5px;
@@ -320,10 +325,8 @@ button.btn.btn_search:hover {
     display: inline-block;
     width: 27px;
     height: 100%;
-    position: relative;
-    top: -3px;
-    margin-right: 12px;
-    background: url('../images/icon-invite.svg?1464359307') no-repeat center;
+    margin-right: 10px;
+    background: url(../images/icon-invite.svg?1464359307) no-repeat center;
     vertical-align: middle;
 }
 .btn-icon_invite_contacts {

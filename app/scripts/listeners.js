@@ -18,9 +18,10 @@ define([
     function Listeners(app) {
         self = this;
         this.app = app;
+        this.blockChatViewPosition = false;
 
         var chatConnection = navigator.onLine;
-        var active = false;
+        var position = 0;
 
         this.setChatState = function(state) {
             if (typeof state === 'boolean') {
@@ -33,6 +34,29 @@ define([
         this.getChatState = function() {
             return chatConnection;
         };
+
+        this.setChatViewPosition = function(value) {
+            if (!self.blockChatViewPosition) {
+                position = value;
+            }
+
+            self.blockChatViewPosition = false;
+        };
+
+        this.getChatViewPosition = function() {
+            var direction = '',
+                value = 0;
+
+            if (position < 0) {
+                direction = '-=';
+                value -= position;
+            } else {
+                direction = '+=';
+                value += position;
+            }
+
+            return (direction + value);
+        };
     }
 
     Listeners.prototype = {
@@ -40,6 +64,10 @@ define([
         init: function() {
             window.addEventListener('online', self._onNetworkStatusListener);
             window.addEventListener('offline', self._onNetworkStatusListener);
+
+            document.addEventListener('webkitfullscreenchange', self.onFullScreenChange);
+            document.addEventListener('mozfullscreenchange', self.onFullScreenChange);
+            document.addEventListener('fullscreenchange', self.onFullScreenChange);
         },
 
         setQBHandlers: function() {
@@ -68,12 +96,25 @@ define([
                 QB.webrtc.onRejectCallListener    = VideoChatView.onReject;
                 QB.webrtc.onInvalidEventsListener = VideoChatView.onIgnored;
                 QB.webrtc.onStopCallListener      = VideoChatView.onStop;
+
                 QB.webrtc.onUpdateCallListener    = VideoChatView.onUpdateCall;
                 QB.webrtc.onRemoteStreamListener  = VideoChatView.onRemoteStream;
                 QB.webrtc.onCallStatsReport       = VideoChatView.onCallStatsReport;
                 QB.webrtc.onSessionCloseListener  = VideoChatView.onSessionCloseListener;
                 QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
             }
+        },
+
+        listenToMediaElement: function(selector) {
+            document.querySelector(selector).onplaying = function(event) {
+                // pause all media sources except started one
+                document.querySelectorAll('.j-audioPlayer, .j-videoPlayer').forEach(function(element) {
+                    if (element !== event.target) {
+                        element.pause();
+                        element.currentTime = 0;
+                    }
+                });
+            };
         },
 
         listenToPsTotalEnd: function(onOrOff) {
@@ -137,6 +178,26 @@ define([
                     _switchToOnlineMode();
                 } else {
                     _switchToOfflineMode();
+                }
+            }
+        },
+
+        onFullScreenChange: function(event) {
+            var fullscreenElement = document.fullscreenElement ||
+                                    document.mozFullscreenElement ||
+                                    document.webkitFullscreenElement,
+                fullscreenEnabled = document.fullscreenEnabled ||
+                                    document.mozFullscreenEnabled ||
+                                    document.webkitFullscreenEnabled,
+                isVideoElementTag = event.target.tagName === 'VIDEO';
+
+            if (fullscreenEnabled && isVideoElementTag) {
+                var $scroll = $('.j-chatItem:visible').find('.j-scrollbar_message');
+
+                if (fullscreenElement) {
+                    self.blockChatViewPosition = true;
+                } else {
+                    $scroll.mCustomScrollbar('scrollTo', self.getChatViewPosition());
                 }
             }
         }

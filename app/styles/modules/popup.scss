@@ -32,7 +32,7 @@
 }
 .popup_details {
     width: 460px;
-    height: 280px;
+    height: 360px;
     border: 1px solid #f2f2f2;
 }
 .popup_password {
@@ -40,7 +40,7 @@
 }
 .popup_attach,
 .popup_avatar {
-    padding: 20px 20px 25px;
+    padding: 5px;
 }
 .open_map {
     display: block;
@@ -56,7 +56,7 @@
     display: block;
     width: 140px;
     height: 20px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-weight: 600;
     font-size: 15px;
     text-transform: uppercase;
@@ -65,7 +65,7 @@
     vertical-align: middle;
 }
 .send_map.is-active {
-    color: #007de3;
+    color: #17d04b;
 }
 .popup_delete,
 .popup_import,
@@ -117,15 +117,15 @@
     color: #333;
 }
 .popup-form {
-    height: 60px;
-    padding: 15px 20px;
+    height: 50px;
+    padding: 10px;
     border-bottom: 1px solid #f2f2f2;
 }
 .popup-content {
-    height: calc(100% - 60px - 60px - 60px);
+    height: calc(100% - 170px);
 }
 .not-selected .popup-content {
-    height: calc(100% - 60px - 60px);
+    height: calc(100% - 110px);
 }
 .not-selected .popup-footer {
     display: none;
@@ -228,7 +228,7 @@
 .avatar-pic {
     max-width: 80vw;
     max-height: 80vh;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     position: relative;
     left: 50%;
     transform: translate(-50%);
@@ -243,8 +243,8 @@
 }
 .file-download {
     position: absolute;
-    top: 0px;
-    right: -125px;
+    top: 0;
+    right: -108px;
     font-size: 13px
 }
 .attach-description,

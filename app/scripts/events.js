@@ -24,15 +24,18 @@ define([
     Ps
 ) {
 
-    var Dialog,
+    var User,
+        Dialog,
         Cursor,
         UserView,
+        ContactList,
         ContactListView,
         DialogView,
         MessageView,
         AttachView,
         VideoChatView,
-        SettingsView;
+        SettingsView,
+        VoiceMessage;
 
     var chatName,
         editedChatName,
@@ -59,6 +62,7 @@ define([
         AttachView = this.app.views.Attach;
         VideoChatView = this.app.views.VideoChat;
         SettingsView = this.app.views.Settings;
+        VoiceMessage = this.app.models.VoiceMessage;
     }
 
     Events.prototype = {
@@ -321,16 +325,19 @@ define([
 
             /* group chats
             ----------------------------------------------------- */
-            $workspace.on('click', '.groupTitle', function() {
-                $scroll = $('.l-chat:visible').find('.j-scrollbar_message');
+            $workspace.on('click', '.j-triangle', function() {
+                var $chat = $('.l-chat:visible'),
+                    $scroll = $chat.find('.j-scrollbar_message');
 
-                if ($('.l-chat:visible').find('.triangle_up').is('.is-hidden')) {
+                if ($chat.find('.triangle_up').is('.is-hidden')) {
                     $scroll.mCustomScrollbar('scrollTo','-=94');
                     setTriagle('up');
                 } else {
                     $scroll.mCustomScrollbar('scrollTo','+=94');
                     setTriagle('down');
                 }
+
+                return false;
             });
 
             $workspace.on('click', '.groupTitle .addToGroupChat', function(event) {
@@ -352,6 +359,8 @@ define([
                 var $chat = $('.l-chat:visible');
                 $chat.find('.triangle:visible').addClass('is-hover')
                     .siblings('.pencil').removeClass('is-hidden');
+
+                return false;
             });
 
             $workspace.on('mouseleave', '.groupTitle .name_chat', function() {
@@ -361,6 +370,8 @@ define([
                     $chat.find('.triangle.is-hover').removeClass('is-hover')
                         .siblings('.pencil').addClass('is-hidden');
                 }
+
+                return false;
             });
 
             $(document.body).on('click', function() {
@@ -563,6 +574,18 @@ define([
                 Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
             });
 
+            $workspace.on('click', '.j-btn_audio_record', function() {
+                var $self = $(this),
+                    bool = $self.is('.is-active');
+
+                removePopover();
+
+                if (!bool) {
+                    $self.addClass('is-active');
+                    $('.j-popover_record').addClass('is-active');
+                }
+            });
+
             /* popups
             ----------------------------------------------------- */
             $('.header-links-item').on('click', '#logout', function(event) {
@@ -570,8 +593,8 @@ define([
                 openPopup($('#popupLogout'));
             });
 
-            $('body').on('click', '.deleteContact', function(event) {
-                event.preventDefault();
+            // delete contact
+            $('body').on('click', '.j-deleteContact', function() {
                 closePopup();
 
                 var $that = $(this),
@@ -579,36 +602,42 @@ define([
                     id = parents.data('id') || $that.data('id');
 
                 if (parents.is('.popup_details')) {
-                    openPopup($('#popupDelete'), id, null, true);
+                    openPopup($('.j-popupDeleteContact'), id, null, true);
                 } else {
-                    openPopup($('#popupDelete'), id);
+                    openPopup($('.j-popupDeleteContact'), id);
                 }
+
+                return false;
             });
 
-            $('.list, .l-workspace-wrap').on('click', '.leaveChat', function(event) {
-                event.preventDefault();
-                var $self = $(this),
-                    parent = $self.parents('.presence-listener')[0] ? $self.parents('.presence-listener') : $self.parents('.is-group'),
-                    dialog_id = parent.data('dialog');
-
-                openPopup($('#popupLeave'), null, dialog_id);
-            });
-
-            $('#logoutConfirm').on('click', function() {
-                localStorage.setItem('QM.' + User.contact.id + '_logOut', true);
-                UserView.logout();
-            });
-
-            $('.j-deleteConfirm').on('click', function() {
-                var id = $(this).parents('.j-popupDelete').data('id');
+            $('.j-deleteContactConfirm').on('click', function() {
+                var id = $(this).parents('.j-popupDeleteContact').data('id');
 
                 ContactListView.sendDelete(id, true);
                 Helpers.log('delete contact');
             });
 
-            $('#leaveConfirm').on('click', function() {
-                Helpers.log('leave chat');
-                DialogView.leaveGroupChat($(this));
+            // delete chat
+            $('.list, .l-workspace-wrap').on('click', '.j-deleteChat', function() {
+                closePopup();
+
+                var $self = $(this),
+                    parent = $self.parents('.presence-listener')[0] ? $self.parents('.presence-listener') : $self.parents('.is-group'),
+                    dialog_id = parent.data('dialog');
+
+                openPopup($('.j-popupDeleteChat'), null, dialog_id);
+
+                return false;
+            });
+
+            $('.j-deleteChatConfirm').on('click', function() {
+                Helpers.log('Delete chat');
+                DialogView.deleteChat($(this));
+            });
+
+            $('#logoutConfirm').on('click', function() {
+                localStorage.setItem('QM.' + User.contact.id + '_logOut', true);
+                UserView.logout();
             });
 
             $('.popup-control-button, .btn_popup_private').on('click', function(event) {
@@ -742,7 +771,6 @@ define([
                     UserView.friendsSearch($form);
                 }
 
-
                 return false;
             });
 
@@ -770,14 +798,14 @@ define([
             });
 
             $('.list').on('click', '.j-requestConfirm', function() {
-                var jid = $(this).parents('.j-incommingContactRequest').data('jid');
+                var jid = $(this).parents('.j-incomingContactRequest').data('jid');
 
                 ContactListView.sendConfirm(jid, true);
                 Helpers.log('send confirm');
             });
 
             $('.list').on('click', '.j-requestCancel', function() {
-                var jid = $(this).parents('.j-incommingContactRequest').data('jid');
+                var jid = $(this).parents('.j-incomingContactRequest').data('jid');
 
                 ContactListView.sendReject(jid, true);
                 Helpers.log('send reject');
@@ -829,9 +857,13 @@ define([
 
             $('#popupContacts .btn_popup_private').on('click', function() {
                 var id = $('#popupContacts .is-chosen').data('id'),
-                    dialogItem = $('.dialog-item[data-id="' + id + '"]').find('.contact');
+                    dialogItem = $('.j-dialogItem[data-id="' + id + '"]').find('.contact');
 
-                DialogView.htmlBuild(dialogItem);
+                if (dialogItem.length) {
+                    DialogView.htmlBuild(dialogItem);
+                } else {
+                    Dialog.restorePrivateDialog(id);
+                }
             });
 
             $('body').on('click', '.writeMessage', function(event) {
@@ -937,7 +969,19 @@ define([
                 }
             });
 
-            $workspace.on('submit', '.j-message', function(event) {
+            $(document).on('keypress', function(event) {
+                if ( event.keyCode === 13 && $('.j-popover_record').hasClass('is-active') ) {
+                    $('.j-record_title').click();
+                }
+            });
+
+            $workspace.on('click', '.j-message', function() {
+                if ( $('.j-popover_record').hasClass('is-active') ) {
+                    removePopover();
+                }
+            });
+
+            $workspace.on('submit', '.j-message', function() {
                 return false;
             });
 
@@ -978,6 +1022,8 @@ define([
 
                 $selected.removeClass('is-selected');
 
+                VoiceMessage.resetRecord();
+
                 return false;
             });
 
@@ -1010,10 +1056,12 @@ define([
     function clickBehaviour(e) {
         var objDom = $(e.target),
             selectors = '#profile, #profile *, .occupant, .occupant *, ' +
-            '.j-btn_input_smile, .j-btn_input_smile *, .textarea, ' +
-            '.textarea *, .j-popover_smile, .j-popover_smile *, ' +
-            '.j-popover_gmap, .j-popover_gmap *, .j-btn_input_location, ' +
-            '.j-btn_input_location *',
+                '.j-btn_input_smile, .j-btn_input_smile *, .textarea, ' +
+                '.textarea *, .j-popover_smile, .j-popover_smile *, ' +
+                '.j-popover_gmap, .j-popover_gmap *, .j-btn_input_location, ' +
+                '.j-btn_input_location *, ' +
+                '.j-popover_record, .j-popover_record *, .j-btn_audio_record, ' +
+                '.j-btn_audio_record *',
             googleImage = objDom.context.src && objDom.context.src.indexOf('/maps.gstatic.com/mapfiles/api-3/images/mapcnt6.png') || null;
 
         if (objDom.is(selectors) || e.which === 3 || googleImage === 7) {
@@ -1036,27 +1084,28 @@ define([
         var $openMap = $('.j-open_map');
 
         $('.is-contextmenu').removeClass('is-contextmenu');
-        $('.is-active').removeClass('is-active');
         $('.popover').remove();
+
+        if ( $('.j-start_record').hasClass('is-active') ||
+             $('.j-start_record').hasClass('is-send') ) {
+            return false;
+        }
+
+        $('.is-active').removeClass('is-active');
 
         if ($openMap.length) {
             $openMap.remove();
-        }
-
-        if ($('#mCSB_8_container').is(':visible')) {
-            $('#mCSB_8_container')[0].style.paddingBottom = '0';
         }
     }
 
     function openPopup(objDom, id, dialog_id, isProfile) {
         // if it was the delete action
         if (id) {
-            objDom.attr('data-id', id);
-            objDom.find('#deleteConfirm').data('id', id);
+            objDom.data('id', id);
+            objDom.find('.j-deleteContactConfirm').data('id', id);
         }
-        // if it was the leave action
         if (dialog_id) {
-            objDom.find('#leaveConfirm').data('dialog', dialog_id);
+            objDom.find('.j-deleteChatConfirm').data('dialog', dialog_id);
         }
         if (isProfile) {
             objDom.find('.popup-control-button_cancel').attr('data-isprofile', true);
@@ -1077,6 +1126,7 @@ define([
     }
 
     function closePopup() {
+        $('.j-popupDeleteContact.is-overlay').removeData('id');
         $('.j-popupDelete.is-overlay').removeData('id');
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();

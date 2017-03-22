@@ -30,7 +30,14 @@ define([
 ) {
 
     var self;
-    var User, Dialog, Message, ContactList, Listeners;
+
+    var User,
+        Dialog,
+        Message,
+        ContactList,
+        VoiceMessage,
+        Listeners;
+
     var unreadDialogs = {};
 
     var TITLE_NAME = 'Q-municate',
@@ -45,6 +52,7 @@ define([
         Dialog = this.app.models.Dialog;
         Message = this.app.models.Message;
         ContactList = this.app.models.ContactList;
+        VoiceMessage = this.app.models.VoiceMessage;
         Listeners = this.app.listeners;
     }
 
@@ -314,8 +322,8 @@ define([
             private_id = dialog_type === 3 ? occupants_ids[0] : null;
 
             try {
-                icon = private_id ? contacts[private_id].avatar_url : (room_photo || QMCONFIG.defAvatar.group_url);
-                name = private_id ? contacts[private_id].full_name : room_name;
+                icon = (private_id && contacts[private_id]) ? contacts[private_id].avatar_url : (room_photo || QMCONFIG.defAvatar.group_url);
+                name = (private_id && contacts[private_id]) ? contacts[private_id].full_name : room_name;
                 status = roster[private_id] ? roster[private_id] : null;
             } catch (error) {
                 console.error(error);
@@ -341,10 +349,18 @@ define([
             startOfCurrentDay = new Date();
             startOfCurrentDay.setHours(0, 0, 0, 0);
 
+            // remove duplicate
+            var $dialogItem = $('.j-dialogItem[data-dialog="'+dialog_id+'"]');
+
+            if ($dialogItem.length) {
+                $dialogItem.remove();
+            }
+
             // checking if this dialog is recent OR no
             if (!last_message_date_sent ||
-                new Date(last_message_date_sent * 1000) > startOfCurrentDay ||
+                (new Date(last_message_date_sent * 1000) > startOfCurrentDay) ||
                 parametr === 'new_dialog') {
+
                 if (isDownload) {
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
                 } else if (!$('#searchList').is(':visible')) {
@@ -368,8 +384,7 @@ define([
         htmlBuild: function(objDom, messages) {
             Entities.Collections.dialogs.saveDraft();
 
-            var MessageView = this.app.views.Message,
-                contacts = ContactList.contacts,
+            var contacts = ContactList.contacts,
                 dialogs = Entities.Collections.dialogs,
                 roster = ContactList.roster,
                 parent = objDom.parent(),
@@ -383,12 +398,8 @@ define([
                 $chatWrap = $('.j-chatWrap'),
                 $chatView = $('.chatView'),
                 isCall,
-                chatTpl,
-                messageId,
                 location,
                 status,
-                msgArr,
-                userId,
                 html,
                 icon,
                 name,
@@ -436,6 +447,9 @@ define([
             localStorage.removeItem(readBadge);
             localStorage.setItem(readBadge, dialog_id);
 
+            // reset recorder state
+            VoiceMessage.resetRecord();
+
             function buildChat() {
                 new Entities.Models.Chat({
                     'occupantsIds': occupants_ids,
@@ -463,6 +477,7 @@ define([
                         }
                     }
                     html += '</div>';
+
                 }
 
                 $('.l-chat[data-dialog="' + dialog_id + '"] .j-chatOccupants').append($(html));
@@ -470,9 +485,13 @@ define([
                 if (dialog.get('type') === 3 && (!status || status.subscription === 'none')) {
                     $('.l-chat:visible').addClass('is-request');
                 }
+
+                // block recorder if isn't supported
+                if (!VoiceMessage.supported) {
+                    VoiceMessage.blockRecorder();
+                }
             }
         },
-
 
         createGroupChat: function(type, dialog_id) {
             var contacts = ContactList.contacts,
@@ -481,8 +500,6 @@ define([
                 groupName = occupants_ids.length > 0 ? [User.contact.full_name, contacts[occupants_ids[0]].full_name] : [User.contact.full_name],
                 occupants_names = !type && occupants_ids.length > 0 ? [contacts[occupants_ids[0]].full_name] : [],
                 new_ids = [],
-                new_id, occupant,
-                roster = ContactList.roster,
                 chat = $('.l-chat[data-dialog="' + dialog_id + '"]');
 
             for (var i = 0, len = new_members.length, name; i < len; i++) {
@@ -531,37 +548,65 @@ define([
             }
         },
 
-        leaveGroupChat: function(dialogParam, sameUser) {
+        deleteChat: function(dialogParam, sameUser) {
             var dialogs = Entities.Collections.dialogs,
-                dialog_id = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
-                dialog = dialogs.get(dialog_id),
-                li = $('.dialog-item[data-dialog="' + dialog_id + '"]'),
-                chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
-                list = li.parents('ul');
+                dialogId = (typeof dialogParam === 'string') ? dialogParam : dialogParam.data('dialog'),
+                dialog = dialogs.get(dialogId);
 
-            if (sameUser) {
-                removeDialogItem();
-            } else {
-                Dialog.leaveChat(dialog, function() {
-                    removeDialogItem();
-                });
+            if (!sameUser) {
+                Dialog.deleteChat(dialog);
             }
 
-            function removeDialogItem() {
-                li.remove();
-                Helpers.Dialogs.isSectionEmpty(list);
+            self.removeDialogItem(dialogId);
+        },
 
-                // delete chat section
-                if (chat.is(':visible')) {
-                    $('.j-capBox').removeClass('is-hidden')
-                        .siblings().removeClass('is-active');
+        removeDialogItem: function(dialogId) {
+            var $dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]'),
+                $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
+                chatIsActive = $chat.is(':visible'),
+                $dialogList = $dialogItem.parents('ul');
 
-                    $('.j-chatWrap').addClass('is-hidden')
-                        .children().remove();
-                }
-
+            // reset recorder state
+            if (chatIsActive) {
+                VoiceMessage.resetRecord();
             }
 
+            $dialogItem.remove();
+
+            Helpers.Dialogs.isSectionEmpty($dialogList);
+
+            // delete chat section
+            if ($chat.is(':visible')) {
+                $('.j-capBox').removeClass('is-hidden')
+                    .siblings().removeClass('is-active');
+
+                $('.j-chatWrap').addClass('is-hidden')
+                    .children().remove();
+            }
+
+            if (Entities.active === dialogId) {
+                Entities.active = '';
+            }
+
+            if ($chat.length > 0) {
+                $chat.remove();
+            }
+        },
+
+        removeForbiddenDialog: function(dialogId) {
+            var dialogs = Entities.Collections.dialogs,
+                $mediacall = $('.mediacall');
+
+            if ($mediacall.length > 0) {
+                $mediacall.find('.btn_hangup').click();
+            }
+
+            this.removeDialogItem(dialogId);
+            this.decUnreadCounter(dialogId);
+
+            dialogs.remove(dialogId);
+
+            return false;
         },
 
         showChatWithNewMessages: function(dialogId, unreadCount, messages) {
@@ -593,7 +638,13 @@ define([
             } else {
                 messages = [];
 
-                Message.download(dialogId, function(response) {
+                Message.download(dialogId, function(response, error) {
+                    if (error && error.code === 403) {
+                        self.removeForbiddenDialog(dialogId);
+
+                        return false;
+                    }
+
                     _.each(response, function(item) {
                         messages.push(Message.create(item));
                     });
@@ -643,20 +694,23 @@ define([
     /* Private
     ---------------------------------------------------------------------- */
     function messageScrollbar(selector) {
+        var isBottom;
+
         $(selector).mCustomScrollbar({
             theme: 'minimal-dark',
             scrollInertia: 0,
             mouseWheel: {
-                scrollAmount: 120,
+                scrollAmount: 120
             },
             callbacks: {
                 onTotalScrollBack: function() {
                     ajaxDownloading(selector);
                 },
                 onTotalScroll: function() {
-                    var isBottom = Helpers.isBeginOfChat(),
-                    $currentDialog = $('.dialog-item.is-selected'),
-                    dialogId = $currentDialog.data('dialog');
+                    var $currentDialog = $('.dialog-item.is-selected'),
+                        dialogId = $currentDialog.data('dialog');
+
+                    isBottom = Helpers.isBeginOfChat();
 
                     if (isBottom) {
                         $('.j-toBottom').hide();
@@ -665,10 +719,14 @@ define([
                     }
                 },
                 onScroll: function() {
-                    var isBottom = Helpers.isBeginOfChat();
+                    isBottom = Helpers.isBeginOfChat();
+
                     if (!isBottom) {
                         $('.j-toBottom').show();
                     }
+
+                    Listeners.setChatViewPosition($(this).find('.mCSB_container').offset().top);
+                    isNeedToStopTheVideo();
                 }
             }
         });
@@ -711,15 +769,21 @@ define([
     function ajaxDownloading(selector) {
         var MessageView = self.app.views.Message,
             $chat = $('.j-chatItem:visible'),
-            dialog_id = $chat.data('dialog'),
+            dialogId = $chat.data('dialog'),
             messages = $chat.find('.message'),
             firstMsgId = messages.first().attr('id'),
             count = messages.length,
             message;
 
 
-        Message.download(dialog_id, function(messages) {
+        Message.download(dialogId, function(messages, error) {
             for (var i = 0, len = messages.length; i < len; i++) {
+                if (error && error.code === 403) {
+                    self.removeForbiddenDialog(dialogId);
+
+                    return false;
+                }
+
                 message = Message.create(messages[i], 'ajax');
                 message.stack = Message.isStack(false, messages[i], messages[i + 1]);
 
@@ -783,6 +847,18 @@ define([
         if ($label.length && (dialogId !== curDialogId)) {
             $label.remove();
         }
+    }
+    
+    function isNeedToStopTheVideo() {
+        $('.j-videoPlayer').each(function(index, element) {
+            var $element = $(element);
+
+            if (!element.paused) {
+                if (($element.offset().top <= 0) || ($element.offset().top >= 750)) {
+                    element.pause();
+                }
+            }
+        });
     }
 
     return DialogView;

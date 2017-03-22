@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="26px" viewBox="0 0 26 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>A56A4447-AE9C-4780-9FBC-43FA1CF17489</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Tex-Input/Regular" transform="translate(-613.000000, -11.000000)">
+            <g id="ic_hidden-location">
+                <g transform="translate(614.000000, 12.000000)">
+                    <circle id="Oval-28" stroke="#959595" stroke-width="0.705882353" cx="12" cy="12" r="12"></circle>
+                    <g id="ic_near_me" transform="translate(4.235294, 5.647059)">
+                        <polygon id="Bounds" points="0 0 14.1176471 0 14.1176471 14.1176471 0 14.1176471"></polygon>
+                        <polygon id="Icon" fill="#17D04B" points="12.3529412 1.76470588 1.76470588 6.19411765 1.76470588 6.77058824 5.78823529 8.32941176 7.34117647 12.3529412 7.91764706 12.3529412"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

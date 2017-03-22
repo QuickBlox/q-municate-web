@@ -75,6 +75,9 @@ define([
                 QMHtml.VideoChat.noWebRTC();
             }
 
+            // remove contextmenu after start call
+            $('.is-contextmenu').removeClass('is-contextmenu');
+
             return false;
         });
 
@@ -193,7 +196,7 @@ define([
             $chat.find('.mediacall').remove();
             $chat.find('.l-chat-header').show();
             $chat.find('.l-chat-content').css({
-                height: 'calc(100% - 165px)'
+                height: 'calc(100% - 140px)'
             });
 
             addCallTypeIcon(opponentId, null);
@@ -394,7 +397,7 @@ define([
         $chat.find('.mediacall').remove();
         $chat.find('.l-chat-header').show();
         $chat.find('.l-chat-content').css({
-            height: 'calc(100% - 165px)'
+            height: 'calc(100% - 140px)'
         });
 
          addCallTypeIcon(id, null);
@@ -573,7 +576,7 @@ define([
             $chat.find('.mediacall').remove();
             $chat.find('.l-chat-header').show();
             $chat.find('.l-chat-content').css({
-                height: 'calc(100% - 165px)'
+                height: 'calc(100% - 140px)'
             });
         } else if ($declineButton[0]) {
             incomingCall = $declineButton.parents('.incoming-call');

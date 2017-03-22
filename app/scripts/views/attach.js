@@ -41,31 +41,19 @@ define([
 
     AttachView.prototype = {
 
-        changeInput: function(objDom) {
-            var file = objDom[0].files[0] || null,
+        changeInput: function(objDom, recordedAudioFile) {
+            var file = recordedAudioFile ? recordedAudioFile : objDom[0].files[0],
                 chat = $('.l-chat:visible .l-chat-content .mCSB_container'),
                 id = _.uniqueId(),
                 fileSize = file.size,
                 fileSizeCrop = fileSize > (1024 * 1024) ? (fileSize / (1024 * 1024)).toFixed(1) : (fileSize / 1024).toFixed(1),
                 fileSizeUnit = fileSize > (1024 * 1024) ? 'MB' : 'KB',
-                type = file.type.indexOf('image/') === 0 ? 'image' :
-                    file.type.indexOf('audio/') === 0 ? 'audio' :
-                    file.type.indexOf('video/') === 0 ? 'video' : 'photo',
-                maxSize = ((type === 'video') ? QMCONFIG.maxVideoSize :
-                    QMCONFIG.maxLimitFile) * 1024 * 1024,
+                metadata = readMetadata(file),
                 errMsg,
                 html;
 
             if (file) {
-                if (file.name.length > 100) {
-                    errMsg = QMCONFIG.errors.fileName;
-                } else if (file.size > maxSize) {
-                    if (type === 'video') {
-                        errMsg = QMCONFIG.errors.videoSize;
-                    } else {
-                        errMsg = QMCONFIG.errors.fileSize;
-                    }
-                }
+                errMsg = self.validateFile(file);
 
                 if (errMsg) {
                     self.pastErrorMessage(errMsg, objDom, chat);
@@ -79,17 +67,22 @@ define([
                 }
 
                 chat.append(html);
-                objDom.val('');
+
+                if (objDom) {
+                    objDom.val('');
+                }
+
                 fixScroll();
+
                 if (file.type.indexOf('image') > -1) {
                     Attach.crop(file, {
                         w: 1000,
                         h: 1000
                     }, function(blob) {
-                        self.createProgressBar(id, fileSizeCrop, fileSize, blob);
+                        self.createProgressBar(id, fileSizeCrop, metadata, blob);
                     });
                 } else {
-                    self.createProgressBar(id, fileSizeCrop, fileSize, file);
+                    self.createProgressBar(id, fileSizeCrop, metadata, file);
                 }
             }
         },
@@ -100,16 +93,20 @@ define([
             });
 
             chat.append(html);
-            objDom.val('');
+
+            if (objDom) {
+                objDom.val('');
+            }
 
             fixScroll();
 
             return false;
         },
 
-        createProgressBar: function(id, fileSizeCrop, fileSize, file) {
+        createProgressBar: function(id, fileSizeCrop, metadata, file) {
             var progressBar = new ProgressBar('progress_' + id),
                 $chatItem = $('.j-chatItem'),
+                fileSize = metadata.size,
                 percent = 5,
                 isUpload = false,
                 part,
@@ -136,7 +133,7 @@ define([
             Attach.upload(file, function(blob) {
                 Helpers.log('Blob:', blob);
 
-                self.sendMessage($chatItem, blob, fileSize);
+                self.sendMessage($chatItem, blob, metadata);
                 isUpload = true;
 
                 if ($('#progress_' + id).length > 0) {
@@ -169,7 +166,7 @@ define([
             objDom.parents('article').remove();
         },
 
-        sendMessage: function(chat, blob, size, mapCoords) {
+        sendMessage: function(chat, blob, metadata, mapCoords) {
             var MessageView = this.app.views.Message,
                 jid = chat.data('jid'),
                 id = chat.data('id'),
@@ -190,12 +187,12 @@ define([
                     'data': mapCoords
                 };
             } else {
-                attach = Attach.create(blob, size);
+                attach = Attach.create(blob, metadata);
             }
 
             msg = {
                 'type': type,
-                'body': attach.type === 'location' ? 'Location' : 'Attachment',
+                'body': getAttachmentText(),
                 'extension': {
                     'save_to_history': 1,
                     'dialog_id': dialog_id,
@@ -243,6 +240,73 @@ define([
                     Helpers.Dialogs.isSectionEmpty($('#recentList ul'));
                 }
             }
+
+            function getAttachmentText() {
+                var text;
+
+                switch (attach.type) {
+                    case 'location':
+                        text = 'Location';
+                        break;
+
+                    case 'image':
+                        text = 'Image attachment';
+                        break;
+
+                    case 'audio':
+                        text = 'Audio attachment';
+                        break;
+
+                    case 'video':
+                        text = 'Video attachment';
+                        break;
+
+                    default:
+                        text = 'Attachment';
+                        break;
+                }
+
+                return text;
+            }
+        },
+
+        validateFile: function(file) {
+            var errMsg,
+                maxSize,
+                fullType,
+                type;
+
+            fullType = file.type;
+            type = file.type.indexOf('image/') === 0 ? 'image' :
+                   file.type.indexOf('audio/') === 0 ? 'audio' :
+                   file.type.indexOf('video/') === 0 ? 'video' : 'file';
+
+            if (type === 'video' || type === 'audio') {
+                maxSize = QMCONFIG.maxLimitMediaFile * 1024 * 1024;
+            } else {
+                maxSize = QMCONFIG.maxLimitFile * 1024 * 1024;
+            }
+
+            if (file.name.length > 100) {
+                errMsg = QMCONFIG.errors.fileName;
+            } else if (file.size > maxSize) {
+                if (type === 'video') {
+                    errMsg = QMCONFIG.errors.videoSize;
+                } else {
+                    errMsg = QMCONFIG.errors.fileSize;
+                }
+            }
+
+            if (type === 'video' && fullType !== 'video/mp4') {
+                errMsg = 'This video format is not supported, only *.mp4';
+            } else if (type === 'audio' &&
+                (fullType !== 'audio/mp3' || fullType !== 'audio/mpeg')) {
+                errMsg = 'This audio format is not supported, only *.mp3';
+            } else if (type === 'file') {
+                errMsg = 'This file format isn\'t supported';
+            }
+
+            return errMsg;
         }
 
     };
@@ -251,6 +315,51 @@ define([
     ---------------------------------------------------------------------- */
     function fixScroll() {
         $('.l-chat:visible .j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
+    }
+
+    function readMetadata(file) {
+        var _URL = window.URL || window.webkitURL,
+            metadata = { 'size': file.size },
+            type = file.type.indexOf('image/') === 0 ? 'image' :
+                   file.type.indexOf('audio/') === 0 ? 'audio' :
+                   file.type.indexOf('video/') === 0 ? 'video' : 'file';
+
+        switch (type) {
+            case 'image':
+                var image = new Image();
+
+                image.src = _URL.createObjectURL(file);
+                image.onload = function() {
+                    metadata.width = this.width;
+                    metadata.height = this.height;
+                };
+                break;
+
+            case 'audio':
+                var audio = new Audio();
+
+                audio.src = _URL.createObjectURL(file);
+                audio.onloadedmetadata = function() {
+                    metadata.duration = Math.floor(this.duration);
+                };
+                break;
+
+            case 'video':
+                var video = document.createElement('video');
+
+                video.src = _URL.createObjectURL(file);
+                video.onloadedmetadata = function() {
+                    metadata.width = this.videoWidth;
+                    metadata.height = this.videoHeight;
+                    metadata.duration = Math.floor(this.duration);
+                };
+                break;
+
+            default:
+                break;
+        }
+
+        return metadata;
     }
 
     return AttachView;

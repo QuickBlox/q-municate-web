@@ -23,6 +23,7 @@ define([
     QMHtml,
     _
 ) {
+    var self;
 
     var Dialog,
         Message,
@@ -35,7 +36,7 @@ define([
         Message = this.app.models.Message;
         ContactList = this.app.models.ContactList;
         User = this.app.models.User;
-        that = this;
+        self = this;
 
         scrollbarContacts();
     }
@@ -63,41 +64,49 @@ define([
             var popup = $('#popupSearch');
 
             openPopup(popup);
-            popup.find('.popup-elem').addClass('is-hidden').siblings('form').find('input').val('');
+            popup.find('.popup-elem')
+                 .addClass('is-hidden')
+                 .siblings('form')
+                 .find('input')
+                 .val('');
             popup.find('.mCSB_container').empty();
         },
 
-        globalSearch: function(form) {
+        globalSearch: function($form) {
             var self = this,
-                popup = form.parent(),
-                list = popup.find('ul:first.list_contacts'),
-                val = form.find('input[type="search"]').val().trim(),
+                $popup = $form.parent(),
+                $list = $popup.find('ul:first.list_contacts'),
+                $firstNote = $popup.find('.j-start_search_note'),
+                val = $form.find('input[type="search"]').val().trim(),
                 len = val.length;
 
             if (len > 0) {
+                $firstNote.addClass('is-hidden');
                 // display "Name must be more than 2 characters" or "No results found"
                 if (len < 3) {
-                    popup.find('.popup-elem .not_found').addClass('is-hidden');
-                    popup.find('.popup-elem .short_length').removeClass('is-hidden');
+                    $popup.find('.popup-elem .not_found').addClass('is-hidden');
+                    $popup.find('.popup-elem .short_length').removeClass('is-hidden');
                 } else {
-                    popup.find('.popup-elem .not_found').removeClass('is-hidden');
-                    popup.find('.popup-elem .short_length').addClass('is-hidden');
+                    $popup.find('.popup-elem .not_found').removeClass('is-hidden');
+                    $popup.find('.popup-elem .short_length').addClass('is-hidden');
                 }
 
-                scrollbar(list, self);
-                self.createDataSpinner(list);
+                scrollbar($list, self);
+                self.createDataSpinner($list);
 
                 sessionStorage.setItem('QM.search.value', val);
                 sessionStorage.setItem('QM.search.page', 1);
 
                 ContactList.globalSearch(function(results) {
-                    createListResults(list, results, self);
+                    createListResults($list, results, self);
                 });
+            } else {
+                $firstNote.removeClass('is-hidden');
             }
 
-            form.find('input').prop('disabled', false).val(val);
-            popup.find('.popup-elem').addClass('is-hidden');
-            popup.find('.mCSB_container').empty();
+            $form.find('input').prop('disabled', false).val(val);
+            $popup.find('.popup-elem').addClass('is-hidden');
+            $popup.find('.mCSB_container').empty();
 
             $('.popup:visible .spinner_bounce')
                 .removeClass('is-hidden')
@@ -202,7 +211,6 @@ define([
                 message,
                 self = this;
 
-
             if (notConfirmed[id] && requestItem.length) {
                 changeRequestStatus('Request accepted');
                 self.sendConfirm(jid, 'new_dialog');
@@ -269,8 +277,7 @@ define([
 
         sendConfirm: function(jid, isClick) {
             var DialogView = this.app.views.Dialog,
-                MessageView = this.app.views.Message,
-                $objDom = $('.j-incommingContactRequest[data-jid="' + jid + '"]'),
+                $objDom = $('.j-incomingContactRequest[data-jid="' + jid + '"]'),
                 id = QB.chat.helpers.getIdFromNode(jid),
                 $chat = $('.l-chat[data-id="' + id + '"]'),
                 list = $objDom.parents('ul.j-requestsList'),
@@ -293,14 +300,6 @@ define([
             if ($chat.length) {
                 $chat.removeClass('is-request');
             }
-
-            // update roster
-            roster[id] = {
-                'subscription': 'from',
-                'ask': 'subscribe'
-            };
-
-            ContactList.saveRoster(roster);
 
             // update notConfirmed people list
             delete notConfirmed[id];
@@ -337,6 +336,13 @@ define([
                 });
             }
 
+            // update roster
+            roster[id] = {
+                'subscription': 'both',
+                'ask': null
+            };
+            ContactList.saveRoster(roster);
+
             // delete duplicate contact item
             li = $('.dialog-item[data-id="' + id + '"]');
             list = li.parents('ul');
@@ -348,7 +354,7 @@ define([
             dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]');
             copyDialogItem = dialogItem.clone();
             dialogItem.remove();
-            $('#recentList ul').prepend(copyDialogItem);
+            $('.j-recentList').prepend(copyDialogItem);
             if ($('#searchList').is(':hidden')) {
                 $('#recentList').removeClass('is-hidden');
                 Helpers.Dialogs.isSectionEmpty($('.j-recentList'));
@@ -360,8 +366,7 @@ define([
 
         sendReject: function(jid, isClick) {
             var id = QB.chat.helpers.getIdFromNode(jid),
-                $objDom = $('.j-incommingContactRequest[data-jid="' + jid + '"]'),
-                list = $objDom.parents('ul.j-requestsList'),
+                $objDom = $('.j-incomingContactRequest[data-jid="' + jid + '"]'),
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
@@ -369,7 +374,7 @@ define([
 
             $objDom.remove();
 
-            Helpers.Dialogs.isSectionEmpty(list);
+            Helpers.Dialogs.isSectionEmpty($('.j-requestsList'));
 
             // update roster
             roster[id] = {
@@ -391,7 +396,7 @@ define([
                         date_sent: time,
                         dialog_id: hiddenDialogs[id],
                         save_to_history: 1,
-                        notification_type: '6',
+                        notification_type: '6'
                     });
                 });
             }
@@ -399,15 +404,17 @@ define([
         },
 
         sendDelete: function(id, isClick) {
-            var contacts = ContactList.contacts,
+            var DialogView = self.app.views.Dialog,
                 dialogs = Entities.Collections.dialogs,
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 li = $('.dialog-item[data-id="' + id + '"]'),
-                $chat = $('.l-chat[data-id="' + id + '"]'),
                 list = li.parents('ul.j-list'),
-                dialog_id = li.data('dialog'),
+                hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
+                dialogId = li.data('dialog') || hiddenDialogs[id] || null,
                 roster = ContactList.roster,
-                time = Math.floor(Date.now() / 1000);
+                dialog = dialogId ? dialogs.get(dialogId) : null,
+                time = Math.floor(Date.now() / 1000),
+                $mediacall = $('.mediacall');
 
             // update roster
             delete roster[id];
@@ -419,59 +426,45 @@ define([
                     sendContactRequest({
                         jid: jid,
                         date_sent: time,
-                        dialog_id: dialog_id,
+                        dialog_id: dialogId,
                         save_to_history: 1,
-                        notification_type: '7',
+                        notification_type: '7'
                     });
                 });
+
+                if (dialogId) {
+                    Dialog.deleteChat(dialog);
+                }
             }
 
-            li.remove();
-            Helpers.Dialogs.isSectionEmpty(list);
-
-            // delete chat section
-            if ($chat.is(':visible')) {
-                $('.j-capBox').removeClass('is-hidden')
-                    .siblings().removeClass('is-active');
-
-                $('.j-chatWrap').addClass('is-hidden')
-                    .children().remove();
-            }
-            if ($chat.length > 0) {
-                $chat.remove();
+            if ($mediacall.length > 0) {
+                $mediacall.find('.btn_hangup').click();
             }
 
-            if (Entities.active === dialog_id) {
-                Entities.active = '';
+            if (dialogId) {
+                DialogView.removeDialogItem(dialogId);
+                DialogView.decUnreadCounter(dialogId);
             }
-            dialogs.remove(dialog_id);
-
-            that.app.views.Dialog.decUnreadCounter(dialog_id);
         },
 
         // callbacks
-
         onSubscribe: function(id) {
             var html,
                 contacts = ContactList.contacts,
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-                roster = ContactList.roster,
-                $dialogItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
-                $isCurrentItem = $('#recentList .list-item[data-id="' + id + '"]'),
-                recentList = $isCurrentItem.parents('ul.j-recentList'),
-                dialog_id = $isCurrentItem.data('dialog'),
-                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
-
-            if ($dialogItem.length) {
-                return true;
-            }
+                $requestList = $('.j-requestsList'),
+                $recentList = $('.j-recentList'),
+                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+                duplicate;
 
             // update notConfirmed people list
             notConfirmed[id] = true;
             ContactList.saveNotConfirmed(notConfirmed);
 
             ContactList.add([id], null, function() {
-                html = '<li class="list-item j-incommingContactRequest" data-jid="' + jid + '">';
+                duplicate = $requestList.find('.j-incomingContactRequest[data-jid="' + jid + '"]').length;
+
+                html = '<li class="list-item j-incomingContactRequest" data-jid="' + jid + '">';
                 html += '<a class="contact l-flexbox" href="#">';
                 html += '<div class="l-flexbox_inline">';
                 html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + (typeof contacts[id] !== 'undefined' ? contacts[id].avatar_url : '') + ')" data-id="' + id + '"></div>';
@@ -481,14 +474,19 @@ define([
                 html += '<button class="request-button request-button_ok j-requestConfirm">&#10003;</button>';
                 html += '</div></a></li>';
 
-                $('#requestsList').removeClass('is-hidden').find('ul').prepend(html);
-                $('#emptyList').addClass('is-hidden');
-            }, 'subscribe');
+                if (!duplicate) {
+                    $requestList.prepend(html);
+                }
 
-            if ($isCurrentItem.length) {
-                $isCurrentItem.remove();
-                Helpers.Dialogs.isSectionEmpty(recentList);
-            }
+                $('#requestsList').removeClass('is-hidden');
+                $('#emptyList').addClass('is-hidden');
+
+                if ($recentList.find('.list-item[data-id="' + id + '"]').length) {
+                    $recentList.find('.list-item[data-id="' + id + '"]').remove();
+                    self.autoConfirm(id);
+                    Helpers.Dialogs.isSectionEmpty($recentList);
+                }
+            }, 'subscribe');
         },
 
         onConfirm: function(id) {
@@ -511,12 +509,19 @@ define([
         },
 
         onReject: function(id) {
-            var dialogItem = $('.presence-listener[data-id="' + id + '"]'),
+            var VoiceMessage = self.app.models.VoiceMessage,
+                dialogItem = $('.presence-listener[data-id="' + id + '"]'),
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 request = $('#requestsList .list-item[data-jid="' + jid + '"]'),
+                chatIsActive = $('.j-chatItem[data-id="' + id + '"]').is(':visible'),
                 list = request && request.parents('ul'),
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
+
+            // reset recorder state
+            if (chatIsActive) {
+                VoiceMessage.resetRecord();
+            }
 
             // update roster
             roster[id] = {
@@ -560,6 +565,24 @@ define([
                 if (dialogItem.is('.popup_details')) {
                     dialogItem.find('.status_text').text('Online');
                 }
+            }
+        },
+
+        autoConfirm: function(id) {
+            var jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+                hiddenDialogs = notConfirmed[id] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : null,
+                dialogId = hiddenDialogs[id] || null,
+                activeId = Entities.active,
+                dialogs = Entities.Collections.dialogs,
+                dialog = dialogId ? dialogs.get(dialogId) : null;
+
+            self.sendConfirm(jid, 'new_dialog');
+
+            if (activeId === dialogId) {
+                Entities.active = '';
+                dialog.set({'opened': false});
+                $('.j-dialogItem[data-dialog="' + dialogId + '"] > .contact').click();
             }
         }
 

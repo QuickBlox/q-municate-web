@@ -30,10 +30,19 @@ define([
     Entities
 ) {
 
-    var User, Message, ContactList, Dialog, Settings;
-    var clearTyping, typingList = []; // for typing statuses
-    var urlCache = {};
     var self;
+
+    var User,
+        Message,
+        ContactList,
+        Dialog,
+        SyncTabs,
+        Settings;
+
+    var clearTyping,
+        typingList = []; // for typing statuses
+
+    var urlCache = {};
 
     function MessageView(app) {
         this.app = app;
@@ -59,12 +68,14 @@ define([
             }
         },
 
-        addItem: function(message, isCallback, isMessageListener, recipientId) {
-            var DialogView = this.app.views.Dialog,
-                ContactListMsg = this.app.models.ContactList,
+        addItem: function(message, isCallback, isMessageListener) {
+            var Contact = this.app.models.Contact,
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
                 isBottom = Helpers.isBeginOfChat(),
-                isOnline = message.online;
+                isOnline = message.online,
+                senderID = message.sender_id,
+                contacts = ContactList.contacts,
+                contact;
 
             if (isCallback && isMessageListener) {
                 updateDialogItem(message);
@@ -78,11 +89,18 @@ define([
                 return true;
             }
 
-            this.checkSenderId(message.sender_id, function() {
+            if (senderID === User.contact.id) {
+                contact = User.contact;
+            } else {
+                if (!contacts[senderID]) {
+                    contacts[senderID] = Contact.create( { 'id': senderID } );
+                }
 
-                var contacts = ContactListMsg.contacts,
-                    contact = message.sender_id === User.contact.id ? User.contact : contacts[message.sender_id],
-                    type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
+                contact = contacts[senderID];
+            }
+
+            this.checkSenderId(senderID, function() {
+                var type = message.notification_type || (message.callState && (parseInt(message.callState) + 7).toString()) || 'message',
                     attachType = message.attachment && message.attachment['content-type'] || message.attachment && message.attachment.type || null,
                     attachUrl = message.attachment && (QB.content.privateUrl(message.attachment.id) || message.attachment.url || null),
                     geolocation = (message.latitude && message.longitude) ? {
@@ -94,11 +112,25 @@ define([
                         'size': [380, 200]
                     }) : null,
                     mapAttachLink = geoCoords ? Location.getMapUrl(geoCoords) : null,
-                    recipient = message.recipient_id && contacts[message.recipient_id] || null,
+                    recipientFullName = message.recipient_id && contacts[message.recipient_id] && contacts[message.recipient_id].full_name || 'this user',
                     occupants_names = '',
+                    added_occupant_ids,
                     occupants_ids,
+                    attachParams,
                     status,
                     html;
+
+
+                if (attachType) {
+                    attachParams = {
+                        id: message.id,
+                        height: message.attachment.height || null,
+                        width: message.attachment.width || null,
+                        name: message.attachment.name,
+                        type: attachType,
+                        url: attachUrl
+                    };
+                }
 
                 switch (type) {
                     case '1':
@@ -189,10 +221,10 @@ define([
                         if (message.sender_id === User.contact.id) {
                             html += '<h4 class="message-author">You have rejected a request';
                         } else {
-                            html += '<h4 class="message-author">Your request has been rejected ';
+                            html += '<h4 class="message-author">Your request has been rejected</h4>';
                             html += '<button class="btn btn_request_again j-requestAgain">';
                             html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again';
-                            html += '</button></h4>';
+                            html += '</button>';
                         }
 
                         html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
@@ -207,11 +239,11 @@ define([
                         html += '<div class="message-content">';
 
                         if (message.sender_id === User.contact.id) {
-                            html += '<h4 class="message-author">You have deleted ' + recipient.full_name + ' from your contact list';
+                            html += '<h4 class="message-author">You have deleted ' + recipientFullName + ' from your contact list';
                         } else {
-                            html += '<h4 class="message-author">You have been deleted from the contact list ';
+                            html += '<h4 class="message-author">You have been deleted from the contact list</h4>';
                             html += '<button class="btn btn_request_again btn_request_again_delete j-requestAgain">';
-                            html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button></h4>';
+                            html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button>';
                         }
 
                         html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
@@ -309,60 +341,44 @@ define([
 
                         if (attachType && attachType.indexOf('image') > -1) {
                             html += '<div class="message-body">';
-                            html += '<div class="preview preview-photo" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '">';
-                            html += '<img id="attach_' + message.id + '" src="' + attachUrl + '" alt="attach">';
-                            html += '</div></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
+                            html += '<div id="image_' + message.id + '" class="preview preview-photo" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '">';
+                            html += '<img src="' + attachUrl + '" alt="attach"></div></div></div>';
                         } else if (attachType && attachType.indexOf('audio') > -1) {
-                            html += '<div class="message-body">';
-                            html += message.attachment.name + '<br><br>';
-                            html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
-                            html += '<audio id="attach_' + message.id + '" src="' + attachUrl + '" controls class="attach-audio"></audio></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
+                            html += '<div class="message-body"><div id="audio_player_' + message.id + '" class="audio_player"></div></div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
-                            html += '<div class="message-body">';
-                            html += message.attachment.name + '<br><br>';
-                            html += '<a class="file-download" href="' + attachUrl + '" download="' + message.attachment.name + '">Download</a>';
-                            html += '<div id="attach_' + message.id + '" class="preview preview-video" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '"></div></div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
+                            html += '<div class="message-body"><div class="media_title">'+ message.attachment.name + '</div>';
+                            html += '<video id="video_' + message.id + '" class="video_player j-videoPlayer" controls>'+
+                                        '<source src="' + attachUrl + '" type="video/mp4">'+
+                                    '</video></div></div>';
                         } else if (attachType && attachType.indexOf('location') > -1) {
                             html += '<div class="message-body">';
                             html += '<a class="open_googlemaps" href="' + mapAttachLink + '" target="_blank">';
                             html += '<img id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map"></a></div></div>';
-                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
-                        } else if (attachType) {
+                        } else if (attachType && attachType.indexOf('file') > -1) {
                             html += '<div class="message-body">';
                             html += '<a id="attach_' + message.id + '" class="attach-file" href="' + attachUrl + '" download="' + message.attachment.name + '">' + message.attachment.name + '</a>';
                             html += '<span class="attach-size">' + getFileSize(message.attachment.size) + '</span></div></div>';
-                            html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
                         } else {
-                            html += '<div class="message-body">' + minEmoji(Helpers.Messages.parser(message.body)) + '</div>';
-                            html += '</div><div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
-                            html += '<div class="message-status is-hidden">'+ status +'</div>';
-                            html += '<div class="message-geo j-showlocation"></div></div>';
+                            html += '<div class="message-body">' + minEmoji(Helpers.Messages.parser(message.body)) + '</div></div>';
                         }
 
+                        html += '<div class="message-info"><time class="message-time" data-time="' + message.date_sent + '">' + Helpers.getTime(message.date_sent) + '</time>';
+                        html += '<div class="message-status is-hidden">'+ status +'</div>';
+                        html += '<div class="message-geo j-showlocation"></div></div>';
                         html += '</div></div></article>';
+
                         break;
                 }
 
                 if (isCallback) {
                     if (isMessageListener) {
                         $chat.find('.l-chat-content .mCSB_container').append(html);
+                        setAttachSize(attachParams);
                         getUrlPreview(message.id);
                         smartScroll(isBottom);
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
+                        setAttachSize(attachParams);
                         getUrlPreview(message.id);
                     }
                 } else {
@@ -371,6 +387,7 @@ define([
                     } else {
                         $chat.find('.l-chat-content').prepend(html);
                     }
+                    setAttachSize(attachParams);
                     getUrlPreview(message.id);
                     smartScroll(true);
                 }
@@ -386,10 +403,14 @@ define([
                     });
                 }
 
+                if (attachParams) {
+                    self.updateMediaElement(attachParams);
+                }
 
                 if ((message.sender_id == User.contact.id) && (message.delivered_ids.length > 0)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'delivered', false);
                 }
+
                 if ((message.sender_id == User.contact.id) && (message.read_ids.length > 1)) {
                     self.addStatusMessages(message.id, message.dialog_id, 'displayed', false);
                 }
@@ -399,9 +420,7 @@ define([
         },
 
         addStatusMessages: function(messageId, dialogId, messageStatus, isListener) {
-            var DialogView = this.app.views.Dialog,
-                ContactListMsg = this.app.models.ContactList,
-                $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
+            var $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
                 time = $chat.find('article#' + messageId + ' .message-container-wrap .message-container .message-time'),
                 statusHtml = $chat.find('article#' + messageId + ' .message-container-wrap .message-container .message-status');
 
@@ -435,7 +454,6 @@ define([
                 type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 $newMessages = $('.j-newMessages[data-dialog="' + dialog_id + '"]'),
-                dialogItem = (type === 'groupchat') ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
                 locationIsActive = ($('.j-send_location').hasClass('btn_active') && localStorage['QM.latitude'] && localStorage['QM.longitude']),
                 lastMessage,
                 message,
@@ -525,20 +543,18 @@ define([
                 dialog_id = message.extension && message.extension.dialog_id,
                 recipient_id = message.recipient_id || message.extension && message.extension.recipient_id || null,
                 recipient_jid = recipient_id ? makeJid(recipient_id) : null,
-                room_jid = roomJidVerification(dialog_id),
                 room_name = message.extension && message.extension.room_name,
                 room_photo = message.extension && message.extension.room_photo,
                 deleted_id = message.extension && message.extension.deleted_occupant_ids,
                 new_ids = message.extension && message.extension.added_occupant_ids,
                 occupants_ids = message.extension && message.extension.current_occupant_ids,
                 dialogItem = message.type === 'groupchat' ? $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]') : $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]'),
-                contactRequest = $('.j-incommingContactRequest[data-jid="' + makeJid(id) + '"]'),
-                dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
+                contactRequest = $('.j-incomingContactRequest[data-jid="' + makeJid(id) + '"]'),
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden') || !$chat.length,
-                isExistent = dialogItem.length ? true : (contactRequest.length ? true : false),
-                unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 roster = ContactList.roster,
+                isExistent = dialogItem.length ? true : (contactRequest.length ? true : (roster[id] ? true : false)),
+                unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
                 isOfflineStorage = message.delay,
                 selected = $('[data-dialog = ' + dialog_id + ']').is('.is-selected'),
@@ -550,13 +566,18 @@ define([
                 $label = $chat.find('.j-newMessages'),
                 isNewMessages = $label.length,
                 dialog = dialogs.get(dialog_id),
-                copyDialogItem,
                 lastMessage,
                 occupants,
                 occupant,
-                blobObj,
-                msgArr,
                 msg;
+
+            if (!dialog && roster[id] && notification_type !== '4') {
+                Dialog.download({'_id': dialog_id}, function(results) {
+                    var newDialogId = Dialog.create(results.items[0]);
+
+                    DialogView.addDialogItem(dialogs.get(newDialogId), null, true);
+                });
+            }
 
             typeof new_ids === "string" ? new_ids = new_ids.split(',').map(Number) : null;
             typeof deleted_id === "string" ? deleted_id = deleted_id.split(',').map(Number) : null;
@@ -634,7 +655,7 @@ define([
                 }
 
                 if (deleted_id && (deleted_id[0] === User.contact.id)) {
-                    DialogView.leaveGroupChat(dialog_id, true);
+                    DialogView.deleteChat(dialog_id, true);
                     DialogView.decUnreadCounter(dialog_id);
                     dialogs.remove(dialog);
                 }
@@ -681,16 +702,18 @@ define([
                 ContactListView.onConfirm(id);
             }
 
-            if (notification_type === '7') {
-                ContactListView.onReject(id);
-            }
-
-            var isHidden = (isHiddenChat || !window.isQMAppActive) ? true : false,
-                sentToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
+            var isHidden = isHiddenChat || !window.isQMAppActive,
+                sentToMe = (message.type !== 'groupchat') || (msg.sender_id !== User.contact.id),
                 isSoundOn = Settings.get('sounds_notify'),
                 isMainTab = SyncTabs.get();
 
-            createAndShowNotification(msg, isHidden);
+            if (isExistent) {
+                createAndShowNotification(msg, isHidden);
+            }
+
+            if (notification_type === '7') {
+                ContactListView.onReject(id);
+            }
 
             if (isHidden && sentToMe && isSoundOn && isMainTab && isExistent) {
                 audioSignal.play();
@@ -725,7 +748,6 @@ define([
                 dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 dialogGroupItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialog_id + '"]'),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
-                audioSignal = $('#newMessageSignal')[0],
                 dialogs = Entities.Collections.dialogs,
                 dialog,
                 msg;
@@ -741,7 +763,7 @@ define([
                     room_updated_date: room_updated_at,
                     xmpp_room_jid: room_jid,
                     unread_count: 1,
-                    opened: true
+                    opened: false
                 });
 
                 dialog = dialogs.get(dialog_id);
@@ -781,8 +803,8 @@ define([
                 contacts = ContactListMsg.contacts,
                 contact = contacts[userId],
                 $chat = dialogId === null ? $('.l-chat[data-id="' + userId + '"]') : $('.l-chat[data-dialog="' + dialogId + '"]'),
-                recipient = userId !== User.contact.id ? true : false,
-                visible = $chat.is(':visible') ? true : false;
+                recipient = userId !== User.contact.id,
+                visible = $chat.is(':visible');
 
             if (recipient && visible) {
                 // stop displays the status if they do not come
@@ -817,6 +839,23 @@ define([
         onReadStatus: function(messageId, dialogId, userId) {
             self.addStatusMessages(messageId, dialogId, 'displayed', true);
             updatedMessageModel(messageId, dialogId, 'displayed');
+        },
+
+        updateMediaElement: function(params) {
+            var Listeners = this.app.listeners,
+                QMPlayer = self.app.QMPlayer.Model;
+
+            if (params.type && params.type.indexOf('audio') > -1) {
+                new QMPlayer({
+                    id: params.id,
+                    name: params.name,
+                    source: params.url
+                });
+
+                Listeners.listenToMediaElement('#audio_' + params.id);
+            } else if (params.type && params.type.indexOf('video') > -1) {
+                Listeners.listenToMediaElement('#video_' + params.id);
+            }
         }
 
     };
@@ -916,14 +955,12 @@ define([
             dialog = dialogs.get(msg.dialog_id),
             cancelNotify = !Settings.get('messages_notify'),
             isNotMainTab = !SyncTabs.get(),
-            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false,
-            isDialog = $('.j-dialogItem[data-id="' + msg.sender_id + '"]').length,
-            isApsent = (+msg.notification_type === 7) && !isDialog,
+            isCurrentUser = (msg.sender_id === User.contact.id),
             options,
             title,
             params;
 
-        if (cancelNotify || isNotMainTab || isCurrentUser || isApsent) {
+        if (cancelNotify || isNotMainTab || isCurrentUser) {
             return false;
         }
 
@@ -1055,63 +1092,86 @@ define([
     }
 
     function getUrlPreview(id) {
-        var $messageBody = $('#' + id + '.message').find('.message-body'),
-            $hyperText = $messageBody.find('a:not(a.open_googlemaps)'),
-            isValidUrl,
-            ogBlock,
-            ogInfo,
-            params,
-            url;
-
-        if ($hyperText.length) {
-            url = $hyperText.first().attr('href');
-            isValidUrl = Helpers.isValidUrl(url);
-
-            if (urlCache[url] === null || !isValidUrl) {
-                return false;
-            }
-
-            ogBlock = $('<a class="og_block" href="'+ url +'" target="_blank"></a>');
-            $messageBody.append(ogBlock);
-
-            if (urlCache[url]) {
-                ogInfo = QMHtml.Messages.urlPreview(urlCache[url]);
-                $messageBody.find('.og_block').append(ogInfo);
-            } else {
-                Helpers.getOpenGraphInfo(url, function(error, result) {
-                    if (result && (result.ogTitle || result.ogDescription)) {
-                        params = {
-                            title: result.ogTitle || result.ogUrl || '',
-                            description: result.ogDescription || result.ogUrl || url,
-                            picture: _getValidImagePath(url, result.ogImage) || ''
-                        };
-
-                        urlCache[url] = params;
-                    } else {
-                        params = {
-                            title: '',
-                            description: url,
-                            picture: ''
-                        };
-
-                        urlCache[url] = null;
-                    }
-
-                    ogInfo = QMHtml.Messages.urlPreview(params);
-                    $messageBody.find('.og_block').append(ogInfo);
-                });
-            }
+        if (!id) {
+            return true;
         }
 
-        function _getValidImagePath(url, imgObj) {
-            var imagePath = imgObj && imgObj.url || '';
+        var $message = $('#' + id + '.message').find('.message-body'),
+            $hyperText = $message.find('a:not(a.open_googlemaps, a.file-download)');
 
-            if ((imagePath.indexOf('/') === 0) &&
-                (imagePath.indexOf('//') !== 0)) {
-                imagePath = url + imagePath;
-            }
+        if ($hyperText.length) {
+            $hyperText.each(function(index) {
+                if (index === 5) {
+                    return false;
+                }
 
-            return imagePath;
+                var $this = $(this),
+                    url = $this.attr('href'),
+                    params,
+                    $elem;
+
+                if (Helpers.isImageUrl(url)) {
+                    $elem = $this.clone()
+                                 .addClass('image_preview')
+                                 .html('<img src="'+ url +'" alt="picture"/>');
+                } else if (urlCache[url] !== null && Helpers.isValidUrl(url)) {
+                    $elem = $this.clone().addClass('og_block');
+
+                    if (urlCache[url]) {
+                        $elem.html(QMHtml.Messages.urlPreview(urlCache[url]));
+                    } else {
+                        Helpers.getOpenGraphInfo({
+                            'url': url,
+                            'token': JSON.parse(localStorage['QM.session']).token
+                        }, function(error, result) {
+                            if (result && (result.ogTitle || result.ogDescription)) {
+                                params = {
+                                    title: result.ogTitle || result.ogUrl || '',
+                                    description: result.ogDescription || result.ogUrl || url,
+                                    picture: result.ogImage && result.ogImage.url || ''
+                                };
+
+                                urlCache[url] = params;
+                            } else {
+                                params = {
+                                    title: '',
+                                    description: url,
+                                    picture: ''
+                                };
+
+                                urlCache[url] = null;
+                            }
+
+                            $elem.html(QMHtml.Messages.urlPreview(params));
+                        });
+                    }
+                }
+
+                $message.append($elem);
+            });
+
+        }
+    }
+
+    function setAttachSize(params) {
+        if (!(params && params.width && params.height)) {
+            return;
+        }
+
+        var width = Number(params.width),
+            height = Number(params.height),
+            $container;
+
+        if (params.type && params.type.indexOf('image') > -1) {
+            $container = $('#image_' + params.id);
+        } else if (params.type && params.type.indexOf('video') > -1) {
+            $container = $('#video_' + params.id);
+        }
+
+        if (height < 215) {
+            $container.height(height);
+        } else if ((height > width) && (height > 285)) {
+            $container.height(285);
         }
     }
 

@@ -54,7 +54,7 @@ input.form-input-search.without_M[type=search]:focus:not([readonly]) {
     -webkit-appearance: none;
 }
 input.form-input-search.without_M[type=search]:focus:not([readonly]) {
-    border-color: #66afe9;
+    border-color: #00bf28;
 }
 .formSearch {
     position: relative;
@@ -64,13 +64,13 @@ input.form-input-search.without_M[type=search]:focus:not([readonly]) {
     display: none;
     width: 21px;
     height: 21px;
-    top: 20px;
-    right: 27px;
+    top: 15px;
+    right: 20px;
     color: #ccc;
     cursor: pointer;
 }
 #searchContacts .clean-button {
-    right: 23px;
+    right: 15px;
 }
 .form-input-message {
     width: 96%;
@@ -189,5 +189,21 @@ input.without_M[type=url]:focus:not([readonly]),
 textarea.without_M.materialize-textarea:focus:not([readonly]) {
     border-bottom: none;
     outline: 0;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: none;
+}
+input.without_M:not([type]):focus:not([readonly]),
+input.without_M[type=text]:focus:not([readonly]),
+input.without_M[type=password]:focus:not([readonly]),
+input.without_M[type=email]:focus:not([readonly]),
+input.without_M[type=url]:focus:not([readonly]),
+input.without_M[type=time]:focus:not([readonly]),
+input.without_M[type=date]:focus:not([readonly]),
+input.without_M[type=datetime]:focus:not([readonly]),
+input.without_M[type=datetime-local]:focus:not([readonly]),
+input.without_M[type=tel]:focus:not([readonly]),
+input.without_M[type=number]:focus:not([readonly]),
+input.without_M[type=search]:focus:not([readonly]),
+textarea.without_M.materialize-textarea:focus:not([readonly]) {
+    border-bottom: none;
+    box-shadow: none;
 }

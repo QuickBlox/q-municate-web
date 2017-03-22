@@ -17,7 +17,8 @@ define([
     'VideoChatView', 'Events',
     'Helpers', 'QBApiCalls',
     'config', 'Entities',
-    'QMHtml', 'Listeners'
+    'QMHtml', 'Listeners',
+    'VoiceMessage', 'QMPlayer'
 ], function(
     $, User,
     Session, Settings,
@@ -31,34 +32,36 @@ define([
     VideoChatView, Events,
     Helpers, QBApiCalls,
     QMCONFIG, Entities,
-    QMHtml, Listeners
+    QMHtml, Listeners,
+    VoiceMessage, QMPlayer
 ) {
 
     function QM() {
         this.listeners = new Listeners(this);
 
         this.models = {
-            User       : new User(this),
-            Session    : new Session(this),
-            Settings   : new Settings(this),
-            Contact    : new Contact(this),
-            Dialog     : new Dialog(this),
-            Message    : new Message(this),
-            Attach     : new Attach(this),
-            ContactList: new ContactList(this),
-            VideoChat  : new VideoChat(this),
-            Cursor     : new Cursor(this),
-            SyncTabs   : new SyncTabs(this),
+            User        : new User(this),
+            Session     : new Session(this),
+            Settings    : new Settings(this),
+            Contact     : new Contact(this),
+            Dialog      : new Dialog(this),
+            Message     : new Message(this),
+            Attach      : new Attach(this),
+            ContactList : new ContactList(this),
+            VideoChat   : new VideoChat(this),
+            Cursor      : new Cursor(this),
+            SyncTabs    : new SyncTabs(this),
+            VoiceMessage: new VoiceMessage(this)
         };
 
         this.views = {
-            User       : new UserView(this),
-            Settings   : new SettingsView(this),
-            Dialog     : new DialogView(this),
-            Message    : new MessageView(this),
-            Attach     : new AttachView(this),
-            ContactList: new ContactListView(this),
-            VideoChat  : new VideoChatView(this)
+            User        : new UserView(this),
+            Settings    : new SettingsView(this),
+            Dialog      : new DialogView(this),
+            Message     : new MessageView(this),
+            Attach      : new AttachView(this),
+            ContactList : new ContactListView(this),
+            VideoChat   : new VideoChatView(this)
         };
 
         this.events    = new Events(this);
@@ -66,6 +69,8 @@ define([
 
         this.entities  = Entities;
         this.entities.app = this;
+
+        this.QMPlayer = QMPlayer;
     }
 
     QM.prototype = {

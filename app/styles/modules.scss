@@ -11,6 +11,8 @@
 @import "modules/webrtc";
 @import "modules/profile";
 @import "modules/settings";
+@import "modules/recorder";
+@import "modules/qmplayer";
 /* scrollbar */
 .mCS-autoHide > .mCustomScrollBox ~ .mCSB_scrollTools {
     opacity: 1;
@@ -56,9 +58,9 @@
 .header-links-item > a {
     display: block;
     height: 100%;
-    padding: 19px 20px;
+    padding: 10px 10px;
     font-size: 18px;
-    line-height: 40px;
+    line-height: 50px;
     color: #333;
 }
 .header-links-item:nth-child(1) > a:hover {
@@ -116,12 +118,13 @@
 .chat_popover {
     position: absolute;
     bottom: 40px;
-    right: 19px;
+    right: 10px;
     visibility: hidden;
     opacity: 0;
     background: #fff;
-    border: 1px solid #f2f2f2;
-    box-shadow: 0 0 10px 3px rgba(240, 240, 240, .7);
+    border: solid 1px #dadfe1;
+    border-radius: 5px;
+    box-shadow: 0 0 10px 3px rgba(240, 240, 240, .9);
     transition: opacity 0.4s, bottom 0.6s;
     z-index: 3;
 }
@@ -131,30 +134,32 @@
     opacity: 1;
 }
 .popover_smile {
-    width: 230px;
+    width: 215px;
     height: 240px;
 }
-.popover_smile .coner {
-    position: absolute;
-    bottom: -12px;
-    right: 115px;
+.coner {
     overflow: hidden;
-    width: 24px;
+    position: absolute;
     height: 12px;
+    width: 24px;
+    bottom: -12px;
 }
-.popover_smile i.icon_coner {
+.popover_smile .coner {
+    right: 115px;
+}
+.icon_coner {
     background: #fff;
     width: 18px;
     height: 18px;
     display: inline-block;
-    border: 1px solid #f2f2f2;
+    border: solid 1px #dadfe1;
     border-width: 0 1px 1px 0;
     border-radius: 2px;
     position: relative;
     top: -9px;
     left: 3px;
     transform: rotate(45deg);
-    box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
+    box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.9);
 }
 .popover_gmap {
     width: 462px;
@@ -162,26 +167,7 @@
     padding: 5px;
 }
 .popover_gmap .coner {
-    position: absolute;
-    bottom: -12px;
-    right: 83px;
-    overflow: hidden;
-    width: 24px;
-    height: 12px;
-}
-.popover_gmap i.icon_coner {
-    background: #fff;
-    width: 18px;
-    height: 18px;
-    display: inline-block;
-    border: 1px solid #f2f2f2;
-    border-width: 0 1px 1px 0;
-    border-radius: 2px;
-    position: relative;
-    top: -9px;
-    left: 3px;
-    transform: rotate(45deg);
-    box-shadow: 0 0 10px 3px rgba(240, 240, 240, 0.7);
+    right: 82px;
 }
 /* no connect */
 .no-connection {

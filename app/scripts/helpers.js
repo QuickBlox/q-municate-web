@@ -4,11 +4,13 @@
 define([
     'jquery',
     'quickblox',
+    'underscore',
     'config',
     'QBNotification'
 ], function(
     $,
     QB,
+    _,
     QMCONFIG,
     QBNotification
 ) {
@@ -28,7 +30,6 @@ define([
         getTitle: function(message, params) {
             var contacts = params.contacts,
                 roomName = params.roomName,
-                roomPhoto = params.roomPhoto,
                 contact = contacts[message.sender_id],
                 title;
 
@@ -40,7 +41,6 @@ define([
         getOptions: function(message, params) {
             var myUser = params.user,
                 contacts = params.contacts,
-                roomName = params.roomName,
                 roomPhoto = params.roomPhoto,
                 contact = contacts[message.sender_id],
                 chatType = message.type,
@@ -341,21 +341,27 @@ define([
         $popup.add('.popups').addClass('is-overlay');
     };
 
-    Helpers.getOpenGraphInfo = function(url, callback) {
-        $.ajax({
-            'url': 'https://ogs.quickblox.com/?url=' + url,
+    Helpers.getOpenGraphInfo = function(params, callback) {
+        var ajaxCall = {
+            url: 'https://ogs.quickblox.com/?url=' + params.url + '&token=' + params.token,
             error: function(jqHXR, status, error) {
                 callback(error, null);
             },
             success: function(data, status, jqHXR) {
                 callback(null, data);
             }
-        });
+        };
+
+        $.ajax(ajaxCall);
     };
 
     Helpers.isValidUrl = function(url) {
         var validator = /^(?:([a-z]+):(?:([a-z]*):)?\/\/)?(?:([^:@]*)(?::([^:@]*))?@)?((?:[a-z0-9_-]+\.)+[a-z]{2,}|localhost|(?:(?:[01]?\d\d?|2[0-4]\d|25[0-5])\.){3}(?:(?:[01]?\d\d?|2[0-4]\d|25[0-5])))(?::(\d+))?(?:([^:\?\#]+))?(?:\?([^\#]+))?(?:\#([^\s]+))?$/i;
         return validator.test(url);
+    };
+
+    Helpers.isImageUrl = function(url) {
+        return /.svg|.png|.jpg|.jpeg|.gif/i.test(url);
     };
 
     return Helpers;

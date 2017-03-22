@@ -395,13 +395,29 @@ define([
         },
 
         updateDialog: function(id, params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function(result) {
                 QB.chat.dialog.update(id, params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
-
                     } else {
                         Helpers.log('QB SDK: Dialog is updated', res);
+
+                        Session.update({
+                            date: new Date()
+                        });
+                        callback(res);
+                    }
+                });
+            });
+        },
+
+        deleteDialog: function(id, callback) {
+            this.checkSession(function(result) {
+                QB.chat.dialog.delete(id, params, function(err, res) {
+                    if (err) {
+                        Helpers.log(err.detail);
+                    } else {
+                        Helpers.log('QB SDK: Dialog is deleted', res);
 
                         Session.update({
                             date: new Date()
@@ -417,7 +433,7 @@ define([
                 QB.chat.message.list(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
-
+                        callback(null, err);
                     } else {
                         Helpers.log('QB SDK: Messages is found', res);
 

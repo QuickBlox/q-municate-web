@@ -27,7 +27,6 @@
     <link rel="icon" href="images/favicon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
-    <link rel="stylesheet" href="https://vjs.zencdn.net/5.11.6/video-js.css">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
     <!-- build:css styles/build.css -->
     <link rel="stylesheet" href="bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
@@ -274,7 +273,7 @@
                         </div>
                     </aside>
 
-                    <div class="l-workspace-wrap">
+                    <div class="l-workspace-wrap j-workspace-wrap">
                         <section id="capBox" class="l-workspace l-flexbox j-capBox">
                             <div class="l-cap l-flexbox l-flexbox_column">
                                 <span class="cap-text">Is anybody here?</span>
@@ -288,6 +287,18 @@
 
                         <div class="chat_popover popover_gmap j-popover_const j-popover_gmap">
                             <button class="send_map j-send_map">SEND LOCATION</button>
+                            <div class="coner"><i class="icon_coner"></i></div>
+                        </div>
+
+                        <div class="chat_popover popover_record j-popover_const j-popover_record">
+                            <div class="record_progress_container">
+                                <div class="record_progress j-record_progress"></div>
+                            </div>
+                            <button class="start_record j-start_record"></button>
+                            <div class="record_title j-record_title">RECORD</div>
+                            <div class="cancel_record_container">
+                                <button class="cancel_record j-cancel_record"></button>
+                            </div>
                             <div class="coner"><i class="icon_coner"></i></div>
                         </div>
 
@@ -343,14 +354,14 @@
 
     <div class="popups l-flexbox j-overlay">
 
-        <section id="popupDisconnect" class="popup popup_discon is-open j-disconnect">
+        <div id="popupDisconnect" class="popup popup_discon is-open j-disconnect">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
                 <span class="alert alert_discon"><b>Not Connected.</b> Connecting...</span>
             </div>
-        </section>
+        </div>
 
         <!-- Popup with users settings (on/off sounds and local notification for calls or messages) -->
-        <section id="popupSettings" class="popup popup_settings is-open j-settings">
+        <div id="popupSettings" class="popup popup_settings is-open j-settings">
             <header class="header_settings">
                 <span class="header_settings_label">Settings</span>
                 <div class="i-close_settings j-close_settings"></div>
@@ -406,16 +417,16 @@
                     </label>
                 </footer>
             </div>
-        </section>
+        </div>
 
-        <section id="popupGeoInfo" class="popup popup_geo_info j-geoInfo">
+        <div id="popupGeoInfo" class="popup popup_geo_info j-geoInfo">
             <span class="alert alert_geo_info">
-        <b>Your location can't be detected.</b>
-        <br/>Please enable your location in browser settings and refresh current page after that.
-      </span>
-        </section>
+                <b>Your location can't be detected.</b>
+                <br/>Please enable your location in browser settings and refresh current page after that.
+            </span>
+        </div>
 
-        <section id="popupDetails" class="popup popup_details presence-listener">
+        <div id="popupDetails" class="popup popup_details presence-listener">
             <div class="userDetails-preview">
                 <div class="userDetails-avatar profileUserAvatar"></div>
                 <div class="userDetails-info">
@@ -424,72 +435,68 @@
                 </div>
             </div>
             <div class="userDetails-chatStatus"></div>
-            <div class="userDetails-controls l-flexbox"></div>
+            <div class="userDetails-controls"></div>
             <div class="userDetails-field profileUserPhone"></div>
-        </section>
+        </div>
 
-        <section id="popupIncoming" class="popup incoming-call-popup is-open"></section>
+        <div id="popupIncoming" class="popup incoming-call-popup is-open"></div>
 
-        <section id="popupAttach" class="popup popup_attach">
+        <div id="popupAttach" class="popup popup_attach">
             <img class="attach-photo" src="images/photo_preloader.gif" alt="attach">
-            <video class="video-js vjs-default-skin vjs-big-play-centered attach-video" controls autoplay preload="auto" data-setup="{}">
-                <source src="" type="video/mp4"/>
-                <source src="" type="video/webm"/>
-            </video>
             <div class="attach-description l-flexbox l-flexbox_flexbetween">
                 <span class="attach-name"></span>
                 <a class="attach-download" href="" target="_blank" download="">Download</a>
             </div>
-        </section>
+        </div>
 
-        <section id="popupAvatar" class="popup popup_avatar j-popupAvatar">
+        <div id="popupAvatar" class="popup popup_avatar j-popupAvatar">
             <img class="avatar-pic j-avatarPic" alt="avatar">
             <div class="avatar-description l-flexbox l-flexbox_flexbetween">
                 <span class="avatar-name j-avatarName"></span>
                 <a class="changePic j-changePic is-hidden">Change avatar</a>
             </div>
-        </section>
+        </div>
 
-        <section id="popupLogout" class="popup popup_logout is-open">
+        <div id="popupLogout" class="popup popup_logout is-open">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
                 <span class="alert alert_logout">Are you sure<br>you want to log out?</span>
             </div>
             <div class="popup-controls">
-                <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
-                <a id="logoutConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
+                <button class="popup-control-button popup-control-button_cancel" href="#">Cancel</button>
+                <button id="logoutConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</button>
             </div>
-        </section>
+        </div>
 
-        <section id="popupImport" class="popup popup_import is-open">
+        <div id="popupImport" class="popup popup_import is-open">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
                 <span class="alert alert_import">Your Facebook friends who have<br>a Q-municate account were successfully<br>added to your contacts</span>
             </div>
             <div class="popup-controls">
                 <a class="popup-control-button popup-control-button_ok" href="#">Got it</a>
             </div>
-        </section>
+        </div>
 
-        <section id="popupDelete" class="popup popup_delete is-open j-popupDelete">
+        <div id="popupDeleteContact" class="popup popup_delete is-open j-popupDeleteContact">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-                <span class="alert alert_delete">Delete contact?</span>
+                <span class="alert alert_delete">Delete Contact?</span>
             </div>
             <div class="popup-controls">
-                <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
-                <a id="deleteConfirm" class="popup-control-button popup-control-button_ok j-deleteConfirm" href="#">Ok</a>
+                <button class="popup-control-button popup-control-button_cancel" href="#">Cancel</button>
+                <button id="deleteContactConfirm" class="popup-control-button popup-control-button_ok j-deleteContactConfirm" href="#">Ok</button>
             </div>
-        </section>
+        </div>
 
-        <section id="popupLeave" class="popup popup_leave is-open">
+        <div id="popupDeleteChat" class="popup popup_delete is-open j-popupDeleteChat">
             <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-                <span class="alert alert_logout">Are you sure<br>you want to leave the group chat?</span>
+                <span class="alert alert_delete">Are you sure<br>you want to leave chat<br>and clear history?</span>
             </div>
             <div class="popup-controls">
-                <a class="popup-control-button popup-control-button_cancel" href="#">Cancel</a>
-                <a id="leaveConfirm" class="popup-control-button popup-control-button_ok" href="#">Ok</a>
+                <button class="popup-control-button popup-control-button_cancel" href="#">Cancel</button>
+                <button id="deleteChatConfirm" class="popup-control-button popup-control-button_ok j-deleteChatConfirm" href="#">Ok</button>
             </div>
-        </section>
+        </div>
 
-        <section id="popupSearch" class="popup popup_search">
+        <div id="popupSearch" class="popup popup_search">
             <header class="popup-header">
                 <h3>Global Search</h3>
             </header>
@@ -498,14 +505,18 @@
                 <button class="clean-button j-clean-button" type="reset">✕</button>
             </form>
             <ul class="popup-elem list list_contacts"></ul>
-            <div class="popup-elem note l-flexbox l-flexbox_column">
+            <div class="start_search_note j-start_search_note">
+                <span class="text text_start_search">Results</span>
+                <span class="text start_search">Here will be users</span>
+            </div>
+            <div class="popup-elem note l-flexbox l-flexbox_column j-global_search_note">
                 <span class="text text_alert">Sorry...</span>
                 <span class="text not_found">No results found</span>
                 <span class="text short_length is-hidden">Name must be more than 2 characters</span>
             </div>
-        </section>
+        </div>
 
-        <section id="popupContacts" class="popup popup_contacts not-selected">
+        <div id="popupContacts" class="popup popup_contacts not-selected">
             <header class="popup-header">
                 <h3>Contacts</h3>
             </header>
@@ -533,27 +544,27 @@
                 <button class="btn btn_popup btn_popup_group">Create group chat</button>
                 <button class="btn btn_popup btn_popup_add">Add to chat</button>
             </footer>
-        </section>
+        </div>
     </div>
 
     <audio id="newMessageSignal">
-        <source src="audio/new_message.ogg"></source>
-        <source src="audio/new_message.mp3"></source>
+        <source src="audio/new_message.ogg" />
+        <source src="audio/new_message.mp3" />
     </audio>
 
     <audio id="callingSignal" loop>
-        <source src="audio/calling.ogg"></source>
-        <source src="audio/calling.mp3"></source>
+        <source src="audio/calling.ogg" />
+        <source src="audio/calling.mp3" />
     </audio>
 
     <audio id="ringtoneSignal" loop>
-        <source src="audio/ringtone.ogg"></source>
-        <source src="audio/ringtone.mp3"></source>
+        <source src="audio/ringtone.ogg" />
+        <source src="audio/ringtone.mp3" />
     </audio>
 
     <audio id="endCallSignal">
-        <source src="audio/end_of_call.ogg"></source>
-        <source src="audio/end_of_call.mp3"></source>
+        <source src="audio/end_of_call.ogg" />
+        <source src="audio/end_of_call.mp3" />
     </audio>
 
     <div id="fb-root"></div>
@@ -657,34 +668,37 @@
                         <input class="avatar_file avatar is-hidden" type="file" accept="image/*" data-dialog="<%= dialog_id %>">
                         <h2 class="name name_chat" contenteditable="true" title="<%= name %>"><%= name %></h2>
                         <span class="pencil is-hidden"></span>
-                        <span class="triangle triangle_down"></span>
-                        <span class="triangle triangle_up is-hidden"></span>
+                        <span class="triangle j-triangle triangle_down"></span>
+                        <span class="triangle j-triangle triangle_up is-hidden"></span>
                     </div>
                 <% } %>
             </div>
             <div class="chat-controls">
                 <% if (type === 3) { %>
-                    <button class="btn_chat btn_chat_videocall videoCall">
+                    <button class="btn_chat btn_chat_videocall videoCall" data-balloon="Make a video call" data-balloon-pos="down">
                         <img src="images/icon-videocall.svg" alt="Make a Video Call">
                     </button>
-                    <button class="btn_chat btn_chat_audiocall audioCall">
-                        <img src="images/icon-audiocall.svg" alt="Make a Audio Call">
+                    <button class="btn_chat btn_chat_audiocall audioCall" data-balloon="Make an audio call" data-balloon-pos="down">
+                        <img src="images/icon-audiocall.svg" alt="Make an Audio Call">
                     </button>
-                    <button class="btn_chat btn_chat_add createGroupChat" data-ids="<%= occupantsIds.join() %>" data-private="1">
-                        <img src="images/icon-add.svg" alt="Create group chat">
-                    </button>
-                    <button class="btn_chat btn_chat_profile userDetails" data-id="<%= user_id %>">
+                    <button class="btn_chat btn_chat_profile userDetails" data-id="<%= user_id %>" data-balloon="Show user profile" data-balloon-pos="down">
                         <img src="images/icon-profile.svg" alt="Show user profile">
                     </button>
-                    <button class="btn_chat btn_chat_delete deleteContact">
-                        <img src="images/icon-delete.svg" alt="Delete contact">
+                    <button class="btn_chat btn_chat_add createGroupChat" data-ids="<%= occupantsIds.join() %>" data-private="1" data-balloon="Create a new group chat with the current user" data-balloon-pos="down">
+                        <img src="images/icon-add.svg" alt="Create a new group chat">
+                    </button>
+                    <button class="btn_chat btn_chat_delete deleteContact j-deleteContact" data-balloon="Delete contact" data-balloon-pos="down">
+                        <img src="images/icon-profile-delete.svg" alt="Delete contact">
+                    </button>
+                    <button class="btn_chat btn_chat_delete deleteChat j-deleteChat" data-balloon="Remove chat" data-balloon-pos="down">
+                        <img src="images/icon-delete.svg" alt="Remove chat">
                     </button>
                 <% } else { %>
-                    <button class="btn_chat btn_chat_add addToGroupChat" data-ids="<%= occupantsIds.join() %>" data-dialog="<%= dialog_id %>">
+                    <button class="btn_chat btn_chat_add addToGroupChat" data-ids="<%= occupantsIds.join() %>" data-dialog="<%= dialog_id %>" data-balloon="Add occupants to group chat" data-balloon-pos="down">
                         <img src="images/icon-add.svg" alt="Add occupants to group chat">
                     </button>
-                    <button class="btn_chat btn_chat_delete leaveChat">
-                        <img src="images/icon-delete.svg" alt="Leave chat">
+                    <button class="btn_chat btn_chat_leave deleteChat j-deleteChat" data-balloon="Leave chat and clear history" data-balloon-pos="down">
+                        <img src="images/icon-exit.svg" alt="Leave chat">
                     </button>
                 <% } %>
             </div>
@@ -697,19 +711,44 @@
         <footer class="l-chat-footer">
             <div class="footer_btn j-toBottom btn_to_bottom"></div>
             <form class="l-message j-message" action="#">
-                <div id="textarea_<%= dialog_id %>" class="form-input-message textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"><%= draft %></div>
-                <div class="footer_btn j-send_location btn_sendlocation <%= location %>" data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>
-                <input class="attachment" type="file" accept="image/*">
+                <div id="textarea_<%= dialog_id %>" class="form-input-message textarea j-textarea" tabindex="0" contenteditable="true" ondragend="return true" placeholder="Type a message"><%= draft %></div>
+                <button class="j-footer_btn l-input-buttons btn_input_send j-btn_input_send" data-balloon="Send message" data-balloon-pos="up"></button>
+                <input class="attachment j-attachment" type="file" accept="image/*,video/mp4,audio/mp3">
             </form>
             <div class="j-typing l-typing"></div>
             <div class="l-input-menu">
-                <div class="footer_btn l-input-buttons btn_input_smile j-btn_input_smile" data-balloon="Add smiles" data-balloon-pos="up"></div>
-                <div class="footer_btn l-input-buttons btn_input_location j-btn_input_location" data-balloon="Send location" data-balloon-pos="up"></div>
-                <div class="footer_btn l-input-buttons btn_input_attach j-btn_input_attach" data-balloon="Send attachment file" data-balloon-pos="up"></div>
-                <button class="footer_btn l-input-buttons btn_input_send j-btn_input_send" data-balloon="Send message" data-balloon-pos="up">SEND</button>
+                <div class="j-footer_btn l-input-buttons btn_audio_record j-btn_audio_record" data-balloon-length="medium" data-balloon="Record audio" data-balloon-pos="up"></div>
+                <div class="j-footer_btn l-input-buttons btn_input_smile j-btn_input_smile" data-balloon="Add smiles" data-balloon-pos="up"></div>
+                <div class="j-footer_btn l-input-buttons btn_input_location j-btn_input_location" data-balloon="Send location" data-balloon-pos="up"></div>
+                <div class="j-footer_btn l-input-buttons btn_sendlocation j-send_location <%= location %>" data-balloon-length="small" data-balloon="Send your location with messages" data-balloon-pos="up"></div>
+                <div class="j-footer_btn l-input-buttons btn_input_attach j-btn_input_attach" data-balloon="Send attachment file" data-balloon-pos="up"></div>
             </div>
         </footer>
         </section>
+    </script>
+
+    <script id="QMPlayer" type="text/template">
+        <div id="qm_audio_player_<%= id %>" class="qm_audio_player">
+            <audio id="audio_<%= id %>" class="j-audioPlayer">
+                <source src="<%= source %>" type="audio/mpeg">
+            </audio>
+
+            <div id="QMPlayer_<%= id %>">
+                <div class="qm_player_main_container">
+                    <div class="qm_player_control_container">
+                        <div id="qm_player_control_<%= id %>" class="qm_player_control is-paused"></div>
+                        <div id="qm_player_filler_<%= id %>" class="qm_player_filler"></div>
+                    </div>
+                    <div id="qm_player_setter_<%= id %>" class="qm_player_setter"></div>
+                    <div id="qm_player_wrap_<%= id %>" class="qm_player_wrap">
+                        <span class="qm_player_name qm_player_font"><%= name %></span>
+                        <span id="qm_player_time_<%= id %>" class="qm_player_time qm_player_font">00:00 / 00:00</span>
+                        <div id="qm_player_progress_<%= id %>" class="qm_player_progress"></div>
+                    </div>
+                    <a id="qm_player_file_<%= id %>" class="qm_player_download qm_player_font" href="<%= source %>" download="<%= name %>" target="_blank">Download</a>
+                </div>
+            </div>
+        </div>
     </script>
 
 </body>

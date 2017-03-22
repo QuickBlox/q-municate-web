@@ -202,7 +202,6 @@ define([
         cutMessages: function() {
             var messages = this.get('messages'),
                 curCount = this.get('unread_count'),
-                preCount = this.previous('unread_count'),
                 stack = QMCONFIG.stackMessages,
                 msgCount = messages.length;
 

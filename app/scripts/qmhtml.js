@@ -110,11 +110,10 @@ define([
             }
 
             if (params.dialogType === 3) {
-                htmlStr += '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=ids%>" href="#">Profile</a></li>' +
-                    '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>';
-            } else {
-                htmlStr += '<li class="list-item"><a class="leaveChat list-actions-action" data-group="true" href="#">Leave chat</a></li>';
+                htmlStr += '<li class="list-item"><a class="j-deleteContact deleteContact list-actions-action" href="#">Delete contact</a></li>' +
+                    '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=ids%>" href="#">Profile</a></li>';
             }
+                htmlStr += '<li class="list-item"><a class="j-deleteChat deleteChat list-actions-action" data-group="true" href="#">Remove chat</a></li>';
 
             return $html.append(_.template(htmlStr)(params));
         },
@@ -128,7 +127,7 @@ define([
                     '<a class="list-actions-action requestAction j-requestAction" data-id="<%=id%>" href="#">Send request</a></li>';
             } else if (roster.ask === 'subscribe' && !roster.status) {
                 htmlStr = '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>' +
-                    '<li class="list-item"><a class="deleteContact list-actions-action" data-id="<%=id%>" href="#">Delete contact</a></li>';
+                    '<li class="list-item"><a class="j-deleteContact deleteContact list-actions-action" data-id="<%=id%>" href="#">Delete contact</a></li>';
             } else {
                 htmlStr = '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Video call</a></li>' +
                     '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Audio call</a></li>' +
@@ -148,12 +147,21 @@ define([
 
             if (roster.subscription !== 'none' && roster.ask === null) {
                 params.roster = '';
-                htmlStr = '<button class="btn_userDetails writeMessage videoCall"><img src="images/icon-videocall.svg" alt="videocall">Video Call</button>' +
-                    '<button class="btn_userDetails writeMessage audioCall"><img src="images/icon-audiocall.svg" alt="videocall">Call</button>';
+                htmlStr =
+                    '<div class="btn_userDetails writeMessage videoCall">' +
+                    '<div class="ic_videoCall ic_userDetails">' +
+                    '<img src="images/icon-videocall.svg" alt="videocall"></div>Make video call</div>' +
+                    '<div class="btn_userDetails writeMessage audioCall">' +
+                    '<div class="ic_audioCall ic_userDetails">' +
+                    '<img src="images/icon-audiocall.svg" alt="videocall"></div>Make audio call</div>';
             }
 
-            htmlStr += '<button class="btn_userDetails <%=roster%> writeMessage"><img src="images/icon-message.png" alt="videocall">Message</button>' +
-                '<button class="btn_userDetails <%=roster%> deleteContact"><img src="images/icon-delete.svg" alt="videocall">Delete</button>';
+            htmlStr += '<div class="btn_userDetails <%=roster%> writeMessage">' +
+                '<div class="ic_writeMessage ic_userDetails">' +
+                '<img src="images/icon-message.png" alt="videocall"></div>Send message</div>' +
+                '<div class="btn_userDetails <%=roster%> deleteContact j-deleteContact">' +
+                '<div class="ic_deleteContact ic_userDetails">' +
+                '<img src="images/icon-profile-delete.svg" alt="videocall"></div>Remove contact and chat</div>';
 
             $html.empty();
             $html.append(_.template(htmlStr)(params));
@@ -184,10 +192,8 @@ define([
 
         urlPreview: function(params) {
             var htmlTemplate = _.template(
-                    '<div class="og_info">'+
-                        '<h4 class="og_title"><%=title%></h4>'+
-                        '<span class="og_description"><%=description%></span>'+
-                    '</div>'+
+                    '<h4 class="og_title"><%=title%></h4>'+
+                    '<span class="og_description"><%=description%></span>'+
                     '<% if (picture) { %>'+
                         '<div class="og_image">'+
                             '<img src="<%=picture%>" alt="og_pic">'+
