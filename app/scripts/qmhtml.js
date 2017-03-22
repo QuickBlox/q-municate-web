@@ -110,10 +110,10 @@ define([
             }
 
             if (params.dialogType === 3) {
-                htmlStr += '<li class="list-item"><a class="deleteContact list-actions-action" href="#">Delete contact</a></li>' +
+                htmlStr += '<li class="list-item"><a class="j-deleteContact deleteContact list-actions-action" href="#">Delete contact</a></li>' +
                     '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=ids%>" href="#">Profile</a></li>';
             }
-                htmlStr += '<li class="list-item"><a class="deleteChat list-actions-action" data-group="true" href="#">Remove chat</a></li>';
+                htmlStr += '<li class="list-item"><a class="j-deleteChat deleteChat list-actions-action" data-group="true" href="#">Remove chat</a></li>';
 
             return $html.append(_.template(htmlStr)(params));
         },
@@ -127,7 +127,7 @@ define([
                     '<a class="list-actions-action requestAction j-requestAction" data-id="<%=id%>" href="#">Send request</a></li>';
             } else if (roster.ask === 'subscribe' && !roster.status) {
                 htmlStr = '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>' +
-                    '<li class="list-item"><a class="deleteContact list-actions-action" data-id="<%=id%>" href="#">Delete contact</a></li>';
+                    '<li class="list-item"><a class="j-deleteContact deleteContact list-actions-action" data-id="<%=id%>" href="#">Delete contact</a></li>';
             } else {
                 htmlStr = '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Video call</a></li>' +
                     '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Audio call</a></li>' +
@@ -159,7 +159,7 @@ define([
             htmlStr += '<div class="btn_userDetails <%=roster%> writeMessage">' +
                 '<div class="ic_writeMessage ic_userDetails">' +
                 '<img src="images/icon-message.png" alt="videocall"></div>Send message</div>' +
-                '<div class="btn_userDetails <%=roster%> deleteContact">' +
+                '<div class="btn_userDetails <%=roster%> deleteContact j-deleteContact">' +
                 '<div class="ic_deleteContact ic_userDetails">' +
                 '<img src="images/icon-profile-delete.svg" alt="videocall"></div>Remove contact and chat</div>';
 
@@ -240,8 +240,6 @@ define([
         }
 
     };
-
-    QMHtml.qmplayer
 
     return QMHtml;
 });

@@ -116,6 +116,8 @@ define([
                 min,
                 sec;
 
+            self.ui.progress.classList.add('is-active');
+
             self.timerID = setInterval(function() {
                 ++step;
 
@@ -172,7 +174,6 @@ define([
 
                         controlElClassList.remove('is-send');
                         controlElClassList.add('is-active');
-                        progressElClassList.add('is-active');
                         cancelElClassList.add('is-active');
 
                         self.ui.title.innerHTML = '00:00';

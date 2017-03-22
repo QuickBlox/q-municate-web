@@ -552,9 +552,9 @@ define([
                 contactRequest = $('.j-incomingContactRequest[data-jid="' + makeJid(id) + '"]'),
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden') || !$chat.length,
-                isExistent = dialogItem.length ? true : (contactRequest.length ? true : false),
-                unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 roster = ContactList.roster,
+                isExistent = dialogItem.length ? true : (contactRequest.length ? true : (roster[id] ? true : false)),
+                unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
                 isOfflineStorage = message.delay,
                 selected = $('[data-dialog = ' + dialog_id + ']').is('.is-selected'),
@@ -571,7 +571,7 @@ define([
                 occupant,
                 msg;
 
-            if (!dialog && roster[id] && (roster[id].subscription === 'both')) {
+            if (!dialog && roster[id] && notification_type !== '4') {
                 Dialog.download({'_id': dialog_id}, function(results) {
                     var newDialogId = Dialog.create(results.items[0]);
 
@@ -702,16 +702,18 @@ define([
                 ContactListView.onConfirm(id);
             }
 
-            if (notification_type === '7') {
-                ContactListView.onReject(id);
-            }
-
-            var isHidden = (isHiddenChat || !window.isQMAppActive) ? true : false,
-                sentToMe = (message.type !== 'groupchat' || msg.sender_id !== User.contact.id) ? true : false,
+            var isHidden = isHiddenChat || !window.isQMAppActive,
+                sentToMe = (message.type !== 'groupchat') || (msg.sender_id !== User.contact.id),
                 isSoundOn = Settings.get('sounds_notify'),
                 isMainTab = SyncTabs.get();
 
-            createAndShowNotification(msg, isHidden);
+            if (isExistent) {
+                createAndShowNotification(msg, isHidden);
+            }
+
+            if (notification_type === '7') {
+                ContactListView.onReject(id);
+            }
 
             if (isHidden && sentToMe && isSoundOn && isMainTab && isExistent) {
                 audioSignal.play();
@@ -801,8 +803,8 @@ define([
                 contacts = ContactListMsg.contacts,
                 contact = contacts[userId],
                 $chat = dialogId === null ? $('.l-chat[data-id="' + userId + '"]') : $('.l-chat[data-dialog="' + dialogId + '"]'),
-                recipient = userId !== User.contact.id ? true : false,
-                visible = $chat.is(':visible') ? true : false;
+                recipient = userId !== User.contact.id,
+                visible = $chat.is(':visible');
 
             if (recipient && visible) {
                 // stop displays the status if they do not come
@@ -953,14 +955,12 @@ define([
             dialog = dialogs.get(msg.dialog_id),
             cancelNotify = !Settings.get('messages_notify'),
             isNotMainTab = !SyncTabs.get(),
-            isCurrentUser = (msg.sender_id === User.contact.id) ? true : false,
-            isDialog = $('.j-dialogItem[data-id="' + msg.sender_id + '"]').length,
-            isApsent = (+msg.notification_type === 7) && !isDialog,
+            isCurrentUser = (msg.sender_id === User.contact.id),
             options,
             title,
             params;
 
-        if (cancelNotify || isNotMainTab || isCurrentUser || isApsent) {
+        if (cancelNotify || isNotMainTab || isCurrentUser) {
             return false;
         }
 

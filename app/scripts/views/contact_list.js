@@ -211,7 +211,6 @@ define([
                 message,
                 self = this;
 
-
             if (notConfirmed[id] && requestItem.length) {
                 changeRequestStatus('Request accepted');
                 self.sendConfirm(jid, 'new_dialog');
@@ -355,7 +354,7 @@ define([
             dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-id="' + id + '"]');
             copyDialogItem = dialogItem.clone();
             dialogItem.remove();
-            $('#recentList ul').prepend(copyDialogItem);
+            $('.j-recentList').prepend(copyDialogItem);
             if ($('#searchList').is(':hidden')) {
                 $('#recentList').removeClass('is-hidden');
                 Helpers.Dialogs.isSectionEmpty($('.j-recentList'));
@@ -368,7 +367,6 @@ define([
         sendReject: function(jid, isClick) {
             var id = QB.chat.helpers.getIdFromNode(jid),
                 $objDom = $('.j-incomingContactRequest[data-jid="' + jid + '"]'),
-                list = $objDom.parents('ul.j-requestsList'),
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
@@ -376,7 +374,7 @@ define([
 
             $objDom.remove();
 
-            Helpers.Dialogs.isSectionEmpty(list);
+            Helpers.Dialogs.isSectionEmpty($('.j-requestsList'));
 
             // update roster
             roster[id] = {
@@ -411,9 +409,10 @@ define([
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 li = $('.dialog-item[data-id="' + id + '"]'),
                 list = li.parents('ul.j-list'),
-                dialogId = li.data('dialog'),
+                hiddenDialogs = JSON.parse(sessionStorage['QM.hiddenDialogs']),
+                dialogId = li.data('dialog') || hiddenDialogs[id] || null,
                 roster = ContactList.roster,
-                dialog = dialogs.get(dialogId),
+                dialog = dialogId ? dialogs.get(dialogId) : null,
                 time = Math.floor(Date.now() / 1000),
                 $mediacall = $('.mediacall');
 
@@ -433,33 +432,30 @@ define([
                     });
                 });
 
-                Dialog.deleteChat(dialog);
+                if (dialogId) {
+                    Dialog.deleteChat(dialog);
+                }
             }
 
             if ($mediacall.length > 0) {
                 $mediacall.find('.btn_hangup').click();
             }
 
-            DialogView.removeDialogItem(dialogId);
-            DialogView.decUnreadCounter(dialogId);
+            if (dialogId) {
+                DialogView.removeDialogItem(dialogId);
+                DialogView.decUnreadCounter(dialogId);
+            }
         },
 
         // callbacks
-
         onSubscribe: function(id) {
             var html,
                 contacts = ContactList.contacts,
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
-                $dialogItem = $('#requestsList .list-item[data-jid="' + jid + '"]'),
-                $isCurrentItem = $('#recentList .list-item[data-id="' + id + '"]'),
-                recentList = $isCurrentItem.parents('ul.j-recentList'),
-                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 $requestList = $('.j-requestsList'),
+                $recentList = $('.j-recentList'),
+                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
                 duplicate;
-
-            if ($dialogItem.length) {
-                return true;
-            }
 
             // update notConfirmed people list
             notConfirmed[id] = true;
@@ -484,12 +480,13 @@ define([
 
                 $('#requestsList').removeClass('is-hidden');
                 $('#emptyList').addClass('is-hidden');
-            }, 'subscribe');
 
-            if ($isCurrentItem.length) {
-                $isCurrentItem.remove();
-                Helpers.Dialogs.isSectionEmpty(recentList);
-            }
+                if ($recentList.find('.list-item[data-id="' + id + '"]').length) {
+                    $recentList.find('.list-item[data-id="' + id + '"]').remove();
+                    self.autoConfirm(id);
+                    Helpers.Dialogs.isSectionEmpty($recentList);
+                }
+            }, 'subscribe');
         },
 
         onConfirm: function(id) {
@@ -512,12 +509,19 @@ define([
         },
 
         onReject: function(id) {
-            var dialogItem = $('.presence-listener[data-id="' + id + '"]'),
+            var VoiceMessage = self.app.models.VoiceMessage,
+                dialogItem = $('.presence-listener[data-id="' + id + '"]'),
                 jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
                 request = $('#requestsList .list-item[data-jid="' + jid + '"]'),
+                chatIsActive = $('.j-chatItem[data-id="' + id + '"]').is(':visible'),
                 list = request && request.parents('ul'),
                 roster = ContactList.roster,
                 notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {};
+
+            // reset recorder state
+            if (chatIsActive) {
+                VoiceMessage.resetRecord();
+            }
 
             // update roster
             roster[id] = {
@@ -561,6 +565,24 @@ define([
                 if (dialogItem.is('.popup_details')) {
                     dialogItem.find('.status_text').text('Online');
                 }
+            }
+        },
+
+        autoConfirm: function(id) {
+            var jid = QB.chat.helpers.getUserJid(id, QMCONFIG.qbAccount.appId),
+                notConfirmed = localStorage['QM.notConfirmed'] ? JSON.parse(localStorage['QM.notConfirmed']) : {},
+                hiddenDialogs = notConfirmed[id] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : null,
+                dialogId = hiddenDialogs[id] || null,
+                activeId = Entities.active,
+                dialogs = Entities.Collections.dialogs,
+                dialog = dialogId ? dialogs.get(dialogId) : null;
+
+            self.sendConfirm(jid, 'new_dialog');
+
+            if (activeId === dialogId) {
+                Entities.active = '';
+                dialog.set({'opened': false});
+                $('.j-dialogItem[data-dialog="' + dialogId + '"] > .contact').click();
             }
         }
 
