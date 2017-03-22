@@ -299,9 +299,10 @@ define([
 
             if (type === 'video' && fullType !== 'video/mp4') {
                 errMsg = 'This video format is not supported, only *.mp4';
-            } else if (type === 'audio' &&
-                (fullType !== 'audio/mp3' || fullType !== 'audio/mpeg')) {
-                errMsg = 'This audio format is not supported, only *.mp3';
+            } else if (type === 'audio' && fullType !== 'audio/mp3') {
+                if (fullType !== 'audio/mpeg') {
+                    errMsg = 'This audio format is not supported, only *.mp3';
+                }
             } else if (type === 'file') {
                 errMsg = 'This file format isn\'t supported';
             }
