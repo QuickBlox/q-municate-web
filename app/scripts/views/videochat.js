@@ -149,7 +149,7 @@ define([
                 }
 
                 VoiceMessage.resetRecord();
-                VoiceMessage.blockRecorder('during call');
+                VoiceMessage.blockRecorder('during a call');
 
                 if (callType === 'audio') {
                     self.type = 'audio';
@@ -488,7 +488,7 @@ define([
             }
 
             VoiceMessage.resetRecord();
-            VoiceMessage.blockRecorder('during call');
+            VoiceMessage.blockRecorder('during a call');
 
             if (Settings.get('sounds_notify')) {
                 audioSignal.play();
