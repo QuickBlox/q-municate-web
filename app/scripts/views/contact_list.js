@@ -417,8 +417,7 @@ define([
                 dialogId = li.data('dialog') || hiddenDialogs[id] || null,
                 roster = ContactList.roster,
                 dialog = dialogId ? dialogs.get(dialogId) : null,
-                time = Math.floor(Date.now() / 1000),
-                $mediacall = $('.mediacall');
+                time = Math.floor(Date.now() / 1000);
 
             // update roster
             delete roster[id];
@@ -442,10 +441,6 @@ define([
                 if (dialogId) {
                     Dialog.deleteChat(dialog);
                 }
-            }
-
-            if ($mediacall.length > 0) {
-                $mediacall.find('.btn_hangup').click();
             }
 
             if (dialogId) {

@@ -397,6 +397,7 @@ define([
                 occupants_ids = dialog.get('occupants_ids'),
                 $chatWrap = $('.j-chatWrap'),
                 $chatView = $('.chatView'),
+                isBlocked,
                 isCall,
                 location,
                 status,
@@ -406,6 +407,7 @@ define([
                 jid;
 
             Entities.active = dialog_id;
+            isBlocked = $('.icon_videocall, .icon_audiocall').length;
             isCall = objDom.find('.icon_videocall').length || objDom.find('.icon_audiocall').length;
             jid = dialog.get('room_jid') || user.user_jid;
             icon = user_id ? user.avatar_url : (dialog.get('room_photo') || QMCONFIG.defAvatar.group_url);
@@ -447,8 +449,13 @@ define([
             localStorage.removeItem(readBadge);
             localStorage.setItem(readBadge, dialog_id);
 
+
             // reset recorder state
             VoiceMessage.resetRecord();
+
+            if (isBlocked) {
+                VoiceMessage.blockRecorder('during a call');
+            }
 
             function buildChat() {
                 new Entities.Models.Chat({
@@ -486,7 +493,6 @@ define([
                     $('.l-chat:visible').addClass('is-request');
                 }
 
-                // block recorder if isn't supported
                 if (!VoiceMessage.supported) {
                     VoiceMessage.blockRecorder();
                 }
@@ -566,7 +572,12 @@ define([
         removeDialogItem: function(dialogId) {
             var $dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]'),
                 $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
-                $dialogList = $dialogItem.parents('ul');
+                $dialogList = $dialogItem.parents('ul'),
+                $mediacall = $chat.find('.mediacall');
+
+            if ($mediacall.length > 0) {
+                $mediacall.find('.btn_hangup').click();
+            }
 
             $dialogItem.remove();
 

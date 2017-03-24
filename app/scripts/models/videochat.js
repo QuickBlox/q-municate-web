@@ -90,7 +90,6 @@ define([
             unread = parseInt($dialogItem.length > 0 &&
                 $dialogItem.find('.unread').text().length > 0 ?
                 $dialogItem.find('.unread').text() : 0),
-            copyDialogItem,
             extension,
             message,
             msg;

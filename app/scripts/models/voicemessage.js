@@ -73,18 +73,24 @@ define([
         },
 
         blockRecorder: function(message) {
-            var recorder = document.querySelector('.j-btn_audio_record'),
-                error = message ? (' ' + message) : '';
+            var recorders = document.querySelectorAll('.j-btn_audio_record'),
+                error = message ? (' ' + message) : '(microphone wasn\'t found)';
 
-            if (recorder) {
-                recorder.disabled = true;
-                recorder.classList.remove('is-active');
-                recorder.classList.add('is-unavailable');
-                recorder.setAttribute('data-balloon-length', 'medium');
-                recorder.setAttribute('data-balloon', 'Recorder unavailable' + error);
+            if (recorders.length) {
+                recorders.forEach(function(recorder) {
+                    recorder.disabled = true;
+                    recorder.classList.remove('is-active');
+                    recorder.classList.add('is-unavailable');
+                    recorder.setAttribute('data-balloon-length', 'medium');
+                    recorder.setAttribute('data-balloon', 'Recorder unavailable' + error);
+                });
             }
 
-            Helpers.log('Recorder isn\'t supported is this browser');
+            if (message) {
+                Helpers.log('Recorder unavailable' + error);
+            } else {
+                Helpers.log('Recorder isn\'t supported is this browser');
+            }
         },
 
         _startStream: function (callback) {
@@ -95,7 +101,7 @@ define([
                 callback();
             }).catch(function(err) {
                 self.resetRecord();
-                self.blockRecorder('(microphone wasn\'t found)');
+                self.blockRecorder();
                 console.error(err);
             });
         },
@@ -217,7 +223,7 @@ define([
                 button = document.querySelector('.j-btn_audio_record'),
                 activeDialogId = self.app.entities.active;
 
-            if (dialogId && (dialogId !== activeDialogId)) {
+            if ((dialogId && (dialogId !== activeDialogId)) || !button) {
                 return false;
             }
 
