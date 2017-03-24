@@ -74,7 +74,7 @@ define([
 
         blockRecorder: function(message) {
             var recorder = document.querySelector('.j-btn_audio_record'),
-                error = message ? ' (microphone wasn\'t found)' : '';
+                error = message ? (' ' + message) : '';
 
             if (recorder) {
                 recorder.disabled = true;
@@ -95,7 +95,7 @@ define([
                 callback();
             }).catch(function(err) {
                 self.resetRecord();
-                self.blockRecorder(true);
+                self.blockRecorder('(microphone wasn\'t found)');
                 console.error(err);
             });
         },

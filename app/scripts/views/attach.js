@@ -105,7 +105,8 @@ define([
 
         createProgressBar: function(id, fileSizeCrop, metadata, file) {
             var progressBar = new ProgressBar('progress_' + id),
-                $chatItem = $('.j-chatItem'),
+                dialogId = self.app.entities.active,
+                $chatItem = $('.j-chatItem[data-dialog="' + dialogId + '"]'),
                 fileSize = metadata.size,
                 percent = 5,
                 isUpload = false,

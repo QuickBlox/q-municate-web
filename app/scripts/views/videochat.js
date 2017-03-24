@@ -25,6 +25,7 @@ define([
         User,
         Settings,
         VideoChat,
+        VoiceMessage,
         ContactList,
         callTimer,
         stopStreamFF,
@@ -42,6 +43,7 @@ define([
         User = this.app.models.User;
         ContactList = this.app.models.ContactList;
         VideoChat = this.app.models.VideoChat;
+        VoiceMessage = this.app.models.VoiceMessage;
     }
 
     VideoChatView.prototype.cancelCurrentCalls = function() {
@@ -145,6 +147,9 @@ define([
                     fixScroll();
                     return true;
                 }
+
+                VoiceMessage.resetRecord();
+                VoiceMessage.blockRecorder('during call');
 
                 if (callType === 'audio') {
                     self.type = 'audio';
@@ -482,6 +487,9 @@ define([
                 QBApiCalls.sendPushNotification(calleeId, fullName);
             }
 
+            VoiceMessage.resetRecord();
+            VoiceMessage.blockRecorder('during call');
+
             if (Settings.get('sounds_notify')) {
                 audioSignal.play();
             }
@@ -571,6 +579,8 @@ define([
             VideoChat.callee = null;
             self.type = null;
             videoStreamTime = null;
+
+            VoiceMessage.resetRecord();
 
             $chat.parent('.chatView').removeClass('j-mediacall');
             $chat.find('.mediacall').remove();
