@@ -862,7 +862,10 @@ define([
                 if (dialogItem.length) {
                     DialogView.htmlBuild(dialogItem);
                 } else {
-                    Dialog.restorePrivateDialog(id);
+                    Dialog.restorePrivateDialog(id, function() {
+                        dialogItem = $('.dialog-item[data-id="' + id + '"]').find('.contact');
+                        DialogView.htmlBuild(dialogItem);
+                    });
                 }
             });
 
@@ -873,7 +876,15 @@ define([
                     dialogItem = $('.dialog-item[data-id="' + id + '"]').find('.contact');
 
                 closePopup();
-                DialogView.htmlBuild(dialogItem);
+
+                if (dialogItem.length) {
+                    DialogView.htmlBuild(dialogItem);
+                } else {
+                    Dialog.restorePrivateDialog(id, function() {
+                        dialogItem = $('.dialog-item[data-id="' + id + '"]').find('.contact');
+                        DialogView.htmlBuild(dialogItem);
+                    });
+                }
             });
 
             $('#popupContacts .btn_popup_group').on('click', function() {

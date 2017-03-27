@@ -101,8 +101,8 @@ define([
                 htmlStr = '';
 
             if (params.dialogType === 3 && roster && roster.subscription !== 'none') {
-                htmlStr = '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="<%=ids%>" href="#">Video call</a></li>' +
-                    '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="<%=ids%>" href="#">Audio call</a></li>' +
+                htmlStr = '<li class="list-item"><a class="videoCall list-actions-action" data-id="<%=ids%>" href="#">Video call</a></li>' +
+                    '<li class="list-item"><a class="audioCall list-actions-action" data-id="<%=ids%>" href="#">Audio call</a></li>' +
                     '<li class="list-item"><a class="list-actions-action createGroupChat" data-ids="<%=ids%>" data-private="1" href="#">Add people</a></li>';
             } else if (params.dialogType !== 3) {
                 htmlStr = '<li class="list-item"><a class="list-actions-action addToGroupChat" data-group="true" data-ids="<%=occupantsIds%>" ' +
@@ -129,8 +129,8 @@ define([
                 htmlStr = '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>' +
                     '<li class="list-item"><a class="j-deleteContact deleteContact list-actions-action" data-id="<%=id%>" href="#">Delete contact</a></li>';
             } else {
-                htmlStr = '<li class="list-item"><a class="videoCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Video call</a></li>' +
-                    '<li class="list-item"><a class="audioCall list-actions-action writeMessage" data-id="<%=id%>" href="#">Audio call</a></li>' +
+                htmlStr = '<li class="list-item"><a class="videoCall list-actions-action" data-id="<%=id%>" href="#">Video call</a></li>' +
+                    '<li class="list-item"><a class="audioCall list-actions-action" data-id="<%=id%>" href="#">Audio call</a></li>' +
                     '<li class="list-item"><a class="list-actions-action writeMessage" data-id="<%=id%>" href="#">Write message</a></li>' +
                     '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>';
             }

@@ -179,7 +179,7 @@ define([
             });
         },
 
-        restorePrivateDialog: function(id) {
+        restorePrivateDialog: function(id, callback) {
             var QBApiCalls = this.app.service,
                 DialogView = this.app.views.Dialog,
                 self = this;
@@ -193,7 +193,8 @@ define([
                     dialog = dialogs.get(dialogId);
 
                 DialogView.addDialogItem(dialog, null, 'new_dialog');
-                $('.j-dialogItem[data-id="' + id + '"] .contact').click();
+
+                callback(dialog);
             });
         },
 

@@ -27,6 +27,7 @@ define([
         VideoChat,
         VoiceMessage,
         ContactList,
+        SyncTabs,
         callTimer,
         stopStreamFF,
         sendAutoReject,
@@ -63,16 +64,31 @@ define([
     };
 
     VideoChatView.prototype.init = function() {
-        var DialogView = this.app.views.Dialog;
+        var DialogView = this.app.views.Dialog,
+            Dialog = this.app.models.Dialog;
 
         $('body').on('click', '.videoCall, .audioCall', function() {
             if (QB.webrtc) {
-                var className = $(this).attr('class');
+                var $this = $(this),
+                    className = $this.attr('class'),
+                    userId = $this.data('id'),
+                    $item = $('.dialog-item[data-id="' + userId + '"]').find('.contact');
 
-                self.cancelCurrentCalls();
-                self.startCall(className);
+                if ($item.length) {
+                    openChatAndStartCall($item);
+                } else {
+                    Dialog.restorePrivateDialog(userId, function() {
+                        $item = $('.dialog-item[data-id="' + userId + '"]').find('.contact');
+                        openChatAndStartCall($item)
+                    });
+                }
 
-                curSession = self.app.models.VideoChat.session;
+                function openChatAndStartCall(dialogItem) {
+                    DialogView.htmlBuild(dialogItem);
+                    self.cancelCurrentCalls();
+                    self.startCall(className, userId);
+                    curSession = self.app.models.VideoChat.session;
+                }
             } else {
                 QMHtml.VideoChat.noWebRTC();
             }
@@ -119,8 +135,7 @@ define([
 
             DialogView.htmlBuild($dialogItem);
 
-            var opponentId = $self.data('id'),
-                dialogId = $self.data('dialog'),
+            var dialogId = $self.data('dialog'),
                 sessionId = $self.data('session'),
                 callType = $self.data('calltype'),
                 audioSignal = $('#ringtoneSignal')[0],
@@ -275,43 +290,55 @@ define([
             callType = (session.callType === 1 ? 'video' : 'audio') || extension.call_type,
             userName = contact.full_name || extension.full_name,
             userAvatar = contact.avatar_url || extension.avatar,
-            dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
+            $dialogItem = $('.j-dialogItem[data-id="' + id + '"]'),
+            dialogId = $dialogItem.length ? $dialogItem.data('dialog') : null,
             autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
             htmlTpl,
             tplParams;
 
-        tplParams = {
-            userAvatar: userAvatar,
-            callTypeUС: capitaliseFirstLetter(callType),
-            callType: callType,
-            userName: userName,
-            dialogId: dialogId,
-            sessionId: session.ID,
-            userId: id
-        };
-
-        htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams);
-
-        $incomings.find('.mCSB_container').prepend(htmlTpl);
-        openPopup($incomings);
-
-        if (Settings.get('sounds_notify') && SyncTabs.get()) {
-            audioSignal.play();
+        if (!dialogId && ContactList.roster[id]) {
+            self.app.models.Dialog.restorePrivateDialog(id, function(dialog) {
+                dialogId = dialog.get('id');
+                incomingCall();
+            });
+        } else {
+            incomingCall();
         }
 
-        VideoChat.session = session;
-        curSession = VideoChat.session;
+        function incomingCall() {
+            tplParams = {
+                userAvatar: userAvatar,
+                callTypeUС: capitaliseFirstLetter(callType),
+                callType: callType,
+                userName: userName,
+                dialogId: dialogId,
+                sessionId: session.ID,
+                userId: id
+            };
 
-        createAndShowNotification({
-            'id': id,
-            'dialogId': dialogId,
-            'callState': '4',
-            'callType': callType
-        });
+            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams);
 
-        sendAutoReject = setTimeout(function() {
-            $('.btn_decline').click();
-        }, autoReject);
+            $incomings.find('.mCSB_container').prepend(htmlTpl);
+            openPopup($incomings);
+
+            if (Settings.get('sounds_notify') && SyncTabs.get()) {
+                audioSignal.play();
+            }
+
+            VideoChat.session = session;
+            curSession = VideoChat.session;
+
+            createAndShowNotification({
+                'id': id,
+                'dialogId': dialogId,
+                'callState': '4',
+                'callType': callType
+            });
+
+            sendAutoReject = setTimeout(function() {
+                $('.btn_decline').click();
+            }, autoReject);
+        }
     };
 
     VideoChatView.prototype.onIgnored = function(state, session, id, extension) {
@@ -467,9 +494,9 @@ define([
         $('.btn_hangup').click();
     };
 
-    VideoChatView.prototype.startCall = function(className) {
+    VideoChatView.prototype.startCall = function(className, userId) {
         var audioSignal = document.getElementById('callingSignal'),
-            params = self.build(),
+            params = self.build(userId),
             $chat = $('.l-chat:visible'),
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
             QBApiCalls = this.app.service,
