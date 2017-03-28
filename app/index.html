@@ -674,10 +674,10 @@
             </div>
             <div class="chat-controls">
                 <% if (type === 3) { %>
-                    <button class="btn_chat btn_chat_videocall videoCall" data-balloon="Make a video call" data-balloon-pos="down">
+                    <button class="btn_chat btn_chat_videocall videoCall" data-id="<%= user_id %>" data-balloon="Make a video call" data-balloon-pos="down">
                         <img src="images/icon-videocall.svg" alt="Make a Video Call">
                     </button>
-                    <button class="btn_chat btn_chat_audiocall audioCall" data-balloon="Make an audio call" data-balloon-pos="down">
+                    <button class="btn_chat btn_chat_audiocall audioCall" data-id="<%= user_id %>" data-balloon="Make an audio call" data-balloon-pos="down">
                         <img src="images/icon-audiocall.svg" alt="Make an Audio Call">
                     </button>
                     <button class="btn_chat btn_chat_profile userDetails" data-id="<%= user_id %>" data-balloon="Show user profile" data-balloon-pos="down">
