@@ -72,29 +72,38 @@ define([
                 var $this = $(this),
                     className = $this.attr('class'),
                     userId = $this.data('id'),
-                    $item = $('.dialog-item[data-id="' + userId + '"]').find('.contact');
+                    $dialogItem = $('.j-dialogItem[data-id="' + userId + '"]'),
+                    $dialogContact = $dialogItem.find('.contact'),
+                    $listItem = $('.j-listActionsContacts'),
+                    dialogId;
 
-                if ($item.length) {
-                    openChatAndStartCall($item);
+                if ($dialogItem.length) {
+                    dialogId = $dialogItem.attr('dialog');
+                    openChatAndStartCall($dialogContact, dialogId);
                 } else {
-                    Dialog.restorePrivateDialog(userId, function() {
-                        $item = $('.dialog-item[data-id="' + userId + '"]').find('.contact');
-                        openChatAndStartCall($item)
+                    Dialog.restorePrivateDialog(userId, function(dialog) {
+                        dialogId = dialog.get('id');
+                        $dialogContact = $('.dialog-item[data-id="' + userId + '"]').find('.contact');
+                        openChatAndStartCall($dialogContact, dialogId)
                     });
                 }
 
-                function openChatAndStartCall(dialogItem) {
+                function openChatAndStartCall(dialogItem, dialogId) {
                     DialogView.htmlBuild(dialogItem);
                     self.cancelCurrentCalls();
-                    self.startCall(className, userId);
+                    self.startCall(className, dialogId);
                     curSession = self.app.models.VideoChat.session;
                 }
             } else {
                 QMHtml.VideoChat.noWebRTC();
             }
 
-            // remove contextmenu after start call
+            // remove contextmenus after start call
             $('.is-contextmenu').removeClass('is-contextmenu');
+
+            if ($listItem.length) {
+                $listItem.remove();
+            }
 
             return false;
         });
@@ -494,9 +503,9 @@ define([
         $('.btn_hangup').click();
     };
 
-    VideoChatView.prototype.startCall = function(className, userId) {
+    VideoChatView.prototype.startCall = function(className, dialogId) {
         var audioSignal = document.getElementById('callingSignal'),
-            params = self.build(userId),
+            params = self.build(dialogId),
             $chat = $('.l-chat:visible'),
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
             QBApiCalls = this.app.service,
@@ -535,7 +544,7 @@ define([
     };
 
     VideoChatView.prototype.build = function(id) {
-        var $chat = id ? $('.l-chat[data-dialog="' + id + '"]') : $('.l-chat:visible'),
+        var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
             userId = $chat.data('id'),
             dialogId = $chat.data('dialog'),
             contact = ContactList.contacts[userId],

@@ -97,7 +97,7 @@ define([
     QMHtml.User = {
 
         contactPopover: function(params, roster) {
-            var $html = $('<ul class="list-actions list-actions_contacts popover"></ul>'),
+            var $html = $('<ul class="list-actions list-actions_contacts popover j-listActionsContacts"></ul>'),
                 htmlStr = '';
 
             if (params.dialogType === 3 && roster && roster.subscription !== 'none') {
@@ -119,7 +119,7 @@ define([
         },
 
         occupantPopover: function(params, roster) {
-            var $html = $('<ul class="list-actions list-actions_occupants popover"></ul>'),
+            var $html = $('<ul class="list-actions list-actions_occupants popover j-listActionsContacts"></ul>'),
                 htmlStr = '';
 
             if (!roster || (roster.subscription === 'none' && !roster.ask)) {
@@ -127,10 +127,10 @@ define([
                     '<a class="list-actions-action requestAction j-requestAction" data-id="<%=id%>" href="#">Send request</a></li>';
             } else if (roster.ask === 'subscribe' && !roster.status) {
                 htmlStr = '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>' +
-                    '<li class="list-item"><a class="j-deleteContact deleteContact list-actions-action" data-id="<%=id%>" href="#">Delete contact</a></li>';
+                    '<li class="list-item"><a class="list-actions-action deleteContact j-deleteContact" data-id="<%=id%>" href="#">Delete contact</a></li>';
             } else {
-                htmlStr = '<li class="list-item"><a class="videoCall list-actions-action" data-id="<%=id%>" href="#">Video call</a></li>' +
-                    '<li class="list-item"><a class="audioCall list-actions-action" data-id="<%=id%>" href="#">Audio call</a></li>' +
+                htmlStr = '<li class="list-item"><a class="list-actions-action videoCall" data-id="<%=id%>" href="#">Video call</a></li>' +
+                    '<li class="list-item"><a class="list-actions-action audioCall" data-id="<%=id%>" href="#">Audio call</a></li>' +
                     '<li class="list-item"><a class="list-actions-action writeMessage" data-id="<%=id%>" href="#">Write message</a></li>' +
                     '<li class="list-item"><a class="list-actions-action userDetails" data-id="<%=id%>" href="#">Profile</a></li>';
             }
