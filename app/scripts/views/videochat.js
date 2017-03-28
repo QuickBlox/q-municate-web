@@ -74,7 +74,6 @@ define([
                     userId = $this.data('id'),
                     $dialogItem = $('.j-dialogItem[data-id="' + userId + '"]'),
                     $dialogContact = $dialogItem.find('.contact'),
-                    $listItem = $('.j-listActionsContacts'),
                     dialogId;
 
                 if ($dialogItem.length) {
@@ -83,16 +82,9 @@ define([
                 } else {
                     Dialog.restorePrivateDialog(userId, function(dialog) {
                         dialogId = dialog.get('id');
-                        $dialogContact = $('.dialog-item[data-id="' + userId + '"]').find('.contact');
-                        openChatAndStartCall($dialogContact, dialogId)
+                        $dialogContact = $('.j-dialogItem[data-id="' + userId + '"]').find('.contact');
+                        openChatAndStartCall($dialogContact, dialogId);
                     });
-                }
-
-                function openChatAndStartCall(dialogItem, dialogId) {
-                    DialogView.htmlBuild(dialogItem);
-                    self.cancelCurrentCalls();
-                    self.startCall(className, dialogId);
-                    curSession = self.app.models.VideoChat.session;
                 }
             } else {
                 QMHtml.VideoChat.noWebRTC();
@@ -100,9 +92,13 @@ define([
 
             // remove contextmenus after start call
             $('.is-contextmenu').removeClass('is-contextmenu');
+            $('.j-listActionsContacts').remove();
 
-            if ($listItem.length) {
-                $listItem.remove();
+            function openChatAndStartCall(dialogItem, dialogId) {
+                DialogView.htmlBuild(dialogItem);
+                self.cancelCurrentCalls();
+                self.startCall(className, dialogId);
+                curSession = self.app.models.VideoChat.session;
             }
 
             return false;
