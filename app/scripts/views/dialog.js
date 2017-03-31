@@ -97,15 +97,13 @@ define([
             $('.spinner_bounce, .temp-box, div.message_service').remove();
         },
 
-        prepareDownloading: function(roster) {
-            Helpers.log('QB SDK: Roster has been got', roster);
+        prepareDownloading: function() {
+            scrollbarAside();
             Listeners.setQBHandlers();
             User.initProfile();
             self.createDataSpinner();
-            scrollbarAside();
-            ContactList.saveRoster(roster);
-            this.app.views.Settings.setUp(User.contact.id);
-            this.app.models.SyncTabs.init(User.contact.id);
+            self.app.views.Settings.setUp(User.contact.id);
+            self.app.models.SyncTabs.init(User.contact.id);
         },
 
         getUnreadCounter: function(dialog_id) {
@@ -165,12 +163,10 @@ define([
                 dialog,
                 chat;
 
-            params = {
+            Dialog.download({
                 'sort_desc': 'last_message_date_sent',
                 'skip': skip || 0
-            },
-
-            Dialog.download(params, function(result) {
+            }, function(result) {
                 dialogs = result.items;
                 totalEntries = result.total_entries;
                 localEntries = result.limit + result.skip;

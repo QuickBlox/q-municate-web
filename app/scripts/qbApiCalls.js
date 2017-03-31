@@ -68,17 +68,17 @@ define([
                     UserView.getFBStatus(function(token) {
                         Session.authParams.keys.token = token;
 
-                        self.createSession(Session.authParams, function(session) {
-                            callback(session);
+                        self.createSession(Session.authParams, function() {
+                            callback();
                         }, Session._remember);
                     });
                 } else if (Session.authParams.provider === 'twitter_digits') {
-                    self.getTwitterDigits(function(session) {
-                        callback(session);
+                    self.getTwitterDigits(function() {
+                        callback();
                     });
                 } else {
-                    self.createSession(Session.decrypt(Session.authParams), function(session) {
-                        callback(session);
+                    self.createSession(Session.decrypt(Session.authParams), function() {
+                        callback();
                     }, Session._remember);
 
                     Session.encrypt(Session.authParams);
@@ -149,7 +149,7 @@ define([
         },
 
         loginUser: function(params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.login(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
@@ -169,14 +169,14 @@ define([
         getTwitterDigits: function(callback) {
             self.createSession({}, function(session) {
                 QB.login(Session.authParams, function(err, user) {
-                    if (err) {
-                        Helpers.log(err.detail);
-                    } else {
+                    if (user && !err) {
                         Session.update({
                             date: new Date(),
                             authParams: Session.encrypt(Session.authParams)
                         });
                         callback(session);
+                    } else {
+                        Helpers.log(err.detail);
                     }
                 });
             }, Session._remember);
@@ -192,7 +192,7 @@ define([
         },
 
         forgotPassword: function(email, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.users.resetPassword(email, function(response) {
                     if (response.code === 404) {
                         Helpers.log(response.message);
@@ -209,7 +209,7 @@ define([
         },
 
         listUsers: function(params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.users.listUsers(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
@@ -227,7 +227,7 @@ define([
         },
 
         getUser: function(params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.users.get(params, function(err, res) {
                     if (err && err.code === 404) {
                         Helpers.log(err.message);
@@ -251,7 +251,7 @@ define([
         },
 
         createUser: function(params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.users.create(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
@@ -271,7 +271,7 @@ define([
         },
 
         updateUser: function(id, params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.users.update(id, params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
@@ -295,7 +295,7 @@ define([
         },
 
         createBlob: function(params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.content.createAndUpload(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
@@ -313,13 +313,14 @@ define([
         },
 
         connectChat: function(jid, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 var password = Session.token;
 
                 QB.chat.connect({
                     jid: jid,
-                    password: password
-                }, function(err, res) {
+                    password: password,
+                    connectWithoutGettingRoster: true
+                }, function(err) {
                     if (err) {
                         Helpers.log(err);
 
@@ -327,16 +328,18 @@ define([
                         window.location.reload();
                         fail(err.detail);
                     } else {
-                        Listeners.setChatState(true);
+                        self.getContactList(function(res) {
+                            self.app.models.ContactList.saveRoster(res);
+                            callback();
+                        });
 
-                        startFlurryAgent();
+                        Listeners.setChatState(true);
 
                         Session.update({
                             date: new Date()
                         });
 
                         setRecoverySessionInterval();
-                        callback(res);
 
                         if (User.contact.full_name === 'Unknown user') {
                             self.app.views.Profile.render().openPopup();
@@ -347,7 +350,7 @@ define([
         },
 
         reconnectChat: function() {
-            self.connectChat(User.contact.user_jid, function(roster) {
+            self.connectChat(User.contact.user_jid, function() {
                 Listeners.setQBHandlers();
                 Listeners.onReconnected();
 
@@ -360,7 +363,7 @@ define([
         },
 
         listDialogs: function(params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.chat.dialog.list(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
@@ -377,7 +380,7 @@ define([
         },
 
         createDialog: function(params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.chat.dialog.create(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
@@ -388,6 +391,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback(res);
                     }
                 });
@@ -395,7 +399,7 @@ define([
         },
 
         updateDialog: function(id, params, callback) {
-            this.checkSession(function(result) {
+            this.checkSession(function() {
                 QB.chat.dialog.update(id, params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
@@ -412,8 +416,8 @@ define([
         },
 
         deleteDialog: function(id, callback) {
-            this.checkSession(function(result) {
-                QB.chat.dialog.delete(id, params, function(err, res) {
+            this.checkSession(function() {
+                QB.chat.dialog.delete(id, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
                     } else {
@@ -429,7 +433,7 @@ define([
         },
 
         listMessages: function(params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.chat.message.list(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
@@ -448,7 +452,7 @@ define([
         },
 
         deleteMessage: function(params, callback) {
-            this.checkSession(function(res) {
+            this.checkSession(function() {
                 QB.chat.message.delete(params, function(response) {
                     if (response.code === 404) {
                         Helpers.log(response.message);
@@ -482,6 +486,12 @@ define([
                     Helpers.log('Create event: ', response);
                 }
             });
+        },
+
+        getContactList: function(callback) {
+            QB.chat.roster.get(function(roster) {
+                callback(roster);
+            });
         }
 
     };
@@ -504,14 +514,20 @@ define([
         }, 3600 * 1000);
     }
 
-    function startFlurryAgent() {
-        var eventParams = {
-            'chat_endpoint': QB.auth.service.qbInst.config.endpoints.chat,
-            'app_id': (QMCONFIG.qbAccount.appId).toString()
-        };
-
-        FlurryAgent.logEvent("Connect_to_chat", eventParams);
-    }
+    // function startFlurryAgent() {
+    //     try {
+    //         $.getScript('https://cdn.flurry.com/js/flurry.js', function() {
+    //             FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');
+    //            console.info(FlurryAgent.hasOwnProperty(startSession));
+    //             FlurryAgent.logEvent("Connect_to_chat", {
+    //                 'chat_endpoint': QB.auth.service.qbInst.config.endpoints.chat,
+    //                 'app_id': (QMCONFIG.qbAccount.appId).toString()
+    //             });
+    //         });
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // };
 
     var fail = function(errMsg) {
         UserView.removeSpinner();

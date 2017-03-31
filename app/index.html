@@ -1,57 +1,46 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js" prefix="og: http://ogp.me/ns#">
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <meta property="og:title" content="Q-municate" />
     <meta property="og:url" content="https://qm.quickblox.com/" />
     <meta property="og:image:secure_url" content="https://qm.quickblox.com/images/qm-logo.svg" />
     <meta property="og:description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox" />
 
-    <meta itemprop="name" content="Q-municate" />
-    <meta itemprop="description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox" />
-    <meta itemprop="image" content="https://qm.quickblox.com/images/qm-logo.svg" />
-
     <meta name="twitter:domain" content="https://qm.quickblox.com/" />
     <meta name="twitter:title" content="Q-municate">
     <meta name="twitter:description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox" />
     <meta name="twitter:image:src" content="https://qm.quickblox.com/images/qm-logo.svg" />
 
-    <title>Q-municate</title>
     <meta name="description" content="Q-municate - the open-source, cross platform video calling and instant messaging app from Quickblox">
+
+    <title>Q-municate</title>
 
     <link rel="icon" href="images/favicon.png">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css">
     <!-- build:css styles/build.css -->
     <link rel="stylesheet" href="bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
     <link rel="stylesheet" href="bower_components/perfect-scrollbar/css/perfect-scrollbar.min.css">
     <link rel="stylesheet" href="bower_components/progressbar.js/css/lib/control/progressbar.css">
-    <link rel="stylesheet" href="vendor/emoji/css/minEmoji.css">
     <link rel="stylesheet" href="bower_components/balloon-css/balloon.min.css">
+    <link rel="stylesheet" href="vendor/emoji/css/minEmoji.css">
 
     <link rel="stylesheet" href=".css/main.css">
-    <!-- endbuild -->
-
-    <!-- build:js vendor/modernizr.js -->
-    <script src="bower_components/modernizr/modernizr.js"></script>
     <!-- endbuild -->
 </head>
 
 <script>
-    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        location.href = 'http://q-municate.com/';
-    }
+    if (window!=top){top.location.href=location.href;}
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){location.href='http://q-municate.com/';}
 </script>
 
 <body class="is-welcome">
-    <!--[if lt IE 10]>
-    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
+
     <div class="l-wrapper">
 
         <section id="welcomePage" class="l-page">

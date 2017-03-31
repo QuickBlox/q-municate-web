@@ -43,7 +43,7 @@ requirejs.config({
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
         handlebars: '../bower_components/handlebars/handlebars',
-        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.5.0/quickblox.min',
+        quickblox: '../bower_components/quickblox/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
@@ -127,6 +127,8 @@ requirejs([
         // set Q-MUNICATE version
         $('.j-appVersion').html('v. 1.11.0');
 
+        $.ajaxSetup({cache: true});
+
         // facebook sdk
         FB.init({
             appId: QMCONFIG.fbAccount.appId,
@@ -143,16 +145,12 @@ requirejs([
                 Helpers.log('Digits failed to initialize: ', error);
             });
 
-        $.ajaxSetup({
-            cache: true
-        });
-
         /* Materialize sdk
          *
          * Not included in requirejs dependencies as required hammer.js,
          * which often creates problems when loading
          */
-        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js', function() {
+        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js', function() {
             Helpers.log('Materialize connected');
         });
 
@@ -168,10 +166,6 @@ requirejs([
 
         APP = new QM();
         APP.init();
-
-        $.getScript('https://cdn.flurry.com/js/flurry.js', function() {
-            FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');
-        });
     });
 
 });

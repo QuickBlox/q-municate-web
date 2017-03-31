@@ -128,13 +128,14 @@ define([
 
                 Helpers.log('User', self);
 
-                QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
+                UserView.successFormCallback();
+                
+                QBApiCalls.connectChat(self.contact.user_jid, function() {
                     self.rememberMe();
-                    UserView.successFormCallback();
-                    DialogView.prepareDownloading(roster);
+                    DialogView.prepareDownloading();
 
                     if (!self._is_import && isFB) {
-                        self.import(roster, user);
+                        self.import(user);
                     } else {
                         DialogView.downloadDialogs();
                     }
@@ -142,7 +143,7 @@ define([
             }
         },
 
-        import: function(roster, user) {
+        import: function(user) {
             var DialogView = this.app.views.Dialog,
                 isFriendsPermission = false,
                 self = this;
@@ -228,13 +229,14 @@ define([
                             self.contact = Contact.create(user);
 
                             Helpers.log('User', self);
+                            
+                            UserView.successFormCallback();
 
-                            QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
+                            QBApiCalls.connectChat(self.contact.user_jid, function() {
                                 if (tempParams.blob) {
-                                    self.uploadAvatar(roster);
+                                    self.uploadAvatar();
                                 } else {
-                                    UserView.successFormCallback();
-                                    DialogView.prepareDownloading(roster);
+                                    DialogView.prepareDownloading();
                                     DialogView.downloadDialogs();
                                 }
                             });
@@ -245,7 +247,7 @@ define([
             }
         },
 
-        uploadAvatar: function(roster) {
+        uploadAvatar: function() {
             var QBApiCalls = this.app.service,
                 UserView = this.app.views.User,
                 DialogView = this.app.views.Dialog,
@@ -265,7 +267,7 @@ define([
                     self.contact.avatar_url = blob.path;
 
                     UserView.successFormCallback();
-                    DialogView.prepareDownloading(roster);
+                    DialogView.prepareDownloading();
                     DialogView.downloadDialogs();
 
                     custom_data = JSON.stringify({
@@ -304,10 +306,11 @@ define([
 
                         Helpers.log('User', self);
 
-                        QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
+                        UserView.successFormCallback();
+                        
+                        QBApiCalls.connectChat(self.contact.user_jid, function() {
                             self.rememberMe();
-                            UserView.successFormCallback();
-                            DialogView.prepareDownloading(roster);
+                            DialogView.prepareDownloading();
                             DialogView.downloadDialogs();
                         });
                     });
@@ -376,11 +379,12 @@ define([
                 }
 
                 Helpers.log('User', user);
-
-                QBApiCalls.connectChat(self.contact.user_jid, function(roster) {
+                
+                UserView.successFormCallback();
+                
+                QBApiCalls.connectChat(self.contact.user_jid, function() {
                     self.rememberMe();
-                    UserView.successFormCallback();
-                    DialogView.prepareDownloading(roster);
+                    DialogView.prepareDownloading();
                     DialogView.downloadDialogs();
                 });
             });

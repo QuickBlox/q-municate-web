@@ -26,7 +26,7 @@ module.exports = function(grunt) {
         clean: {
             dev: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css'],
             dist: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css',
-                '<%= yeoman.dist %>/scripts', '<%= yeoman.dist %>/styles', '<%= yeoman.dist %>/vendor'
+                '<%= yeoman.dist %>/scripts', '<%= yeoman.dist %>/styles'
             ],
             tmpBuild: ['<%= yeoman.app %>/scripts/.build.js']
         },
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
             all: {
                 rjsConfig: '<%= yeoman.app %>/scripts/main.js',
                 options: {
-                    exclude: ['jquery', 'modernizr', 'requirejs']
+                    exclude: ['jquery', 'requirejs']
                 }
             }
         },
@@ -127,9 +127,15 @@ module.exports = function(grunt) {
 
         htmlmin: {
             dist: {
+                options: {
+                    minifyCSS: true,
+                    minifyJS: true,
+                    collapseWhitespace: true,
+                    removeComments: true
+                },
                 files: [{
                     expand: true,
-                    cwd: '<%= yeoman.app %>',
+                    cwd: '<%= yeoman.dist %>',
                     src: '*.html',
                     dest: '<%= yeoman.dist %>'
                 }]
@@ -141,8 +147,7 @@ module.exports = function(grunt) {
                 files: {
                     src: [
                         '<%= yeoman.dist %>/scripts/{,*/}*.js',
-                        '<%= yeoman.dist %>/styles/{,*/}*.css',
-                        '<%= yeoman.dist %>/vendor/{,*/}*.js',
+                        '<%= yeoman.dist %>/styles/{,*/}*.css'
                     ]
                 }
             }
@@ -200,8 +205,7 @@ module.exports = function(grunt) {
             },
             all: [
                 'Gruntfile.js',
-                '<%= yeoman.app %>/scripts/{,*/}*.js',
-                '!<%= yeoman.app %>/vendor/*'
+                '<%= yeoman.app %>/scripts/{,*/}*.js'
             ]
         },
 
