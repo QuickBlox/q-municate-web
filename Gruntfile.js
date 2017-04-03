@@ -26,9 +26,10 @@ module.exports = function(grunt) {
         clean: {
             dev: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css'],
             dist: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css',
-                '<%= yeoman.dist %>/scripts', '<%= yeoman.dist %>/styles'
+                '<%= yeoman.dist %>/scripts', '<%= yeoman.dist %>/styles', '<%= yeoman.dist %>/vendor'
             ],
-            tmpBuild: ['<%= yeoman.app %>/scripts/.build.js']
+            tmpBuild: ['<%= yeoman.app %>/scripts/.build.js'],
+            tails: ['<%= yeoman.dist %>/_index.html']
         },
 
         sass: {
@@ -55,7 +56,7 @@ module.exports = function(grunt) {
             all: {
                 rjsConfig: '<%= yeoman.app %>/scripts/main.js',
                 options: {
-                    exclude: ['jquery', 'requirejs']
+                    exclude: ['jquery', 'modernizr', 'requirejs']
                 }
             }
         },
@@ -127,18 +128,20 @@ module.exports = function(grunt) {
 
         htmlmin: {
             dist: {
+                files: {
+                    '<%= yeoman.dist %>/_index.html': '<%= yeoman.app %>/index.html'
+                }
+            },
+            min: {
                 options: {
-                    minifyCSS: true,
-                    minifyJS: true,
                     collapseWhitespace: true,
-                    removeComments: true
+                    minifyCSS: true,
+                    minifyJS: true
                 },
-                files: [{
-                    expand: true,
-                    cwd: '<%= yeoman.dist %>',
-                    src: '*.html',
-                    dest: '<%= yeoman.dist %>'
-                }]
+                files: {
+                    '<%= yeoman.dist %>/index.html': '<%= yeoman.dist %>/_index.html',
+                    '<%= yeoman.dist %>/404.html': '<%= yeoman.app %>/404.html'
+                }
             }
         },
 
@@ -147,7 +150,8 @@ module.exports = function(grunt) {
                 files: {
                     src: [
                         '<%= yeoman.dist %>/scripts/{,*/}*.js',
-                        '<%= yeoman.dist %>/styles/{,*/}*.css'
+                        '<%= yeoman.dist %>/styles/{,*/}*.css',
+                        '<%= yeoman.dist %>/vendor/{,*/}*.js',
                     ]
                 }
             }
@@ -205,7 +209,8 @@ module.exports = function(grunt) {
             },
             all: [
                 'Gruntfile.js',
-                '<%= yeoman.app %>/scripts/{,*/}*.js'
+                '<%= yeoman.app %>/scripts/{,*/}*.js',
+                '!<%= yeoman.app %>/vendor/*'
             ]
         },
 
@@ -271,15 +276,15 @@ module.exports = function(grunt) {
         }
 
         /***********************************************************************
-        1) task - "grunt serve"
-        > use configs from ../q-municate-web./app/config.js
+         1) task - "grunt serve"
+         > use configs from ../q-municate-web./app/config.js
 
-        2) task - "grunt serve --env=dev"
-        > use configs from ../q-municate-web./app/configs/environments.js and set DEV environment
+         2) task - "grunt serve --env=dev"
+         > use configs from ../q-municate-web./app/configs/environments.js and set DEV environment
 
-        3) task - "grunt serve --env=prod"
-        > use configs from ../q-municate-web./app/configs/environments.js and set PROD environment
-        ***********************************************************************/
+         3) task - "grunt serve --env=prod"
+         > use configs from ../q-municate-web./app/configs/environments.js and set PROD environment
+         ***********************************************************************/
         grunt.task.run([
             'includereplace:' + envTarget,
             'clean:dev',
@@ -292,15 +297,15 @@ module.exports = function(grunt) {
     });
 
     /***************************************************************************
-    1) task - "grunt build"
-    > use configs from ../q-municate-web./app/config.js
+     1) task - "grunt build"
+     > use configs from ../q-municate-web./app/config.js
 
-    2) task - "grunt build --env=dev"
-    > use configs from ../q-municate-web./app/configs/environments.js and set DEV environment
+     2) task - "grunt build --env=dev"
+     > use configs from ../q-municate-web./app/configs/environments.js and set DEV environment
 
-    3) task - "grunt build --env=prod"
-    > use configs from ../q-municate-web./app/configs/environments.js and set PROD environment
-    ***************************************************************************/
+     3) task - "grunt build --env=prod"
+     > use configs from ../q-municate-web./app/configs/environments.js and set PROD environment
+     ***************************************************************************/
     grunt.registerTask('build', [
         'jshint',
         'includereplace:' + envTarget,
@@ -319,7 +324,9 @@ module.exports = function(grunt) {
         'rev',
         'usemin',
         'newer:copy',
-        'createTmpScriptTag:rollBack'
+        'createTmpScriptTag:rollBack',
+        'htmlmin:min',
+        'clean:tails'
     ]);
 
     grunt.registerTask('default', ['build']);
