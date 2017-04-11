@@ -14,6 +14,8 @@ define(function() {
             scope: 'email,user_friends'
         },
 
+        twitterDigitsKey: 'KCcPaHrIgJ44gs3kwJuIbLaad',
+
         debug: Number('@@debugQM'),
 
         notification: {

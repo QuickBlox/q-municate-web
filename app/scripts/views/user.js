@@ -6,7 +6,6 @@
  */
 define([
     'jquery',
-    'facebook',
     'config',
     'quickblox',
     'Entities',
@@ -15,7 +14,6 @@ define([
     'LocationView'
 ], function(
     $,
-    FB,
     QMCONFIG,
     QB,
     Entities,
@@ -50,8 +48,12 @@ define([
             switchPage($('#forgotPage'));
         },
 
-        connectTwitterDigits: function() {
-            User.connectTwitterDigits();
+        logInTwitterDigits: function() {
+            User.logInTwitterDigits();
+        },
+
+        logInFacebook: function() {
+            User.logInFacebook();
         },
 
         connectFB: function(token) {

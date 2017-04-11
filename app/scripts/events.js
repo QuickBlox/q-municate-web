@@ -456,28 +456,36 @@ define([
 
             /* welcome page
             ----------------------------------------------------- */
-            $('#signupFB, #loginFB').on('click', function(event) {
-                Helpers.log('connect with FB');
-                event.preventDefault();
+            $('.j-btn_login_fb').on('click', function() {
+                if ($(this).hasClass('j-reloadPage')) {
+                    window.location.reload();
+                }
 
-                // NOTE!! You should use FB.login method instead FB.getLoginStatus
-                // and your browser won't block FB Login popup
-                FB.login(function(response) {
-                    Helpers.log('FB authResponse', response);
-                    if (response.status === 'connected') {
-                        UserView.connectFB(response.authResponse.accessToken);
-                    }
-                }, {
-                    scope: QMCONFIG.fbAccount.scope
-                });
-            });
-
-            $('.j-twitterDigits').on('click', function() {
-                UserView.connectTwitterDigits();
-                Helpers.log('connecting with twitterDigits');
+                if (window.FB) {
+                    UserView.logInFacebook();
+                } else {
+                    $('.j-btn_login_fb').addClass('not_allowed j-reloadPage')
+                        .html('Login by Facebook failed.<br>Click to reload the page.');
+                }
 
                 return false;
             });
+
+            $('.j-twitterDigits').on('click', function() {
+                if ($(this).hasClass('j-reloadPage')) {
+                    window.location.reload();
+                }
+
+                if (window.Digits) {
+                    UserView.logInTwitterDigits();
+                } else {
+                    $('.j-twitterDigits').addClass('not_allowed j-reloadPage')
+                        .html('Login by phone number failed.<br>Click to reload the page.');
+                }
+
+                return false;
+            });
+
 
             $('#signupQB').on('click', function() {
                 Helpers.log('signup with QB');
@@ -1009,8 +1017,6 @@ define([
                 }
             });
 
-            // fix QMW-253
-            // solution http://stackoverflow.com/questions/2176861/javascript-get-clipboard-data-on-paste-event-cross-browser
             $('body').on('paste', '.j-message', function(e) {
                 var text = (e.originalEvent || e).clipboardData.getData('text/plain');
                 document.execCommand('insertText', false, text);

@@ -11,9 +11,6 @@ requirejs.config({
     },
     baseUrl: 'scripts',
     shim: {
-        facebook: {
-            exports: 'FB'
-        },
         gmaps: {
             deps: ['googlemaps'],
             exports: "GMaps"
@@ -33,11 +30,9 @@ requirejs.config({
     },
     paths: {
         // libs
-        facebook: 'https://connect.facebook.net/en_US/sdk',
         googlemaps: '../bower_components/googlemaps-amd/src/googlemaps',
         async: '../bower_components/requirejs-plugins/src/async',
         gmaps: 'https://cdnjs.cloudflare.com/ajax/libs/gmaps.js/0.4.24/gmaps.min',
-        digits: 'https://cdn.digits.com/1/sdk',
         cryptojs: '../bower_components/crypto-js-lib/rollups/aes',
         jquery: '../bower_components/jquery/dist/jquery',
         underscore: '../bower_components/underscore/underscore',
@@ -101,49 +96,48 @@ requirejs.config({
 
 requirejs([
     'jquery',
-    'facebook',
     'config',
     'minEmoji',
     'MainModule',
     'backbone',
     'QBNotification',
-    'Helpers',
-    'digits'
+    'Helpers'
 ], function(
     $,
-    FB,
     QMCONFIG,
     minEmoji,
     QM,
     Backbone,
     QBNotification,
-    Helpers,
-    Digits
+    Helpers
 ) {
     var APP;
 
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.11.1');
+        $('.j-appVersion').html('v. 1.11.3');
 
         $.ajaxSetup({cache: true});
 
-        // facebook sdk
-        FB.init({
-            appId: QMCONFIG.fbAccount.appId,
-            version: 'v2.7'
-        });
-
-        // twitter digits sdk
-        Digits.init({
-                consumerKey: 'KCcPaHrIgJ44gs3kwJuIbLaad'
-            })
-            .done(function() {
-                Helpers.log('Digits initialized.');
-            }).fail(function(error) {
-                Helpers.log('Digits failed to initialize: ', error);
+        // initialize facebook sdk
+        if (window.hasOwnProperty('FB')) {
+            FB.init({
+                appId: QMCONFIG.fbAccount.appId,
+                version: 'v2.8'
             });
+        }
+
+        // initialize twitterDigits sdk
+        if (window.hasOwnProperty('Digits')) {
+            Digits.init({consumerKey: QMCONFIG.twitterDigitsKey})
+                .done(function () {
+                    Helpers.log('Digits initialized.');
+                })
+                .fail(function (error) {
+                    Helpers.log('Digits failed to initialize: ', error);
+                });
+        }
 
         /* Materialize sdk
          *

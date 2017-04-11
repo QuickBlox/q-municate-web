@@ -375,7 +375,6 @@ define([
                         $chat.find('.l-chat-content .mCSB_container').append(html);
                         setAttachSize(attachParams);
                         getUrlPreview(message.id);
-                        smartScroll(isBottom);
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
                         setAttachSize(attachParams);
@@ -389,7 +388,6 @@ define([
                     }
                     setAttachSize(attachParams);
                     getUrlPreview(message.id);
-                    smartScroll(true);
                 }
 
                 if (geolocation) {
@@ -415,6 +413,7 @@ define([
                     self.addStatusMessages(message.id, message.dialog_id, 'displayed', false);
                 }
 
+                smartScroll();
             });
 
         },
@@ -883,14 +882,10 @@ define([
         return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
     }
 
-    function smartScroll(isBottom) {
-        if (!isBottom) {
-            return true;
+    function smartScroll() {
+        if (Helpers.isBeginOfChat()) {
+            $('.j-scrollbar_message:visible').mCustomScrollbar('scrollTo', 'bottom');
         }
-
-        var $objDom = $('.l-chat:visible .scrollbar_message');
-
-        $objDom.mCustomScrollbar('scrollTo', 'bottom');
     }
 
     function stopShowTyping(user) {
@@ -1112,18 +1107,20 @@ define([
 
                 var $this = $(this),
                     url = $this.attr('href'),
-                    params,
-                    $elem;
+                    $elem = $this.clone(),
+                    params;
 
                 if (Helpers.isImageUrl(url)) {
-                    $elem = $this.clone()
-                                 .addClass('image_preview')
-                                 .html('<img src="'+ url +'" alt="picture"/>');
+                    $elem.addClass('image_preview')
+                         .html('<img src="'+ url +'" alt="picture"/>');
+                    $message.append($elem);
+                    smartScroll();
                 } else if (urlCache[url] !== null && Helpers.isValidUrl(url)) {
-                    $elem = $this.clone().addClass('og_block');
-
                     if (urlCache[url]) {
-                        $elem.html(QMHtml.Messages.urlPreview(urlCache[url]));
+                        $elem.addClass('og_block')
+                             .html(QMHtml.Messages.urlPreview(urlCache[url]));
+                        $message.append($elem);
+                        smartScroll();
                     } else {
                         Helpers.getOpenGraphInfo({
                             'url': url,
@@ -1137,22 +1134,17 @@ define([
                                 };
 
                                 urlCache[url] = params;
-                            } else {
-                                params = {
-                                    title: '',
-                                    description: url,
-                                    picture: ''
-                                };
 
+                                $elem.addClass('og_block')
+                                     .html(QMHtml.Messages.urlPreview(urlCache[url]));
+                                $message.append($elem);
+                                smartScroll();
+                            } else {
                                 urlCache[url] = null;
                             }
-
-                            $elem.html(QMHtml.Messages.urlPreview(params));
                         });
                     }
                 }
-
-                $message.append($elem);
             });
 
         }
@@ -1178,6 +1170,8 @@ define([
         } else if ((height > width) && (height > 285)) {
             $container.height(285);
         }
+
+        smartScroll();
     }
 
     return MessageView;

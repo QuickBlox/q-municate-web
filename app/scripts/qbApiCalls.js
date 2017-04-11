@@ -21,6 +21,7 @@ define([
 
     var Session,
         UserView,
+        DialogView,
         ContactListView,
         User,
         Listeners;
@@ -51,7 +52,7 @@ define([
                 QB.service.qbInst.session.application_id = QMCONFIG.qbAccount.appId;
                 QB.service.qbInst.config.creds = QMCONFIG.qbAccount;
 
-                Session.create(JSON.parse(localStorage['QM.session']), true);
+                Session.create(JSON.parse(localStorage['QM.session']));
                 UserView.autologin();
             }
 
@@ -70,7 +71,7 @@ define([
 
                         self.createSession(Session.authParams, function() {
                             callback();
-                        }, Session._remember);
+                        });
                     });
                 } else if (Session.authParams.provider === 'twitter_digits') {
                     self.getTwitterDigits(function() {
@@ -79,7 +80,7 @@ define([
                 } else {
                     self.createSession(Session.decrypt(Session.authParams), function() {
                         callback();
-                    }, Session._remember);
+                    });
 
                     Session.encrypt(Session.authParams);
                 }
@@ -88,7 +89,7 @@ define([
             }
         },
 
-        createSession: function(params, callback, isRemember) {
+        createSession: function(params, callback) {
             // Remove coordinates from localStorage
             Location.toggleGeoCoordinatesToLocalStorage(false, function(res, err) {
                 Helpers.log(err ? err : res);
@@ -137,12 +138,13 @@ define([
                         Session.create({
                             token: res.token,
                             authParams: Session.encrypt(params)
-                        }, isRemember);
+                        });
                     }
 
                     Session.update({
                         date: new Date()
                     });
+
                     callback(res);
                 }
             });
@@ -160,6 +162,7 @@ define([
                             date: new Date(),
                             authParams: Session.encrypt(params)
                         });
+
                         callback(res);
                     }
                 });
@@ -174,12 +177,13 @@ define([
                             date: new Date(),
                             authParams: Session.encrypt(Session.authParams)
                         });
+
                         callback(session);
                     } else {
                         Helpers.log(err.detail);
                     }
                 });
-            }, Session._remember);
+            });
         },
 
         logoutUser: function(callback) {
@@ -220,6 +224,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback(res);
                     }
                 });
@@ -244,6 +249,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback(res);
                     }
                 });
@@ -264,6 +270,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback(res);
                     }
                 });
@@ -288,6 +295,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback(res);
                     }
                 });
@@ -306,6 +314,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback(res);
                     }
                 });
@@ -344,6 +353,8 @@ define([
                         if (User.contact.full_name === 'Unknown user') {
                             self.app.views.Profile.render().openPopup();
                         }
+
+                        // startFlurryAgent();
                     }
                 });
             });
@@ -373,6 +384,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback(res);
                     }
                 });
@@ -409,6 +421,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback(res);
                     }
                 });
@@ -426,6 +439,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback(res);
                     }
                 });
@@ -463,6 +477,7 @@ define([
                         Session.update({
                             date: new Date()
                         });
+
                         callback();
                     }
                 });
@@ -508,6 +523,7 @@ define([
                     Session.update({
                         date: new Date()
                     });
+
                     setRecoverySessionInterval();
                 }
             });
@@ -516,13 +532,10 @@ define([
 
     // function startFlurryAgent() {
     //     try {
-    //         $.getScript('https://cdn.flurry.com/js/flurry.js', function() {
-    //             FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');
-    //            console.info(FlurryAgent.hasOwnProperty(startSession));
-    //             FlurryAgent.logEvent("Connect_to_chat", {
-    //                 'chat_endpoint': QB.auth.service.qbInst.config.endpoints.chat,
-    //                 'app_id': (QMCONFIG.qbAccount.appId).toString()
-    //             });
+    //         FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');
+    //         FlurryAgent.logEvent("Connect_to_chat", {
+    //             'chat_endpoint': QB.auth.service.qbInst.config.endpoints.chat,
+    //             'app_id': (QMCONFIG.qbAccount.appId).toString()
     //         });
     //     } catch (error) {
     //         console.error(error);

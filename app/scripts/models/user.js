@@ -10,32 +10,30 @@ define([
     'config',
     'quickblox',
     'Helpers',
-    'digits',
     'models/person',
     'views/profile',
     'views/change_password',
-    'views/fb_import',
+    'views/fb_import'
 ], function(
     $,
     _,
     QMCONFIG,
     QB,
     Helpers,
-    Digits,
     Person,
     ProfileView,
     ChangePassView,
     FBImportView
 ) {
 
-    var tempParams,
-        self,
-        isSecondTab;
+    var self,
+        tempParams,
+        isTwitterDigitsCalled,
+        isFacebookCalled;
 
     function User(app) {
         this.app = app;
         this._is_import = null;
-        this._remember = false;
         this._valid = false;
         self = this;
     }
@@ -63,63 +61,82 @@ define([
             self.app.views.FBImport = fbImportView;
         },
 
-        connectTwitterDigits: function() {
-            if (isSecondTab) {
+        logInTwitterDigits: function() {
+            if (isTwitterDigitsCalled) {
                 return false;
+            } else {
+                isTwitterDigitsCalled = true;
             }
-
-            isSecondTab = true;
 
             Digits.logIn()
                 .done(function(onLogin) {
-                    isSecondTab = false;
-                    var params = {
+                    self.providerConnect({
                         'provider': 'twitter_digits',
                         'twitter_digits': onLogin.oauth_echo_headers
-                    };
+                    });
 
-                    self.providerConnect(params);
+                    isTwitterDigitsCalled = false;
+                    Helpers.log('TwitterDigits onLogin', onLogin);
                 })
                 .fail(function(error) {
-                    isSecondTab = false;
+                    isTwitterDigitsCalled = false;
                     Helpers.log('Digits failed to login: ', error);
                 });
         },
 
-        connectFB: function(token) {
-            var params = {
-                provider: 'facebook',
-                keys: {
-                    token: token
-                }
-            };
+        logInFacebook: function () {
+            if (isFacebookCalled) {
+                return false;
+            } else {
+                isFacebookCalled = true;
+            }
 
-            self.providerConnect(params);
+            // NOTE!! You should use FB.login method instead FB.getLoginStatus
+            // and your browser won't block FB Login popup
+            FB.login(function(response) {
+                if (response.authResponse && response.status === 'connected') {
+                    self.connectFB(response.authResponse.accessToken);
+
+                    isFacebookCalled = false;
+                    Helpers.log('FB authResponse', response);
+                } else {
+                    isFacebookCalled = false;
+                    Helpers.log('User cancelled login or did not fully authorize.');
+                }
+            }, {
+                scope: QMCONFIG.fbAccount.scope
+            });
         },
 
-        providerConnect: function(params, callback) {
+        connectFB: function(token) {
+            self.providerConnect({
+                provider: 'facebook',
+                keys: { token: token }
+            });
+        },
+
+        providerConnect: function(params) {
             var QBApiCalls = this.app.service,
                 UserView = this.app.views.User,
                 DialogView = this.app.views.Dialog,
                 Contact = this.app.models.Contact,
-                self = this,
-                isFB = params.provider === 'facebook' ? true : false;
+                self = this;
 
             UserView.loginQB();
             UserView.createSpinner();
 
-            if (isFB) {
+            if (params.provider === 'facebook') {
                 QBApiCalls.createSession(params, function(session) {
                     QBApiCalls.getUser(session.user_id, function(user) {
                         _prepareChat(user);
                     });
-                }, true);
+                });
             } else {
-                QBApiCalls.createSession({}, function(session) {
+                QBApiCalls.createSession({}, function() {
                     QBApiCalls.loginUser(params, function(user) {
                         _prepareChat(user);
                     });
-                }, true);
+                });
             }
 
             function _prepareChat(user) {
@@ -129,7 +146,7 @@ define([
                 Helpers.log('User', self);
 
                 UserView.successFormCallback();
-                
+
                 QBApiCalls.connectChat(self.contact.user_jid, function() {
                     self.rememberMe();
                     DialogView.prepareDownloading();
@@ -229,7 +246,7 @@ define([
                             self.contact = Contact.create(user);
 
                             Helpers.log('User', self);
-                            
+
                             UserView.successFormCallback();
 
                             QBApiCalls.connectChat(self.contact.user_jid, function() {
@@ -243,7 +260,7 @@ define([
                         });
 
                     });
-                }, false);
+                });
             }
         },
 
@@ -307,14 +324,14 @@ define([
                         Helpers.log('User', self);
 
                         UserView.successFormCallback();
-                        
+
                         QBApiCalls.connectChat(self.contact.user_jid, function() {
                             self.rememberMe();
                             DialogView.prepareDownloading();
                             DialogView.downloadDialogs();
                         });
                     });
-                }, true);
+                });
             }
         },
 
@@ -345,19 +362,8 @@ define([
                         UserView.successSendEmailCallback();
                         self._valid = false;
                     });
-                }, false);
+                });
             }
-        },
-
-        resetPass: function() {
-            var QBApiCalls = this.app.service,
-                UserView = this.app.views.User,
-                form = $('section:visible form'),
-                self = this;
-
-            /*if (validate(form, this)) {
-                UserView.createSpinner();
-            }*/
         },
 
         autologin: function() {
@@ -366,7 +372,6 @@ define([
                 DialogView = this.app.views.Dialog,
                 Contact = this.app.models.Contact,
                 storage = JSON.parse(localStorage['QM.user']),
-                Entities = this.app.entities,
                 self = this;
 
             UserView.createSpinner();
@@ -379,9 +384,9 @@ define([
                 }
 
                 Helpers.log('User', user);
-                
+
                 UserView.successFormCallback();
-                
+
                 QBApiCalls.connectChat(self.contact.user_jid, function() {
                     self.rememberMe();
                     DialogView.prepareDownloading();
@@ -408,7 +413,6 @@ define([
             QBApiCalls.logoutUser(function() {
                 localStorage.removeItem('QM.user');
                 self.contact = null;
-                self._remember = false;
                 self._valid = false;
                 callback();
             });
@@ -420,7 +424,6 @@ define([
     ---------------------------------------------------------------------- */
     function validate(form, user) {
         var maxSize = QMCONFIG.maxLimitFile * 1024 * 1024,
-            remember = form.find('input:checkbox')[0],
             file = form.find('input:file')[0],
             fieldName, errName,
             value, errMsg;
@@ -470,10 +473,6 @@ define([
                 return false;
             }
         });
-
-        if (user._valid && remember) {
-            user._remember = remember.checked;
-        }
 
         if (user._valid && file && file.files[0]) {
             file = file.files[0];

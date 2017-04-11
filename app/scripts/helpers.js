@@ -284,7 +284,7 @@ define([
             msgListPosition = msgList.offsetTop,
             msgListHeight = msgList.clientHeight,
             msgListBottom = msgListPosition + msgListHeight,
-            bottom;
+            bottom = true;
 
         if (msgListPosition < 0) {
             bottom = false;
