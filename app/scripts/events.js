@@ -111,15 +111,20 @@ define([
 
             /* User Profile
             ----------------------------------------------------- */
-            $('body').on('click', '.userDetails', function() {
+            $('body').on('click', '.userDetails, .j-userMenu', function(event) {
                 removePopover();
 
                 var id = $(this).data('id'),
                     roster = ContactList.roster[id];
 
-                QMHtml.User.getControlButtonsForPopupDetails(roster);
-                openPopup($('#popupDetails'), id);
-                UserView.buildDetails(id);
+                if (roster) {
+                    QMHtml.User.getControlButtonsForPopupDetails(roster);
+                    openPopup($('#popupDetails'), id);
+                    UserView.buildDetails(id);
+                } else {
+                    removePopover();
+                    UserView.occupantPopover($(this), event);
+                }
 
                 return false;
             });
@@ -557,15 +562,17 @@ define([
             });
 
             $('.list_contextmenu').on('contextmenu', '.contact', function(event) {
-                event.preventDefault();
                 removePopover();
                 UserView.contactPopover($(this));
+
+                return false;
             });
 
             $workspace.on('click', '.occupant', function(event) {
-                event.preventDefault();
                 removePopover();
                 UserView.occupantPopover($(this), event);
+
+                return false;
             });
 
             $workspace.on('click', '.j-btn_input_smile', function() {

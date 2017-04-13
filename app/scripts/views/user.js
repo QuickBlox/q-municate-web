@@ -209,6 +209,7 @@ define([
             appearAnimation();
 
             objDom.addClass('is-active');
+
             $('.list-actions_occupants').offset({
                 top: (29 + position.top),
                 left: position.left

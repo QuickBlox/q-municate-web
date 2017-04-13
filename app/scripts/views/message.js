@@ -71,10 +71,12 @@ define([
         addItem: function(message, isCallback, isMessageListener) {
             var Contact = this.app.models.Contact,
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
-                isBottom = Helpers.isBeginOfChat(),
                 isOnline = message.online,
                 senderID = message.sender_id,
                 contacts = ContactList.contacts,
+                isGroupChat = typeof $chat.data('id') === 'undefined',
+                isMyUser = senderID === User.contact.id,
+                isUserMenu = isGroupChat && !isMyUser,
                 contact;
 
             if (isCallback && isMessageListener) {
@@ -89,7 +91,7 @@ define([
                 return true;
             }
 
-            if (senderID === User.contact.id) {
+            if (isMyUser) {
                 contact = User.contact;
             } else {
                 if (!contacts[senderID]) {
@@ -119,7 +121,6 @@ define([
                     attachParams,
                     status,
                     html;
-
 
                 if (attachType) {
                     attachParams = {
@@ -184,7 +185,7 @@ define([
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
 
-                        if (message.sender_id === User.contact.id) {
+                        if (isMyUser) {
                             html += '<h4 class="message-author">Your request has been sent</h4>';
                         } else {
                             html += '<h4 class="message-author"><span class="profileUserName" data-id="' + message.sender_id + '">' + contact.full_name + '</span> has sent a request to you</h4>';
@@ -201,7 +202,7 @@ define([
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
 
-                        if (message.sender_id === User.contact.id) {
+                        if (isMyUser) {
                             html += '<h4 class="message-author">You have accepted a request</h4>';
                         } else {
                             html += '<h4 class="message-author">Your request has been accepted</h4>';
@@ -218,7 +219,7 @@ define([
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
 
-                        if (message.sender_id === User.contact.id) {
+                        if (isMyUser) {
                             html += '<h4 class="message-author">You have rejected a request';
                         } else {
                             html += '<h4 class="message-author">Your request has been rejected</h4>';
@@ -238,7 +239,7 @@ define([
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
 
-                        if (message.sender_id === User.contact.id) {
+                        if (isMyUser) {
                             html += '<h4 class="message-author">You have deleted ' + recipientFullName + ' from your contact list';
                         } else {
                             html += '<h4 class="message-author">You have been deleted from the contact list</h4>';
@@ -324,7 +325,7 @@ define([
 
                         status = isOnline ? message.status : 'Not delivered yet';
 
-                        if (message.sender_id === User.contact.id) {
+                        if (isMyUser) {
                             html = '<article id="' + message.id + '" class="message is-own l-flexbox l-flexbox_alignstretch' +
                             (message.stack ? ' without_border' : '') + '" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         } else {
@@ -332,7 +333,7 @@ define([
                             (message.stack ? ' without_border' : '') + '" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         }
 
-                        html += '<div class="message-avatar avatar profileUserAvatar' + (message.stack ? ' is-hidden' : '') +
+                        html += '<div class="message-avatar avatar profileUserAvatar' + (message.stack ? ' is-hidden' : (isUserMenu ? ' userMenu j-userMenu' : '')) +
                             '" style="background-image:url(' + contact.avatar_url + ')" data-id="' + message.sender_id + '"></div>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
