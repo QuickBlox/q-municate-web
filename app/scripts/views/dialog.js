@@ -198,9 +198,8 @@ define([
                             }
 
                             if ((dialog.get('type') === 2) && !dialog.get('joined')) {
-                                QB.chat.muc.join(dialog.get('room_jid'), function() {
-                                    dialog.set('joined', true);
-                                });
+                                QB.chat.muc.join(dialog.get('room_jid'));
+                                dialog.set('joined', true);
                             }
 
                             // update hidden dialogs
