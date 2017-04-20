@@ -1110,7 +1110,7 @@ define([
         }
 
         var $message = $('#' + id + '.message').find('.message-body'),
-            $hyperText = $message.find('a:not(a.open_googlemaps, a.file-download)');
+            $hyperText = $message.find('a:not(a.open_googlemaps, a.file-download, a.qm_player_download)');
 
         if ($hyperText.length) {
             $hyperText.each(function(index) {
@@ -1120,19 +1120,18 @@ define([
 
                 var $this = $(this),
                     url = $this.attr('href'),
-                    cachedURL = urlCache[url],
                     params,
                     $elem;
 
-                if (Helpers.isImageUrl(url)) {
+                if (urlCache[url] !== null && Helpers.isImageUrl(url)) {
                     $elem = $this.clone()
-                        .addClass('image_preview')
-                        .html('<img src="'+ url +'" alt="picture"/>');
-                } else if (cachedURL !== null && Helpers.isValidUrl(url)) {
+                                 .addClass('image_preview')
+                                 .html('<img src="'+ url +'" alt="picture"/>');
+                } else if (urlCache[url] !== null && Helpers.isValidUrl(url)) {
                     $elem = $this.clone().addClass('og_block');
 
-                    if (cachedURL) {
-                        $elem.html(QMHtml.Messages.urlPreview(cachedURL));
+                    if (urlCache[url]) {
+                        $elem.html(QMHtml.Messages.urlPreview(urlCache[url]));
                     } else {
                         Helpers.getOpenGraphInfo({
                             'url': url,
@@ -1145,7 +1144,7 @@ define([
                                     picture: result.ogImage && result.ogImage.url || ''
                                 };
 
-                                cachedURL = params;
+                                urlCache[url] = params;
                             } else {
                                 params = {
                                     title: 'Error 404 (Not Found)',
@@ -1153,7 +1152,7 @@ define([
                                     picture: ''
                                 };
 
-                                cachedURL = null;
+                                urlCache[url] = null;
                             }
 
                             $elem.html(QMHtml.Messages.urlPreview(params));
@@ -1161,7 +1160,9 @@ define([
                     }
                 }
 
-                $message.append($elem);
+                if ($elem) {
+                    $message.append($elem);
+                }
             });
 
         }
