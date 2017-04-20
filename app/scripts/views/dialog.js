@@ -149,8 +149,9 @@ define([
         downloadDialogs: function(ids, skip) {
             var ContactListView = this.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
-                parametr = !skip ? null : 'old_dialog',
+                parameter = !skip ? null : 'old_dialog',
                 dialogsCollection = Entities.Collections.dialogs,
+                activeId = Entities.active,
                 roster = ContactList.roster,
                 rosterIds = Object.keys(roster),
                 totalEntries,
@@ -163,10 +164,18 @@ define([
                 dialog,
                 chat;
 
+            self.removeDataSpinner();
+            self.createDataSpinner();
+
             Dialog.download({
                 'sort_desc': 'last_message_date_sent',
                 'skip': skip || 0
-            }, function(result) {
+            }, function(error, result) {
+                if (error) {
+                    self.addRefreshButton();
+                    return false;
+                }
+
                 dialogs = result.items;
                 totalEntries = result.total_entries;
                 localEntries = result.limit + result.skip;
@@ -188,8 +197,10 @@ define([
                                 continue;
                             }
 
-                            if (dialog.get('type') === 2) {
-                                QB.chat.muc.join(dialog.get('room_jid'));
+                            if ((dialog.get('type') === 2) && !dialog.get('joined')) {
+                                QB.chat.muc.join(dialog.get('room_jid'), function() {
+                                    dialog.set('joined', true);
+                                });
                             }
 
                             // update hidden dialogs
@@ -205,7 +216,7 @@ define([
                                 continue;
                             }
 
-                            self.addDialogItem(dialog, true, parametr);
+                            self.addDialogItem(dialog, true, parameter);
                         }
 
                         if ($('#requestsList').is('.is-hidden') &&
@@ -236,6 +247,10 @@ define([
 
                 if (totalEntries >= localEntries) {
                     self.downloadDialogs(ids, localEntries);
+                } else if (activeId) {
+                    dialogsCollection.get(activeId)
+                                     .set({opened: false});
+                    dialogsCollection.selectDialog(activeId);
                 }
             });
         },
@@ -291,7 +306,7 @@ define([
             $('.l-list ul').html('');
         },
 
-        addDialogItem: function(dialog, isDownload, parametr) {
+        addDialogItem: function(dialog, isDownload, parameter) {
             if (!dialog) {
                 Helpers.log('Dialog is undefined');
                 return false;
@@ -345,7 +360,7 @@ define([
             startOfCurrentDay = new Date();
             startOfCurrentDay.setHours(0, 0, 0, 0);
 
-            // remove duplicate
+            // remove duplicate and replace to newest
             var $dialogItem = $('.j-dialogItem[data-dialog="'+dialog_id+'"]');
 
             if ($dialogItem.length) {
@@ -355,7 +370,7 @@ define([
             // checking if this dialog is recent OR no
             if (!last_message_date_sent ||
                 (new Date(last_message_date_sent * 1000) > startOfCurrentDay) ||
-                parametr === 'new_dialog') {
+                parameter === 'new_dialog') {
 
                 if (isDownload) {
                     $('#recentList').removeClass('is-hidden').find('ul').append(html);
@@ -364,7 +379,7 @@ define([
                 } else {
                     $('#recentList').removeClass('is-hidden').find('ul').prepend(html);
                 }
-            } else if (parametr === 'old_dialog') {
+            } else if (parameter === 'old_dialog') {
                 $('#oldHistoryList').find('ul').append(html);
             } else if (!$('#searchList').is(':visible')) {
                 $('#historyList').removeClass('is-hidden').find('ul').append(html);
@@ -377,22 +392,25 @@ define([
         },
 
 
-        htmlBuild: function(objDom, messages) {
+        htmlBuild: function(elemOrId, messages) {
             Entities.Collections.dialogs.saveDraft();
 
-            var contacts = ContactList.contacts,
+            var QBApiCalls = this.app.service,
+                contacts = ContactList.contacts,
                 dialogs = Entities.Collections.dialogs,
                 roster = ContactList.roster,
-                parent = objDom.parent(),
-                dialog_id = parent.data('dialog'),
-                user_id = parent.data('id'),
+                $dialog = (typeof elemOrId === 'object') ? elemOrId :
+                    $('.j-dialogItem[data-dialog="'+ elemOrId + '"]'),
+                dialog_id = $dialog.data('dialog'),
+                user_id = $dialog.data('id'),
                 dialog = dialogs.get(dialog_id),
                 user = contacts[user_id],
                 readBadge = 'QM.' + User.contact.id + '_readBadge',
-                unreadCount = Number(objDom.find('.unread').text()),
+                unreadCount = Number($dialog.find('.unread').text()),
                 occupants_ids = dialog.get('occupants_ids'),
                 $chatWrap = $('.j-chatWrap'),
                 $chatView = $('.chatView'),
+                $selected = $('.is-selected'),
                 isBlocked,
                 isCall,
                 location,
@@ -402,9 +420,20 @@ define([
                 name,
                 jid;
 
+            // remove the private dialog with deleted user
+            if (user_id && !user) {
+                QBApiCalls.getUser(user_id, function(res) {
+                    if (!res.items.length) {
+                        self.deleteChat(dialog_id);
+                    }
+                });
+
+                return false;
+            }
+
             Entities.active = dialog_id;
             isBlocked = $('.icon_videocall, .icon_audiocall').length;
-            isCall = objDom.find('.icon_videocall').length || objDom.find('.icon_audiocall').length;
+            isCall = $dialog.find('.icon_videocall').length || $dialog.find('.icon_audiocall').length;
             jid = dialog.get('room_jid') || user.user_jid;
             icon = user_id ? user.avatar_url : (dialog.get('room_photo') || QMCONFIG.defAvatar.group_url);
             name = dialog.get('room_name') || user.full_name;
@@ -433,12 +462,15 @@ define([
 
             textAreaScrollbar('#textarea_'+dialog_id);
             messageScrollbar('#mCS_'+dialog_id);
+
             self.createDataSpinner(true);
             self.showChatWithNewMessages(dialog_id, unreadCount, messages);
 
-            removeNewMessagesLabel($('.is-selected').data('dialog'), dialog_id);
-            $('.is-selected').removeClass('is-selected');
-            parent.addClass('is-selected').find('.unread').text('');
+            removeNewMessagesLabel($selected.data('dialog'), dialog_id);
+
+            $selected.removeClass('is-selected');
+            $dialog.addClass('is-selected')
+                   .find('.unread').text('');
             self.decUnreadCounter(dialog.get('id'));
 
             // set dialog_id to localStorage wich must bee read in all tabs for same user
@@ -643,17 +675,19 @@ define([
                 messages = [];
 
                 Message.download(dialogId, function(response, error) {
-                    if (error && error.code === 403) {
-                        self.removeForbiddenDialog(dialogId);
+                    if (error) {
+                        if (error.code === 403) {
+                            self.removeForbiddenDialog(dialogId);
+                        } else {
+                            self.addRefreshButton(dialogId);
+                        }
+                    } else {
+                        _.each(response, function(item) {
+                            messages.push(Message.create(item));
+                        });
 
-                        return false;
+                        addItems(messages);
                     }
-
-                    _.each(response, function(item) {
-                        messages.push(Message.create(item));
-                    });
-
-                    addItems(messages);
                 }, count);
             }
 
@@ -691,6 +725,24 @@ define([
                 }, 150);
             }
 
+        },
+
+        addRefreshButton: function(dialogId) {
+            var id = dialogId ? dialogId : '',
+                $button = $(
+                    '<button class="refresh_button j-refreshButton" data-dialog="' + id + '">' +
+                        '<span class="refresh_icon">' +
+                        '</span><span class="refresh_text">Refresh</span>' +
+                    '</button>'
+                );
+
+            self.removeDataSpinner();
+
+            if (dialogId) {
+                $('.j-chatItem:visible').find('.mCSB_container').prepend($button);
+            } else {
+                $('#emptyList').after($button);
+            }
         }
 
     };

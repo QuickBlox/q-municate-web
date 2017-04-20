@@ -189,12 +189,14 @@ define([
             unread_messages: [],
             messages: [],
             opened: false,
+            joined: false,
             draft: ''
         },
 
         // add dialog to collection after initialize
         initialize: function() {
             entities.Collections.dialogs.push(this);
+
             this.listenTo(this, 'change:unread_count', this.cutMessages);
             this.listenTo(this, 'remove', this.setActiveDialog);
         },
@@ -268,6 +270,25 @@ define([
 
                 dialog.set('draft', text);
             }
+        },
+
+        selectDialog: function(dialogId) {
+            var MessageView = entities.app.views.Message,
+                DialogView = entities.app.views.Dialog,
+                Cursor = entities.app.models.Cursor,
+                dialog = this.get(dialogId);
+
+            if (dialog.get('opened')) {
+                DialogView.htmlBuild(dialogId, dialog.get('messages').toJSON());
+            } else {
+                dialog.set('opened', true);
+                DialogView.htmlBuild(dialogId);
+            }
+
+            MessageView.clearTheListTyping();
+            Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
+            // send read status
+            this.readAll(dialogId);
         }
     });
 
@@ -325,27 +346,10 @@ define([
 
 	// select and open dialog
 	$('.list_contextmenu').on('click', '.contact', function() {
-        var $dialog = $(this),
-            dialogId = $dialog.parent().data('dialog');
+        var dialogId = $(this).parent().data('dialog');
 
         if (entities.active !== dialogId) {
-            var MessageView = entities.app.views.Message,
-                DialogView = entities.app.views.Dialog,
-                Cursor = entities.app.models.Cursor,
-                dialogs = entities.Collections.dialogs,
-                dialog = dialogs.get(dialogId);
-
-            if (dialog.get('opened')) {
-                DialogView.htmlBuild($dialog, dialog.get('messages').toJSON());
-            } else {
-                dialog.set('opened', true);
-                DialogView.htmlBuild($dialog);
-            }
-
-            MessageView.clearTheListTyping();
-            Cursor.setCursorToEnd($('.l-chat:visible .textarea')[0]);
-            // send read status
-            dialogs.readAll(dialogId);
+            entities.Collections.dialogs.selectDialog(dialogId);
         }
 	});
 

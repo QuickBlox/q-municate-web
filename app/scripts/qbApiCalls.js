@@ -353,8 +353,6 @@ define([
                         if (User.contact.full_name === 'Unknown user') {
                             self.app.views.Profile.render().openPopup();
                         }
-
-                        // startFlurryAgent();
                     }
                 });
             });
@@ -364,12 +362,7 @@ define([
             self.connectChat(User.contact.user_jid, function() {
                 Listeners.setQBHandlers();
                 Listeners.onReconnected();
-
-                Entities.Collections.dialogs.each(function(dialog) {
-                    if (dialog.get('type') === 2) {
-                        QB.chat.muc.join(dialog.get('room_jid'));
-                    }
-                });
+                Listeners.updateDialogs(true);
             });
         },
 
@@ -378,6 +371,8 @@ define([
                 QB.chat.dialog.list(params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
+
+                        callback(err);
                     } else {
                         Helpers.log('QB SDK: Dialogs is found', res);
 
@@ -385,7 +380,7 @@ define([
                             date: new Date()
                         });
 
-                        callback(res);
+                        callback(null, res);
                     }
                 });
             });
@@ -529,18 +524,6 @@ define([
             });
         }, 3600 * 1000);
     }
-
-    // function startFlurryAgent() {
-    //     try {
-    //         FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');
-    //         FlurryAgent.logEvent("Connect_to_chat", {
-    //             'chat_endpoint': QB.auth.service.qbInst.config.endpoints.chat,
-    //             'app_id': (QMCONFIG.qbAccount.appId).toString()
-    //         });
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
 
     var fail = function(errMsg) {
         UserView.removeSpinner();

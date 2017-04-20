@@ -28,8 +28,8 @@ define([
         download: function(params, callback) {
             var QBApiCalls = this.app.service;
 
-            QBApiCalls.listDialogs(params, function(result) {
-                callback(result);
+            QBApiCalls.listDialogs(params, function(error, result) {
+                callback(error, result);
             });
         },
 
@@ -50,7 +50,8 @@ define([
                     unread_count: params.unread_messages_count || '',
                     unread_messages: new Entities.Collections.UnreadMessages(),
                     messages: new Entities.Collections.Messages(),
-                    opened: params.opened || false
+                    opened: params.opened || false,
+                    joined: (params.type === 3) ? true : false
                 };
 
             new Entities.Models.Dialog(dialog);
@@ -124,6 +125,8 @@ define([
                 Helpers.log('Dialog', dialog.toJSON());
 
                 QB.chat.muc.join(dialog.get('room_jid'), function() {
+                    dialog.set('joined', true);
+
                     var msgId = QB.chat.helpers.getBsonObjectId(),
                         time = Math.floor(Date.now() / 1000);
 

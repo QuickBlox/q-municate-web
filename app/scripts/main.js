@@ -15,9 +15,6 @@ requirejs.config({
             deps: ['googlemaps'],
             exports: "GMaps"
         },
-        handlebars: {
-            exports: 'Handlebars'
-        },
         cryptojs: {
             exports: 'CryptoJS'
         },
@@ -37,8 +34,8 @@ requirejs.config({
         jquery: '../bower_components/jquery/dist/jquery',
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
-        handlebars: '../bower_components/handlebars/handlebars',
-        quickblox: '../bower_components/quickblox/quickblox.min',
+        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.5.1/quickblox.min',
+        // quickblox: '../bower_components/quickblox/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
@@ -116,7 +113,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.11.4');
+        $('.j-appVersion').html('v. 1.11.5');
 
         $.ajaxSetup({cache: true});
 

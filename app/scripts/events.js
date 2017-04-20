@@ -45,7 +45,8 @@ define([
 
     var App;
 
-    var $workspace = $('.l-workspace-wrap');
+    var $workspace = $('.l-workspace-wrap'),
+        $body = $('body');
 
     function Events(app) {
         App = app;
@@ -111,7 +112,7 @@ define([
 
             /* User Profile
             ----------------------------------------------------- */
-            $('body').on('click', '.userDetails, .j-userMenu', function(event) {
+            $body.on('click', '.userDetails, .j-userMenu', function(event) {
                 removePopover();
 
                 var id = $(this).data('id'),
@@ -129,7 +130,7 @@ define([
                 return false;
             });
 
-            $('body').on('click', '#userProfile', function(event) {
+            $body.on('click', '#userProfile', function(event) {
                 var profileView = App.views.Profile;
 
                 event.preventDefault();
@@ -137,7 +138,7 @@ define([
                 profileView.render().openPopup();
             });
 
-            $('body').on('click', '.btn_changePassword', function(event) {
+            $body.on('click', '.btn_changePassword', function(event) {
                 var changePassView = App.views.ChangePass,
                     profileView = App.views.Profile;
 
@@ -146,7 +147,7 @@ define([
                 changePassView.render().openPopup();
             });
 
-            $('body').on('click', '.btn_popup_changepass', function(event) {
+            $body.on('click', '.btn_popup_changepass', function(event) {
                 var profileView = App.views.Profile,
                     changePassView = App.views.ChangePass;
 
@@ -154,7 +155,7 @@ define([
                 changePassView.submitForm();
             });
 
-            $('body').on('click', '.btn_userProfile_connect', function() {
+            $body.on('click', '.btn_userProfile_connect', function() {
                 var profileView = App.views.Profile,
                     btn = $(this);
 
@@ -294,7 +295,7 @@ define([
                 }
             });
 
-            $('body').on('keypress', function(e) {
+            $body.on('keypress', function(e) {
                 if ((e.keyCode === 13) && $('.j-open_map').length) {
                     $('.j-send_map').click();
                 }
@@ -302,7 +303,7 @@ define([
 
             /* user settings
             ----------------------------------------------------- */
-            $('body').on('click', '#userSettings', function() {
+            $body.on('click', '#userSettings', function() {
                 removePopover();
                 $('.j-settings').addClass('is-overlay')
                     .parent('.j-overlay').addClass('is-overlay');
@@ -310,7 +311,7 @@ define([
                 return false;
             });
 
-            $('body').on('click', '.j-close_settings', function() {
+            $body.on('click', '.j-close_settings', function() {
                 closePopup();
 
                 return false;
@@ -399,7 +400,7 @@ define([
                 }
             });
 
-            $('body').on('click', '.groupTitle .name_chat', function(event) {
+            $body.on('click', '.groupTitle .name_chat', function(event) {
                 event.stopPropagation();
                 var $self = $(this);
 
@@ -411,7 +412,7 @@ define([
                 removePopover();
             });
 
-            $('body').on('keypress', '.groupTitle .name_chat', function(event) {
+            $body.on('keypress', '.groupTitle .name_chat', function(event) {
                 var $self = $(this),
                     code = event.keyCode;
 
@@ -432,7 +433,7 @@ define([
 
             /* change the chat avatar
             ----------------------------------------------------- */
-            $('body').on('click', '.j-changePic', function() {
+            $body.on('click', '.j-changePic', function() {
                 var dialog_id = $(this).data('dialog');
 
                 $('input:file[data-dialog="' + dialog_id + '"]').click();
@@ -609,7 +610,7 @@ define([
             });
 
             // delete contact
-            $('body').on('click', '.j-deleteContact', function() {
+            $body.on('click', '.j-deleteContact', function() {
                 closePopup();
 
                 var $that = $(this),
@@ -805,7 +806,7 @@ define([
                 Helpers.log('send subscribe');
             });
 
-            $('body').on('click', '.j-requestAction', function() {
+            $body.on('click', '.j-requestAction', function() {
                 var jid = $(this).parents('.j-listItem').data('jid');
 
                 ContactListView.sendSubscribe(jid);
@@ -884,7 +885,7 @@ define([
                 }
             });
 
-            $('body').on('click', '.writeMessage', function(event) {
+            $body.on('click', '.writeMessage', function(event) {
                 event.preventDefault();
 
                 var id = $(this).data('id'),
@@ -928,7 +929,7 @@ define([
             });
 
             // show message status on hover event
-            $('body').on('mouseenter', 'article.message.is-own', function() {
+            $body.on('mouseenter', 'article.message.is-own', function() {
                 var $self = $(this),
                     time = $self.find('.message-time'),
                     status = $self.find('.message-status');
@@ -937,7 +938,7 @@ define([
                 status.removeClass('is-hidden');
             });
 
-            $('body').on('mouseleave', 'article.message.is-own', function() {
+            $body.on('mouseleave', 'article.message.is-own', function() {
                 var $self = $(this),
                     time = $self.find('.message-time'),
                     status = $self.find('.message-status');
@@ -948,6 +949,21 @@ define([
 
             /* A button for the scroll to the bottom of chat
             ------------------------------------------------------ */
+            $body.on('click', '.j-refreshButton', function() {
+                var $this = $(this),
+                    dialogId = $this.data('dialog');
+
+                if (dialogId.length) {
+                    DialogView.htmlBuild(dialogId);
+                } else {
+                    DialogView.downloadDialogs();
+                }
+
+                $this.remove();
+
+                return false;
+            });
+            
             $workspace.on('click', '.j-toBottom', function() {
                 $('.j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
                 $(this).hide();
@@ -956,7 +972,7 @@ define([
             // send typing statuses with keyup event
             $workspace.on('keypress', '.j-message', function(event) {
                 var $self = $(this),
-                    isEnterKey = (event.keyCode === 13) ? true : false,
+                    isEnterKey = (event.keyCode === 13),
                     shiftKey = event.shiftKey,
                     $chat = $self.parents('.l-chat'),
                     jid = $chat.data('jid'),
@@ -1024,7 +1040,7 @@ define([
                 }
             });
 
-            $('body').on('paste', '.j-message', function(e) {
+            $body.on('paste', '.j-message', function(e) {
                 var text = (e.originalEvent || e).clipboardData.getData('text/plain');
                 document.execCommand('insertText', false, text);
 

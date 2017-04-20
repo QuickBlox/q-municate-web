@@ -376,6 +376,7 @@ define([
                         $chat.find('.l-chat-content .mCSB_container').append(html);
                         setAttachSize(attachParams);
                         getUrlPreview(message.id);
+                        smartScroll();
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
                         setAttachSize(attachParams);
@@ -389,6 +390,7 @@ define([
                     }
                     setAttachSize(attachParams);
                     getUrlPreview(message.id);
+                    smartScroll();
                 }
 
                 if (geolocation) {
@@ -455,6 +457,8 @@ define([
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 $newMessages = $('.j-newMessages[data-dialog="' + dialog_id + '"]'),
                 locationIsActive = ($('.j-send_location').hasClass('btn_active') && localStorage['QM.latitude'] && localStorage['QM.longitude']),
+                dialogs = Entities.Collections.dialogs,
+                dialog = dialogs.get(dialog_id),
                 lastMessage,
                 message,
                 msg;
@@ -512,6 +516,13 @@ define([
                         $newMessages.remove();
                     }
                 }
+
+                if (dialog) {
+                    dialog.set({
+                        'last_message': val,
+                        'last_message_date_sent': time
+                    });
+                }
             }
         },
 
@@ -553,12 +564,7 @@ define([
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden') || !$chat.length,
                 roster = ContactList.roster,
-                isExistent = dialogItem.length ? true :
-                    (contactRequest.length ? true :
-                        (roster[id] ? true :
-                            (notification_type == '4')
-                        )
-                    ),
+                isExistent = dialogItem.length ? true : (contactRequest.length ? true : (roster[id] ? true : (notification_type === '4'))),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
                 isOfflineStorage = message.delay,
@@ -577,10 +583,12 @@ define([
                 msg;
 
             if (!dialog && roster[id] && notification_type !== '4') {
-                Dialog.download({'_id': dialog_id}, function(results) {
-                    var newDialogId = Dialog.create(results.items[0]);
+                Dialog.download({'_id': dialog_id}, function(error, results) {
+                    if (results) {
+                        var newDialogId = Dialog.create(results.items[0]);
 
-                    DialogView.addDialogItem(dialogs.get(newDialogId), null, true);
+                        DialogView.addDialogItem(dialogs.get(newDialogId), null, true);
+                    }
                 });
             }
 
@@ -689,7 +697,7 @@ define([
 
 
             // subscribe message
-            if (notification_type == '4') {
+            if (notification_type === '4') {
                 var QBApiCalls = self.app.service,
                     Contact = self.app.models.Contact;
                 // update hidden dialogs
@@ -783,7 +791,11 @@ define([
                         return true;
                     }
 
-                    QB.chat.muc.join(room_jid);
+                    if (dialog && !dialog.get('joined')) {
+                        QB.chat.muc.join(room_jid, function() {
+                            dialog.set('joined', true);
+                        });
+                    }
 
                     DialogView.addDialogItem(dialog);
                     unread++;
@@ -1108,20 +1120,19 @@ define([
 
                 var $this = $(this),
                     url = $this.attr('href'),
-                    $elem = $this.clone(),
-                    params;
+                    cachedURL = urlCache[url],
+                    params,
+                    $elem;
 
                 if (Helpers.isImageUrl(url)) {
-                    $elem.addClass('image_preview')
-                         .html('<img src="'+ url +'" alt="picture"/>');
-                    $message.append($elem);
-                    smartScroll();
-                } else if (urlCache[url] !== null && Helpers.isValidUrl(url)) {
-                    if (urlCache[url]) {
-                        $elem.addClass('og_block')
-                             .html(QMHtml.Messages.urlPreview(urlCache[url]));
-                        $message.append($elem);
-                        smartScroll();
+                    $elem = $this.clone()
+                        .addClass('image_preview')
+                        .html('<img src="'+ url +'" alt="picture"/>');
+                } else if (cachedURL !== null && Helpers.isValidUrl(url)) {
+                    $elem = $this.clone().addClass('og_block');
+
+                    if (cachedURL) {
+                        $elem.html(QMHtml.Messages.urlPreview(cachedURL));
                     } else {
                         Helpers.getOpenGraphInfo({
                             'url': url,
@@ -1134,18 +1145,23 @@ define([
                                     picture: result.ogImage && result.ogImage.url || ''
                                 };
 
-                                urlCache[url] = params;
-
-                                $elem.addClass('og_block')
-                                     .html(QMHtml.Messages.urlPreview(urlCache[url]));
-                                $message.append($elem);
-                                smartScroll();
+                                cachedURL = params;
                             } else {
-                                urlCache[url] = null;
+                                params = {
+                                    title: 'Error 404 (Not Found)',
+                                    description: url,
+                                    picture: ''
+                                };
+
+                                cachedURL = null;
                             }
+
+                            $elem.html(QMHtml.Messages.urlPreview(params));
                         });
                     }
                 }
+
+                $message.append($elem);
             });
 
         }

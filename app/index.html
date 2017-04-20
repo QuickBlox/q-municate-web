@@ -9,6 +9,7 @@
     <link rel="icon" href="images/favicon.png">
 
     <meta property="og:title" content="Q-municate" />
+
     <meta property="og:url" content="https://qm.quickblox.com/" />
     <meta property="og:image" content="https://qm.quickblox.com/images/qm-logo.svg" />
     <meta property="og:site_name" content="Q-municate">
@@ -258,6 +259,10 @@
                         </section>
 
                     </div>
+
+                    <div id="popupDisconnect" class="disconnect j-disconnect">
+                        <b>Not Connected.</b> Connecting...
+                    </div>
                 </aside>
 
                 <div class="l-workspace-wrap j-workspace-wrap">
@@ -270,7 +275,8 @@
                         </div>
                     </section>
 
-                    <div id="chatWrap" class="l-workspace j-chatWrap is-hidden"></div>
+                    <div id="chatWrap" class="l-workspace j-chatWrap is-hidden">
+                    </div>
 
                     <div class="chat_popover popover_gmap j-popover_const j-popover_gmap">
                         <button class="send_map j-send_map">SEND LOCATION</button>
@@ -323,6 +329,7 @@
 
             </div>
         </div>
+
         <footer class="l-footer l-flexbox l-flexbox_flexbetween">
             <div class="footer-logo">
                 <a href="https://quickblox.com" target="_blank"><img src="images/logo-quickblox-gray.svg" alt="QuickBlox"></a>
@@ -331,21 +338,14 @@
                 <a class="footer-apps-ios" href="https://itunes.apple.com/us/app/q-municate/id909698517?ls=1&mt=8" target="_blank"><img src="images/icon-ios.svg" alt="download Q-municate iOS"></a>
                 <a href="https://play.google.com/store/apps/details?id=com.quickblox.q_municate" target="_blank"><img src="images/icon-android.svg" alt="download Q-municate Android"></a>
             </div>
-
             <div class="j-appVersion l-app-version"></div>
-
         </footer>
+
     </section>
 
 </div>
 
 <div class="popups l-flexbox j-overlay">
-
-    <div id="popupDisconnect" class="popup popup_discon is-open j-disconnect">
-        <div class="popup-alert l-flexbox_inline l-flexbox_flexcenter">
-            <span class="alert alert_discon"><b>Not Connected.</b> Connecting...</span>
-        </div>
-    </div>
 
     <!-- Popup with users settings (on/off sounds and local notification for calls or messages) -->
     <div id="popupSettings" class="popup popup_settings is-open j-settings">
