@@ -21,6 +21,7 @@ define([
         self = this;
         self.app = app;
         self.blockChatViewPosition = false;
+        self.stateActive = null;
         self.disconnected = false;
         self.offline = false;
 
@@ -133,9 +134,11 @@ define([
         },
 
         onDisconnected: function() {
-            self.updateDialogs(false);
-            self.setChatState(false);
-            _switchToOfflineMode();
+            if (self.stateActive) {
+                self.updateDialogs(false);
+                self.setChatState(false);
+                _switchToOfflineMode();
+            }
         },
 
         onReconnected: function() {

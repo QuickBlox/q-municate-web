@@ -337,6 +337,8 @@ define([
                         window.location.reload();
                         fail(err.detail);
                     } else {
+                        Listeners.stateActive = true;
+
                         self.getContactList(function(res) {
                             self.app.models.ContactList.saveRoster(res);
                             callback();
@@ -363,6 +365,20 @@ define([
                 Listeners.setQBHandlers();
                 Listeners.onReconnected();
                 Listeners.updateDialogs(true);
+            });
+        },
+
+        disconnectChat: function() {
+            this.checkSession(function() {
+                Listeners.stateActive = false;
+
+                QB.chat.disconnect();
+                DialogView.hideDialogs();
+
+                Entities.active = '';
+                Entities.Collections.dialogs = undefined;
+                // init the new dialog's collection
+                Entities.Collections.dialogs = new Entities.Collections.Dialogs();
             });
         },
 

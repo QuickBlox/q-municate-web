@@ -396,20 +396,10 @@ define([
         },
 
         logout: function(callback) {
-            var QBApiCalls = this.app.service,
-                DialogView = this.app.views.Dialog,
-                Entities = this.app.entities,
-                self = this;
+            var self = this,
+                QBApiCalls = self.app.service;
 
-            QB.chat.disconnect();
-
-            DialogView.hideDialogs();
-
-            Entities.Collections.dialogs = undefined;
-            Entities.active = '';
-            // init dialog's collection with starting app
-            Entities.Collections.dialogs = new Entities.Collections.Dialogs();
-
+            QBApiCalls.disconnectChat();
             QBApiCalls.logoutUser(function() {
                 localStorage.removeItem('QM.user');
                 self.contact = null;
