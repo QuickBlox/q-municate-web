@@ -34,10 +34,11 @@
 .list-actions_profile {
     position: absolute;
     top: 74px;
-    right: -35px;
+    right: -60px;
     left: initial;
 }
 .list-actions .list-item {
+    width: 125px;
     height: 32px;
 }
 .list-actions .list-item:last-child {
