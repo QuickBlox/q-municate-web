@@ -36,7 +36,10 @@ define([
         Message,
         ContactList,
         VoiceMessage,
-        Listeners;
+        Listeners,
+        errorDialogsLoadingID,
+        errorMessagesLoadingID,
+        UPDATE_PERIOD = 10000;
 
     var unreadDialogs = {};
 
@@ -172,8 +175,15 @@ define([
                 'skip': skip || 0
             }, function(error, result) {
                 if (error) {
-                    self.addRefreshButton();
+                    self.removeDataSpinner();
+
+                    errorDialogsLoadingID = setTimeout(() => {
+                        self.downloadDialogs(ids, skip);
+                    }, UPDATE_PERIOD);
+
                     return false;
+                } else {
+                    clearTimeout(errorDialogsLoadingID);
                 }
 
                 dialogs = result.items;
@@ -462,7 +472,6 @@ define([
             textAreaScrollbar('#textarea_'+dialog_id);
             messageScrollbar('#mCS_'+dialog_id);
 
-            self.createDataSpinner(true);
             self.showChatWithNewMessages(dialog_id, unreadCount, messages);
 
             removeNewMessagesLabel($selected.data('dialog'), dialog_id);
@@ -667,6 +676,7 @@ define([
                 count = MAX_STACK;
             }
 
+            self.createDataSpinner(true);
 
             if (messages) {
                 addItems(messages);
@@ -678,9 +688,15 @@ define([
                         if (error.code === 403) {
                             self.removeForbiddenDialog(dialogId);
                         } else {
-                            self.addRefreshButton(dialogId);
+                            self.removeDataSpinner();
+
+                            errorMessagesLoadingID = setTimeout(() => {
+                                self.showChatWithNewMessages(dialogId, unreadCount, messages);
+                            }, UPDATE_PERIOD);
                         }
                     } else {
+                        clearTimeout(errorMessagesLoadingID);
+
                         _.each(response, function(item) {
                             messages.push(Message.create(item));
                         });
@@ -724,23 +740,6 @@ define([
                 }, 150);
             }
 
-        },
-
-        addRefreshButton: function(dialogId) {
-            var id = dialogId ? dialogId : '',
-                $button = $(
-                    '<button class="refresh_button j-refreshButton" data-dialog="' + id + '">' +
-                        'Refresh' +
-                    '</button>'
-                );
-
-            self.removeDataSpinner();
-
-            if (dialogId) {
-                $('.j-chatItem:visible').find('.mCSB_container').prepend($button);
-            } else {
-                $('#emptyList').after($button);
-            }
         }
 
     };

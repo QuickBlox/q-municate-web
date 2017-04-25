@@ -284,6 +284,7 @@ define([
                         Helpers.log(err.detail);
 
                         var parseErr = JSON.parse(err.detail).errors.email;
+
                         if (parseErr) {
                             failUser(parseErr[0]);
                         } else {

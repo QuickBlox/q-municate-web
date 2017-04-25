@@ -238,24 +238,18 @@ define([
     // Private functions
     //
     function _switchToOfflineMode() {
-        if (!self.getChatState()) {
+        if (!self.disconnected) {
             document.querySelector('.j-overlay').classList.add('is-disconnect');
             document.querySelector('.j-overlay').disabled = true;
-        }
-
-        if (!self.disconnected) {
             document.querySelector('.j-disconnect').classList.add('disconnected');
             self.disconnected = true;
         }
     }
 
     function _switchToOnlineMode() {
-        if (self.getChatState()) {
+        if (self.disconnected) {
             document.querySelector('.j-overlay').classList.remove('is-disconnect');
             document.querySelector('.j-overlay').disabled = false;
-        }
-
-        if (self.disconnected) {
             document.querySelector('.j-disconnect').classList.remove('disconnected');
             self.disconnected = false;
         }

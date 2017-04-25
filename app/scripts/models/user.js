@@ -128,7 +128,7 @@ define([
             if (params.provider === 'facebook') {
                 QBApiCalls.createSession(params, function(session) {
                     QBApiCalls.getUser(session.user_id, function(user) {
-                        _prepareChat(user);
+                        _prepareChat(user, true);
                     });
                 });
             } else {
@@ -139,7 +139,7 @@ define([
                 });
             }
 
-            function _prepareChat(user) {
+            function _prepareChat(user, isFB) {
                 self.contact = Contact.create(user);
                 self._is_import = getImport(user);
 
@@ -150,11 +150,10 @@ define([
                 QBApiCalls.connectChat(self.contact.user_jid, function() {
                     self.rememberMe();
                     DialogView.prepareDownloading();
+                    DialogView.downloadDialogs();
 
                     if (!self._is_import && isFB) {
                         self.import(user);
-                    } else {
-                        DialogView.downloadDialogs();
                     }
                 });
             }
@@ -380,7 +379,7 @@ define([
                 if (user) {
                     self.contact = Contact.create(user);
                 } else {
-                    this.contact = Contact.create(storage);
+                    self.contact = Contact.create(storage);
                 }
 
                 Helpers.log('User', user);
