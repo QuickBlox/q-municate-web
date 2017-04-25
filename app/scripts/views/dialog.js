@@ -730,8 +730,7 @@ define([
             var id = dialogId ? dialogId : '',
                 $button = $(
                     '<button class="refresh_button j-refreshButton" data-dialog="' + id + '">' +
-                        '<span class="refresh_icon">' +
-                        '</span><span class="refresh_text">Refresh</span>' +
+                        'Refresh' +
                     '</button>'
                 );
 

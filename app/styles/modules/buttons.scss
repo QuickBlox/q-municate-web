@@ -87,10 +87,6 @@ button:hover {
     margin-right: 7px;
     vertical-align: middle;
 }
-.l-welcome_footer_logo a {
-    display: inline-block;
-    text-align: left;
-}
 .i-mini_logo {
     width: 22px;
     height: 22px;
@@ -104,9 +100,10 @@ button:hover {
     color: #959595;
 }
 .l-welcome_download {
-    display: inline-block;
-    text-align: right;
-    float: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 110px;
 }
 .l-welcome_download_app {
     margin-left: 16px;
