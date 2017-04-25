@@ -177,7 +177,7 @@ define([
                 if (error) {
                     self.removeDataSpinner();
 
-                    errorDialogsLoadingID = setTimeout(() => {
+                    errorDialogsLoadingID = setTimeout(function() {
                         self.downloadDialogs(ids, skip);
                     }, UPDATE_PERIOD);
 
@@ -690,7 +690,7 @@ define([
                         } else {
                             self.removeDataSpinner();
 
-                            errorMessagesLoadingID = setTimeout(() => {
+                            errorMessagesLoadingID = setTimeout(function() {
                                 self.showChatWithNewMessages(dialogId, unreadCount, messages);
                             }, UPDATE_PERIOD);
                         }
