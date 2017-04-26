@@ -210,7 +210,7 @@ define([
                 self = this;
 
             if (self.get('avatar_url') === QMCONFIG.defAvatar.url) {
-                custom_data.avatar_url = 'https://graph.facebook.com/v2.8/' + fbId + '/picture?width=1200&height=1200';
+                custom_data.avatar_url = 'https://graph.facebook.com/v2.9/' + fbId + '/picture?width=1200&height=1200';
             }
             custom_data.is_import = '1';
             params.facebook_id = fbId;
