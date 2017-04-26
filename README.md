@@ -33,14 +33,14 @@ See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases)
 
 - The App should work correctly in the following browsers:
 
-  - Chrome 50+
-  - Firefox 46+
-  - Opera 37+
-  - Safari 9+ (without audio/video calls)
-  - IE 11+ (without audio/video calls and local notifications) (\*)
-  - Edge 14+ (without audio/video calls) (\*)
+| Browser |  Edge   |   IE    | Firefox | Chrome  | Safari  |  Opera  |
+|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
+| version |   14+   |   11+   |   46+   |   50+   |    9+   |   37+   |
+|  note   |  1, 2   | 1, 2, 3 |    -    |    -    |    2    |    -    |
 
-  (\*) note: for IE and Edge browsers recommended BOSH connection ([Configuration](http://quickblox.com/developers/Javascript#Configuration))
+* (1) note: recommended BOSH connection ([Configuration](http://quickblox.com/developers/Javascript#Configuration))
+* (2) note: without audio/video calls
+* (3) note: without local notifications
 
 Q-municate is a fully fledged chat application using the Quickblox API.
 

@@ -551,16 +551,22 @@ define([
                 roster = ContactList.roster;
 
             // update roster
-            if (typeof roster[id] === 'undefined') return true;
-            roster[id].status = type ? false : true;
+            if (typeof roster[id] === 'undefined') {
+                return true;
+            }
+
+            roster[id].status = !type;
             ContactList.saveRoster(roster);
 
             if (type) {
                 dialogItem.find('.status').removeClass('status_online');
-                if (dialogItem.is('.popup_details'))
+
+                if (dialogItem.is('.popup_details')) {
                     dialogItem.find('.status_text').text('Offline');
+                }
             } else {
                 dialogItem.find('.status').addClass('status_online');
+
                 if (dialogItem.is('.popup_details')) {
                     dialogItem.find('.status_text').text('Online');
                 }
