@@ -311,8 +311,10 @@ define([
         },
 
         hideDialogs: function() {
-            $('.l-list').addClass('is-hidden');
-            $('.l-list ul').html('');
+            $('.j-aside_list_item').addClass('is-hidden');
+            $('.j-list').each(function(index, element){
+                $(element).html('');
+            });
         },
 
         addDialogItem: function(dialog, isDownload, parameter) {
