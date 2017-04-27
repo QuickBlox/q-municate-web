@@ -136,6 +136,7 @@ requirejs([
                 });
         }
 
+
         /* Materialize sdk
          *
          * Not included in requirejs dependencies as required hammer.js,
