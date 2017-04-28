@@ -6,27 +6,25 @@
  */
 define([
     'jquery',
-    'facebook',
     'config',
     'quickblox',
     'Entities',
     'Helpers',
     'QMHtml',
-    'LocationView',
-    'digits'
+    'LocationView'
 ], function(
     $,
-    FB,
     QMCONFIG,
     QB,
     Entities,
     Helpers,
     QMHtml,
-    Location,
-    Digits
+    Location
 ) {
 
-    var User, ContactList, Contact,
+    var User,
+        ContactList,
+        Contact,
         FBCallback = null;
 
     function UserView(app) {
@@ -50,8 +48,12 @@ define([
             switchPage($('#forgotPage'));
         },
 
-        connectTwitterDigits: function(loginPage) {
-            User.connectTwitterDigits();
+        logInTwitterDigits: function() {
+            User.logInTwitterDigits();
+        },
+
+        logInFacebook: function() {
+            User.logInFacebook();
         },
 
         connectFB: function(token) {
@@ -93,11 +95,13 @@ define([
 
 
         successFormCallback: function() {
+            var $profileAvatar = $('#profile').find('.avatar');
+
             this.removeSpinner();
-            // $('#profile').find('img').attr('src', User.contact.avatar_url);
-            $('#profile').find('.avatar').addClass('profileUserAvatar').css('background-image', "url(" + User.contact.avatar_url + ")");
-            $('#profile').find('.avatar').attr('data-id', User.contact.id);
+            $profileAvatar.addClass('profileUserAvatar').css('background-image', "url(" + User.contact.avatar_url + ")");
+            $profileAvatar.attr('data-id', User.contact.id);
             switchPage($('#mainPage'));
+            this.app.views.Dialog.createDataSpinner();
         },
 
         successSendEmailCallback: function() {
@@ -205,6 +209,7 @@ define([
             appearAnimation();
 
             objDom.addClass('is-active');
+
             $('.list-actions_occupants').offset({
                 top: (29 + position.top),
                 left: position.left

@@ -11,15 +11,9 @@ requirejs.config({
     },
     baseUrl: 'scripts',
     shim: {
-        facebook: {
-            exports: 'FB'
-        },
         gmaps: {
             deps: ['googlemaps'],
             exports: "GMaps"
-        },
-        handlebars: {
-            exports: 'Handlebars'
         },
         cryptojs: {
             exports: 'CryptoJS'
@@ -33,17 +27,15 @@ requirejs.config({
     },
     paths: {
         // libs
-        facebook: 'https://connect.facebook.net/en_US/sdk',
         googlemaps: '../bower_components/googlemaps-amd/src/googlemaps',
         async: '../bower_components/requirejs-plugins/src/async',
         gmaps: 'https://cdnjs.cloudflare.com/ajax/libs/gmaps.js/0.4.24/gmaps.min',
-        digits: 'https://cdn.digits.com/1/sdk',
         cryptojs: '../bower_components/crypto-js-lib/rollups/aes',
         jquery: '../bower_components/jquery/dist/jquery',
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
-        handlebars: '../bower_components/handlebars/handlebars',
-        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.5.0/quickblox.min',
+        // quickblox: '../bower_components/quickblox/quickblox.min',
+        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.5.1/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         canvasToBlob: '../bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
@@ -101,58 +93,56 @@ requirejs.config({
 
 requirejs([
     'jquery',
-    'facebook',
     'config',
     'minEmoji',
     'MainModule',
     'backbone',
     'QBNotification',
-    'Helpers',
-    'digits'
+    'Helpers'
 ], function(
     $,
-    FB,
     QMCONFIG,
     minEmoji,
     QM,
     Backbone,
     QBNotification,
-    Helpers,
-    Digits
+    Helpers
 ) {
     var APP;
 
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.11.0');
+        $('.j-appVersion').html('v. 1.11.9');
 
-        // facebook sdk
-        FB.init({
-            appId: QMCONFIG.fbAccount.appId,
-            version: 'v2.7'
-        });
+        $.ajaxSetup({cache: true});
 
-        // twitter digits sdk
-        Digits.init({
-                consumerKey: 'KCcPaHrIgJ44gs3kwJuIbLaad'
-            })
-            .done(function() {
-                Helpers.log('Digits initialized.');
-            }).fail(function(error) {
-                Helpers.log('Digits failed to initialize: ', error);
+        // initialize facebook sdk
+        if (window.hasOwnProperty('FB')) {
+            FB.init({
+                appId: QMCONFIG.fbAccount.appId,
+                version: 'v2.9'
             });
+        }
 
-        $.ajaxSetup({
-            cache: true
-        });
+        // initialize twitterDigits sdk
+        if (window.hasOwnProperty('Digits')) {
+            Digits.init({consumerKey: QMCONFIG.twitterDigitsKey})
+                .done(function () {
+                    Helpers.log('Digits initialized.');
+                })
+                .fail(function (error) {
+                    Helpers.log('Digits failed to initialize: ', error);
+                });
+        }
+
 
         /* Materialize sdk
          *
          * Not included in requirejs dependencies as required hammer.js,
          * which often creates problems when loading
          */
-        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js', function() {
+        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js', function() {
             Helpers.log('Materialize connected');
         });
 
@@ -168,10 +158,6 @@ requirejs([
 
         APP = new QM();
         APP.init();
-
-        $.getScript('https://cdn.flurry.com/js/flurry.js', function() {
-            FlurryAgent.startSession('P8NWM9PBFCK2CWC8KZ59');
-        });
     });
 
 });

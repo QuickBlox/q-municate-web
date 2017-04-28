@@ -40,11 +40,11 @@ define([
                 'type': type,
                 'id': blob.uid,
                 'name': blob.name,
+                'size': blob.size || metadata.size,
                 'content-type': blob.content_type,
                 'duration': metadata.duration,
                 'height': metadata.height,
-                'width': metadata.width,
-                'size': metadata.size
+                'width': metadata.width
             };
         },
 

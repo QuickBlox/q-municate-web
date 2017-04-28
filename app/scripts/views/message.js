@@ -71,10 +71,12 @@ define([
         addItem: function(message, isCallback, isMessageListener) {
             var Contact = this.app.models.Contact,
                 $chat = $('.l-chat[data-dialog="' + message.dialog_id + '"]'),
-                isBottom = Helpers.isBeginOfChat(),
                 isOnline = message.online,
                 senderID = message.sender_id,
                 contacts = ContactList.contacts,
+                isGroupChat = typeof $chat.data('id') === 'undefined',
+                isMyUser = senderID === User.contact.id,
+                isUserMenu = isGroupChat && !isMyUser,
                 contact;
 
             if (isCallback && isMessageListener) {
@@ -89,7 +91,7 @@ define([
                 return true;
             }
 
-            if (senderID === User.contact.id) {
+            if (isMyUser) {
                 contact = User.contact;
             } else {
                 if (!contacts[senderID]) {
@@ -119,7 +121,6 @@ define([
                     attachParams,
                     status,
                     html;
-
 
                 if (attachType) {
                     attachParams = {
@@ -184,7 +185,7 @@ define([
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
 
-                        if (message.sender_id === User.contact.id) {
+                        if (isMyUser) {
                             html += '<h4 class="message-author">Your request has been sent</h4>';
                         } else {
                             html += '<h4 class="message-author"><span class="profileUserName" data-id="' + message.sender_id + '">' + contact.full_name + '</span> has sent a request to you</h4>';
@@ -201,7 +202,7 @@ define([
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
 
-                        if (message.sender_id === User.contact.id) {
+                        if (isMyUser) {
                             html += '<h4 class="message-author">You have accepted a request</h4>';
                         } else {
                             html += '<h4 class="message-author">Your request has been accepted</h4>';
@@ -218,7 +219,7 @@ define([
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
 
-                        if (message.sender_id === User.contact.id) {
+                        if (isMyUser) {
                             html += '<h4 class="message-author">You have rejected a request';
                         } else {
                             html += '<h4 class="message-author">Your request has been rejected</h4>';
@@ -238,7 +239,7 @@ define([
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
                         html += '<div class="message-content">';
 
-                        if (message.sender_id === User.contact.id) {
+                        if (isMyUser) {
                             html += '<h4 class="message-author">You have deleted ' + recipientFullName + ' from your contact list';
                         } else {
                             html += '<h4 class="message-author">You have been deleted from the contact list</h4>';
@@ -324,7 +325,7 @@ define([
 
                         status = isOnline ? message.status : 'Not delivered yet';
 
-                        if (message.sender_id === User.contact.id) {
+                        if (isMyUser) {
                             html = '<article id="' + message.id + '" class="message is-own l-flexbox l-flexbox_alignstretch' +
                             (message.stack ? ' without_border' : '') + '" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         } else {
@@ -332,7 +333,7 @@ define([
                             (message.stack ? ' without_border' : '') + '" data-id="' + message.sender_id + '" data-type="' + type + '">';
                         }
 
-                        html += '<div class="message-avatar avatar profileUserAvatar' + (message.stack ? ' is-hidden' : '') +
+                        html += '<div class="message-avatar avatar profileUserAvatar' + (message.stack ? ' is-hidden' : (isUserMenu ? ' userMenu j-userMenu' : '')) +
                             '" style="background-image:url(' + contact.avatar_url + ')" data-id="' + message.sender_id + '"></div>';
                         html += '<div class="message-container-wrap">';
                         html += '<div class="message-container l-flexbox l-flexbox_flexbetween l-flexbox_alignstretch">';
@@ -375,7 +376,7 @@ define([
                         $chat.find('.l-chat-content .mCSB_container').append(html);
                         setAttachSize(attachParams);
                         getUrlPreview(message.id);
-                        smartScroll(isBottom);
+                        smartScroll();
                     } else {
                         $chat.find('.l-chat-content .mCSB_container').prepend(html);
                         setAttachSize(attachParams);
@@ -389,7 +390,7 @@ define([
                     }
                     setAttachSize(attachParams);
                     getUrlPreview(message.id);
-                    smartScroll(true);
+                    smartScroll();
                 }
 
                 if (geolocation) {
@@ -415,6 +416,7 @@ define([
                     self.addStatusMessages(message.id, message.dialog_id, 'displayed', false);
                 }
 
+                smartScroll();
             });
 
         },
@@ -455,6 +457,8 @@ define([
                 $chat = $('.l-chat[data-dialog="' + dialog_id + '"]'),
                 $newMessages = $('.j-newMessages[data-dialog="' + dialog_id + '"]'),
                 locationIsActive = ($('.j-send_location').hasClass('btn_active') && localStorage['QM.latitude'] && localStorage['QM.longitude']),
+                dialogs = Entities.Collections.dialogs,
+                dialog = dialogs.get(dialog_id),
                 lastMessage,
                 message,
                 msg;
@@ -512,6 +516,13 @@ define([
                         $newMessages.remove();
                     }
                 }
+
+                if (dialog) {
+                    dialog.set({
+                        'last_message': val,
+                        'last_message_date_sent': time
+                    });
+                }
             }
         },
 
@@ -553,12 +564,7 @@ define([
                 $chat = message.type === 'groupchat' ? $('.l-chat[data-dialog="' + dialog_id + '"]') : $('.l-chat[data-id="' + id + '"]'),
                 isHiddenChat = $chat.is(':hidden') || !$chat.length,
                 roster = ContactList.roster,
-                isExistent = dialogItem.length ? true :
-                    (contactRequest.length ? true :
-                        (roster[id] ? true :
-                            (notification_type == '4')
-                        )
-                    ),
+                isExistent = dialogItem.length ? true : (contactRequest.length ? true : (roster[id] ? true : (notification_type === '4'))),
                 unread = parseInt(dialogItem.length > 0 && dialogItem.find('.unread').text().length > 0 ? dialogItem.find('.unread').text() : 0),
                 audioSignal = $('#newMessageSignal')[0],
                 isOfflineStorage = message.delay,
@@ -577,10 +583,12 @@ define([
                 msg;
 
             if (!dialog && roster[id] && notification_type !== '4') {
-                Dialog.download({'_id': dialog_id}, function(results) {
-                    var newDialogId = Dialog.create(results.items[0]);
+                Dialog.download({'_id': dialog_id}, function(error, results) {
+                    if (results) {
+                        var newDialogId = Dialog.create(results.items[0]);
 
-                    DialogView.addDialogItem(dialogs.get(newDialogId), null, true);
+                        DialogView.addDialogItem(dialogs.get(newDialogId), null, true);
+                    }
                 });
             }
 
@@ -689,7 +697,7 @@ define([
 
 
             // subscribe message
-            if (notification_type == '4') {
+            if (notification_type === '4') {
                 var QBApiCalls = self.app.service,
                     Contact = self.app.models.Contact;
                 // update hidden dialogs
@@ -783,7 +791,11 @@ define([
                         return true;
                     }
 
-                    QB.chat.muc.join(room_jid);
+                    if (dialog && !dialog.get('joined')) {
+                        QB.chat.muc.join(room_jid, function() {
+                            dialog.set('joined', true);
+                        });
+                    }
 
                     DialogView.addDialogItem(dialog);
                     unread++;
@@ -883,14 +895,10 @@ define([
         return size > (1024 * 1024) ? (size / (1024 * 1024)).toFixed(1) + ' MB' : (size / 1024).toFixed(1) + 'KB';
     }
 
-    function smartScroll(isBottom) {
-        if (!isBottom) {
-            return true;
+    function smartScroll() {
+        if (Helpers.isBeginOfChat()) {
+            $('.j-scrollbar_message:visible').mCustomScrollbar('scrollTo', 'bottom');
         }
-
-        var $objDom = $('.l-chat:visible .scrollbar_message');
-
-        $objDom.mCustomScrollbar('scrollTo', 'bottom');
     }
 
     function stopShowTyping(user) {
@@ -1102,7 +1110,7 @@ define([
         }
 
         var $message = $('#' + id + '.message').find('.message-body'),
-            $hyperText = $message.find('a:not(a.open_googlemaps, a.file-download)');
+            $hyperText = $message.find('a:not(a.open_googlemaps, a.file-download, a.qm_player_download)');
 
         if ($hyperText.length) {
             $hyperText.each(function(index) {
@@ -1115,7 +1123,7 @@ define([
                     params,
                     $elem;
 
-                if (Helpers.isImageUrl(url)) {
+                if (urlCache[url] !== null && Helpers.isImageUrl(url)) {
                     $elem = $this.clone()
                                  .addClass('image_preview')
                                  .html('<img src="'+ url +'" alt="picture"/>');
@@ -1139,7 +1147,7 @@ define([
                                 urlCache[url] = params;
                             } else {
                                 params = {
-                                    title: '',
+                                    title: 'Error 404 (Not Found)',
                                     description: url,
                                     picture: ''
                                 };
@@ -1152,7 +1160,9 @@ define([
                     }
                 }
 
-                $message.append($elem);
+                if ($elem) {
+                    $message.append($elem);
+                }
             });
 
         }
@@ -1178,6 +1188,8 @@ define([
         } else if ((height > width) && (height > 285)) {
             $container.height(285);
         }
+
+        smartScroll();
     }
 
     return MessageView;

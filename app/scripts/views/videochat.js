@@ -73,17 +73,15 @@ define([
                     className = $this.attr('class'),
                     userId = $this.data('id'),
                     $dialogItem = $('.j-dialogItem[data-id="' + userId + '"]'),
-                    $dialogContact = $dialogItem.find('.contact'),
                     dialogId;
 
                 if ($dialogItem.length) {
-                    dialogId = $dialogItem.attr('dialog');
-                    openChatAndStartCall($dialogContact, dialogId);
+                    dialogId = $dialogItem.data('dialog');
+                    openChatAndStartCall(dialogId);
                 } else {
                     Dialog.restorePrivateDialog(userId, function(dialog) {
                         dialogId = dialog.get('id');
-                        $dialogContact = $('.j-dialogItem[data-id="' + userId + '"]').find('.contact');
-                        openChatAndStartCall($dialogContact, dialogId);
+                        openChatAndStartCall(dialogId);
                     });
                 }
             } else {
@@ -94,8 +92,8 @@ define([
             $('.is-contextmenu').removeClass('is-contextmenu');
             $('.j-listActionsContacts').remove();
 
-            function openChatAndStartCall(dialogItem, dialogId) {
-                DialogView.htmlBuild(dialogItem);
+            function openChatAndStartCall(dialogId) {
+                DialogView.htmlBuild(dialogId);
                 self.cancelCurrentCalls();
                 self.startCall(className, dialogId);
                 curSession = self.app.models.VideoChat.session;
@@ -136,7 +134,7 @@ define([
 
             var $self = $(this),
                 id = $self.data('id'),
-                $dialogItem = $('.dialog-item[data-id="' + id + '"]').find('.contact');
+                $dialogItem = $('.dialog-item[data-id="' + id + '"]');
 
             DialogView.htmlBuild($dialogItem);
 

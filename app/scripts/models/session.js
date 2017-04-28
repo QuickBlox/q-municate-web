@@ -14,20 +14,18 @@ define([
 
     function Session(app) {
         this.app = app;
-        this._remember = false;
     }
 
     Session.prototype = {
 
-        create: function(params, isRemember) {
+        create: function(params) {
             this.token = params.token;
             this.expirationTime = params.expirationTime || null;
             this.authParams = params.authParams;
-            this._remember = isRemember || false;
         },
 
         update: function(params) {
-            var storage, date;
+            var date;
 
             if (params.token) {
                 this.token = params.token;
@@ -42,15 +40,12 @@ define([
                     date.setMinutes(date.getMinutes() + 5);
                     this.expirationTime = date.toISOString();
                 }
-                if (this._remember) {
-                    storage = {
-                        token: this.token,
-                        expirationTime: this.expirationTime,
-                        authParams: this.authParams
-                    };
-                    localStorage.setItem('QM.session', JSON.stringify(storage));
-                }
 
+                localStorage.setItem('QM.session', JSON.stringify({
+                    token: this.token,
+                    expirationTime: this.expirationTime,
+                    authParams: this.authParams
+                }));
             }
         },
 
@@ -59,7 +54,6 @@ define([
             this.token = null;
             this.expirationTime = null;
             this.authParams = null;
-            this._remember = false;
         },
 
         // crypto methods for password

@@ -60,6 +60,15 @@ a.twitterDigits:hover {
     text-decoration: underline;
     opacity: 1;
 }
+.twitterDigits.not_allowed,
+.twitterDigits.not_allowed:focus,
+.twitterDigits.not_allowed:hover,
+.l-btn_login_fb.not_allowed,
+.l-btn_login_fb.not_allowed:focus,
+.l-btn_login_fb.not_allowed:hover {
+    opacity: 0.4;
+    text-transform: initial;
+}
 .text_login {
     font-family: "Roboto", sans-serif;
     font-size: 11px;

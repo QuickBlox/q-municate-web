@@ -1,12 +1,14 @@
 'use strict';
 
 define([
+    'underscore',
     'jquery',
     'config',
     'quickblox',
     'Helpers',
     'perfectscrollbar'
 ], function(
+    _,
     $,
     QMCONFIG,
     QB,
@@ -17,25 +19,29 @@ define([
 
     function Listeners(app) {
         self = this;
-        this.app = app;
-        this.blockChatViewPosition = false;
+        self.app = app;
+        self.blockChatViewPosition = false;
+        self.stateActive = null;
+        self.disconnected = false;
+        self.offline = false;
 
         var chatConnection = navigator.onLine;
         var position = 0;
 
-        this.setChatState = function(state) {
+        self.setChatState = function(state) {
             if (typeof state === 'boolean') {
                 chatConnection = state;
             } else {
                 chatConnection = navigator.onLine;
+                self.offline = false;
             }
         };
 
-        this.getChatState = function() {
+        self.getChatState = function() {
             return chatConnection;
         };
 
-        this.setChatViewPosition = function(value) {
+        self.setChatViewPosition = function(value) {
             if (!self.blockChatViewPosition) {
                 position = value;
             }
@@ -43,7 +49,7 @@ define([
             self.blockChatViewPosition = false;
         };
 
-        this.getChatViewPosition = function() {
+        self.getChatViewPosition = function() {
             var direction = '',
                 value = 0;
 
@@ -128,13 +134,17 @@ define([
         },
 
         onDisconnected: function() {
-            _switchToOfflineMode();
-            self.setChatState(false);
+            if (self.stateActive) {
+                self.updateDialogs(false);
+                self.setChatState(false);
+                _switchToOfflineMode();
+            }
         },
 
         onReconnected: function() {
-            _switchToOnlineMode();
+            self.updateDialogs(true);
             self.setChatState(true);
+            _switchToOnlineMode();
         },
 
         onReconnectFailed: function(error) {
@@ -172,9 +182,28 @@ define([
             Ps.update(document.querySelector('.j-scrollbar_aside'));
         },
 
+        updateDialogs: function(reconnected) {
+            var DialogView = self.app.views.Dialog,
+                dialogsCollection = self.app.entities.Collections.dialogs;
+
+            if (reconnected) {
+                DialogView.downloadDialogs();
+            } else {
+                dialogsCollection.forEach(function(dialog) {
+                    if (dialog.get('type') === 2) {
+                        dialog.set({
+                            'joined': false,
+                            'opened': false
+                        });
+                    }
+                });
+            }
+        },
+
         onNetworkStatus: function(status) {
-            if (self.getChatState()) {            
+            if (self.getChatState()) {
                 if (status === 'online') {
+                    self.updateDialogs(true);
                     _switchToOnlineMode();
                 } else {
                     _switchToOfflineMode();
@@ -209,16 +238,20 @@ define([
     // Private functions
     //
     function _switchToOfflineMode() {
-        if ('div.popups.is-overlay') {
-            $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
+        if (!self.disconnected) {
+            document.querySelector('.j-overlay').classList.add('is-disconnect');
+            document.querySelector('.j-overlay').disabled = true;
+            document.querySelector('.j-disconnect').classList.add('disconnected');
+            self.disconnected = true;
         }
-
-        $('.j-disconnect').addClass('is-overlay')
-            .parent('.j-overlay').addClass('is-overlay');
     }
 
     function _switchToOnlineMode() {
-        $('.j-disconnect').removeClass('is-overlay')
-            .parent('.j-overlay').removeClass('is-overlay');
+        if (self.disconnected) {
+            document.querySelector('.j-overlay').classList.remove('is-disconnect');
+            document.querySelector('.j-overlay').disabled = false;
+            document.querySelector('.j-disconnect').classList.remove('disconnected');
+            self.disconnected = false;
+        }
     }
 });

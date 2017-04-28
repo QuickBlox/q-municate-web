@@ -99,14 +99,14 @@ define([
             }, function(data) {
                 isExistingRequest = false;
 
-                sessionStorage.setItem('QM.search.allPages', Math.ceil(data.total_entries / data.per_page));
-                sessionStorage.setItem('QM.search.page', ++page);
-
                 if(data.items.length) {
                     contacts = self.getResults(data.items);
                 } else {
                     contacts = data.items;
                 }
+
+                sessionStorage.setItem('QM.search.allPages', Math.ceil(data.total_entries / data.per_page));
+                sessionStorage.setItem('QM.search.page', ++page);
 
                 contacts.sort(function(first, second) {
                     var a = first.full_name.toLowerCase(),
@@ -133,6 +133,7 @@ define([
                     contacts.push(contact);
                 }
             });
+
             return contacts;
         },
 

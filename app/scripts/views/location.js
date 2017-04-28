@@ -12,9 +12,7 @@ define([
     GMaps,
     Helpers
 ) {
-    google.maps === googleMaps;
-
-    var Location = {},
+    var Location,
         watchId;
 
     Location = {
@@ -129,7 +127,7 @@ define([
             }
 
             GMaps.on('click', map.map, function(event) {
-                mapCoords.lat = event.latLng.lat(),
+                mapCoords.lat = event.latLng.lat();
                 mapCoords.lng = event.latLng.lng();
 
                 localStorage.setItem('QM.locationAttach', JSON.stringify(mapCoords));

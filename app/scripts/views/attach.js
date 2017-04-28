@@ -107,7 +107,7 @@ define([
             var progressBar = new ProgressBar('progress_' + id),
                 dialogId = self.app.entities.active,
                 $chatItem = $('.j-chatItem[data-dialog="' + dialogId + '"]'),
-                fileSize = metadata.size,
+                fileSize = file.size || metadata.size,
                 percent = 5,
                 isUpload = false,
                 part,
@@ -129,12 +129,15 @@ define([
 
             setPercent();
 
-            Helpers.log('File:', file);
-
             Attach.upload(file, function(blob) {
                 Helpers.log('Blob:', blob);
 
+                if (!blob.size) {
+                    blob.size = file.size || metadata.size;
+                }
+
                 self.sendMessage($chatItem, blob, metadata);
+
                 isUpload = true;
 
                 if ($('#progress_' + id).length > 0) {

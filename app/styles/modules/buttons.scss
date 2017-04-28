@@ -5,6 +5,7 @@
     color: #fff;
     text-align: center;
     box-shadow: none;
+    line-height: 100%;
 }
 button:focus,
 button:hover {
@@ -19,17 +20,16 @@ button:hover {
     text-transform: uppercase;
 }
 .l-welcome_btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 304px;
     height: 40px;
-    display: block;
-    position: relative;
     margin: 0 auto;
     border-radius: 2px;
     font-family: "Roboto", sans-serif;
     font-size: 14px;
     font-weight: 500;
-    text-align: center;
-    vertical-align: middle;
 }
 .l-welcome_btn_green {
     margin-top: 76px;
@@ -87,10 +87,6 @@ button:hover {
     margin-right: 7px;
     vertical-align: middle;
 }
-.l-welcome_footer_logo a {
-    display: inline-block;
-    text-align: left;
-}
 .i-mini_logo {
     width: 22px;
     height: 22px;
@@ -104,9 +100,10 @@ button:hover {
     color: #959595;
 }
 .l-welcome_download {
-    display: inline-block;
-    text-align: right;
-    float: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 110px;
 }
 .l-welcome_download_app {
     margin-left: 16px;
@@ -275,6 +272,7 @@ button.btn.btn_search:hover {
     background-size: contain;
     background-position: 50%;
     display: none;
+    cursor: pointer;
 }
 .btn_to_bottom:hover {
     opacity: 0.4;

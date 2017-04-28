@@ -25,6 +25,8 @@ define([
                 email: qbUser.email || '',
                 phone: qbUser.phone || '',
                 facebook_id: qbUser.facebook_id || null,
+                twitter_digits_id: qbUser.twitter_digits_id || null,
+                is_provider: !!qbUser.facebook_id || !!qbUser.twitter_digits_id || false,
                 blob_id: qbUser.blob_id || null,
                 user_tags: qbUser.tag || qbUser.user_tags || null,
                 avatar_url: (qbUser.avatar_url || getAvatar(qbUser)).replace('http://', 'https://') || QMCONFIG.defAvatar.url,

@@ -30,6 +30,7 @@ define([
             phone: '',
             facebook_id: null,
             twitter_digits_id: null,
+            is_provider: null,
             avatar: null,
             avatar_url: QMCONFIG.defAvatar.url,
             status: '',
@@ -37,9 +38,7 @@ define([
         },
 
         validate: function(attrs) {
-            var MAX_SIZE = QMCONFIG.maxLimitFile * 1024 * 1024,
-                prevModel = JSON.stringify(this.previousAttributes()),
-                thisModel = JSON.stringify(attrs);
+            var MAX_SIZE = QMCONFIG.maxLimitFile * 1024 * 1024;
 
             // Field: full_name
             // mandatory; 3-50 characters; could contain everything except '<', '>' and ';'
@@ -168,7 +167,7 @@ define([
                 h: 1000
             }, function(file) {
                 QBApiCalls.createBlob({
-                    file: file,
+                    'file': file,
                     'public': true
                 }, function(blob) {
                     callback(blob);
@@ -211,7 +210,7 @@ define([
                 self = this;
 
             if (self.get('avatar_url') === QMCONFIG.defAvatar.url) {
-                custom_data.avatar_url = 'https://graph.facebook.com/v2.7/' + fbId + '/picture?width=1200&height=1200';
+                custom_data.avatar_url = 'https://graph.facebook.com/v2.9/' + fbId + '/picture?width=1200&height=1200';
             }
             custom_data.is_import = '1';
             params.facebook_id = fbId;

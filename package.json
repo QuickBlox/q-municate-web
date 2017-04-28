@@ -1,6 +1,6 @@
 {
   "name": "q-municate",
-  "version": "1.11.0",
+  "version": "1.11.9",
   "repository": {
     "type": "git",
     "url": "git@github.com:QuickBlox/q-municate-web.git"
@@ -12,8 +12,8 @@
     "connect-livereload": "^0.5.4",
     "ghooks": "^1.2.1",
     "grunt": "^0.4.5",
-    "grunt-cli": "^1.2.0",
     "grunt-bower-requirejs": "^2.0.0",
+    "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-connect": "^1.0.2",
