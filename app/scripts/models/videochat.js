@@ -84,6 +84,7 @@ define([
             Message = this.app.models.Message,
             MessageView = this.app.views.Message,
             VideoChatView = this.app.views.VideoChat,
+            DialogView = this.app.views.Dialog,
             time = Math.floor(Date.now() / 1000),
             $dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialogId + '"]'),
             selected = $('[data-dialog = ' + dialogId + ']').is('.is-selected'),

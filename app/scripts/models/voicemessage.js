@@ -69,7 +69,7 @@ define([
 
             self._initHandler();
 
-            Helpers.log('Recorder\'s ready to use');
+            Helpers.log('Recorder is ready to use');
         },
 
         blockRecorder: function(message) {
