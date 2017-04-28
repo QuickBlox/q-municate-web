@@ -153,9 +153,7 @@ define([
         loginUser: function(params, callback) {
             this.checkSession(function() {
                 QB.login(params, function(err, res) {
-                    if (err) {
-                        Helpers.log(err.detail);
-                    } else {
+                    if (res && !err) {
                         Helpers.log('QB SDK: User has logged', res);
 
                         Session.update({
@@ -164,6 +162,10 @@ define([
                         });
 
                         callback(res);
+                    } else {
+                        Helpers.log(err);
+
+                        window.location.reload();
                     }
                 });
             });
@@ -180,7 +182,9 @@ define([
 
                         callback(session);
                     } else {
-                        Helpers.log(err.detail);
+                        Helpers.log(err);
+
+                        window.location.reload();
                     }
                 });
             });
