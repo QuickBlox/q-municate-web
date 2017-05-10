@@ -5,11 +5,9 @@
  *
  */
 define([
-    'loadImage',
-    'canvasToBlob'
+    'loadImage'
 ], function(
-    loadImage,
-    dataURLtoBlob
+    loadImage
 ) {
 
     function Attach(app) {
