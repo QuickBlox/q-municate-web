@@ -125,6 +125,7 @@ define([
                 if (attachType) {
                     attachParams = {
                         id: message.id,
+                        duration: message.attachment.duration || null,
                         height: message.attachment.height || null,
                         width: message.attachment.width || null,
                         name: message.attachment.name,
@@ -348,8 +349,8 @@ define([
                             html += '<div class="message-body"><div id="audio_player_' + message.id + '" class="audio_player"></div></div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
                             html += '<div class="message-body"><div class="media_title">'+ message.attachment.name + '</div>';
-                            html += '<video id="video_' + message.id + '" class="video_player j-videoPlayer" controls>'+
-                                        '<source src="' + attachUrl + '" type="video/mp4">'+
+                            html += '<video id="video_' + message.id + '" class="video_player j-videoPlayer" preload="none" data-source="' + attachUrl + '" poster="images/ic-play-video.svg">'+
+                                        // '<source src="' + attachUrl + '" type="video/mp4">'+
                                     '</video></div></div>';
                         } else if (attachType && attachType.indexOf('location') > -1) {
                             html += '<div class="message-body">';
@@ -863,10 +864,15 @@ define([
                 QMPlayer = self.app.QMPlayer.Model;
 
             if (params.type && params.type.indexOf('audio') > -1) {
+                var duration = params.duration ? params.duration.toString() : '00';
+
+                if (duration.length === 1) duration = '0' + duration;
+
                 new QMPlayer({
                     id: params.id,
                     name: params.name,
-                    source: params.url
+                    source: params.url,
+                    duration: duration
                 });
 
                 Listeners.listenToMediaElement('#audio_' + params.id);
