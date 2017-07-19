@@ -864,20 +864,27 @@ define([
                 QMPlayer = self.app.QMPlayer.Model;
 
             if (params.type && params.type.indexOf('audio') > -1) {
-                var duration = params.duration ? params.duration.toString() : '00';
-
-                if (duration.length === 1) duration = '0' + duration;
+                var duration = isNaN(params.duration) ? 0 : Number(params.duration);
 
                 new QMPlayer({
                     id: params.id,
                     name: params.name,
                     source: params.url,
-                    duration: duration
+                    duration: toStringTime(duration)
                 });
 
                 Listeners.listenToMediaElement('#audio_' + params.id);
             } else if (params.type && params.type.indexOf('video') > -1) {
                 Listeners.listenToMediaElement('#video_' + params.id);
+            }
+
+            function toStringTime(time) {
+                var m = Math.floor(time / 60),
+                    s = time % 60,
+                    min = (m < 10) ? ('0' + m) : m,
+                    sec = (s < 10) ? ('0' + s) : s;
+
+                return min + ':' + sec;
             }
         }
 
