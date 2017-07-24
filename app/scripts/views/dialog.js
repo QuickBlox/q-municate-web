@@ -296,6 +296,7 @@ define([
                 users.items.forEach(function(qbUser) {
                     var user = qbUser.user;
                     var contact = Contact.create(user);
+
                     ContactList.contacts[contact.id] = contact;
 
                     $('.profileUserName[data-id="' + contact.id + '"]').text(contact.full_name);

@@ -23,6 +23,7 @@ define([
         UserView,
         DialogView,
         ContactListView,
+        ContactList,
         User,
         Listeners;
 
@@ -38,6 +39,7 @@ define([
         UserView = this.app.views.User;
         DialogView = this.app.views.Dialog;
         ContactListView = this.app.views.ContactList;
+        ContactList = this.app.models.ContactList;
         User = this.app.models.User;
         Listeners = this.app.listeners;
     }
