@@ -80,16 +80,9 @@ define([
             }
         },
         
-        update: function (requestIds, users) {
+        update: function (requestIds, responseIds) {
             var ContactListView = this.app.views.ContactList,
-                responseIds = [];
-
-            users.forEach(function(user) {
-                responseIds.push(user.id);
-            });
-console.log('Request Ids:', requestIds);
-            console.log('Response Ids:', responseIds);
-            var ids = _.difference(requestIds, responseIds);
+                ids = _.difference(requestIds, responseIds);
 
             ids.forEach(function(id) {
                 localStorage.removeItem('QM.contact-' + id);

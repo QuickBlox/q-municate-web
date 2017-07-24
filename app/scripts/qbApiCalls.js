@@ -225,14 +225,21 @@ define([
                         Helpers.log(err.detail);
 
                     } else {
-                        Helpers.log('QB SDK: Users is found', res);
+                        Helpers.log('QB SDK: Users are found', res);
 
                         Session.update({
                             date: new Date()
                         });
 
-                        if (params.filters && params.filters.value) {
-                            ContactList.update(params.value, res.items);
+                        if (params.filter && params.filter.value) {
+                            var requestIds = params.filter.value.split(',').map(Number),
+                                responseIds = [];
+
+                            res.items.forEach(function(item) {
+                                responseIds.push(item.user.id);
+                            });
+
+                            ContactList.update(requestIds, responseIds);
                         }
 
                         callback(res);
@@ -254,7 +261,7 @@ define([
                             items: []
                         });
                     } else {
-                        Helpers.log('QB SDK: Users is found', res);
+                        Helpers.log('QB SDK: User is found', res);
 
                         Session.update({
                             date: new Date()
