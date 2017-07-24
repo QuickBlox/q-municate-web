@@ -231,6 +231,10 @@ define([
                             date: new Date()
                         });
 
+                        if (params.filters && params.filters.value) {
+                            ContactList.update(params.value, res.items);
+                        }
+
                         callback(res);
                     }
                 });

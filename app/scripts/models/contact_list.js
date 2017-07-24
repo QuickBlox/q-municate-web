@@ -63,19 +63,13 @@ define([
                 };
 
                 QBApiCalls.listUsers(params, function(users) {
-                    var availableUsersIds = [];
-
                     users.items.forEach(function(qbUser) {
                         var user = qbUser.user;
                         var contact = Contact.create(user);
 
-                        availableUsersIds.push(user.id);
-
                         self.contacts[user.id] = contact;
                         localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
                     });
-
-                    self.update(_.difference(new_ids, availableUsersIds));
 
                     Helpers.log('Contact List is updated', self);
                     callback(dialog);
@@ -86,9 +80,15 @@ define([
             }
         },
         
-        update: function (ids) {
-            console.log(ids);
-            var ContactListView = this.app.views.ContactList;
+        update: function (requestIds, users) {
+            var ContactListView = this.app.views.ContactList,
+                responseIds = [];
+
+            users.forEach(function(user) {
+                responseIds.push(user.id);
+            });
+
+            var ids = _.difference(requestIds, responseIds);
 
             ids.forEach(function(id) {
                 localStorage.removeItem('QM.contact-' + id);
