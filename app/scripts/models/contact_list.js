@@ -87,7 +87,8 @@ define([
             users.forEach(function(user) {
                 responseIds.push(user.id);
             });
-
+console.log('Request Ids:', requestIds);
+            console.log('Response Ids:', responseIds);
             var ids = _.difference(requestIds, responseIds);
 
             ids.forEach(function(id) {
