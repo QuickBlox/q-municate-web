@@ -403,11 +403,13 @@ define([
                 self.getUnreadCounter(dialog_id);
             }
 
-            self.validateAvatar({
-                privateId: private_id,
-                dialogId: dialog_id,
-                iconURL: icon
-            });
+            if (icon !== defaultAvatar) {
+                self.validateAvatar({
+                    privateId: private_id,
+                    dialogId: dialog_id,
+                    iconURL: icon
+                });
+            }
         },
 
 
@@ -753,32 +755,35 @@ define([
         },
 
         validateAvatar: function(params) {
-            var avatarImage = new Image();
+            var img = new Image();
 
-            avatarImage.src = params.iconURL;
+            img.addEventListener('load', function() {
+                img = undefined;
+            });
 
-            avatarImage.onload = function() {
-                avatarImage = undefined;
-            };
+            img.addEventListener('error', function() {
+                setTimeout(function() {
+                    var avatar = document.querySelector('.j-dialogItem[data-dialog="' + params.dialogId + '"] .j-avatar');
 
-            avatarImage.onerror = function() {
-                var dialogAvatar = document.querySelector('.j-dialogItem[data-dialog="' + params.dialogId + '"] .j-avatar');
+                    avatar.style.backgroundImage = '';
 
-                dialogAvatar.style.backgroundImage = '';
+                    if (params.privateId) {
+                        var user = ContactList.contacts[params.privateId];
 
-                if (params.privateId) {
-                    var user = ContactList.contacts[params.privateId];
-                    user.avatar_url = QMCONFIG.defAvatar.url;
-                    dialogAvatar.classList.add('default_single_avatar');
-                } else {
-                    var dialog = Entities.Collections.dialogs.get(params.dialogId);
-                    dialog.set('room_photo', QMCONFIG.defAvatar.group_url);
+                        user.avatar_url = QMCONFIG.defAvatar.url;
+                        avatar.classList.add('default_single_avatar');
+                    } else {
+                        var dialog = Entities.Collections.dialogs.get(params.dialogId);
 
-                    dialogAvatar.classList.add('default_group_avatar');
-                }
+                        dialog.set('room_photo', QMCONFIG.defAvatar.group_url);
+                        avatar.classList.add('default_group_avatar');
+                    }
+                }, 100);
 
-                avatarImage = undefined;
-            };
+                img = undefined;
+            });
+
+            img.src = params.iconURL;
         }
 
     };
