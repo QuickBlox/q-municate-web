@@ -55,3 +55,12 @@
     top: 4px;
     border-top: 7px solid #bebebe;
 }
+
+.default_group_avatar {
+    background: url('../images/ava-group.svg') no-repeat center;
+    background-size: contain;
+}
+.default_single_avatar {
+    background: url('../images/ava-single.svg') no-repeat center;
+    background-size: contain;
+}

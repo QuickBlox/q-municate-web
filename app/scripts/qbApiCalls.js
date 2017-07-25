@@ -239,7 +239,7 @@ define([
                                 responseIds.push(item.user.id);
                             });
 
-                            ContactList.update(requestIds, responseIds);
+                            ContactList.cleanUp(requestIds, responseIds);
                         }
 
                         callback(res);

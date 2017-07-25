@@ -79,8 +79,8 @@ define([
                 callback(dialog);
             }
         },
-        
-        update: function (requestIds, responseIds) {
+
+        cleanUp: function (requestIds, responseIds) {
             var ContactListView = this.app.views.ContactList,
                 ids = _.difference(requestIds, responseIds);
 

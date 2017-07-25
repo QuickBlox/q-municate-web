@@ -335,6 +335,7 @@ define([
                 dialog_id =  dialog.get('id'),
                 lastTime = Helpers.getTime(last_message_date_sent, true),
                 lastMessage = minEmoji(Helpers.Messages.parser(dialog.get('last_message'))),
+                defaultAvatar = private_id ? QMCONFIG.defAvatar.url : QMCONFIG.defAvatar.group_url,
                 startOfCurrentDay,
                 private_id,
                 status,
@@ -345,7 +346,7 @@ define([
             private_id = dialog_type === 3 ? occupants_ids[0] : null;
 
             try {
-                icon = (private_id && contacts[private_id]) ? contacts[private_id].avatar_url : (room_photo || QMCONFIG.defAvatar.group_url);
+                icon = (private_id && contacts[private_id]) ? contacts[private_id].avatar_url : (room_photo || defaultAvatar);
                 name = (private_id && contacts[private_id]) ? contacts[private_id].full_name : room_name;
                 status = roster[private_id] ? roster[private_id] : null;
             } catch (error) {
@@ -355,7 +356,7 @@ define([
             html  = '<li class="list-item dialog-item j-dialogItem presence-listener" data-dialog="' + dialog_id + '" data-id="' + private_id + '">';
             html += '<div class="contact l-flexbox" href="#">';
             html += '<div class="l-flexbox_inline">';
-            html += '<div class="contact-avatar avatar profileUserAvatar" style="background-image:url(' + icon + ')" data-id="' + private_id + '"></div>';
+            html += '<div class="contact-avatar avatar profileUserAvatar j-avatar" style="background-image: url(' + icon + ')" data-id="' + private_id + '"></div>';
             html += '<div class="dialog_body"><span class="name name_dialog profileUserName" data-id="' + private_id + '">' + name + '</span>';
             html += '<span class="last_message_preview j-lastMessagePreview">' + lastMessage + '</span></div></div>';
 
@@ -401,6 +402,12 @@ define([
             if (unread_count) {
                 self.getUnreadCounter(dialog_id);
             }
+
+            self.validateAvatar({
+                privateId: private_id,
+                dialogId: dialog_id,
+                iconURL: icon
+            });
         },
 
 
@@ -743,6 +750,35 @@ define([
                 }, 150);
             }
 
+        },
+
+        validateAvatar: function(params) {
+            var avatarImage = new Image();
+
+            avatarImage.src = params.iconURL;
+
+            avatarImage.onload = function() {
+                avatarImage = undefined;
+            };
+
+            avatarImage.onerror = function() {
+                var dialogAvatar = document.querySelector('.j-dialogItem[data-dialog="' + params.dialogId + '"] .j-avatar');
+
+                dialogAvatar.style.backgroundImage = '';
+
+                if (params.privateId) {
+                    var user = ContactList.contacts[params.privateId];
+                    user.avatar_url = QMCONFIG.defAvatar.url;
+                    dialogAvatar.classList.add('default_single_avatar');
+                } else {
+                    var dialog = Entities.Collections.dialogs.get(params.dialogId);
+                    dialog.set('room_photo', QMCONFIG.defAvatar.group_url);
+
+                    dialogAvatar.classList.add('default_group_avatar');
+                }
+
+                avatarImage = undefined;
+            };
         }
 
     };
