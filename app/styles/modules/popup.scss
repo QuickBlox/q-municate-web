@@ -32,7 +32,7 @@
 }
 .popup_details {
     width: 460px;
-    border: 1px solid #f2f2f2;
+    border: 1px solid #f2f4f5;
 }
 .popup_password {
     width: 460px;
@@ -72,7 +72,7 @@
 .popup_logout {
     width: 400px;
     height: 195px;
-    border: 1px solid #f2f2f2;
+    border: 1px solid #f2f4f5;
 }
 .disconnect {
     display: flex;
@@ -103,7 +103,7 @@
     height: 98px;
     padding: 10px;
     text-align: center;
-    border: 1px solid #f2f2f2;
+    border: 1px solid #f2f4f5;
 }
 #chatConnecting.popup {
     transition: none;
@@ -122,8 +122,8 @@
 .popup-header {
     margin-top: -1px;
     padding: 0 20px;
-    background: #f2f2f2;
-    border-bottom: 1px solid #f2f2f2;
+    background: #f2f4f5;
+    border-bottom: 1px solid #f2f4f5;
 }
 .popup-header h3 {
     font-size: 18px;
@@ -133,7 +133,7 @@
 .popup-form {
     height: 50px;
     padding: 10px;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f2f4f5;
 }
 .popup-content {
     height: calc(100% - 170px);

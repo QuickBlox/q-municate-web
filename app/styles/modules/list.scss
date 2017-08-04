@@ -5,7 +5,7 @@
     cursor: pointer;
 }
 .list-item:hover {
-    background: #f2f2f2;
+    background: #f2f4f5;
 }
 #requestsList .list-item:hover {
     background: #fff;
@@ -17,7 +17,7 @@
     transform: translate(-50%, 0);
     -webkit-transform: translate(-50%, 0);
     top: 100%;
-    border: 1px solid #f2f2f2;
+    border: 1px solid #f2f4f5;
     box-shadow: 0 0 10px 3px rgba(240, 240, 240, 1);
 }
 .list-actions_contacts {
@@ -33,7 +33,7 @@
 }
 .list-actions_profile {
     position: absolute;
-    top: 74px;
+    top: 50px;
     right: -60px;
     left: initial;
 }

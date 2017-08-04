@@ -48,9 +48,9 @@
 }
 /* avatar */
 .avatar {
-    width: 50px;
+    width: 40px;
     min-width: 32px;
-    height: 50px;
+    height: 40px;
     border-radius: 50%;
     background-size: cover;
     background-position: 50%;
@@ -109,7 +109,7 @@
     left: 27px;
 }
 .list-item:hover .status {
-    border-color: #f2f2f2;
+    border-color: #f2f4f5;
 }
 .list-item.is-selected .status {
     border-color: #1cba48;
@@ -148,7 +148,7 @@
     background: #fff;
 }
 .list-item:hover .status_request {
-    background: #f2f2f2;
+    background: #f2f4f5;
 }
 .list-item.is-selected .status_request {
     background: #1cba48;
@@ -214,17 +214,17 @@
 .request-controls {
     min-width: 70px;
     background: #fff;
-    border: 1px solid #f2f2f2;
+    border: 1px solid #f2f4f5;
     border-radius: 8px;
 }
 .request-button {
     padding: 0 9px;
     line-height: 32px;
     background: none;
-    border-right: 1px solid #f2f2f2;
+    border-right: 1px solid #f2f4f5;
 }
 .request-button:hover {
-    background: #f2f2f2;
+    background: #f2f4f5;
 }
 .request-button:last-child {
     border-right: 0;
@@ -327,8 +327,8 @@ span.send-request {
     margin: 0 5px 5px 0;
     padding: 0 15px;
     background: #fff;
-    border: 1px solid #f2f2f2;
-    border-radius: 20px;
+    border: 1px solid #f2f4f5;
+    border-radius: 4px;
 }
 .userMenu {
     cursor: pointer;
