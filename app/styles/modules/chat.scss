@@ -21,7 +21,7 @@
     height: 93px;
     padding: 13px 16px 13px 10px;
     background: #f8f8f8;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f2f4f5;
     visibility: hidden;
     opacity: 0;
     transition: all 0.1s;
@@ -49,11 +49,11 @@
 }
 .triangle_up {
     bottom: 2px;
-    border-bottom: 7px solid #bebebe;
+    border-bottom: 7px solid #959595;
 }
 .triangle_down {
     top: 4px;
-    border-top: 7px solid #bebebe;
+    border-top: 7px solid #959595;
 }
 
 .default_group_avatar {

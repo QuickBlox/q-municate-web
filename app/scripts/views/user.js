@@ -95,11 +95,12 @@ define([
 
 
         successFormCallback: function() {
-            var $profileAvatar = $('#profile').find('.avatar');
+            var $profileAvatar = $('#avatar-container');
 
             this.removeSpinner();
             $profileAvatar.addClass('profileUserAvatar').css('background-image', "url(" + User.contact.avatar_url + ")");
             $profileAvatar.attr('data-id', User.contact.id);
+            $profileAvatar.attr('data-name', User.contact.full_name);
             switchPage($('#mainPage'));
             this.app.views.Dialog.createDataSpinner();
         },

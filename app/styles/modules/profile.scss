@@ -53,7 +53,7 @@
 .userDetails-chatStatus,
 .userProfile-chatStatus {
     width: 100%;
-    background: #f2f2f2;
+    background: #f2f4f5;
     font-size: 16px;
     height: 30px;
     color: #999;
@@ -80,7 +80,7 @@
     width: 100%;
     font-family: "Roboto", sans-serif;
     color: #333;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f2f4f5;
     cursor: pointer;
 }
 .ic_userDetails {
@@ -126,7 +126,7 @@ input.userProfile-filename.without_M[type=text]:focus:not([readonly]) {
     width: 30px;
     height: 30px;
     background: url('../images/icon-pencil.svg') no-repeat center, #f8f8f8;
-    border: 1px solid #f2f2f2;
+    border: 1px solid #f2f4f5;
     border-radius: 4px;
     vertical-align: top;
 }
@@ -153,7 +153,7 @@ input.userProfile-phone.without_M[type=text]:focus:not([readonly]) {
     padding: 0 10px;
     margin-right: 10px;
     background: #f8f8f8;
-    border: 1px solid #f2f2f2;
+    border: 1px solid #f2f4f5;
     border-radius: 4px;
 }
 .btn_userProfile:last-child {
@@ -178,7 +178,7 @@ input.userProfile-phone.without_M[type=text]:focus:not([readonly]) {
     font-size: 16px;
     line-height: 20px;
     border: 0;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f2f4f5;
     resize: none;
     overflow: hidden;
 }
@@ -188,7 +188,7 @@ input.userProfile-phone.without_M[type=text]:focus:not([readonly]) {
 }
 .userProfile-field {
     position: relative;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f2f4f5;
 }
 .userProfile-field_email {
     width: 460px;
