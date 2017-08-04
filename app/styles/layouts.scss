@@ -191,7 +191,8 @@
 .l-container {
     height: calc(100% - 40px);
     background: #fff;
-    border: 1px solid #dadfe1;
+    border-left: 1px solid #dadfe1;
+    border-right: 1px solid #dadfe1;
     border-top: 0;
 }
 .l-header {
@@ -269,6 +270,7 @@
 .l-footer {
     z-index: 2;
     background-color: #fff;
+    border-top: 1px solid #dadfe1;
     position: relative;
     height: 40px;
     padding: 0 20px;
