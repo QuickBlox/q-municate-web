@@ -86,7 +86,6 @@ define([
 
             ids.forEach(function(id) {
                 localStorage.removeItem('QM.contact-' + id);
-                ContactListView.sendDelete(id);
             });
 
             contact_ids = _.difference(contact_ids, ids);
