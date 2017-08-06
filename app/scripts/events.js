@@ -604,7 +604,7 @@ define([
 
             /* popups
             ----------------------------------------------------- */
-            $('.header-links-item').on('click', '#logout', function(event) {
+            $body.on('click', '#logout', function(event) {
                 event.preventDefault();
                 openPopup($('#popupLogout'));
             });
