@@ -7,8 +7,8 @@
     visibility: hidden;
 }
 body.is-welcome .l-wrapper {
-    border-left: 1px solid #f2f2f2;
-    border-right: 1px solid #f2f2f2;
+    border-left: 1px solid #f2f4f5;
+    border-right: 1px solid #f2f4f5;
     background: rgba(255, 255, 255, .6);
 }
 body.is-welcome .l-app-version {
@@ -26,7 +26,7 @@ input.is-error:focus {
 }
 .list-item.is-chosen,
 .list-item.is-contextmenu {
-    background: #f2f2f2;
+    background: #f2f4f5;
     position: relative;
 }
 .list-item.is-selected {

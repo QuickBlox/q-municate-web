@@ -183,27 +183,6 @@
     <section id="mainPage" class="l-page l-chat_wrapper is-hidden">
 
         <div class="l-container">
-            <header class="l-header l-flexbox l-flexbox_flexbetween">
-                <div class="header-logo">
-                    <a id="home" class="j-home" href="#"><img src="images/logo-qmunicate.svg" alt="Q-municate"></a>
-                </div>
-                <ol class="header-links l-flexbox">
-                    <li class="header-links-item is-hidden">
-                        <a id="share" href="#">
-                            <img class="btn-icon btn-icon_fb_header icon-normal" src="images/icon-fb_header.svg" alt="fb">
-                            <img class="btn-icon btn-icon_fb_header icon-active" src="images/icon-fb_header_active.svg" alt="fb"> Share
-                        </a>
-                    </li>
-                    <li class="header-links-item">
-                        <a id="contacts" class="createGroupChat" href="#">Contacts</a>
-                    </li>
-                    <li class="header-links-item">
-                        <a id="profile" href="#">
-                            <div class="avatar"></div>
-                        </a>
-                    </li>
-                </ol>
-            </header>
 
             <div class="l-content l-flexbox">
 
@@ -212,9 +191,27 @@
             </div>
 
                 <aside class="l-sidebar">
+                    <header class="l-header l-flexbox l-flexbox_flexbetween">
+                        <div class="header-logo">
+                            <a id="home" class="j-home" href="#">
+                                <div class="l-header-logo">
+                                    <img src="images/app_icon_launch.svg" width="32" height="32" alt="Q-municate">
+                                    <p class="l-header-logo-text">q-municate</p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div id="avatar-container" class="avatar profileUserAvatar"></div>
+                    </header>
+
                     <form id="searchContacts" class="l-search localSearch formSearch j-localSearch">
-                        <input class="form-input-search without_M" type="search" placeholder="Search">
+                        <input class="form-input-search without_M" type="search">
                         <button class="clean-button j-clean-button" type="reset">✕</button>
+                        <div class="users-nav-btns">
+                            <a id="share" class="users-nav-btn users-nav-share is-hidden"></a>
+                            <a id="contacts" class="createGroupChat users-nav-btn users-nav-contacts"></a>
+                            <a id="profile" class="users-nav-btn users-nav-profile"></a>
+                        </div>
                     </form>
 
                     <div id="aside_container" class="l-list-wrap j-scrollbar_aside">
@@ -488,7 +485,7 @@
             <h3>Global Search</h3>
         </header>
         <form id="globalSearch" class="popup-form formSearch j-globalSearch" action="#">
-            <input class="form-input-search without_M" type="search" placeholder="Search" autofocus>
+            <input class="form-input-search without_M" type="search" autofocus>
             <button class="clean-button j-clean-button" type="reset">✕</button>
         </form>
         <ul class="popup-elem list list_contacts"></ul>
@@ -508,7 +505,7 @@
             <h3>Contacts</h3>
         </header>
         <form id="searchFriends" class="popup-form localSearch formSearch j-searchFriends" action="#">
-            <input class="form-input-search without_M" type="search" placeholder="Search">
+            <input class="form-input-search without_M" type="search">
             <button class="clean-button j-clean-button" type="reset">✕</button>
         </form>
         <div class="popup-content">
@@ -719,7 +716,7 @@
 
 <script id="QMPlayer" type="text/template">
     <div id="qm_audio_player_<%= id %>" class="qm_audio_player">
-        <audio id="audio_<%= id %>" class="j-audioPlayer">
+        <audio id="audio_<%= id %>" class="j-audioPlayer" preload="none">
             <source src="<%= source %>" type="audio/mpeg">
         </audio>
 
@@ -732,7 +729,7 @@
                 <div id="qm_player_setter_<%= id %>" class="qm_player_setter"></div>
                 <div id="qm_player_wrap_<%= id %>" class="qm_player_wrap">
                     <span class="qm_player_name qm_player_font"><%= name %></span>
-                    <span id="qm_player_time_<%= id %>" class="qm_player_time qm_player_font">00:00 / 00:00</span>
+                    <span id="qm_player_time_<%= id %>" class="qm_player_time qm_player_font">00:00 / <%= duration %></span>
                     <div id="qm_player_progress_<%= id %>" class="qm_player_progress"></div>
                 </div>
                 <a id="qm_player_file_<%= id %>" class="qm_player_download qm_player_font" href="<%= source %>" download="<%= name %>" target="_blank">Download</a>

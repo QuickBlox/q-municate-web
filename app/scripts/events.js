@@ -604,7 +604,7 @@ define([
 
             /* popups
             ----------------------------------------------------- */
-            $('.header-links-item').on('click', '#logout', function(event) {
+            $body.on('click', '#logout', function(event) {
                 event.preventDefault();
                 openPopup($('#popupLogout'));
             });
@@ -967,6 +967,28 @@ define([
             $workspace.on('click', '.j-toBottom', function() {
                 $('.j-scrollbar_message').mCustomScrollbar('scrollTo', 'bottom');
                 $(this).hide();
+            });
+
+            $workspace.on('click', '.j-videoPlayer', function(e) {
+                var video = e.target;
+
+                if (!video.dataset.source) return false;
+
+                video.src = video.dataset.source;
+                video.preload = 'metadata';
+                video.poster = 'images/video_loader.gif';
+
+                video.addEventListener('loadeddata', isReady);
+
+                function isReady() {
+                    delete this.dataset.source;
+                    this.removeEventListener('loadeddata', isReady);
+
+                    this.poster = '';
+                    this.controls = true;
+                    this.autoplay = true;
+                    this.load();
+                }
             });
 
             // send typing statuses with keyup event

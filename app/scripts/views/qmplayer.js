@@ -16,7 +16,8 @@ define([
         defaults: {
             id: '',
             name: '',
-            source: ''
+            source: '',
+            duration: ''
         },
 
         initialize: function() {

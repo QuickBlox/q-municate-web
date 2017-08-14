@@ -23,6 +23,7 @@ define([
         UserView,
         DialogView,
         ContactListView,
+        ContactList,
         User,
         Listeners;
 
@@ -38,6 +39,7 @@ define([
         UserView = this.app.views.User;
         DialogView = this.app.views.Dialog;
         ContactListView = this.app.views.ContactList;
+        ContactList = this.app.models.ContactList;
         User = this.app.models.User;
         Listeners = this.app.listeners;
     }
@@ -223,11 +225,22 @@ define([
                         Helpers.log(err.detail);
 
                     } else {
-                        Helpers.log('QB SDK: Users is found', res);
+                        Helpers.log('QB SDK: Users are found', res);
 
                         Session.update({
                             date: new Date()
                         });
+
+                        if (params.filter && params.filter.value) {
+                            var requestIds = params.filter.value.split(',').map(Number),
+                                responseIds = [];
+
+                            res.items.forEach(function(item) {
+                                responseIds.push(item.user.id);
+                            });
+
+                            ContactList.cleanUp(requestIds, responseIds);
+                        }
 
                         callback(res);
                     }
@@ -248,7 +261,7 @@ define([
                             items: []
                         });
                     } else {
-                        Helpers.log('QB SDK: Users is found', res);
+                        Helpers.log('QB SDK: User is found', res);
 
                         Session.update({
                             date: new Date()

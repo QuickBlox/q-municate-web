@@ -66,6 +66,7 @@ define([
                     users.items.forEach(function(qbUser) {
                         var user = qbUser.user;
                         var contact = Contact.create(user);
+
                         self.contacts[user.id] = contact;
                         localStorage.setItem('QM.contact-' + user.id, JSON.stringify(contact));
                     });
@@ -77,6 +78,18 @@ define([
             } else {
                 callback(dialog);
             }
+        },
+
+        cleanUp: function (requestIds, responseIds) {
+            var ContactListView = this.app.views.ContactList,
+                ids = _.difference(requestIds, responseIds);
+
+            ids.forEach(function(id) {
+                localStorage.removeItem('QM.contact-' + id);
+            });
+
+            contact_ids = _.difference(contact_ids, ids);
+            localStorage.setItem('QM.contacts', contact_ids.join());
         },
 
         globalSearch: function(callback) {

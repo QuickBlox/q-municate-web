@@ -288,14 +288,14 @@ button.btn.btn_search:hover {
     font-family: "Roboto", sans-serif;
     color: #4a4a4a;
     line-height: 19px;
-    background: #f2f2f2;
-    border: 1px solid #f2f2f2;
+    background: #f2f4f5;
+    border: 1px solid #f2f4f5;
     border-radius: 5px;
     text-transform: none;
 }
 .btn_request_again:focus,
 .btn_request_again:hover {
-    background: #f2f2f2;
+    background: #f2f4f5;
     color: #333;
 }
 .btn_request_again_delete {
@@ -357,4 +357,29 @@ button.btn.btn_search:hover {
     text-transform: none;
     vertical-align: initial;
     -webkit-tap-highlight-color: initial;
+}
+.users-nav-btns {
+    margin-left: 10px;
+    display: flex;
+    height: 32px;
+    min-width: 80px;
+    justify-content: space-around;
+    align-items: center;
+}
+.users-nav-btn {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+}
+.users-nav-contacts {
+    background: url(../images/ic_group.svg) 50% no-repeat;
+    background-size: contain;
+}
+.users-nav-profile {
+    background: url(../images/ic_menu.svg) 50% no-repeat;
+    background-size: contain;
+}
+.users-nav-share {
+    background: url(../images/icon-fb_header.svg) 50% no-repeat;
+    background-size: 18px 18px;
 }
