@@ -28,7 +28,6 @@ define([
 
     var self,
         tempParams,
-        isTwitterDigitsCalled,
         isFacebookCalled;
 
     function User(app) {
@@ -61,27 +60,16 @@ define([
             self.app.views.FBImport = fbImportView;
         },
 
-        logInTwitterDigits: function() {
-            if (isTwitterDigitsCalled) {
-                return false;
-            } else {
-                isTwitterDigitsCalled = true;
-            }
-
-            Digits.logIn()
-                .done(function(onLogin) {
-                    self.providerConnect({
-                        'provider': 'twitter_digits',
-                        'twitter_digits': onLogin.oauth_echo_headers
-                    });
-
-                    isTwitterDigitsCalled = false;
-                    Helpers.log('TwitterDigits onLogin', onLogin);
-                })
-                .fail(function(error) {
-                    isTwitterDigitsCalled = false;
-                    Helpers.log('Digits failed to login: ', error);
+        logInFirebasePhone: function(user) {
+            user.getIdToken().then(function(idToken) {
+                self.providerConnect({
+                    'provider': 'firebase_phone',
+                    'firebase_phone': {
+                        'access_token': idToken,
+                        'project_id': QMCONFIG.firebase.projectId
+                    }
                 });
+            });
         },
 
         logInFacebook: function () {

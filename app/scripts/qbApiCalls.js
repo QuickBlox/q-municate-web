@@ -75,8 +75,8 @@ define([
                             callback();
                         });
                     });
-                } else if (Session.authParams.provider === 'twitter_digits') {
-                    self.getTwitterDigits(function() {
+                } else if (Session.authParams.provider === 'firebase_phone') {
+                    self.getFirebasePhone(function() {
                         callback();
                     });
                 } else {
@@ -173,7 +173,7 @@ define([
             });
         },
 
-        getTwitterDigits: function(callback) {
+        getFirebasePhone: function(callback) {
             self.createSession({}, function(session) {
                 QB.login(Session.authParams, function(err, user) {
                     if (user && !err) {
@@ -185,8 +185,8 @@ define([
                         callback(session);
                     } else {
                         Helpers.log(err);
-
-                        window.location.reload();
+                        UserView.logInFirebase(true);
+                        // window.location.reload();
                     }
                 });
             });
