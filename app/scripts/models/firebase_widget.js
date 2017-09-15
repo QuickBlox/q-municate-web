@@ -165,7 +165,7 @@ define([
 
         resendCode: function(event) {
             event.preventDefault();
-            widget._openWidget()
+            widget._openWidget();
         },
 
         resendTimer: function(timeLeft) {
