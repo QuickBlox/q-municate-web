@@ -25,7 +25,7 @@ define([
 
         widget = this;
         widget.login = login;
-        widget.container = $('#firebase');
+        widget.container = $('#firebase_container');
         widget.resendTime = 30;
         widget._firebasePhoneNumberForm();
     };

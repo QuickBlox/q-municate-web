@@ -48,6 +48,7 @@ requirejs.config({
         QBNotification: '../bower_components/web-notifications/qbNotification',
         lamejs: '../bower_components/lamejs/lame.min',
         QBMediaRecorder: '../bower_components/media-recorder-js/mediaRecorder',
+        firebase: '../bower_components/firebase/firebase',
 
         // Q-municate application
         config: '../configs/main_config',
@@ -99,7 +100,8 @@ requirejs([
     'MainModule',
     'backbone',
     'QBNotification',
-    'Helpers'
+    'Helpers',
+    'firebase'
 ], function(
     $,
     QMCONFIG,
@@ -107,9 +109,12 @@ requirejs([
     QM,
     Backbone,
     QBNotification,
-    Helpers
+    Helpers,
+    firebase
 ) {
     var APP;
+    
+    console.info(firebase);
 
     // Application initialization
     $(function() {
