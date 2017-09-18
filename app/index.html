@@ -22,11 +22,13 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css">
     <!-- build:css styles/build.css -->
+    <link rel="stylesheet" href="bower_components/firebaseui/dist/firebaseui.css" />
     <link rel="stylesheet" href="bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
     <link rel="stylesheet" href="bower_components/perfect-scrollbar/css/perfect-scrollbar.min.css">
     <link rel="stylesheet" href="bower_components/progressbar.js/css/lib/control/progressbar.css">
     <link rel="stylesheet" href="bower_components/balloon-css/balloon.min.css">
     <link rel="stylesheet" href="vendor/emoji/css/minEmoji.css">
+    <link rel="stylesheet" href="vendor/intl-tel-input/css/intlTelInput.css">
     <link rel="stylesheet" href=".css/main.css">
     <!-- endbuild -->
 </head>
@@ -40,6 +42,8 @@
 
 <div class="l-wrapper">
 
+    <div id="firebase" class="text firebase__container"></div>
+
     <section id="welcomePage" class="l-page">
         <div class="l-welcome_container">
             <div class="l-welcome_main_logo">
@@ -48,7 +52,7 @@
                 <div class="l-welcome_block l-welcome_text_description">Your own Chat!</div>
             </div>
             <footer class="l-welcome-footer l-flexbox l-flexbox_column l-flexbox_flexbetween is-hidden">
-                <button class="btn l-welcome_btn l-welcome_btn_green j-twitterDigits twitterDigits">connect with phone number</button>
+                <button class="btn l-welcome_btn l-welcome_btn_green j-firebasePhone firebasePhone">connect with phone number</button>
                 <button id="loginQB" class="btn l-welcome_btn l-welcome_btn_white j-login_QB">login by email or social</button>
             </footer>
             <div class="l-spinner">
@@ -102,7 +106,7 @@
                 </button>
                 <span class="text text_digits">
                     New user?
-                    <a id="twitterDigitsLogin" class="twitterDigits j-twitterDigits" href="#">Connect with phone number!</a>
+                    <a id="firebasePhoneLogin" class="firebasePhone j-firebasePhone" href="#">Connect with phone number!</a>
                 </span>
                 <a id="forgot" class="text text_login" href="#">Forgot password?</a>
             </form>
@@ -198,6 +202,7 @@
                                     <img src="images/app_icon_launch.svg" width="32" height="32" alt="Q-municate">
                                     <p class="l-header-logo-text">q-municate</p>
                                 </div>
+
                             </a>
                         </div>
 
@@ -553,7 +558,7 @@
 
 <div id="fb-root"></div>
 
-<script src="//cdn.digits.com/1/sdk.js"></script>
+<script src="bower_components/firebase/firebase.js"></script>
 <script src="//connect.facebook.net/en_US/sdk.js"></script>
 <!-- build:js scripts/build.js -->
 <script src="bower_components/requirejs/require.js"></script>
@@ -736,6 +741,64 @@
             </div>
         </div>
     </div>
+</script>
+
+<script id="firebasePhoneNumberForm" type="text/template">
+    <form class="firebase__form j-phone_number">
+        <div class="firebase__info">
+            <h1>Enter your phone number</h1>
+        </div>
+        <div class="firebase__block">
+            <div class="firebase__inputs input-field">
+                <input id="firebase__phone_number_input"
+                       class="form-input input_tel"
+                       name="phone_number"
+                       type="tel"
+                       pattern="\+?[0-9]\d{3,15}$"
+                       title="Phone number" />
+            </div>
+            <div id="firebase__recaptcha_container" class="firebase__recaptcha"></div>
+        </div>
+        <div class="firebase__buttons">
+            <button type="reset" class="btn firebase__button firebase__button_close j-firebase__button_close">close</button>
+            <button class="btn firebase__button firebase__button_verify j-firebase__button_verify" disabled="true">verify</button>
+        </div>
+        <div class="firebase__info">
+            <p>By tapping Verify, an SMS may be sent. Message & data rates may apply.</p>
+        </div>
+    </form>
+</script>
+
+<script id="firebaseDigitsNumberForm" type="text/template">
+    <form class="firebase__form j-digits_number">
+        <div class="firebase__info">
+            <h1>Verify your phone number</h1>
+            <h2>Enter the 6-digit code we sent to <%= phoneNumber %></h2>
+        </div>
+        <div class="firebase__block">
+            <div class="firebase__inputs input-field">
+                <input id="firebase__code_input"
+                       class="form-input input_text"
+                       name="digits_number"
+                       type="text"
+                       pattern="[0-9]{6}"
+                       title="6 digits code" />
+                <label for="firebase__code_input">6-digit code</label>
+            </div>
+        </div>
+        <div class="firebase__buttons">
+            <button type="reset" class="btn firebase__button firebase__button_close j-firebase__button_close">close</button>
+            <button class="btn firebase__button firebase__button_verify j-firebase__button_verify">verify</button>
+        </div>
+        <div class="firebase__info">
+            <div class="j-firebase__timer_text">
+                <p>Resend code in 0:<span class="j-firebase__resend_time"></span></p>
+            </div>
+            <div class="j-firebase__resend">
+                <p>Didn't receive the SMS? <a href="" class="firebase__resend">Try again</a></p>
+            </div>
+        </div>
+    </form>
 </script>
 
 </body>

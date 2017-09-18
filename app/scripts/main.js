@@ -41,6 +41,8 @@ requirejs.config({
         mousewheel: '../bower_components/jquery-mousewheel/jquery.mousewheel',
         timeago: '../bower_components/jquery-timeago/jquery.timeago',
         minEmoji: '../vendor/emoji/js/minEmoji',
+        initTelInput: '../vendor/intl-tel-input/js/intlTelInput.min',
+        intlTelInputUtils: '../vendor/intl-tel-input/js/utils',
         nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
         perfectscrollbar: '../bower_components/perfect-scrollbar/js/perfect-scrollbar.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
@@ -63,6 +65,7 @@ requirejs.config({
         CursorModule: 'models/custom_cursor',
         SyncTabsModule: 'models/sync_tabs',
         VoiceMessage: 'models/voicemessage',
+        FirebaseWidget: 'models/firebase_widget',
         // views
         UserView: 'views/user',
         SettingsView: 'views/settings',
@@ -111,7 +114,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.12.5');
+        $('.j-appVersion').html('v. 1.12.6');
 
         $.ajaxSetup({cache: true});
 
@@ -122,18 +125,6 @@ requirejs([
                 version: 'v2.9'
             });
         }
-
-        // initialize twitterDigits sdk
-        if (window.hasOwnProperty('Digits')) {
-            Digits.init({consumerKey: QMCONFIG.twitterDigitsKey})
-                .done(function () {
-                    Helpers.log('Digits initialized.');
-                })
-                .fail(function (error) {
-                    Helpers.log('Digits failed to initialize: ', error);
-                });
-        }
-
 
         /* Materialize sdk
          *

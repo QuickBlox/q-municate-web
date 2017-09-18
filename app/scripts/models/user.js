@@ -10,6 +10,7 @@ define([
     'config',
     'quickblox',
     'Helpers',
+    'FirebaseWidget',
     'models/person',
     'views/profile',
     'views/change_password',
@@ -20,6 +21,7 @@ define([
     QMCONFIG,
     QB,
     Helpers,
+    FirebaseWidget,
     Person,
     ProfileView,
     ChangePassView,
@@ -28,7 +30,6 @@ define([
 
     var self,
         tempParams,
-        isTwitterDigitsCalled,
         isFacebookCalled;
 
     function User(app) {
@@ -61,27 +62,36 @@ define([
             self.app.views.FBImport = fbImportView;
         },
 
-        logInTwitterDigits: function() {
-            if (isTwitterDigitsCalled) {
-                return false;
-            } else {
-                isTwitterDigitsCalled = true;
-            }
+        reLogInFirebasePhone: function(callback) {
+            FirebaseWidget.init();
 
-            Digits.logIn()
-                .done(function(onLogin) {
-                    self.providerConnect({
-                        'provider': 'twitter_digits',
-                        'twitter_digits': onLogin.oauth_echo_headers
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    self.logInFirebasePhone(user, function(authParams) {
+                        callback(authParams);
                     });
+                } else {
+                    callback();
+                }
+            });
+        },
 
-                    isTwitterDigitsCalled = false;
-                    Helpers.log('TwitterDigits onLogin', onLogin);
-                })
-                .fail(function(error) {
-                    isTwitterDigitsCalled = false;
-                    Helpers.log('Digits failed to login: ', error);
-                });
+        logInFirebasePhone: function(user, callback) {
+            user.getIdToken().then(function(idToken) {
+                var authParams = {
+                    'provider': 'firebase_phone',
+                    'firebase_phone': {
+                        'access_token': idToken,
+                        'project_id': QMCONFIG.firebase.projectId
+                    }
+                };
+
+                self.providerConnect(authParams);
+
+                if (typeof callback === 'function') {
+                    callback(authParams);
+                }
+            });
         },
 
         logInFacebook: function () {

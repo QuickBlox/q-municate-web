@@ -477,21 +477,20 @@ define([
                 return false;
             });
 
-            $('.j-twitterDigits').on('click', function() {
+            $('.j-firebasePhone').on('click', function() {
                 if ($(this).hasClass('j-reloadPage')) {
                     window.location.reload();
                 }
 
-                if (window.Digits) {
-                    UserView.logInTwitterDigits();
+                if (window.firebase) {
+                    UserView.logInFirebase();
                 } else {
-                    $('.j-twitterDigits').addClass('not_allowed j-reloadPage')
+                    $('.j-firebasePhone').addClass('not_allowed j-reloadPage')
                         .html('Login by phone number failed.<br>Click to reload the page.');
                 }
 
                 return false;
             });
-
 
             $('#signupQB').on('click', function() {
                 Helpers.log('signup with QB');

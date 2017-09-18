@@ -18,7 +18,8 @@
     "perfect-scrollbar": "^0.6.15",
     "lamejs": "*",
     "media-recorder-js": "^1.0.1",
-    "quickblox": "^2.6.0"
+    "quickblox": "^2.6.0",
+    "firebase": "^4.3.1"
   },
   "devDependencies": {}
 }

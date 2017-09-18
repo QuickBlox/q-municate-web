@@ -14,7 +14,9 @@
     background-color: #ffffff;
 }
 input.input_email[type=email],
-input.input_pass[type=password] {
+input.input_pass[type=password],
+input.input_tel[type=tel],
+input.input_text[type=text] {
     width: 304px;
     height: 17px;
     margin: 0 0 7px;
@@ -28,7 +30,9 @@ input.input_pass[type=password] {
     box-shadow: inset 0 99px 0 0 #fff;
 }
 input.input_email[type=email]:focus:not([readonly]),
-input.input_pass[type=password]:focus:not([readonly]) {
+input.input_pass[type=password]:focus:not([readonly]),
+input.input_tel[type=tel]:focus:not([readonly]),
+input.input_text[type=text]:focus:not([readonly]) {
     border-bottom: 2px solid #28ca4a;
     box-shadow: inset 0 99px 0 0 #fff;
 }
@@ -38,7 +42,9 @@ input.input_pass[type=password]:focus:not([readonly]) {
     color: #959595;
 }
 input.input_email[type=email]:focus:not([readonly])+label,
-input.input_pass[type=password]:focus:not([readonly])+label {
+input.input_pass[type=password]:focus:not([readonly])+label,
+input.input_tel[type=tel]:focus:not([readonly])+label,
+input.input_text[type=text]:focus:not([readonly])+label {
     color: #28ca4a;
 }
 input.form-input-search.without_M[type=search],
