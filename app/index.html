@@ -750,7 +750,12 @@
         </div>
         <div class="firebase__block">
             <div class="firebase__inputs input-field">
-                <input id="firebase__phone_number_input" class="form-input input_tel" name="phone_number" type="tel" pattern="\+?[0-9]\d{3,15}$" title="6 digits code" />
+                <input id="firebase__phone_number_input"
+                       class="form-input input_tel"
+                       name="phone_number"
+                       type="tel"
+                       pattern="\+?[0-9]\d{3,15}$"
+                       title="Phone number" />
             </div>
             <div id="firebase__recaptcha_container" class="firebase__recaptcha"></div>
         </div>
@@ -768,13 +773,16 @@
     <form class="firebase__form j-digits_number">
         <div class="firebase__info">
             <h1>Verify your phone number</h1>
-            <h2>Enter the 6-digit code we sent to
-                <span class="j-firebase__your_phone"></span>
-            </h2>
+            <h2>Enter the 6-digit code we sent to <%= phoneNumber %></h2>
         </div>
         <div class="firebase__block">
             <div class="firebase__inputs input-field">
-                <input id="firebase__code_input" class="form-input input_text" name="digits_number" type="text" pattern="[0-9]{6}" title="6 digits code" />
+                <input id="firebase__code_input"
+                       class="form-input input_text"
+                       name="digits_number"
+                       type="text"
+                       pattern="[0-9]{6}"
+                       title="6 digits code" />
                 <label for="firebase__code_input">6-digit code</label>
             </div>
         </div>
@@ -786,7 +794,9 @@
             <div class="j-firebase__timer_text">
                 <p>Resend code in 0:<span class="j-firebase__resend_time"></span></p>
             </div>
-            <a href="" class="j-firebase__resend firebase__resend">Try again</a>
+            <div class="j-firebase__resend">
+                <p>Didn't receive the SMS? <a href="" class="firebase__resend">Try again</a></p>
+            </div>
         </div>
     </form>
 </script>

@@ -39,11 +39,10 @@
             font-weight: 400;
             color: #959595;
         }
-        .firebase__info>p {
+        .firebase__info p {
             color: #959595;
         }
         .firebase__info .firebase__resend {
-            display: none;
             color: #2c74c7;
         }
             .firebase__info .firebase__resend:hover {
@@ -62,15 +61,19 @@
         .firebase__inputs .intl-tel-input input.input_tel[type=tel] {
             width: 244px;
             padding: 10px 10px 10px 60px;
+            transition: boreder-color 1s;
         }
-        .firebase__inputs .intl-tel-input.allow-dropdown .selected-flag:focus {
-            outline: none;
-        }
-        .firebase__inputs .intl-tel-input .country-list {
-            top: -130px;
-            left: -55px;
-            max-height: 500px;
-        }
+            .firebase__inputs .intl-tel-input input.input_tel[type=tel].error_highlight {
+                border-color: #ff0000;
+            }
+            .firebase__inputs .intl-tel-input.allow-dropdown .selected-flag:focus {
+                outline: none;
+            }
+            .firebase__inputs .intl-tel-input .country-list {
+                top: -130px;
+                left: -55px;
+                max-height: 500px;
+            }
     .firebase__buttons {
         display: flex;
         flex-direction: row;

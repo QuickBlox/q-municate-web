@@ -5,12 +5,14 @@ define([
     'underscore',
     'backbone',
     'config',
+    'Helpers',
     'initTelInput',
     'intlTelInputUtils'
 ], function(
     _,
     Backbone,
     QMCONFIG,
+    Helpers,
     initTelInput,
     intlTelInputUtils
 ) {
@@ -18,19 +20,14 @@ define([
 
     var widget;
 
-    var FirebaseWidget = function(login, relogin) {
+    var FirebaseWidget = function(login) {
         widget = this;
         widget.init();
+        widget.login = login;
+        widget.container = $('#firebase');
+        widget.resendTime = 30;
 
-        if (relogin) {
-            widget.relogin();
-        } else {
-            widget.login = login;
-            widget.container = $('#firebase');
-            widget.resendTime = 30;
-
-            widget._openWidget();
-        }
+        widget._firebasePhoneNumberForm();
     };
 
     FirebaseWidget.prototype.init = function() {
@@ -40,20 +37,16 @@ define([
         }
     };
 
-    FirebaseWidget.prototype.relogin = function() {
-        firebase.auth().onAuthStateChanged(function(user) {
-            widget.login(user);
-        });
-    };
-
     FirebaseWidget.prototype.sendSMS = function() {
         firebase.auth()
             .signInWithPhoneNumber(widget.myPhone, widget.recaptchaVerifier)
             .then(function(confirmationResult) {
+                widget._firebaseDigitsNumberForm();
                 widget.confirmationResult = confirmationResult;
             }).catch(function(error) {
-                console.error(error);
-                widget._openWidget();
+                Helpers.log('Error:', error);
+                if (error.message) alert(error.message);
+                widget._firebasePhoneNumberForm();
             });
     };
 
@@ -63,8 +56,9 @@ define([
                 widget._closeWidget();
                 widget.login(result.user);
             }).catch(function (error) {
-                console.error(error);
-                widget._openWidget();
+                Helpers.log('Error:', error);
+                if (error.message) alert(error.message);
+                widget._firebasePhoneNumberForm();
             });
     };
 
@@ -93,11 +87,18 @@ define([
         submitAction: function(event) {
             event.preventDefault();
 
-            widget.myPhone = $('#firebase__phone_number_input').intlTelInput('getNumber');
+            var $input = $('#firebase__phone_number_input');
+
+            widget.myPhone = $input.intlTelInput('getNumber');
 
             if (widget.myPhone) {
                 widget.sendSMS();
-                new widget.firebaseDigitsNumberForm();
+            } else {
+                $input.addClass('error_highlight');
+
+                setTimeout(function() {
+                    $input.removeClass('error_highlight');
+                }, 1000)
             }
         },
 
@@ -118,9 +119,6 @@ define([
                 'size': 'normal',
                 'callback': function(response) {
                     $('.j-firebase__button_verify').attr('disabled', false);
-                },
-                'expired-callback': function() {
-                    widget._openWidget();
                 }
             });
 
@@ -141,15 +139,13 @@ define([
 
 
         initialize: function() {
-            widget.phoneNumberForm.hide();
             this.render();
         },
 
         render: function() {
-            this.$el.html(this.template());
+            this.$el.html(this.template({phoneNumber: widget.myPhone}));
             widget.digitsNumberForm = this.$el;
             widget.container.append(this.$el);
-            $('.j-firebase__your_phone').html(widget.myPhone);
             this.resendTimer(widget.resendTime);
         },
 
@@ -165,7 +161,7 @@ define([
 
         resendCode: function(event) {
             event.preventDefault();
-            widget._openWidget();
+            widget._firebasePhoneNumberForm();
         },
 
         resendTimer: function(timeLeft) {
@@ -198,10 +194,15 @@ define([
         }
     });
 
-    FirebaseWidget.prototype._openWidget = function() {
+    FirebaseWidget.prototype._firebasePhoneNumberForm = function() {
         widget._cleanup();
         widget._show();
         new widget.firebasePhoneNumberForm();
+    };
+
+    FirebaseWidget.prototype._firebaseDigitsNumberForm = function() {
+        widget.phoneNumberForm.hide();
+        new widget.firebaseDigitsNumberForm();
     };
 
     FirebaseWidget.prototype._closeWidget = function() {

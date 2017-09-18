@@ -60,15 +60,35 @@ define([
             self.app.views.FBImport = fbImportView;
         },
 
-        logInFirebasePhone: function(user) {
+        reLogInFirebasePhone: function(callback) {
+            firebase.initializeApp(QMCONFIG.firebase);
+
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    self.logInFirebasePhone(user, function(authParams) {
+                        callback(authParams);
+                    });
+                } else {
+                    callback();
+                }
+            });
+        },
+
+        logInFirebasePhone: function(user, callback) {
             user.getIdToken().then(function(idToken) {
-                self.providerConnect({
+                var authParams = {
                     'provider': 'firebase_phone',
                     'firebase_phone': {
                         'access_token': idToken,
                         'project_id': QMCONFIG.firebase.projectId
                     }
-                });
+                };
+
+                self.providerConnect(authParams);
+
+                if (typeof callback === 'function') {
+                    callback(authParams);
+                }
             });
         },
 
