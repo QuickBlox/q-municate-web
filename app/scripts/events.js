@@ -1196,8 +1196,8 @@ define([
             $('video.attach-video')[0].pause();
         }
 
-        if ($('images.attach-photo')[0]) {
-            $('images.attach-photo').attr('src', 'images/photo_preloader.gif');
+        if ($('img.attach-photo')[0]) {
+            $('img.attach-photo').attr('src', 'images/photo_preloader.gif');
         }
     }
 
