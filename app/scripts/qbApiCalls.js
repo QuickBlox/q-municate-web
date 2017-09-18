@@ -176,7 +176,6 @@ define([
         getFirebasePhone: function(callback) {
             self.createSession({}, function(session) {
                 QB.login(Session.authParams, function(err, user) {
-                    console.error(Session.encrypt(Session.authParams));
                     if (user && !err) {
                         Session.update({
                             date: new Date(),

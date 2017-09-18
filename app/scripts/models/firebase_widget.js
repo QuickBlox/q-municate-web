@@ -21,16 +21,16 @@ define([
     var widget;
 
     var FirebaseWidget = function(login) {
+        FirebaseWidget.init();
+
         widget = this;
-        widget.init();
         widget.login = login;
         widget.container = $('#firebase');
         widget.resendTime = 30;
-
         widget._firebasePhoneNumberForm();
     };
 
-    FirebaseWidget.prototype.init = function() {
+    FirebaseWidget.init = function() {
         if (!FirebaseWidget.started) {
             FirebaseWidget.started = true;
             firebase.initializeApp(QMCONFIG.firebase);
@@ -98,7 +98,7 @@ define([
 
                 setTimeout(function() {
                     $input.removeClass('error_highlight');
-                }, 1000)
+                }, 1000);
             }
         },
 

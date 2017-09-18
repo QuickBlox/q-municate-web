@@ -10,6 +10,7 @@ define([
     'config',
     'quickblox',
     'Helpers',
+    'FirebaseWidget',
     'models/person',
     'views/profile',
     'views/change_password',
@@ -20,6 +21,7 @@ define([
     QMCONFIG,
     QB,
     Helpers,
+    FirebaseWidget,
     Person,
     ProfileView,
     ChangePassView,
@@ -61,7 +63,7 @@ define([
         },
 
         reLogInFirebasePhone: function(callback) {
-            firebase.initializeApp(QMCONFIG.firebase);
+            FirebaseWidget.init();
 
             firebase.auth().onAuthStateChanged(function(user) {
                 if (user) {
