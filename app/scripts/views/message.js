@@ -225,7 +225,7 @@ define([
                         } else {
                             html += '<h4 class="message-author">Your request has been rejected</h4>';
                             html += '<button class="btn btn_request_again j-requestAgain">';
-                            html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again';
+                            html += '<images class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again';
                             html += '</button>';
                         }
 
@@ -245,7 +245,7 @@ define([
                         } else {
                             html += '<h4 class="message-author">You have been deleted from the contact list</h4>';
                             html += '<button class="btn btn_request_again btn_request_again_delete j-requestAgain">';
-                            html += '<img class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button>';
+                            html += '<images class="btn-icon btn-icon_request" src="images/icon-request.svg" alt="request">Send Request Again</button>';
                         }
 
                         html += '</div><div class="message-info"><time class="message-time">' + Helpers.getTime(message.date_sent) + '</time>';
@@ -344,7 +344,7 @@ define([
                         if (attachType && attachType.indexOf('image') > -1) {
                             html += '<div class="message-body">';
                             html += '<div id="image_' + message.id + '" class="preview preview-photo" data-url="' + attachUrl + '" data-name="' + message.attachment.name + '">';
-                            html += '<img src="' + attachUrl + '" alt="attach"></div></div></div>';
+                            html += '<images src="' + attachUrl + '" alt="attach"></div></div></div>';
                         } else if (attachType && attachType.indexOf('audio') > -1) {
                             html += '<div class="message-body"><div id="audio_player_' + message.id + '" class="audio_player"></div></div></div>';
                         } else if (attachType && attachType.indexOf('video') > -1) {
@@ -355,7 +355,7 @@ define([
                         } else if (attachType && attachType.indexOf('location') > -1) {
                             html += '<div class="message-body">';
                             html += '<a class="open_googlemaps" href="' + mapAttachLink + '" target="_blank">';
-                            html += '<img id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map"></a></div></div>';
+                            html += '<images id="attach_' + message.id + '" src="' + mapAttachImage + '" alt="attach" class="attach_map"></a></div></div>';
                         } else if (attachType && attachType.indexOf('file') > -1) {
                             html += '<div class="message-body">';
                             html += '<a id="attach_' + message.id + '" class="attach-file" href="' + attachUrl + '" download="' + message.attachment.name + '">' + message.attachment.name + '</a>';
@@ -451,7 +451,7 @@ define([
                 id = form.parents('.l-chat').data('id'),
                 dialog_id = form.parents('.l-chat').data('dialog'),
                 $textarea = form.find('.textarea'),
-                $smiles = form.find('.textarea > img'),
+                $smiles = form.find('.textarea > images'),
                 val = $textarea.html().trim(),
                 time = Math.floor(Date.now() / 1000),
                 type = form.parents('.l-chat').is('.is-group') ? 'groupchat' : 'chat',
@@ -1139,7 +1139,7 @@ define([
                 if (urlCache[url] !== null && Helpers.isImageUrl(url)) {
                     $elem = $this.clone()
                                  .addClass('image_preview')
-                                 .html('<img src="'+ url +'" alt="picture"/>');
+                                 .html('<images src="'+ url +'" alt="picture"/>');
                 } else if (urlCache[url] !== null && Helpers.isValidUrl(url)) {
                     $elem = $this.clone().addClass('og_block');
 

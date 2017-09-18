@@ -115,7 +115,7 @@ define([
                 'zoom': isCoords ? 15 : 1
             });
 
-            $('#map img').addClass('gooImg');
+            $('#map images').addClass('gooImg');
 
             if (!isCoords) {
                 this.getGeoCoordinates(false, function(res, err) {

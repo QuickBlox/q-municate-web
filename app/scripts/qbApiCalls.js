@@ -163,7 +163,9 @@ define([
                             authParams: Session.encrypt(params)
                         });
 
-                        callback(res);
+                        if (typeof callback === 'function') {
+                            callback(res);
+                        }
                     } else {
                         Helpers.log(err);
 
