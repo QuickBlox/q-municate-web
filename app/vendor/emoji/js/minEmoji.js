@@ -10,7 +10,7 @@
 	regx_arr = null;
 	var minEmoji = function(s, wrap){
 		return s.replace(regx, function (a, b) {
-			var smileIMG  = '<images src="images/blank.gif" ' +
+			var smileIMG  = '<img src="images/blank.gif" ' +
 							'alt="'+b+'" ' +
 							'data-unicode="'+b+'" ' +
 							'class="em emj'+emoji[b]+'">';
