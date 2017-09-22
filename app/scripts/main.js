@@ -100,7 +100,6 @@ requirejs([
     'MainModule',
     'backbone',
     'QBNotification',
-    'Helpers',
     'firebase'
 ], function(
     $,
@@ -109,12 +108,9 @@ requirejs([
     QM,
     Backbone,
     QBNotification,
-    Helpers,
     firebase
 ) {
     var APP;
-    
-    console.info(firebase);
 
     // Application initialization
     $(function() {
@@ -130,15 +126,6 @@ requirejs([
                 version: 'v2.9'
             });
         }
-
-        /* Materialize sdk
-         *
-         * Not included in requirejs dependencies as required hammer.js,
-         * which often creates problems when loading
-         */
-        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js', function() {
-            Helpers.log('Materialize connected');
-        });
 
         // emoji smiles run
         $('.smiles-group').each(function() {

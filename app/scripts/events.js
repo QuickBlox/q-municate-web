@@ -462,6 +462,8 @@ define([
 
             /* welcome page
             ----------------------------------------------------- */
+            Events.intiAuthorizationInputs();
+
             $('.j-btn_login_fb').on('click', function() {
                 if ($(this).hasClass('j-reloadPage')) {
                     window.location.reload();
@@ -1097,6 +1099,30 @@ define([
             // videocalls
             VideoChatView.init();
         }
+    };
+
+    Events.intiAuthorizationInputs = function(el) {
+        $input = el ? el : $('.form-input');
+
+        $input.on('focus', function() {
+            var $this = $(this);
+
+            if (!$this.val()) {
+                $this.next('label').addClass('active');
+            }
+
+            return false;
+        });
+
+        $input.on('blur', function() {
+            var $this = $(this);
+
+            if (!$this.val()) {
+                $this.next('label').removeClass('active');
+            }
+
+            return false;
+        });
     };
 
     /* Private
