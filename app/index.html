@@ -582,16 +582,14 @@
             </div>
         </div>
         <div class="userProfile-chatStatus">Status</div>
-        <textarea class="userProfile-status-field userProfile-edit" maxlength="80">
-                <%= status %>
-            </textarea>
+        <textarea class="userProfile-status-field userProfile-edit" maxlength="80"><%= status %></textarea>
         <div class="userProfile-field userProfile-field_email">
             <span class="userDetails-label">Email:</span>
             <span class="userProfile-email"><%= email %></span>
         </div>
-        <div class="userProfile-field userProfile-field_phone userProfile-edit">
+        <div class="userProfile-field userProfile-field_phone">
             <span class="userDetails-label">Phone:</span>
-            <input class="userProfile-phone editable-profile without_M" type="text" value="<%= phone %>" maxlength="20">
+            <span class="userProfile-phone"><%= phone %></span>
         </div>
         <div class="userProfile-field userProfile-field-facebook">
             <% if (facebook_id) { %>

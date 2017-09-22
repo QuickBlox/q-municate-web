@@ -66,14 +66,6 @@ define([
                 }
             }
 
-            // Field: phone
-            // only valid phone number; 0-20 characters
-            if (attrs.phone) {
-                if (!/^[-0-9()+*#]+$/.test(attrs.phone)) {
-                    return QMCONFIG.errors.invalidPhone;
-                }
-            }
-
             // Field: avatar
             // only image file; not more than 10 MB; filename not more than 100 characters
             if (attrs.avatar) {
