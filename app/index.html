@@ -784,14 +784,14 @@
         </div>
         <div class="firebase__buttons">
             <button type="reset" class="btn firebase__button firebase__button_close j-firebase__button_close">close</button>
-            <button class="btn firebase__button firebase__button_verify j-firebase__button_verify">verify</button>
+            <button class="btn firebase__button firebase__button_verify j-firebase__button_verify" disabled="true">verify</button>
         </div>
         <div class="firebase__info">
             <div class="j-firebase__timer_text">
                 <p>Resend code in 0:<span class="j-firebase__resend_time"></span></p>
             </div>
-            <div class="j-firebase__resend">
-                <p>Didn't receive the SMS? <a href="" class="firebase__resend">Try again</a></p>
+            <div class="j-firebase__resend firebase__resend">
+                <p>Didn't receive the SMS? <button id="resend_btn" class="firebase__resend_btn">Resend code</button></p>
             </div>
         </div>
     </form>

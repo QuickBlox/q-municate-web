@@ -28,10 +28,26 @@ define([
         widget = this;
         widget.login = login;
         widget.container = $('#firebase_container');
-        widget.resendTime = 30;
+        widget.resendTime = 10;
         widget.countryCode = '';
         widget.phoneNumber = '';
         widget.fullPhoneNumber = '';
+        widget.states = {};
+
+        Object.defineProperty(widget, 'filled', {
+            set: function(prop) {
+                widget.states.filled = prop;
+                widget._setDisableState();
+            }
+        });
+
+        Object.defineProperty(widget, 'verified', {
+            set: function(prop) {
+                widget.states.verified = prop;
+                widget._setDisableState();
+            }
+        });
+
         widget._firebasePhoneNumberForm();
     };
 
@@ -72,7 +88,8 @@ define([
 
         events: {
             'submit': 'submitAction',
-            'reset': 'cancelAction'
+            'reset': 'cancelAction',
+            'input': 'validateAction'
         },
 
         initialize: function() {
@@ -85,6 +102,7 @@ define([
             this.$el.html(this.template());
             widget.phoneNumberForm = this.$el;
             widget.container.append(this.$el);
+            widget.currentSubmitButton = this.$el.find('.j-firebase__button_verify');
         },
 
         submitAction: function(event) {
@@ -96,20 +114,17 @@ define([
             widget.phoneNumber = $input.val();
             widget.fullPhoneNumber = $input.intlTelInput('getNumber');
 
-            if (widget.fullPhoneNumber) {
-                widget.sendSMS();
-            } else {
-                $input.addClass('error_highlight');
-
-                setTimeout(function() {
-                    $input.removeClass('error_highlight');
-                }, 1000);
-            }
+            if (widget.fullPhoneNumber) widget.sendSMS();
         },
 
         cancelAction: function(event) {
             event.preventDefault();
             widget._closeWidget();
+        },
+
+        validateAction: function(event) {
+            event.preventDefault();
+            widget.filled = !!event.target.value;
         },
 
         addTelInput: function() {
@@ -134,13 +149,7 @@ define([
         },
 
         addRecaptcha: function() {
-            widget.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('firebase__recaptcha_container', {
-                'size': 'normal',
-                'callback': function(response) {
-                    $('.j-firebase__button_verify').attr('disabled', false);
-                }
-            });
-
+            widget._recaptchaBuilder('firebase__recaptcha_container', 'normal');
             widget.recaptchaVerifier.render();
         }
     });
@@ -153,9 +162,9 @@ define([
         events: {
             'submit': 'submitAction',
             'reset': 'cancelAction',
+            'input': 'validateAction',
             'click .j-firebase__resend': 'resendCode',
         },
-
 
         initialize: function() {
             this.render();
@@ -165,6 +174,7 @@ define([
             this.$el.html(this.template({fullPhoneNumber: widget.fullPhoneNumber}));
             widget.digitsNumberForm = this.$el;
             widget.container.append(this.$el);
+            widget.currentSubmitButton = this.$el.find('.j-firebase__button_verify');
             Events.intiAuthorizationInputs(this.$el.find('#firebase__code_input'));
             this.resendTimer(widget.resendTime);
         },
@@ -179,9 +189,15 @@ define([
             widget._closeWidget();
         },
 
+        validateAction: function(event) {
+            event.preventDefault();
+            widget.filled = !!event.target.value;
+        },
+
         resendCode: function(event) {
             event.preventDefault();
-            widget._firebasePhoneNumberForm();
+            $('.j-firebase__resend').hide();
+            widget.sendSMS();
         },
 
         resendTimer: function(timeLeft) {
@@ -189,15 +205,14 @@ define([
                 $text = $('.j-firebase__timer_text'),
                 $timer = $('.j-firebase__resend_time'),
                 $button = $('.j-firebase__resend');
-
             if (widget.resendTime === timeLeft) {
                 $button.hide();
                 $text.show();
             }
-
             if (timeLeft < 0) {
                 $text.hide();
                 $button.show();
+                widget._recaptchaBuilder('resend_btn', 'invisible');
             } else if (timeLeft < 10) {
                 $timer.html('0' + timeLeft);
                 next();
@@ -254,6 +269,41 @@ define([
         widget.recaptchaWidgetId = null;
         widget.confirmationResult = null;
     };
+
+    FirebaseWidget.prototype._recaptchaBuilder = function(target, size) {
+        widget.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(target, {
+            'size': size,
+            'callback': function(response) {
+                widget.verified = true;
+            },
+            'expired-callback': function() {
+                widget.verified = false;
+            }
+        });
+    };
+
+    FirebaseWidget.prototype._setDisableState = function() {
+        var verified = widget.states.verified,
+            filled = widget.states.filled,
+            button = widget.currentSubmitButton;
+
+        if (verified && filled) {
+            disableButton(false);
+        } else {
+            disableButton(true);
+        }
+
+        function disableButton(newState) {
+            var currentState = button.attr('disabled');
+
+            if (currentState === newState) {
+                return true;
+            } else {
+                button.attr('disabled', newState);
+            }
+        }
+    };
+
 
     return FirebaseWidget;
 });
