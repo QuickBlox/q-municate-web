@@ -352,9 +352,7 @@ define([
                 }, function(err) {
                     if (err) {
                         Helpers.log(err);
-
                         UserView.logout();
-                        window.location.reload();
                         fail(err.detail);
                     } else {
                         Listeners.stateActive = true;
@@ -395,9 +393,6 @@ define([
                 Entities.Collections.dialogs = undefined;
                 // init the new dialog's collection
                 Entities.Collections.dialogs = new Entities.Collections.Dialogs();
-
-                // TODO: need to delete after bug fix (https://quickblox.atlassian.net/browse/QBWEBSDK-508)
-                window.location.reload();
             });
         },
 

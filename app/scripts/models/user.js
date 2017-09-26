@@ -408,16 +408,19 @@ define([
             });
         },
 
-        logout: function(callback) {
+        logout: function() {
             var self = this,
                 QBApiCalls = self.app.service;
 
             QBApiCalls.disconnectChat();
+
             QBApiCalls.logoutUser(function() {
                 localStorage.removeItem('QM.user');
                 self.contact = null;
                 self._valid = false;
-                callback();
+
+                localStorage.clear();
+                window.location.reload();
             });
         }
 
