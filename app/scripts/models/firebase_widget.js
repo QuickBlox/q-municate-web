@@ -28,7 +28,7 @@ define([
         widget = this;
         widget.login = login;
         widget.container = $('#firebase_container');
-        widget.resendTime = 10;
+        widget.resendTime = 30;
         widget.countryCode = '';
         widget.phoneNumber = '';
         widget.fullPhoneNumber = '';
