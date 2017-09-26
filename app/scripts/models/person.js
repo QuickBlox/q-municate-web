@@ -29,7 +29,6 @@ define([
             password: '',
             phone: '',
             facebook_id: null,
-            phone: null,
             is_provider: null,
             avatar: null,
             avatar_url: QMCONFIG.defAvatar.url,
