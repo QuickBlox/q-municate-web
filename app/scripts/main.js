@@ -127,27 +127,6 @@ requirejs([
             });
         }
 
-        // initialize twitterDigits sdk
-        if (window.hasOwnProperty('Digits')) {
-            Digits.init({consumerKey: QMCONFIG.twitterDigitsKey})
-                .done(function () {
-                    Helpers.log('Digits initialized.');
-                })
-                .fail(function (error) {
-                    Helpers.log('Digits failed to initialize: ', error);
-                });
-        }
-
-
-        /* Materialize sdk
-         *
-         * Not included in requirejs dependencies as required hammer.js,
-         * which often creates problems when loading
-         */
-        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js', function() {
-            Helpers.log('Materialize connected');
-        });
-
         // emoji smiles run
         $('.smiles-group').each(function() {
             var obj = $(this);
