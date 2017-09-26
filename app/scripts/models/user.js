@@ -126,11 +126,11 @@ define([
         },
 
         providerConnect: function(params) {
-            var QBApiCalls = this.app.service,
-                UserView = this.app.views.User,
-                DialogView = this.app.views.Dialog,
-                Contact = this.app.models.Contact,
-                self = this;
+            var self = this,
+                QBApiCalls = self.app.service,
+                UserView = self.app.views.User,
+                DialogView = self.app.views.Dialog,
+                Contact = self.app.models.Contact;
 
             UserView.loginQB();
             UserView.createSpinner();
@@ -164,6 +164,10 @@ define([
 
                     if (!self._is_import && isFB) {
                         self.import(user);
+                    }
+
+                    if (self.contact.full_name === 'Unknown user') {
+                        self.app.views.Profile.render().openPopup();
                     }
                 });
             }

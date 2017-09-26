@@ -44,6 +44,7 @@ define([
             template = self.$el.html(self.template(renderObj));
             $('.popups').append(template);
             self.delegateEvents(self.events);
+
             return self;
         },
 
