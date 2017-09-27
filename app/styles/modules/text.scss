@@ -52,17 +52,17 @@
 .text_signup a {
     color: #999;
 }
-.text_digits a.twitterDigits {
+.text_digits a.firebasePhone {
     color: #2c74c7;
 }
-a.twitterDigits:focus,
-a.twitterDigits:hover {
+a.firebasePhone:focus,
+a.firebasePhone:hover {
     text-decoration: underline;
     opacity: 1;
 }
-.twitterDigits.not_allowed,
-.twitterDigits.not_allowed:focus,
-.twitterDigits.not_allowed:hover,
+.firebasePhone.not_allowed,
+.firebasePhone.not_allowed:focus,
+.firebasePhone.not_allowed:hover,
 .l-btn_login_fb.not_allowed,
 .l-btn_login_fb.not_allowed:focus,
 .l-btn_login_fb.not_allowed:hover {

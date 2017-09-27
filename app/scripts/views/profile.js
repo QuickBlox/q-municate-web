@@ -28,7 +28,6 @@ define([
         },
 
         events: {
-            'click .userProfile-field_phone': 'editPhone',
             'click': 'editProfile',
             'change .btn_userProfile_file': 'chooseAvatar'
         },
@@ -45,6 +44,7 @@ define([
             template = self.$el.html(self.template(renderObj));
             $('.popups').append(template);
             self.delegateEvents(self.events);
+
             return self;
         },
 
@@ -54,10 +54,6 @@ define([
 
         closePopup: function() {
             $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
-        },
-
-        editPhone: function() {
-            this.$el.find('.userProfile-phone').focus();
         },
 
         editProfile: function(event) {
@@ -75,7 +71,6 @@ define([
 
                 params = {
                     full_name: this.$el.find('.userProfile-filename').val().trim(),
-                    phone: this.$el.find('.userProfile-phone').val().trim(),
                     status: this.$el.find('.userProfile-status-field').val().trim(),
                     avatar: this.$el.find('.btn_userProfile_file')[0].files[0] || null
                 };

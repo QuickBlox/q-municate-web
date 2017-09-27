@@ -41,11 +41,14 @@ requirejs.config({
         mousewheel: '../bower_components/jquery-mousewheel/jquery.mousewheel',
         timeago: '../bower_components/jquery-timeago/jquery.timeago',
         minEmoji: '../vendor/emoji/js/minEmoji',
+        initTelInput: '../vendor/intl-tel-input/js/intlTelInput.min',
+        intlTelInputUtils: '../vendor/intl-tel-input/js/utils',
         nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
         perfectscrollbar: '../bower_components/perfect-scrollbar/js/perfect-scrollbar.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
         lamejs: '../bower_components/lamejs/lame.min',
         QBMediaRecorder: '../bower_components/media-recorder-js/mediaRecorder',
+        firebase: '../bower_components/firebase/firebase',
 
         // Q-municate application
         config: '../configs/main_config',
@@ -63,6 +66,7 @@ requirejs.config({
         CursorModule: 'models/custom_cursor',
         SyncTabsModule: 'models/sync_tabs',
         VoiceMessage: 'models/voicemessage',
+        FirebaseWidget: 'models/firebase_widget',
         // views
         UserView: 'views/user',
         SettingsView: 'views/settings',
@@ -96,7 +100,7 @@ requirejs([
     'MainModule',
     'backbone',
     'QBNotification',
-    'Helpers'
+    'firebase'
 ], function(
     $,
     QMCONFIG,
@@ -104,14 +108,14 @@ requirejs([
     QM,
     Backbone,
     QBNotification,
-    Helpers
+    firebase
 ) {
     var APP;
 
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.12.5');
+        $('.j-appVersion').html('v. 1.13.0');
 
         $.ajaxSetup({cache: true});
 
@@ -122,27 +126,6 @@ requirejs([
                 version: 'v2.9'
             });
         }
-
-        // initialize twitterDigits sdk
-        if (window.hasOwnProperty('Digits')) {
-            Digits.init({consumerKey: QMCONFIG.twitterDigitsKey})
-                .done(function () {
-                    Helpers.log('Digits initialized.');
-                })
-                .fail(function (error) {
-                    Helpers.log('Digits failed to initialize: ', error);
-                });
-        }
-
-
-        /* Materialize sdk
-         *
-         * Not included in requirejs dependencies as required hammer.js,
-         * which often creates problems when loading
-         */
-        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js', function() {
-            Helpers.log('Materialize connected');
-        });
 
         // emoji smiles run
         $('.smiles-group').each(function() {

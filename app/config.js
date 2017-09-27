@@ -14,7 +14,14 @@ define(function() {
             scope: 'email,user_friends'
         },
 
-        twitterDigitsKey: 'KCcPaHrIgJ44gs3kwJuIbLaad',
+        firebase: {
+            apiKey: 'AIzaSyBngIcgrzjJVOLXaDzFf7HVfieh7TZTLr8',
+            authDomain: 'teak-perigee-572.firebaseapp.com',
+            databaseURL: 'https://teak-perigee-572.firebaseio.com',
+            projectId: 'teak-perigee-572',
+            storageBucket: 'teak-perigee-572.appspot.com',
+            messagingSenderId: '265299067289'
+        },
 
         debug: true,
 

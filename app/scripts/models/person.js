@@ -29,7 +29,6 @@ define([
             password: '',
             phone: '',
             facebook_id: null,
-            twitter_digits_id: null,
             is_provider: null,
             avatar: null,
             avatar_url: QMCONFIG.defAvatar.url,
@@ -63,14 +62,6 @@ define([
                 }
                 if (attrs.password.length < 8) {
                     return QMCONFIG.errors.shortPass;
-                }
-            }
-
-            // Field: phone
-            // only valid phone number; 0-20 characters
-            if (attrs.phone) {
-                if (!/^[-0-9()+*#]+$/.test(attrs.phone)) {
-                    return QMCONFIG.errors.invalidPhone;
                 }
             }
 

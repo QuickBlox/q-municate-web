@@ -48,8 +48,14 @@ define([
             switchPage($('#forgotPage'));
         },
 
-        logInTwitterDigits: function() {
-            User.logInTwitterDigits();
+        logInFirebase: function(callback) {
+            if (typeof callback === 'function') {
+                User.reLogInFirebasePhone(function(authParams) {
+                    callback(authParams);
+                });
+            } else {
+                new this.app.FirebaseWidget(User.logInFirebasePhone);
+            }
         },
 
         logInFacebook: function() {

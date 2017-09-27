@@ -10,6 +10,7 @@ define([
     'config',
     'quickblox',
     'Helpers',
+    'FirebaseWidget',
     'models/person',
     'views/profile',
     'views/change_password',
@@ -20,6 +21,7 @@ define([
     QMCONFIG,
     QB,
     Helpers,
+    FirebaseWidget,
     Person,
     ProfileView,
     ChangePassView,
@@ -28,7 +30,6 @@ define([
 
     var self,
         tempParams,
-        isTwitterDigitsCalled,
         isFacebookCalled;
 
     function User(app) {
@@ -61,27 +62,36 @@ define([
             self.app.views.FBImport = fbImportView;
         },
 
-        logInTwitterDigits: function() {
-            if (isTwitterDigitsCalled) {
-                return false;
-            } else {
-                isTwitterDigitsCalled = true;
-            }
+        reLogInFirebasePhone: function(callback) {
+            FirebaseWidget.init();
 
-            Digits.logIn()
-                .done(function(onLogin) {
-                    self.providerConnect({
-                        'provider': 'twitter_digits',
-                        'twitter_digits': onLogin.oauth_echo_headers
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    self.logInFirebasePhone(user, function(authParams) {
+                        callback(authParams);
                     });
+                } else {
+                    callback();
+                }
+            });
+        },
 
-                    isTwitterDigitsCalled = false;
-                    Helpers.log('TwitterDigits onLogin', onLogin);
-                })
-                .fail(function(error) {
-                    isTwitterDigitsCalled = false;
-                    Helpers.log('Digits failed to login: ', error);
-                });
+        logInFirebasePhone: function(user, callback) {
+            user.getIdToken().then(function(idToken) {
+                var authParams = {
+                    'provider': 'firebase_phone',
+                    'firebase_phone': {
+                        'access_token': idToken,
+                        'project_id': QMCONFIG.firebase.projectId
+                    }
+                };
+
+                self.providerConnect(authParams);
+
+                if (typeof callback === 'function') {
+                    callback(authParams);
+                }
+            });
         },
 
         logInFacebook: function () {
@@ -116,11 +126,11 @@ define([
         },
 
         providerConnect: function(params) {
-            var QBApiCalls = this.app.service,
-                UserView = this.app.views.User,
-                DialogView = this.app.views.Dialog,
-                Contact = this.app.models.Contact,
-                self = this;
+            var self = this,
+                QBApiCalls = self.app.service,
+                UserView = self.app.views.User,
+                DialogView = self.app.views.Dialog,
+                Contact = self.app.models.Contact;
 
             UserView.loginQB();
             UserView.createSpinner();
@@ -154,6 +164,10 @@ define([
 
                     if (!self._is_import && isFB) {
                         self.import(user);
+                    }
+
+                    if (self.contact.full_name === 'Unknown user') {
+                        self.app.views.Profile.render().openPopup();
                     }
                 });
             }
@@ -394,16 +408,19 @@ define([
             });
         },
 
-        logout: function(callback) {
+        logout: function() {
             var self = this,
                 QBApiCalls = self.app.service;
 
             QBApiCalls.disconnectChat();
+
             QBApiCalls.logoutUser(function() {
                 localStorage.removeItem('QM.user');
                 self.contact = null;
                 self._valid = false;
-                callback();
+
+                localStorage.clear();
+                window.location.reload();
             });
         }
 

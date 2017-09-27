@@ -75,8 +75,8 @@ define([
                             callback();
                         });
                     });
-                } else if (Session.authParams.provider === 'twitter_digits') {
-                    self.getTwitterDigits(function() {
+                } else if (Session.authParams.provider === 'firebase_phone') {
+                    self.getFirebasePhone(function() {
                         callback();
                     });
                 } else {
@@ -163,7 +163,9 @@ define([
                             authParams: Session.encrypt(params)
                         });
 
-                        callback(res);
+                        if (typeof callback === 'function') {
+                            callback(res);
+                        }
                     } else {
                         Helpers.log(err);
 
@@ -173,7 +175,7 @@ define([
             });
         },
 
-        getTwitterDigits: function(callback) {
+        getFirebasePhone: function(callback) {
             self.createSession({}, function(session) {
                 QB.login(Session.authParams, function(err, user) {
                     if (user && !err) {
@@ -184,9 +186,9 @@ define([
 
                         callback(session);
                     } else {
-                        Helpers.log(err);
-
-                        window.location.reload();
+                        UserView.logInFirebase(function(authParams) {
+                            self.loginUser(authParams);
+                        });
                     }
                 });
             });
@@ -350,9 +352,7 @@ define([
                 }, function(err) {
                     if (err) {
                         Helpers.log(err);
-
                         UserView.logout();
-                        window.location.reload();
                         fail(err.detail);
                     } else {
                         Listeners.stateActive = true;
@@ -369,10 +369,6 @@ define([
                         });
 
                         setRecoverySessionInterval();
-
-                        if (User.contact.full_name === 'Unknown user') {
-                            self.app.views.Profile.render().openPopup();
-                        }
                     }
                 });
             });
@@ -397,9 +393,6 @@ define([
                 Entities.Collections.dialogs = undefined;
                 // init the new dialog's collection
                 Entities.Collections.dialogs = new Entities.Collections.Dialogs();
-
-                // TODO: need to delete after bug fix (https://quickblox.atlassian.net/browse/QBWEBSDK-508)
-                window.location.reload();
             });
         },
 

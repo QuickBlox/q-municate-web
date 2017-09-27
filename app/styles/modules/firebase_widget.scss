@@ -1,0 +1,114 @@
+#firebase_container {
+    width: 410px;
+    height: 480px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    position: absolute;
+    top: calc(50% - 40px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    z-index: 10;
+    visibility: hidden;
+}
+    .firebase__form {
+        width: 310px;
+        height: 450px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .firebase__info {
+        width: 100%;
+        height: 20%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        margin: 0;
+    }
+        .firebase__info>h1 {
+            font-size: 18px;
+            color: #6e6e6e;
+        }
+        .firebase__info>h2 {
+            font-size: 14px;
+            font-weight: 400;
+            color: #959595;
+        }
+        .firebase__info p {
+            color: #959595;
+        }
+        .firebase__info .firebase__resend_btn {
+            color: #2c74c7;
+        }
+            .firebase__info .firebase__resend_btn:hover {
+                opacity: 1;
+                text-decoration: underline;
+            }
+    .firebase__block {
+        width: 100%;
+        height: 40%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        margin: 0;
+    }
+        .firebase__inputs .intl-tel-input input.input_tel[type=tel] {
+            width: 244px;
+            padding: 10px 10px 10px 60px;
+            transition: boreder-color 1s;
+        }
+            .firebase__inputs .intl-tel-input input.input_tel[type=tel].error_highlight {
+                border-color: #ff0000;
+            }
+            .firebase__inputs .intl-tel-input.allow-dropdown .selected-flag:focus {
+                outline: none;
+            }
+            .firebase__inputs .intl-tel-input .country-list {
+                top: -130px;
+                left: -55px;
+                max-height: 500px;
+            }
+    .firebase__buttons {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        width: 100%;
+        height: 20%;
+    }
+        .firebase__button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 125px;
+            height: 40px;
+            border-radius: 2px;
+            font-family: "Roboto", sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .firebase__button_close.btn {
+            background-color: #ffffff;
+            color: #6e6e6e;
+        }
+            .firebase__button_close.btn:focus,
+            .firebase__button_close.btn:hover {
+                background-color: #eeeeee;
+                color: #6e6e6e;
+                opacity: 1;
+            }
+        .firebase__button_verify.btn {
+            background-color: #28c849;
+            color: #ffffff;
+        }
+            .firebase__button_verify.btn:focus,
+            .firebase__button_verify.btn:hover {
+                background-color: #26a640;
+                opacity: 1;
+            }
