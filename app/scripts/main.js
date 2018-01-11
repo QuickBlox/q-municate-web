@@ -115,7 +115,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.13.1');
+        $('.j-appVersion').html('v. 1.13.0');
 
         $.ajaxSetup({cache: true});
 
