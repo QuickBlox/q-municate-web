@@ -28,6 +28,8 @@ define([
 
         saveRoster: function(roster) {
             this.roster = roster;
+
+            this._checkIncommingContactRequests(this.roster);
         },
 
         saveNotConfirmed: function(notConfirmed) {
@@ -181,6 +183,19 @@ define([
                 Helpers.log('Contact List is updated', self);
                 callback(new_ids);
             });
+        },
+
+        _checkIncommingContactRequests: function(roster) {
+            var ContactListView = this.app.views.ContactList;
+
+            for (var id in roster) {
+                var isSubscriptionNone = roster[id].subscription === 'none',
+                    isAskNull = roster[id].ask === null;
+
+                if (isSubscriptionNone && isAskNull) {
+                    ContactListView.onSubscribe(id);
+                }
+            }
         }
 
     };

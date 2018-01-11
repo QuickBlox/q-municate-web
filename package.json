@@ -1,12 +1,11 @@
 {
   "name": "q-municate",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "repository": {
     "type": "git",
     "url": "git@github.com:QuickBlox/q-municate-web.git"
   },
   "license": "(Apache-2.0)",
-  "dependencies": {},
   "devDependencies": {
     "bower": "^1.8.0",
     "connect-livereload": "^0.5.4",
@@ -24,7 +23,7 @@
     "grunt-contrib-imagemin": "^1.0.0",
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-contrib-sass": "^1.0.0",
-    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-contrib-uglify": "^1.0.2",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-include-replace": "^4.0.1",
     "grunt-newer": "^1.1.1",
