@@ -47,6 +47,14 @@ define([
             }
         },
 
+        defineUI: function() {
+            self.ui.chat = document.querySelector('.j-workspace-wrap');
+            self.ui.title = document.querySelector('.j-record_title');
+            self.ui.control = document.querySelector('.j-start_record');
+            self.ui.cancel = document.querySelector('.j-cancel_record');
+            self.ui.progress = document.querySelector('.j-record_progress');
+        },
+
         _initRecorder: function() {
             var options = {
                 onstart: function onStart() {
@@ -59,14 +67,9 @@ define([
                 mimeType: 'audio/mp3'
             };
 
-            self.ui.chat = document.querySelector('.j-workspace-wrap');
-            self.ui.title = document.querySelector('.j-record_title');
-            self.ui.control = document.querySelector('.j-start_record');
-            self.ui.cancel = document.querySelector('.j-cancel_record');
-            self.ui.progress = document.querySelector('.j-record_progress');
-
             self.recorder = new QBMediaRecorder(options);
 
+            self.defineUI();
             self._initHandler();
 
             Helpers.log('Recorder is ready to use');

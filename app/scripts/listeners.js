@@ -86,7 +86,7 @@ define([
             QB.chat.onSystemMessageListener    = MessageView.onSystemMessage;
             QB.chat.onDeliveredStatusListener  = MessageView.onDeliveredStatus;
             QB.chat.onReadStatusListener       = MessageView.onReadStatus;
-
+            
             QB.chat.onContactListListener      = ContactListView.onPresence;
             QB.chat.onSubscribeListener        = ContactListView.onSubscribe;
             QB.chat.onConfirmSubscribeListener = ContactListView.onConfirm;

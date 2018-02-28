@@ -544,6 +544,8 @@ define([
 
                 if (!VoiceMessage.supported) {
                     VoiceMessage.blockRecorder();
+                } else {
+                    VoiceMessage.defineUI();
                 }
             }
         },

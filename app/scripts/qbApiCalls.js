@@ -356,7 +356,7 @@ define([
                         fail(err.detail);
                     } else {
                         Listeners.stateActive = true;
-
+                        
                         self.getContactList(function(res) {
                             self.app.models.ContactList.saveRoster(res);
                             callback();
@@ -376,7 +376,6 @@ define([
 
         reconnectChat: function() {
             self.connectChat(User.contact.user_jid, function() {
-                Listeners.setQBHandlers();
                 Listeners.onReconnected();
                 Listeners.updateDialogs(true);
             });
