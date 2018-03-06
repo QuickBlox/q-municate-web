@@ -364,5 +364,16 @@ define([
         return /.svg|.png|.jpg|.jpeg|.gif/i.test(url);
     };
 
+    Helpers.pauseAllMedia = function(target) {
+        document.querySelectorAll('.j-audioPlayer, .j-videoPlayer').forEach(function(element) {
+            if (element !== target) {
+                element.pause();
+                if (target) {
+                    element.currentTime = 0;
+                }
+            }
+        });
+    };
+
     return Helpers;
 });

@@ -974,17 +974,15 @@ define([
                 var video = e.target;
 
                 if (!video.dataset.source) return false;
-
+                
                 video.src = video.dataset.source;
-                video.preload = 'metadata';
+                video.preload = 'auto';
                 video.poster = 'images/video_loader.gif';
-
                 video.addEventListener('loadeddata', isReady);
 
                 function isReady() {
                     delete this.dataset.source;
                     this.removeEventListener('loadeddata', isReady);
-
                     this.poster = '';
                     this.controls = true;
                     this.autoplay = true;

@@ -140,7 +140,9 @@ button.btn_invite:hover {
     margin-bottom: 2vh;
     background: #ff4945;
 }
-button.btn.btn_invite_contacts {
+button.btn.btn_invite_contacts,
+button.btn.btn_invite_contacts:focus,
+button.btn.btn_invite_contacts:hover {
     width: 300px;
     font-size: 20px;
     border-radius: 56px;

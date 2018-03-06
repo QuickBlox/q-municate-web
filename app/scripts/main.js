@@ -34,7 +34,7 @@ requirejs.config({
         jquery: '../bower_components/jquery/dist/jquery',
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
-        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.8.1/quickblox.min',
+        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.9.0/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         mCustomScrollbar: '../bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar',
@@ -47,7 +47,7 @@ requirejs.config({
         perfectscrollbar: '../bower_components/perfect-scrollbar/js/perfect-scrollbar.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
         lamejs: '../bower_components/lamejs/lame.min',
-        QBMediaRecorder: '../bower_components/media-recorder-js/mediaRecorder',
+        QBMediaRecorder: '../bower_components/media-recorder-js/qbMediaRecorder',
         firebase: '../bower_components/firebase/firebase',
 
         // Q-municate application
@@ -115,7 +115,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.13.0');
+        $('.j-appVersion').html('v. 1.13.1');
 
         $.ajaxSetup({cache: true});
 
