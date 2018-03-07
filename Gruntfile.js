@@ -184,7 +184,7 @@ module.exports = function(grunt) {
                 port: grunt.option('port') || SERVER_PORT,
                 open: true,
                 // change this to '0.0.0.0' to access the server from outside
-                hostname: '192.168.1.179'
+                hostname: 'localhost'
             },
             dev: {
                 options: {
