@@ -390,7 +390,6 @@ define([
             UserView.createSpinner();
 
             QBApiCalls.getUser(storage.id, function(user) {
-                console.log(user);
                 if (user) {
                     self.contact = Contact.create(user);
                 } else {

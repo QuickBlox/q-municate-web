@@ -973,7 +973,7 @@ define([
             $workspace.on('click', '.j-videoPlayer', function(e) {
                 var video = e.target;
 
-                if (!video.dataset.source) return false;
+                if (!video.dataset.source) return true;
                 
                 video.src = video.dataset.source;
                 video.preload = 'auto';
