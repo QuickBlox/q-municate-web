@@ -89,6 +89,7 @@ requirejs.config({
         QMHtml: 'qmhtml',
         // entities
         Entities: 'entities',
+
         // QM Player
         QMPlayer: 'views/qmplayer'
     }
@@ -102,7 +103,7 @@ requirejs([
     'backbone',
     'QBNotification',
     'firebase',
-    'fetch' // the polifil for IE 10+
+    'fetch' // the fetch polifil for IE 10+
 ], function(
     $,
     QMCONFIG,

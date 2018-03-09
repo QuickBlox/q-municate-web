@@ -39,7 +39,7 @@ define([
 
     VoiceMessage.prototype = {
         init: function() {
-            if (QBMediaRecorder.isAvailable()) {
+            if (QBMediaRecorder.isAvailable() || QBMediaRecorder.isAudioContext()) {
                 self.supported = true;
                 self._initRecorder();
             } else {
@@ -56,6 +56,7 @@ define([
                     self._stopTimer();
                     self.blob = blob;
                 },
+                mimeType: 'audio/mp3',
                 workerPath: '../../bower_components/media-recorder-js/qbAudioRecorderWorker.js'
             };
 
@@ -68,7 +69,6 @@ define([
             self._initHandler();
 
             self.recorder = new QBMediaRecorder(options);
-            self.recorder.toggleMimeType('audio/mp3');
 
             Helpers.log('Recorder is ready to use');
         },
