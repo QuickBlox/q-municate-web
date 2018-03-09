@@ -39,11 +39,13 @@ define([
 
     VoiceMessage.prototype = {
         init: function() {
+            self.supported = false;
+
+            if (Helpers.isIE11orEdge()) return true;
+
             if (QBMediaRecorder.isAvailable() || QBMediaRecorder.isAudioContext()) {
                 self.supported = true;
                 self._initRecorder();
-            } else {
-                self.supported = false;
             }
         },
 
@@ -75,7 +77,7 @@ define([
 
         blockRecorder: function(message) {
             var recorders = document.getElementsByClassName('j-btn_audio_record'),
-                error = message ? (' ' + message) : '(microphone wasn\'t found)';
+                error = message ? message : ' (unsupported)';
 
             if (recorders.length) {
                 for (var i=0; i<recorders.length; i++) {
@@ -89,11 +91,7 @@ define([
                 }
             }
 
-            if (message) {
-                Helpers.log('Recorder unavailable' + error);
-            } else {
-                Helpers.log('Recorder isn\'t supported is this browser');
-            }
+            Helpers.log('Recorder unavailable' + error);
         },
 
         _startStream: function (callback) {
@@ -104,7 +102,7 @@ define([
                 callback();
             }).catch(function(err) {
                 self.resetRecord();
-                self.blockRecorder();
+                self.blockRecorder('(microphone wasn\'t found)');
                 console.error(err);
             });
         },

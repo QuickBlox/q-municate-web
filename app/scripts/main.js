@@ -98,6 +98,7 @@ requirejs.config({
 requirejs([
     'jquery',
     'config',
+    'Helpers',
     'minEmoji',
     'MainModule',
     'backbone',
@@ -107,6 +108,7 @@ requirejs([
 ], function(
     $,
     QMCONFIG,
+    Helpers,
     minEmoji,
     QM,
     Backbone,
@@ -119,6 +121,11 @@ requirejs([
     $(function() {
         // set Q-MUNICATE version
         $('.j-appVersion').html('v. 1.13.1');
+
+        // Set the chat protocol BOSH for IE(11+)/Edge(14+) browsers
+        if (Helpers.isIE11orEdge()) {
+            QMCONFIG.QBconf.chatProtocol.active = 1;
+        }
 
         $.ajaxSetup({cache: true});
 
