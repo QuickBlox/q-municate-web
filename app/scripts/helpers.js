@@ -377,7 +377,7 @@ define([
 
     Helpers.isIE11orEdge = function() {
         return (/rv:11.0/i.test(navigator.userAgent) || /Edge\/\d./i.test(navigator.userAgent));
-    }
+    };
 
     return Helpers;
 });
