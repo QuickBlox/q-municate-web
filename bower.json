@@ -1,6 +1,6 @@
 {
   "name": "q-municate",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "dependencies": {
     "jquery": "~2.1.4",
     "backbone": "^1.3.3",
@@ -16,10 +16,10 @@
     "balloon-css": "*",
     "crypto-js-lib": "^3.1.2",
     "perfect-scrollbar": "^0.6.15",
-    "lamejs": "*",
-    "media-recorder-js": "^1.0.1",
-    "quickblox": "2.6.2",
-    "firebase": "^4.3.1"
+    "quickblox": "2.9.0",
+    "firebase": "^4.3.1",
+    "media-recorder-js": "^2.1.0",
+    "fetch": "^2.0.3"
   },
   "devDependencies": {}
 }

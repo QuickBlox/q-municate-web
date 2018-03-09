@@ -350,7 +350,6 @@ define([
                         } else if (attachType && attachType.indexOf('video') > -1) {
                             html += '<div class="message-body"><div class="media_title">'+ message.attachment.name + '</div>';
                             html += '<video id="video_' + message.id + '" class="video_player j-videoPlayer" preload="none" data-source="' + attachUrl + '" poster="images/ic-play-video.svg">'+
-                                        // '<source src="' + attachUrl + '" type="video/mp4">'+
                                     '</video></div></div>';
                         } else if (attachType && attachType.indexOf('location') > -1) {
                             html += '<div class="message-body">';

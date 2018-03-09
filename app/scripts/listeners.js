@@ -103,23 +103,18 @@ define([
                 QB.webrtc.onInvalidEventsListener = VideoChatView.onIgnored;
                 QB.webrtc.onStopCallListener      = VideoChatView.onStop;
 
-                QB.webrtc.onUpdateCallListener    = VideoChatView.onUpdateCall;
-                QB.webrtc.onRemoteStreamListener  = VideoChatView.onRemoteStream;
-                QB.webrtc.onCallStatsReport       = VideoChatView.onCallStatsReport;
-                QB.webrtc.onSessionCloseListener  = VideoChatView.onSessionCloseListener;
-                QB.webrtc.onUserNotAnswerListener = VideoChatView.onUserNotAnswerListener;
+                QB.webrtc.onUpdateCallListener                    = VideoChatView.onUpdateCall;
+                QB.webrtc.onRemoteStreamListener                  = VideoChatView.onRemoteStream;
+                QB.webrtc.onSessionConnectionStateChangedListener = VideoChatView.onSessionConnectionStateChangedListener;
+                QB.webrtc.onSessionCloseListener                  = VideoChatView.onSessionCloseListener;
+                QB.webrtc.onUserNotAnswerListener                 = VideoChatView.onUserNotAnswerListener;
             }
         },
 
         listenToMediaElement: function(selector) {
             document.querySelector(selector).onplaying = function(event) {
                 // pause all media sources except started one
-                document.querySelectorAll('.j-audioPlayer, .j-videoPlayer').forEach(function(element) {
-                    if (element !== event.target) {
-                        element.pause();
-                        element.currentTime = 0;
-                    }
-                });
+                Helpers.pauseAllMedia(event.target);
             };
         },
 

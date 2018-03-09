@@ -266,7 +266,7 @@
 
                 </aside>
 
-                <div class="l-workspace-wrap j-workspace-wrap">
+                <div id="workspaceWrap" class="l-workspace-wrap j-workspace-wrap">
                     <section id="capBox" class="l-workspace l-flexbox j-capBox">
                         <div class="l-cap l-flexbox l-flexbox_column">
                             <span class="cap-text">Is anybody here?</span>
@@ -276,22 +276,21 @@
                         </div>
                     </section>
 
-                    <div id="chatWrap" class="l-workspace j-chatWrap is-hidden">
-                    </div>
+                    <div id="chatWrap" class="l-workspace j-chatWrap is-hidden"></div>
 
                     <div class="chat_popover popover_gmap j-popover_const j-popover_gmap">
                         <button class="send_map j-send_map">SEND LOCATION</button>
                         <div class="coner"><i class="icon_coner"></i></div>
                     </div>
 
-                    <div class="chat_popover popover_record j-popover_const j-popover_record">
+                    <div id="popoverRecord" class="chat_popover popover_record j-popover_const j-popover_record">
                         <div class="record_progress_container">
-                            <div class="record_progress j-record_progress"></div>
+                            <div id="recordProgress" class="record_progress j-record_progress"></div>
                         </div>
-                        <button class="start_record j-start_record"></button>
-                        <div class="record_title j-record_title">RECORD</div>
+                        <button id="startRecord" class="start_record j-start_record"></button>
+                        <div id="recordTitle" class="record_title j-record_title">RECORD</div>
                         <div class="cancel_record_container">
-                            <button class="cancel_record j-cancel_record"></button>
+                            <button id="cancelRecord" class="cancel_record j-cancel_record"></button>
                         </div>
                         <div class="coner"><i class="icon_coner"></i></div>
                     </div>

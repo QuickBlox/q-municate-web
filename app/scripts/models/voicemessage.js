@@ -39,20 +39,12 @@ define([
 
     VoiceMessage.prototype = {
         init: function() {
-            if (QBMediaRecorder.isAvailable()) {
+            if (QBMediaRecorder.isAvailable() || QBMediaRecorder.isAudioContext()) {
                 self.supported = true;
                 self._initRecorder();
             } else {
                 self.supported = false;
             }
-        },
-
-        defineUI: function() {
-            self.ui.chat = document.querySelector('.j-workspace-wrap');
-            self.ui.title = document.querySelector('.j-record_title');
-            self.ui.control = document.querySelector('.j-start_record');
-            self.ui.cancel = document.querySelector('.j-cancel_record');
-            self.ui.progress = document.querySelector('.j-record_progress');
         },
 
         _initRecorder: function() {
@@ -64,29 +56,37 @@ define([
                     self._stopTimer();
                     self.blob = blob;
                 },
-                mimeType: 'audio/mp3'
+                mimeType: 'audio/mp3',
+                workerPath: '../../bower_components/media-recorder-js/qbAudioRecorderWorker.js'
             };
 
-            self.recorder = new QBMediaRecorder(options);
-
-            self.defineUI();
+            self.ui.chat = document.getElementById('workspaceWrap');
+            self.ui.title = document.getElementById('recordTitle');
+            self.ui.control = document.getElementById('startRecord');
+            self.ui.cancel = document.getElementById('cancelRecord');
+            self.ui.progress = document.getElementById('recordProgress');
+            
             self._initHandler();
+
+            self.recorder = new QBMediaRecorder(options);
 
             Helpers.log('Recorder is ready to use');
         },
 
         blockRecorder: function(message) {
-            var recorders = document.querySelectorAll('.j-btn_audio_record'),
+            var recorders = document.getElementsByClassName('j-btn_audio_record'),
                 error = message ? (' ' + message) : '(microphone wasn\'t found)';
 
             if (recorders.length) {
-                recorders.forEach(function(recorder) {
+                for (var i=0; i<recorders.length; i++) {
+                    var recorder = recorders[i];
+
                     recorder.disabled = true;
                     recorder.classList.remove('is-active');
                     recorder.classList.add('is-unavailable');
                     recorder.setAttribute('data-balloon-length', 'medium');
                     recorder.setAttribute('data-balloon', 'Recorder unavailable' + error);
-                });
+                }
             }
 
             if (message) {
@@ -222,7 +222,11 @@ define([
         },
 
         resetRecord: function(dialogId) {
-            var popover = document.querySelector('.j-popover_record'),
+            if (!self.supported) {
+                return false;
+            }
+            
+            var popover = document.getElementById('popoverRecord'),
                 button = document.querySelector('.j-btn_audio_record'),
                 activeDialogId = self.app.entities.active;
 
