@@ -34,7 +34,8 @@ requirejs.config({
         jquery: '../bower_components/jquery/dist/jquery',
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
-        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.5.1/quickblox.min',
+        fetch: '../bower_components/fetch/fetch',
+        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.9.0/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         mCustomScrollbar: '../bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar',
@@ -46,10 +47,8 @@ requirejs.config({
         nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
         perfectscrollbar: '../bower_components/perfect-scrollbar/js/perfect-scrollbar.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
-        lamejs: '../bower_components/lamejs/lame.min',
-        QBMediaRecorder: '../bower_components/media-recorder-js/mediaRecorder',
+        QBMediaRecorder: '../bower_components/media-recorder-js/qbMediaRecorder',
         firebase: '../bower_components/firebase/firebase',
-
         // Q-municate application
         config: '../configs/main_config',
         MainModule: 'app',
@@ -96,14 +95,17 @@ requirejs.config({
 requirejs([
     'jquery',
     'config',
+    'Helpers',
     'minEmoji',
     'MainModule',
     'backbone',
     'QBNotification',
-    'firebase'
+    'firebase',
+    'fetch' // the fetch polifil for IE 10+
 ], function(
     $,
     QMCONFIG,
+    Helpers,
     minEmoji,
     QM,
     Backbone,
@@ -115,7 +117,12 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.13.0');
+        $('.j-appVersion').html('v. 1.14.0');
+
+        // Set the chat protocol BOSH for IE(11+)/Edge(14+) browsers
+        if (Helpers.isIE11orEdge()) {
+            QMCONFIG.QBconf.chatProtocol.active = 1;
+        }
 
         $.ajaxSetup({cache: true});
 

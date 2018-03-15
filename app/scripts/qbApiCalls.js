@@ -99,10 +99,10 @@ define([
 
             QB.createSession(params, function(err, res) {
                 if (err) {
-                    Helpers.log(err.detail);
+                    Helpers.log(err);
 
                     var errMsg,
-                        parseErr = JSON.parse(err.detail);
+                        parseErr = err.detail;
 
                     if (err.code === 401) {
                         errMsg = QMCONFIG.errors.unauthorized;
@@ -205,9 +205,9 @@ define([
 
         forgotPassword: function(email, callback) {
             this.checkSession(function() {
-                QB.users.resetPassword(email, function(response) {
-                    if (response.code === 404) {
-                        Helpers.log(response.message);
+                QB.users.resetPassword(email, function(error, response) {
+                    if (error && error.code === 404) {
+                        Helpers.log(error.message);
 
                         failForgot();
                     } else {
@@ -240,6 +240,7 @@ define([
                             res.items.forEach(function(item) {
                                 responseIds.push(item.user.id);
                             });
+                            
 
                             ContactList.cleanUp(requestIds, responseIds);
                         }
@@ -356,7 +357,7 @@ define([
                         fail(err.detail);
                     } else {
                         Listeners.stateActive = true;
-
+                        
                         self.getContactList(function(res) {
                             self.app.models.ContactList.saveRoster(res);
                             callback();
@@ -376,7 +377,6 @@ define([
 
         reconnectChat: function() {
             self.connectChat(User.contact.user_jid, function() {
-                Listeners.setQBHandlers();
                 Listeners.onReconnected();
                 Listeners.updateDialogs(true);
             });

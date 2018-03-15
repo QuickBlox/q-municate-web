@@ -364,5 +364,20 @@ define([
         return /.svg|.png|.jpg|.jpeg|.gif/i.test(url);
     };
 
+    Helpers.pauseAllMedia = function(target) {
+        document.querySelectorAll('.j-audioPlayer, .j-videoPlayer').forEach(function(element) {
+            if (element !== target) {
+                element.pause();
+                if (target) {
+                    element.currentTime = 0;
+                }
+            }
+        });
+    };
+
+    Helpers.isIE11orEdge = function() {
+        return (/rv:11.0/i.test(navigator.userAgent) || /Edge\/\d./i.test(navigator.userAgent));
+    };
+
     return Helpers;
 });
