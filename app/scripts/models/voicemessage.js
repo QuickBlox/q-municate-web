@@ -4,12 +4,10 @@
 define([
     'config',
     'Helpers',
-    'lamejs',
     'QBMediaRecorder'
 ], function(
     QMCONFIG,
     Helpers,
-    lamejs,
     QBMediaRecorder
 ) {
     'use strict';

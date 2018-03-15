@@ -47,10 +47,8 @@ requirejs.config({
         nicescroll: '../bower_components/jquery.nicescroll/jquery.nicescroll.min',
         perfectscrollbar: '../bower_components/perfect-scrollbar/js/perfect-scrollbar.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
-        lamejs: '../bower_components/lamejs/lame.min',
         QBMediaRecorder: '../bower_components/media-recorder-js/qbMediaRecorder',
         firebase: '../bower_components/firebase/firebase',
-
         // Q-municate application
         config: '../configs/main_config',
         MainModule: 'app',
@@ -89,7 +87,6 @@ requirejs.config({
         QMHtml: 'qmhtml',
         // entities
         Entities: 'entities',
-
         // QM Player
         QMPlayer: 'views/qmplayer'
     }
@@ -120,7 +117,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.13.1');
+        $('.j-appVersion').html('v. 1.14.0');
 
         // Set the chat protocol BOSH for IE(11+)/Edge(14+) browsers
         if (Helpers.isIE11orEdge()) {
