@@ -43,8 +43,5 @@
     "ghooks": {
       "pre-push": "grunt test"
     }
-  },
-  "dependencies": {
-    "npm": "^5.7.1"
   }
 }
