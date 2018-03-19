@@ -4,11 +4,13 @@
 define([
     'config',
     'Helpers',
-    'QBMediaRecorder'
+    'QBMediaRecorder',
+    'QBAudioRecorderWorker'
 ], function(
     QMCONFIG,
     Helpers,
-    QBMediaRecorder
+    QBMediaRecorder,
+    QBAudioRecorderWorker
 ) {
     'use strict';
 
