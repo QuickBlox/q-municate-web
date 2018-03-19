@@ -4,13 +4,11 @@
 define([
     'config',
     'Helpers',
-    'QBMediaRecorder',
-    'QBAudioRecorderWorker'
+    'QBMediaRecorder'
 ], function(
     QMCONFIG,
     Helpers,
-    QBMediaRecorder,
-    QBAudioRecorderWorker
+    QBMediaRecorder
 ) {
     'use strict';
 
@@ -59,7 +57,7 @@ define([
                     self.blob = blob;
                 },
                 mimeType: 'audio/mp3',
-                workerPath: '../../bower_components/media-recorder-js/qbAudioRecorderWorker.js'
+                workerPath: '../../vendor/audio-worker/qbAudioRecorderWorker.js'
             };
 
             self.ui.chat = document.getElementById('workspaceWrap');
