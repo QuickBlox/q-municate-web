@@ -64,7 +64,6 @@ requirejs.config({
         VideoChatModule: 'models/videochat',
         CursorModule: 'models/custom_cursor',
         SyncTabsModule: 'models/sync_tabs',
-        VoiceMessage: 'models/voicemessage',
         FirebaseWidget: 'models/firebase_widget',
         // views
         UserView: 'views/user',
@@ -88,7 +87,9 @@ requirejs.config({
         // entities
         Entities: 'entities',
         // QM Player
-        QMPlayer: 'views/qmplayer'
+        QMPlayer: 'views/qmplayer',
+        // Voice Messages
+        VoiceMessage: 'voicemessage'
     }
 });
 
