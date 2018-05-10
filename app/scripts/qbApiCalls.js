@@ -276,40 +276,13 @@ define([
             });
         },
 
-        createUser: function(params, callback) {
-            this.checkSession(function() {
-                QB.users.create(params, function(err, res) {
-                    if (err) {
-                        Helpers.log(err.detail);
-
-                        var parseErr = JSON.parse(err.detail).errors.email[0];
-                        failUser(parseErr);
-                    } else {
-                        Helpers.log('QB SDK: User is created', res);
-
-                        Session.update({
-                            date: new Date()
-                        });
-
-                        callback(res);
-                    }
-                });
-            });
-        },
-
         updateUser: function(id, params, callback) {
             this.checkSession(function() {
                 QB.users.update(id, params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
 
-                        var parseErr = JSON.parse(err.detail).errors.email;
-
-                        if (parseErr) {
-                            failUser(parseErr[0]);
-                        } else {
-                            callback(null, err);
-                        }
+                        callback(null, err);
                     } else {
                         Helpers.log('QB SDK: User is updated', res);
 
@@ -353,7 +326,7 @@ define([
                 }, function(err) {
                     if (err) {
                         Helpers.log(err);
-                        UserView.logout();
+                        
                         fail(err.detail);
                     } else {
                         Listeners.stateActive = true;
@@ -559,19 +532,6 @@ define([
         UserView.removeSpinner();
         $('section:visible .text_error').addClass('is-error').text(errMsg);
         $('section:visible input:password').val('');
-    };
-
-    var failUser = function(err) {
-        var errMsg;
-
-        if (err.indexOf('already') >= 0) {
-            errMsg = QMCONFIG.errors.emailExists;
-        } else if (err.indexOf('look like') >= 0) {
-            errMsg = QMCONFIG.errors.invalidEmail;
-        }
-
-        $('section:visible input[type="email"]').addClass('is-error');
-        fail(errMsg);
     };
 
     var failForgot = function() {
