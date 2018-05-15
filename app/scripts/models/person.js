@@ -40,18 +40,20 @@ define([
             var MAX_SIZE = QMCONFIG.maxLimitFile * 1024 * 1024;
 
             // Field: full_name
-            // mandatory; 3-50 characters; could contain everything except '<', '>' and ';'
+            // mandatory; 3-200 characters;
             if (!attrs.full_name) {
                 return 'Name is required';
             }
+            console.log(attrs.full_name);
+            console.log(attrs.full_name === 'Unknown user');
             if (attrs.full_name === 'Unknown user') {
-                return 'Your name is "Unknown user", please change';
+                return QMCONFIG.errors.unknownUserName;
             }
             if (attrs.full_name.length < 3) {
                 return QMCONFIG.errors.shortName;
             }
-            if (!/^[^><;]+$/.test(attrs.full_name)) {
-                return QMCONFIG.errors.invalidName;
+            if (attrs.full_name.length > 200) {
+                return QMCONFIG.errors.bigName;
             }
 
             // Field: password
