@@ -57,7 +57,7 @@ define([
                     self.blob = blob;
                 },
                 mimeType: 'audio/mp3',
-                workerPath: './qbAudioRecorderWorker.js'
+                workerPath: '../workers/qbAudioRecorderWorker.js'
             };
 
             self.ui.chat = document.getElementById('workspaceWrap');
