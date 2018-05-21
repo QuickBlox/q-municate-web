@@ -16,7 +16,6 @@
     "balloon-css": "*",
     "crypto-js-lib": "^3.1.2",
     "perfect-scrollbar": "^0.6.15",
-    "quickblox": "git+https://github.com/QuickBlox/quickblox-javascript-sdk.git#dev",
     "firebase": "^4.3.1",
     "media-recorder-js": "^2.1.0",
     "fetch": "^2.0.3"
