@@ -5,9 +5,11 @@
  *
  */
 define([
-    'config'
+    'config',
+    'quickblox'
 ], function(
-    QMCONFIG
+    QMCONFIG,
+    QB
 ) {
 
     function Contact(app) {

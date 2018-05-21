@@ -6,12 +6,14 @@ define([
     'underscore',
     'backbone',
     'config',
+    'quickblox',
     'Helpers'
 ], function(
     $,
     _,
     Backbone,
     QMCONFIG,
+    QB,
     Helpers
 ) {
 

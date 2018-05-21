@@ -7,6 +7,7 @@
 define([
     'jquery',
     'config',
+    'quickblox',
     'Helpers',
     'QMHtml',
     'LocationView',
@@ -15,6 +16,7 @@ define([
 ], function(
     $,
     QMCONFIG,
+    QB,
     Helpers,
     QMHtml,
     Location,

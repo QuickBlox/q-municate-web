@@ -7,10 +7,12 @@
 define([
     'jquery',
     'config',
+    'quickblox',
     'Helpers'
 ], function(
     $,
     QMCONFIG,
+    QB,
     Helpers
 ) {
 

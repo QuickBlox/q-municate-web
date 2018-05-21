@@ -6,9 +6,11 @@
  */
 define([
     'config',
+    'quickblox',
     'Entities'
 ], function(
     QMCONFIG,
+    QB,
     Entities
 ) {
     var self;

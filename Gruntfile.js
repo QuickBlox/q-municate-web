@@ -26,7 +26,7 @@ module.exports = function(grunt) {
         clean: {
             dev: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css'],
             dist: ['.sass-cache', '.tmp', '<%= yeoman.app %>/.css',
-                '<%= yeoman.dist %>/scripts', '<%= yeoman.dist %>/styles', '<%= yeoman.dist %>/vendor', '<%= yeoman.dist %>/workers', '<%= yeoman.dist %>/quickblox'
+                '<%= yeoman.dist %>/scripts', '<%= yeoman.dist %>/styles', '<%= yeoman.dist %>/vendor', '<%= yeoman.dist %>/workers'
             ],
             tmpBuild: ['<%= yeoman.app %>/scripts/.build.js'],
             tails: ['<%= yeoman.dist %>/_index.html']
@@ -172,8 +172,7 @@ module.exports = function(grunt) {
                     src: [
                         '*.{ico,png}',
                         'audio/{,*/}*.*',
-                        'workers/{,*/}*.js',
-                        'quickblox/{,*/}*.js'
+                        'workers/{,*/}*.js'
                     ],
                     dest: '<%= yeoman.dist %>'
                 }]

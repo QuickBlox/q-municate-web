@@ -7,6 +7,7 @@
 define([
     'jquery',
     'config',
+    'quickblox',
     'underscore',
     'minEmoji',
     'Helpers',
@@ -18,6 +19,7 @@ define([
 ], function(
     $,
     QMCONFIG,
+    QB,
     _,
     minEmoji,
     Helpers,
