@@ -7,12 +7,14 @@
 define([
     'jquery',
     'underscore',
+    'quickblox',
     'backbone',
     'config',
     'Helpers'
 ], function(
     $,
     _,
+    QB,
     Backbone,
     QMCONFIG,
     Helpers

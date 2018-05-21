@@ -5,9 +5,9 @@
  *
  */
 define([
-    'config',
+    'config'
 ], function(
-    QMCONFIG,
+    QMCONFIG
 ) {
 
     function Contact(app) {
