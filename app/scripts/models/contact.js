@@ -6,10 +6,8 @@
  */
 define([
     'config',
-    'quickblox'
 ], function(
     QMCONFIG,
-    QB
 ) {
 
     function Contact(app) {

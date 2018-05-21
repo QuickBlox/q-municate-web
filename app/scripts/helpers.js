@@ -3,13 +3,11 @@
  */
 define([
     'jquery',
-    'quickblox',
     'underscore',
     'config',
     'QBNotification'
 ], function(
     $,
-    QB,
     _,
     QMCONFIG,
     QBNotification

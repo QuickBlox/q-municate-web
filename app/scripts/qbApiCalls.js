@@ -7,13 +7,11 @@
 define([
     'jquery',
     'config',
-    'quickblox',
     'Entities',
     'Helpers',
     'LocationView'
 ], function($,
     QMCONFIG,
-    QB,
     Entities,
     Helpers,
     Location

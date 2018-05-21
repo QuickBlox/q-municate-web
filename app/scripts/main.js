@@ -35,7 +35,6 @@ requirejs.config({
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
         fetch: '../bower_components/fetch/fetch',
-        quickblox: 'https://raw.githubusercontent.com/QuickBlox/quickblox-javascript-sdk/dev/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         mCustomScrollbar: '../bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar',

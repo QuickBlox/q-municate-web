@@ -6,13 +6,11 @@
  */
 define([
     'config',
-    'quickblox',
     'underscore',
     'Helpers',
     'Entities'
 ], function(
     QMCONFIG,
-    QB,
     _,
     Helpers,
     Entities

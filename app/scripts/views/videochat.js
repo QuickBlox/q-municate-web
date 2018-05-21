@@ -6,7 +6,6 @@
  */
 define([
     'jquery',
-    'quickblox',
     'Entities',
     'config',
     'Helpers',
@@ -14,7 +13,6 @@ define([
     'QMHtml'
 ], function(
     $,
-    QB,
     Entities,
     QMCONFIG,
     Helpers,
