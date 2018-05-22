@@ -7,17 +7,19 @@
 define([
     'jquery',
     'config',
-    'quickblox',
+    // 'quickblox',
     'Entities',
     'Helpers',
     'LocationView'
-], function($,
+], function(
+    $,
     QMCONFIG,
-    QB,
+    // QB,
     Entities,
     Helpers,
     Location
 ) {
+    var QB = window.QB;
 
     var Session,
         UserView,

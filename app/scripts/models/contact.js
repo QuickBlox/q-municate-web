@@ -5,12 +5,13 @@
  *
  */
 define([
-    'config',
-    'quickblox'
+    'config'
+    // 'quickblox'
 ], function(
-    QMCONFIG,
-    QB
+    QMCONFIG
+    // QB
 ) {
+    var QB = window.QB;
 
     function Contact(app) {
         this.app = app;

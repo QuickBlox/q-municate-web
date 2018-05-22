@@ -4,17 +4,19 @@ define([
     'underscore',
     'jquery',
     'config',
-    'quickblox',
+    // 'quickblox',
     'Helpers',
     'perfectscrollbar'
 ], function(
     _,
     $,
     QMCONFIG,
-    QB,
+    // QB,
     Helpers,
     Ps
 ) {
+    var QB = window.QB;
+    
     var self;
 
     function Listeners(app) {

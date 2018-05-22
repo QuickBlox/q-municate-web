@@ -8,7 +8,7 @@ define([
     'jquery',
     'underscore',
     'config',
-    'quickblox',
+    // 'quickblox',
     'Entities',
     'Helpers',
     'QMHtml',
@@ -21,13 +21,14 @@ define([
     $,
     _,
     QMCONFIG,
-    QB,
+    // QB,
     Entities,
     Helpers,
     QMHtml,
     minEmoji,
     Ps
 ) {
+    var QB = window.QB;
 
     var self;
 

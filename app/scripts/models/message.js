@@ -6,13 +6,15 @@
  */
 define([
     'config',
-    'quickblox',
+    // 'quickblox',
     'Entities'
 ], function(
     QMCONFIG,
-    QB,
+    // QB,
     Entities
 ) {
+    var QB = window.QB;
+    
     var self;
 
     function Message(app) {

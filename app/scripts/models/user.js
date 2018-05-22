@@ -8,7 +8,7 @@ define([
     'jquery',
     'underscore',
     'config',
-    'quickblox',
+    // 'quickblox',
     'Helpers',
     'FirebaseWidget',
     'models/person',
@@ -19,7 +19,7 @@ define([
     $,
     _,
     QMCONFIG,
-    QB,
+    // QB,
     Helpers,
     FirebaseWidget,
     Person,
@@ -27,6 +27,7 @@ define([
     ChangePassView,
     FBImportView
 ) {
+    var QB = window.QB;
 
     var self,
         tempParams,

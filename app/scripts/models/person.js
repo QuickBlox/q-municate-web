@@ -7,18 +7,19 @@
 define([
     'jquery',
     'underscore',
-    'quickblox',
+    // 'quickblox',
     'backbone',
     'config',
     'Helpers'
 ], function(
     $,
     _,
-    QB,
+    // QB,
     Backbone,
     QMCONFIG,
     Helpers
 ) {
+    var QB = window.QB;
 
     var App;
 
