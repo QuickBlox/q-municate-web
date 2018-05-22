@@ -321,28 +321,25 @@ define([
 
                 QB.chat.connect({
                     jid: jid,
-                    password: password,
-                    connectWithoutGettingRoster: true
-                }, function(err) {
+                    password: password
+                }, function(err, roster) {
                     if (err) {
                         Helpers.log(err);
                         
                         fail(err.detail);
                     } else {
                         Listeners.stateActive = true;
-                        
-                        self.getContactList(function(res) {
-                            self.app.models.ContactList.saveRoster(res);
-                            callback();
-                        });
-
                         Listeners.setChatState(true);
 
                         Session.update({
                             date: new Date()
                         });
-
+                        
+                        ContactList.saveRoster(roster);
+                        
                         setRecoverySessionInterval();
+
+                        callback();
                     }
                 });
             });
