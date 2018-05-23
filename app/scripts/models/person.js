@@ -7,20 +7,17 @@
 define([
     'jquery',
     'underscore',
-    // 'quickblox',
     'backbone',
     'config',
     'Helpers'
 ], function(
     $,
     _,
-    // QB,
     Backbone,
     QMCONFIG,
     Helpers
 ) {
-    var QB = window.QB;
-
+    
     var App;
 
     var Person = Backbone.Model.extend({
@@ -204,7 +201,7 @@ define([
                 self = this;
 
             if (self.get('avatar_url') === QMCONFIG.defAvatar.url) {
-                custom_data.avatar_url = 'https://graph.facebook.com/v2.9/' + fbId + '/picture?width=1200&height=1200';
+                custom_data.avatar_url = 'https://graph.facebook.com/v3.0/' + fbId + '/picture?width=1200&height=1200';
             }
             custom_data.is_import = '1';
             params.facebook_id = fbId;

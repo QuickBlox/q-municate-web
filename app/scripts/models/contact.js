@@ -4,15 +4,8 @@
  * Contact Module
  *
  */
-define([
-    'config'
-    // 'quickblox'
-], function(
-    QMCONFIG
-    // QB
-) {
-    var QB = window.QB;
-
+define(['config'], function(QMCONFIG) {
+    
     function Contact(app) {
         this.app = app;
     }
@@ -50,7 +43,7 @@ define([
         if (contact.avatar_url) {
             avatar = contact.avatar_url;
         } else if (contact.facebook_id) {
-            avatar = 'https://graph.facebook.com/v2.9/' + contact.facebook_id + '/picture?width=240&height=240';
+            avatar = 'https://graph.facebook.com/v3.0/' + contact.facebook_id + '/picture?width=240&height=240';
         } else {
             avatar = QMCONFIG.defAvatar.url;
         }

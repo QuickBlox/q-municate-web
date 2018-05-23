@@ -7,7 +7,6 @@
 define([
     'jquery',
     'config',
-    // 'quickblox',
     'Entities',
     'Helpers',
     'QMHtml',
@@ -15,14 +14,12 @@ define([
 ], function(
     $,
     QMCONFIG,
-    // QB,
     Entities,
     Helpers,
     QMHtml,
     Location
 ) {
-    var QB = window.QB;
-
+    
     var User,
         ContactList,
         Contact,

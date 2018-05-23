@@ -4,17 +4,16 @@ define([
     'underscore',
     'jquery',
     'config',
-    // 'quickblox',
     'Helpers',
     'perfectscrollbar'
 ], function(
     _,
     $,
     QMCONFIG,
-    // QB,
     Helpers,
     Ps
 ) {
+    
     var QB = window.QB;
     
     var self;

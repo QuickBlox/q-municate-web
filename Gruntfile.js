@@ -175,6 +175,11 @@ module.exports = function(grunt) {
                         'workers/{,*/}*.js'
                     ],
                     dest: '<%= yeoman.dist %>'
+                }, {
+                    expand: true,
+                    cwd: '<%= yeoman.app %>',
+                    src: ['bower_components/quickblox/quickblox.min.js'],
+                    dest: '<%= yeoman.dist %>'
                 }]
             }
         },

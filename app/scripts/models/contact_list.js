@@ -13,7 +13,6 @@ define([
     _,
     Helpers
 ) {
-
     var contact_ids,
         isExistingRequest;
 

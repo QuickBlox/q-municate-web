@@ -7,7 +7,6 @@
 define([
     'jquery',
     'config',
-    // 'quickblox',
     'Helpers',
     'QMHtml',
     'LocationView',
@@ -16,15 +15,13 @@ define([
 ], function(
     $,
     QMCONFIG,
-    // QB,
     Helpers,
     QMHtml,
     Location,
     _,
     ProgressBar
 ) {
-    var QB = window.QB;
-
+    
     var self;
 
     var User,

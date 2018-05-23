@@ -6,19 +6,16 @@
  */
 define([
     'config',
-    // 'quickblox',
     'underscore',
     'Helpers',
     'Entities'
 ], function(
     QMCONFIG,
-    // QB,
     _,
     Helpers,
     Entities
 ) {
-    var QB = window.QB;
-
+    
     function Dialog(app) {
         this.app = app;
     }
