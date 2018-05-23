@@ -75,6 +75,7 @@ define(function() {
         },
 
         QBconf: {
+            chatReconnectionTimeInterval: 2,
             chatProtocol: {
                 // BOSH protocol = 1,
                 // WebSocket = 2
