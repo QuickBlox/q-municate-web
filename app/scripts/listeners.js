@@ -151,8 +151,11 @@ define([
              * need to delete this code after pull-request will be confirmed
              * https://github.com/QuickBlox/quickblox-javascript-sdk/pull/342
              */
-            if (QB.chat._checkConnectionTimer) {
-                QB.chat.disconnect();
+            var _timerID = QB.chat._checkConnectionTimer;
+
+            if (_timerID) {
+                clearInterval(_timerID);
+                _timerID = undefined;
             }
             /**/
 
