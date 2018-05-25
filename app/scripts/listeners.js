@@ -154,8 +154,9 @@ define([
             var _timerID = QB.chat._checkConnectionTimer;
 
             if (_timerID) {
-                clearInterval(_timerID);
-                _timerID = undefined;
+                QB.chat.disconnect();
+                // clearInterval(_timerID);
+                // _timerID = undefined;
             }
             /**/
 
