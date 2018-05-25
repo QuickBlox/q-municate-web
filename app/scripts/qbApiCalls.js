@@ -344,13 +344,6 @@ define([
             });
         },
 
-        reconnectChat: function() {
-            self.connectChat(User.contact.user_jid, function() {
-                Listeners.onReconnected();
-                Listeners.updateDialogs(true);
-            });
-        },
-
         disconnectChat: function() {
             this.checkSession(function() {
                 Listeners.stateActive = false;

@@ -13,7 +13,7 @@ define([
     Helpers,
     Ps
 ) {
-    
+
     var QB = window.QB;
     
     var self;
@@ -144,10 +144,24 @@ define([
         },
 
         onReconnectFailed: function(error) {
-            if (error) {
-                self.app.service.reconnectChat();
-                self.setChatState(false);
+            var qbService = self.app.service,
+                userJID = self.app.models.User.contact.user_jid;
+
+            /* TODO: 
+             * need to delete this code after pull-request will be confirmed
+             * https://github.com/QuickBlox/quickblox-javascript-sdk/pull/342
+             */
+            if (QB.chat._checkConnectionTimer) {
+                QB.chat.disconnect();
             }
+            /**/
+
+            qbService.checkSession(function() {
+                qbService.connectChat(userJID, function() {
+                    self.onReconnected();
+                    self.updateDialogs(true);
+                });
+            });
         },
 
         _onNetworkStatusListener: function() {
