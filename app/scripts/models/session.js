@@ -37,7 +37,7 @@ define([
                 if (params.date) {
                     // set QB session expiration through 5 minutes
                     date = params.date;
-                    date.setMinutes(date.getMinutes() + 1);
+                    date.setMinutes(date.getMinutes() + 5);
                     this.expirationTime = date.toISOString();
                 }
 
