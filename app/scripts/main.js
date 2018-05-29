@@ -117,7 +117,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.15.0_DEV');
+        $('.j-appVersion').html('v. 1.15.0');
 
         // Set the chat protocol BOSH for IE(11+)/Edge(14+) browsers
         if (Helpers.isIE11orEdge()) {
