@@ -7,7 +7,6 @@
 define([
     'jquery',
     'config',
-    'quickblox',
     'Entities',
     'Helpers',
     'QMHtml',
@@ -17,12 +16,12 @@ define([
 ], function(
     $,
     QMCONFIG,
-    QB,
     Entities,
     Helpers,
     QMHtml,
     _
 ) {
+    
     var self;
 
     var Dialog,

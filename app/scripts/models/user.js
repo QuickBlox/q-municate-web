@@ -8,7 +8,6 @@ define([
     'jquery',
     'underscore',
     'config',
-    'quickblox',
     'Helpers',
     'FirebaseWidget',
     'models/person',
@@ -19,7 +18,6 @@ define([
     $,
     _,
     QMCONFIG,
-    QB,
     Helpers,
     FirebaseWidget,
     Person,
@@ -27,7 +25,7 @@ define([
     ChangePassView,
     FBImportView
 ) {
-
+    
     var self,
         tempParams,
         isFacebookCalled;
@@ -379,7 +377,7 @@ define([
             }
         },
 
-        autologin: function() {
+        autologin: function(callback) {
             var QBApiCalls = this.app.service,
                 UserView = this.app.views.User,
                 DialogView = this.app.views.Dialog,
@@ -404,6 +402,10 @@ define([
                     self.rememberMe();
                     DialogView.prepareDownloading();
                     DialogView.downloadDialogs();
+
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
                 });
             });
         },

@@ -397,7 +397,7 @@
                     </a>
                 </label>
                 <label class="footer_settings">
-                    <a class="footer_settings_link" href="//q-municate.com/" target="_blank">
+                    <a class="footer_settings_link" href="http://q-municate.com/" target="_blank">
                         <div class="i-help_settings i-footer_settings"></div>
                         <span class="footer_settings_label">About</span>
                     </a>
@@ -556,6 +556,7 @@
 
 <div id="fb-root"></div>
 
+<script src="bower_components/quickblox/quickblox.min.js"></script>
 <script src="https://connect.facebook.net/en_US/sdk.js"></script>
 <!-- build:js scripts/build.js -->
 <script src="bower_components/requirejs/require.js"></script>
@@ -569,7 +570,7 @@
             <div class="userDetails-avatar profileUserAvatar" style="background-image: url(<%= avatar_url %>)" data-id="<%= id %>"></div>
             <div class="userProfile-info">
                 <div class="userProfile-filename-wrap">
-                    <input class="userProfile-filename editable-profile without_M" type="text" placeholder="Your name" value="<%= full_name %>" maxlength="50">
+                    <input class="userProfile-filename editable-profile without_M" type="text" placeholder="Your name" value="<%= full_name %>" maxlength="200">
                     <span class="userProfile-header-pencil"></span>
                 </div>
                 <div style="clear:both"></div>

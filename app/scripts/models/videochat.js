@@ -7,15 +7,13 @@
 define([
     'jquery',
     'config',
-    'quickblox',
     'Helpers'
 ], function(
     $,
     QMCONFIG,
-    QB,
     Helpers
 ) {
-
+    
     var curSession,
         self;
 

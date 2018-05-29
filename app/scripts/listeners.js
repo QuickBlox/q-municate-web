@@ -4,17 +4,18 @@ define([
     'underscore',
     'jquery',
     'config',
-    'quickblox',
     'Helpers',
     'perfectscrollbar'
 ], function(
     _,
     $,
     QMCONFIG,
-    QB,
     Helpers,
     Ps
 ) {
+
+    var QB = window.QB;
+    
     var self;
 
     function Listeners(app) {
@@ -143,10 +144,11 @@ define([
         },
 
         onReconnectFailed: function(error) {
-            if (error) {
-                self.app.service.reconnectChat();
-                self.setChatState(false);
-            }
+            self.app.service.disconnectChat();
+
+            self.app.models.User.autologin(function() {
+                _switchToOnlineMode();
+            });
         },
 
         _onNetworkStatusListener: function() {

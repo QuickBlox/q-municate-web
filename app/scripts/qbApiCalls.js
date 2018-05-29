@@ -7,18 +7,17 @@
 define([
     'jquery',
     'config',
-    'quickblox',
     'Entities',
     'Helpers',
     'LocationView'
-], function($,
+], function(
+    $,
     QMCONFIG,
-    QB,
     Entities,
     Helpers,
     Location
 ) {
-
+    
     var Session,
         UserView,
         DialogView,
@@ -276,40 +275,13 @@ define([
             });
         },
 
-        createUser: function(params, callback) {
-            this.checkSession(function() {
-                QB.users.create(params, function(err, res) {
-                    if (err) {
-                        Helpers.log(err.detail);
-
-                        var parseErr = JSON.parse(err.detail).errors.email[0];
-                        failUser(parseErr);
-                    } else {
-                        Helpers.log('QB SDK: User is created', res);
-
-                        Session.update({
-                            date: new Date()
-                        });
-
-                        callback(res);
-                    }
-                });
-            });
-        },
-
         updateUser: function(id, params, callback) {
             this.checkSession(function() {
                 QB.users.update(id, params, function(err, res) {
                     if (err) {
                         Helpers.log(err.detail);
 
-                        var parseErr = JSON.parse(err.detail).errors.email;
-
-                        if (parseErr) {
-                            failUser(parseErr[0]);
-                        } else {
-                            callback(null, err);
-                        }
+                        callback(null, err);
                     } else {
                         Helpers.log('QB SDK: User is updated', res);
 
@@ -348,37 +320,27 @@ define([
 
                 QB.chat.connect({
                     jid: jid,
-                    password: password,
-                    connectWithoutGettingRoster: true
-                }, function(err) {
+                    password: password
+                }, function(err, roster) {
                     if (err) {
                         Helpers.log(err);
-                        UserView.logout();
+                        
                         fail(err.detail);
                     } else {
                         Listeners.stateActive = true;
-                        
-                        self.getContactList(function(res) {
-                            self.app.models.ContactList.saveRoster(res);
-                            callback();
-                        });
-
                         Listeners.setChatState(true);
 
                         Session.update({
                             date: new Date()
                         });
-
+                        
+                        ContactList.saveRoster(roster);
+                        
                         setRecoverySessionInterval();
+
+                        callback();
                     }
                 });
-            });
-        },
-
-        reconnectChat: function() {
-            self.connectChat(User.contact.user_jid, function() {
-                Listeners.onReconnected();
-                Listeners.updateDialogs(true);
             });
         },
 
@@ -559,19 +521,6 @@ define([
         UserView.removeSpinner();
         $('section:visible .text_error').addClass('is-error').text(errMsg);
         $('section:visible input:password').val('');
-    };
-
-    var failUser = function(err) {
-        var errMsg;
-
-        if (err.indexOf('already') >= 0) {
-            errMsg = QMCONFIG.errors.emailExists;
-        } else if (err.indexOf('look like') >= 0) {
-            errMsg = QMCONFIG.errors.invalidEmail;
-        }
-
-        $('section:visible input[type="email"]').addClass('is-error');
-        fail(errMsg);
     };
 
     var failForgot = function() {

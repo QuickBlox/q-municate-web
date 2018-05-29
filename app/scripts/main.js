@@ -35,7 +35,6 @@ requirejs.config({
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
         fetch: '../bower_components/fetch/fetch',
-        quickblox: 'https://cdnjs.cloudflare.com/ajax/libs/quickblox/2.9.0/quickblox.min',
         progressbar: '../bower_components/progressbar.js/lib/control/progressbar',
         loadImage: '../bower_components/blueimp-load-image/js/load-image',
         mCustomScrollbar: '../bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar',
@@ -118,7 +117,7 @@ requirejs([
     // Application initialization
     $(function() {
         // set Q-MUNICATE version
-        $('.j-appVersion').html('v. 1.14.0');
+        $('.j-appVersion').html('v. 1.15.0_DEV');
 
         // Set the chat protocol BOSH for IE(11+)/Edge(14+) browsers
         if (Helpers.isIE11orEdge()) {
@@ -131,7 +130,7 @@ requirejs([
         if (window.hasOwnProperty('FB')) {
             FB.init({
                 appId: QMCONFIG.fbAccount.appId,
-                version: 'v2.9'
+                version: 'v3.0'
             });
         }
 

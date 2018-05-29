@@ -30,10 +30,10 @@ define([
             if (params.token) {
                 this.token = params.token;
             } else {
-
                 if (params.authParams) {
                     this.authParams = params.authParams;
                 }
+
                 if (params.date) {
                     // set QB session expiration through 5 minutes
                     date = params.date;
