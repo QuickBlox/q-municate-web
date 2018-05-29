@@ -145,24 +145,18 @@ define([
 
         onReconnectFailed: function(error) {
             var qbService = self.app.service,
-                userJID = self.app.models.User.contact.user_jid;
+                User = self.app.models.User,
+                userJID = User.contact.user_jid;
 
             /* TODO: 
              * need to delete this code after pull-request will be confirmed
              * https://github.com/QuickBlox/quickblox-javascript-sdk/pull/342
              */
-            var _timerID = QB.chat._checkConnectionTimer;
-
-            if (_timerID) {
-                clearInterval(_timerID);
-                _timerID = undefined;
-            }
-            /**/
+            QB.chat.disconnect();
 
             qbService.checkSession(function() {
                 qbService.connectChat(userJID, function() {
                     self.onReconnected();
-                    self.updateDialogs(true);
                 });
             });
         },
