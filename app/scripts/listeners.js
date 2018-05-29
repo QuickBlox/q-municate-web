@@ -144,13 +144,13 @@ define([
         },
 
         onReconnectFailed: function(error) {
-            var userJID = self.app.models.User.contact.user_jid,
-                reconnecting = true;
+            var active = self.app.entities.active;
 
-            QB.chat.disconnect();
+            self.app.service.disconnectChat();
 
-            self.app.service.connectChat(userJID, function() {
-                self.onReconnected();
+            self.app.models.User.autologin(function() {
+                self.app.entities.active = active;
+                _switchToOnlineMode();
             });
         },
 
