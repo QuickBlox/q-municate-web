@@ -144,12 +144,9 @@ define([
         },
 
         onReconnectFailed: function(error) {
-            var active = self.app.entities.active;
-
             self.app.service.disconnectChat();
 
             self.app.models.User.autologin(function() {
-                self.app.entities.active = active;
                 _switchToOnlineMode();
             });
         },
