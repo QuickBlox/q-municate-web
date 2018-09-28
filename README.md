@@ -15,8 +15,8 @@ Q-municate is designed for all developers, including beginners, as we move from 
 ## Live demo
 
 - Web - [Live app](https://qm.quickblox.com/)
-- iOS - [App Store](https://itunes.apple.com/us/app/q-municate/id909698517?mt=8)
-- Android - [Google Play](https://play.google.com/store/apps/details?id=com.quickblox.q_municate)
+- iOS - [App Store](https://itunes.apple.com/us/app/q-municate/id909698517)
+- Android - [Google Play](https://play.google.com/store/apps/details?id=com.quickblox.qb_qmunicate)
 
 ## Releases and changelog
 See [the Releases section](https://github.com/QuickBlox/q-municate-web/releases) for changelogs for each release version of Q-municate.
