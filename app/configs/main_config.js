@@ -23,7 +23,7 @@ define(function() {
             messagingSenderId: '265299067289'
         },
 
-        debug: true,
+        debug: Number('0'),
 
         notification: {
             timeout: 7
@@ -48,8 +48,8 @@ define(function() {
         MAX_RECORD_TIME: 30,
 
         patterns: {
-            name: '.{3,50}',
-            password: '.{8,40}'
+            name: ".{3,50}",
+            password: ".{8,40}"
         },
 
         errors: {
@@ -77,12 +77,11 @@ define(function() {
         QBconf: {
             chatReconnectionTimeInterval: 2,
             chatProtocol: {
-                // BOSH protocol = 1,
-                // WebSocket = 2
+                // BOSH protocol = 1, WebSocket = 2
                 active: 2
             },
             debug: {
-                mode: 1,
+                mode: Number('0'),
                 file: null
             },
             webrtc: {
@@ -94,4 +93,5 @@ define(function() {
     };
 
     return QMCONFIG;
+
 });
