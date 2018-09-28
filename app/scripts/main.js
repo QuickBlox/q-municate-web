@@ -47,7 +47,6 @@ requirejs.config({
         perfectscrollbar: '../bower_components/perfect-scrollbar/js/perfect-scrollbar.min',
         QBNotification: '../bower_components/web-notifications/qbNotification',
         QBMediaRecorder: '../bower_components/media-recorder-js/qbMediaRecorder',
-        firebase: '../bower_components/firebase/firebase',
         // Q-municate application
         config: '../configs/main_config',
         MainModule: 'app',
@@ -100,7 +99,6 @@ requirejs([
     'MainModule',
     'backbone',
     'QBNotification',
-    'firebase',
     'fetch' // the fetch polifil for IE 10+
 ], function(
     $,
@@ -109,8 +107,7 @@ requirejs([
     minEmoji,
     QM,
     Backbone,
-    QBNotification,
-    firebase
+    QBNotification
 ) {
     var APP;
 
