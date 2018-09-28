@@ -178,7 +178,10 @@ module.exports = function(grunt) {
                 }, {
                     expand: true,
                     cwd: '<%= yeoman.app %>',
-                    src: ['bower_components/quickblox/quickblox.min.js'],
+                    src: [
+                        'bower_components/quickblox/quickblox.min.js',
+                        'bower_components/firebase/firebase.js'
+                    ],
                     dest: '<%= yeoman.dist %>'
                 }]
             }
