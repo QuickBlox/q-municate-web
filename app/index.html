@@ -219,7 +219,6 @@
                     </form>
 
                     <div id="aside_container" class="l-list-wrap j-scrollbar_aside">
-
                         <section id="requestsList" class="l-list j-aside_list_item is-hidden">
                             <header class="l-list-header">
                                 <h3 class="l-list-header-title">Requests</h3>
@@ -564,7 +563,6 @@
 <script src="scripts/main.js"></script>
 
 <!-- endbuild -->
-
 <script id="templateProfile" type="text/template">
     <section id="popupProfile" class="popup popup_profile">
         <div class="userProfile-preview">
@@ -636,22 +634,28 @@
     </section>
 </script>
 
+<!-- Окно управления чатом -->
 <script id="chatTpl" type="text/template">
+    <p style="color: red">Тип чата: <%= type %></p>
     <% if (type === 3) { %>
-    <section id="chat_<%= dialog_id %>" class="l-chat l-chat_private presence-listener j-chatItem" data-dialog="<%= dialog_id %>" data-id="<%= user_id %>" data-jid="<%= jid %>">
+    <!-- Заголовок одиночного чата -->
+    <section id="chat_<%= dialog_id %>" class="l-chat l-chat_private presence-listener j-chatItem" data-dialog="<%= dialog_id %>" data-id="<%= user_id %>" data-jid="<%= jid %>" data-type="<%= type %>">
         <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
             <% } else { %>
-            <section id="chat_<%= dialog_id %>" class="l-chat l-chat_group is-group j-chatItem" data-dialog="<%= dialog_id %>" data-jid="<%= jid %>">
+            <!-- Заголовок группового чата -->
+            <section id="chat_<%= dialog_id %>" class="l-chat l-chat_group is-group j-chatItem" data-dialog="<%= dialog_id %>" data-ids="<%= occupantsIds %>" data-jid="<%= jid %>" data-type="<%= type %>">
                 <header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">
                     <% } %>
                     <div class="chat-title">
                         <% if (type === 3) { %>
+                        <!-- Имена юзеров одиночного чата -->
                         <div class="l-flexbox_inline">
                             <div class="contact-avatar avatar avatar_chat profileUserAvatar scaleAvatar j-scaleAvatar" style="background-image:url(<%= icon %>)" data-id="<%= user_id %>" data-name="<%= name %>"></div>
                             <h2 class="name name_chat profileUserName" title="<%= name %>" data-id="<%= user_id %>"><%= name %></h2>
                             <%= status %>
                         </div>
                         <% } else { %>
+                        <!-- Имена юзеров группового чата -->
                         <div class="l-flexbox_inline">
                             <div class="contact-avatar avatar avatar_chat scaleAvatar j-scaleAvatar" style="background-image:url(<%= icon %>)" data-name="<%= name %>"></div>
                             <input class="avatar_file avatar is-hidden" type="file" accept="image/*" data-dialog="<%= dialog_id %>">
@@ -662,12 +666,14 @@
                         </div>
                         <% } %>
                     </div>
+                    <!-- Кнопки управления чатом -->
                     <div class="chat-controls">
                         <% if (type === 3) { %>
-                        <button class="btn_chat btn_chat_videocall videoCall" data-id="<%= user_id %>" data-balloon="Make a video call" data-balloon-pos="down">
+                        <!-- Кнопки управления одиночным чатом -->
+                        <button class="btn_chat btn_chat_videocall videoCall" data-type="<%= type %>" data-id="<%= user_id %>" data-balloon="Make a video call" data-balloon-pos="down">
                             <img src="images/icon-videocall.svg" alt="Make a Video Call">
                         </button>
-                        <button class="btn_chat btn_chat_audiocall audioCall" data-id="<%= user_id %>" data-balloon="Make an audio call" data-balloon-pos="down">
+                        <button class="btn_chat btn_chat_audiocall audioCall" data-type="<%= type %>" data-id="<%= user_id %>" data-balloon="Make an audio call" data-balloon-pos="down">
                             <img src="images/icon-audiocall.svg" alt="Make an Audio Call">
                         </button>
                         <button class="btn_chat btn_chat_profile userDetails" data-id="<%= user_id %>" data-balloon="Show user profile" data-balloon-pos="down">
@@ -683,6 +689,18 @@
                             <img src="images/icon-delete.svg" alt="Remove chat">
                         </button>
                         <% } else { %>
+                            <!-- Кнопки управления групповым чатом -->
+                            <% if ( (type === 2) && (occupantsIds.length < 5) ) { %>
+                            <!-- <button class="btn_chat btn_chat_group_videocall groupVideoCall" data-type="<%= type %>" data-dialog="<%= dialog_id %>" data-ids="<%= occupantsIds.join() %>" data-balloon="Make a video call in group chat" data-balloon-pos="down">
+                                <img src="images/icon-videocall.svg" alt="Make a Video Call in group chat">
+                            </button>
+                            <button class="btn_chat btn_chat_group_audiocall groupAudioCall" data-type="<%= type %>" data-dialog="<%= dialog_id %>" data-ids="<%= occupantsIds.join() %>" data-balloon="Make an audio call in group chat" data-balloon-pos="down">
+                                <img src="images/icon-audiocall.svg" alt="Make an Audio Call in group chat">
+                            </button> -->
+                            <button class="btn_chat btn_chat_audiocall_group audioCall" data-type="<%= type %>" data-dialog="<%= dialog_id %>" data-id="<%= occupantsIds.join() %>" data-balloon="Make an audio call in group chat" data-balloon-pos="down">
+                                <img src="images/icon-audiocall.svg" alt="Make an Audio Call in group chat">
+                            </button>
+                            <% } %>                     
                         <button class="btn_chat btn_chat_add addToGroupChat" data-ids="<%= occupantsIds.join() %>" data-dialog="<%= dialog_id %>" data-balloon="Add occupants to group chat" data-balloon-pos="down">
                             <img src="images/icon-add.svg" alt="Add occupants to group chat">
                         </button>

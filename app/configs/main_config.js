@@ -3,10 +3,16 @@ define(function() {
 
     var QMCONFIG = {
 
+        // qbAccount: {
+        //     appId: 36125,
+        //     authKey: 'gOGVNO4L9cBwkPE',
+        //     authSecret: 'JdqsMHCjHVYkVxV'
+        // },
+
         qbAccount: {
-            appId: 36125,
-            authKey: 'gOGVNO4L9cBwkPE',
-            authSecret: 'JdqsMHCjHVYkVxV'
+            appId: 75551,
+            authKey: 'JMrhj7rU2dMFKfD',
+            authSecret: 'jWLczh2JdD3sUrz'
         },
 
         fbAccount: {
@@ -23,7 +29,7 @@ define(function() {
             messagingSenderId: '265299067289'
         },
 
-        debug: Number('0'),
+        debug: 1,
 
         notification: {
             timeout: 7
@@ -81,7 +87,7 @@ define(function() {
                 active: 2
             },
             debug: {
-                mode: Number('0'),
+                mode: 1,
                 file: null
             },
             webrtc: {

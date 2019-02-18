@@ -36,6 +36,11 @@ define([
         };
 
         if (!options.isCallee) {
+
+            // => ROMA
+            console.log(options);
+            // <= ROMA
+
             if (callType === 'video') {
                 self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO, null, {bandwidth: 512});
             } else {

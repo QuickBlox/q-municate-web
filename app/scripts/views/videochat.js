@@ -62,16 +62,20 @@ define([
         }
     };
 
+    // Инициализация видео и аудио чатов
     VideoChatView.prototype.init = function() {
         var DialogView = this.app.views.Dialog,
             Dialog = this.app.models.Dialog;
 
+        // Подключение коллбеков одиночного видео и аудио чатов
         $('body').on('click', '.videoCall, .audioCall', function() {
             if (QB.webrtc) {
                 var $this = $(this),
                     className = $this.attr('class'),
                     userId = $this.data('id'),
-                    $dialogItem = $('.j-dialogItem[data-id="' + userId + '"]'),
+                    chatType = $this.data('type'),
+                    $dialogItem = (chatType === 3) ? $('.j-dialogItem[data-id="' + userId + '"]') : $('.j-dialogItem[data-ids="' + userId + '"]'),
+                    // $dialogItem = (chatType === 3) ? $('.j-dialogItem[data-id="' + userId + '"]') : $('.j-dialogItem'),
                     dialogId;
 
                 if ($dialogItem.length) {
@@ -92,9 +96,13 @@ define([
             $('.j-listActionsContacts').remove();
 
             function openChatAndStartCall(dialogId) {
+                console.log('htmlBuild');
                 DialogView.htmlBuild(dialogId);
+                console.log('cancelCurrentCalls');
                 self.cancelCurrentCalls();
+                console.log('startCall');
                 self.startCall(className, dialogId);
+                console.log('curSession');
                 curSession = self.app.models.VideoChat.session;
             }
 
