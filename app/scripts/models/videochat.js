@@ -38,14 +38,22 @@ define([
         if (!options.isCallee) {
 
             // => ROMA
-            console.log(options);
-            // <= ROMA
-
-            if (callType === 'video') {
-                self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO, null, {bandwidth: 512});
+            if (options.opponentId.length > 1) {
+                // Group chat
+                if (callType === 'video') {
+                    self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO, null, {bandwidth: 512});
+                } else {
+                    self.session = QB.webrtc.createNewSession(options.opponentId, QB.webrtc.CallType.AUDIO);
+                }
             } else {
-                self.session = QB.webrtc.createNewSession(options.opponentId, QB.webrtc.CallType.AUDIO);
+                // Single chat
+                if (callType === 'video') {
+                    self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO, null, {bandwidth: 512});
+                } else {
+                    self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.AUDIO);
+                }
             }
+            // <= ROMA
         }
 
         curSession = self.session;

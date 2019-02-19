@@ -75,7 +75,6 @@ define([
                     userId = $this.data('id'),
                     chatType = $this.data('type'),
                     $dialogItem = (chatType === 3) ? $('.j-dialogItem[data-id="' + userId + '"]') : $('.j-dialogItem[data-ids="' + userId + '"]'),
-                    // $dialogItem = (chatType === 3) ? $('.j-dialogItem[data-id="' + userId + '"]') : $('.j-dialogItem'),
                     dialogId;
 
                 if ($dialogItem.length) {
@@ -535,7 +534,7 @@ define([
             type = $chat[0].dataset.type,
             dialogId =  $chat.data('dialog'),
             userId,
-            contact,
+            contact = new Object(),
             htmlTpl,
             tplParams;
 
@@ -551,16 +550,24 @@ define([
                 userId: userId
             };
         } else if (type === '2') { // Group chat
+            
             userId = JSON.parse("[" + $chat.data('ids') + "]");
-            contact = (function () {
-                const filtered = userId
-                    .reduce((obj, key) => ({...obj, [key]: ContactList.contacts[key] }), {});
-                return filtered;
-            })();
+
+            Object.keys(userId).forEach(function(id){
+                if (ContactList.contacts.hasOwnProperty(userId[id])) {
+                    contact[userId[id]] = ContactList.contacts[userId[id]];
+                }
+              });
+
+            // contact = (function () {
+            //     const filtered = userId
+            //         .reduce((obj, key) => ({...obj, [key]: ContactList.contacts[key] }), {});
+            //     return filtered;
+            // })();
             
             // Names of occupants for group chat
-            // var namesOccupants =User.contact.full_name;
-            // Object.values(contact).map(function(value) { namesOccupants += ", " + value.full_name });
+            var namesOccupants = User.contact.full_name;
+            Object.values(contact).map(function(value) { namesOccupants += ", " + value.full_name });
 
             tplParams = {
                 userAvatar: User.contact.avatar_url,
