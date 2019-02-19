@@ -534,7 +534,7 @@ define([
             type = $chat[0].dataset.type,
             dialogId =  $chat.data('dialog'),
             htmlTpl,
-            tplParams;
+            tplParams,
             userId;
 
         var contact = {};
