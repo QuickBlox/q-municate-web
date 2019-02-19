@@ -568,7 +568,7 @@ define([
             
             // Names of occupants for group chat
             var namesOccupants = User.contact.full_name;
-            Object.values(contact).map(function(value) { namesOccupants += ", " + value.full_name});
+            Object.values(contact).map(function(value) { namesOccupants += ", " + value.full_name;});
 
             tplParams = {
                 userAvatar: User.contact.avatar_url,
