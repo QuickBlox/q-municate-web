@@ -555,9 +555,9 @@ define([
             // Group chat
             userId = JSON.parse("[" + $chat.data('ids') + "]");
             contact = (function () {
-                const filtered = userId
-                    // .reduce((obj, key) => ({ ...obj, [key]: ContactList.contacts[key] }), {});
-                return filtered
+                // const filtered = userId
+                //     .reduce((obj, key) => ({ ...obj, [key]: ContactList.contacts[key] }), {});
+                // return filtered
             })();
             
             // Names of occupants for group chat
