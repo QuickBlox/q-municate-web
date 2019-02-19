@@ -533,10 +533,11 @@ define([
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
             type = $chat[0].dataset.type,
             dialogId =  $chat.data('dialog'),
-            userId,
-            contact = new Object(),
             htmlTpl,
             tplParams;
+            userId;
+
+        var contact = new Object();
 
         // => Roma
         if (type === '3') { // Individual chat
@@ -550,7 +551,7 @@ define([
                 userId: userId
             };
         } else if (type === '2') { // Group chat
-            
+
             userId = JSON.parse("[" + $chat.data('ids') + "]");
 
             Object.keys(userId).forEach(function(id){
