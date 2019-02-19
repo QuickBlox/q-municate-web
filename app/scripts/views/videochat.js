@@ -540,8 +540,7 @@ define([
             tplParams;
 
         // => Roma
-        if (type === '3') {
-            // Individual chat
+        if (type === '3') { // Individual chat
             userId = $chat.data('id');
             contact = ContactList.contacts[userId];
             tplParams = {
@@ -551,14 +550,13 @@ define([
                 dialogId: dialogId,
                 userId: userId
             };
-        } else if (type === '2') {
-            // Group chat
+        } else if (type === '2') { // Group chat
             userId = JSON.parse("[" + $chat.data('ids') + "]");
-            // contact = (function () {
-            //     const filtered = userId
-            //         .reduce((obj, key) => ({ ...obj, [key]: ContactList.contacts[key] }), {});
-            //     return filtered
-            // })();
+            contact = (function () {
+                const filtered = userId
+                    // .reduce((obj, key) => ({ ...obj, [key]: ContactList.contacts[key] }), {});
+                return filtered
+            })();
             
             // Names of occupants for group chat
             // var namesOccupants =User.contact.full_name;
