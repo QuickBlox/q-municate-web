@@ -489,7 +489,10 @@ define([
 
     VideoChatView.prototype.startCall = function(className, dialogId) {
         var audioSignal = document.getElementById('callingSignal'),
+
+            // ошибка
             params = self.build(dialogId),
+
             $chat = $('.l-chat:visible'),
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
             QBApiCalls = this.app.service,
@@ -529,19 +532,47 @@ define([
 
     VideoChatView.prototype.build = function(id) {
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
-            userId = $chat.data('id'),
-            dialogId = $chat.data('dialog'),
-            contact = ContactList.contacts[userId],
+            type = $chat[0].dataset.type,
+            dialogId =  $chat.data('dialog'),
+            userId,
+            contact,
             htmlTpl,
             tplParams;
 
-        tplParams = {
-            userAvatar: User.contact.avatar_url,
-            contactAvatar: contact.avatar_url,
-            contactName: contact.full_name,
-            dialogId: dialogId,
-            userId: userId
-        };
+        // => Roma
+        if (type === '3') {
+            // Individual chat
+            userId = $chat.data('id');
+            contact = ContactList.contacts[userId];
+            tplParams = {
+                userAvatar: User.contact.avatar_url,
+                contactAvatar: contact.avatar_url,
+                contactName: contact.full_name,
+                dialogId: dialogId,
+                userId: userId
+            };
+        } else if (type === '2') {
+            // Group chat
+            userId = JSON.parse("[" + $chat.data('ids') + "]");
+            contact = (function () {
+                const filtered = userId
+                    .reduce((obj, key) => ({ ...obj, [key]: ContactList.contacts[key] }), {});
+                return filtered
+            })();
+            
+            // Names of occupants for group chat
+            var namesOccupants =User.contact.full_name;
+            Object.values(contact).map(function(value) { namesOccupants += ", " + value.full_name });
+
+            tplParams = {
+                userAvatar: User.contact.avatar_url,
+                contactAvatar: QMCONFIG.defAvatar.group_url,
+                contactName: namesOccupants,
+                dialogId: dialogId,
+                userId: userId
+            };
+        }
+        // <= Roma
 
         htmlTpl = QMHtml.VideoChat.buildTpl(tplParams);
 

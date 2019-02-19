@@ -44,7 +44,7 @@ define([
             if (callType === 'video') {
                 self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO, null, {bandwidth: 512});
             } else {
-                self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.AUDIO);
+                self.session = QB.webrtc.createNewSession(options.opponentId, QB.webrtc.CallType.AUDIO);
             }
         }
 
