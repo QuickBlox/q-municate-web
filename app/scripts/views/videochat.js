@@ -537,7 +537,7 @@ define([
             tplParams;
             userId;
 
-        var contact = new Object();
+        var contact = {};
 
         // => Roma
         if (type === '3') { // Individual chat
