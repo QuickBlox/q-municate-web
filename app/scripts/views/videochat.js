@@ -556,7 +556,7 @@ define([
             userId = JSON.parse("[" + $chat.data('ids') + "]");
             contact = (function () {
                 const filtered = userId
-                    .reduce((obj, key) => ({ ...obj, [key]: ContactList.contacts[key] }), {});
+                    // .reduce((obj, key) => ({ ...obj, [key]: ContactList.contacts[key] }), {});
                 return filtered
             })();
             
