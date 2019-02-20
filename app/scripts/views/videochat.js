@@ -47,6 +47,7 @@ define([
     }
 
     VideoChatView.prototype.cancelCurrentCalls = function() {
+        console.log('Roma => cancelCurrentCalls');
         var $mediacall = $('.mediacall');
 
         if ($mediacall.length > 0) {
@@ -55,6 +56,7 @@ define([
     };
 
     VideoChatView.prototype.clearChat = function() {
+        console.log('Roma => clearChat');
         var $chatView = $('.chatView');
 
         if ($chatView.length > 1) {
@@ -62,13 +64,13 @@ define([
         }
     };
 
-    // Инициализация видео и аудио чатов
     VideoChatView.prototype.init = function() {
+        console.log('Roma => init');
         var DialogView = this.app.views.Dialog,
             Dialog = this.app.models.Dialog;
 
-        // Подключение коллбеков одиночного видео и аудио чатов
         $('body').on('click', '.videoCall, .audioCall', function() {
+            console.log('call');
             if (QB.webrtc) {
                 var $this = $(this),
                     className = $this.attr('class'),
@@ -109,6 +111,7 @@ define([
         });
 
         $('#popupIncoming').on('click', '.btn_decline', function() {
+            console.log('Roma => #popupIncoming .btn_decline');
             var $self = $(this),
                 $incomingCall = $self.parents('.incoming-call'),
                 opponentId = $self.data('id'),
@@ -133,6 +136,7 @@ define([
         });
 
         $('#popupIncoming').on('click', '.btn_accept', function() {
+            console.log('Roma => #popupIncoming .btn_accept');
             self.cancelCurrentCalls();
 
             clearTimeout(sendAutoReject);
@@ -191,11 +195,12 @@ define([
         });
 
         $('body').on('click', '.btn_hangup', function() {
+            console.log('Roma => click .btn_hangup');
             self.clearChat();
 
             var $self = $(this),
                 $chat = $self.parents('.l-chat'),
-                opponentId = $self.data('id'),
+                opponentId = [],
                 dialogId = $self.data('dialog'),
                 callType = curSession.callType === 1 ? 'video' : 'audio',
                 duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
@@ -204,11 +209,21 @@ define([
                 isErrorMessage = $self.data('errorMessage');
 
             if (VideoChat.caller) {
-                if (!isErrorMessage && duration !== 'connect...') {
-                    VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
+                if (VideoChat.callee instanceof Array) {
+                    for (var i = 0, len = VideoChat.callee.length; i < len; i++) {
+                        opponentId.push(VideoChat.callee[i]);
+
+                        // TODO: нужно отправлять пуши в цикле, что юзер вышел из группового чата
+                    }
                 } else {
-                    VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
-                    $self.removeAttr('data-errorMessage');
+                    opponentId.push($self.data('id'));
+
+                    if (!isErrorMessage && duration !== 'connect...') {
+                        VideoChat.sendMessage(opponentId[0], '1', duration, dialogId, null, null, self.sessionID);
+                    } else {
+                        VideoChat.sendMessage(opponentId[0], '1', null, dialogId, callType);
+                        $self.removeAttr('data-errorMessage');
+                    }
                 }
             }
 
@@ -237,6 +252,7 @@ define([
 
         // full-screen-mode
         $('body').on('click', '.btn_full-mode', function() {
+            console.log('Roma => click .btn_full-mode');
             var mediaScreen = document.getElementsByClassName("mediacall")[0],
                 isFullScreen = false;
 
@@ -284,6 +300,7 @@ define([
     };
 
     VideoChatView.prototype.onCall = function(session, extension) {
+        console.log('Roma => VideoChatView.prototype.onCall');
         if (User.contact.id === session.initiatorID) {
             return false;
         }
@@ -353,6 +370,7 @@ define([
     };
 
     VideoChatView.prototype.onIgnored = function(state, session, id, extension) {
+        console.log('Roma => VideoChatView.prototype.onIgnored');
         if ((state === 'onAccept') && (User.contact.id === id)) {
             stopIncomingCall(session.initiatorID);
         }
@@ -369,6 +387,7 @@ define([
     };
 
     VideoChatView.prototype.onAccept = function(session, id, extension) {
+        console.log('Roma => VideoChatView.prototype.onAccept');
         var audioSignal = document.getElementById('callingSignal'),
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             callType = self.type,
@@ -391,6 +410,7 @@ define([
     };
 
     VideoChatView.prototype.onRemoteStream = function(session, id, stream) {
+        console.log('Roma => VideoChatView.prototype.onRemoteStream');
         var video = document.getElementById('remoteStream');
 
         curSession.attachMediaStream('remoteStream', stream);
@@ -416,6 +436,7 @@ define([
     };
 
     VideoChatView.prototype.onReject = function(session, id, extension) {
+        console.log('Roma => VideoChatView.prototype.onReject');
         var audioSignal = document.getElementById('callingSignal'),
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
@@ -447,10 +468,12 @@ define([
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
+        console.log('Roma => VideoChatView.prototype.onStop');
         closeStreamScreen(id);
     };
 
     VideoChatView.prototype.onUpdateCall = function(session, id, extension) {
+        console.log('Roma => VideoChatView.prototype.onUpdateCall');
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]');
         var $selector = $(window.document.body);
@@ -468,6 +491,7 @@ define([
     };
 
     VideoChatView.prototype.onSessionConnectionStateChangedListener = function(session, userID, connectionState) {
+        console.log('Roma => VideoChatView.prototype.onSessionConnectionStateChangedListener');
         // connectionState === 3 (failed) - will close connection (for firefox browser)
         if (is_firefox && (connectionState === 3)) {
             curSession.closeConnection(userID);
@@ -477,16 +501,19 @@ define([
     };
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
+        console.log('Roma => VideoChatView.prototype.onSessionCloseListener');
         var opponentId = User.contact.id === VideoChat.callee ? VideoChat.caller : VideoChat.callee;
 
         closeStreamScreen(opponentId);
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
+        console.log('Roma => VideoChatView.prototype.onUserNotAnswerListener');
         $('.btn_hangup').click();
     };
 
     VideoChatView.prototype.startCall = function(className, dialogId) {
+        console.log('Roma => VideoChatView.prototype.startCall');
         var audioSignal = document.getElementById('callingSignal'),
 
             // ошибка
@@ -530,6 +557,7 @@ define([
     };
 
     VideoChatView.prototype.build = function(id) {
+        console.log('Roma => VideoChatView.prototype.build');
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
             type = $chat[0].dataset.type,
             dialogId =  $chat.data('dialog'),
@@ -592,6 +620,7 @@ define([
     };
 
     VideoChatView.prototype.mute = function(callType) {
+        console.log('Roma => VideoChatView.prototype.mute');
         curSession.mute(callType);
         if (callType === 'video') {
             $('#localStream').addClass('is-hidden');
@@ -600,6 +629,7 @@ define([
     };
 
     VideoChatView.prototype.unmute = function(callType) {
+        console.log('Roma => VideoChatView.prototype.unmute');
         curSession.unmute(callType);
         if (callType === 'video') {
             $('#localStream').removeClass('is-hidden');
@@ -610,6 +640,7 @@ define([
     /* Private
     --------------------------------------------------------------------------*/
     function closeStreamScreen(id) {
+        console.log('Roma => closeStreamScreen');
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]'),
@@ -655,6 +686,7 @@ define([
     }
 
     function switchOffDevice(event) {
+        console.log('Roma => switchOffDevice(event)');
         var $obj = $(event.target).data('id') ? $(event.target) : $(event.target).parent(),
             opponentId = $obj.data('id'),
             dialogId = $obj.data('dialog'),
@@ -691,6 +723,7 @@ define([
     }
 
     function createAndShowNotification(paramsObg) {
+        console.log('Roma => createAndShowNotification(paramsObg)');
         var cancelNotify  = !Settings.get('calls_notify'),
             isNotMainTab  = !SyncTabs.get();
 
@@ -730,6 +763,7 @@ define([
     }
 
     function addCallTypeIcon(id, callType) {
+        console.log('Roma => addCallTypeIcon(id, callType)');
         var $status = $('li.dialog-item[data-id="' + id + '"]').find('span.status');
 
         if (callType === 'video') {
@@ -742,6 +776,7 @@ define([
     }
 
     function stopIncomingCall(id) {
+        console.log('Roma => stopIncomingCall(id)');
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]');
 
@@ -767,10 +802,12 @@ define([
     }
 
     function openPopup($objDom) {
+        console.log('Roma => openPopup($objDom)');
         $objDom.add('.popups').addClass('is-overlay');
     }
 
     function closePopup() {
+        console.log('Roma => closePopup()');
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();
 
@@ -780,6 +817,7 @@ define([
     }
 
     function setDuration(currentTime) {
+        console.log('Roma => setDuration(currentTime)');
         var c = currentTime || 0;
         $('.mediacall-info-duration').text(getTimer(c));
         callTimer = setTimeout(function() {
@@ -789,6 +827,7 @@ define([
     }
 
     function getTimer(time) {
+        console.log('Roma => getTimer(time)');
         var h, min, sec;
 
         h = Math.floor(time / 3600);
@@ -802,6 +841,7 @@ define([
     }
 
     function fixScroll() {
+        console.log('Roma => fixScroll()');
         var $chat = $('.l-chat:visible'),
             containerHeight = $chat.find('.l-chat-content .mCSB_container').height(),
             chatContentHeight = $chat.find('.l-chat-content').height(),
@@ -817,10 +857,12 @@ define([
     }
 
     function capitaliseFirstLetter(string) {
+        console.log('Roma => capitaliseFirstLetter(string)');
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
     function setScreenStyle() {
+        console.log('Roma => setScreenStyle()');
         if ($('.mediacall').outerHeight() <= 260) {
             $('.mediacall').addClass('small_screen');
         } else {
