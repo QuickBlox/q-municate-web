@@ -472,15 +472,15 @@ define([
         },
 
         sendPushNotification: function(calleeId, fullName) {
-            console.log('---------SEND PUSH-------------');
-            console.log('calleeId: ', calleeId);
             var params = {
                 'notification_type': 'push',
                 'environment': "production",
-                'message': QB.pushnotifications.base64Encode(fullName + ' is calling you.'),
+                'message': QB.pushnotifications.base64Encode(fullName + ' 999999 is calling you.'),
                 'user': { ids: [calleeId] },
                 'ios_badge': '1',
-                'ios_sound': 'default'
+                'ios_sound': 'default',
+                'name': 'Roma',
+                'tags': 'RomaTag'
             };
 
             QB.pushnotifications.events.create(params, function(err, response) {

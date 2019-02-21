@@ -70,13 +70,13 @@ define([
             Dialog = this.app.models.Dialog;
 
         $('body').on('click', '.videoCall, .audioCall', function() {
-            console.log('call');
             if (QB.webrtc) {
                 var $this = $(this),
                     className = $this.attr('class'),
                     userId = $this.data('id'),
                     chatType = $this.data('type'),
-                    $dialogItem = (chatType === 3) ? $('.j-dialogItem[data-id="' + userId + '"]') : $('.j-dialogItem[data-ids="' + userId + '"]'),
+                    activeDialog = Dialog.app.entities.active,
+                    $dialogItem = $('.j-dialogItem[data-dialog="' + activeDialog + '"]'),
                     dialogId;
 
                 if ($dialogItem.length) {
@@ -97,13 +97,9 @@ define([
             $('.j-listActionsContacts').remove();
 
             function openChatAndStartCall(dialogId) {
-                console.log('htmlBuild');
                 DialogView.htmlBuild(dialogId);
-                console.log('cancelCurrentCalls');
                 self.cancelCurrentCalls();
-                console.log('startCall');
                 self.startCall(className, dialogId);
-                console.log('curSession');
                 curSession = self.app.models.VideoChat.session;
             }
 
@@ -376,12 +372,12 @@ define([
             VideoChat.session = session;
             curSession = VideoChat.session;
 
-            createAndShowNotification({
-                'id': id,
-                'dialogId': dialogId,
-                'callState': '4',
-                'callType': callType
-            });
+            // createAndShowNotification({
+            //     'id': id,
+            //     'dialogId': dialogId,
+            //     'callState': '4',
+            //     'callType': callType
+            // });
 
             sendAutoReject = setTimeout(function() {
                 $('.btn_decline').click();
@@ -577,7 +573,7 @@ define([
         console.log('Roma => VideoChatView.prototype.build');
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
             type = $chat[0].dataset.type,
-            dialogId =  $chat.data('dialog'),
+            dialogId = $chat.data('dialog'),
             htmlTpl,
             tplParams,
             userId;
