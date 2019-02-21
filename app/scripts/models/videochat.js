@@ -113,7 +113,9 @@ define([
                 callType: state === '2' ? (callType === 'video' ? '2' : '1') : (VideoChatView.type === 'video' ? '2' : '1'),
                 callState: state === '1' && !callDuration ? '2' : state,
                 caller: state === '2' ? userId : self.caller,
-                callee: state === '2' ? User.contact.id : self.callee
+                // тут возможно ошибка
+                // callee: state === '2' ? User.contact.id : self.callee
+                callee: state === '2' ? User.contact.id : self.callee[0]
             };
 
             if (callDuration) extension.callDuration = Helpers.getDuration(null, callDuration);
@@ -140,17 +142,20 @@ define([
             callState: extension.callState,
             caller: extension.caller,
             callee: extension.callee,
+            // callee: extension.callee[0],
             callDuration: extension.callDuration || null,
             sessionID: extension.sessionID || null,
             'online': true
         };
-
+        console.log('proceed--------------------------------');
+        console.dir('jid: ', jid);
+        console.dir('msg: ', msg);
         msg.id = QB.chat.send(jid, {
             type: 'chat',
             body: 'Call notification',
             extension: extension
         });
-
+        console.log(msg);
         message = Message.create(msg);
         Helpers.log(message);
         MessageView.addItem(message, true, true);

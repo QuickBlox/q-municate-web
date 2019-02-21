@@ -213,7 +213,17 @@ define([
                     for (var i = 0, len = VideoChat.callee.length; i < len; i++) {
                         opponentId.push(VideoChat.callee[i]);
 
+
+
+
                         // TODO: нужно отправлять пуши в цикле, что юзер вышел из группового чата
+                        VideoChat.sendMessage(opponentId[1], '1', null, dialogId, callType);
+                        $self.removeAttr('data-errorMessage');
+
+
+
+
+
                     }
                 } else {
                     opponentId.push($self.data('id'));
@@ -221,6 +231,7 @@ define([
                     if (!isErrorMessage && duration !== 'connect...') {
                         VideoChat.sendMessage(opponentId[0], '1', duration, dialogId, null, null, self.sessionID);
                     } else {
+                        console.log('Отправка пуш');
                         VideoChat.sendMessage(opponentId[0], '1', null, dialogId, callType);
                         $self.removeAttr('data-errorMessage');
                     }
@@ -301,6 +312,9 @@ define([
 
     VideoChatView.prototype.onCall = function(session, extension) {
         console.log('Roma => VideoChatView.prototype.onCall');
+        console.log(session.opponentsIDs.length > 1);
+        // TODO: из session нужно взять массив юзеров opponents
+
         if (User.contact.id === session.initiatorID) {
             return false;
         }
@@ -309,6 +323,10 @@ define([
             $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         }
 
+        var ids = session.opponentsIDs.slice(1);
+        ids.unshift(session.initiatorID);
+        console.log(ids);
+
         var audioSignal = document.getElementById('ringtoneSignal'),
             $incomings = $('#popupIncoming'),
             id = session.initiatorID,
@@ -316,7 +334,7 @@ define([
             callType = (session.callType === 1 ? 'video' : 'audio') || extension.call_type,
             userName = contact.full_name || extension.full_name,
             userAvatar = contact.avatar_url || extension.avatar,
-            $dialogItem = $('.j-dialogItem[data-id="' + id + '"]'),
+            $dialogItem = (session.opponentsIDs.length === 1) ? $('.j-dialogItem[data-id="' + id + '"]') : $('.j-dialogItem[data-ids="' + session.opponentsIDs.join() + '"]'),
             dialogId = $dialogItem.length ? $dialogItem.data('dialog') : null,
             autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
             htmlTpl,
@@ -332,11 +350,13 @@ define([
         }
 
         function incomingCall() {
+
+            // TODO: учитывать групповой или одиночный звонок
             tplParams = {
-                userAvatar: userAvatar,
+                userAvatar: (session.opponentsIDs.length === 1) ? userAvatar : QMCONFIG.defAvatar.group_url,
                 callTypeUС: capitaliseFirstLetter(callType),
                 callType: callType,
-                userName: userName,
+                userName: (session.opponentsIDs.length === 1) ? userName : "Group call",
                 dialogId: dialogId,
                 sessionId: session.ID,
                 userId: id
@@ -515,16 +535,13 @@ define([
     VideoChatView.prototype.startCall = function(className, dialogId) {
         console.log('Roma => VideoChatView.prototype.startCall');
         var audioSignal = document.getElementById('callingSignal'),
-
-            // ошибка
             params = self.build(dialogId),
-
             $chat = $('.l-chat:visible'),
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
             QBApiCalls = this.app.service,
             calleeId = params.opponentId,
             fullName = User.contact.full_name,
-            id = $chat.data('id');
+            id = $chat.data('id') || $chat.data('ids');
 
         VideoChat.getUserMedia(params, callType, function(err, res) {
             fixScroll();

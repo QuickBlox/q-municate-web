@@ -472,6 +472,8 @@ define([
         },
 
         sendPushNotification: function(calleeId, fullName) {
+            console.log('---------SEND PUSH-------------');
+            console.log('calleeId: ', calleeId);
             var params = {
                 'notification_type': 'push',
                 'environment': "production",

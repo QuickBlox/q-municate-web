@@ -31,6 +31,7 @@ define([
             return htmlTemplate;
         },
 
+        // TODO: нужно будет поменять шаблон группового звонка
         buildTpl: function(params) {
             var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
                 '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
