@@ -41,6 +41,7 @@ define([
         Settings = this.app.models.Settings;
         SyncTabs = this.app.models.SyncTabs;
         User = this.app.models.User;
+        Dialog = this.app.models.Dialog;    ////////// Roma
         ContactList = this.app.models.ContactList;
         VideoChat = this.app.models.VideoChat;
         VoiceMessage = this.app.models.VoiceMessage;
@@ -65,20 +66,40 @@ define([
     };
 
     VideoChatView.prototype.init = function() {
-        console.log('Roma => init');
         var DialogView = this.app.views.Dialog,
             Dialog = this.app.models.Dialog;
-
+            
         $('body').on('click', '.videoCall, .audioCall', function() {
+                
             if (QB.webrtc) {
                 var $this = $(this),
+                    isGroupCall = ($this.data('type') === 2) ? true : false,
+                    dialogs = DialogView.app.entities.Collections.dialogs,
+                    activeDialog = Dialog.app.entities.active,
+                    activeDialogDetailed = dialogs.get(activeDialog),
                     className = $this.attr('class'),
                     userId = $this.data('id'),
-                    chatType = $this.data('type'),
-                    activeDialog = Dialog.app.entities.active,
                     $dialogItem = $('.j-dialogItem[data-dialog="' + activeDialog + '"]'),
+                    limitOccupants = QMCONFIG.QBconf.webrtc.maxOccupantsGroupCall,
                     dialogId;
 
+                // Exceed occupants number for group chat
+                if (isGroupCall && activeDialogDetailed.attributes.occupants_ids.length >= limitOccupants) {
+                    
+                    tplParams = {
+                        groupAvatar: QMCONFIG.defAvatar.group_url,
+                        limitOccupants: limitOccupants
+                    };
+
+                    htmlTpl = QMHtml.VideoChat.exceededOccupangsCallTpl(tplParams);
+                    $('#popupIncoming').find('.mCSB_container').prepend(htmlTpl);
+                    openPopup($('#popupIncoming'));
+                    // $incomings.find('.mCSB_container').empty();
+                    // openPopup($('#popupDetails'), null);
+
+                    return false;
+                }
+                
                 if ($dialogItem.length) {
                     dialogId = $dialogItem.data('dialog');
                     openChatAndStartCall(dialogId);
@@ -129,6 +150,11 @@ define([
             }
 
             return false;
+        });
+
+        $('#popupIncoming').on('click', '.btn_accept_exceed', function() {
+            $('#popupIncoming').find('.mCSB_container').empty();
+            closePopup();
         });
 
         $('#popupIncoming').on('click', '.btn_accept', function() {
@@ -372,12 +398,12 @@ define([
             VideoChat.session = session;
             curSession = VideoChat.session;
 
-            // createAndShowNotification({
-            //     'id': id,
-            //     'dialogId': dialogId,
-            //     'callState': '4',
-            //     'callType': callType
-            // });
+            createAndShowNotification({
+                'id': id,
+                'dialogId': dialogId,
+                'callState': '4',
+                'callType': callType
+            });
 
             sendAutoReject = setTimeout(function() {
                 $('.btn_decline').click();
@@ -536,8 +562,8 @@ define([
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
             QBApiCalls = this.app.service,
             calleeId = params.opponentId,
-            fullName = User.contact.full_name,
-            id = $chat.data('id') || $chat.data('ids');
+            fullName = 'Roma', //User.contact.full_name,
+            id = $chat.data('id');
 
         VideoChat.getUserMedia(params, callType, function(err, res) {
             fixScroll();
@@ -574,49 +600,25 @@ define([
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
             type = $chat[0].dataset.type,
             dialogId = $chat.data('dialog'),
+            dialogs = this.app.entities.Collections.dialogs,
+            activeDialog = this.app.entities.active,
+            activeDialogDetailed = dialogs.get(activeDialog),
+            activeDialogName = activeDialogDetailed.attributes.room_name,
+            userId = (type === '3') ? $chat.data('id') : JSON.parse("[" + $chat.data('ids') + "]"),
+            contact = ContactList.contacts[userId],
             htmlTpl,
-            tplParams,
-            userId;
+            tplParams;
 
-        var contact = {};
-
-        // => Roma
-        if (type === '3') { // Individual chat
-            userId = $chat.data('id');
-            contact = ContactList.contacts[userId];
-            tplParams = {
-                userAvatar: User.contact.avatar_url,
-                contactAvatar: contact.avatar_url,
-                contactName: contact.full_name,
-                dialogId: dialogId,
-                userId: userId
-            };
-        } else if (type === '2') { // Group chat
-
-            userId = JSON.parse("[" + $chat.data('ids') + "]");
-
-            Object.keys(userId).forEach(function(id){
-                if (ContactList.contacts.hasOwnProperty(userId[id])) {
-                    contact[userId[id]] = ContactList.contacts[userId[id]];
-                }
-              });
-            
-            // Names of occupants for group chat
-            var namesOccupants = User.contact.full_name;
-            Object.values(contact).map(function(value) { namesOccupants += ", " + value.full_name;});
-
-            tplParams = {
-                userAvatar: User.contact.avatar_url,
-                contactAvatar: QMCONFIG.defAvatar.group_url,
-                contactName: namesOccupants,
-                dialogId: dialogId,
-                userId: userId
-            };
-        }
-        // <= Roma
+        tplParams = {
+            type: type,
+            userAvatar: User.contact.avatar_url,
+            contactAvatar: (type === '3') ? contact.avatar_url : QMCONFIG.defAvatar.group_url,
+            contactName: (type === '3') ? contact.full_name : activeDialogName,
+            dialogId: dialogId,
+            userId: userId
+        };
 
         htmlTpl = QMHtml.VideoChat.buildTpl(tplParams);
-
         $chat.parent('.chatView').addClass('j-mediacall');
         $chat.prepend(htmlTpl);
         $chat.find('.l-chat-header').hide();

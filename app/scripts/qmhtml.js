@@ -16,6 +16,18 @@ define([
 
     QMHtml.VideoChat = {
 
+        exceededOccupangsCallTpl: function(params) {
+            var htmlTemplate = _.template('<div l-flexbox l-flexbox_column l-flexbox_flexbetween">' +
+                '<div class="incoming-call-info l-flexbox l-flexbox_column">' +
+                '<div class="message-avatar avatar info-avatar" style="background-image:url(<%= groupAvatar %>)"></div>' +
+                '<span class="info-notice">Group calls are possible in the group <= <%= limitOccupants %> occupants</span></div>' +
+                '<div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">' +
+                '<button class="btn_accept_exceed l-flexbox l-flexbox_flexcenter">Close</button>' +
+                '</div></div>')(params);
+
+                return htmlTemplate;
+        },
+
         onCallTpl: function(params) {
             var htmlTemplate = _.template('<div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween">' +
                 '<div class="incoming-call-info l-flexbox l-flexbox_column">' +

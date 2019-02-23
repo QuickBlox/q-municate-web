@@ -92,7 +92,8 @@ define(function() {
             },
             webrtc: {
                 answerTimeInterval: 45,
-                statsReportTimeInterval: 5
+                statsReportTimeInterval: 5,
+                maxOccupantsGroupCall: 4
             }
         }
 

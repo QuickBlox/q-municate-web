@@ -475,12 +475,10 @@ define([
             var params = {
                 'notification_type': 'push',
                 'environment': "production",
-                'message': QB.pushnotifications.base64Encode(fullName + ' 999999 is calling you.'),
+                'message': QB.pushnotifications.base64Encode(fullName + ' is calling you.'),
                 'user': { ids: [calleeId] },
                 'ios_badge': '1',
-                'ios_sound': 'default',
-                'name': 'Roma',
-                'tags': 'RomaTag'
+                'ios_sound': 'default'
             };
 
             QB.pushnotifications.events.create(params, function(err, response) {

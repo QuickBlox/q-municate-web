@@ -46,6 +46,7 @@ define([
         FAVICON = 'images/favicon.png';
 
     function DialogView(app) {
+        console.log('Roma => DialogView');
         self = this;
 
         this.app = app;
@@ -148,6 +149,7 @@ define([
         },
 
         downloadDialogs: function(ids, skip) {
+            console.log('Roma => downloadDialogs');
             var ContactListView = this.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
                 parameter = !skip ? null : 'old_dialog',
@@ -412,6 +414,7 @@ define([
 
 
         htmlBuild: function(elemOrId, messages) {
+            console.log('Roma => dialog - htmlBuild');
             Entities.Collections.dialogs.saveDraft();
 
             var QBApiCalls = this.app.service,

@@ -38,18 +38,21 @@
     margin: 20px 0;
 }
 .btn_accept,
-.btn_decline {
+.btn_decline,
+.btn_accept_exceed {
     text-transform: uppercase;
 }
 .btn_accept:hover,
-.btn_decline:hover {
+.btn_decline:hover,
+.btn_accept_exceed:hover {
     opacity: 1;
 }
 .btn_decline {
     margin-right: 55px;
     color: #b20001;
 }
-.btn_accept {
+.btn_accept,
+.btn_accept_exceed {
     color: #1ec252;
 }
 /* Video / audio calls */
