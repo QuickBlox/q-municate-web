@@ -20,7 +20,7 @@ define([
             var htmlTemplate = _.template('<div l-flexbox l-flexbox_column l-flexbox_flexbetween">' +
                 '<div class="incoming-call-info l-flexbox l-flexbox_column">' +
                 '<div class="message-avatar avatar info-avatar" style="background-image:url(<%= groupAvatar %>)"></div>' +
-                '<span class="info-notice">Group calls are possible in the group <= <%= limitOccupants %> occupants</span></div>' +
+                '<span class="info-notice">Group calls are possible in the group less or equal to <%= limitOccupants %> people</span></div>' +
                 '<div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">' +
                 '<button class="btn_accept_exceed l-flexbox l-flexbox_flexcenter">Close</button>' +
                 '</div></div>')(params);
@@ -44,13 +44,38 @@ define([
         },
 
         // TODO: нужно будет поменять шаблон группового звонка
-        buildTpl: function(params) {
+        singleAudioCall: function(params) {
             var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
                 '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
                 '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>' +
                 '<img id="localUser" class="mediacall-local mediacall-local-avatar" src="<%=userAvatar%>" alt="avatar">' +
                 '<div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">' +
-                '<img class="mediacall-remote-avatar" src="<%=contactAvatar%>" alt="avatar">' +
+                '<img class="mediacall-remote-avatar" src="<%=contactAvatar%>" alt="avatar"><br>' +
+                '<span class="mediacall-remote-name"><%=contactName%></span></div>' +
+                '<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">' +
+                '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">' +
+                '<span class="mediacall-info-duration">connect...</span></div>' +
+                '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">' +
+                '<button class="btn_mediacall btn_full-mode" data-id="<%=userId%>" data-dialog="<%=dialogId%>" disabled>' +
+                '<div id="fullModeOn" class="btn-icon_mediacall"></div>' +
+                '<div id="fullModeOff" class="btn-icon_mediacall"></div></button>' +
+                '<button class="btn_mediacall btn_camera_off" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
+                '<img class="btn-icon_mediacall" src="images/icon-camera-off.svg" alt="camera"></button>' +
+                '<button class="btn_mediacall btn_mic_off" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
+                '<img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>' +
+                '<button class="btn_mediacall btn_hangup" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
+                '<img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>' +
+                '</div></div>')(params);
+
+            return htmlTemplate;
+        },
+
+        groupAudioCall: function(params) {
+            var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
+                '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
+                '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>' +
+                '<div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">' +
+                '<img class="mediacall-remote-avatar" src="<%=contactAvatar%>" alt="avatar"><br>' +
                 '<span class="mediacall-remote-name"><%=contactName%></span></div>' +
                 '<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">' +
                 '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">' +

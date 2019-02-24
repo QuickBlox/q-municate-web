@@ -114,8 +114,8 @@ define([
                 callState: state === '1' && !callDuration ? '2' : state,
                 caller: state === '2' ? userId : self.caller,
                 // тут возможно ошибка
-                // callee: state === '2' ? User.contact.id : self.callee
-                callee: state === '2' ? User.contact.id : self.callee[0]
+                // callee: state === '2' ? User.contact.id : self.callee[0]
+                callee: state === '2' ? User.contact.id : self.callee
             };
 
             if (callDuration) extension.callDuration = Helpers.getDuration(null, callDuration);

@@ -41,7 +41,7 @@ define([
         Settings = this.app.models.Settings;
         SyncTabs = this.app.models.SyncTabs;
         User = this.app.models.User;
-        Dialog = this.app.models.Dialog;    ////////// Roma
+        Dialog = this.app.models.Dialog;
         ContactList = this.app.models.ContactList;
         VideoChat = this.app.models.VideoChat;
         VoiceMessage = this.app.models.VoiceMessage;
@@ -94,8 +94,6 @@ define([
                     htmlTpl = QMHtml.VideoChat.exceededOccupangsCallTpl(tplParams);
                     $('#popupIncoming').find('.mCSB_container').prepend(htmlTpl);
                     openPopup($('#popupIncoming'));
-                    // $incomings.find('.mCSB_container').empty();
-                    // openPopup($('#popupDetails'), null);
 
                     return false;
                 }
@@ -557,14 +555,14 @@ define([
     VideoChatView.prototype.startCall = function(className, dialogId) {
         console.log('Roma => VideoChatView.prototype.startCall');
         var audioSignal = document.getElementById('callingSignal'),
-            params = self.build(dialogId),
-            $chat = $('.l-chat:visible'),
-            callType = !!className.match(/audioCall/) ? 'audio' : 'video',
-            QBApiCalls = this.app.service,
-            calleeId = params.opponentId,
-            fullName = 'Roma', //User.contact.full_name,
-            id = $chat.data('id');
-
+        params = self.build(dialogId),
+        $chat = $('.l-chat:visible'),
+        callType = !!className.match(/audioCall/) ? 'audio' : 'video',
+        QBApiCalls = this.app.service,
+        calleeId = params.opponentId,
+        fullName = User.contact.full_name,
+        id = $chat.data('id');
+        
         VideoChat.getUserMedia(params, callType, function(err, res) {
             fixScroll();
             if (err) {
@@ -572,6 +570,7 @@ define([
                 QMHtml.VideoChat.showError();
                 return true;
             } else {
+                console.log(calleId);
                 QBApiCalls.sendPushNotification(calleeId, fullName);
             }
 
@@ -618,7 +617,7 @@ define([
             userId: userId
         };
 
-        htmlTpl = QMHtml.VideoChat.buildTpl(tplParams);
+        htmlTpl = (type === '3') ? QMHtml.VideoChat.singleAudioCall(tplParams) : QMHtml.VideoChat.groupAudioCall(tplParams);
         $chat.parent('.chatView').addClass('j-mediacall');
         $chat.prepend(htmlTpl);
         $chat.find('.l-chat-header').hide();
