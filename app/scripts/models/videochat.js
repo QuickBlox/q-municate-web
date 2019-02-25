@@ -80,7 +80,6 @@ define([
 
     VideoChat.prototype.sendMessage = function(userId, state, callDuration, dialogId, callType, isErrorMessage, sessionID) {
         console.log('Roma => VideoChat.prototype.sendMessage');
-        alert('send message');
         var jid = QB.chat.helpers.getUserJid(userId, QMCONFIG.qbAccount.appId),
             User = this.app.models.User,
             Message = this.app.models.Message,
