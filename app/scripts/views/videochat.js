@@ -97,7 +97,6 @@ define([
 
                     return false;
                 }
-                
                 if ($dialogItem.length) {
                     dialogId = $dialogItem.data('dialog');
                     openChatAndStartCall(dialogId);
@@ -564,14 +563,18 @@ define([
         id = $chat.data('id');
         
         VideoChat.getUserMedia(params, callType, function(err, res) {
+
+            // console.log(res);
+            // Тут возвращается медиастрим
+
             fixScroll();
             if (err) {
                 $chat.find('.mediacall .btn_hangup').click();
                 QMHtml.VideoChat.showError();
                 return true;
             } else {
-                console.log(calleId);
-                QBApiCalls.sendPushNotification(calleeId, fullName);
+                // TODO: пуш-нотификации работают с ошибкой
+                // QBApiCalls.sendPushNotification(calleeId, fullName);
             }
 
             VoiceMessage.resetRecord();

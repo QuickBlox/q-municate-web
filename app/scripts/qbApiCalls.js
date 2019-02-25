@@ -474,17 +474,19 @@ define([
         sendPushNotification: function(calleeId, fullName) {
             var params = {
                 'notification_type': 'push',
-                'environment': "production",
+                'environment': 'production',
                 'message': QB.pushnotifications.base64Encode(fullName + ' is calling you.'),
-                'user': { ids: [calleeId] },
+                'user': { ids: calleeId },
                 'ios_badge': '1',
                 'ios_sound': 'default'
             };
 
             QB.pushnotifications.events.create(params, function(err, response) {
                 if (err) {
+                    console.dir(err);
                     Helpers.log('Create event error: ', err);
                 } else {
+                    alert('created');
                     Helpers.log('Create event: ', response);
                 }
             });

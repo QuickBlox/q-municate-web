@@ -25,33 +25,23 @@ define([
 
     VideoChat.prototype.getUserMedia = function(options, callType, callback) {
         console.log('Roma => VideoChat.prototype.getUserMedia');
-        var User = this.app.models.User;
-        var params = {
-            audio: true,
-            video: callType === 'video' ? true : false,
-            elemId: 'localStream',
-            options: {
-                muted: true,
-                mirror: true
-            }
-        };
+        var User = this.app.models.User,
+            isGroupCall = (options.opponentId.length > 1) ? true : false,
+            params = {
+                audio: true,
+                video: callType === 'video' ? true : false,
+                elemId: 'localStream',
+                options: {
+                    muted: true,
+                    mirror: true
+                }
+            };
 
         if (!options.isCallee) {
-            if (options.opponentId.length > 1) {
-                // Group chat
-                if (callType === 'video') {
-                    self.session = QB.webrtc.createNewSession(options.opponentId, QB.webrtc.CallType.VIDEO, null, {bandwidth: 512});
-                } else {
-                    // QB.webrtc.createNewSession(calleesIds, sessionType, callerID, additionalOptions);
-                    self.session = QB.webrtc.createNewSession(options.opponentId, QB.webrtc.CallType.AUDIO, User.contact.id);
-                }
+            if (callType === 'video') {
+                self.session = QB.webrtc.createNewSession(isGroupCall ? options.opponentId : [options.opponentId], QB.webrtc.CallType.VIDEO, null, {bandwidth: 512});
             } else {
-                // Single chat
-                if (callType === 'video') {
-                    self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.VIDEO, null, {bandwidth: 512});
-                } else {
-                    self.session = QB.webrtc.createNewSession([options.opponentId], QB.webrtc.CallType.AUDIO, User.contact.id);
-                }
+                self.session = QB.webrtc.createNewSession(isGroupCall ? options.opponentId : [options.opponentId], QB.webrtc.CallType.AUDIO, User.contact.id);
             }
         }
 
@@ -90,6 +80,7 @@ define([
 
     VideoChat.prototype.sendMessage = function(userId, state, callDuration, dialogId, callType, isErrorMessage, sessionID) {
         console.log('Roma => VideoChat.prototype.sendMessage');
+        alert('send message');
         var jid = QB.chat.helpers.getUserJid(userId, QMCONFIG.qbAccount.appId),
             User = this.app.models.User,
             Message = this.app.models.Message,
@@ -115,7 +106,7 @@ define([
                 caller: state === '2' ? userId : self.caller,
                 // тут возможно ошибка
                 // callee: state === '2' ? User.contact.id : self.callee[0]
-                callee: state === '2' ? User.contact.id : self.callee
+                callee: state === '2' ? User.contact.id : self.callee[0]
             };
 
             if (callDuration) extension.callDuration = Helpers.getDuration(null, callDuration);
