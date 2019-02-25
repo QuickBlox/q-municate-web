@@ -119,6 +119,8 @@ define([
                 self.cancelCurrentCalls();
                 self.startCall(className, dialogId);
                 curSession = self.app.models.VideoChat.session;
+
+                return;
             }
 
             return false;

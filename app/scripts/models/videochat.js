@@ -139,13 +139,12 @@ define([
         };
         console.log('proceed--------------------------------');
         console.dir('jid: ', jid);
-        console.dir('msg: ', msg);
+        // alert(msg);
         msg.id = QB.chat.send(jid, {
             type: 'chat',
             body: 'Call notification',
             extension: extension
         });
-        console.log(msg);
         message = Message.create(msg);
         Helpers.log(message);
         MessageView.addItem(message, true, true);
