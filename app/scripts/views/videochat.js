@@ -889,5 +889,66 @@ define([
         }
     }
 
+    function getHtmlTpl(isGroupCall, callType) {
+
+        if (callType === 'audio' && isGroupCall === false) {
+
+        // tplParams = {
+        //     type: type,
+        //     callTypeUС: capitaliseFirstLetter(callType),
+        //     userAvatar: User.contact.avatar_url,
+        //     contactAvatar: (type === '3') ? contact.avatar_url : QMCONFIG.defAvatar.group_url,
+        //     contactName: (type === '3') ? contact.full_name : activeDialogName,
+        //     dialogId: dialogId,
+        //     userId: userId
+        // };            
+
+            tplParams = {
+                userAvatar: !isGroupCall ? userAvatar : QMCONFIG.defAvatar.group_url,
+                callTypeUС: capitaliseFirstLetter(callType),
+                callType: callType,
+                userName: !isGroupCall ? userName : "Group call " + currentDialogId,
+                dialogId: currentDialogId,
+                sessionId: session.ID,
+                userId: id
+            };
+
+            htmlTpl = QMHtml.VideoChat.onSingleAudioCallTpl(tplParams);
+
+        } else if (callType === 'audio' && isGroupCall === true) {
+
+            tplParams = {
+                userAvatar: !isGroupCall ? userAvatar : QMCONFIG.defAvatar.group_url,
+                callTypeUС: capitaliseFirstLetter(callType),
+                callType: callType,
+                userName: !isGroupCall ? userName : "Group call " + currentDialogId,
+                dialogId: currentDialogId,
+                sessionId: session.ID,
+                userId: id
+            };
+
+            htmlTpl = QMHtml.VideoChat.onGroupAudioCallTpl(tplParams);
+
+        } else if (callType === 'video' && isGroupCall === false) {
+
+                tplParams = {
+                    userAvatar: userAvatar,
+                    callTypeUС: capitaliseFirstLetter(callType),
+                    callType: callType,
+                    userName: userName,
+                    dialogId: currentDialogId,
+                    sessionId: session.ID,
+                    userId: id
+                };
+
+                htmlTpl = QMHtml.VideoChat.onSingleVideoCallTpl(tplParams);
+
+        } else if (callType === 'video' && isGroupCall === true) {
+
+        
+            htmlTpl = QMHtml.VideoChat.onGroupVideoCallTpl(tplParams);
+        }
+    }
+
     return VideoChatView;
 });
