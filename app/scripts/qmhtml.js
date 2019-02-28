@@ -31,8 +31,8 @@ define([
         onCallTpl: function(params) {
             var htmlTemplate = _.template('<div class="incoming-call l-flexbox l-flexbox_column l-flexbox_flexbetween">' +
                 '<div class="incoming-call-info l-flexbox l-flexbox_column">' +
-                '<div class="message-avatar avatar info-avatar" style="background-image:url(<%= userAvatar %>)"></div>' +
-                '<span class="info-notice"><%= callTypeUС %> Call from <%= userName %></span></div>' +
+                '<div class="message-avatar avatar info-avatar" style="background-image:url(<%= avatar %>)"></div>' +
+                '<span class="info-notice"><%= callSignature %></span></div>' +
                 '<div class="incoming-call-controls l-flexbox l-flexbox_flexcenter">' +
                 '<button class="btn_decline" data-callType="<%= callType %>" data-dialog="<%= dialogId %>"' +
                 ' data-id="<%= userId %>">Decline</button>' +
@@ -43,8 +43,7 @@ define([
             return htmlTemplate;
         },
 
-        // TODO: нужно будет поменять шаблон группового звонка
-        singleAudioCall: function(params) {
+        singleAudioCallTpl: function(params) {
             var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
                 '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
                 '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>' +
@@ -70,7 +69,7 @@ define([
             return htmlTemplate;
         },
 
-        groupAudioCall: function(params) {
+        groupAudioCallTpl: function(params) {
             var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
                 '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
                 '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>' +

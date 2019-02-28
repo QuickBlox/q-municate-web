@@ -70,7 +70,6 @@ define([
             Dialog = this.app.models.Dialog;
             
         $('body').on('click', '.videoCall, .audioCall', function() {
-                
             if (QB.webrtc) {
                 var $this = $(this),
                     isGroupCall = ($this.data('type') === 2) ? true : false,
@@ -81,7 +80,8 @@ define([
                     userId = $this.data('id'),
                     $dialogItem = $('.j-dialogItem[data-dialog="' + activeDialog + '"]'),
                     limitOccupants = QMCONFIG.QBconf.webrtc.maxOccupantsGroupCall,
-                    dialogId;
+                    dialogId,
+                    tplParams;
 
                 // Exceed occupants number for group chat
                 if (isGroupCall && activeDialogDetailed.attributes.occupants_ids.length >= limitOccupants) {
@@ -97,6 +97,7 @@ define([
 
                     return false;
                 }
+
                 if ($dialogItem.length) {
                     dialogId = $dialogItem.data('dialog');
                     openChatAndStartCall(dialogId);
@@ -157,7 +158,6 @@ define([
         });
 
         $('#popupIncoming').on('click', '.btn_accept', function() {
-            console.log('Roma => #popupIncoming .btn_accept');
             self.cancelCurrentCalls();
 
             clearTimeout(sendAutoReject);
@@ -332,9 +332,8 @@ define([
     };
 
     VideoChatView.prototype.onCall = function(session, extension) {
-        console.log('Roma => VideoChatView.prototype.onCall');
-        console.log(session.opponentsIDs.length > 1);
-        // TODO: из session нужно взять массив юзеров opponents
+        var dialogId = extension.dialogId,
+            isGroupCall = JSON.parse(extension.isGroupCall);
 
         if (User.contact.id === session.initiatorID) {
             return false;
@@ -344,19 +343,15 @@ define([
             $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         }
 
-        var ids = session.opponentsIDs.slice(1);
-        ids.unshift(session.initiatorID);
-        console.log(ids);
-
         var audioSignal = document.getElementById('ringtoneSignal'),
             $incomings = $('#popupIncoming'),
             id = session.initiatorID,
             contact = ContactList.contacts[id],
             callType = (session.callType === 1 ? 'video' : 'audio') || extension.call_type,
+            callTypeUС = capitaliseFirstLetter(callType),
             userName = contact.full_name || extension.full_name,
             userAvatar = contact.avatar_url || extension.avatar,
-            $dialogItem = (session.opponentsIDs.length === 1) ? $('.j-dialogItem[data-id="' + id + '"]') : $('.j-dialogItem[data-ids="' + session.opponentsIDs.join() + '"]'),
-            dialogId = $dialogItem.length ? $dialogItem.data('dialog') : null,
+            $dialogItem = $('.j-dialogItem[data-dialog="' + dialogId + '"]'),
             autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
             htmlTpl,
             tplParams;
@@ -371,13 +366,11 @@ define([
         }
 
         function incomingCall() {
-
-            // TODO: учитывать групповой или одиночный звонок
             tplParams = {
-                userAvatar: (session.opponentsIDs.length === 1) ? userAvatar : QMCONFIG.defAvatar.group_url,
-                callTypeUС: capitaliseFirstLetter(callType),
+                avatar: userAvatar,
                 callType: callType,
-                userName: (session.opponentsIDs.length === 1) ? userName : "Group call",
+                callTypeUС: callTypeUС,
+                callSignature: isGroupCall ? userName + "started a Group Call in a \"Bla Bla\"" : callTypeUС + " Call from " + userName,
                 dialogId: dialogId,
                 sessionId: session.ID,
                 userId: id
@@ -549,20 +542,19 @@ define([
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
-        console.log('Roma => VideoChatView.prototype.onUserNotAnswerListener');
         $('.btn_hangup').click();
     };
 
+
     VideoChatView.prototype.startCall = function(className, dialogId) {
-        console.log('Roma => VideoChatView.prototype.startCall');
         var audioSignal = document.getElementById('callingSignal'),
-        params = self.build(dialogId),
-        $chat = $('.l-chat:visible'),
-        callType = !!className.match(/audioCall/) ? 'audio' : 'video',
-        QBApiCalls = this.app.service,
-        calleeId = params.opponentId,
-        fullName = User.contact.full_name,
-        id = $chat.data('id');
+            callType = !!className.match(/audioCall/) ? 'audio' : 'video',
+            params = self.build(dialogId, callType),
+            $chat = $('.l-chat:visible'),
+            QBApiCalls = this.app.service,
+            calleeId = params.opponentId,
+            fullName = User.contact.full_name,
+            id = $chat.data('id');
         
         VideoChat.getUserMedia(params, callType, function(err, res) {
 
@@ -599,30 +591,24 @@ define([
         });
     };
 
-    VideoChatView.prototype.build = function(id) {
-        console.log('Roma => VideoChatView.prototype.build');
+    VideoChatView.prototype.build = function(id, callType) {
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
-            type = $chat[0].dataset.type,
-            dialogId = $chat.data('dialog'),
+            isGroupCall = ($chat.data('type') === '2') ? true : false,
             dialogs = this.app.entities.Collections.dialogs,
-            activeDialog = this.app.entities.active,
-            activeDialogDetailed = dialogs.get(activeDialog),
-            activeDialogName = activeDialogDetailed.attributes.room_name,
-            userId = (type === '3') ? $chat.data('id') : JSON.parse("[" + $chat.data('ids') + "]"),
-            contact = ContactList.contacts[userId],
-            htmlTpl,
-            tplParams;
+            activeDialogDetailed = dialogs.get(id),
+            contactId = $chat.data('id'),
+            contact = ContactList.contacts[contactId],
 
-        tplParams = {
-            type: type,
-            userAvatar: User.contact.avatar_url,
-            contactAvatar: (type === '3') ? contact.avatar_url : QMCONFIG.defAvatar.group_url,
-            contactName: (type === '3') ? contact.full_name : activeDialogName,
-            dialogId: dialogId,
-            userId: userId
-        };
+            options = {
+                isGroupCall: isGroupCall,
+                callType: callType,
+                contact: contact,
+                contactId: contactId,
+                dialogId: id
+            };
 
-        htmlTpl = (type === '3') ? QMHtml.VideoChat.singleAudioCall(tplParams) : QMHtml.VideoChat.groupAudioCall(tplParams);
+        htmlTpl = getHtmlTpl.call(options);
+
         $chat.parent('.chatView').addClass('j-mediacall');
         $chat.prepend(htmlTpl);
         $chat.find('.l-chat-header').hide();
@@ -633,8 +619,8 @@ define([
         setScreenStyle();
 
         return {
-            opponentId: userId,
-            dialogId: dialogId
+            opponentId: contactId,
+            dialogId: id
         };
     };
 
@@ -876,7 +862,6 @@ define([
     }
 
     function capitaliseFirstLetter(string) {
-        console.log('Roma => capitaliseFirstLetter(string)');
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
@@ -889,19 +874,37 @@ define([
         }
     }
 
-    function getHtmlTpl(isGroupCall, callType) {
+    function getHtmlTpl() {
+        var tplParams,
+            htmlTpl;
 
-        if (callType === 'audio' && isGroupCall === false) {
+        if (this.callType === 'audio' && this.isGroupCall === false) {
+            tplParams = {
+                callType: this.callType,
+                callTypeUС: capitaliseFirstLetter(this.callType),
+                userId: User.contact.id,
+                userName: User.contact.full_name,
+                userAvatar: User.contact.avatar_url,
+                contactName: this.contact.full_name,
+                contactAvatar: this.contact.avatar_url,
+                dialogId: this.dialogId
+            };
 
+            htmlTpl = QMHtml.VideoChat.singleAudioCallTpl(tplParams);
+
+        } else if (this.callType === 'audio' && this.isGroupCall === true) {
+            
         // tplParams = {
         //     type: type,
+        // userName: !isGroupCall ? userName : "Group call " + currentDialogId,
+        //     userAvatar: !isGroupCall ? userAvatar : QMCONFIG.defAvatar.group_url,
         //     callTypeUС: capitaliseFirstLetter(callType),
         //     userAvatar: User.contact.avatar_url,
         //     contactAvatar: (type === '3') ? contact.avatar_url : QMCONFIG.defAvatar.group_url,
         //     contactName: (type === '3') ? contact.full_name : activeDialogName,
         //     dialogId: dialogId,
         //     userId: userId
-        // };            
+        // };     
 
             tplParams = {
                 userAvatar: !isGroupCall ? userAvatar : QMCONFIG.defAvatar.group_url,
@@ -913,41 +916,28 @@ define([
                 userId: id
             };
 
-            htmlTpl = QMHtml.VideoChat.onSingleAudioCallTpl(tplParams);
+            htmlTpl = QMHtml.VideoChat.groupAudioCallTpl(tplParams);
 
-        } else if (callType === 'audio' && isGroupCall === true) {
-
+        } else if (this.callType === 'video' && this.isGroupCall === false) {
             tplParams = {
-                userAvatar: !isGroupCall ? userAvatar : QMCONFIG.defAvatar.group_url,
+                userAvatar: userAvatar,
                 callTypeUС: capitaliseFirstLetter(callType),
                 callType: callType,
-                userName: !isGroupCall ? userName : "Group call " + currentDialogId,
+                userName: userName,
                 dialogId: currentDialogId,
                 sessionId: session.ID,
                 userId: id
             };
 
-            htmlTpl = QMHtml.VideoChat.onGroupAudioCallTpl(tplParams);
+            htmlTpl = QMHtml.VideoChat.onSingleVideoCallTpl(tplParams);
 
-        } else if (callType === 'video' && isGroupCall === false) {
-
-                tplParams = {
-                    userAvatar: userAvatar,
-                    callTypeUС: capitaliseFirstLetter(callType),
-                    callType: callType,
-                    userName: userName,
-                    dialogId: currentDialogId,
-                    sessionId: session.ID,
-                    userId: id
-                };
-
-                htmlTpl = QMHtml.VideoChat.onSingleVideoCallTpl(tplParams);
-
-        } else if (callType === 'video' && isGroupCall === true) {
+        } else if (this.callType === 'video' && this.isGroupCall === true) {
 
         
             htmlTpl = QMHtml.VideoChat.onGroupVideoCallTpl(tplParams);
         }
+
+        return htmlTpl;
     }
 
     return VideoChatView;

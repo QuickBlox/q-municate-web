@@ -41,7 +41,7 @@ define([
             if (callType === 'video') {
                 self.session = QB.webrtc.createNewSession(isGroupCall ? options.opponentId : [options.opponentId], QB.webrtc.CallType.VIDEO, null, {bandwidth: 512});
             } else {
-                self.session = QB.webrtc.createNewSession(isGroupCall ? options.opponentId : [options.opponentId], QB.webrtc.CallType.AUDIO, User.contact.id);
+                self.session = QB.webrtc.createNewSession(isGroupCall ? options.opponentId : [options.opponentId], QB.webrtc.CallType.AUDIO);
             }
         }
 
@@ -69,7 +69,11 @@ define([
                     self.caller = options.opponentId;
                     self.callee = User.contact.id;
                 } else {
-                    curSession.call({});
+                    var extension = {
+                        isGroupCall: isGroupCall,
+                        dialogId: options.dialogId
+                    }
+                    curSession.call(extension);
                     self.caller = User.contact.id;
                     self.callee = options.opponentId;
                 }
