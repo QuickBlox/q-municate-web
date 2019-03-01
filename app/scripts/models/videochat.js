@@ -24,7 +24,6 @@ define([
     }
 
     VideoChat.prototype.getUserMedia = function(options, callType, callback) {
-        console.log('Roma => VideoChat.prototype.getUserMedia');
         var User = this.app.models.User,
             isGroupCall = (options.opponentId.length > 1) ? true : false,
             params = {
@@ -72,7 +71,7 @@ define([
                     var extension = {
                         isGroupCall: isGroupCall,
                         dialogId: options.dialogId
-                    }
+                    };
                     curSession.call(extension);
                     self.caller = User.contact.id;
                     self.callee = options.opponentId;
@@ -83,7 +82,6 @@ define([
     };
 
     VideoChat.prototype.sendMessage = function(userId, state, callDuration, dialogId, callType, isErrorMessage, sessionID) {
-        console.log('Roma => VideoChat.prototype.sendMessage');
         var jid = QB.chat.helpers.getUserJid(userId, QMCONFIG.qbAccount.appId),
             User = this.app.models.User,
             Message = this.app.models.Message,
@@ -108,7 +106,6 @@ define([
                 callState: state === '1' && !callDuration ? '2' : state,
                 caller: state === '2' ? userId : self.caller,
                 // тут возможно ошибка
-                // callee: state === '2' ? User.contact.id : self.callee[0]
                 callee: state === '2' ? User.contact.id : self.callee[0]
             };
 
@@ -136,19 +133,17 @@ define([
             callState: extension.callState,
             caller: extension.caller,
             callee: extension.callee,
-            // callee: extension.callee[0],
             callDuration: extension.callDuration || null,
             sessionID: extension.sessionID || null,
             'online': true
         };
-        console.log('proceed--------------------------------');
-        console.dir('jid: ', jid);
-        // alert(msg);
+
         msg.id = QB.chat.send(jid, {
             type: 'chat',
             body: 'Call notification',
             extension: extension
         });
+
         message = Message.create(msg);
         Helpers.log(message);
         MessageView.addItem(message, true, true);

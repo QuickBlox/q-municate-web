@@ -57,7 +57,6 @@ define([
     };
 
     VideoChatView.prototype.clearChat = function() {
-        console.log('Roma => clearChat');
         var $chatView = $('.chatView');
 
         if ($chatView.length > 1) {
@@ -216,7 +215,11 @@ define([
         });
 
         $('body').on('click', '.btn_hangup', function() {
-            console.log('Roma => click .btn_hangup');
+
+            // TODO: здесь нужно переделать логику
+            // Если duration !== 'connect...' завершать звонок
+            // Если нет - отправлять что юзер вышел из чата
+
             self.clearChat();
 
             var $self = $(this),
@@ -234,16 +237,9 @@ define([
                     for (var i = 0, len = VideoChat.callee.length; i < len; i++) {
                         opponentId.push(VideoChat.callee[i]);
 
-
-
-
                         // TODO: нужно отправлять пуши в цикле, что юзер вышел из группового чата
                         VideoChat.sendMessage(opponentId[1], '1', null, dialogId, callType);
                         $self.removeAttr('data-errorMessage');
-
-
-
-
 
                     }
                 } else {
@@ -252,8 +248,8 @@ define([
                     if (!isErrorMessage && duration !== 'connect...') {
                         VideoChat.sendMessage(opponentId[0], '1', duration, dialogId, null, null, self.sessionID);
                     } else {
-                        console.log('Отправка пуш');
                         VideoChat.sendMessage(opponentId[0], '1', null, dialogId, callType);
+                        // VideoChat.sendMessage(opponentId[0], '1', 'durationnnn', dialogId, callType, null, self.sessionID);
                         $self.removeAttr('data-errorMessage');
                     }
                 }
@@ -265,7 +261,6 @@ define([
             }
 
             clearTimeout(callTimer);
-
             curSession.stop({});
 
             self.type = null;
@@ -593,18 +588,19 @@ define([
 
     VideoChatView.prototype.build = function(id, callType) {
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
-            isGroupCall = ($chat.data('type') === '2') ? true : false,
+            isGroupCall = ($chat.data('type') === 2) ? true : false,
             dialogs = this.app.entities.Collections.dialogs,
             activeDialogDetailed = dialogs.get(id),
-            contactId = $chat.data('id'),
+            contactId = activeDialogDetailed.attributes.occupants_ids,
             contact = ContactList.contacts[contactId],
-
+            
             options = {
                 isGroupCall: isGroupCall,
                 callType: callType,
                 contact: contact,
                 contactId: contactId,
-                dialogId: id
+                dialogId: id,
+                activeDialogDetailed: activeDialogDetailed
             };
 
         htmlTpl = getHtmlTpl.call(options);
@@ -893,6 +889,21 @@ define([
             htmlTpl = QMHtml.VideoChat.singleAudioCallTpl(tplParams);
 
         } else if (this.callType === 'audio' && this.isGroupCall === true) {
+
+            tplParams = {
+                callType: this.callType,
+                callTypeUС: capitaliseFirstLetter(this.callType),
+                userId: User.contact.id,
+                userName: User.contact.full_name,
+                userAvatar: User.contact.avatar_url,
+                contactName: "Group Call from <br>" + this.activeDialogDetailed.attributes.room_name,
+                contactAvatar: User.contact.avatar_url,
+                dialogId: this.dialogId,
+            };
+
+            htmlTpl = QMHtml.VideoChat.groupAudioCallTpl(tplParams);
+
+        } else if (this.callType === 'video' && this.isGroupCall === false) {
             
         // tplParams = {
         //     type: type,
@@ -904,21 +915,7 @@ define([
         //     contactName: (type === '3') ? contact.full_name : activeDialogName,
         //     dialogId: dialogId,
         //     userId: userId
-        // };     
-
-            tplParams = {
-                userAvatar: !isGroupCall ? userAvatar : QMCONFIG.defAvatar.group_url,
-                callTypeUС: capitaliseFirstLetter(callType),
-                callType: callType,
-                userName: !isGroupCall ? userName : "Group call " + currentDialogId,
-                dialogId: currentDialogId,
-                sessionId: session.ID,
-                userId: id
-            };
-
-            htmlTpl = QMHtml.VideoChat.groupAudioCallTpl(tplParams);
-
-        } else if (this.callType === 'video' && this.isGroupCall === false) {
+        // };              
             tplParams = {
                 userAvatar: userAvatar,
                 callTypeUС: capitaliseFirstLetter(callType),
