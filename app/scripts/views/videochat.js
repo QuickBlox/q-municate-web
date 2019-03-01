@@ -86,7 +86,7 @@ define([
                 if (isGroupCall && activeDialogDetailed.attributes.occupants_ids.length >= limitOccupants) {
                     
                     tplParams = {
-                        groupAvatar: QMCONFIG.defAvatar.group_url,
+                        groupAvatar: activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url,
                         limitOccupants: limitOccupants
                     };
 
@@ -886,9 +886,23 @@ define([
                 dialogId: this.dialogId
             };
 
-            htmlTpl = QMHtml.VideoChat.singleAudioCallTpl(tplParams);
+            htmlTpl = QMHtml.VideoChat.outSingleAudioCallTpl(tplParams);
 
         } else if (this.callType === 'audio' && this.isGroupCall === true) {
+            tplParams = {
+                callType: this.callType,
+                callTypeUС: capitaliseFirstLetter(this.callType),
+                userId: User.contact.id,
+                userName: User.contact.full_name,
+                userAvatar: User.contact.avatar_url,
+                contactName: this.activeDialogDetailed.attributes.room_name,
+                contactAvatar: this.activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url,
+                dialogId: this.dialogId,
+            };
+
+            htmlTpl = QMHtml.VideoChat.outGroupAudioCallTpl(tplParams);
+
+        } else if (this.callType === 'video' && this.isGroupCall === false) {
 
             tplParams = {
                 callType: this.callType,
@@ -896,14 +910,12 @@ define([
                 userId: User.contact.id,
                 userName: User.contact.full_name,
                 userAvatar: User.contact.avatar_url,
-                contactName: "Group Call from <br>" + this.activeDialogDetailed.attributes.room_name,
-                contactAvatar: User.contact.avatar_url,
-                dialogId: this.dialogId,
+                contactName: this.contact.full_name,
+                contactAvatar: this.contact.avatar_url,
+                dialogId: this.dialogId
             };
 
-            htmlTpl = QMHtml.VideoChat.groupAudioCallTpl(tplParams);
-
-        } else if (this.callType === 'video' && this.isGroupCall === false) {
+            htmlTpl = QMHtml.VideoChat.outSingleVideoCallTpl(tplParams);            
             
         // tplParams = {
         //     type: type,
@@ -916,22 +928,20 @@ define([
         //     dialogId: dialogId,
         //     userId: userId
         // };              
-            tplParams = {
-                userAvatar: userAvatar,
-                callTypeUС: capitaliseFirstLetter(callType),
-                callType: callType,
-                userName: userName,
-                dialogId: currentDialogId,
-                sessionId: session.ID,
-                userId: id
-            };
-
-            htmlTpl = QMHtml.VideoChat.onSingleVideoCallTpl(tplParams);
 
         } else if (this.callType === 'video' && this.isGroupCall === true) {
-
+            tplParams = {
+                callType: this.callType,
+                callTypeUС: capitaliseFirstLetter(this.callType),
+                userId: User.contact.id,
+                userName: User.contact.full_name,
+                userAvatar: User.contact.avatar_url,
+                contactName: this.activeDialogDetailed.attributes.room_name,
+                contactAvatar: User.contact.avatar_url,
+                dialogId: this.dialogId
+            };
         
-            htmlTpl = QMHtml.VideoChat.onGroupVideoCallTpl(tplParams);
+            htmlTpl = QMHtml.VideoChat.outGroupVideoCallTpl(tplParams);
         }
 
         return htmlTpl;

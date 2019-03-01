@@ -43,7 +43,7 @@ define([
             return htmlTemplate;
         },
 
-        singleAudioCallTpl: function(params) {
+        outSingleAudioCallTpl: function(params) {
             var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
                 '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
                 '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>' +
@@ -69,7 +69,7 @@ define([
             return htmlTemplate;
         },
 
-        groupAudioCallTpl: function(params) {
+        outGroupAudioCallTpl: function(params) {
             var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
                 '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
                 '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>' +
@@ -97,6 +97,58 @@ define([
             return htmlTemplate;
         },
 
+        outSingleVideoCallTpl: function(params) {
+            var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
+                '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
+                '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>' +
+                '<img id="localUser" class="mediacall-local mediacall-local-avatar" src="<%=userAvatar%>" alt="avatar">' +
+                '<div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">' +
+                '<img class="mediacall-remote-avatar" src="<%=contactAvatar%>" alt="avatar"><br>' +
+                '<span class="mediacall-remote-name"><%=contactName%></span></div>' +
+                '<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">' +
+                '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">' +
+                '<span class="mediacall-info-duration">connect...</span></div>' +
+                '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">' +
+                '<button class="btn_mediacall btn_full-mode" data-id="<%=userId%>" data-dialog="<%=dialogId%>" disabled>' +
+                '<div id="fullModeOn" class="btn-icon_mediacall"></div>' +
+                '<div id="fullModeOff" class="btn-icon_mediacall"></div></button>' +
+                '<button class="btn_mediacall btn_camera_off" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
+                '<img class="btn-icon_mediacall" src="images/icon-camera-off.svg" alt="camera"></button>' +
+                '<button class="btn_mediacall btn_mic_off" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
+                '<img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>' +
+                '<button class="btn_mediacall btn_hangup" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
+                '<img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>' +
+                '</div></div>')(params);
+
+            return htmlTemplate;
+        },        
+
+        outGroupVideoCallTpl: function(params) {
+            var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
+                '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
+                '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>' +
+                // '<img id="localUser" class="mediacall-local mediacall-local-avatar" src="<%=userAvatar%>" alt="avatar">' +
+                '<div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">' +
+                '<img class="mediacall-remote-avatar" src="<%=contactAvatar%>" alt="avatar"><br>' +
+                '<span class="mediacall-remote-name"><%=contactName%></span></div>' +
+                '<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">' +
+                '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">' +
+                '<span class="mediacall-info-duration">connect...</span></div>' +
+                '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">' +
+                '<button class="btn_mediacall btn_full-mode" data-id="<%=userId%>" data-dialog="<%=dialogId%>" disabled>' +
+                '<div id="fullModeOn" class="btn-icon_mediacall"></div>' +
+                '<div id="fullModeOff" class="btn-icon_mediacall"></div></button>' +
+                '<button class="btn_mediacall btn_camera_off" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
+                '<img class="btn-icon_mediacall" src="images/icon-camera-off.svg" alt="camera"></button>' +
+                '<button class="btn_mediacall btn_mic_off" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
+                '<img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>' +
+                '<button class="btn_mediacall btn_hangup" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
+                '<img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>' +
+                '</div></div>')(params);
+
+            return htmlTemplate;
+        },
+        
         showError: function() {
             var isBottom = Helpers.isBeginOfChat(),
                 $chat = $('.l-chat:visible'),
