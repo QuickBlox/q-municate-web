@@ -189,3 +189,23 @@
     height: 100% !important;
     max-height: 100% !important;
 }
+// Oleg Zdor
+
+.mediacall-global-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #a1ccaf70;
+    border: 1px solid orange;
+    position: absolute;
+}
+
+.users .mediacall-global-avatar:nth-child(1){
+    top: 23%;
+}
+.users .mediacall-global-avatar:nth-child(2){
+    top: 42%;
+}
+.users .mediacall-global-avatar:nth-child(3){
+    top: 61%;
+}

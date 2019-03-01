@@ -601,7 +601,8 @@ define([
                 contactId: contactId,
                 dialogId: id,
                 activeDialogDetailed: activeDialogDetailed
-            };
+            
+        };
 
         htmlTpl = getHtmlTpl.call(options);
 
@@ -898,6 +899,7 @@ define([
                 contactName: this.activeDialogDetailed.attributes.room_name,
                 contactAvatar: this.activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url,
                 dialogId: this.dialogId,
+                contactImg: this.ContactList.contact[78065205].avatar_url,
             };
 
             htmlTpl = QMHtml.VideoChat.outGroupAudioCallTpl(tplParams);

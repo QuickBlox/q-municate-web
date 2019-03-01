@@ -73,9 +73,12 @@ define([
             var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
                 '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
                 '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>' +
-                
-                '<img id="localUser" class="mediacall-local mediacall-local-avatar" src="<%=userAvatar%>" alt="avatar">' +
-
+                '<img id="localUser" class="mediacall-local mediacall-local-avatar" " alt="avatar">' +
+                '<div class = "users">' +
+                '<img  class="mediacall-local mediacall-global-avatar" src="<%=contactsIds%>' + 
+                '<img  class="mediacall-local mediacall-global-avatar" src="<%=contactsIds%>' + 
+                '<img  class="mediacall-local mediacall-global-avatar" src="<%=contactsIds%>' + 
+                '</div>' +
                 '<div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">' +
                 '<img class="mediacall-remote-avatar" src="<%=contactAvatar%>" alt="avatar"><br>' +
                 '<span class="mediacall-remote-name"><%=contactName%></span></div>' +
