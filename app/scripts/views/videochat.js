@@ -1,4 +1,4 @@
-/* roma
+/* romaroma
  * Q-municate chat application
  *
  * VideoChat View Module
