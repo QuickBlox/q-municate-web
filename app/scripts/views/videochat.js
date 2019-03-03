@@ -540,7 +540,6 @@ define([
         $('.btn_hangup').click();
     };
 
-
     VideoChatView.prototype.startCall = function(className, dialogId) {
         var audioSignal = document.getElementById('callingSignal'),
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
@@ -597,12 +596,12 @@ define([
             options = {
                 isGroupCall: isGroupCall,
                 callType: callType,
+                contacts: ContactList.contacts,
                 contact: contact,
                 contactId: contactId,
                 dialogId: id,
                 activeDialogDetailed: activeDialogDetailed
-            
-        };
+            };
 
         htmlTpl = getHtmlTpl.call(options);
 
@@ -890,6 +889,17 @@ define([
             htmlTpl = QMHtml.VideoChat.outSingleAudioCallTpl(tplParams);
 
         } else if (this.callType === 'audio' && this.isGroupCall === true) {
+            var contacts = this.contacts,
+                occupantsTpl = "",
+                avataUrl;
+
+            this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
+                // console.log(contacts[occupant].avatar_url);
+                avataUrl = contacts[occupant].avatar_url || QMCONFIG.defAvatar.url_png;
+                occupantsTpl += '<img id="remoteUser1" class="mediacall-local mediacall-global-avatar" src="' + avataUrl + '" alt="avatar">'
+            });
+            console.log(occupantsTpl);
+
             tplParams = {
                 callType: this.callType,
                 callTypeUС: capitaliseFirstLetter(this.callType),
@@ -899,7 +909,7 @@ define([
                 contactName: this.activeDialogDetailed.attributes.room_name,
                 contactAvatar: this.activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url,
                 dialogId: this.dialogId,
-                contactImg: this.ContactList.contact[78065205].avatar_url,
+                occupantsTpl: occupantsTpl,
             };
 
             htmlTpl = QMHtml.VideoChat.outGroupAudioCallTpl(tplParams);
