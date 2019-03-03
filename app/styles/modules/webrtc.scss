@@ -200,6 +200,10 @@
     position: absolute;
 }
 
+.users .hidden-avatar {
+    opacity: .2;
+}
+
 .users .mediacall-global-avatar:nth-child(1){
     top: 23%;
 }

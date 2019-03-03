@@ -33,7 +33,8 @@ define([
         videoStreamTime,
         network = {},
         curSession = {},
-        is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1,
+        opponents = [];
 
     function VideoChatView(app) {
         this.app = app;
@@ -328,7 +329,7 @@ define([
 
     VideoChatView.prototype.onCall = function(session, extension) {
         var dialogId = extension.dialogId,
-            isGroupCall = JSON.parse(extension.isGroupCall);
+            isGroupCall = isGroupChat(session);
 
         if (User.contact.id === session.initiatorID) {
             return false;
@@ -346,7 +347,8 @@ define([
             callTypeUС = capitaliseFirstLetter(callType),
             userName = contact.full_name || extension.full_name,
             userAvatar = contact.avatar_url || extension.avatar,
-            $dialogItem = $('.j-dialogItem[data-dialog="' + dialogId + '"]'),
+            dialogs = Dialog.app.entities.Collections.dialogs,
+            activeDialogDetailed = dialogs.get(dialogId),
             autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
             htmlTpl,
             tplParams;
@@ -362,10 +364,10 @@ define([
 
         function incomingCall() {
             tplParams = {
-                avatar: userAvatar,
+                avatar: isGroupCall ? activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url : userAvatar ,
                 callType: callType,
                 callTypeUС: callTypeUС,
-                callSignature: isGroupCall ? userName + "started a Group Call in a \"Bla Bla\"" : callTypeUС + " Call from " + userName,
+                callSignature: isGroupCall ? "Group " + callTypeUС + " Call from<br>" + activeDialogDetailed.attributes.room_name : callTypeUС + " Call from " + userName,
                 dialogId: dialogId,
                 sessionId: session.ID,
                 userId: id
@@ -399,7 +401,7 @@ define([
     };
 
     VideoChatView.prototype.onIgnored = function(state, session, id, extension) {
-        console.log('Roma => VideoChatView.prototype.onIgnored');
+        alert('ignored: ' + state);
         if ((state === 'onAccept') && (User.contact.id === id)) {
             stopIncomingCall(session.initiatorID);
         }
@@ -416,11 +418,15 @@ define([
     };
 
     VideoChatView.prototype.onAccept = function(session, id, extension) {
-        console.log('Roma => VideoChatView.prototype.onAccept');
         var audioSignal = document.getElementById('callingSignal'),
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             callType = self.type,
             isCurrentUser = (User.contact.id === id) ? true : false;
+
+        // Если групповой аудио звонок убираю прозрачность аватарки юзера
+        if (isGroupChat(session) && callType === 'audio') {
+            var avatar = $( '#remoteUser-' + id ).removeClass('hidden-avatar');
+        }
 
         if (Settings.get('sounds_notify')) {
             audioSignal.pause();
@@ -439,7 +445,6 @@ define([
     };
 
     VideoChatView.prototype.onRemoteStream = function(session, id, stream) {
-        console.log('Roma => VideoChatView.prototype.onRemoteStream');
         var video = document.getElementById('remoteStream');
 
         curSession.attachMediaStream('remoteStream', stream);
@@ -465,7 +470,7 @@ define([
     };
 
     VideoChatView.prototype.onReject = function(session, id, extension) {
-        console.log('Roma => VideoChatView.prototype.onReject');
+        alert('onReject');
         var audioSignal = document.getElementById('callingSignal'),
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
@@ -497,12 +502,30 @@ define([
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
-        console.log('Roma => VideoChatView.prototype.onStop');
-        closeStreamScreen(id);
+        var callType = self.type;
+
+        if (!isGroupChat(session)) {
+            closeStreamScreen(id);
+            return;
+        }
+
+        removeOpponent(VideoChatView.opponents, id);
+
+        if (typeof VideoChatView.opponents === 'undefined' || VideoChatView.opponents.length === 0) {
+            closeStreamScreen(id);
+            return;
+        }
+
+        if (callType === 'audio') {
+            // Делаю аватарку юзера прозрачной
+            var avatar = $( '#remoteUser-' + id ).addClass('hidden-avatar');
+        }
+            
+
     };
 
     VideoChatView.prototype.onUpdateCall = function(session, id, extension) {
-        console.log('Roma => VideoChatView.prototype.onUpdateCall');
+        alert('onUpdateCall');
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]');
         var $selector = $(window.document.body);
@@ -520,23 +543,23 @@ define([
     };
 
     VideoChatView.prototype.onSessionConnectionStateChangedListener = function(session, userID, connectionState) {
-        console.log('Roma => VideoChatView.prototype.onSessionConnectionStateChangedListener');
         // connectionState === 3 (failed) - will close connection (for firefox browser)
         if (is_firefox && (connectionState === 3)) {
             curSession.closeConnection(userID);
             $('.btn_hangup').click();
-
         }
     };
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
-        console.log('Roma => VideoChatView.prototype.onSessionCloseListener');
+        // alert('onSessionCloseListener');
         var opponentId = User.contact.id === VideoChat.callee ? VideoChat.caller : VideoChat.callee;
 
         closeStreamScreen(opponentId);
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
+        // Юзер не поднял трубку
+        alert('onUserNotAnswerListener');
         $('.btn_hangup').click();
     };
 
@@ -561,6 +584,7 @@ define([
                 QMHtml.VideoChat.showError();
                 return true;
             } else {
+                VideoChatView.opponents = params.opponentId;
                 // TODO: пуш-нотификации работают с ошибкой
                 // QBApiCalls.sendPushNotification(calleeId, fullName);
             }
@@ -777,7 +801,7 @@ define([
     }
 
     function stopIncomingCall(id) {
-        console.log('Roma => stopIncomingCall(id)');
+        alert(stopIncomingCall);
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]');
 
@@ -842,7 +866,6 @@ define([
     }
 
     function fixScroll() {
-        console.log('Roma => fixScroll()');
         var $chat = $('.l-chat:visible'),
             containerHeight = $chat.find('.l-chat-content .mCSB_container').height(),
             chatContentHeight = $chat.find('.l-chat-content').height(),
@@ -894,11 +917,9 @@ define([
                 avataUrl;
 
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
-                // console.log(contacts[occupant].avatar_url);
                 avataUrl = contacts[occupant].avatar_url || QMCONFIG.defAvatar.url_png;
-                occupantsTpl += '<img id="remoteUser1" class="mediacall-local mediacall-global-avatar" src="' + avataUrl + '" alt="avatar">';
+                occupantsTpl += '<img id="remoteUser-' + occupant + '" class="hidden-avatar mediacall-local mediacall-global-avatar" src="' + avataUrl + '" alt="avatar">';
             });
-            console.log(occupantsTpl);
 
             tplParams = {
                 callType: this.callType,
@@ -957,6 +978,15 @@ define([
         }
 
         return htmlTpl;
+    }
+
+    function isGroupChat(session) {
+        return (session.opponentsIDs.length > 1) ? true : false;
+    }
+
+    function removeOpponent(array, id) {
+        var index = array.indexOf(id);
+        if (index !== -1) array.splice(index, 1);
     }
 
     return VideoChatView;
