@@ -896,7 +896,7 @@ define([
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
                 // console.log(contacts[occupant].avatar_url);
                 avataUrl = contacts[occupant].avatar_url || QMCONFIG.defAvatar.url_png;
-                occupantsTpl += '<img id="remoteUser1" class="mediacall-local mediacall-global-avatar" src="' + avataUrl + '" alt="avatar">'
+                occupantsTpl += '<img id="remoteUser1" class="mediacall-local mediacall-global-avatar" src="' + avataUrl + '" alt="avatar">';
             });
             console.log(occupantsTpl);
 
