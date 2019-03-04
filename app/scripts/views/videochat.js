@@ -34,6 +34,7 @@ define([
         network = {},
         curSession = {},
         is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1,
+        curCall = 
         opponents = [];
 
     function VideoChatView(app) {
@@ -128,7 +129,6 @@ define([
         });
 
         $('#popupIncoming').on('click', '.btn_decline', function() {
-            console.log('Roma => #popupIncoming .btn_decline');
             var $self = $(this),
                 $incomingCall = $self.parents('.incoming-call'),
                 opponentId = $self.data('id'),
@@ -167,6 +167,8 @@ define([
                 id = $self.data('id'),
                 $dialogItem = $('.dialog-item[data-id="' + id + '"]');
 
+            
+            // TODO: dialogItem это одиночный звонок, нужно извлечь групповой
             DialogView.htmlBuild($dialogItem);
 
             var dialogId = $self.data('dialog'),
@@ -191,6 +193,7 @@ define([
 
             VideoChat.getUserMedia(params, callType, function(err, res) {
                 if (err) {
+                    alert(err);
                     $chat.find('.mediacall .btn_hangup').data('errorMessage', 1);
                     $chat.find('.mediacall .btn_hangup').click();
                     fixScroll();
@@ -480,10 +483,18 @@ define([
             document.getElementById('callingSignal').pause();
         }
 
+        // Тут есть инфа о участникам и сессии!!!
+        // Нужно удалить из calle оппонента, который бросил трубку
+
+
+
+
         if (isCurrentUser) {
+            // Если это я бросил трубку
             stopIncomingCall(session.initiatorID);
         }
 
+        
         curSession = {};
         VideoChat.session = null;
         VideoChat.caller = null;
@@ -568,9 +579,9 @@ define([
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
             params = self.build(dialogId, callType),
             $chat = $('.l-chat:visible'),
-            QBApiCalls = this.app.service,
-            calleeId = params.opponentId,
-            fullName = User.contact.full_name,
+            // QBApiCalls = this.app.service,
+            // calleeId = params.opponentId,
+            // fullName = User.contact.full_name,
             id = $chat.data('id');
         
         VideoChat.getUserMedia(params, callType, function(err, res) {
@@ -584,7 +595,7 @@ define([
                 QMHtml.VideoChat.showError();
                 return true;
             } else {
-                VideoChatView.opponents = params.opponentId;
+                // VideoChatView.opponents = params.opponentId;
                 // TODO: пуш-нотификации работают с ошибкой
                 // QBApiCalls.sendPushNotification(calleeId, fullName);
             }
