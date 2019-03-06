@@ -508,24 +508,24 @@ define([
         alert('onStop');
         closeStreamScreen(id);
         return;
-        var callType = self.type;
+        // var callType = self.type;
 
-        if (!isGroupChat(session)) {
-            closeStreamScreen(id);
-            return false;
-        }
+        // if (!isGroupChat(session)) {
+        //     closeStreamScreen(id);
+        //     return false;
+        // }
 
-        removeOpponent(id);
+        // removeOpponent(id);
 
-        if (typeof VideoChatView.opponents === 'undefined' || VideoChatView.opponents.length === 0) {
-            closeStreamScreen(id);
-            return;
-        }
+        // if (typeof VideoChatView.opponents === 'undefined' || VideoChatView.opponents.length === 0) {
+        //     closeStreamScreen(id);
+        //     return;
+        // }
 
-        if (callType === 'audio') {
-            // Делаю аватарку юзера прозрачной
-            var avatar = $( '#remoteUser-' + id ).addClass('hidden-avatar');
-        }
+        // if (callType === 'audio') {
+        //     // Делаю аватарку юзера прозрачной
+        //     var avatar = $( '#remoteUser-' + id ).addClass('hidden-avatar');
+        // }
             
 
     };
@@ -991,7 +991,7 @@ define([
 
     function removeOpponent(id) {
         if (VideoChat.callee) {
-            VideoChat.callee = VideoChat.callee.filter(function(opponent) { return opponent !== id })
+            VideoChat.callee = VideoChat.callee.filter(function(opponent) { return opponent !== id; });
         }
     }
 
