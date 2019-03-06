@@ -34,7 +34,6 @@ define([
         network = {},
         curSession = {},
         is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1,
-        curCall = 
         opponents = [];
 
     function VideoChatView(app) {
