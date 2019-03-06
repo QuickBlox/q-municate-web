@@ -37,8 +37,7 @@ define([
         videoStreamTime,
         network = {},
         curSession = {},
-        is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1,
-        opponents = [];
+        is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
     function VideoChatView(app) {
         this.app = app;
@@ -76,10 +75,9 @@ define([
         $('body').on('click', '.videoCall, .audioCall', function() {
             if (QB.webrtc) {
                 var $this = $(this),
-                    isGroupCall = ($this.data('type') === 2) ? true : false,
-                    dialogs = DialogView.app.entities.Collections.dialogs,
+                    isGroupCall = ($this.data('type') === 2),
                     activeDialog = Dialog.app.entities.active,
-                    activeDialogDetailed = dialogs.get(activeDialog),
+                    activeDialogDetailed = DialogView.app.entities.Collections.dialogs.get(activeDialog),
                     className = $this.attr('class'),
                     userId = $this.data('id'),
                     $dialogItem = $('.j-dialogItem[data-dialog="' + activeDialog + '"]'),
@@ -87,9 +85,8 @@ define([
                     dialogId,
                     tplParams;
 
-                // Exceed occupants number for group chat
                 if (isGroupCall && activeDialogDetailed.attributes.occupants_ids.length >= limitOccupants) {
-                    
+
                     tplParams = {
                         groupAvatar: activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url,
                         limitOccupants: limitOccupants
@@ -98,7 +95,7 @@ define([
                     htmlTpl = QMHtml.VideoChat.exceededOccupangsCallTpl(tplParams);
                     $('#popupIncoming').find('.mCSB_container').prepend(htmlTpl);
                     openPopup($('#popupIncoming'));
-
+                    
                     return false;
                 }
 
@@ -125,8 +122,6 @@ define([
                 self.startCall(className, dialogId);
                 curSession = self.app.models.VideoChat.session;
                 Helpers.Dialogs.moveDialogToTop(dialogId);
-
-                return;
             }
 
             return false;
@@ -175,14 +170,13 @@ define([
                 $dialogItem = $('.dialog-item[data-id="' + id + '"]');
 
             
-            // TODO: dialogItem это одиночный звонок, нужно извлечь групповой
             DialogView.htmlBuild($dialogItem);
 
             var dialogId = $self.data('dialog'),
                 sessionId = $self.data('session'),
                 callType = $self.data('calltype'),
                 audioSignal = $('#ringtoneSignal')[0],
-                params = self.build(dialogId),
+                params = self.build(dialogId, callType),
                 $chat = $('.l-chat[data-dialog="' + dialogId + '"]');
 
             $self.parents('.incoming-call').remove();
@@ -324,7 +318,9 @@ define([
 
     VideoChatView.prototype.onCall = function(session, extension) {
         var dialogId = extension.dialogId,
-            isGroupCall = isGroupChat(session);
+        isGroupCall = isGroupChat(session);
+        
+        saveCurSession(session);
 
         if (User.contact.id === session.initiatorID) {
             return false;
@@ -470,6 +466,11 @@ define([
     VideoChatView.prototype.onReject = function(session, id, extension) {
         if (!areCurSession()) return;
 
+        if (!isGroupChat(session)) {
+            $('.btn_decline').click();
+            return false;
+        }
+
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
             isCurrentUser = (User.contact.id === id) ? true : false;
@@ -610,8 +611,7 @@ define([
     VideoChatView.prototype.build = function(id, callType) {
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
             isGroupCall = ($chat.data('type') === 2) ? true : false,
-            dialogs = this.app.entities.Collections.dialogs,
-            activeDialogDetailed = dialogs.get(id),
+            activeDialogDetailed = this.app.entities.Collections.dialogs.get(id),
             contactId = activeDialogDetailed.attributes.occupants_ids,
             contact = ContactList.contacts[contactId],
             
@@ -997,6 +997,14 @@ define([
 
     function areOpponents() {
         return VideoChat.callee.length > 0;
+    }
+
+    function saveCurSession(session) {
+        curSession = session;
+        VideoChat.session = session;
+        VideoChat.caller = session.initiatorID;
+        VideoChat.callee = session.opponentsIDs;
+        self.type = session.callType;
     }
 
     function clearCurSession() {
