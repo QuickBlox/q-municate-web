@@ -999,7 +999,7 @@ define([
         VideoChat.caller = session.initiatorID;
         VideoChat.callee = session.opponentsIDs;
         VideoChat.callee.push(VideoChat.caller);
-        removeOpponent(User.contact.id)
+        removeOpponent(User.contact.id);
         VideoChat.currentDialogId = extension.dialogId;
         self.type = session.callType;
     }
