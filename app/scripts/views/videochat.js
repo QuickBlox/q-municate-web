@@ -1,6 +1,6 @@
 // TODO
 // Групповой звонок - после реджекта оппонента пропадает чат, становится пустым
-
+// Есть проблемы при сохранинии сессии - при входящем меняется местами callee и caller
 
 /* romaroma
  * Q-municate chat application
@@ -980,7 +980,10 @@ define([
     }
 
     function getSessionOpponents() {
-        return VideoChat.callee || VideoChat.session.opponentsIDs;
+        let opponents = VideoChat.callee;
+        opponents.push(VideoChat.caller);
+        opponents = opponents.filter(function(opponent) { return opponent !== User.contact.id; });
+        return opponents;
     }
 
     function removeOpponent(id) {
@@ -995,11 +998,13 @@ define([
 
     function saveCurSession(session, extension) {
         curSession = session;
+
         VideoChat.session = session;
-        VideoChat.caller = session.initiatorID;
-        VideoChat.callee = session.opponentsIDs;
-        VideoChat.callee.push(VideoChat.caller);
-        removeOpponent(User.contact.id);
+        // VideoChat.caller = session.initiatorID;
+        // VideoChat.callee = session.opponentsIDs;
+        // VideoChat.callee.push(VideoChat.caller);
+        // removeOpponent(User.contact.id);
+
         VideoChat.currentDialogId = extension.dialogId;
         self.type = session.callType;
     }
