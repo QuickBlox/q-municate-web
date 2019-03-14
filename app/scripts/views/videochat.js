@@ -220,7 +220,7 @@ define([
         });
 
         $('body').on('click', '.btn_hangup', function() {
-            self.clearChat();
+            // self.clearChat();
 
             var $self = $(this),
                 $chat = $self.parents('.l-chat'),
@@ -249,8 +249,8 @@ define([
 
             clearTimeout(callTimer);
 
-            // curSession.stop({});
-            curSession.reject({});
+            curSession.stop({});
+            // curSession.reject({});
             clearCurSession();
 
             self.type = null;
