@@ -1,6 +1,6 @@
 // TODO
 // Групповой звонок - после реджекта оппонента пропадает чат, становится пустым
-
+// Есть проблемы при сохранинии сессии - при входящем меняется местами callee и caller
 
 /* romaroma
  * Q-municate chat application
@@ -166,8 +166,8 @@ define([
             sendAutoReject = undefined;
 
             var $self = $(this),
-                id = $self.data('id'),
-                $dialogItem = $('.dialog-item[data-id="' + id + '"]');
+                id = VideoChat.currentDialogId,
+                $dialogItem = $('.dialog-item[data-dialog="' + id + '"]');
 
             
             DialogView.htmlBuild($dialogItem);
@@ -230,27 +230,34 @@ define([
                 duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0],
-                isErrorMessage = $self.data('errorMessage'),
+                // isErrorMessage = $self.data('errorMessage'),
                 opponents = getSessionOpponents();
 
-            if (VideoChat.caller) {
-                if (!isErrorMessage && duration !== 'connect...') {
-                    VideoChat.sendMessage(opponents, '1', duration, dialogId, null, null, self.sessionID);
-                } else {
-                    VideoChat.sendMessage(opponents, '1', null, dialogId, callType);
-                    $self.removeAttr('data-errorMessage');
-                }
-            }
+            // if (VideoChat.caller) {
+            //     if (!isErrorMessage && duration !== 'connect...') {
+            //         VideoChat.sendMessage(opponents, '1', duration, dialogId, null, null, self.sessionID);
+            //     } else {
+            //         VideoChat.sendMessage(opponents, '1', null, dialogId, callType);
+            //         $self.removeAttr('data-errorMessage');
+            //     }
+            // }
+            
+            
+            clearTimeout(callTimer);
 
             if (Settings.get('sounds_notify') && SyncTabs.get()) {
                 callingSignal.pause();
                 endCallSignal.play();
             }
+            
+            // Если трубку положил инициатор и звонок еще не начался - завершить сессию
+            if (User.contact.id === VideoChat.caller && duration === 'connect...') {
+                curSession.stop({});
+                // curSession.reject({p:"close"});
+            } else {
+                curSession.reject({});
+            }
 
-            clearTimeout(callTimer);
-
-            curSession.stop({});
-            // curSession.reject({});
             clearCurSession();
 
             self.type = null;
@@ -320,7 +327,7 @@ define([
         var dialogId = extension.dialogId,
         isGroupCall = isGroupChat(session);
         
-        saveCurSession(session);
+        // saveCurSession(session, extension);
 
         if (User.contact.id === session.initiatorID) {
             return false;
@@ -361,7 +368,8 @@ define([
                 callSignature: isGroupCall ? "Group " + callTypeUС + " Call from<br>" + activeDialogDetailed.attributes.room_name : callTypeUС + " Call from " + userName,
                 dialogId: dialogId,
                 sessionId: session.ID,
-                userId: isGroupCall ? session.opponentsIDs.join(',') : id
+                // userId: isGroupCall ? session.opponentsIDs.join(',') : id
+                userId: id
             };
 
             htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams);
@@ -375,15 +383,15 @@ define([
                 audioSignal.play();
             }
 
-            VideoChat.session = session;
-            curSession = VideoChat.session;
+            // VideoChat.session = session;
+            // curSession = VideoChat.session;
 
-            createAndShowNotification({
-                'id': id,
-                'dialogId': dialogId,
-                'callState': '4',
-                'callType': callType
-            });
+            // createAndShowNotification({
+            //     'id': id,
+            //     'dialogId': dialogId,
+            //     'callState': '4',
+            //     'callType': callType
+            // });
 
             sendAutoReject = setTimeout(function() {
                 $('.btn_decline').click();
@@ -392,9 +400,9 @@ define([
     };
 
     VideoChatView.prototype.onIgnored = function(state, session, id, extension) {
-        alert('ignored: ' + state);
+        alert('onIgnored');
         console.log(areCurSession());
-        if (!areCurSession()) return;
+        // if (!areCurSession()) return;
 
         if ((state === 'onAccept') && (User.contact.id === id)) {
             stopIncomingCall(session.initiatorID);
@@ -464,7 +472,8 @@ define([
     };
 
     VideoChatView.prototype.onReject = function(session, id, extension) {
-        if (!areCurSession()) return;
+        alert('onReject');
+        // if (!areCurSession()) return;
 
         if (!isGroupChat(session)) {
             $('.btn_decline').click();
@@ -473,7 +482,7 @@ define([
 
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
-            isCurrentUser = (User.contact.id === id) ? true : false;
+            isCurrentUser = User.contact.id === id;
 
         if (Settings.get('sounds_notify')) {
             document.getElementById('callingSignal').pause();
@@ -483,9 +492,7 @@ define([
         removeOpponent(id);
         removeAvatar(id);
 
-        // Если это я положил трубку - завершаю звонок
         if (isCurrentUser) {
-            alert('текущий юзер');
             stopIncomingCall(session.initiatorID);
         }
 
@@ -505,29 +512,20 @@ define([
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
-        alert('onStop');
+        alert('onstop');
+        // if (!areCurSession()) return;
+
         closeStreamScreen(id);
-        return;
-        // var callType = self.type;
+        clearCurSession();
+        // $chat.parent('.chatView').removeClass('j-mediacall');
+        // $chat.find('.mediacall-info-duration').text('');
+        // $chat.find('.mediacall').remove();
+        // $chat.find('.l-chat-header').show();
+        // $chat.find('.l-chat-content').css({
+        //     height: 'calc(100% - 140px)'
+        // });
 
-        // if (!isGroupChat(session)) {
-        //     closeStreamScreen(id);
-        //     return false;
-        // }
-
-        // removeOpponent(id);
-
-        // if (typeof VideoChatView.opponents === 'undefined' || VideoChatView.opponents.length === 0) {
-        //     closeStreamScreen(id);
-        //     return;
-        // }
-
-        // if (callType === 'audio') {
-        //     // Делаю аватарку юзера прозрачной
-        //     var avatar = $( '#remoteUser-' + id ).addClass('hidden-avatar');
-        // }
-            
-
+        addCallTypeIcon(id, null);
     };
 
     VideoChatView.prototype.onUpdateCall = function(session, id, extension) {
@@ -557,6 +555,7 @@ define([
     };
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
+        // alert('onsessioncloseListener');
         // TODO: тут закрывается видеозвонок для одного, для группового возможно неверно работает
         var opponentId = User.contact.id === VideoChat.callee ? VideoChat.caller : VideoChat.callee;
 
@@ -785,7 +784,7 @@ define([
     }
 
     function addCallTypeIcon(id, callType) {
-        console.log('Roma => addCallTypeIcon(id, callType)');
+        // TODO: здесь исправить id на группу
         var $status = $('li.dialog-item[data-id="' + id + '"]').find('span.status');
 
         if (callType === 'video') {
@@ -798,7 +797,7 @@ define([
     }
 
     function stopIncomingCall(id) {
-        alert(stopIncomingCall);
+        alert('stopIncomingCall');
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]');
 
@@ -986,7 +985,10 @@ define([
     }
 
     function getSessionOpponents() {
-        return VideoChat.callee || VideoChat.session.opponentsIDs;
+        let opponents = VideoChat.callee;
+        opponents.push(VideoChat.caller);
+        opponents = opponents.filter(function(opponent) { return opponent !== User.contact.id; });
+        return opponents;
     }
 
     function removeOpponent(id) {
@@ -999,11 +1001,16 @@ define([
         return VideoChat.callee.length > 0;
     }
 
-    function saveCurSession(session) {
+    function saveCurSession(session, extension) {
         curSession = session;
+
         VideoChat.session = session;
-        VideoChat.caller = session.initiatorID;
-        VideoChat.callee = session.opponentsIDs;
+        // VideoChat.caller = session.initiatorID;
+        // VideoChat.callee = session.opponentsIDs;
+        // VideoChat.callee.push(VideoChat.caller);
+        // removeOpponent(User.contact.id);
+
+        VideoChat.currentDialogId = extension.dialogId;
         self.type = session.callType;
     }
 
