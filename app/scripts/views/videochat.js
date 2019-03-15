@@ -220,6 +220,7 @@ define([
         });
 
         $('body').on('click', '.btn_hangup', function() {
+
             // self.clearChat();
 
             var $self = $(this),
@@ -230,18 +231,7 @@ define([
                 duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0],
-                // isErrorMessage = $self.data('errorMessage'),
-                opponents = getSessionOpponents();
-
-            // if (VideoChat.caller) {
-            //     if (!isErrorMessage && duration !== 'connect...') {
-            //         VideoChat.sendMessage(opponents, '1', duration, dialogId, null, null, self.sessionID);
-            //     } else {
-            //         VideoChat.sendMessage(opponents, '1', null, dialogId, callType);
-            //         $self.removeAttr('data-errorMessage');
-            //     }
-            // }
-            
+                isErrorMessage = $self.data('errorMessage');
             
             clearTimeout(callTimer);
 
@@ -253,7 +243,9 @@ define([
             // Если трубку положил инициатор и звонок еще не начался - завершить сессию
             if (User.contact.id === VideoChat.caller && duration === 'connect...') {
                 curSession.stop({});
-                // curSession.reject({p:"close"});
+                // TODO: отправка сообщения работает не верно
+                // VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
+                $self.removeAttr('data-errorMessage');                
             } else {
                 curSession.reject({});
             }
@@ -327,7 +319,7 @@ define([
         var dialogId = extension.dialogId,
         isGroupCall = isGroupChat(session);
         
-        // saveCurSession(session, extension);
+        saveCurSession(session, extension);
 
         if (User.contact.id === session.initiatorID) {
             return false;
@@ -512,18 +504,10 @@ define([
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
-        alert('onstop');
-        // if (!areCurSession()) return;
+        if (!areCurSession()) return;
 
         closeStreamScreen(id);
         clearCurSession();
-        // $chat.parent('.chatView').removeClass('j-mediacall');
-        // $chat.find('.mediacall-info-duration').text('');
-        // $chat.find('.mediacall').remove();
-        // $chat.find('.l-chat-header').show();
-        // $chat.find('.l-chat-content').css({
-        //     height: 'calc(100% - 140px)'
-        // });
 
         addCallTypeIcon(id, null);
     };
@@ -1024,6 +1008,16 @@ define([
 
     function areCurSession() {
         return Object.keys(curSession).length !== 0;
+    }
+
+    function restoreChat() {
+        $chat.parent('.chatView').removeClass('j-mediacall');
+        $chat.find('.mediacall-info-duration').text('');
+        $chat.find('.mediacall').remove();
+        $chat.find('.l-chat-header').show();
+        $chat.find('.l-chat-content').css({
+            height: 'calc(100% - 140px)'
+        });
     }
 
     return VideoChatView;
