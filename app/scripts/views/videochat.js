@@ -220,14 +220,13 @@ define([
         });
 
         $('body').on('click', '.btn_hangup', function() {
-
-            // self.clearChat();
+            self.clearChat();
 
             var $self = $(this),
                 $chat = $self.parents('.l-chat'),
                 opponentId = $self.data('id'),
-                dialogId = $self.data('dialog'),
-                callType = curSession.callType === 1 ? 'video' : 'audio',
+                // dialogId = $self.data('dialog'),
+                // callType = curSession.callType === 1 ? 'video' : 'audio',
                 duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0],
@@ -245,7 +244,7 @@ define([
                 curSession.stop({});
                 // TODO: отправка сообщения работает не верно
                 // VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
-                $self.removeAttr('data-errorMessage');                
+                // $self.removeAttr('data-errorMessage');   
             } else {
                 curSession.reject({});
             }
@@ -558,7 +557,7 @@ define([
             params = self.build(dialogId, callType),
             $chat = $('.l-chat:visible'),
             id = $chat.data('id');
-        
+
         VideoChat.getUserMedia(params, callType, function(err, res) {
             // Тут возвращается медиастрим
             fixScroll();
@@ -593,7 +592,7 @@ define([
 
     VideoChatView.prototype.build = function(id, callType) {
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
-            isGroupCall = ($chat.data('type') === 2) ? true : false,
+            isGroupCall = $chat.data('type') === 2,
             activeDialogDetailed = this.app.entities.Collections.dialogs.get(id),
             contactId = activeDialogDetailed.attributes.occupants_ids,
             contact = ContactList.contacts[contactId],
@@ -646,7 +645,7 @@ define([
     /* Private
     --------------------------------------------------------------------------*/
     function closeStreamScreen(id) {
-        var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
+        var dialogId = VideoChat.currentDialogId, //$('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]'),
             callingSignal = document.getElementById('callingSignal'),
@@ -660,11 +659,12 @@ define([
                 endCallSignal.play();
             }
             clearTimeout(callTimer);
-            curSession = {};
-            VideoChat.session = null;
-            VideoChat.caller = null;
-            VideoChat.callee = null;
-            self.type = null;
+            // curSession = {};
+            // VideoChat.session = null;
+            // VideoChat.caller = null;
+            // VideoChat.callee = null;
+            // self.type = null;
+            clearCurSession();
             videoStreamTime = null;
 
             VoiceMessage.resetRecord();
