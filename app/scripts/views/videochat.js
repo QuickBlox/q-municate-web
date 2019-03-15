@@ -1,8 +1,7 @@
 // TODO
-// Групповой звонок - после реджекта оппонента пропадает чат, становится пустым
 // Есть проблемы при сохранинии сессии - при входящем меняется местами callee и caller
 
-/* romaroma
+/*
  * Q-municate chat application
  *
  * VideoChat View Module
@@ -168,7 +167,6 @@ define([
             var $self = $(this),
                 id = VideoChat.currentDialogId,
                 $dialogItem = $('.dialog-item[data-dialog="' + id + '"]');
-
             
             DialogView.htmlBuild($dialogItem);
 
@@ -224,13 +222,14 @@ define([
 
             var $self = $(this),
                 $chat = $self.parents('.l-chat'),
-                opponentId = $self.data('id'),
+                // opponentId = $self.data('id'),
                 // dialogId = $self.data('dialog'),
                 // callType = curSession.callType === 1 ? 'video' : 'audio',
                 duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0],
                 isErrorMessage = $self.data('errorMessage');
+                opponents = getSessionOpponents();
             
             clearTimeout(callTimer);
 
@@ -244,7 +243,7 @@ define([
                 curSession.stop({});
                 // TODO: отправка сообщения работает не верно
                 // VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
-                // $self.removeAttr('data-errorMessage');   
+                $self.removeAttr('data-errorMessage');
             } else {
                 curSession.reject({});
             }
@@ -258,7 +257,7 @@ define([
                 height: 'calc(100% - 140px)'
             });
 
-            addCallTypeIcon(opponentId, null);
+            // addCallTypeIcon(dialogId, null);
 
             return false;
         });
@@ -769,7 +768,8 @@ define([
 
     function addCallTypeIcon(id, callType) {
         // TODO: здесь исправить id на группу
-        var $status = $('li.dialog-item[data-id="' + id + '"]').find('span.status');
+        // var $status = $('li.dialog-item[data-id="' + id + '"]').find('span.status');
+        var $status = $('li.dialog-item[data-dialog="' + id + '"]').find('span.status');
 
         if (callType === 'video') {
             $status.addClass('icon_videocall');
