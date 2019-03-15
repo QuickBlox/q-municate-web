@@ -588,6 +588,7 @@ define([
             $('.chatView').addClass('j-mediacall');
         });
     };
+    
 
     VideoChatView.prototype.build = function(id, callType) {
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
