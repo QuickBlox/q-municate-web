@@ -594,7 +594,7 @@ define([
             isGroupCall = $chat.data('type') === 2,
             activeDialogDetailed = this.app.entities.Collections.dialogs.get(id),
             contactId = activeDialogDetailed.attributes.occupants_ids,
-            contact = ContactList.contacts[contactId],
+            contact = ContactList.contacts[contactId];
             
             options = {
                 isGroupCall: isGroupCall,
@@ -607,6 +607,8 @@ define([
             };
 
         htmlTpl = getHtmlTpl.call(options);
+        console.log('*********************************************');
+        console.log(htmlTpl);
 
         $chat.parent('.chatView').addClass('j-mediacall');
         $chat.prepend(htmlTpl);
