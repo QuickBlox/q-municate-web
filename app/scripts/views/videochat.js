@@ -229,7 +229,7 @@ define([
                 callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0],
                 isErrorMessage = $self.data('errorMessage');
-                opponents = getSessionOpponents();
+                // opponents = getSessionOpponents();
             
             clearTimeout(callTimer);
 

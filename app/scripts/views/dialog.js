@@ -414,6 +414,7 @@ define([
 
 
         htmlBuild: function(elemOrId, messages) {
+            alert('htmlBuild');
             Entities.Collections.dialogs.saveDraft();
             // console.log(VideoChat.session.ID);
 
