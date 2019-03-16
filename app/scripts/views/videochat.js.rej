@@ -1,0 +1,9 @@
+diff a/app/scripts/views/videochat.js b/app/scripts/views/videochat.js	(rejected hunks)
+@@ -347,7 +347,6 @@
+             callTypeUС = capitaliseFirstLetter(callType),
+             userName = contact.full_name || extension.full_name,
+             userAvatar = contact.avatar_url || extension.avatar,
+-            $dialogItem = $('.j-dialogItem[data-dialog="' + dialogId + '"]'),
+             dialogs = Dialog.app.entities.Collections.dialogs,
+             activeDialogDetailed = dialogs.get(dialogId),
+             autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,

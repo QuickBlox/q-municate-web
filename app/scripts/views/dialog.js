@@ -414,9 +414,7 @@ define([
 
 
         htmlBuild: function(elemOrId, messages) {
-            alert('htmlBuild');
             Entities.Collections.dialogs.saveDraft();
-            // console.log(VideoChat.session.ID);
 
             var QBApiCalls = this.app.service,
                 contacts = ContactList.contacts,
