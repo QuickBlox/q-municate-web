@@ -109,7 +109,7 @@
 .mediacall-local {
     position: absolute;
     top: 15px;
-    right: 15px;
+    right: 45px;
 }
 .mediacall-local-stream {
     width: 20%;
@@ -197,19 +197,39 @@
     border-radius: 50%;
     background-color: #a1ccaf70;
     border: 1px solid orange;
-    position: absolute;
 }
+.users .usrBox {
+    position: absolute !important;
+    right: 54px !important;
+    max-width: 50px;
 
+    
+}
+.users .usrBox .usrName h5 {
+    color: white;
+    font-size: 7px;
+    text-align: center;
+}
+.users .usrBox #usrName h5 {
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    padding-left: 10px;
+}
 .users .hidden-avatar {
     opacity: .2;
+}   
+.users .hidden-usrName {
+    color: #616361;
+}   
+
+.users .usrBox:nth-child(1){
+    top: 25%;
+}
+.users .usrBox:nth-child(2){
+    top: 49%;
+}
+.users .usrBox:nth-child(3){
+    top: 73%;
 }
 
-.users .mediacall-global-avatar:nth-child(1){
-    top: 23%;
-}
-.users .mediacall-global-avatar:nth-child(2){
-    top: 42%;
-}
-.users .mediacall-global-avatar:nth-child(3){
-    top: 61%;
-}

@@ -38,7 +38,7 @@ define([
         network = {},
         curSession = {},
         is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1,
-        curCall = 
+        curCall, //! !!! 
         opponents = [];
 
     function VideoChatView(app) {
@@ -421,10 +421,11 @@ define([
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             callType = self.type,
             isCurrentUser = (User.contact.id === id) ? true : false;
-
-        // Если групповой аудио звонок убираю прозрачность аватарки юзера
+        
+            // Если групповой аудио звонок убираю прозрачность аватарки юзера
         if (isGroupChat(session) && callType === 'audio') {
             showAvatar(id);
+            showUsrName(id);
         }
 
         if (Settings.get('sounds_notify')) {
@@ -482,6 +483,7 @@ define([
         // Удаляю оппонента, который положил трубку из списка оппонентов
         removeOpponent(id);
         removeAvatar(id);
+        removeUsrName(id);
 
         // Если это я положил трубку - завершаю звонок
         if (isCurrentUser) {
@@ -508,24 +510,24 @@ define([
         alert('onStop');
         closeStreamScreen(id);
         return;
-        var callType = self.type;
+        // var callType = self.type;
 
-        if (!isGroupChat(session)) {
-            closeStreamScreen(id);
-            return false;
-        }
+        // if (!isGroupChat(session)) {
+        //     closeStreamScreen(id);
+        //     return false;
+        // } //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
 
-        removeOpponent(id);
+        // removeOpponent(id);
 
-        if (typeof VideoChatView.opponents === 'undefined' || VideoChatView.opponents.length === 0) {
-            closeStreamScreen(id);
-            return;
-        }
+        // if (typeof VideoChatView.opponents === 'undefined' || VideoChatView.opponents.length === 0) {
+        //     closeStreamScreen(id);
+        //     return;
+        // }
 
-        if (callType === 'audio') {
-            // Делаю аватарку юзера прозрачной
-            var avatar = $( '#remoteUser-' + id ).addClass('hidden-avatar');
-        }
+        // if (callType === 'audio') {
+        //     // Делаю аватарку юзера прозрачной
+        //     var avatar = $( '#remoteUser-' + id ).addClass('hidden-avatar');
+        // }
             
 
     };
@@ -908,11 +910,16 @@ define([
         } else if (this.callType === 'audio' && this.isGroupCall === true) {
             var contacts = this.contacts,
                 occupantsTpl = "",
+                occupantName = this.contacts,
                 avataUrl;
 
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
                 avataUrl = contacts[occupant].avatar_url || QMCONFIG.defAvatar.url_png;
-                occupantsTpl += '<img id="remoteUser-' + occupant + '" class="hidden-avatar mediacall-local mediacall-global-avatar" src="' + avataUrl + '" alt="avatar">';
+                occupantName = contacts[occupant].full_name ;
+                occupantsTpl +=
+                '<div class ="usrBox">' +
+                '<img id="remoteUser' + occupant + '" class="hidden-avatar mediacall-global-avatar" src="' + avataUrl + '"alt="avatar">' +
+                '<div id="usrName" class ="hidden-usrName">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>';
             });
 
             tplParams = {
@@ -983,7 +990,13 @@ define([
     }
     
     function removeAvatar(id) {
-        $( '#remoteUser-' + id ).remove();
+        $( '#remoteUser-' + id ).remove();   
+    }
+    function showUsrName(id) {
+        $( '#usrName-' + id ).removeClass('hidden-usrName');
+    }
+    function removeUsrName(id) {
+        $( '#usrName-' + id ).remove();
     }
 
     function getSessionOpponents() {
@@ -992,7 +1005,10 @@ define([
 
     function removeOpponent(id) {
         if (VideoChat.callee) {
-            VideoChat.callee = VideoChat.callee.filter(function(opponent) { return opponent !== id })
+            VideoChat.callee = VideoChat.callee.filter(
+                function(opponent) { 
+                    return opponent !== id;
+            });
         }
     }
 
