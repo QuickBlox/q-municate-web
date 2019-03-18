@@ -414,7 +414,6 @@ define([
 
 
         htmlBuild: function(elemOrId, messages) {
-            console.log('Roma => dialog - htmlBuild');
             Entities.Collections.dialogs.saveDraft();
 
             var QBApiCalls = this.app.service,
