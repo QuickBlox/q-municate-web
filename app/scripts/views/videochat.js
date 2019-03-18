@@ -454,7 +454,7 @@ define([
     };
 
     VideoChatView.prototype.onReject = function(session, id, extension) {
-        curSession.opponentsIDs = [];
+        
         if (!areCurSession()) return;
 
         if (!isGroupChat(session)) {
@@ -495,7 +495,7 @@ define([
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
-        alert('onstop');
+        // alert('onstop');
         if (!areCurSession()) return;
 
         closeStreamScreen(id);
@@ -877,8 +877,8 @@ define([
                 occupantName = contacts[occupant].full_name ;
                 occupantsTpl +=
                 '<div class ="usrBox">' +
-                '<img id="remoteUser' + occupant + '" class="hidden-avatar mediacall-global-avatar" src="' + avataUrl + '"alt="avatar">' +
-                '<div id="usrName" class ="hidden-usrName">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>';
+                '<img id="remoteUser-' + occupant + '" class="hidden-avatar mediacall-global-avatar" src="' + avataUrl + '"alt="avatar">' +
+                '<div id="usrName-' +  occupant + '" class ="hidden-usrName">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>';
             });
 
             tplParams = {
@@ -949,12 +949,14 @@ define([
     }
     
     function removeAvatar(id) {
+        var t = $( '#remoteUser-' + id );
         $( '#remoteUser-' + id ).remove();   
     }
     function showUsrName(id) {
         $( '#usrName-' + id ).removeClass('hidden-usrName');
     }
     function removeUsrName(id) {
+        var t = $( '#usrName-' + id );
         $( '#usrName-' + id ).remove();
     }
 
