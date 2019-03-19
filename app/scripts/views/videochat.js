@@ -138,10 +138,10 @@ define([
                 VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
                 curSession.stop({});
             } else {
-                curSession.reject({});
+                // curSession.reject({});
             }
 
-            clearCurSession();
+            // clearCurSession();
             $incomingCall.remove();
             
             if ($('#popupIncoming .mCSB_container').children().length === 0) {
@@ -246,7 +246,7 @@ define([
                 // VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
                 $self.removeAttr('data-errorMessage');
             } else {
-                curSession.reject(null);
+                curSession.reject({});
             }
 
             clearCurSession();
@@ -309,7 +309,7 @@ define([
 
     VideoChatView.prototype.onCall = function(session, extension) {
         var dialogId = extension.dialogId,
-            isGroupCall = isGroupChat(session);
+        isGroupCall = isGroupChat(session);
         
         saveCurSession(session, extension);
 
@@ -529,12 +529,12 @@ define([
     };
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
-        if (!areCurSession()) return;
+        // if (!areCurSession()) return;
 
-        // TODO: тут закрывается видеозвонок для одного, для группового возможно неверно работает
+        // // TODO: тут закрывается видеозвонок для одного, для группового возможно неверно работает
         var opponentId = User.contact.id === VideoChat.callee ? VideoChat.caller : VideoChat.callee;
 
-        closeStreamScreen(opponentId);
+        // closeStreamScreen(opponentId);
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
