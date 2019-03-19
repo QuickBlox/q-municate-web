@@ -878,7 +878,7 @@ define([
                 occupantsTpl +=
                 '<div class ="usrBox">' +
                 '<img id="remoteUser-' + occupant + '" class="hidden-avatar mediacall-global-avatar" src="' + avataUrl + '"alt="avatar">' +
-                '<div id="usrName-' +  occupant + '" class ="hidden-usrName">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>';
+                '<div id="usrName-' +  occupant + '" class ="hidden-usrName usrW">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>';
             });
 
             tplParams = {

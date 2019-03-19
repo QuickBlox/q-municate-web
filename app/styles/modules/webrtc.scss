@@ -202,15 +202,16 @@
     position: absolute !important;
     right: 54px !important;
     max-width: 50px;
-
+    
     
 }
-.users .usrBox .usrName h5 {
+.users .usrBox .usrW {
     color: white;
-    font-size: 7px;
+    font-size: 12.5px;
     text-align: center;
+    font-weight: lighter;
 }
-.users .usrBox #usrName h5 {
+.users .usrBox .usrW {
     display: flex;
     justify-content:center;
     align-items: center;
@@ -219,17 +220,17 @@
 .users .hidden-avatar {
     opacity: .2;
 }   
-.users .hidden-usrName {
-    color: #616361;
+.users .usrBox .hidden-usrName  {
+    color: #616361 !important;
 }   
 
 .users .usrBox:nth-child(1){
-    top: 25%;
+    top: 23%;
 }
 .users .usrBox:nth-child(2){
-    top: 49%;
+    top: 46%;
 }
 .users .usrBox:nth-child(3){
-    top: 73%;
+    top: 71%;
 }
 
