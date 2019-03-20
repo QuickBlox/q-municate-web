@@ -460,45 +460,28 @@ define([
     };
 
     VideoChatView.prototype.onReject = function(session, id, extension) {
-        
-        // if (!areCurSession()) return;
-
-        console.group('OnReject');
-
-        var peerConnection = curSession.peerConnections;
-        var peerConnection1 = curSession.peerConnections[id];
-
-        console.log(curSession.peerConnections);
-        peerConnection1.release();
-        console.log(curSession.peerConnections);
-
-        console.dir(session);
-
-        curSession.closeConnection(id);
-        console.dir(session);
-        console.groupEnd();
 
         if (!isGroupChat(session)) {
             $('.btn_hangup').click();
             return false;
         }
 
-        // var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
-        //     $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
-        //     isCurrentUser = User.contact.id === id;
+        curSession.closeConnection(id);
 
-        // if (Settings.get('sounds_notify')) {
-        //     document.getElementById('callingSignal').pause();
-        // }
+        var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
+            $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
+            isCurrentUser = User.contact.id === id;
 
-        // Удаляю оппонента, который положил трубку из списка оппонентов
-        // removeOpponent(id);
+        if (Settings.get('sounds_notify')) {
+            document.getElementById('callingSignal').pause();
+        }
+
         removeAvatar(id);
         removeUsrName(id);
 
-        // if (isCurrentUser) {
-        //     stopIncomingCall(session.initiatorID);
-        // }
+        if (isCurrentUser) {
+            stopIncomingCall(session.initiatorID);
+        }
 
         // Если не осталось оппонентов - завершаю текущий звонок
         // if (!areOpponents()) {
