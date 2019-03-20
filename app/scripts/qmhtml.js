@@ -73,8 +73,9 @@ define([
             var htmlTemplate = _.template('<div class="mediacall l-flexbox">' +
                 '<video id="remoteStream" class="mediacall-remote-stream is-hidden"></video>' +
                 '<video id="localStream" class="mediacall-local mediacall-local-stream is-hidden"></video>' +
+                '<div class = "localUs">' + 
                 '<img id="localUser" class="mediacall-local mediacall-local-avatar" src="<%=userAvatar%>" alt="avatar">' +
-
+                '<div class = "localName">'+'<h5><%=userName%></h5>' + '</div></div>'+ //! last fix
                 '<div class = "users">' +
                 '<%=occupantsTpl%>' +
                 '</div>' +

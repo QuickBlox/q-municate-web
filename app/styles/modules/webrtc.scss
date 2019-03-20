@@ -106,11 +106,6 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-.mediacall-local {
-    position: absolute;
-    top: 15px;
-    right: 45px;
-}
 .mediacall-local-stream {
     width: 20%;
 }
@@ -198,6 +193,20 @@
     background-color: #a1ccaf70;
     border: 1px solid orange;
 }
+.mediacall .localName {
+    color: white;
+    font-size: 12.5px;
+    margin-top: 2px;
+}
+.mediacall .localUs {
+    position: absolute;
+    top: 15px;
+    right: 50px;
+    display: flex;
+    max-width: 50px;
+    flex-direction: column;
+    align-items: center;
+}
 .users .usrBox {
     position: absolute !important;
     right: 54px !important;
@@ -225,12 +234,11 @@
 }   
 
 .users .usrBox:nth-child(1){
-    top: 23%;
+    top: 27%;
 }
 .users .usrBox:nth-child(2){
-    top: 46%;
+    top: 50%;
 }
 .users .usrBox:nth-child(3){
-    top: 71%;
+    top: 76%;
 }
-
