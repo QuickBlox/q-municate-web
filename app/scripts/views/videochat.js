@@ -138,7 +138,13 @@ define([
                 VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
                 curSession.stop({});
             } else {
-                // curSession.reject({});
+                console.dir(QB.webrtc);
+                curSession.reject({});
+                // var user = User.contact.id;
+                // curSession.closeConnection();
+                // curSession.destroy();
+                console.dir(QB.webrtc);
+                // QB.webrtc.destroy();
             }
 
             // clearCurSession();
@@ -383,6 +389,7 @@ define([
     };
 
     VideoChatView.prototype.onIgnored = function(state, session, id, extension) {
+        console.dir(QB.webrtc);
         // alert('onignored');
         // if (!areCurSession()) return false;
 
@@ -457,6 +464,21 @@ define([
         
         if (!areCurSession()) return;
 
+        console.group('OnReject');
+
+        var peerConnection = curSession.peerConnections;
+        var peerConnection1 = curSession.peerConnections[id];
+
+        console.log(curSession.peerConnections);
+        peerConnection1.release();
+        console.log(curSession.peerConnections);
+
+        console.dir(session);
+
+        curSession.closeConnection(id);
+        console.dir(session);
+        console.groupEnd();
+
         if (!isGroupChat(session)) {
             $('.btn_hangup').click();
             return false;
@@ -496,6 +518,7 @@ define([
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
         // alert('onstop');
+        console.dir(QB.webrtc);
         if (!areCurSession()) return;
 
         closeStreamScreen(id);
