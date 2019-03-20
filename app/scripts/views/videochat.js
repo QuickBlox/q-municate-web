@@ -138,10 +138,16 @@ define([
                 VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
                 curSession.stop({});
             } else {
+                console.dir(QB.webrtc);
                 curSession.reject({});
+                // var user = User.contact.id;
+                // curSession.closeConnection();
+                // curSession.destroy();
+                console.dir(QB.webrtc);
+                // QB.webrtc.destroy();
             }
 
-            clearCurSession();
+            // clearCurSession();
             $incomingCall.remove();
             
             if ($('#popupIncoming .mCSB_container').children().length === 0) {
@@ -246,7 +252,7 @@ define([
                 // VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
                 $self.removeAttr('data-errorMessage');
             } else {
-                curSession.reject(null);
+                curSession.reject({});
             }
 
             clearCurSession();
@@ -309,7 +315,7 @@ define([
 
     VideoChatView.prototype.onCall = function(session, extension) {
         var dialogId = extension.dialogId,
-            isGroupCall = isGroupChat(session);
+        isGroupCall = isGroupChat(session);
         
         saveCurSession(session, extension);
 
@@ -383,6 +389,7 @@ define([
     };
 
     VideoChatView.prototype.onIgnored = function(state, session, id, extension) {
+        console.dir(QB.webrtc);
         // alert('onignored');
         // if (!areCurSession()) return false;
 
@@ -457,6 +464,21 @@ define([
         
         if (!areCurSession()) return;
 
+        console.group('OnReject');
+
+        var peerConnection = curSession.peerConnections;
+        var peerConnection1 = curSession.peerConnections[id];
+
+        console.log(curSession.peerConnections);
+        peerConnection1.release();
+        console.log(curSession.peerConnections);
+
+        console.dir(session);
+
+        curSession.closeConnection(id);
+        console.dir(session);
+        console.groupEnd();
+
         if (!isGroupChat(session)) {
             $('.btn_hangup').click();
             return false;
@@ -496,6 +518,7 @@ define([
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
         // alert('onstop');
+        console.dir(QB.webrtc);
         if (!areCurSession()) return;
 
         closeStreamScreen(id);
@@ -529,12 +552,12 @@ define([
     };
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
-        if (!areCurSession()) return;
+        // if (!areCurSession()) return;
 
-        // TODO: тут закрывается видеозвонок для одного, для группового возможно неверно работает
+        // // TODO: тут закрывается видеозвонок для одного, для группового возможно неверно работает
         var opponentId = User.contact.id === VideoChat.callee ? VideoChat.caller : VideoChat.callee;
 
-        closeStreamScreen(opponentId);
+        // closeStreamScreen(opponentId);
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
