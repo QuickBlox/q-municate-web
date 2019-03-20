@@ -118,9 +118,8 @@ define([
                 DialogView.htmlBuild(dialogId);
                 self.cancelCurrentCalls();
                 self.startCall(className, dialogId);
-                curSession = self.app.models.VideoChat.session;
+                saveCurSession(curSession, { dialogId: dialogId });
                 Helpers.Dialogs.moveDialogToTop(dialogId);
-                saveCurSession(curSession, {dialogId: dialogId});
             }
 
             return false;
@@ -462,7 +461,7 @@ define([
 
     VideoChatView.prototype.onReject = function(session, id, extension) {
         
-        if (!areCurSession()) return;
+        // if (!areCurSession()) return;
 
         console.group('OnReject');
 
@@ -493,7 +492,7 @@ define([
         // }
 
         // Удаляю оппонента, который положил трубку из списка оппонентов
-        removeOpponent(id);
+        // removeOpponent(id);
         removeAvatar(id);
         removeUsrName(id);
 
@@ -518,9 +517,6 @@ define([
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
         // alert('onstop');
-        console.dir(QB.webrtc);
-        if (!areCurSession()) return;
-
         closeStreamScreen(id);
         clearCurSession();
     };
@@ -552,11 +548,12 @@ define([
     };
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
+        // alert('close session');
         // if (!areCurSession()) return;
 
         // // TODO: тут закрывается видеозвонок для одного, для группового возможно неверно работает
         var opponentId = User.contact.id === VideoChat.callee ? VideoChat.caller : VideoChat.callee;
-
+        // $('.btn_hangup').click();
         // closeStreamScreen(opponentId);
     };
 
@@ -659,7 +656,7 @@ define([
     /* Private
     --------------------------------------------------------------------------*/
     function closeStreamScreen(id) {
-        var dialogId = getSessionDialogId(), //$('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
+        var dialogId = getSessionDialogId(),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]'),
             callingSignal = document.getElementById('callingSignal'),
@@ -987,32 +984,25 @@ define([
         return VideoChat.currentDialogId || null;
     }
 
-    function getSessionOpponents() {
-        let opponents = VideoChat.callee;
-        opponents.push(VideoChat.caller);
-        opponents = opponents.filter(function(opponent) { return opponent !== User.contact.id; });
-        return opponents;
-    }
+    // function getSessionOpponents() {
+    //     let opponents = VideoChat.callee;
+    //     opponents.push(VideoChat.caller);
+    //     opponents = opponents.filter(function(opponent) { return opponent !== User.contact.id; });
+    //     return opponents;
+    // }
 
-    function removeOpponent(id) {
-        if (VideoChat.callee) {
-            VideoChat.callee = VideoChat.callee.filter(function(opponent) { return opponent !== id; });
-        }
-    }
+    // function removeOpponent(id) {
+    //     if (VideoChat.callee) {
+    //         VideoChat.callee = VideoChat.callee.filter(function(opponent) { return opponent !== id; });
+    //     }
+    // }
 
-    function areOpponents() {
-        return VideoChat.callee.length > 0;
-    }
+    // function areOpponents() {
+    //     return VideoChat.callee.length > 0;
+    // }
 
     function saveCurSession(session, extension) {
-        curSession = session;
-
-        VideoChat.session = session;
-        // VideoChat.caller = session.initiatorID;
-        // VideoChat.callee = session.opponentsIDs;
-        // VideoChat.callee.push(VideoChat.caller);
-        // removeOpponent(User.contact.id);
-
+        curSession = VideoChat.session;
         VideoChat.currentDialogId = extension.dialogId;
         self.type = session.callType;
     }
@@ -1026,7 +1016,6 @@ define([
     }
 
     function areCurSession() {
-        var t = Object.keys(curSession).length !== 0;
         return Object.keys(curSession).length !== 0;
     }
 
