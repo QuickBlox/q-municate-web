@@ -137,16 +137,9 @@ define([
                 VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
                 curSession.stop({});
             } else {
-                console.dir(QB.webrtc);
                 curSession.reject({});
-                // var user = User.contact.id;
-                // curSession.closeConnection();
-                // curSession.destroy();
-                console.dir(QB.webrtc);
-                // QB.webrtc.destroy();
             }
 
-            // clearCurSession();
             $incomingCall.remove();
             
             if ($('#popupIncoming .mCSB_container').children().length === 0) {
@@ -466,11 +459,9 @@ define([
             return false;
         }
 
+        if (!areCurSession()) return false;
+        
         curSession.closeConnection(id);
-
-        var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
-            $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
-            isCurrentUser = User.contact.id === id;
 
         if (Settings.get('sounds_notify')) {
             document.getElementById('callingSignal').pause();
@@ -478,24 +469,6 @@ define([
 
         removeAvatar(id);
         removeUsrName(id);
-
-        if (isCurrentUser) {
-            stopIncomingCall(session.initiatorID);
-        }
-
-        // Если не осталось оппонентов - завершаю текущий звонок
-        // if (!areOpponents()) {
-        //     clearCurSession();
-        //     $chat.parent('.chatView').removeClass('j-mediacall');
-        //     $chat.find('.mediacall-info-duration').text('');
-        //     $chat.find('.mediacall').remove();
-        //     $chat.find('.l-chat-header').show();
-        //     $chat.find('.l-chat-content').css({
-        //         height: 'calc(100% - 140px)'
-        //     });
-    
-        //      addCallTypeIcon(id, null);
-        // }
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
@@ -531,13 +504,9 @@ define([
     };
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
-        // alert('close session');
-        // if (!areCurSession()) return;
-
-        // // TODO: тут закрывается видеозвонок для одного, для группового возможно неверно работает
-        var opponentId = User.contact.id === VideoChat.callee ? VideoChat.caller : VideoChat.callee;
-        // $('.btn_hangup').click();
-        // closeStreamScreen(opponentId);
+        var opponentId = (User.contact.id === VideoChat.callee) ? VideoChat.caller : VideoChat.callee;
+        closeStreamScreen(opponentId);
+        clearCurSession();
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
