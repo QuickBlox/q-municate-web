@@ -401,6 +401,7 @@ define([
     };
 
     VideoChatView.prototype.onAccept = function(session, id, extension) {
+        alert('onaccept');
         var audioSignal = document.getElementById('callingSignal'),
             dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             callType = self.type;
@@ -980,6 +981,16 @@ define([
             height: 'calc(100% - 140px)'
         });
     }
+
+    // function restoreChat($chat) {
+    //     $chat.parent('.chatView').removeClass('j-mediacall');
+    //     $chat.find('.mediacall-info-duration').text('');
+    //     $chat.find('.mediacall').remove();
+    //     $chat.find('.l-chat-header').show();
+    //     $chat.find('.l-chat-content').css({
+    //         height: 'calc(100% - 140px)'
+    //     });
+    // }
 
     return VideoChatView;
 });
