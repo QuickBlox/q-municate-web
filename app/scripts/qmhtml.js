@@ -338,7 +338,7 @@ define([
 
             return htmlTemplate;
         }
-
+                    
     };
 
     return QMHtml;

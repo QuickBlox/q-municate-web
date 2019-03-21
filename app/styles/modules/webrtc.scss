@@ -196,7 +196,7 @@
 .mediacall .localName {
     color: white;
     font-size: 12.5px;
-    margin-top: 2px;
+    margin-top: 3.5px;
 }
 .mediacall .localUs {
     position: absolute;
@@ -215,9 +215,9 @@
 }
 .users .usrBox .usrW { 
     color: white;
-    font-size: 12.5px;
+    font-size: 12px;
     text-align: center;
-    font-weight: lighter;
+    line-height:1px; 
 }
 .users .usrBox .usrW {
     display: flex;
@@ -236,8 +236,8 @@
     top: 27%;
 }
 .users .usrBox:nth-child(2){
-    top: 50%;
+    top: 52%;
 }
 .users .usrBox:nth-child(3){
-    top: 76%;
+    top: 75.5%;
 }
