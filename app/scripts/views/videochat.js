@@ -137,16 +137,9 @@ define([
                 VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
                 curSession.stop({});
             } else {
-                console.dir(QB.webrtc);
                 curSession.reject({});
-                // var user = User.contact.id;
-                // curSession.closeConnection();
-                // curSession.destroy();
-                console.dir(QB.webrtc);
-                // QB.webrtc.destroy();
             }
 
-            // clearCurSession();
             $incomingCall.remove();
             
             if ($('#popupIncoming .mCSB_container').children().length === 0) {
@@ -360,7 +353,7 @@ define([
                 userId: id
             };
 
-            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams);
+            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams); //git!! test
 
             $incomings.find('.mCSB_container').prepend(htmlTpl);
             openPopup($incomings);
@@ -460,36 +453,19 @@ define([
     };
 
     VideoChatView.prototype.onReject = function(session, id, extension) {
-        
-        // if (!areCurSession()) return;
-
-        console.group('OnReject');
-
-        var peerConnection = curSession.peerConnections;
-        var peerConnection1 = curSession.peerConnections[id];
-
-        console.log(curSession.peerConnections);
-        peerConnection1.release();
-        console.log(curSession.peerConnections);
-
-        console.dir(session);
-
-        curSession.closeConnection(id);
-        console.dir(session);
-        console.groupEnd();
 
         if (!isGroupChat(session)) {
             $('.btn_hangup').click();
             return false;
         }
 
-        // var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
-        //     $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
-        //     isCurrentUser = User.contact.id === id;
+        if (!areCurSession()) return false;
+        
+        curSession.closeConnection(id);
 
-        // if (Settings.get('sounds_notify')) {
-        //     document.getElementById('callingSignal').pause();
-        // }
+        if (Settings.get('sounds_notify')) {
+            document.getElementById('callingSignal').pause();
+        }
 
         // Удаляю оппонента, который положил трубку из списка оппонентов
         // removeOpponent(id);
@@ -548,13 +524,9 @@ define([
     };
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
-        // alert('close session');
-        // if (!areCurSession()) return;
-
-        // // TODO: тут закрывается видеозвонок для одного, для группового возможно неверно работает
-        var opponentId = User.contact.id === VideoChat.callee ? VideoChat.caller : VideoChat.callee;
-        // $('.btn_hangup').click();
-        // closeStreamScreen(opponentId);
+        var opponentId = (User.contact.id === VideoChat.callee) ? VideoChat.caller : VideoChat.callee;
+        closeStreamScreen(opponentId);
+        clearCurSession();
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
