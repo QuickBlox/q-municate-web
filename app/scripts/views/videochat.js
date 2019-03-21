@@ -493,8 +493,8 @@ define([
 
         // Удаляю оппонента, который положил трубку из списка оппонентов
         // removeOpponent(id);
-        removeAvatar(id);
-        removeUsrName(id);
+    
+        removeUsrBlock(id);
 
         // if (isCurrentUser) {
         //     stopIncomingCall(session.initiatorID);
@@ -896,9 +896,9 @@ define([
                 avataUrl = contacts[occupant].avatar_url || QMCONFIG.defAvatar.url_png;
                 occupantName = contacts[occupant].full_name ;
                 occupantsTpl +=
-                '<div class ="usrBox">' +
-                '<img id="remoteUser-' + occupant + '" class="hidden-avatar mediacall-global-avatar" src="' + avataUrl + '"alt="avatar">' +
-                '<div id="usrName-' +  occupant + '" class ="hidden-usrName usrW">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>';
+                '<div id = "usrBlock-'+ occupant + '" class = "usrBox">' +
+                '<img id = "remoteUser-' + occupant + '" class="hidden-avatar mediacall-global-avatar" src="' + avataUrl + '"alt="avatar">' +
+                '<div id = "usrName-' +  occupant + '" class ="hidden-usrName usrW">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>';
             });
 
             tplParams = {
@@ -968,18 +968,21 @@ define([
         $( '#remoteUser-' + id ).removeClass('hidden-avatar');
     }
     
-    function removeAvatar(id) {
-        var t = $( '#remoteUser-' + id );
-        $( '#remoteUser-' + id ).remove();   
-    }
+    //function removeAvatar(id) {
+    //    var t = $( '#remoteUser-' + id );
+    //    $( '#remoteUser-' + id ).remove();   
+    //}
     function showUsrName(id) {
         $( '#usrName-' + id ).removeClass('hidden-usrName');
     }
-    function removeUsrName(id) {
-        var t = $( '#usrName-' + id );
-        $( '#usrName-' + id ).remove();
+    //function removeUsrName(id) {
+    //  var t = $( '#usrName-' + id );
+    //  $( '#usrName-' + id ).remove();
+    //}
+    function removeUsrBlock(id) {    //! last fix)
+        var t = $( '#usrBlock-' + id );
+        $('#usrBlock-' + id ).remove(); 
     }
-
     function getSessionDialogId() {
         return VideoChat.currentDialogId || null;
     }
