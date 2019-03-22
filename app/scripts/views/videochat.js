@@ -1,13 +1,11 @@
-// TODO
-// Есть проблемы при сохранинии сессии - при входящем меняется местами callee и caller
-
 /*
  * Q-municate chat application
  *
  * VideoChat View Module
  *
  */
-define([
+
+ define([
     'jquery',
     'Entities',
     'config',
@@ -22,7 +20,6 @@ define([
     QBNotification,
     QMHtml
 ) {
-    
     var self,
         User,
         Settings,
@@ -210,6 +207,7 @@ define([
                 }
                 
                 self.sessionID = sessionId;
+                Helpers.Dialogs.moveDialogToTop(dialogId);
                 addCallTypeIcon(dialogId, callType);
             });
             
@@ -236,7 +234,7 @@ define([
                 endCallSignal.play();
             }
             
-            // Если трубку положил инициатор и звонок не начался, завершаю сессию
+            // If this is the initiator and the call did not start, end the session
             if (User.contact.id === VideoChat.caller && duration === 'connect...') {
                 curSession.stop({});
                 // TODO: отправка сообщения работает не верно
@@ -248,7 +246,6 @@ define([
 
             clearCurSession();
             restoreChat($chat);
-            // addCallTypeIcon(dialogId, null);
 
             return false;
         });
@@ -352,7 +349,7 @@ define([
                 userId: id
             };
 
-            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams); //git!! test
+            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams);
 
             $incomings.find('.mCSB_container').prepend(htmlTpl);
             openPopup($incomings);
@@ -458,31 +455,8 @@ define([
         
         curSession.closeConnection(id);
 
-        if (Settings.get('sounds_notify')) {
-            document.getElementById('callingSignal').pause();
-        }
-
-        // Удаляю оппонента, который положил трубку из списка оппонентов
-        // removeOpponent(id);
-    
-
-
-        // if (isCurrentUser) {
-        //     stopIncomingCall(session.initiatorID);
-        // }
-
-        // Если не осталось оппонентов - завершаю текущий звонок
-        // if (!areOpponents()) {
-        //     clearCurSession();
-        //     $chat.parent('.chatView').removeClass('j-mediacall');
-        //     $chat.find('.mediacall-info-duration').text('');
-        //     $chat.find('.mediacall').remove();
-        //     $chat.find('.l-chat-header').show();
-        //     $chat.find('.l-chat-content').css({
-        //         height: 'calc(100% - 140px)'
-        //     });
-    
-        //      addCallTypeIcon(id, null);
+        // if (Settings.get('sounds_notify')) {
+        //     document.getElementById('callingSignal').pause();
         // }
     };
 
@@ -737,8 +711,6 @@ define([
     }
 
     function addCallTypeIcon(id, callType) {
-        // TODO: здесь исправить id на группу
-        // var $status = $('li.dialog-item[data-id="' + id + '"]').find('span.status');
         var $status = $('li.dialog-item[data-dialog="' + id + '"]').find('span.status');
 
         if (callType === 'video') {
