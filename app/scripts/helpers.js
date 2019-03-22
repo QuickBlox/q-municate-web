@@ -210,16 +210,7 @@ define([
     Helpers.Dialogs = {
 
         moveDialogToTop: function(dialogId) {
-            var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-            var dialogItem;
-
-            if (is_firefox) {
-                dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]');
-                console.log(dialogItem);
-
-            } else {
-                dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialogId + '"]');
-            }
+            var dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]');
 
             if (dialogItem.length > 0) {
                 copyDialogItem = dialogItem.clone();

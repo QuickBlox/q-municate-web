@@ -907,6 +907,7 @@
     }
     
     function showUsrBlock(id) {
+        var t = $( '#remoteUser-' + id );
         $( '#remoteUser-' + id ).removeClass('hidden-avatar');
         $( '#usrName-' + id ).removeClass('hidden-usrName');
     }
@@ -963,7 +964,7 @@
     /** Redraw all avatars corresponding with the peer connection statuses */
     function redrawAudioCallTpl() {
         for(var index in curSession.peerConnections) {
-            var connectionState = curSession.peerConnections[index].connectionState;
+            var connectionState = curSession.peerConnections[index].iceConnectionState;
 
             switch(connectionState) {
                 case "connected":
@@ -975,7 +976,7 @@
                 break;
             
                 default: 
-                    console.log('default');
+                    console.log('default connection state');
                 break;
             }
         }
