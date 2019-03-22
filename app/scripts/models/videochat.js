@@ -99,9 +99,6 @@ define([
             msg;
 
         if (!isErrorMessage) {
-            console.log('state: ' + state);
-            console.log(self.callee);
-            console.log('ty;e: ', typeof self.callee);
             extension = {
                 save_to_history: 1,
                 date_sent: time,

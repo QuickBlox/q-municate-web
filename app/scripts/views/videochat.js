@@ -219,13 +219,9 @@
 
             var $self = $(this),
                 $chat = $self.parents('.l-chat'),
-                // opponentId = $self.data('id'),
-                // dialogId = $self.data('dialog'),
-                // callType = curSession.callType === 1 ? 'video' : 'audio',
                 duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
-                endCallSignal = $('#endCallSignal')[0],
-                isErrorMessage = $self.data('errorMessage');
+                endCallSignal = $('#endCallSignal')[0];
             
             clearTimeout(callTimer);
 
@@ -234,20 +230,18 @@
                 endCallSignal.play();
             }
             
-            // If this is the initiator and the call did not start, end the session
             if (User.contact.id === VideoChat.caller && duration === 'connect...') {
-                curSession.stop({});
-                // TODO: отправка сообщения работает не верно
-                // VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
+                curSession.stop();
                 $self.removeAttr('data-errorMessage');
+                // TODO: отправка сообщения работает не верно
+                // VideoChat.sendMessage(78065205, '1', null, curSession.currentDialogId, self.type);
+            } else if (curSession.state === 2 && getCountConnectedOpponents() < 2) {
+                curSession.stop();
             } else {
-                curSession.reject({});
+                curSession.reject();
             }
-
-            clearCurSession();
+            
             restoreChat($chat);
-
-            return false;
         });
 
         $('body').on('click', '.btn_camera_off, .btn_mic_off', switchOffDevice);
@@ -399,7 +393,6 @@
     VideoChatView.prototype.onAccept = function(session, id, extension) {
         // alert('onaccept');
         var audioSignal = document.getElementById('callingSignal'),
-            // dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             dialogId = VideoChat.currentDialogId,
             callType = self.type;
 
@@ -425,22 +418,26 @@
         curSession.attachMediaStream('remoteStream', stream);
         $('.mediacall .btn_full-mode').prop('disabled', false);
 
-        if (self.type === 'video') {
-            video.addEventListener('timeupdate', function() {
-                videoStreamTime = video.currentTime;
-                var duration = getTimer(Math.floor(video.currentTime));
-                $('.mediacall-info-duration').text(duration);
-            });
+        var duration = $('.mediacall-info-duration').text();
 
-            $('#remoteUser').addClass('is-hidden');
-            $('#remoteStream').removeClass('is-hidden');
-        } else {
-            setTimeout(function() {
-                setDuration();
-
-                $('#remoteStream').addClass('is-hidden');
-                $('#remoteUser').removeClass('is-hidden');
-            }, 2700);
+        if (duration === 'connect...') {
+            if (self.type === 'video') {
+                video.addEventListener('timeupdate', function() {
+                    videoStreamTime = video.currentTime;
+                    duration = getTimer(Math.floor(video.currentTime));
+                    $('.mediacall-info-duration').text(duration);
+                });
+    
+                $('#remoteUser').addClass('is-hidden');
+                $('#remoteStream').removeClass('is-hidden');
+            } else {
+                console.log(callTimer);
+                setTimeout(function() {
+                    setDuration();
+                    $('#remoteStream').addClass('is-hidden');
+                    $('#remoteUser').removeClass('is-hidden');
+                }, 2700);
+            }
         }
     };
 
@@ -448,21 +445,16 @@
 
         if (!isGroupChat(session)) {
             $('.btn_hangup').click();
-            return false;
+            return;
         }
 
-        if (!areCurSession()) return false;
-        
+        if (!areCurSession()) return;
         curSession.closeConnection(id);
-
-        // if (Settings.get('sounds_notify')) {
-        //     document.getElementById('callingSignal').pause();
-        // }
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
         // alert('onstop');
-        closeStreamScreen(id);
+        // closeStreamScreen(id);
         clearCurSession();
     };
 
@@ -967,11 +959,11 @@
             var connectionState = curSession.peerConnections[index].iceConnectionState;
 
             switch(connectionState) {
-                case "connected":
+                case 'connected':
                     showUsrBlock(index);
                 break;
 
-                case "closed":
+                case 'closed':
                     removeUsrBlock(index);
                 break;
             
@@ -980,11 +972,35 @@
                 break;
             }
         }
-
     }
 
     function redrawVideoCallTpl() {
 
+    }
+
+    /** Get count connections wint status 'connected' for current session */
+    function getCountConnectedOpponents() {
+        var countConnected = 0;
+
+        for(var index in curSession.peerConnections) {
+            var connectionState = curSession.peerConnections[index].iceConnectionState;
+
+            if (connectionState === 'connected') {
+                countConnected++;
+            }
+        }
+        return countConnected;
+    }
+
+    function isAllConnectionsNewStatus() {
+        for(var index in curSession.peerConnections) {
+            var connectionState = curSession.peerConnections[index].iceConnectionState;
+
+            if (connectionState !== 'new') {
+                return false;
+            }
+        }
+        return true;
     }
 
     return VideoChatView;
