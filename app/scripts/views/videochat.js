@@ -28,6 +28,7 @@
         ContactList,
         SyncTabs,
         callTimer,
+        callTimerOn = false,
         stopStreamFF,
         sendAutoReject,
         videoStreamTime,
@@ -224,6 +225,8 @@
                 endCallSignal = $('#endCallSignal')[0];
             
             clearTimeout(callTimer);
+            callTimerOn = false;
+            callTimer = undefined;
 
             if (Settings.get('sounds_notify') && SyncTabs.get()) {
                 callingSignal.pause();
@@ -420,7 +423,8 @@
 
         var duration = $('.mediacall-info-duration').text();
 
-        if (duration === 'connect...') {
+        if (callTimerOn === false) {
+            callTimerOn = true;
             if (self.type === 'video') {
                 video.addEventListener('timeupdate', function() {
                     videoStreamTime = video.currentTime;
@@ -431,7 +435,6 @@
                 $('#remoteUser').addClass('is-hidden');
                 $('#remoteStream').removeClass('is-hidden');
             } else {
-                console.log(callTimer);
                 setTimeout(function() {
                     setDuration();
                     $('#remoteStream').addClass('is-hidden');
@@ -455,6 +458,7 @@
     VideoChatView.prototype.onStop = function(session, id, extension) {
         // alert('onstop');
         // closeStreamScreen(id);
+        
         clearCurSession();
     };
 
@@ -491,6 +495,9 @@
         var opponentId = (User.contact.id === VideoChat.callee) ? VideoChat.caller : VideoChat.callee;
         closeStreamScreen(opponentId);
         clearCurSession();
+        clearTimeout(callTimer);
+        callTimerOn = false;
+        callTimer = undefined;
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
@@ -605,7 +612,6 @@
                 callingSignal.pause();
                 endCallSignal.play();
             }
-            clearTimeout(callTimer);
             videoStreamTime = null;
             VoiceMessage.resetRecord();
             restoreChat($chat);
@@ -752,7 +758,6 @@
     }
 
     function setDuration(currentTime) {
-        console.log('Roma => setDuration(currentTime)');
         var c = currentTime || 0;
         $('.mediacall-info-duration').text(getTimer(c));
         callTimer = setTimeout(function() {
@@ -762,7 +767,6 @@
     }
 
     function getTimer(time) {
-        console.log('Roma => getTimer(time)');
         var h, min, sec;
 
         h = Math.floor(time / 3600);
@@ -899,7 +903,6 @@
     }
     
     function showUsrBlock(id) {
-        var t = $( '#remoteUser-' + id );
         $( '#remoteUser-' + id ).removeClass('hidden-avatar');
         $( '#usrName-' + id ).removeClass('hidden-usrName');
     }
@@ -913,7 +916,6 @@
     }
 
     function saveCurSession(session, extension) {
-        // curSession = VideoChat.session;
         curSession = session;
         VideoChat.currentDialogId = extension.dialogId;
         self.type = session.callType;
