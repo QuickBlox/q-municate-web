@@ -130,6 +130,9 @@
                 callType = $self.data('calltype'),
                 audioSignal = document.getElementById('ringtoneSignal');
 
+            clearTimeout(sendAutoReject);
+            sendAutoReject = undefined;                
+
             if (!isGroupChat(curSession)) {
                 var opponentId = $self.data('id');
                 VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
@@ -374,9 +377,6 @@
     };
 
     VideoChatView.prototype.onIgnored = function(state, session, id, extension) {
-        console.dir(QB.webrtc);
-        // alert('onignored');
-        // if (!areCurSession()) return false;
 
         if ((state === 'onAccept') && (User.contact.id === id)) {
             stopIncomingCall(session.initiatorID);
@@ -385,9 +385,9 @@
             closeStreamScreen(id);
         }
         // send message to caller that user is busy
-        if ((state === 'onCall') && (User.contact.id !== id)) {
-            var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog');
-                callType = (extension.callType === '1' ? 'video' : 'audio') || extension.call_type;
+        if ((state === 'onCall') && (User.contact.id !== id) && !isGroupChat(session)) {
+            var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
+                callType = (session.callType === 1 ? 'video' : 'audio');
 
             VideoChat.sendMessage(id, '2', null, dialogId, callType);
         }
@@ -495,15 +495,14 @@
         var opponentId = (User.contact.id === VideoChat.callee) ? VideoChat.caller : VideoChat.callee;
         closeStreamScreen(opponentId);
         clearCurSession();
+
         clearTimeout(callTimer);
         callTimerOn = false;
         callTimer = undefined;
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
-        // TODO for group calls
-        // alert('onUserNotAnswerListener');
-        // $('.btn_hangup').click();
+
     };
 
     VideoChatView.prototype.startCall = function(className, dialogId) {
@@ -724,9 +723,6 @@
         alert('stopIncomingCall');
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]');
-
-        clearTimeout(sendAutoReject);
-        sendAutoReject = undefined;
 
         $declineButton.parents('.incoming-call').remove();
 
