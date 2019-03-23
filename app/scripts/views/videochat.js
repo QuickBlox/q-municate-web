@@ -37,6 +37,7 @@
         is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
     function VideoChatView(app) {
+
         this.app = app;
         self = this;
         Settings = this.app.models.Settings;
@@ -49,6 +50,7 @@
     }
 
     VideoChatView.prototype.cancelCurrentCalls = function() {
+
         var $mediacall = $('.mediacall');
 
         if ($mediacall.length > 0) {
@@ -57,6 +59,7 @@
     };
 
     VideoChatView.prototype.clearChat = function() {
+
         var $chatView = $('.chatView');
 
         if ($chatView.length > 1) {
@@ -65,11 +68,14 @@
     };
 
     VideoChatView.prototype.init = function() {
+
         var DialogView = this.app.views.Dialog,
             Dialog = this.app.models.Dialog;
             
         $('body').on('click', '.videoCall, .audioCall', function() {
+
             if (QB.webrtc) {
+
                 var $this = $(this),
                     isGroupCall = ($this.data('type') === 2),
                     activeDialog = Dialog.app.entities.active,
@@ -96,15 +102,18 @@
                 }
 
                 if ($dialogItem.length) {
+
                     dialogId = $dialogItem.data('dialog');
                     openChatAndStartCall(dialogId);
                 } else {
+
                     Dialog.restorePrivateDialog(userId, function(dialog) {
                         dialogId = dialog.get('id');
                         openChatAndStartCall(dialogId);
                     });
                 }
             } else {
+
                 QMHtml.VideoChat.noWebRTC();
             }
 
@@ -113,6 +122,7 @@
             $('.j-listActionsContacts').remove();
 
             function openChatAndStartCall(dialogId) {
+
                 DialogView.htmlBuild(dialogId);
                 self.cancelCurrentCalls();
                 self.startCall(className, dialogId);
@@ -124,6 +134,7 @@
         });
 
         $('#popupIncoming').on('click', '.btn_decline', function() {
+
             var $self = $(this),
                 $incomingCall = $self.parents('.incoming-call'),
                 dialogId = $self.data('dialog'),
@@ -144,7 +155,9 @@
             $incomingCall.remove();
             
             if ($('#popupIncoming .mCSB_container').children().length === 0) {
+
                 closePopup();
+
                 if (Settings.get('sounds_notify')) {
                     audioSignal.pause();
                 }
@@ -154,11 +167,13 @@
         });
 
         $('#popupIncoming').on('click', '.btn_accept_exceed', function() {
+
             $('#popupIncoming').find('.mCSB_container').empty();
             closePopup();
         });
 
         $('#popupIncoming').on('click', '.btn_accept', function() {
+
             self.cancelCurrentCalls();
 
             clearTimeout(sendAutoReject);
@@ -219,6 +234,7 @@
         });
 
         $('body').on('click', '.btn_hangup', function() {
+
             self.clearChat();
 
             var $self = $(this),
@@ -226,27 +242,30 @@
                 duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0];
-            
-            clearTimeout(callTimer);
-            callTimerOn = false;
-            callTimer = undefined;
 
             if (Settings.get('sounds_notify') && SyncTabs.get()) {
                 callingSignal.pause();
                 endCallSignal.play();
             }
-            
-            if (User.contact.id === VideoChat.caller && duration === 'connect...') {
+            console.log(getCountConnectedOpponents());
+            if ((User.contact.id === curSession.initiatorID) && (callTimerOn === false)) {
+
                 curSession.stop();
-                $self.removeAttr('data-errorMessage');
                 // TODO: отправка сообщения работает не верно
                 // VideoChat.sendMessage(78065205, '1', null, curSession.currentDialogId, self.type);
-            } else if (curSession.state === 2 && getCountConnectedOpponents() < 2) {
+
+            } else if (getCountConnectedOpponents() < 2) {
+
                 curSession.stop();
+
             } else {
                 curSession.reject();
             }
             
+            $self.removeAttr('data-errorMessage');
+            clearTimeout(callTimer);
+            callTimerOn = false;
+            callTimer = undefined;            
             restoreChat($chat);
         });
 
@@ -325,7 +344,7 @@
             userAvatar = contact.avatar_url || extension.avatar,
             dialogs = Dialog.app.entities.Collections.dialogs,
             activeDialogDetailed = dialogs.get(dialogId),
-            autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
+            autoReject = 1000000, //QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
             htmlTpl,
             tplParams;
 
@@ -1020,7 +1039,7 @@
 
             var connectionState = curSession.peerConnections[index].iceConnectionState;
 
-            if (connectionState === 'connected') {
+            if (connectionState === 'completed') {
                 countConnected++;
             }
         }
