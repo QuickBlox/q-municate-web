@@ -126,7 +126,8 @@ define([
                 '<img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>' +
                 '<button class="btn_mediacall btn_hangup" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
                 '<img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>' +
-                '</div></div>')(params);
+                '</div></div>'
+                )(params);
 
             return htmlTemplate;
         },        
@@ -152,7 +153,12 @@ define([
                 '<img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>' +
                 '<button class="btn_mediacall btn_hangup" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
                 '<img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>' +
-                '</div></div>')(params);
+                '</div></div>'+
+                '<div class = "videoTpl">' +
+                '<div id = "videoWindow-" class ="videoWin"> </div>' +
+                '<div id = "videoWindow-" class ="videoWin"> </div>' +
+                '<div id = "videoWindow-" class ="videoWin"> </div>' +
+                '</div>')(params);
 
             return htmlTemplate;
         },

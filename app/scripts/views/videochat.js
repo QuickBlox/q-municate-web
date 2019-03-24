@@ -362,7 +362,7 @@
                 userId: id
             };
 
-            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams);
+            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams); //git!! test   
 
             $incomings.find('.mCSB_container').prepend(htmlTpl);
             openPopup($incomings);
