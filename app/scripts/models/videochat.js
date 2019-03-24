@@ -68,11 +68,15 @@ define([
                     self.caller = options.opponentId;
                     self.callee = User.contact.id;
                 } else {
+
                     var extension = {
                         isGroupCall: isGroupCall,
                         dialogId: options.dialogId
                     };
-                    curSession.call(extension);
+
+                    extension = JSON.stringify(extension);
+
+                    curSession.call(options.dialogId);
                     self.caller = User.contact.id;
                     self.callee = options.opponentId;
                 }

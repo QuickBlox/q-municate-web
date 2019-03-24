@@ -239,7 +239,6 @@
 
             var $self = $(this),
                 $chat = $self.parents('.l-chat'),
-                duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0];
 
@@ -247,25 +246,19 @@
                 callingSignal.pause();
                 endCallSignal.play();
             }
-            console.log(getCountConnectedOpponents());
-            if ((User.contact.id === curSession.initiatorID) && (callTimerOn === false)) {
 
-                curSession.stop();
+            if ((User.contact.id === curSession.initiatorID) && (callTimerOn === false)) {
+                curSession.stop({});
                 // TODO: отправка сообщения работает не верно
                 // VideoChat.sendMessage(78065205, '1', null, curSession.currentDialogId, self.type);
-
             } else if (getCountConnectedOpponents() < 2) {
-
-                curSession.stop();
-
+                curSession.stop({});
             } else {
                 curSession.reject();
             }
             
             $self.removeAttr('data-errorMessage');
-            clearTimeout(callTimer);
-            callTimerOn = false;
-            callTimer = undefined;            
+            clearCurSession();
             restoreChat($chat);
         });
 
@@ -344,7 +337,8 @@
             userAvatar = contact.avatar_url || extension.avatar,
             dialogs = Dialog.app.entities.Collections.dialogs,
             activeDialogDetailed = dialogs.get(dialogId),
-            autoReject = 1000000, //QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
+            // autoReject = 10000,
+            autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
             htmlTpl,
             tplParams;
 
@@ -401,7 +395,7 @@
             stopIncomingCall(session.initiatorID);
         }
         if ((state === 'onStop') && (User.contact.id === id)) {
-            closeStreamScreen(id);
+            closeStreamScreen();
         }
         // send message to caller that user is busy
         if ((state === 'onCall') && (User.contact.id !== id) && !isGroupChat(session)) {
@@ -476,10 +470,24 @@
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
-        // alert('onstop');
-        // closeStreamScreen(id);
-        
-        clearCurSession();
+
+        if (session.ID === curSession.ID) {
+
+            var callingSignal = $('#callingSignal')[0],
+                endCallSignal = $('#endCallSignal')[0];
+    
+            if (Settings.get('sounds_notify') && SyncTabs.get()) {
+                callingSignal.pause();
+                endCallSignal.play();
+            }
+
+            for (var index in session.peerConnections) {
+                session.closeConnection(index);
+            }
+            
+            closeStreamScreen();
+            clearCurSession();
+        }
     };
 
     VideoChatView.prototype.onUpdateCall = function(session, id, extension) {
@@ -513,13 +521,10 @@
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
 
-        var opponentId = (User.contact.id === VideoChat.callee) ? VideoChat.caller : VideoChat.callee;
-        closeStreamScreen(opponentId);
-        clearCurSession();
-
-        clearTimeout(callTimer);
-        callTimerOn = false;
-        callTimer = undefined;
+        if (session.ID === curSession.ID) {
+            closeStreamScreen();
+            clearCurSession();
+        }
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
@@ -531,8 +536,7 @@
         var audioSignal = document.getElementById('callingSignal'),
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
             params = self.build(dialogId, callType),
-            $chat = $('.l-chat:visible'),
-            id = $chat.data('id');
+            $chat = $('.l-chat:visible');
 
         VideoChat.getUserMedia(params, callType, function(err, res) {
             // Тут возвращается медиастрим
@@ -622,7 +626,7 @@
 
     /* Private
     --------------------------------------------------------------------------*/
-    function closeStreamScreen(id) {
+    function closeStreamScreen() {
 
         var dialogId = getSessionDialogId(),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
@@ -970,6 +974,10 @@
         VideoChat.caller = null;
         VideoChat.callee = null;
         self.type = null;
+
+        clearTimeout(callTimer);
+        callTimerOn = false;
+        callTimer = undefined;   
     }
 
     function areCurSession() {
@@ -1039,7 +1047,7 @@
 
             var connectionState = curSession.peerConnections[index].iceConnectionState;
 
-            if (connectionState === 'completed') {
+            if (['completed', 'connected'].includes(connectionState)) {
                 countConnected++;
             }
         }
