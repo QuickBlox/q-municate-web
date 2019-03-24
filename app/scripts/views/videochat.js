@@ -1,13 +1,11 @@
-// TODO
-// Есть проблемы при сохранинии сессии - при входящем меняется местами callee и caller
-
 /*
  * Q-municate chat application
  *
  * VideoChat View Module
  *
  */
-define([
+
+ define([
     'jquery',
     'Entities',
     'config',
@@ -22,7 +20,6 @@ define([
     QBNotification,
     QMHtml
 ) {
-    
     var self,
         User,
         Settings,
@@ -31,6 +28,7 @@ define([
         ContactList,
         SyncTabs,
         callTimer,
+        callTimerOn = false,
         stopStreamFF,
         sendAutoReject,
         videoStreamTime,
@@ -39,6 +37,7 @@ define([
         is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
     function VideoChatView(app) {
+
         this.app = app;
         self = this;
         Settings = this.app.models.Settings;
@@ -51,6 +50,7 @@ define([
     }
 
     VideoChatView.prototype.cancelCurrentCalls = function() {
+
         var $mediacall = $('.mediacall');
 
         if ($mediacall.length > 0) {
@@ -59,6 +59,7 @@ define([
     };
 
     VideoChatView.prototype.clearChat = function() {
+
         var $chatView = $('.chatView');
 
         if ($chatView.length > 1) {
@@ -67,11 +68,14 @@ define([
     };
 
     VideoChatView.prototype.init = function() {
+
         var DialogView = this.app.views.Dialog,
             Dialog = this.app.models.Dialog;
             
         $('body').on('click', '.videoCall, .audioCall', function() {
+
             if (QB.webrtc) {
+
                 var $this = $(this),
                     isGroupCall = ($this.data('type') === 2),
                     activeDialog = Dialog.app.entities.active,
@@ -98,15 +102,18 @@ define([
                 }
 
                 if ($dialogItem.length) {
+
                     dialogId = $dialogItem.data('dialog');
                     openChatAndStartCall(dialogId);
                 } else {
+
                     Dialog.restorePrivateDialog(userId, function(dialog) {
                         dialogId = dialog.get('id');
                         openChatAndStartCall(dialogId);
                     });
                 }
             } else {
+
                 QMHtml.VideoChat.noWebRTC();
             }
 
@@ -115,10 +122,11 @@ define([
             $('.j-listActionsContacts').remove();
 
             function openChatAndStartCall(dialogId) {
+
                 DialogView.htmlBuild(dialogId);
                 self.cancelCurrentCalls();
                 self.startCall(className, dialogId);
-                saveCurSession(curSession, { dialogId: dialogId });
+                saveCurSession(self.app.models.VideoChat.session, { dialogId: dialogId });
                 Helpers.Dialogs.moveDialogToTop(dialogId);
             }
 
@@ -126,11 +134,15 @@ define([
         });
 
         $('#popupIncoming').on('click', '.btn_decline', function() {
+
             var $self = $(this),
                 $incomingCall = $self.parents('.incoming-call'),
                 dialogId = $self.data('dialog'),
                 callType = $self.data('calltype'),
                 audioSignal = document.getElementById('ringtoneSignal');
+
+            clearTimeout(sendAutoReject);
+            sendAutoReject = undefined;                
 
             if (!isGroupChat(curSession)) {
                 var opponentId = $self.data('id');
@@ -143,7 +155,9 @@ define([
             $incomingCall.remove();
             
             if ($('#popupIncoming .mCSB_container').children().length === 0) {
+
                 closePopup();
+
                 if (Settings.get('sounds_notify')) {
                     audioSignal.pause();
                 }
@@ -153,24 +167,25 @@ define([
         });
 
         $('#popupIncoming').on('click', '.btn_accept_exceed', function() {
+
             $('#popupIncoming').find('.mCSB_container').empty();
             closePopup();
         });
 
         $('#popupIncoming').on('click', '.btn_accept', function() {
+
             self.cancelCurrentCalls();
 
             clearTimeout(sendAutoReject);
             sendAutoReject = undefined;
 
             var $self = $(this),
-                id = VideoChat.currentDialogId,
-                $dialogItem = $('.dialog-item[data-dialog="' + id + '"]');
+                dialogId = VideoChat.currentDialogId,
+                $dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]');
             
             DialogView.htmlBuild($dialogItem);
 
-            var dialogId = $self.data('dialog'),
-                sessionId = $self.data('session'),
+            var sessionId = $self.data('session'),
                 callType = $self.data('calltype'),
                 audioSignal = $('#ringtoneSignal')[0],
                 params = self.build(dialogId, callType),
@@ -182,26 +197,26 @@ define([
             });
 
             closePopup();
-
+            
             if (Settings.get('sounds_notify')) {
                 audioSignal.pause();
             }
-
+            
             params.isCallee = true;
-
+            
             VideoChat.getUserMedia(params, callType, function(err, res) {
                 if (err) {
                     alert(err);
                     $chat.find('.mediacall .btn_hangup').data('errorMessage', 1);
                     $chat.find('.mediacall .btn_hangup').click();
                     fixScroll();
-
+                    
                     return true;
                 }
-
+                
                 VoiceMessage.resetRecord();
                 VoiceMessage.blockRecorder('during a call');
-
+                
                 if (callType === 'audio') {
                     self.type = 'audio';
                     $('.btn_camera_off').click();
@@ -209,49 +224,49 @@ define([
                     self.type = 'video';
                     self.unmute('video');
                 }
-
+                
                 self.sessionID = sessionId;
-                addCallTypeIcon(id, callType);
+                Helpers.Dialogs.moveDialogToTop(dialogId);
+                addCallTypeIcon(dialogId, callType);
             });
-
+            
             return false;
         });
 
         $('body').on('click', '.btn_hangup', function() {
+
             self.clearChat();
 
             var $self = $(this),
                 $chat = $self.parents('.l-chat'),
-                // opponentId = $self.data('id'),
-                // dialogId = $self.data('dialog'),
-                // callType = curSession.callType === 1 ? 'video' : 'audio',
                 duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
-                endCallSignal = $('#endCallSignal')[0],
-                isErrorMessage = $self.data('errorMessage');
-            
-            clearTimeout(callTimer);
+                endCallSignal = $('#endCallSignal')[0];
 
             if (Settings.get('sounds_notify') && SyncTabs.get()) {
                 callingSignal.pause();
                 endCallSignal.play();
             }
-            
-            // Если трубку положил инициатор и звонок не начался, завершаю сессию
-            if (User.contact.id === VideoChat.caller && duration === 'connect...') {
-                curSession.stop({});
+            console.log(getCountConnectedOpponents());
+            if ((User.contact.id === curSession.initiatorID) && (callTimerOn === false)) {
+
+                curSession.stop();
                 // TODO: отправка сообщения работает не верно
-                // VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
-                $self.removeAttr('data-errorMessage');
+                // VideoChat.sendMessage(78065205, '1', null, curSession.currentDialogId, self.type);
+
+            } else if (getCountConnectedOpponents() < 2) {
+
+                curSession.stop();
+
             } else {
-                curSession.reject({});
+                curSession.reject();
             }
-
-            clearCurSession();
+            
+            $self.removeAttr('data-errorMessage');
+            clearTimeout(callTimer);
+            callTimerOn = false;
+            callTimer = undefined;            
             restoreChat($chat);
-            // addCallTypeIcon(dialogId, null);
-
-            return false;
         });
 
         $('body').on('click', '.btn_camera_off, .btn_mic_off', switchOffDevice);
@@ -307,7 +322,7 @@ define([
 
     VideoChatView.prototype.onCall = function(session, extension) {
         var dialogId = extension.dialogId,
-        isGroupCall = isGroupChat(session);
+            isGroupCall = isGroupChat(session);
         
         saveCurSession(session, extension);
 
@@ -329,7 +344,7 @@ define([
             userAvatar = contact.avatar_url || extension.avatar,
             dialogs = Dialog.app.entities.Collections.dialogs,
             activeDialogDetailed = dialogs.get(dialogId),
-            autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
+            autoReject = 1000000, //QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
             htmlTpl,
             tplParams;
 
@@ -381,9 +396,6 @@ define([
     };
 
     VideoChatView.prototype.onIgnored = function(state, session, id, extension) {
-        console.dir(QB.webrtc);
-        // alert('onignored');
-        // if (!areCurSession()) return false;
 
         if ((state === 'onAccept') && (User.contact.id === id)) {
             stopIncomingCall(session.initiatorID);
@@ -392,24 +404,19 @@ define([
             closeStreamScreen(id);
         }
         // send message to caller that user is busy
-        if ((state === 'onCall') && (User.contact.id !== id)) {
-            var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog');
-                callType = (extension.callType === '1' ? 'video' : 'audio') || extension.call_type;
+        if ((state === 'onCall') && (User.contact.id !== id) && !isGroupChat(session)) {
+            var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
+                callType = (session.callType === 1 ? 'video' : 'audio');
 
             VideoChat.sendMessage(id, '2', null, dialogId, callType);
         }
     };
 
     VideoChatView.prototype.onAccept = function(session, id, extension) {
+        // alert('onaccept');
         var audioSignal = document.getElementById('callingSignal'),
-            dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
+            dialogId = VideoChat.currentDialogId,
             callType = self.type;
-
-        // Если групповой аудио звонок убираю прозрачность аватарки юзера
-        if (isGroupChat(session) && callType === 'audio') {
-            showAvatar(id);
-            showUsrName(id);
-        }
 
         if (Settings.get('sounds_notify')) {
             audioSignal.pause();
@@ -417,7 +424,7 @@ define([
 
         self.sessionID = session.ID;
 
-        addCallTypeIcon(id, callType);
+        addCallTypeIcon(dialogId, callType);
 
         createAndShowNotification({
             'id': id,
@@ -433,22 +440,26 @@ define([
         curSession.attachMediaStream('remoteStream', stream);
         $('.mediacall .btn_full-mode').prop('disabled', false);
 
-        if (self.type === 'video') {
-            video.addEventListener('timeupdate', function() {
-                videoStreamTime = video.currentTime;
-                var duration = getTimer(Math.floor(video.currentTime));
-                $('.mediacall-info-duration').text(duration);
-            });
+        var duration = $('.mediacall-info-duration').text();
 
-            $('#remoteUser').addClass('is-hidden');
-            $('#remoteStream').removeClass('is-hidden');
-        } else {
-            setTimeout(function() {
-                setDuration();
-
-                $('#remoteStream').addClass('is-hidden');
-                $('#remoteUser').removeClass('is-hidden');
-            }, 2700);
+        if (callTimerOn === false) {
+            callTimerOn = true;
+            if (self.type === 'video') {
+                video.addEventListener('timeupdate', function() {
+                    videoStreamTime = video.currentTime;
+                    duration = getTimer(Math.floor(video.currentTime));
+                    $('.mediacall-info-duration').text(duration);
+                });
+    
+                $('#remoteUser').addClass('is-hidden');
+                $('#remoteStream').removeClass('is-hidden');
+            } else {
+                setTimeout(function() {
+                    setDuration();
+                    $('#remoteStream').addClass('is-hidden');
+                    $('#remoteUser').removeClass('is-hidden');
+                }, 2700);
+            }
         }
     };
 
@@ -456,44 +467,18 @@ define([
 
         if (!isGroupChat(session)) {
             $('.btn_hangup').click();
-            return false;
+            return;
         }
 
-        if (!areCurSession()) return false;
-        
-        curSession.closeConnection(id);
-
-        if (Settings.get('sounds_notify')) {
-            document.getElementById('callingSignal').pause();
+        if (areCurSession()) {
+            curSession.closeConnection(id);
         }
-
-        // Удаляю оппонента, который положил трубку из списка оппонентов
-        // removeOpponent(id);
-    
-        removeUsrBlock(id);
-
-        // if (isCurrentUser) {
-        //     stopIncomingCall(session.initiatorID);
-        // }
-
-        // Если не осталось оппонентов - завершаю текущий звонок
-        // if (!areOpponents()) {
-        //     clearCurSession();
-        //     $chat.parent('.chatView').removeClass('j-mediacall');
-        //     $chat.find('.mediacall-info-duration').text('');
-        //     $chat.find('.mediacall').remove();
-        //     $chat.find('.l-chat-header').show();
-        //     $chat.find('.l-chat-content').css({
-        //         height: 'calc(100% - 140px)'
-        //     });
-    
-        //      addCallTypeIcon(id, null);
-        // }
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
         // alert('onstop');
-        closeStreamScreen(id);
+        // closeStreamScreen(id);
+        
         clearCurSession();
     };
 
@@ -516,7 +501,10 @@ define([
     };
 
     VideoChatView.prototype.onSessionConnectionStateChangedListener = function(session, userID, connectionState) {
-        // Это только для браузера Firefox, дополнительно завершается сессия
+        // alert('onSessionConnectionStateChangedListener');
+        var callType = (session.callType === 1 ? 'video' : 'audio');
+        redrawCallTpl(callType);
+
         if (is_firefox && (connectionState === 3)) {
             curSession.closeConnection(userID);
             $('.btn_hangup').click();
@@ -524,17 +512,22 @@ define([
     };
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
+
         var opponentId = (User.contact.id === VideoChat.callee) ? VideoChat.caller : VideoChat.callee;
         closeStreamScreen(opponentId);
         clearCurSession();
+
+        clearTimeout(callTimer);
+        callTimerOn = false;
+        callTimer = undefined;
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
-        alert('onUserNotAnswerListener');
-        $('.btn_hangup').click();
+
     };
 
     VideoChatView.prototype.startCall = function(className, dialogId) {
+
         var audioSignal = document.getElementById('callingSignal'),
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
             params = self.build(dialogId, callType),
@@ -568,12 +561,12 @@ define([
                 self.unmute('video');
             }
 
-            addCallTypeIcon(id, callType);
             $('.chatView').addClass('j-mediacall');
         });
     };
     
     VideoChatView.prototype.build = function(id, callType) {
+
         var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
             isGroupCall = $chat.data('type') === 2,
             activeDialogDetailed = this.app.entities.Collections.dialogs.get(id),
@@ -608,6 +601,7 @@ define([
     };
 
     VideoChatView.prototype.mute = function(callType) {
+        
         console.log('Roma => VideoChatView.prototype.mute');
         curSession.mute(callType);
         if (callType === 'video') {
@@ -617,6 +611,7 @@ define([
     };
 
     VideoChatView.prototype.unmute = function(callType) {
+
         console.log('Roma => VideoChatView.prototype.unmute');
         curSession.unmute(callType);
         if (callType === 'video') {
@@ -628,6 +623,7 @@ define([
     /* Private
     --------------------------------------------------------------------------*/
     function closeStreamScreen(id) {
+
         var dialogId = getSessionDialogId(),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]'),
@@ -641,7 +637,6 @@ define([
                 callingSignal.pause();
                 endCallSignal.play();
             }
-            clearTimeout(callTimer);
             videoStreamTime = null;
             VoiceMessage.resetRecord();
             restoreChat($chat);
@@ -662,6 +657,7 @@ define([
     }
 
     function switchOffDevice(event) {
+
         console.log('Roma => switchOffDevice(event)');
         var $obj = $(event.target).data('id') ? $(event.target) : $(event.target).parent(),
             opponentId = $obj.data('id'),
@@ -699,6 +695,7 @@ define([
     }
 
     function createAndShowNotification(paramsObg) {
+
         console.log('Roma => createAndShowNotification(paramsObg)');
         var cancelNotify  = !Settings.get('calls_notify'),
             isNotMainTab  = !SyncTabs.get();
@@ -739,8 +736,7 @@ define([
     }
 
     function addCallTypeIcon(id, callType) {
-        // TODO: здесь исправить id на группу
-        // var $status = $('li.dialog-item[data-id="' + id + '"]').find('span.status');
+
         var $status = $('li.dialog-item[data-dialog="' + id + '"]').find('span.status');
 
         if (callType === 'video') {
@@ -753,12 +749,10 @@ define([
     }
 
     function stopIncomingCall(id) {
+
         alert('stopIncomingCall');
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]');
-
-        clearTimeout(sendAutoReject);
-        sendAutoReject = undefined;
 
         $declineButton.parents('.incoming-call').remove();
 
@@ -775,12 +769,12 @@ define([
     }
 
     function openPopup($objDom) {
-        console.log('Roma => openPopup($objDom)');
+
         $objDom.add('.popups').addClass('is-overlay');
     }
 
     function closePopup() {
-        console.log('Roma => closePopup()');
+
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();
 
@@ -790,9 +784,11 @@ define([
     }
 
     function setDuration(currentTime) {
-        console.log('Roma => setDuration(currentTime)');
+
         var c = currentTime || 0;
+
         $('.mediacall-info-duration').text(getTimer(c));
+
         callTimer = setTimeout(function() {
             c++;
             setDuration(c);
@@ -800,7 +796,7 @@ define([
     }
 
     function getTimer(time) {
-        console.log('Roma => getTimer(time)');
+
         var h, min, sec;
 
         h = Math.floor(time / 3600);
@@ -814,6 +810,7 @@ define([
     }
 
     function fixScroll() {
+
         var $chat = $('.l-chat:visible'),
             containerHeight = $chat.find('.l-chat-content .mCSB_container').height(),
             chatContentHeight = $chat.find('.l-chat-content').height(),
@@ -829,10 +826,12 @@ define([
     }
 
     function capitaliseFirstLetter(string) {
+
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
     function setScreenStyle() {
+
         if ($('.mediacall').outerHeight() <= 260) {
             $('.mediacall').addClass('small_screen');
         } else {
@@ -841,10 +840,12 @@ define([
     }
 
     function getHtmlTpl() {
+
         var tplParams,
             htmlTpl;
 
         if (this.callType === 'audio' && this.isGroupCall === false) {
+
             tplParams = {
                 callType: this.callType,
                 callTypeUС: capitaliseFirstLetter(this.callType),
@@ -859,6 +860,7 @@ define([
             htmlTpl = QMHtml.VideoChat.outSingleAudioCallTpl(tplParams);
 
         } else if (this.callType === 'audio' && this.isGroupCall === true) {
+            
             var contacts = this.contacts,
                 occupantsTpl = "",
                 occupantName = this.contacts,
@@ -915,6 +917,7 @@ define([
         // };              
 
         } else if (this.callType === 'video' && this.isGroupCall === true) {
+            
             tplParams = {
                 callType: this.callType,
                 callTypeUС: capitaliseFirstLetter(this.callType),
@@ -933,56 +936,35 @@ define([
     }
 
     function isGroupChat(session) {
+
         return session.opponentsIDs.length > 1;
     }
     
-    function showAvatar(id) {
+    function showUsrBlock(id) {
+
         $( '#remoteUser-' + id ).removeClass('hidden-avatar');
-    }
-    
-    //function removeAvatar(id) {
-    //    var t = $( '#remoteUser-' + id );
-    //    $( '#remoteUser-' + id ).remove();   
-    //}
-    function showUsrName(id) {
         $( '#usrName-' + id ).removeClass('hidden-usrName');
     }
-    //function removeUsrName(id) {
-    //  var t = $( '#usrName-' + id );
-    //  $( '#usrName-' + id ).remove();
-    //}
-    function removeUsrBlock(id) {    //! last fix)
-        var t = $( '#usrBlock-' + id );
+
+    function removeUsrBlock(id) {
+
         $('#usrBlock-' + id ).remove(); 
     }
+
     function getSessionDialogId() {
+
         return VideoChat.currentDialogId || null;
     }
 
-    // function getSessionOpponents() {
-    //     let opponents = VideoChat.callee;
-    //     opponents.push(VideoChat.caller);
-    //     opponents = opponents.filter(function(opponent) { return opponent !== User.contact.id; });
-    //     return opponents;
-    // }
-
-    // function removeOpponent(id) {
-    //     if (VideoChat.callee) {
-    //         VideoChat.callee = VideoChat.callee.filter(function(opponent) { return opponent !== id; });
-    //     }
-    // }
-
-    // function areOpponents() {
-    //     return VideoChat.callee.length > 0;
-    // }
-
     function saveCurSession(session, extension) {
-        curSession = VideoChat.session;
+
+        curSession = session;
         VideoChat.currentDialogId = extension.dialogId;
         self.type = session.callType;
     }
 
     function clearCurSession() {
+
         curSession = {};
         VideoChat.session = null;
         VideoChat.caller = null;
@@ -991,10 +973,12 @@ define([
     }
 
     function areCurSession() {
+
         return Object.keys(curSession).length !== 0;
     }
 
     function restoreChat($chat) {
+
         $chat.parent('.chatView').removeClass('j-mediacall');
         $chat.find('.mediacall-info-duration').text('');
         $chat.find('.mediacall').remove();
@@ -1002,6 +986,79 @@ define([
         $chat.find('.l-chat-content').css({
             height: 'calc(100% - 140px)'
         });
+    }
+
+    /** Redraw the template for group call */
+    function redrawCallTpl(callType) {
+
+        if (!areCurSession(curSession)) return;
+
+        if (!isGroupChat(curSession)) return;
+
+        if (callType === 'audio') {
+            redrawAudioCallTpl();
+        } else if (callType === 'video') {
+            redrawVideoCallTpl();
+        }
+    }
+    
+    /** Redraw all avatars corresponding with the peer connection statuses */
+    function redrawAudioCallTpl() {
+
+        for (var index in curSession.peerConnections) {
+
+            var connectionState = curSession.peerConnections[index].iceConnectionState;
+
+            switch(connectionState) {
+
+                case 'connected':
+                    showUsrBlock(index);
+                break;
+
+                case 'closed':
+                    removeUsrBlock(index);
+                break;
+            
+                default: 
+                    console.log('default connection state');
+                break;
+            }
+        }
+    }
+
+    function redrawVideoCallTpl() {
+
+    }
+
+    /** Get count connections wint status 'connected' for current session */
+    function getCountConnectedOpponents() {
+
+        var countConnected = 0;
+
+        for (var index in curSession.peerConnections) {
+
+            var connectionState = curSession.peerConnections[index].iceConnectionState;
+
+            if (connectionState === 'completed') {
+                countConnected++;
+            }
+        }
+
+        return countConnected;
+    }
+
+    function isAllConnectionsNewStatus() {
+
+        for (var index in curSession.peerConnections) {
+
+            var connectionState = curSession.peerConnections[index].iceConnectionState;
+
+            if (connectionState !== 'new') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     return VideoChatView;

@@ -208,8 +208,9 @@ define([
     };
 
     Helpers.Dialogs = {
+
         moveDialogToTop: function(dialogId) {
-            var dialogItem = $('.l-list-wrap section:not(#searchList) .dialog-item[data-dialog="' + dialogId + '"]');
+            var dialogItem = $('.dialog-item[data-dialog="' + dialogId + '"]');
 
             if (dialogItem.length > 0) {
                 copyDialogItem = dialogItem.clone();
