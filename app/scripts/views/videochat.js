@@ -353,7 +353,7 @@ define([
                 userId: id
             };
 
-            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams); //git!! test
+            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams); //git!! test   
 
             $incomings.find('.mCSB_container').prepend(htmlTpl);
             openPopup($incomings);

@@ -108,6 +108,9 @@
 }
 .mediacall-local-stream {
     width: 20%;
+    position: absolute;
+    right: 13px;
+    top: 13px;
 }
 .mediacall-local-avatar {
     width: 60px;
@@ -240,4 +243,23 @@
 }
 .users .usrBox:nth-child(3){
     top: 75.5%;
+}
+
+
+//TODO video group call
+
+.videoTpl {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #262626;
+    position: relative;
+    width: 100%;
+    height: 220px;
+}
+.videoTpl .videoWin {
+    background-color: rebeccapurple;
+    width: 200px;
+    height: 135px;
+    margin: 5px;
 }
