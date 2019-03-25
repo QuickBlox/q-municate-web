@@ -312,14 +312,12 @@
 
             var $this = $(this),
                 occupantId = $this.data('id'),
-                // remoteStream = document.getElementById('remoteStream'),
                 stream = curSession.peerConnections[occupantId].remoteStream;
             
             if (stream) {
                 curSession.detachMediaStream('remoteStream');
                 curSession.attachMediaStream('remoteStream', stream);
             }
-            console.log(curSession.peerConnections[occupantId].remoteStream);
         });
 
     };
@@ -447,10 +445,12 @@
 
         if ((self.type === 'video') && isGroupChat(session)) {
             curSession.attachMediaStream('video-stream-' + id, stream);
-            if (callTimerOn === false) {
+            if (stream && (callTimerOn === false)) {
+                curSession.detachMediaStream('remoteStream');
                 curSession.attachMediaStream('remoteStream', stream);
             }
-        } else {
+        } else if (stream){
+            curSession.detachMediaStream('remoteStream');
             curSession.attachMediaStream('remoteStream', stream);
         }
 
