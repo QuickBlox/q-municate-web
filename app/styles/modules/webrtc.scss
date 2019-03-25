@@ -230,7 +230,8 @@
 }
 .users .hidden-avatar {
     opacity: .2;
-}   
+}
+
 .users .usrBox .hidden-usrName  {
     color: #616361 !important;
 }   
@@ -248,7 +249,11 @@
 
 //TODO video group call
 
-.videoTpl {
+.hidden-video-stream {
+    opacity: .2;
+}
+
+.remote-video {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -257,7 +262,7 @@
     width: 100%;
     height: 220px;
 }
-.videoTpl .videoWin {
+.remote-video .video-stream {
     background-color: rebeccapurple;
     width: 200px;
     height: 135px;

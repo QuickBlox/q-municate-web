@@ -18,12 +18,14 @@ define([
         self;
 
     function VideoChat(app) {
+
         this.app = app;
         this.session = {};
         self = this;
     }
 
     VideoChat.prototype.getUserMedia = function(options, callType, callback) {
+
         var User = this.app.models.User,
             isGroupCall = (options.opponentId.length > 1) ? true : false,
             params = {
@@ -70,13 +72,10 @@ define([
                 } else {
 
                     var extension = {
-                        isGroupCall: isGroupCall,
                         dialogId: options.dialogId
                     };
 
-                    extension = JSON.stringify(extension);
-
-                    curSession.call(options.dialogId);
+                    curSession.call(extension);
                     self.caller = User.contact.id;
                     self.callee = options.opponentId;
                 }
@@ -86,6 +85,7 @@ define([
     };
 
     VideoChat.prototype.sendMessage = function(userId, state, callDuration, dialogId, callType, isErrorMessage, sessionID) {
+
         var jid = QB.chat.helpers.getUserJid(userId, QMCONFIG.qbAccount.appId),
             User = this.app.models.User,
             Message = this.app.models.Message,

@@ -102,18 +102,15 @@
                 }
 
                 if ($dialogItem.length) {
-
                     dialogId = $dialogItem.data('dialog');
                     openChatAndStartCall(dialogId);
                 } else {
-
                     Dialog.restorePrivateDialog(userId, function(dialog) {
                         dialogId = dialog.get('id');
                         openChatAndStartCall(dialogId);
                     });
                 }
             } else {
-
                 QMHtml.VideoChat.noWebRTC();
             }
 
@@ -314,6 +311,7 @@
     };
 
     VideoChatView.prototype.onCall = function(session, extension) {
+
         var dialogId = extension.dialogId,
             isGroupCall = isGroupChat(session);
         
@@ -352,6 +350,7 @@
         }
 
         function incomingCall() {
+
             tplParams = {
                 avatar: isGroupCall ? activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url : userAvatar ,
                 callType: callType,
@@ -362,7 +361,7 @@
                 userId: id
             };
 
-            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams); //git!! test   
+            htmlTpl = QMHtml.VideoChat.onCallTpl(tplParams);
 
             $incomings.find('.mCSB_container').prepend(htmlTpl);
             openPopup($incomings);
@@ -407,7 +406,7 @@
     };
 
     VideoChatView.prototype.onAccept = function(session, id, extension) {
-        // alert('onaccept');
+
         var audioSignal = document.getElementById('callingSignal'),
             dialogId = VideoChat.currentDialogId,
             callType = self.type;
@@ -429,13 +428,20 @@
     };
 
     VideoChatView.prototype.onRemoteStream = function(session, id, stream) {
+
         var video = document.getElementById('remoteStream');
+
+        // TODO
+        // Здесь входящий стрим прикрепляется к основному окно каждый раз, когда оппонент берет трубку
+        // Нужно сделать это по клику на квадрат с оппонентом
+        // А при каждом новом подключении не переключать
 
         curSession.attachMediaStream('remoteStream', stream);
         $('.mediacall .btn_full-mode').prop('disabled', false);
 
         var duration = $('.mediacall-info-duration').text();
 
+        // Start the timer of call duration
         if (callTimerOn === false) {
             callTimerOn = true;
             if (self.type === 'video') {
@@ -539,7 +545,6 @@
             $chat = $('.l-chat:visible');
 
         VideoChat.getUserMedia(params, callType, function(err, res) {
-            // Тут возвращается медиастрим
             fixScroll();
             if (err) {
                 $chat.find('.mediacall .btn_hangup').click();
@@ -569,11 +574,11 @@
         });
     };
     
-    VideoChatView.prototype.build = function(id, callType) {
+    VideoChatView.prototype.build = function(dialogId, callType) {
 
-        var $chat = id ? $('.j-chatItem[data-dialog="' + id + '"]') : $('.j-chatItem:visible'),
+        var $chat = dialogId ? $('.j-chatItem[data-dialog="' + dialogId + '"]') : $('.j-chatItem:visible'),
             isGroupCall = $chat.data('type') === 2,
-            activeDialogDetailed = this.app.entities.Collections.dialogs.get(id),
+            activeDialogDetailed = this.app.entities.Collections.dialogs.get(dialogId),
             contactId = activeDialogDetailed.attributes.occupants_ids,
             contact = ContactList.contacts[contactId];
             
@@ -583,7 +588,7 @@
                 contacts: ContactList.contacts,
                 contact: contact,
                 contactId: contactId,
-                dialogId: id,
+                dialogId: dialogId,
                 activeDialogDetailed: activeDialogDetailed
             };
 
@@ -600,7 +605,7 @@
 
         return {
             opponentId: contactId,
-            dialogId: id
+            dialogId: dialogId
         };
     };
 
@@ -754,7 +759,6 @@
 
     function stopIncomingCall(id) {
 
-        alert('stopIncomingCall');
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]');
 
@@ -867,8 +871,8 @@
             
             var contacts = this.contacts,
                 occupantsTpl = "",
-                occupantName = this.contacts,
-                avataUrl;
+                avataUrl,
+                occupantName;
 
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
                 avataUrl = contacts[occupant].avatar_url || QMCONFIG.defAvatar.url_png;
@@ -907,21 +911,21 @@
             };
 
             htmlTpl = QMHtml.VideoChat.outSingleVideoCallTpl(tplParams);            
-            
-        // tplParams = {
-        //     type: type,
-        // userName: !isGroupCall ? userName : "Group call " + currentDialogId,
-        //     userAvatar: !isGroupCall ? userAvatar : QMCONFIG.defAvatar.group_url,
-        //     callTypeUС: capitaliseFirstLetter(callType),
-        //     userAvatar: User.contact.avatar_url,
-        //     contactAvatar: (type === '3') ? contact.avatar_url : QMCONFIG.defAvatar.group_url,
-        //     contactName: (type === '3') ? contact.full_name : activeDialogName,
-        //     dialogId: dialogId,
-        //     userId: userId
-        // };              
 
         } else if (this.callType === 'video' && this.isGroupCall === true) {
-            
+
+            var contacts = this.contacts,
+                occupantsTpl = "",
+                avataUrl,
+                occupantName;
+
+            this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
+                occupantName = contacts[occupant].full_name ;
+                occupantsTpl +=
+                '<div id = "video-stream-'+ occupant + '" class = "video-stream hidden-video-stream">' +
+                '<div id = "usrName-' +  occupant + '" class ="hidden-usrName usrW">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>';
+            });         
+
             tplParams = {
                 callType: this.callType,
                 callTypeUС: capitaliseFirstLetter(this.callType),
@@ -930,7 +934,8 @@
                 userAvatar: User.contact.avatar_url,
                 contactName: this.activeDialogDetailed.attributes.room_name,
                 contactAvatar: User.contact.avatar_url,
-                dialogId: this.dialogId
+                dialogId: this.dialogId,
+                occupantsTpl: occupantsTpl,
             };
         
             htmlTpl = QMHtml.VideoChat.outGroupVideoCallTpl(tplParams);
@@ -953,6 +958,17 @@
     function removeUsrBlock(id) {
 
         $('#usrBlock-' + id ).remove(); 
+    }
+
+    function showRemoteVideoStream(id) {
+
+        $( '#video-stream-' + id ).removeClass('hidden-video-stream');
+        $( '#usrName-' + id ).removeClass('hidden-usrName');
+    }
+
+    function removeRemoteVideoStream(id) {
+
+        $('#video-stream-' + id ).remove(); 
     }
 
     function getSessionDialogId() {
@@ -1000,7 +1016,6 @@
     function redrawCallTpl(callType) {
 
         if (!areCurSession(curSession)) return;
-
         if (!isGroupChat(curSession)) return;
 
         if (callType === 'audio') {
@@ -1010,7 +1025,7 @@
         }
     }
     
-    /** Redraw all avatars corresponding with the peer connection statuses */
+    /** Redraw all avatars corresponding with the peer connections */
     function redrawAudioCallTpl() {
 
         for (var index in curSession.peerConnections) {
@@ -1034,8 +1049,28 @@
         }
     }
 
+    /** Redraw all remote streams corresponding with the peer connections */
     function redrawVideoCallTpl() {
 
+        for (var index in curSession.peerConnections) {
+
+            var connectionState = curSession.peerConnections[index].iceConnectionState;
+
+            switch(connectionState) {
+
+                case 'connected':
+                    showRemoteVideoStream(index);
+                break;
+
+                case 'closed':
+                    removeRemoteVideoStream(index);
+                break;
+            
+                default: 
+                    console.log('default connection state');
+                break;
+            }
+        }
     }
 
     /** Get count connections wint status 'connected' for current session */
@@ -1053,20 +1088,6 @@
         }
 
         return countConnected;
-    }
-
-    function isAllConnectionsNewStatus() {
-
-        for (var index in curSession.peerConnections) {
-
-            var connectionState = curSession.peerConnections[index].iceConnectionState;
-
-            if (connectionState !== 'new') {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     return VideoChatView;
