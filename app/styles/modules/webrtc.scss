@@ -250,7 +250,7 @@
 //TODO video group call
 
 .hidden-video-stream {
-    opacity: .2;
+    // opacity: .2;
 }
 
 .remote-video {
@@ -264,6 +264,8 @@
 }
 .remote-video .video-stream {
     background-color: rebeccapurple;
+    // background-color: #262626;
+    position: relative;
     width: 200px;
     height: 135px;
     margin: 5px;

@@ -431,12 +431,24 @@
 
         var video = document.getElementById('remoteStream');
 
+        if ((self.type === 'video') && isGroupChat(session)) {
+
+            var t = document.getElementById('video-stream-' + id);
+            curSession.attachMediaStream('video-stream-' + id, stream);
+
+            if (callTimerOn === false) {
+                curSession.attachMediaStream('remoteStream', stream);
+            }
+
+        } else {
+            curSession.attachMediaStream('remoteStream', stream);
+        }
+
         // TODO
         // Здесь входящий стрим прикрепляется к основному окно каждый раз, когда оппонент берет трубку
         // Нужно сделать это по клику на квадрат с оппонентом
         // А при каждом новом подключении не переключать
 
-        curSession.attachMediaStream('remoteStream', stream);
         $('.mediacall .btn_full-mode').prop('disabled', false);
 
         var duration = $('.mediacall-info-duration').text();
@@ -479,20 +491,27 @@
 
         if (session.ID === curSession.ID) {
 
-            var callingSignal = $('#callingSignal')[0],
-                endCallSignal = $('#endCallSignal')[0];
+            if ((id === session.initiatorID) && (session.state === 1)) {
+                var callingSignal = $('#callingSignal')[0],
+                    endCallSignal = $('#endCallSignal')[0];
+        
+                if (Settings.get('sounds_notify') && SyncTabs.get()) {
+                    callingSignal.pause();
+                    endCallSignal.play();
+                }
     
-            if (Settings.get('sounds_notify') && SyncTabs.get()) {
-                callingSignal.pause();
-                endCallSignal.play();
-            }
+                for (var index in session.peerConnections) {
+                    session.closeConnection(index);
+                }
 
-            for (var index in session.peerConnections) {
-                session.closeConnection(index);
+                closeStreamScreen();
+                clearCurSession();
+                session.stop({});
+
+            } else {
+
+                session.closeConnection(id);
             }
-            
-            closeStreamScreen();
-            clearCurSession();
         }
     };
 
@@ -916,8 +935,8 @@
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
                 occupantName = contacts[occupant].full_name ;
                 occupantsTpl +=
-                '<div id = "video-stream-'+ occupant + '" class = "video-stream hidden-video-stream">' +
-                '<div id = "usrName-' +  occupant + '" class ="hidden-usrName usrW">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>';
+                '<video id = "video-stream-'+ occupant + '" class = "video-stream hidden-video-stream"></video>' +
+                '<div id = "usrName-' +  occupant + '" class ="hidden-usrName usrW">' + '<h5>'+ occupantName +'</h5>' + '</div>';
             });         
 
             tplParams = {
@@ -927,7 +946,7 @@
                 userName: User.contact.full_name,
                 userAvatar: User.contact.avatar_url,
                 contactName: this.activeDialogDetailed.attributes.room_name,
-                contactAvatar: User.contact.avatar_url,
+                contactAvatar: this.activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url,
                 dialogId: this.dialogId,
                 occupantsTpl: occupantsTpl,
             };
