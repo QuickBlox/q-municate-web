@@ -935,8 +935,9 @@
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
                 occupantName = contacts[occupant].full_name ;
                 occupantsTpl +=
+                '<div id = "usrVid-'+ occupant + '" class = "usrBoxV">' +
                 '<video id = "video-stream-'+ occupant + '" class = "video-stream hidden-video-stream"></video>' +
-                '<div id = "usrName-' +  occupant + '" class ="hidden-usrName usrW">' + '<h5>'+ occupantName +'</h5>' + '</div>';
+                '<div id = "usrName-' +  occupant + '" class ="hidden-usrName usrV">' + '<h5>'+ occupantName +'</h5>' + '</div>'+ '</div>';
             });         
 
             tplParams = {
@@ -966,21 +967,20 @@
 
         $( '#remoteUser-' + id ).removeClass('hidden-avatar');
         $( '#usrName-' + id ).removeClass('hidden-usrName');
+        $( '#usrVid-' + id ).removeClass('hidden-usrName');
+        
     }
 
     function removeUsrBlock(id) {
 
         $('#usrBlock-' + id ).remove(); 
     }
-
     function showRemoteVideoStream(id) {
-
         $( '#video-stream-' + id ).removeClass('hidden-video-stream');
         $( '#usrName-' + id ).removeClass('hidden-usrName');
     }
 
     function removeRemoteVideoStream(id) {
-
         $('#video-stream-' + id ).remove(); 
     }
 
