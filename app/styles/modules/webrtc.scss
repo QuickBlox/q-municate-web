@@ -247,10 +247,8 @@
 }
 
 
-//TODO video group call
-
 .hidden-video-stream {
-    // opacity: .2;
+    border: 1px solid #757575;
 }
 
 .remote-video {
@@ -263,8 +261,7 @@
     height: 400px;
 }
 .remote-video .video-stream {
-    background-color: rgb(138, 135, 141);
-    // background-color: #262626;
+    background-color: rgba(0, 0, 0, 0.57);
     position: relative;
     width: 200px;
     height: 320px;
@@ -277,5 +274,5 @@
     line-height:1px; 
 }
 .usrBoxV .hidden-usrName  {
-    color: #616361 !important;
+    color: #757575 !important;
 }   

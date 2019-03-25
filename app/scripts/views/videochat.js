@@ -539,7 +539,7 @@
     };
 
     VideoChatView.prototype.onSessionConnectionStateChangedListener = function(session, userID, connectionState) {
-        // alert('onSessionConnectionStateChangedListener');
+
         var callType = (session.callType === 1 ? 'video' : 'audio');
         redrawCallTpl(callType);
 
@@ -944,7 +944,6 @@
                 '<video id="video-stream-'+ occupant + '" data-id=' + occupant + ' class="video-stream hidden-video-stream"></video>' +
                 '<div id="usrName-' +  occupant + '" class="hidden-usrName usrV">' + '<h5>'+ occupantName +'</h5>' + '</div>'+ '</div>';
             });
-            console.log(occupantsTpl);     
 
             tplParams = {
                 callType: this.callType,
@@ -981,13 +980,17 @@
 
         $('#usrBlock-' + id ).remove(); 
     }
+
     function showRemoteVideoStream(id) {
+
         $( '#video-stream-' + id ).removeClass('hidden-video-stream');
         $( '#usrName-' + id ).removeClass('hidden-usrName');
     }
 
     function removeRemoteVideoStream(id) {
-        $('#video-stream-' + id ).remove(); 
+
+        $('#video-stream-' + id ).remove();
+        $( '#usrName-' + id ).remove(); 
     }
 
     function getSessionDialogId() {
@@ -1082,7 +1085,16 @@
                 break;
 
                 case 'closed':
+                    // var $this = $(this),
+                    // occupantId = $this.data('id'),
+                    // stream = curSession.peerConnections[occupantId].remoteStream;
+                
+                    // if (stream) {
+                    //     curSession.detachMediaStream('remoteStream');
+                    //     curSession.attachMediaStream('remoteStream', stream);
+                    // }                    
                     removeRemoteVideoStream(index);
+
                 break;
             
                 default: 
