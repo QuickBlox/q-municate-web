@@ -940,10 +940,11 @@
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
                 occupantName = contacts[occupant].full_name ;
                 occupantsTpl +=
-                '<div id = "usrVid-'+ occupant + '" class = "usrBoxV">' +
-                '<video id = "video-stream-'+ occupant + '" class = "video-stream hidden-video-stream"></video>' +
-                '<div id = "usrName-' +  occupant + '" class ="hidden-usrName usrV">' + '<h5>'+ occupantName +'</h5>' + '</div>'+ '</div>';
-            });         
+                '<div id="usrVid-'+ occupant + '" class="usrBoxV">' +
+                '<video id="video-stream-'+ occupant + '" data-id=' + occupant + ' class="video-stream hidden-video-stream"></video>' +
+                '<div id="usrName-' +  occupant + '" class="hidden-usrName usrV">' + '<h5>'+ occupantName +'</h5>' + '</div>'+ '</div>';
+            });
+            console.log(occupantsTpl);     
 
             tplParams = {
                 callType: this.callType,
