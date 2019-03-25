@@ -308,6 +308,20 @@
             setScreenStyle();
         });
 
+        $('body').on('click', '.video-stream', function() {
+
+            var $this = $(this),
+                occupantId = $this.data('id'),
+                // remoteStream = document.getElementById('remoteStream'),
+                stream = curSession.peerConnections[occupantId].remoteStream;
+            
+            if (stream) {
+                curSession.detachMediaStream('remoteStream');
+                curSession.attachMediaStream('remoteStream', stream);
+            }
+            console.log(curSession.peerConnections[occupantId].remoteStream);
+        });
+
     };
 
     VideoChatView.prototype.onCall = function(session, extension) {
@@ -432,22 +446,13 @@
         var video = document.getElementById('remoteStream');
 
         if ((self.type === 'video') && isGroupChat(session)) {
-
-            var t = document.getElementById('video-stream-' + id);
             curSession.attachMediaStream('video-stream-' + id, stream);
-
             if (callTimerOn === false) {
                 curSession.attachMediaStream('remoteStream', stream);
             }
-
         } else {
             curSession.attachMediaStream('remoteStream', stream);
         }
-
-        // TODO
-        // Здесь входящий стрим прикрепляется к основному окно каждый раз, когда оппонент берет трубку
-        // Нужно сделать это по клику на квадрат с оппонентом
-        // А при каждом новом подключении не переключать
 
         $('.mediacall .btn_full-mode').prop('disabled', false);
 
