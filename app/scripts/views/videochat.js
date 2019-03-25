@@ -850,7 +850,11 @@
     function getHtmlTpl() {
 
         var tplParams,
-            htmlTpl;
+            htmlTpl,
+            contacts = this.contacts,
+            occupantsTpl = "",
+            avataUrl,
+            occupantName;            
 
         if (this.callType === 'audio' && this.isGroupCall === false) {
 
@@ -868,11 +872,6 @@
             htmlTpl = QMHtml.VideoChat.outSingleAudioCallTpl(tplParams);
 
         } else if (this.callType === 'audio' && this.isGroupCall === true) {
-            
-            var contacts = this.contacts,
-                occupantsTpl = "",
-                avataUrl,
-                occupantName;
 
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
                 avataUrl = contacts[occupant].avatar_url || QMCONFIG.defAvatar.url_png;
@@ -913,11 +912,6 @@
             htmlTpl = QMHtml.VideoChat.outSingleVideoCallTpl(tplParams);            
 
         } else if (this.callType === 'video' && this.isGroupCall === true) {
-
-            var contacts = this.contacts,
-                occupantsTpl = "",
-                avataUrl,
-                occupantName;
 
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
                 occupantName = contacts[occupant].full_name ;
