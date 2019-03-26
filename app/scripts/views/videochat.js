@@ -119,8 +119,8 @@
             $('.j-listActionsContacts').remove();
 
             function openChatAndStartCall(dialogId) {
-
                 DialogView.htmlBuild(dialogId);
+                self.clearChat();
                 self.cancelCurrentCalls();
                 self.startCall(className, dialogId);
                 saveCurSession(self.app.models.VideoChat.session, { dialogId: dialogId });
@@ -245,9 +245,8 @@
             }
 
             if ((User.contact.id === curSession.initiatorID) && (callTimerOn === false)) {
+                VideoChat.sendMessage(User.contact.id, '1', null, VideoChat.currentDialogId, self.type);
                 curSession.stop({});
-                // TODO: отправка сообщения работает не верно
-                // VideoChat.sendMessage(78065205, '1', null, curSession.currentDialogId, self.type);
             } else if (getCountConnectedOpponents() < 2) {
                 curSession.stop({});
             } else {
@@ -593,6 +592,12 @@
                 self.type = 'video';
                 self.unmute('video');
             }
+
+            var message  = User.contact.full_name + " started ";
+            message += isGroupChat(VideoChat.session) ? "group " : "";
+            message += callType + " call.";
+
+            VideoChat.sendMessage(User.contact.id, '4', null, VideoChat.currentDialogId, self.type, null, VideoChat.session.ID, message);
 
             $('.chatView').addClass('j-mediacall');
         });
@@ -1034,7 +1039,6 @@
         });
     }
 
-    /** Redraw the template for group call */
     function redrawCallTpl(callType) {
 
         if (!areCurSession(curSession)) return;
@@ -1047,7 +1051,6 @@
         }
     }
     
-    /** Redraw all avatars corresponding with the peer connections */
     function redrawAudioCallTpl() {
 
         for (var index in curSession.peerConnections) {
@@ -1071,29 +1074,41 @@
         }
     }
 
-    /** Redraw all remote streams corresponding with the peer connections */
     function redrawVideoCallTpl() {
 
         for (var index in curSession.peerConnections) {
-
             var connectionState = curSession.peerConnections[index].iceConnectionState;
 
             switch(connectionState) {
-
                 case 'connected':
                     showRemoteVideoStream(index);
                 break;
 
                 case 'closed':
-                    // var $this = $(this),
-                    // occupantId = $this.data('id'),
-                    // stream = curSession.peerConnections[occupantId].remoteStream;
-                
-                    // if (stream) {
-                    //     curSession.detachMediaStream('remoteStream');
-                    //     curSession.attachMediaStream('remoteStream', stream);
-                    // }                    
+                    var activeStreamCount = 0,
+                        activeIndex;
+
                     removeRemoteVideoStream(index);
+
+                    for (var connection in curSession.peerConnections) {
+                        stream = curSession.peerConnections[connection].remoteStream;
+
+                        if (stream.active) {
+                            activeStreamCount++;
+                            activeIndex = connection;
+
+                            // Switch to first active stream
+                            if (activeStreamCount === 1) {
+                                curSession.detachMediaStream('remoteStream');
+                                curSession.attachMediaStream('remoteStream', stream);
+                            }
+                        }
+                    }
+
+                    // Delete remote stream if last stream
+                    if (activeStreamCount === 1) {
+                        removeRemoteVideoStream(activeIndex);
+                    }
 
                 break;
             
@@ -1104,20 +1119,16 @@
         }
     }
 
-    /** Get count connections wint status 'connected' for current session */
     function getCountConnectedOpponents() {
-
         var countConnected = 0;
 
         for (var index in curSession.peerConnections) {
-
             var connectionState = curSession.peerConnections[index].iceConnectionState;
 
             if (['completed', 'connected'].includes(connectionState)) {
                 countConnected++;
             }
         }
-
         return countConnected;
     }
 

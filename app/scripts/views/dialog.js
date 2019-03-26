@@ -149,7 +149,7 @@ define([
         },
 
         downloadDialogs: function(ids, skip) {
-            console.log('Roma => downloadDialogs');
+
             var ContactListView = this.app.views.ContactList,
                 hiddenDialogs = sessionStorage['QM.hiddenDialogs'] ? JSON.parse(sessionStorage['QM.hiddenDialogs']) : {},
                 parameter = !skip ? null : 'old_dialog',
