@@ -308,13 +308,11 @@
         });
 
         $('body').on('click', '.video-stream', function() {
-
             var $this = $(this),
                 occupantId = $this.data('id'),
                 stream = curSession.peerConnections[occupantId].remoteStream;
             
-            if (stream) {
-                curSession.detachMediaStream('remoteStream');
+            if (stream && stream.active) {
                 curSession.attachMediaStream('remoteStream', stream);
             }
         });
@@ -439,34 +437,25 @@
     };
 
     VideoChatView.prototype.onRemoteStream = function(session, id, stream) {
-
         var video = document.getElementById('remoteStream');
 
         if ((self.type === 'video') && isGroupChat(session)) {
             curSession.attachMediaStream('video-stream-' + id, stream);
-            if (stream && (callTimerOn === false)) {
-                curSession.detachMediaStream('remoteStream');
-                curSession.attachMediaStream('remoteStream', stream);
-            }
-        } else if (stream){
-            curSession.detachMediaStream('remoteStream');
+        } else if ((self.type === 'video') && !isGroupChat(session)){
             curSession.attachMediaStream('remoteStream', stream);
         }
 
         $('.mediacall .btn_full-mode').prop('disabled', false);
 
-        var duration = $('.mediacall-info-duration').text();
-
-        // Start the timer of call duration
-        if (callTimerOn === false) {
+        if (!callTimerOn) {
             callTimerOn = true;
+            curSession.attachMediaStream('remoteStream', stream);
             if (self.type === 'video') {
                 video.addEventListener('timeupdate', function() {
                     videoStreamTime = video.currentTime;
                     duration = getTimer(Math.floor(video.currentTime));
                     $('.mediacall-info-duration').text(duration);
                 });
-    
                 $('#remoteUser').addClass('is-hidden');
                 $('#remoteStream').removeClass('is-hidden');
             } else {
@@ -1010,7 +999,6 @@
     }
 
     function clearCurSession() {
-
         curSession = {};
         VideoChat.session = null;
         VideoChat.caller = null;
