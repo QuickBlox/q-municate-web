@@ -68,14 +68,11 @@
     };
 
     VideoChatView.prototype.init = function() {
-
         var DialogView = this.app.views.Dialog,
             Dialog = this.app.models.Dialog;
             
         $('body').on('click', '.videoCall, .audioCall', function() {
-
             if (QB.webrtc) {
-
                 var $this = $(this),
                     isGroupCall = ($this.data('type') === 2),
                     activeDialog = Dialog.app.entities.active,
@@ -88,7 +85,6 @@
                     tplParams;
 
                 if (isGroupCall && activeDialogDetailed.attributes.occupants_ids.length >= limitOccupants) {
-
                     tplParams = {
                         groupAvatar: activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url,
                         limitOccupants: limitOccupants
@@ -97,8 +93,7 @@
                     htmlTpl = QMHtml.VideoChat.exceededOccupangsCallTpl(tplParams);
                     $('#popupIncoming').find('.mCSB_container').prepend(htmlTpl);
                     openPopup($('#popupIncoming'));
-                    
-                    return false;
+                    return;
                 }
 
                 if ($dialogItem.length) {
@@ -120,14 +115,11 @@
 
             function openChatAndStartCall(dialogId) {
                 DialogView.htmlBuild(dialogId);
-                self.clearChat();
                 self.cancelCurrentCalls();
                 self.startCall(className, dialogId);
                 saveCurSession(self.app.models.VideoChat.session, { dialogId: dialogId });
                 Helpers.Dialogs.moveDialogToTop(dialogId);
             }
-
-            return false;
         });
 
         $('#popupIncoming').on('click', '.btn_decline', function() {
@@ -398,7 +390,6 @@
     };
 
     VideoChatView.prototype.onIgnored = function(state, session, id, extension) {
-
         if ((state === 'onAccept') && (User.contact.id === id)) {
             stopIncomingCall(session.initiatorID);
         }
@@ -415,7 +406,6 @@
     };
 
     VideoChatView.prototype.onAccept = function(session, id, extension) {
-
         var audioSignal = document.getElementById('callingSignal'),
             dialogId = VideoChat.currentDialogId,
             callType = self.type;
@@ -425,7 +415,6 @@
         }
 
         self.sessionID = session.ID;
-
         addCallTypeIcon(dialogId, callType);
 
         createAndShowNotification({
@@ -437,8 +426,6 @@
     };
 
     VideoChatView.prototype.onRemoteStream = function(session, id, stream) {
-        var video = document.getElementById('remoteStream');
-
         if ((self.type === 'video') && isGroupChat(session)) {
             curSession.attachMediaStream('video-stream-' + id, stream);
         } else if ((self.type === 'video') && !isGroupChat(session)){
@@ -451,11 +438,7 @@
             callTimerOn = true;
             curSession.attachMediaStream('remoteStream', stream);
             if (self.type === 'video') {
-                video.addEventListener('timeupdate', function() {
-                    videoStreamTime = video.currentTime;
-                    duration = getTimer(Math.floor(video.currentTime));
-                    $('.mediacall-info-duration').text(duration);
-                });
+                setDuration();
                 $('#remoteUser').addClass('is-hidden');
                 $('#remoteStream').removeClass('is-hidden');
             } else {
@@ -650,8 +633,7 @@
     /* Private
     --------------------------------------------------------------------------*/
     function closeStreamScreen() {
-
-        var dialogId = getSessionDialogId(),
+        var dialogId = VideoChat.currentDialogId || null,
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]'),
             callingSignal = document.getElementById('callingSignal'),
@@ -810,7 +792,6 @@
     }
 
     function setDuration(currentTime) {
-
         var c = currentTime || 0;
 
         $('.mediacall-info-duration').text(getTimer(c));
@@ -822,7 +803,6 @@
     }
 
     function getTimer(time) {
-
         var h, min, sec;
 
         h = Math.floor(time / 3600);
@@ -836,7 +816,6 @@
     }
 
     function fixScroll() {
-
         var $chat = $('.l-chat:visible'),
             containerHeight = $chat.find('.l-chat-content .mCSB_container').height(),
             chatContentHeight = $chat.find('.l-chat-content').height(),
@@ -852,12 +831,10 @@
     }
 
     function capitaliseFirstLetter(string) {
-
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
     function setScreenStyle() {
-
         if ($('.mediacall').outerHeight() <= 260) {
             $('.mediacall').addClass('small_screen');
         } else {
@@ -866,7 +843,6 @@
     }
 
     function getHtmlTpl() {
-
         var tplParams,
             htmlTpl,
             contacts = this.contacts,
@@ -875,7 +851,6 @@
             occupantName;            
 
         if (this.callType === 'audio' && this.isGroupCall === false) {
-
             tplParams = {
                 callType: this.callType,
                 callTypeUС: capitaliseFirstLetter(this.callType),
@@ -886,11 +861,9 @@
                 contactAvatar: this.contact.avatar_url,
                 dialogId: this.dialogId
             };
-
             htmlTpl = QMHtml.VideoChat.outSingleAudioCallTpl(tplParams);
 
         } else if (this.callType === 'audio' && this.isGroupCall === true) {
-
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
                 avataUrl = contacts[occupant].avatar_url || QMCONFIG.defAvatar.url_png;
                 occupantName = contacts[occupant].full_name ;
@@ -911,11 +884,9 @@
                 dialogId: this.dialogId,
                 occupantsTpl: occupantsTpl,
             };
-
             htmlTpl = QMHtml.VideoChat.outGroupAudioCallTpl(tplParams);
 
         } else if (this.callType === 'video' && this.isGroupCall === false) {
-
             tplParams = {
                 callType: this.callType,
                 callTypeUС: capitaliseFirstLetter(this.callType),
@@ -926,11 +897,9 @@
                 contactAvatar: this.contact.avatar_url,
                 dialogId: this.dialogId
             };
-
             htmlTpl = QMHtml.VideoChat.outSingleVideoCallTpl(tplParams);            
 
         } else if (this.callType === 'video' && this.isGroupCall === true) {
-
             this.activeDialogDetailed.attributes.occupants_ids.forEach(function(occupant) {
                 occupantName = contacts[occupant].full_name ;
                 occupantsTpl +=
@@ -950,32 +919,26 @@
                 dialogId: this.dialogId,
                 occupantsTpl: occupantsTpl,
             };
-        
             htmlTpl = QMHtml.VideoChat.outGroupVideoCallTpl(tplParams);
         }
-
         return htmlTpl;
     }
 
     function isGroupChat(session) {
-
         return session.opponentsIDs.length > 1;
     }
     
     function showUsrBlock(id) {
-
         $( '#remoteUser-' + id ).removeClass('hidden-avatar');
         $( '#usrName-' + id ).removeClass('hidden-usrName');
         $( '#usrVid-' + id ).removeClass('hidden-usrName');
-        
     }
-    function removeUsrBlock(id) {
 
+    function removeUsrBlock(id) {
         $('#usrBlock-' + id ).remove(); 
     }
 
     function showRemoteVideoStream(id) {
-
         $( '#video-stream-' + id ).removeClass('hidden-video-stream');
         $( '#usrName-' + id ).removeClass('hidden-usrName');
     }
@@ -986,13 +949,7 @@
         $('#remoteVid-').remove(); 
     }
 
-    function getSessionDialogId() {
-
-        return VideoChat.currentDialogId || null;
-    }
-
     function saveCurSession(session, extension) {
-
         curSession = session;
         VideoChat.currentDialogId = extension.dialogId;
         self.type = session.callType;
@@ -1011,12 +968,10 @@
     }
 
     function areCurSession() {
-
         return Object.keys(curSession).length !== 0;
     }
 
     function restoreChat($chat) {
-
         $chat.parent('.chatView').removeClass('j-mediacall');
         $chat.find('.mediacall-info-duration').text('');
         $chat.find('.mediacall').remove();

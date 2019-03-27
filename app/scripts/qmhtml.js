@@ -15,7 +15,6 @@ define([
     var QMHtml = {};
 
     QMHtml.VideoChat = {
-
         exceededOccupangsCallTpl: function(params) {
             var htmlTemplate = _.template('<div l-flexbox l-flexbox_column l-flexbox_flexbetween">' +
                 '<div class="incoming-call-info l-flexbox l-flexbox_column">' +
@@ -50,7 +49,7 @@ define([
                
                 '<div class = "localUs">' + 
                 '<img id="localUser" class="mediacall-local mediacall-local-avatar" src="<%=userAvatar%>" alt="avatar">' +
-                '<div class = "localName">'+'<h5><%=userName%></h5>' + '</div></div>'+ //! last fix
+                '<div class = "localName">'+'<h5><%=userName%></h5>' + '</div></div>'+
                
                 '<div id="remoteUser" class="mediacall-remote-user l-flexbox l-flexbox_column">' +
                 '<img class="mediacall-remote-avatar" src="<%=contactAvatar%>" alt="avatar"><br>' +
