@@ -1075,6 +1075,7 @@
     }
 
     function redrawVideoCallTpl() {
+        var stream;
 
         for (var index in curSession.peerConnections) {
             var connectionState = curSession.peerConnections[index].iceConnectionState;
@@ -1085,8 +1086,10 @@
                 break;
 
                 case 'closed':
-                    var activeStreamCount = 0,
-                        activeIndex;
+                    var newStreamCount = 0,
+                        newStreamIndex,
+                        activeStreamCount = 0,
+                        activeStreamIndex;
 
                     removeRemoteVideoStream(index);
 
@@ -1095,19 +1098,25 @@
 
                         if (stream && stream.active) {
                             activeStreamCount++;
-                            activeIndex = connection;
-
-                            // Switch to first active stream
-                            if (activeStreamCount === 1) {
-                                curSession.detachMediaStream('remoteStream');
-                                curSession.attachMediaStream('remoteStream', stream);
-                            }
+                            activeStreamIndex = connection;
+                        } else if (curSession.peerConnections[connection].iceConnectionState === 'new') {
+                            newStreamCount++;
+                            if (newStreamCount === 1) {
+                                newStreamIndex = connection;
+                            } 
                         }
                     }
 
-                    // Delete remote stream if last stream
                     if (activeStreamCount === 1) {
-                        removeRemoteVideoStream(activeIndex);
+                        stream = curSession.peerConnections[activeStreamIndex].remoteStream;
+                        curSession.detachMediaStream('remoteStream');
+                        curSession.attachMediaStream('remoteStream', stream);
+                        removeRemoteVideoStream(activeStreamIndex);
+                    } else if (newStreamCount === 1) {
+                        // stream = curSession.peerConnections[newStreamIndex].remoteStream;
+                        // curSession.detachMediaStream('remoteStream');
+                        // curSession.attachMediaStream('remoteStream', stream);
+                        removeRemoteVideoStream(newStreamIndex);
                     }
 
                 break;
