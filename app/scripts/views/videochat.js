@@ -597,7 +597,7 @@
             message += isGroupChat(VideoChat.session) ? "group " : "";
             message += callType + " call.";
 
-            VideoChat.sendMessage(User.contact.id, '4', null, VideoChat.currentDialogId, self.type, null, VideoChat.session.ID, message);
+            // VideoChat.sendMessage(User.contact.id, '4', null, VideoChat.currentDialogId, self.type, null, VideoChat.session.ID, message);
 
             $('.chatView').addClass('j-mediacall');
         });
@@ -1093,7 +1093,7 @@
                     for (var connection in curSession.peerConnections) {
                         stream = curSession.peerConnections[connection].remoteStream;
 
-                        if (stream.active) {
+                        if (stream && stream.active) {
                             activeStreamCount++;
                             activeIndex = connection;
 
