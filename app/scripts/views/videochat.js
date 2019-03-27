@@ -908,7 +908,7 @@
                 occupantsTpl +=
                 '<div id = "usrBlock-'+ occupant + '" class = "usrBox">' +
                 '<img id = "remoteUser-' + occupant + '" class="hidden-avatar mediacall-global-avatar" src="' + avataUrl + '"alt="avatar">' +
-                '<div id = "usrName-' +  occupant + '" class ="hidden-usrName usrW">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>';
+                '<div id = "usrName-' +  occupant + '" class ="hidden-usrName usrW">' + '<h5>'+ occupantName +'</h5>' + '</div>' + '</div>' ;
             });
 
             tplParams = {
@@ -994,7 +994,7 @@
     function removeRemoteVideoStream(id) {
         $('#video-stream-' + id ).remove();
         $('#usrName-' + id ).remove(); 
-       
+        $('#remoteVid-').remove(); 
     }
 
     function getSessionDialogId() {
@@ -1129,7 +1129,6 @@
 
     function getCountConnectedOpponents() {
         var countConnected = 0;
-
         for (var index in curSession.peerConnections) {
             var connectionState = curSession.peerConnections[index].iceConnectionState;
 
