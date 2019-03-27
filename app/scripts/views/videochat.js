@@ -980,7 +980,6 @@
         $( '#usrVid-' + id ).removeClass('hidden-usrName');
         
     }
-
     function removeUsrBlock(id) {
 
         $('#usrBlock-' + id ).remove(); 
@@ -993,9 +992,9 @@
     }
 
     function removeRemoteVideoStream(id) {
-
         $('#video-stream-' + id ).remove();
-        $( '#usrName-' + id ).remove(); 
+        $('#usrName-' + id ).remove(); 
+       
     }
 
     function getSessionDialogId() {
@@ -1108,6 +1107,7 @@
                     // Delete remote stream if last stream
                     if (activeStreamCount === 1) {
                         removeRemoteVideoStream(activeIndex);
+                        
                     }
 
                 break;

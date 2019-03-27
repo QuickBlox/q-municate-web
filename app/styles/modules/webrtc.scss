@@ -254,17 +254,16 @@
 .remote-video {
     display: flex;
     justify-content: center;
-    align-items: center;
     background-color: #262626;
     position: relative;
     width: 100%;
-    height: 400px;
+    height: 180px;
 }
 .remote-video .video-stream {
     background-color: rgba(0, 0, 0, 0.57);
     position: relative;
     width: 200px;
-    height: 320px;
+    height: 140px;
     margin: 5px;
 }
 .usrBoxV .usrV{ 
