@@ -130,9 +130,9 @@ define([
         }
 
         msg = {
-            type: 'chat',
-            body: messageText,
-            save_to_history: 1,
+            // type: 'chat',
+            // body: messageText,
+            // save_to_history: 1,
             chat_dialog_id: dialogId,
             dialog_id: dialogId,
             date_sent: time,
