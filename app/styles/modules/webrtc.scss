@@ -121,6 +121,9 @@
     position: absolute;
     top: 15px;
     left: 15px;
+    width: 100px;
+    height: 100px;
+    background-color:rgba(116, 115, 115, 0.13); 
 }
 .mediacall-info-logo {
     margin-bottom: 17px;
@@ -132,7 +135,7 @@
     text-align: center;
     font-size: 16px;
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.2);
+    color: rgb(255, 255, 255);
 }
 .mediacall-controls {
     position: absolute;
@@ -275,3 +278,23 @@
 .usrBoxV .hidden-usrName  {
     color: #757575 !important;
 }   
+
+//!last activename fix
+
+.activeName {
+    width: 150px;
+    height: 25px;
+    background-color:rgba(0, 0, 0, 0.287);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 71%;
+    left: 39%;
+
+}
+.activeName h5{
+    color: rgb(255, 255, 255);
+    font-size: 12px
+}
+
