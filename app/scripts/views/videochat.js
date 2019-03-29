@@ -219,6 +219,7 @@
                 endCallSignal = $('#endCallSignal')[0];
 
             self.clearChat();
+            $self.removeAttr('data-errorMessage');
 
             if (Settings.get('sounds_notify') && SyncTabs.get()) {
                 callingSignal.pause();
@@ -231,8 +232,7 @@
             } else {
                 curSession.reject();
             }
-            
-            $self.removeAttr('data-errorMessage');
+
             clearCurSession();
             restoreChat($chat);
         });
@@ -316,7 +316,7 @@
             userAvatar = contact.avatar_url || extension.avatar,
             dialogs = Dialog.app.entities.Collections.dialogs,
             activeDialogDetailed = dialogs.get(dialogId),
-            autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
+            autoReject = 10000, //QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
             htmlTpl,
             tplParams;
         
@@ -444,7 +444,8 @@
     VideoChatView.prototype.onStop = function(session, id, extension) {
         if (session.ID !== curSession.ID) return;
 
-        if ((id === session.initiatorID) && (session.state === 1)) {
+        console.log(getCountConnectedOpponents());
+        if (((id === session.initiatorID) && (session.state === 1)) || (getCountConnectedOpponents() === 0)) {
             var callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0];
     
@@ -457,9 +458,9 @@
                 session.closeConnection(index);
             }
 
-            closeStreamScreen();
-            clearCurSession();
             session.stop({});
+            clearCurSession();
+            closeStreamScreen();
 
         } else {
             session.closeConnection(id);
@@ -496,7 +497,6 @@
     };
 
     VideoChatView.prototype.onSessionCloseListener = function(session) {
-
         if (session.ID === curSession.ID) {
             closeStreamScreen();
             clearCurSession();
@@ -504,7 +504,7 @@
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
-
+        session.stop({});
     };
 
     VideoChatView.prototype.startCall = function(className, dialogId) {
@@ -1009,7 +1009,7 @@
                         activeStreamCount = 0,
                         activeStreamIndex;
 
-                    removeRemoteVideoStream(index);
+                    // removeRemoteVideoStream(index);
 
                     for (var connection in curSession.peerConnections) {
                         stream = curSession.peerConnections[connection].remoteStream;
@@ -1026,15 +1026,15 @@
                     }
 
                     if (activeStreamCount === 1) {
-                        stream = curSession.peerConnections[activeStreamIndex].remoteStream;
-                        curSession.detachMediaStream('remoteStream');
-                        curSession.attachMediaStream('remoteStream', stream);
-                        removeRemoteVideoStream(activeStreamIndex);
+                        // stream = curSession.peerConnections[activeStreamIndex].remoteStream;
+                        // curSession.detachMediaStream('remoteStream');
+                        // curSession.attachMediaStream('remoteStream', stream);
+                        // removeRemoteVideoStream(activeStreamIndex);
                     } else if (newStreamCount === 1) {
                         // stream = curSession.peerConnections[newStreamIndex].remoteStream;
                         // curSession.detachMediaStream('remoteStream');
                         // curSession.attachMediaStream('remoteStream', stream);
-                        removeRemoteVideoStream(newStreamIndex);
+                        // removeRemoteVideoStream(newStreamIndex);
                     }
 
                 break;
