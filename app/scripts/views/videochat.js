@@ -37,7 +37,6 @@
         is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
     function VideoChatView(app) {
-
         this.app = app;
         self = this;
         Settings = this.app.models.Settings;
@@ -50,7 +49,6 @@
     }
 
     VideoChatView.prototype.cancelCurrentCalls = function() {
-
         var $mediacall = $('.mediacall');
 
         if ($mediacall.length > 0) {
@@ -59,7 +57,6 @@
     };
 
     VideoChatView.prototype.clearChat = function() {
-
         var $chatView = $('.chatView');
 
         if ($chatView.length > 1) {
@@ -123,7 +120,6 @@
         });
 
         $('#popupIncoming').on('click', '.btn_decline', function() {
-
             var $self = $(this),
                 $incomingCall = $self.parents('.incoming-call'),
                 dialogId = $self.data('dialog'),
@@ -133,36 +129,32 @@
             clearTimeout(sendAutoReject);
             sendAutoReject = undefined;                
 
-            if (!isGroupChat(curSession)) {
+            if (isGroupChat(curSession)) {
+                curSession.reject({});
+            } else {
                 var opponentId = $self.data('id');
                 VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
                 curSession.stop({});
-            } else {
-                curSession.reject({});
             }
 
             $incomingCall.remove();
             
             if ($('#popupIncoming .mCSB_container').children().length === 0) {
-
                 closePopup();
 
                 if (Settings.get('sounds_notify')) {
                     audioSignal.pause();
                 }
             }
-            
             return false;
         });
 
         $('#popupIncoming').on('click', '.btn_accept_exceed', function() {
-
             $('#popupIncoming').find('.mCSB_container').empty();
             closePopup();
         });
 
         $('#popupIncoming').on('click', '.btn_accept', function() {
-
             self.cancelCurrentCalls();
 
             clearTimeout(sendAutoReject);
@@ -199,7 +191,6 @@
                     $chat.find('.mediacall .btn_hangup').data('errorMessage', 1);
                     $chat.find('.mediacall .btn_hangup').click();
                     fixScroll();
-                    
                     return true;
                 }
                 
@@ -218,28 +209,24 @@
                 Helpers.Dialogs.moveDialogToTop(dialogId);
                 addCallTypeIcon(dialogId, callType);
             });
-            
             return false;
         });
 
         $('body').on('click', '.btn_hangup', function() {
-
-            self.clearChat();
-
             var $self = $(this),
                 $chat = $self.parents('.l-chat'),
                 callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0];
+
+            self.clearChat();
 
             if (Settings.get('sounds_notify') && SyncTabs.get()) {
                 callingSignal.pause();
                 endCallSignal.play();
             }
 
-            if ((User.contact.id === curSession.initiatorID) && (callTimerOn === false)) {
-                VideoChat.sendMessage(User.contact.id, '1', null, VideoChat.currentDialogId, self.type);
-                curSession.stop({});
-            } else if (getCountConnectedOpponents() < 2) {
+            if (((User.contact.id === curSession.initiatorID) && (callTimerOn === false)) || (getCountConnectedOpponents() < 2)) {
+                // VideoChat.sendMessage(User.contact.id, '1', null, VideoChat.currentDialogId, self.type);
                 curSession.stop({});
             } else {
                 curSession.reject();
@@ -254,7 +241,6 @@
 
         // full-screen-mode
         $('body').on('click', '.btn_full-mode', function() {
-            console.log('Roma => click .btn_full-mode');
             var mediaScreen = document.getElementsByClassName("mediacall")[0],
                 isFullScreen = false;
 
@@ -291,7 +277,6 @@
                 $('#fullModeOn').show();
                 $('#fullModeOff').hide();
             }
-
             return false;
         });
 
@@ -308,25 +293,20 @@
                 curSession.attachMediaStream('remoteStream', stream);
             }
         });
-
     };
 
     VideoChatView.prototype.onCall = function(session, extension) {
-
-        var dialogId = extension.dialogId,
-            isGroupCall = isGroupChat(session);
-        
-        saveCurSession(session, extension);
-
         if (User.contact.id === session.initiatorID) {
             return false;
         }
 
         if ($('div.popups.is-overlay').length) {
             $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
-        }
+        }        
 
-        var audioSignal = document.getElementById('ringtoneSignal'),
+        var dialogId = extension.dialogId,
+            isGroupCall = isGroupChat(session),
+            audioSignal = document.getElementById('ringtoneSignal'),
             $incomings = $('#popupIncoming'),
             id = session.initiatorID,
             contact = ContactList.contacts[id],
@@ -336,10 +316,11 @@
             userAvatar = contact.avatar_url || extension.avatar,
             dialogs = Dialog.app.entities.Collections.dialogs,
             activeDialogDetailed = dialogs.get(dialogId),
-            // autoReject = 10000,
             autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
             htmlTpl,
             tplParams;
+        
+        saveCurSession(session, extension);
 
         if (!dialogId && ContactList.roster[id]) {
             self.app.models.Dialog.restorePrivateDialog(id, function(dialog) {
@@ -351,7 +332,6 @@
         }
 
         function incomingCall() {
-
             tplParams = {
                 avatar: isGroupCall ? activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url : userAvatar ,
                 callType: callType,
@@ -426,16 +406,15 @@
     };
 
     VideoChatView.prototype.onRemoteStream = function(session, id, stream) {
+        $('.mediacall .btn_full-mode').prop('disabled', false);
+
         if ((self.type === 'video') && isGroupChat(session)) {
             curSession.attachMediaStream('video-stream-' + id, stream);
         } else if ((self.type === 'video') && !isGroupChat(session)){
             curSession.attachMediaStream('remoteStream', stream);
         }
 
-        $('.mediacall .btn_full-mode').prop('disabled', false);
-
         if (!callTimerOn) {
-            callTimerOn = true;
             curSession.attachMediaStream('remoteStream', stream);
             if (self.type === 'video') {
                 setDuration();
@@ -448,46 +427,42 @@
                     $('#remoteUser').removeClass('is-hidden');
                 }, 2700);
             }
+            callTimerOn = true;
         }
     };
 
     VideoChatView.prototype.onReject = function(session, id, extension) {
+        if (session.ID !== curSession.ID) return;
 
-        if (!isGroupChat(session)) {
-            $('.btn_hangup').click();
-            return;
-        }
-
-        if (areCurSession()) {
+        if (isGroupChat(session)) {
             curSession.closeConnection(id);
+        } else {
+            $('.btn_hangup').click();
         }
     };
 
     VideoChatView.prototype.onStop = function(session, id, extension) {
+        if (session.ID !== curSession.ID) return;
 
-        if (session.ID === curSession.ID) {
-
-            if ((id === session.initiatorID) && (session.state === 1)) {
-                var callingSignal = $('#callingSignal')[0],
-                    endCallSignal = $('#endCallSignal')[0];
-        
-                if (Settings.get('sounds_notify') && SyncTabs.get()) {
-                    callingSignal.pause();
-                    endCallSignal.play();
-                }
+        if ((id === session.initiatorID) && (session.state === 1)) {
+            var callingSignal = $('#callingSignal')[0],
+                endCallSignal = $('#endCallSignal')[0];
     
-                for (var index in session.peerConnections) {
-                    session.closeConnection(index);
-                }
-
-                closeStreamScreen();
-                clearCurSession();
-                session.stop({});
-
-            } else {
-
-                session.closeConnection(id);
+            if (Settings.get('sounds_notify') && SyncTabs.get()) {
+                callingSignal.pause();
+                endCallSignal.play();
             }
+
+            for (var index in session.peerConnections) {
+                session.closeConnection(index);
+            }
+
+            closeStreamScreen();
+            clearCurSession();
+            session.stop({});
+
+        } else {
+            session.closeConnection(id);
         }
     };
 
@@ -777,12 +752,10 @@
     }
 
     function openPopup($objDom) {
-
         $objDom.add('.popups').addClass('is-overlay');
     }
 
     function closePopup() {
-
         $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         $('.temp-box').remove();
 
@@ -964,7 +937,10 @@
 
         clearTimeout(callTimer);
         callTimerOn = false;
-        callTimer = undefined;   
+        callTimer = undefined;
+
+        clearTimeout(sendAutoReject);
+        sendAutoReject = undefined;     
     }
 
     function areCurSession() {
