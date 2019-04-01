@@ -286,10 +286,13 @@
         $('body').on('click', '.video-stream', function() {
             var $this = $(this),
                 occupantId = $this.data('id'),
-                stream = curSession.peerConnections[occupantId].remoteStream;
+                stream = curSession.peerConnections[occupantId].remoteStream,
+                contact = ContactList.contacts[occupantId],
+                remoteUserName = contact.full_name;
             
             if (stream && stream.active) {
                 curSession.attachMediaStream('remoteStream', stream);
+                $('#activeUserName').find( "h5" ).text(remoteUserName);
             }
         });
     };
@@ -409,6 +412,7 @@
 
         if ((self.type === 'video') && isGroupChat(session)) {
             curSession.attachMediaStream('video-stream-' + id, stream);
+            $('.video-stream-' + id).click();
         } else if ((self.type === 'video') && !isGroupChat(session)){
             curSession.attachMediaStream('remoteStream', stream);
         }
@@ -1004,14 +1008,16 @@
                     if (activeStreamCount === 1) {
                         stream = curSession.peerConnections[activeStreamIndex].remoteStream;
                         curSession.attachMediaStream('remoteStream', stream);
-                        removeRemoteVideoStream(activeStreamIndex);
+                        // removeRemoteVideoStream(activeStreamIndex);
+                        // $('#remoteVid').remove(); 
                     // Only one new stream is left
                     } else if ((activeStreamCount === 0) && (newStreamCount === 1)) {
-                        stream = curSession.peerConnections[newStreamIndex].remoteStream;
-                        curSession.attachMediaStream('remoteStream', stream);
-                        removeRemoteVideoStream(newStreamIndex);
+                        // stream = curSession.peerConnections[newStreamIndex].remoteStream;
+                        // curSession.attachMediaStream('remoteStream', stream);
+                        // removeRemoteVideoStream(newStreamIndex);
+                        // $('#remoteVid').remove(); 
                     }
-                    $('#activeUserName').find( "h5" ).text('Hello');
+                    // $('#activeUserName').find( "h5" ).text('Hello');
                 break;
             
                 default: 
