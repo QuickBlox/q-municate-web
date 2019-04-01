@@ -412,13 +412,13 @@
 
         if ((self.type === 'video') && isGroupChat(session)) {
             curSession.attachMediaStream('video-stream-' + id, stream);
+            $('#video-stream-' + id).click();
             $('#activeUserName').removeClass('is-hidden');
         } else if ((self.type === 'video') && !isGroupChat(session)){
             curSession.attachMediaStream('remoteStream', stream);
         }
 
         if (!callTimerOn) {
-            curSession.attachMediaStream('remoteStream', stream);
             if (self.type === 'video') {
                 setDuration();
                 $('#remoteUser').addClass('is-hidden');
@@ -972,11 +972,8 @@
 
     function redrawVideoCallTpl() {
         var stream,
-            newStreamCount = 0,
-            newStreamIndex,
             activeStreamCount = 0,
-            activeStreamIndex,
-            userName;
+            activeStreamIndex;
 
         for (var connection in curSession.peerConnections) {
             stream = curSession.peerConnections[connection].remoteStream;
@@ -984,11 +981,6 @@
             if (stream && stream.active) {
                 activeStreamCount++;
                 activeStreamIndex = connection;
-            } else if (curSession.peerConnections[connection].iceConnectionState === 'new') {
-                newStreamCount++;
-                if (newStreamCount === 1) {
-                    newStreamIndex = connection;
-                } 
             }
         }        
 
@@ -998,31 +990,21 @@
             switch(connectionState) {
                 case 'connected':
                     showRemoteVideoStream(index);
-                    var t =$('#video-stream-' + index);
-                    $('#video-stream-' + index).click();
                 break;
 
                 case 'closed':
-
-
                     removeRemoteVideoStream(index);
-
-
-
-                    // Only one active stream is left
-                    if (activeStreamCount === 1) {
-                        // stream = curSession.peerConnections[activeStreamIndex].remoteStream;
-                        // curSession.attachMediaStream('remoteStream', stream);
-                        // removeRemoteVideoStream(activeStreamIndex);
-                        // $('#remoteVid').remove(); 
-                    // Only one new stream is left
-                    } else if ((activeStreamCount === 0) && (newStreamCount === 1)) {
+                    // Switch the main screen to the active stream
+                    if (activeStreamCount !== 0) {
+                        $('#video-stream-' + activeStreamIndex).click();
+                    } else {
+                        curSession.detachMediaStream('remoteStream');
+                        $('#remoteStream').addClass('is-hidden');
                         // stream = curSession.peerConnections[newStreamIndex].remoteStream;
                         // curSession.attachMediaStream('remoteStream', stream);
                         // removeRemoteVideoStream(newStreamIndex);
                         // $('#remoteVid').remove(); 
                     }
-                    // $('#activeUserName').find( "h5" ).text('Hello');
                 break;
             
                 default: 
