@@ -81,6 +81,7 @@
                     dialogId,
                     tplParams;
 
+                // Сall occupants exceeded
                 if (isGroupCall && activeDialogDetailed.attributes.occupants_ids.length >= limitOccupants) {
                     tplParams = {
                         groupAvatar: activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url,
@@ -146,7 +147,6 @@
                     audioSignal.pause();
                 }
             }
-            return false;
         });
 
         $('#popupIncoming').on('click', '.btn_accept_exceed', function() {
@@ -209,7 +209,6 @@
                 Helpers.Dialogs.moveDialogToTop(dialogId);
                 addCallTypeIcon(dialogId, callType);
             });
-            return false;
         });
 
         $('body').on('click', '.btn_hangup', function() {
@@ -316,7 +315,7 @@
             userAvatar = contact.avatar_url || extension.avatar,
             dialogs = Dialog.app.entities.Collections.dialogs,
             activeDialogDetailed = dialogs.get(dialogId),
-            autoReject = 10000, //QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
+            autoReject = QMCONFIG.QBconf.webrtc.answerTimeInterval * 1000,
             htmlTpl,
             tplParams;
         
@@ -444,7 +443,6 @@
     VideoChatView.prototype.onStop = function(session, id, extension) {
         if (session.ID !== curSession.ID) return;
 
-        console.log(getCountConnectedOpponents());
         if (((id === session.initiatorID) && (session.state === 1)) || (getCountConnectedOpponents() === 0)) {
             var callingSignal = $('#callingSignal')[0],
                 endCallSignal = $('#endCallSignal')[0];
@@ -461,14 +459,12 @@
             session.stop({});
             clearCurSession();
             closeStreamScreen();
-
         } else {
             session.closeConnection(id);
         }
     };
 
     VideoChatView.prototype.onUpdateCall = function(session, id, extension) {
-        alert('onUpdateCall');
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $chat = $('.l-chat[data-dialog="' + dialogId + '"]');
         var $selector = $(window.document.body);
@@ -486,12 +482,14 @@
     };
 
     VideoChatView.prototype.onSessionConnectionStateChangedListener = function(session, userID, connectionState) {
-
+        if (session.ID !== curSession.ID) return;
         var callType = (session.callType === 1 ? 'video' : 'audio');
         redrawCallTpl(callType);
 
         if (is_firefox && (connectionState === 3)) {
-            curSession.closeConnection(userID);
+            for (var index in session.peerConnections) {
+                session.closeConnection(index);
+            }
             $('.btn_hangup').click();
         }
     };
@@ -504,11 +502,13 @@
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
-        session.stop({});
+        if (session.ID === curSession.ID) {
+            session.stop({});
+            clearCurSession();
+        }
     };
 
     VideoChatView.prototype.startCall = function(className, dialogId) {
-
         var audioSignal = document.getElementById('callingSignal'),
             callType = !!className.match(/audioCall/) ? 'audio' : 'video',
             params = self.build(dialogId, callType),
@@ -521,7 +521,6 @@
                 QMHtml.VideoChat.showError();
                 return true;
             } else {
-                // TODO: пуш-нотификации не работают
                 // QBApiCalls.sendPushNotification(calleeId, fullName);
             }
 
@@ -540,18 +539,11 @@
                 self.unmute('video');
             }
 
-            var message  = User.contact.full_name + " started ";
-            message += isGroupChat(VideoChat.session) ? "group " : "";
-            message += callType + " call.";
-
-            // VideoChat.sendMessage(User.contact.id, '4', null, VideoChat.currentDialogId, self.type, null, VideoChat.session.ID, message);
-
             $('.chatView').addClass('j-mediacall');
         });
     };
     
     VideoChatView.prototype.build = function(dialogId, callType) {
-
         var $chat = dialogId ? $('.j-chatItem[data-dialog="' + dialogId + '"]') : $('.j-chatItem:visible'),
             isGroupCall = $chat.data('type') === 2,
             activeDialogDetailed = this.app.entities.Collections.dialogs.get(dialogId),
@@ -586,8 +578,6 @@
     };
 
     VideoChatView.prototype.mute = function(callType) {
-        
-        console.log('Roma => VideoChatView.prototype.mute');
         curSession.mute(callType);
         if (callType === 'video') {
             $('#localStream').addClass('is-hidden');
@@ -596,8 +586,6 @@
     };
 
     VideoChatView.prototype.unmute = function(callType) {
-
-        console.log('Roma => VideoChatView.prototype.unmute');
         curSession.unmute(callType);
         if (callType === 'video') {
             $('#localStream').removeClass('is-hidden');
@@ -641,10 +629,7 @@
     }
 
     function switchOffDevice(event) {
-
-        console.log('Roma => switchOffDevice(event)');
         var $obj = $(event.target).data('id') ? $(event.target) : $(event.target).parent(),
-            opponentId = $obj.data('id'),
             dialogId = $obj.data('dialog'),
             deviceType = !!$obj.attr('class').match(/btn_camera_off/) ? 'video' : 'audio',
             msg = deviceType === 'video' ? 'Camera' : 'Mic';
@@ -679,8 +664,6 @@
     }
 
     function createAndShowNotification(paramsObg) {
-
-        console.log('Roma => createAndShowNotification(paramsObg)');
         var cancelNotify  = !Settings.get('calls_notify'),
             isNotMainTab  = !SyncTabs.get();
 
@@ -720,7 +703,6 @@
     }
 
     function addCallTypeIcon(id, callType) {
-
         var $status = $('li.dialog-item[data-dialog="' + id + '"]').find('span.status');
 
         if (callType === 'video') {
@@ -733,7 +715,6 @@
     }
 
     function stopIncomingCall(id) {
-
         var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
             $declineButton = $('.btn_decline[data-dialog="' + dialogId + '"]');
 
@@ -745,9 +726,7 @@
                 document.getElementById('ringtoneSignal').pause();
             }
         }
-
         clearCurSession();
-
         return false;
     }
 
@@ -919,7 +898,6 @@
     function removeRemoteVideoStream(id) {
         $('#video-stream-' + id ).remove();
         $('#usrName-' + id ).remove(); 
-        $('#remoteVid-').remove(); 
     }
 
     function saveCurSession(session, extension) {
@@ -958,7 +936,6 @@
     }
 
     function redrawCallTpl(callType) {
-
         if (!areCurSession(curSession)) return;
         if (!isGroupChat(curSession)) return;
 
@@ -970,13 +947,10 @@
     }
     
     function redrawAudioCallTpl() {
-
         for (var index in curSession.peerConnections) {
-
             var connectionState = curSession.peerConnections[index].iceConnectionState;
 
             switch(connectionState) {
-
                 case 'connected':
                     showUsrBlock(index);
                 break;
@@ -1007,9 +981,10 @@
                     var newStreamCount = 0,
                         newStreamIndex,
                         activeStreamCount = 0,
-                        activeStreamIndex;
+                        activeStreamIndex,
+                        userName;
 
-                    // removeRemoteVideoStream(index);
+                    removeRemoteVideoStream(index);
 
                     for (var connection in curSession.peerConnections) {
                         stream = curSession.peerConnections[connection].remoteStream;
@@ -1025,18 +1000,18 @@
                         }
                     }
 
+                    // Only one active stream is left
                     if (activeStreamCount === 1) {
-                        // stream = curSession.peerConnections[activeStreamIndex].remoteStream;
-                        // curSession.detachMediaStream('remoteStream');
-                        // curSession.attachMediaStream('remoteStream', stream);
-                        // removeRemoteVideoStream(activeStreamIndex);
-                    } else if (newStreamCount === 1) {
-                        // stream = curSession.peerConnections[newStreamIndex].remoteStream;
-                        // curSession.detachMediaStream('remoteStream');
-                        // curSession.attachMediaStream('remoteStream', stream);
-                        // removeRemoteVideoStream(newStreamIndex);
+                        stream = curSession.peerConnections[activeStreamIndex].remoteStream;
+                        curSession.attachMediaStream('remoteStream', stream);
+                        removeRemoteVideoStream(activeStreamIndex);
+                    // Only one new stream is left
+                    } else if ((activeStreamCount === 0) && (newStreamCount === 1)) {
+                        stream = curSession.peerConnections[newStreamIndex].remoteStream;
+                        curSession.attachMediaStream('remoteStream', stream);
+                        removeRemoteVideoStream(newStreamIndex);
                     }
-
+                    $('#activeUserName').find( "h5" ).text('Hello');
                 break;
             
                 default: 

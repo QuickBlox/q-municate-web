@@ -141,7 +141,7 @@ define([
                 '<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">' +
                 '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">' +
                 '<span class="mediacall-info-duration">connect...</span></div>' +
-                '<div class = "activeName" id ="activeUserName"><h5>Oleg Zdor</h5></div>' + //! last fix
+                '<div class = "activeName" id ="activeUserName"><h5>Oleg Zdor</h5></div>' +
                 '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">' +
                 '<button class="btn_mediacall btn_full-mode" data-id="<%=userId%>" data-dialog="<%=dialogId%>" disabled>' +
                 '<div id="fullModeOn" class="btn-icon_mediacall"></div>' +
