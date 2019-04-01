@@ -95,12 +95,12 @@
 }
 .mediacall-remote-duration,
 .mediacall-remote-name {
-    font-size: 22px;
-    color: rgba(255, 255, 255, 0.2);
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.294);
 }
 .mediacall-remote-name {
-    width: 100%;
-    line-height: 26px;
+    width: 80%;
+    height: 100px;
     margin-bottom: 15px;
     overflow: hidden;
     white-space: nowrap;
@@ -270,7 +270,7 @@
     right: 0%;
 }
 .remote-video .video-stream {
-    background-color: rgba(0, 0, 0, 0.57);
+    background-color:rgba(116, 115, 115, 0.13);
     position: relative;
     width: 133px;
     height: 90px;
@@ -285,7 +285,7 @@
 .usrBoxV .usrV{ 
     width: 100px;
     height: 20px;
-    background-color: rgba(0, 0, 0, 0.57);
+    background-color:rgba(116, 115, 115, 0.13);
     color: white;
     font-size: 12px;
     text-align: center;
@@ -312,7 +312,7 @@
 .activeName {
     width: 150px;
     height: 25px;
-    background-color:rgba(0, 0, 0, 0.287);
+    background-color:rgba(116, 115, 115, 0.13);
     display: flex;
     align-items: center;
     justify-content: center;
