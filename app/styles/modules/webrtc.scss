@@ -261,7 +261,7 @@
 }
 
 .remote-video {
-    top:5%;
+    top:10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -276,14 +276,26 @@
     height: 90px;
     margin: 4px;
 }
+.usrBoxV {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
 .usrBoxV .usrV{ 
+    width: 100px;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.57);
     color: white;
     font-size: 12px;
     text-align: center;
     line-height:1px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .usrBoxV .hidden-usrName  {
-    color: #757575 !important;
+    color: #7a7a7a !important;
 }   
 
 //!last activename fix
