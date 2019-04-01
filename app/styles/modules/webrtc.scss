@@ -215,6 +215,7 @@
 }
 .users {
     position: absolute;
+    top: 5px;
     right: 20px;
     display: flex;
     flex-direction: column;
@@ -287,6 +288,15 @@
 
 //!last activename fix
 
+.activeBlock {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 85px;
+    display: flex;
+    justify-content: center;
+}
+
 .activeName {
     width: 150px;
     height: 25px;
@@ -294,11 +304,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    top: 71%;
-    left: 39%;
-
-
 }
 .activeName h5{
     color: rgb(255, 255, 255);
