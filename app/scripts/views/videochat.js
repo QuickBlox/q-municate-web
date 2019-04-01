@@ -455,10 +455,10 @@
                 callingSignal.pause();
                 endCallSignal.play();
             }
-
-            for (var index in session.peerConnections) {
-                session.closeConnection(index);
-            }
+            session.closeConnection(id);
+            // for (var index in session.peerConnections) {
+            //     session.closeConnection(index);
+            // }
 
             session.stop({});
             clearCurSession();
@@ -507,8 +507,12 @@
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
         if (session.ID === curSession.ID) {
-            session.stop({});
-            clearCurSession();
+            if (getCountConnectedOpponents() >= 1) {
+                self.onReject(session, userId)
+            } else {
+                session.stop({});
+                clearCurSession();
+            }
         }
     };
 
