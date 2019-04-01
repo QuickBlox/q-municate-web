@@ -412,7 +412,7 @@
 
         if ((self.type === 'video') && isGroupChat(session)) {
             curSession.attachMediaStream('video-stream-' + id, stream);
-            $('.video-stream-' + id).click();
+            $('#activeUserName').removeClass('is-hidden');
         } else if ((self.type === 'video') && !isGroupChat(session)){
             curSession.attachMediaStream('remoteStream', stream);
         }
@@ -971,7 +971,26 @@
     }
 
     function redrawVideoCallTpl() {
-        var stream;
+        var stream,
+            newStreamCount = 0,
+            newStreamIndex,
+            activeStreamCount = 0,
+            activeStreamIndex,
+            userName;
+
+        for (var connection in curSession.peerConnections) {
+            stream = curSession.peerConnections[connection].remoteStream;
+
+            if (stream && stream.active) {
+                activeStreamCount++;
+                activeStreamIndex = connection;
+            } else if (curSession.peerConnections[connection].iceConnectionState === 'new') {
+                newStreamCount++;
+                if (newStreamCount === 1) {
+                    newStreamIndex = connection;
+                } 
+            }
+        }        
 
         for (var index in curSession.peerConnections) {
             var connectionState = curSession.peerConnections[index].iceConnectionState;
@@ -979,35 +998,21 @@
             switch(connectionState) {
                 case 'connected':
                     showRemoteVideoStream(index);
+                    var t =$('#video-stream-' + index);
+                    $('#video-stream-' + index).click();
                 break;
 
                 case 'closed':
-                    var newStreamCount = 0,
-                        newStreamIndex,
-                        activeStreamCount = 0,
-                        activeStreamIndex,
-                        userName;
+
 
                     removeRemoteVideoStream(index);
 
-                    for (var connection in curSession.peerConnections) {
-                        stream = curSession.peerConnections[connection].remoteStream;
 
-                        if (stream && stream.active) {
-                            activeStreamCount++;
-                            activeStreamIndex = connection;
-                        } else if (curSession.peerConnections[connection].iceConnectionState === 'new') {
-                            newStreamCount++;
-                            if (newStreamCount === 1) {
-                                newStreamIndex = connection;
-                            } 
-                        }
-                    }
 
                     // Only one active stream is left
                     if (activeStreamCount === 1) {
-                        stream = curSession.peerConnections[activeStreamIndex].remoteStream;
-                        curSession.attachMediaStream('remoteStream', stream);
+                        // stream = curSession.peerConnections[activeStreamIndex].remoteStream;
+                        // curSession.attachMediaStream('remoteStream', stream);
                         // removeRemoteVideoStream(activeStreamIndex);
                         // $('#remoteVid').remove(); 
                     // Only one new stream is left
