@@ -141,6 +141,9 @@ define([
                 '<div class="mediacall-info l-flexbox l-flexbox_column l-flexbox_flexcenter">' +
                 '<img class="mediacall-info-logo" src="images/logo-qmunicate-transparent.svg" alt="Q-municate">' +
                 '<span class="mediacall-info-duration">connect...</span></div>' +
+                '<div class = "remote-video" id="remoteVid-">' +
+                '<%=occupantsTpl%>' +
+                '</div>'+
                 '<div class = "activeName" id ="activeUserName"><h5>Oleg Zdor</h5></div>' +
                 '<div class="mediacall-controls l-flexbox l-flexbox_flexcenter">' +
                 '<button class="btn_mediacall btn_full-mode" data-id="<%=userId%>" data-dialog="<%=dialogId%>" disabled>' +
@@ -152,13 +155,7 @@ define([
                 '<img class="btn-icon_mediacall" src="images/icon-mic-off.svg" alt="mic"></button>' +
                 '<button class="btn_mediacall btn_hangup" data-id="<%=userId%>" data-dialog="<%=dialogId%>">' +
                 '<img class="btn-icon_mediacall" src="images/icon-hangup.svg" alt="hangup"></button>' +
-                '</div></div>'+
-
-                '<div class = "mediacall remote-video" id="remoteVid-">' +
-                '<%=occupantsTpl%>' +
-                '</div>'
-
-                )(params);
+                '</div></div>')(params);
 
             return htmlTemplate;
         },
