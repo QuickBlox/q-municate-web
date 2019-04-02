@@ -46,7 +46,6 @@ define([
         FAVICON = 'images/favicon.png';
 
     function DialogView(app) {
-        console.log('Roma => DialogView');
         self = this;
 
         this.app = app;

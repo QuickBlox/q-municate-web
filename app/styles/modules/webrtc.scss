@@ -6,16 +6,20 @@
     background: #fff;
     border: 1px solid #f0f0f0;
 }
+
 .incoming-call {
     width: 100%;
     border-bottom: 1px solid #f0f0f0;
 }
+
 .incoming-call:last-child {
     border-bottom: 0;
 }
+
 .incoming-call-info {
     width: 100%;
 }
+
 .avatar.info-avatar {
     width: 40px;
     height: 40px;
@@ -23,6 +27,7 @@
     margin: 15px 0;
     border-radius: 50%;
 }
+
 .info-notice {
     width: 100%;
     padding: 0 15px;
@@ -33,28 +38,34 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .incoming-call-controls {
     width: 100%;
     margin: 20px 0;
 }
+
 .btn_accept,
 .btn_decline,
 .btn_accept_exceed {
     text-transform: uppercase;
 }
+
 .btn_accept:hover,
 .btn_decline:hover,
 .btn_accept_exceed:hover {
     opacity: 1;
 }
+
 .btn_decline {
     margin-right: 55px;
     color: #b20001;
 }
+
 .btn_accept,
 .btn_accept_exceed {
     color: #1ec252;
 }
+
 /* Video / audio calls */
 .mediacall {
     position: relative;
@@ -65,17 +76,20 @@
     background: #262626;
     text-align: center;
 }
+
 .mediacall-remote-stream {
     width: 100%;
     height: 100%;
     max-height: 100%;
 }
+
 .mediacall-remote-user {
     width: 80%;
     height: 100%;
     max-height: 326px;
     margin: auto;
 }
+
 .mediacall-remote-avatar {
     height: 50%;
     max-width: 146px;
@@ -83,21 +97,26 @@
     margin: 10px 0;
     border-radius: 50%;
 }
+
 .mediacall.small_screen .mediacall-remote-avatar {
     margin: 5px 0;
 }
+
 .mediacall.small_screen .mediacall-remote-name {
     font-size: 18px;
     line-height: 18px;
 }
+
 .mediacall.small_screen .mediacall-controls {
     bottom: 0;
 }
+
 .mediacall-remote-duration,
 .mediacall-remote-name {
     font-size: 18px;
     color: rgba(255, 255, 255, 0.294);
 }
+
 .mediacall-remote-name {
     width: 80%;
     height: 100px;
@@ -106,17 +125,20 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
 .mediacall-local-stream {
     width: 19%;
     position: absolute;
     left: 13px;
     bottom: 13px;
 }
+
 .mediacall-local-avatar {
     width: 60px;
     height: 60px;
     border-radius: 50%;
 }
+
 .mediacall-info {
     position: absolute;
     top: 15px;
@@ -125,9 +147,11 @@
     height: 100px;
     background-color:rgba(116, 115, 115, 0.13); 
 }
+
 .mediacall-info-logo {
     margin-bottom: 17px;
 }
+
 .mediacall-info-duration {
     display: block;
     height: 16px;
@@ -137,36 +161,43 @@
     font-weight: bold;
     color: rgb(255, 255, 255);
 }
+
 .mediacall-controls {
     position: absolute;
     width: 100%;
     left: 0;
     bottom: 15px;
 }
+
 .btn_mediacall,
 .btn_mediacall:focus {
     width: 60px;
     height: 60px;
     background: rgba(0, 0, 0, 0.57);
 }
+
 .btn_mediacall.off,
 .btn_mediacall:hover {
     opacity: 1;
     background: rgba(255, 0, 0, 0.57);
 }
+
 .btn_mediacall:first-child:hover,
 .btn_mediacall:last-child:hover {
     background: rgba(0, 0, 0, 0.4);
 }
+
 .btn-icon_mediacall {
     vertical-align: text-bottom;
 }
+
 #fullModeOn {
     width: 21px;
     height: 21px;
     margin: 0 auto;
     background: url('../images/icon-full-mode-on.png') no-repeat center;
 }
+
 #fullModeOff {
     width: 21px;
     height: 21px;
@@ -174,23 +205,26 @@
     background: url('../images/icon-full-mode-off.png') no-repeat center;
     display: none;
 }
+
 .mediacall:-webkit-full-screen {
     height: 100% !important;
     max-height: 100% !important;
 }
+
 .mediacall:-moz-full-screen {
     height: 100% !important;
     max-height: 100% !important;
 }
+
 .mediacall:-ms-fullscreen {
     height: 100% !important;
     max-height: 100% !important;
 }
+
 .mediacall:fullscreen {
     height: 100% !important;
     max-height: 100% !important;
 }
-// Oleg Zdor
 
 .mediacall-global-avatar {
     width: 60px;
@@ -199,11 +233,13 @@
     background-color: #a1ccaf70;
     border: 1px solid orange;
 }
+
 .mediacall .localName {
     color: white;
     font-size: 12.5px;
     margin-top: 3.5px;
 }
+
 .mediacall .localUs {
     position: absolute;
     bottom: 20px;
@@ -213,6 +249,7 @@
     flex-direction: column;
     align-items: center;
 }
+
 .users {
     position: absolute;
     top: 5px;
@@ -221,22 +258,26 @@
     flex-direction: column;
     justify-content: center;
 }
+
 .users .usrBox {
     position: relative !important;
     margin:10px 0 10px 0;
     
 }
+
 .users .usrBox .usrW { 
     color: white;
     font-size: 12px;
     text-align: center;
     line-height:1px; 
 }
+
 .users .usrBox .usrW {
     display: flex;
     justify-content:center;
     align-items: center;
 }
+
 .users .hidden-avatar {
     opacity: .2;
 }
@@ -244,17 +285,6 @@
 .users .usrBox .hidden-usrName  {
     color: #616361 !important;
 }   
-
-// .users .usrBox:nth-child(1){
-//     top: 27%;
-// }
-// .users .usrBox:nth-child(2){
-//     top: 52%;
-// }
-// .users .usrBox:nth-child(3){
-//     top: 75.5%;
-// }
-
 
 .hidden-video-stream {
     border: 1px solid #757575;
@@ -269,6 +299,7 @@
     width: 159px;
     right: 0%;
 }
+
 .remote-video .video-stream {
     background-color:rgba(116, 115, 115, 0.13);
     position: relative;
@@ -276,12 +307,14 @@
     height: 90px;
     margin: 4px;
 }
+
 .usrBoxV {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
+
 .usrBoxV .usrV{ 
     width: 100px;
     height: 20px;
@@ -294,11 +327,10 @@
     justify-content: center;
     align-items: center;
 }
+
 .usrBoxV .hidden-usrName  {
     color: #7a7a7a !important;
 }   
-
-//!last activename fix
 
 .activeBlock {
     position: absolute;
@@ -317,6 +349,7 @@
     align-items: center;
     justify-content: center;
 }
+
 .activeName h5{
     color: rgb(255, 255, 255);
     font-size: 12px

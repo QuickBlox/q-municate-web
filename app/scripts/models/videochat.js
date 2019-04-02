@@ -13,19 +13,16 @@ define([
     QMCONFIG,
     Helpers
 ) {
-    
     var curSession,
         self;
 
     function VideoChat(app) {
-
         this.app = app;
         this.session = {};
         self = this;
     }
 
     VideoChat.prototype.getUserMedia = function(options, callType, callback) {
-
         var User = this.app.models.User,
             isGroupCall = (options.opponentId.length > 1) ? true : false,
             params = {
@@ -85,7 +82,6 @@ define([
     };
 
     VideoChat.prototype.sendMessage = function(userId, state, callDuration, dialogId, callType, isErrorMessage, sessionID, messageText) {
-
         var jid = QB.chat.helpers.getUserJid(userId, QMCONFIG.qbAccount.appId),
             User = this.app.models.User,
             Message = this.app.models.Message,
@@ -109,8 +105,7 @@ define([
                 callType: state === '2' ? (callType === 'video' ? '2' : '1') : (VideoChatView.type === 'video' ? '2' : '1'),
                 callState: state === '1' && !callDuration ? '2' : state,
                 caller: state === '2' ? userId : self.caller,
-                callee: state === '2' ? User.contact.id : self.callee[0],
-                message: message
+                callee: state === '2' ? User.contact.id : self.callee[0]
             };
 
             if (callDuration) extension.callDuration = Helpers.getDuration(null, callDuration);
@@ -130,11 +125,7 @@ define([
         }
 
         msg = {
-            // type: 'chat',
-            // body: messageText,
-            // save_to_history: 1,
             chat_dialog_id: dialogId,
-            dialog_id: dialogId,
             date_sent: time,
             sender_id: User.contact.id,
             callType: extension.callType,
@@ -143,17 +134,14 @@ define([
             callee: extension.callee,
             callDuration: extension.callDuration || null,
             sessionID: extension.sessionID || null,
-            'online': true,
-            message: message
+            'online': true
         };
 
-        // msg.id = QB.chat.send(jid, {
-        //     type: 'chat',
-        //     body: 'Call notification',
-        //     extension: extension
-        // });
-
-        QB.chat.message.create(msg);
+        msg.id = QB.chat.send(jid, {
+            type: 'chat',
+            body: 'Call notification',
+            extension: extension
+        });
 
         message = Message.create(msg);
         Helpers.log(message);

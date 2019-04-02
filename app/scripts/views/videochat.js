@@ -4,7 +4,6 @@
  * VideoChat View Module
  *
  */
-
  define([
     'jquery',
     'Entities',
@@ -78,11 +77,12 @@
                     userId = $this.data('id'),
                     $dialogItem = $('.j-dialogItem[data-dialog="' + activeDialog + '"]'),
                     limitOccupants = QMCONFIG.QBconf.webrtc.maxOccupantsGroupCall,
+                    occupantsLength = activeDialogDetailed.attributes.occupants_ids.length,
                     dialogId,
                     tplParams;
 
                 // Сall occupants exceeded
-                if (isGroupCall && activeDialogDetailed.attributes.occupants_ids.length >= limitOccupants) {
+                if (isGroupCall && (occupantsLength >= limitOccupants)) {
                     tplParams = {
                         groupAvatar: activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url,
                         limitOccupants: limitOccupants
@@ -125,7 +125,8 @@
                 $incomingCall = $self.parents('.incoming-call'),
                 dialogId = $self.data('dialog'),
                 callType = $self.data('calltype'),
-                audioSignal = document.getElementById('ringtoneSignal');
+                audioSignal = document.getElementById('ringtoneSignal'),
+                opponentId = $self.data('id');
 
             clearTimeout(sendAutoReject);
             sendAutoReject = undefined;                
@@ -133,8 +134,7 @@
             if (isGroupChat(curSession)) {
                 curSession.reject({});
             } else {
-                var opponentId = $self.data('id');
-                // VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
+                VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
                 curSession.stop({});
             }
 
@@ -212,12 +212,26 @@
         });
 
         $('body').on('click', '.btn_hangup', function() {
+            self.clearChat();
+
             var $self = $(this),
                 $chat = $self.parents('.l-chat'),
+                opponentId = $self.data('id'),
+                dialogId = $self.data('dialog'),
+                callType = curSession.callType === 1 ? 'video' : 'audio',
+                duration = $self.parents('.mediacall').find('.mediacall-info-duration').text(),
                 callingSignal = $('#callingSignal')[0],
-                endCallSignal = $('#endCallSignal')[0];
+                endCallSignal = $('#endCallSignal')[0],
+                isErrorMessage = $self.data('errorMessage');
 
-            self.clearChat();
+            if (VideoChat.caller) {
+                if (!isErrorMessage && duration !== 'connect...') {
+                    VideoChat.sendMessage(opponentId, '1', duration, dialogId, null, null, self.sessionID);
+                } else {
+                    VideoChat.sendMessage(opponentId, '1', null, dialogId, callType);
+                }
+            }                
+
             $self.removeAttr('data-errorMessage');
 
             if (Settings.get('sounds_notify') && SyncTabs.get()) {
@@ -226,7 +240,6 @@
             }
 
             if (((User.contact.id === curSession.initiatorID) && (callTimerOn === false)) || (getCountConnectedOpponents() < 2)) {
-                // VideoChat.sendMessage(User.contact.id, '1', null, VideoChat.currentDialogId, self.type);
                 curSession.stop({});
             } else {
                 curSession.reject();
@@ -381,7 +394,7 @@
             var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
                 callType = (session.callType === 1 ? 'video' : 'audio');
 
-            // VideoChat.sendMessage(id, '2', null, dialogId, callType);
+            VideoChat.sendMessage(id, '2', null, dialogId, callType);
         }
     };
 
@@ -975,6 +988,7 @@
     function redrawVideoCallTpl() {
         var stream,
             activeStreamCount = 0,
+            newStremCount = 0,
             activeStreamIndex;
 
         for (var connection in curSession.peerConnections) {
@@ -983,6 +997,8 @@
             if (stream && stream.active) {
                 activeStreamCount++;
                 activeStreamIndex = connection;
+            } else if (stream && stream.new) {
+                newStremCount++;
             }
         }        
 
@@ -997,7 +1013,7 @@
 
                 case 'closed':
                     removeRemoteVideoStream(index);
-                    if (activeStreamCount === 1) {
+                    if ((activeStreamCount === 1) && (newStremCount === 0)) {
                         $('#video-stream-' + activeStreamIndex).click();
                         removeRemoteVideoStream(activeStreamIndex);
                     } else {

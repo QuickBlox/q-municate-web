@@ -444,7 +444,6 @@ define([
         },
 
         sendMessage: function(form) {
-            console.log('Roma => sendMessage');
             var jid = form.parents('.l-chat').data('jid'),
                 id = form.parents('.l-chat').data('id'),
                 dialog_id = form.parents('.l-chat').data('dialog'),

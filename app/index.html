@@ -636,24 +636,20 @@
 
 <script id="chatTpl" type="text/template">
     <% if (type === 3) { %>
-    <!-- Заголовок одиночного чата -->
     <section id="chat_<%= dialog_id %>" class="l-chat l-chat_private presence-listener j-chatItem" data-dialog="<%= dialog_id %>" data-id="<%= user_id %>" data-jid="<%= jid %>" data-type="<%= type %>">
         <header class="l-chat-header l-flexbox l-flexbox_flexbetween">
             <% } else { %>
-            <!-- Заголовок группового чата -->
             <section id="chat_<%= dialog_id %>" class="l-chat l-chat_group is-group j-chatItem" data-dialog="<%= dialog_id %>" data-ids="<%= occupantsIds %>" data-jid="<%= jid %>" data-type="<%= type %>">
                 <header class="l-chat-header l-flexbox l-flexbox_flexbetween groupTitle">
                     <% } %>
                     <div class="chat-title">
                         <% if (type === 3) { %>
-                        <!-- Имена юзеров одиночного чата -->
                         <div class="l-flexbox_inline">
                             <div class="contact-avatar avatar avatar_chat profileUserAvatar scaleAvatar j-scaleAvatar" style="background-image:url(<%= icon %>)" data-id="<%= user_id %>" data-name="<%= name %>"></div>
                             <h2 class="name name_chat profileUserName" title="<%= name %>" data-id="<%= user_id %>"><%= name %></h2>
                             <%= status %>
                         </div>
                         <% } else { %>
-                        <!-- Имена юзеров группового чата -->
                         <div class="l-flexbox_inline">
                             <div class="contact-avatar avatar avatar_chat scaleAvatar j-scaleAvatar" style="background-image:url(<%= icon %>)" data-name="<%= name %>"></div>
                             <input class="avatar_file avatar is-hidden" type="file" accept="image/*" data-dialog="<%= dialog_id %>">
@@ -664,10 +660,8 @@
                         </div>
                         <% } %>
                     </div>
-                    <!-- Кнопки управления чатом -->
                     <div class="chat-controls">
                         <% if (type === 3) { %>
-                        <!-- Кнопки управления одиночным чатом -->
                         <button class="btn_chat btn_chat_videocall videoCall" data-type="<%= type %>" data-id="<%= user_id %>" data-balloon="Make a video call" data-balloon-pos="down">
                             <img src="images/icon-videocall.svg" alt="Make a Video Call">
                         </button>
@@ -687,7 +681,6 @@
                             <img src="images/icon-delete.svg" alt="Remove chat">
                         </button>
                         <% } else { %>
-                            <!-- Кнопки управления групповым чатом -->
                             <button class="btn_chat btn_chat_group_videocall_group videoCall" data-type="<%= type %>" data-dialog="<%= dialog_id %>" data-id="<%= occupantsIds %>" data-balloon="Make a video call in group chat" data-balloon-pos="down">
                                 <img src="images/icon-videocall.svg" alt="Make a Video Call in group chat">
                             </button>
