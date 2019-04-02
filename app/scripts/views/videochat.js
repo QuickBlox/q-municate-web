@@ -507,7 +507,7 @@
         if (session.ID !== curSession.ID) return;
 
         if (getCountConnectedOpponents() >= 1) {
-            self.onReject(session, userId)
+            self.onReject(session, userId);
         } else {
             session.stop({});
             clearCurSession();
