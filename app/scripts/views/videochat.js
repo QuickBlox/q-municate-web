@@ -134,7 +134,7 @@
                 curSession.reject({});
             } else {
                 var opponentId = $self.data('id');
-                VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
+                // VideoChat.sendMessage(opponentId, '2', null, dialogId, callType);
                 curSession.stop({});
             }
 
@@ -298,16 +298,14 @@
     };
 
     VideoChatView.prototype.onCall = function(session, extension) {
-        if (User.contact.id === session.initiatorID) {
-            return false;
-        }
+        if (User.contact.id === session.initiatorID) return;
 
         if ($('div.popups.is-overlay').length) {
             $('.is-overlay:not(.chat-occupants-wrap)').removeClass('is-overlay');
         }        
 
-        var dialogId = extension.dialogId,
-            isGroupCall = isGroupChat(session),
+        var isGroupCall = isGroupChat(session),
+            dialogId = isGroupCall ? extension.dialogId : $('li.list-item.dialog-item[data-id="' + session.initiatorID + '"]').data('dialog'),
             audioSignal = document.getElementById('ringtoneSignal'),
             $incomings = $('#popupIncoming'),
             id = session.initiatorID,
@@ -322,7 +320,7 @@
             htmlTpl,
             tplParams;
         
-        saveCurSession(session, extension);
+        saveCurSession(session, isGroupCall ? extension : {dialogId: dialogId});
 
         if (!dialogId && ContactList.roster[id]) {
             self.app.models.Dialog.restorePrivateDialog(id, function(dialog) {
@@ -335,7 +333,7 @@
 
         function incomingCall() {
             tplParams = {
-                avatar: isGroupCall ? activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url : userAvatar ,
+                avatar: isGroupCall ? activeDialogDetailed.attributes.room_photo || QMCONFIG.defAvatar.group_url : userAvatar,
                 callType: callType,
                 callTypeUС: callTypeUС,
                 callSignature: isGroupCall ? "Group " + callTypeUС + " Call from<br>" + activeDialogDetailed.attributes.room_name : callTypeUС + " Call from " + userName,
@@ -383,7 +381,7 @@
             var dialogId = $('li.list-item.dialog-item[data-id="' + id + '"]').data('dialog'),
                 callType = (session.callType === 1 ? 'video' : 'audio');
 
-            VideoChat.sendMessage(id, '2', null, dialogId, callType);
+            // VideoChat.sendMessage(id, '2', null, dialogId, callType);
         }
     };
 
@@ -455,14 +453,14 @@
                 callingSignal.pause();
                 endCallSignal.play();
             }
-            session.closeConnection(id);
-            // for (var index in session.peerConnections) {
-            //     session.closeConnection(index);
-            // }
 
+            for (var index in session.peerConnections) {
+                session.closeConnection(index);
+            }
+            
             session.stop({});
-            clearCurSession();
             closeStreamScreen();
+            clearCurSession();
         } else {
             session.closeConnection(id);
         }
@@ -506,13 +504,13 @@
     };
 
     VideoChatView.prototype.onUserNotAnswerListener = function(session, userId) {
-        if (session.ID === curSession.ID) {
-            if (getCountConnectedOpponents() >= 1) {
-                self.onReject(session, userId)
-            } else {
-                session.stop({});
-                clearCurSession();
-            }
+        if (session.ID !== curSession.ID) return;
+
+        if (getCountConnectedOpponents() >= 1) {
+            self.onReject(session, userId)
+        } else {
+            session.stop({});
+            clearCurSession();
         }
     };
 
@@ -993,21 +991,17 @@
 
             switch(connectionState) {
                 case 'connected':
+                case 'completed':
                     showRemoteVideoStream(index);
                 break;
 
                 case 'closed':
                     removeRemoteVideoStream(index);
-                    // Switch the main screen to the active stream
-                    if (activeStreamCount !== 0) {
+                    if (activeStreamCount === 1) {
                         $('#video-stream-' + activeStreamIndex).click();
+                        removeRemoteVideoStream(activeStreamIndex);
                     } else {
-                        curSession.detachMediaStream('remoteStream');
-                        $('#remoteStream').addClass('is-hidden');
-                        // stream = curSession.peerConnections[newStreamIndex].remoteStream;
-                        // curSession.attachMediaStream('remoteStream', stream);
-                        // removeRemoteVideoStream(newStreamIndex);
-                        // $('#remoteVid').remove(); 
+                        $('#video-stream-' + activeStreamIndex).click();
                     }
                 break;
             
