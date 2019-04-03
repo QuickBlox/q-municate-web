@@ -90,7 +90,6 @@ define(function() {
                 maxOccupantsGroupCall: 4
             }
         }
-
     };
 
     return QMCONFIG;
