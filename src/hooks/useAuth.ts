@@ -294,7 +294,8 @@ export default function useAuth() {
         })
 
         updates.blob_id = file.id
-      } else if (userName) {
+      }
+      if (userName) {
         updates.full_name = userName
       }
 
