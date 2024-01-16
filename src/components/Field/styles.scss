@@ -1,0 +1,286 @@
+.field {
+  border-radius: 4px;
+  padding: 10px 14px;
+  width: 100%;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+textarea.field,
+input.field,
+.field input {
+  outline: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+input.field::-webkit-credentials-auto-fill-button,
+.field input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+}
+
+input.field[type="password"]::-ms-reveal,
+input.field[type="password"]::-ms-clear,
+.field input[type="password"]::-ms-reveal,
+.field input[type="password"]::-ms-clear {
+  display: none;
+}
+
+textarea.field {
+  min-height: 45px;
+  resize: vertical;
+  line-height: 1.38;
+  height: 100%;
+}
+
+.field input {
+  width: 100%;
+  border: none;
+  padding: 0;
+}
+
+textarea.field::placeholder,
+input.field::placeholder,
+.field input::placeholder {
+  color: var(--blue-7);
+}
+
+textarea.field:focus,
+textarea.field:active,
+input.field:focus,
+input.field:active,
+.field.PhoneInput--focus,
+.field.select-field--focus,
+.field.date-field--focus {
+  box-shadow: 0 4px 11px 4px var(--primary-100);
+}
+
+.flex-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.textarea-wrapper {
+  position: relative;
+  line-height: 0;
+}
+
+.textarea-wrapper .textarea-length {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  line-height: 1;
+  color: var(--Secondary-elements);
+  opacity: 0.5;
+}
+
+.field-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-wrapper .icon {
+  position: absolute;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  fill: #636d78;
+  right: 12px;
+  top: 17px;
+}
+/* CountrySelect */
+
+.select {
+  cursor: pointer;
+  height: 44px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #636d78;
+  position: relative;
+
+  .select-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
+}
+
+.select .select-header .select-dropdown {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  fill: #0b1b0f;
+  transition: transform 0.2s ease-in-out;
+}
+
+.select .select-header .select-dropdown.opened {
+  transform: rotate(180deg);
+}
+
+.select .country-icon {
+  margin-right: 6px;
+
+  svg {
+    width: 16px;
+    height: 10px;
+  }
+}
+
+.select .select-options .check-icon {
+  display: inline;
+  width: 16px;
+  height: 16px;
+  fill: #3978fc;
+}
+
+.select .select-options {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: calc(100% + 1px);
+  width: 100%;
+  max-height: 272px;
+  overflow: auto;
+  background-color: #fff;
+  box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.04),
+    0px 3px 14px 0px rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  transform: scale(0);
+  transition: transform 0.2s ease-in-out;
+  padding: 8px 0;
+
+  &.opened {
+    transform: scale(1);
+  }
+}
+
+.select .select-options li:hover {
+  cursor: pointer;
+  background: rgb(207, 204, 204);
+}
+
+.select .select-options .option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 16px;
+}
+
+/* PinInput */
+
+.input-container {
+  display: flex;
+  justify-content: center;
+}
+
+.input-container input:where([autocomplete="sms-code"]) {
+  --digits: 6;
+  --digit: 0;
+  --ls: 2ch;
+  --gap: 1.25;
+  --bg-sz: calc(var(--ls) + 1ch);
+
+  all: unset;
+  background: linear-gradient(
+      90deg,
+      #3978fc calc(var(--gap) * var(--ls)),
+      transparent 0
+    ),
+    linear-gradient(90deg, #636d78 calc(var(--gap) * var(--ls)), transparent 0);
+  background-position: calc(var(--digit) * var(--bg-sz)) bottom, 0 bottom;
+  background-repeat: no-repeat, repeat-x;
+  background-size: var(--bg-sz) 2px;
+
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 20px;
+  inline-size: calc(var(--digits) * var(--bg-sz));
+  letter-spacing: var(--ls);
+
+  clip-path: inset(0% calc(var(--ls) / 2) 0% 0%);
+  padding-block: 1ch;
+  padding-inline-start: calc(((var(--ls) - 1ch) / 2) * var(--gap));
+  margin-inline-start: calc(((var(--ls)) / 2) * var(--gap));
+}
+
+/* Select */
+
+.field .select-field {
+  max-width: 150px;
+}
+
+.field.select-field {
+  position: relative;
+  background-color: #fff;
+}
+
+.select-field .select-app-version {
+  text-align: center;
+  opacity: 0.5;
+  padding-top: 5px;
+}
+
+.field.select-field .flex-field-input.hidden {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+.field.select-field .flex-field .user-name {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+}
+
+.field.select-field .icon {
+  cursor: pointer;
+  margin-left: 2px;
+  height: 16px;
+  width: 16px;
+  vertical-align: middle;
+  fill: #0b1b0f;
+}
+
+.field.select-field .select-field-list {
+  z-index: 2;
+  position: absolute;
+  top: 22px;
+  right: 0;
+  width: 135px;
+  padding: 8px 0;
+  margin: 0;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.04),
+    0px 3px 14px 0px rgba(0, 0, 0, 0.08);
+  text-align: start;
+}
+
+.field.select-field .select-field-label {
+  color: #0b1b0f;
+}
+
+.field.select-field .select-field-option {
+  list-style-type: none;
+  padding: 4px 8px 4px 16px;
+  cursor: pointer;
+  color: #0b1b0f;
+}
+
+.field.select-field .select-field-option[aria-selected="true"] {
+  background-color: var(--SelectFieldOption-backgroundColor--selected);
+}
+
+.field.select-field .select-field-option:hover {
+  background-color: rgb(207, 204, 204);
+}
+
+@media screen and (max-width: 400px) {
+  .field.select-field .flex-field .user-name {
+    display: none;
+  }
+}

@@ -1,0 +1,108 @@
+.login-screen {
+  flex-grow: 1;
+
+  .form-wrapper {
+    margin: 0 auto;
+    max-width: 390px;
+    padding: 0 15px;
+  }
+
+  .login-form {
+    width: 100%;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 52px;
+
+    &.inactive {
+      opacity: 0;
+      padding-left: 0;
+      padding-right: 0;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .form-header {
+      width: 100%;
+      text-align: center;
+      position: relative;
+      margin-bottom: 36px;
+
+      .back-icon {
+        position: absolute;
+        left: 0;
+        cursor: pointer;
+        height: 24px;
+        width: 24px;
+        fill: #3978fc;
+      }
+    }
+
+    .title {
+      color: #0b1b0f;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 24px;
+    }
+
+    .phone-fields {
+      width: 100%;
+
+      label {
+        display: inline-block;
+        margin-bottom: 8px;
+      }
+    }
+
+    .code-label {
+      text-align: center;
+      font-size: 14px;
+      line-height: 24px;
+      color: #0b1b0f;
+      margin-bottom: 16px;
+
+      .phone-number {
+        display: block;
+        color: #3978fc;
+      }
+    }
+
+    .country-select {
+      margin-bottom: 16px;
+    }
+
+    .phone-input {
+      height: 44px;
+      border-radius: 4px;
+      padding: 6px 8px;
+      border: 1px solid #636d78;
+
+      &::placeholder {
+        opacity: 0.5;
+      }
+    }
+
+    .re-send {
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 16px;
+      letter-spacing: 0.4px;
+      background: transparent;
+      border: none;
+      color: #3978fc;
+      margin-top: 20px;
+    }
+  }
+
+  .login-btn {
+    margin-top: 40px;
+  }
+
+  .verify-btn {
+    margin-top: 56px;
+  }
+}

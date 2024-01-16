@@ -1,0 +1,26 @@
+.toast {
+  background: var(--color-background-overlay);
+  border-radius: 4px;
+  opacity: 0.6000000238418579;
+  padding: 4px 12px 4px 12px;
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: absolute !important;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.message {
+  color: var(--color-background);
+  text-align: left;
+  font: 500 12px/16px "Roboto", sans-serif;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}

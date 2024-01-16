@@ -1,0 +1,213 @@
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.wrapper .content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  width: 300px;
+  border-radius: 4px;
+  padding: 24px;
+  z-index: 1001;
+}
+
+.wrapper .logout {
+  height: 160px;
+}
+
+.wrapper .content .close {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 32px;
+}
+
+.wrapper .content .close span {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0.0015px;
+}
+
+.wrapper .content .close .close-icon {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  fill: #202f3e;
+}
+
+.wrapper .content .buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.wrapper .content .buttons-logout {
+  margin-top: 48px;
+}
+
+.wrapper .content .buttons button {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.4px;
+
+  width: 93px;
+  height: 32px;
+  border-radius: 4px;
+  padding: 8px 16px;
+  border: 1px solid #202f3e;
+  cursor: pointer;
+}
+
+.wrapper .content .buttons .cancel-btn {
+  background-color: transparent;
+  margin-right: 4px;
+  color: #202f3e;
+}
+
+.wrapper .content .buttons .logout-btn {
+  border: none;
+  background-color: #ff3b30;
+  margin-left: 4px;
+  color: #ffffff;
+}
+
+.wrapper .setting {
+  height: 340px;
+}
+
+.wrapper .content .user-info {
+  margin-top: 24px;
+}
+
+.wrapper .content .user-info .user-avatar {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin: 8px 0px 24px;
+}
+
+.wrapper .content .user-info .user-avatar .avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+}
+
+.wrapper .content .user-info .user-avatar .avatar-icon circle {
+  fill: #bcc1c5;
+}
+
+.wrapper .content .user-info .user-avatar .avatar-icon {
+  width: 56px;
+  height: 56px;
+  fill: #636d78;
+}
+
+.wrapper .content .user-info .upload {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: #3978fc;
+}
+
+.wrapper .content .user-info .remove {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: #ff3b30;
+  padding: 0;
+}
+
+.wrapper .content .user-info .upload input {
+  display: none;
+}
+
+.wrapper .content .user-info span {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: #0b1b0f;
+}
+
+.wrapper .content .user-info .user-name {
+  position: relative;
+}
+
+.wrapper .content .user-info .user-name .name-input {
+  padding: 6px 8px;
+  border: 1px solid #636d78;
+  max-width: 332px;
+  height: 44px;
+  margin-top: 8px;
+}
+
+.wrapper .content .user-info .user-name .remove-name {
+  position: absolute;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  fill: #636d78;
+  right: 12px;
+  top: 17px;
+}
+
+.wrapper .content .user-info .user-name .name-input.error {
+  padding: 6px 8px;
+  border: 1px solid #ff3b30;
+  max-width: 332px;
+  height: 44px;
+  margin-top: 8px;
+}
+
+.wrapper .content .user-info .user-name .error-info {
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.5px;
+  color: #ff3b30;
+}
+
+.wrapper .content .user-info .user-name input::placeholder {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.16px;
+  color: #636d78;
+}
+
+.wrapper .content .buttons-setting {
+  margin-top: 24px;
+}
+
+.wrapper .content .buttons .finish-btn {
+  border: none;
+  background-color: #3978fc;
+  margin-left: 4px;
+  color: #ffffff;
+}
+
+.wrapper .content .buttons .finish-btn.disable {
+  border: none;
+  background-color: #bcc1c5;
+  margin-left: 4px;
+  color: #636d78;
+}

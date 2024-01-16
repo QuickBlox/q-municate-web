@@ -1,0 +1,90 @@
+.spinner {
+  background: none;
+  border-radius: 50%;
+  display: inline-block;
+  height: 16px;
+  margin: 0 auto;
+  padding: 0;
+  position: relative;
+  width: 16px;
+}
+
+.spinner > div {
+  animation: fade 1s linear infinite;
+  border-radius: 50px;
+  box-shadow: 0 0 3px var(--grey-8);
+  height: 28%;
+  left: 49%;
+  opacity: 0;
+  position: absolute;
+  top: 38%;
+  width: 6%;
+}
+
+.spinner.default > div {
+  background-color: var(--secondary-900);
+}
+
+.spinner.primary > div {
+  background-color: var(--Main-elements);
+}
+
+.spinner.secondary > div {
+  background-color: var(--Incoming-background);
+}
+
+@keyframes fade {
+  from { opacity: 1; }
+  to { opacity: 0.25; }
+}
+
+.spinner .bar1 {
+  transform: rotate(0deg) translate(0, -130%);
+  animation-delay: 0s;
+}
+
+.spinner .bar2 {
+  transform: rotate(30deg) translate(0, -130%);
+  animation-delay: -0.9167s;
+}
+
+.spinner .bar3 {
+  transform: rotate(60deg) translate(0, -130%);
+  animation-delay: -0.833s;
+}
+.spinner .bar4 {
+  transform: rotate(90deg) translate(0, -130%);
+  animation-delay: -0.7497s;
+}
+.spinner .bar5 {
+  transform: rotate(120deg) translate(0, -130%);
+  animation-delay: -0.667s;
+}
+.spinner .bar6 {
+  transform: rotate(150deg) translate(0, -130%);
+  animation-delay: -0.5837s;
+}
+.spinner .bar7 {
+  transform: rotate(180deg) translate(0, -130%);
+  animation-delay: -0.5s;
+}
+.spinner .bar8 {
+  transform: rotate(210deg) translate(0, -130%);
+  animation-delay: -0.4167s;
+}
+.spinner .bar9 {
+  transform: rotate(240deg) translate(0, -130%);
+  animation-delay: -0.333s;
+}
+.spinner .bar10 {
+  transform: rotate(270deg) translate(0, -130%);
+  animation-delay: -0.2497s;
+}
+.spinner .bar11 {
+  transform: rotate(300deg) translate(0, -130%);
+  animation-delay: -0.167s;
+}
+.spinner .bar12 {
+  transform: rotate(330deg) translate(0, -130%);
+  animation-delay: -0.0833s;
+}

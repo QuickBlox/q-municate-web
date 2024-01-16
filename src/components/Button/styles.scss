@@ -1,0 +1,66 @@
+@import "../../styles/theme_colors_scheme";
+
+.button {
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.4px;
+  padding: 8px 16px;
+  border: none;
+  outline: none;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.button.button-sm {
+  min-width: 133px;
+}
+
+.button.button-md {
+  min-width: 160px;
+}
+
+.button.button-lg {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.button.button-xl {
+  width: 91px;
+  height: 32px;
+}
+
+.button.button-full {
+  width: 100%;
+}
+
+.button.button-default {
+  border: 1px solid var(--secondary-900);
+  background-color: var(--Interface-background);
+  color: var(--Secondary-elements);
+}
+
+.button.button-primary {
+  background-color: var(--primary);
+  color: $primary-a-100;
+}
+
+.button.button-disabled {
+  background-color: var(--blue-5);
+  color: var(--Tertiary-font);
+}
+
+@media screen and (max-width: 768px) {
+  .button.m-button-sm {
+    min-width: 133px;
+  }
+
+  .button.m-button-auto {
+    min-width: auto;
+    width: 100%;
+  }
+}

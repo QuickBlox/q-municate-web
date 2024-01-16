@@ -1,0 +1,16 @@
+.footer-wrapper {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  gap: 40px;
+  padding: 30px 40px;
+
+  a {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.25px;
+    color: #90979f;
+    text-decoration: none;
+  }
+}

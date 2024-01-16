@@ -1,0 +1,49 @@
+name: CI/CD for q-municate-dev.quickblox.com
+
+on:
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches:    
+      - develop
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+    - name: Install npm dependencies
+      run: npm ci
+    - name: Run build task
+      run: npm run build
+      env:
+         CI: false
+         REACT_APP_FIREBASE_API_KEY: ${{ vars.FIREBASE_API_KEY }}
+         REACT_APP_FIREBASE_APP_ID: ${{ vars.FIREBASE_APP_ID }}
+         REACT_APP_FIREBASE_AUTH_DOMAIN: ${{ vars.FIREBASE_AUTH_DOMAIN }}
+         REACT_APP_FIREBASE_DATABASE_URL: ${{ vars.FIREBASE_DATABASE_URL }}
+         REACT_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ vars.FIREBASE_MESSAGING_SENDER_ID }}
+         REACT_APP_FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+         REACT_APP_FIREBASE_STORAGE_BUCKET: ${{ vars.FIREBASE_STORAGE_BUCKET }}
+         REACT_APP_OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
+         REACT_APP_QB_APP_ID: ${{ vars.QB_DEV_APP_ID }}
+         REACT_APP_QB_AUTH_KEY: ${{ vars.QB_DEV_AUTH_KEY }}
+         REACT_APP_QB_AUTH_SECRET: ${{ vars.QB_DEV_AUTH_SECRET }}
+         REACT_APP_QB_ACCOUNT_KEY: ${{ vars.QB_DEV_ACCOUNT_KEY }}
+         REACT_APP_QB_ENDPOINT_API: ${{ vars.QB_ENDPOINT_API }}
+         REACT_APP_QB_ENDPOINT_CHAT: ${{ vars.QB_ENDPOINT_CHAT }}
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@main
+      with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: ""
+          REMOTE_HOST: ${{ secrets.REMOTE_DEV_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_DEV_TARGET }}
+          EXCLUDE: "/dist/, /node_modules/"
