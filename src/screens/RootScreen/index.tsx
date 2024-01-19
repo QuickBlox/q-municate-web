@@ -2,6 +2,7 @@ import {
   QuickBloxUIKitDesktopLayout,
   QuickBloxUIKitProvider,
 } from 'quickblox-react-ui-kit'
+import { useEffect } from 'react'
 
 import { QBConfig } from '../../configs/QBconfig'
 import { useAuth } from '../../hooks'
@@ -10,7 +11,6 @@ import LoaderComponent from '../../components/NewLoader/LoaderComponent'
 import useModal from '../../hooks/useModal'
 import LogoutModal from '../../components/modals/LogoutModal'
 import SettingModal from '../../components/modals/SettingModal'
-import { useEffect } from 'react'
 
 const RootScreen = () => {
   const {
@@ -25,8 +25,12 @@ const RootScreen = () => {
     handlers: { handleLogout, handleUpdateUser, getAvatarUrl },
   } = useAuth()
 
+  const regex = /^(?=[a-zA-Z])[-a-zA-Z_ ]{2,49}$/
+
   useEffect(() => {
     if (user && !user.full_name) {
+      setSelectedValue('settings')
+    } else if (user?.full_name && !regex.test(user.full_name)) {
       setSelectedValue('settings')
     }
   }, [user])
@@ -46,6 +50,7 @@ const RootScreen = () => {
         options={options}
         handleChange={handleChange}
         user={user}
+        regex={regex}
       />
       <QuickBloxUIKitDesktopLayout uikitHeightOffset={'40px'} />
       <SettingModal
@@ -59,6 +64,7 @@ const RootScreen = () => {
         setUserName={setUserName}
         handleUpdateUser={handleUpdateUser}
         getAvatarUrl={getAvatarUrl}
+        regex={regex}
       />
       <LogoutModal
         selectedValue={selectedValue}

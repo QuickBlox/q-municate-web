@@ -4,7 +4,7 @@ import { type QBUser } from 'quickblox'
 import { AvatarBig, Close, Remove } from '../../assets/img'
 import Button from '../Button'
 import Input from '../Field/Input'
-import { type ChangeEvent, type FormEvent, useState } from 'react'
+import { type ChangeEvent, type FormEvent, useState, useEffect } from 'react'
 import { type UploadedImage } from '../../hooks/useAuth'
 interface SettingModalProps {
   user: QBUser | null
@@ -17,6 +17,7 @@ interface SettingModalProps {
   handleUpdateUser: (e: FormEvent<HTMLFormElement>) => Promise<void>
   avatarUrl: string | null
   getAvatarUrl: () => Promise<void>
+  regex: RegExp
 }
 
 export default function SettingModal(props: SettingModalProps) {
@@ -31,11 +32,10 @@ export default function SettingModal(props: SettingModalProps) {
     setUserName,
     handleUpdateUser,
     getAvatarUrl,
+    regex,
   } = props
 
   const [error, setError] = useState('')
-
-  if (selectedValue !== 'settings') return null
 
   const handleUploadAvatar = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files![0]
@@ -67,10 +67,8 @@ export default function SettingModal(props: SettingModalProps) {
       error = 'Must be at least 3 characters long'
     } else if (value.length > 50) {
       error = 'Must be no more than 50 characters long'
-    } else if (!/^[a-zA-Z]/.test(value)) {
-      error = 'The first character must be a letter'
-    } else if (!/^[a-zA-Z-_ ]*$/.test(value)) {
-      error = 'Only letters, hyphens, underscores, and spaces are allowed'
+    } else if (!regex.test(value)) {
+      error = 'Letters, hyphens, underscores, and spaces only'
     }
 
     setError(error)
@@ -83,14 +81,23 @@ export default function SettingModal(props: SettingModalProps) {
     if (user!.blob_id) {
       void getAvatarUrl()
     }
-    if (user!.full_name) {
+    if (regex.test(user!.full_name) && user!.full_name) {
       setSelectedValue('')
       setUserName(user!.full_name)
+      setError('')
     }
     if (avatarUrl) {
       setAvatarUrl('')
     }
   }
+
+  useEffect(() => {
+    if (!regex.test(user!.full_name)) {
+      setError('Letters, hyphens, underscores, and spaces only')
+    }
+  }, [])
+
+  if (selectedValue !== 'settings') return null
 
   return (
     <div className="wrapper">
@@ -103,7 +110,11 @@ export default function SettingModal(props: SettingModalProps) {
       >
         <div className={cn('content', 'setting')}>
           <div className="close">
-            <span>{'Create Profile'}</span>
+            <span>
+              {regex.test(user!.full_name) || user!.full_name
+                ? 'Settings'
+                : 'Create Profile'}
+            </span>
             <Close className="close-icon" onClick={handleOnCancelClick} />
           </div>
           <div className="user-info">
