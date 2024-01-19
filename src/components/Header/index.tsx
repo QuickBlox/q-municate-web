@@ -32,7 +32,7 @@ export default function Header(props: HeaderProps) {
               handleChange!(value)
             }}
             userName={
-              regex!.test(user.full_name) && user.full_name
+              user.full_name && regex!.test(user.full_name)
                 ? user.full_name
                 : 'Unknown'
             }

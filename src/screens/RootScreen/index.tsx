@@ -28,7 +28,7 @@ const RootScreen = () => {
   const regex = /^(?=[a-zA-Z])[-a-zA-Z_ ]{2,49}$/
 
   useEffect(() => {
-    if (user && !user.full_name) {
+    if (!user?.full_name || !regex.test(user.full_name)) {
       setSelectedValue('settings')
     } else if (user?.full_name && !regex.test(user.full_name)) {
       setSelectedValue('settings')

@@ -81,7 +81,7 @@ export default function SettingModal(props: SettingModalProps) {
     if (user!.blob_id) {
       void getAvatarUrl()
     }
-    if (regex.test(user!.full_name) && user!.full_name) {
+    if (user!.full_name && regex.test(user!.full_name)) {
       setSelectedValue('')
       setUserName(user!.full_name)
       setError('')
@@ -111,7 +111,7 @@ export default function SettingModal(props: SettingModalProps) {
         <div className={cn('content', 'setting')}>
           <div className="close">
             <span>
-              {regex.test(user!.full_name) || user!.full_name
+              {user!.full_name && regex.test(user!.full_name)
                 ? 'Settings'
                 : 'Create Profile'}
             </span>
