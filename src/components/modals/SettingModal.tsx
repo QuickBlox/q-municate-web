@@ -103,7 +103,7 @@ export default function SettingModal(props: SettingModalProps) {
       >
         <div className={cn('content', 'setting')}>
           <div className="close">
-            <span>{'Create Profile'}</span>
+            <span>{user!.full_name ? 'Settings' : 'Create Profile'}</span>
             <Close className="close-icon" onClick={handleOnCancelClick} />
           </div>
           <div className="user-info">
