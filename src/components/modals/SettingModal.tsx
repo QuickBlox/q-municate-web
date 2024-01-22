@@ -4,7 +4,7 @@ import { type QBUser } from 'quickblox'
 import { AvatarBig, Close, Remove } from '../../assets/img'
 import Button from '../Button'
 import Input from '../Field/Input'
-import { type ChangeEvent, type FormEvent, useState } from 'react'
+import { type ChangeEvent, type FormEvent } from 'react'
 import { type UploadedImage } from '../../hooks/useAuth'
 interface SettingModalProps {
   user: QBUser | null
@@ -17,6 +17,7 @@ interface SettingModalProps {
   handleUpdateUser: (e: FormEvent<HTMLFormElement>) => Promise<void>
   avatarUrl: string | null
   getAvatarUrl: () => Promise<void>
+  regex: RegExp
 }
 
 export default function SettingModal(props: SettingModalProps) {
@@ -31,11 +32,8 @@ export default function SettingModal(props: SettingModalProps) {
     setUserName,
     handleUpdateUser,
     getAvatarUrl,
+    regex,
   } = props
-
-  const [error, setError] = useState('')
-
-  if (selectedValue !== 'settings') return null
 
   const handleUploadAvatar = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files![0]
@@ -60,20 +58,6 @@ export default function SettingModal(props: SettingModalProps) {
 
   const handleChangeName = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
-
-    let error = ''
-
-    if (value.length < 3) {
-      error = 'Must be at least 3 characters long'
-    } else if (value.length > 50) {
-      error = 'Must be no more than 50 characters long'
-    } else if (!/^[a-zA-Z]/.test(value)) {
-      error = 'The first character must be a letter'
-    } else if (!/^[a-zA-Z-_ ]*$/.test(value)) {
-      error = 'Only letters, hyphens, underscores, and spaces are allowed'
-    }
-
-    setError(error)
     setUserName(value)
   }
 
@@ -83,7 +67,7 @@ export default function SettingModal(props: SettingModalProps) {
     if (user!.blob_id) {
       void getAvatarUrl()
     }
-    if (user!.full_name) {
+    if (user!.full_name && regex.test(user!.full_name)) {
       setSelectedValue('')
       setUserName(user!.full_name)
     }
@@ -91,6 +75,8 @@ export default function SettingModal(props: SettingModalProps) {
       setAvatarUrl('')
     }
   }
+
+  if (selectedValue !== 'settings') return null
 
   return (
     <div className="wrapper">
@@ -103,7 +89,11 @@ export default function SettingModal(props: SettingModalProps) {
       >
         <div className={cn('content', 'setting')}>
           <div className="close">
-            <span>{user!.full_name ? 'Settings' : 'Create Profile'}</span>
+            <span>
+              {user!.full_name && regex.test(user!.full_name)
+                ? 'Settings'
+                : 'Create Profile'}
+            </span>
             <Close className="close-icon" onClick={handleOnCancelClick} />
           </div>
           <div className="user-info">
@@ -139,9 +129,7 @@ export default function SettingModal(props: SettingModalProps) {
             <span>{'Your name'}</span>
             <div className="user-name">
               <Input
-                className={cn('name-input', {
-                  error,
-                })}
+                className={cn('name-input')}
                 type="text"
                 placeholder="Enter your name"
                 onChange={handleChangeName}
@@ -150,12 +138,17 @@ export default function SettingModal(props: SettingModalProps) {
               <Remove
                 className="remove-name"
                 onClick={() => {
-                  setError('Must be at least 3 characters long')
                   setUserName('')
                 }}
               />
 
-              {error && <span className="error-info">{error}</span>}
+              {
+                <span className="hint-info">
+                  {
+                    'Start with a letter, use only a-z, A-Z, hyphens, underscores, and spaces. Length: 3-50 characters.'
+                  }
+                </span>
+              }
             </div>
             <div className={cn('buttons', 'buttons-setting')}>
               <Button
@@ -167,10 +160,10 @@ export default function SettingModal(props: SettingModalProps) {
                 {'Cancel'}
               </Button>
               <Button
-                disabled={error.length > 0 || !userName || userName.length < 3}
+                disabled={!userName || !regex.test(userName)}
                 type="submit"
                 className={cn('finish-btn', {
-                  disable: error.length > 0 || !userName || userName.length < 3,
+                  disable: !userName || !regex.test(userName),
                 })}
                 size="sm"
               >
