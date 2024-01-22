@@ -35,6 +35,8 @@ export default function SettingModal(props: SettingModalProps) {
     regex,
   } = props
 
+  const hint =
+    'Start with a letter, use only a-z, A-Z, hyphens, underscores, and spaces. Length: 3-50 characters.'
   const [error, setError] = useState('')
 
   const handleUploadAvatar = (event: ChangeEvent<HTMLInputElement>) => {
@@ -60,16 +62,8 @@ export default function SettingModal(props: SettingModalProps) {
 
   const handleChangeName = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
-
     let error = ''
-
-    if (value.length < 3) {
-      error = 'Must be at least 3 characters long'
-    } else if (value.length > 50) {
-      error = 'Must be no more than 50 characters long'
-    } else if (!regex.test(value)) {
-      error = 'Letters, hyphens, underscores, and spaces only'
-    }
+    if (!regex.test(value)) error = hint
 
     setError(error)
     setUserName(value)
@@ -93,7 +87,7 @@ export default function SettingModal(props: SettingModalProps) {
 
   useEffect(() => {
     if (!regex.test(user!.full_name)) {
-      setError('Letters, hyphens, underscores, and spaces only')
+      setError(hint)
     }
   }, [])
 
@@ -161,7 +155,7 @@ export default function SettingModal(props: SettingModalProps) {
               <Remove
                 className="remove-name"
                 onClick={() => {
-                  setError('Must be at least 3 characters long')
+                  setError(hint)
                   setUserName('')
                 }}
               />

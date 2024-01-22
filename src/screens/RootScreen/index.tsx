@@ -25,12 +25,10 @@ const RootScreen = () => {
     handlers: { handleLogout, handleUpdateUser, getAvatarUrl },
   } = useAuth()
 
-  const regex = /^(?=[a-zA-Z])[-a-zA-Z_ ]{2,49}$/
+  const regex = /^(?=[a-zA-Z])[-a-zA-Z_ ]{3,49}(?<! )$/
 
   useEffect(() => {
-    if (!user?.full_name || !regex.test(user.full_name)) {
-      setSelectedValue('settings')
-    } else if (user?.full_name && !regex.test(user.full_name)) {
+    if ((user && !user?.full_name) || (user && !regex.test(user.full_name))) {
       setSelectedValue('settings')
     }
   }, [user])
