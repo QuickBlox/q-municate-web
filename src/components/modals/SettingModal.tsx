@@ -35,9 +35,6 @@ export default function SettingModal(props: SettingModalProps) {
     regex,
   } = props
 
-  const hint =
-    'Start with a letter, use only a-z, A-Z, hyphens, underscores, and spaces. Length: 3-50 characters.'
-
   const handleUploadAvatar = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files![0]
     const reader = new FileReader()
@@ -145,7 +142,13 @@ export default function SettingModal(props: SettingModalProps) {
                 }}
               />
 
-              {<span className="hint-info">{hint}</span>}
+              {
+                <span className="hint-info">
+                  {
+                    'Start with a letter, use only a-z, A-Z, hyphens, underscores, and spaces. Length: 3-50 characters.'
+                  }
+                </span>
+              }
             </div>
             <div className={cn('buttons', 'buttons-setting')}>
               <Button
