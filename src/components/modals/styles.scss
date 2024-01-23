@@ -83,7 +83,7 @@
 }
 
 .wrapper .setting {
-  height: 340px;
+  min-height: 340px;
 }
 
 .wrapper .content .user-info {
@@ -170,20 +170,12 @@
   top: 17px;
 }
 
-.wrapper .content .user-info .user-name .name-input.error {
-  padding: 6px 8px;
-  border: 1px solid #ff3b30;
-  max-width: 332px;
-  height: 44px;
-  margin-top: 8px;
-}
-
-.wrapper .content .user-info .user-name .error-info {
+.wrapper .content .user-info .user-name .hint-info {
   font-weight: 400;
   font-size: 11px;
-  line-height: 16px;
+  line-height: 10px;
   letter-spacing: 0.5px;
-  color: #ff3b30;
+  color: #636d78;
 }
 
 .wrapper .content .user-info .user-name input::placeholder {
