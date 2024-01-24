@@ -5,7 +5,7 @@ interface PinInputProps extends InputHTMLAttributes<HTMLInputElement> {
   setCode: (value: string) => void
 }
 
-function PinInput({ setCode, ...rest }: PinInputProps, ref: ForwardedRef<HTMLInputElement>) {
+function PinInput({ value, setCode, ...rest }: PinInputProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <div className={'input-container'}>
       <input
@@ -14,6 +14,7 @@ function PinInput({ setCode, ...rest }: PinInputProps, ref: ForwardedRef<HTMLInp
         autoComplete="sms-code"
         inputMode="numeric"
         maxLength={6}
+        value={value}
         onChange={(e) => {
           e.target.style.setProperty(
             '--digit',

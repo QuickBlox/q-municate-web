@@ -31,6 +31,7 @@
     "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/prefer-optional-chain": "off",
     "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/promise-function-async": "off",
     "@typescript-eslint/member-delimiter-style": [
       "error",
       {
