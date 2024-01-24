@@ -83,6 +83,11 @@ export default function useAuth() {
 
     await QBStartSessionWithToken(session.token)
 
+    await QBChatConnect({
+      userId: session.user_id,
+      password: session.token,
+    })
+
     await qbUIKitContext.authorize({
       userId: session.user_id,
       password: session.token,
@@ -112,11 +117,6 @@ export default function useAuth() {
     const session = await loginWithFirebase(firebaseUser)
 
     setSession(session)
-
-    await QBChatConnect({
-      userId: session.user_id,
-      password: session.token,
-    })
 
     qbUIKitContext.setSubscribeOnSessionExpiredListener(() => {
       console.log('[Q-Municate] React ui-kit session expired')
