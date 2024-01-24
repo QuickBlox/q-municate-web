@@ -1,6 +1,6 @@
 {
   "name": "q-municate",
-  "version": "4.0.0-alpha.10",
+  "version": "4.0.0-alpha.11",
   "private": true,
   "devDependencies": {
     "@types/node": "^16.18.28",
@@ -24,7 +24,7 @@
     "@firebase/auth": "^1.5.1",
     "classnames": "^2.3.2",
     "quickblox": "^2.16.1",
-    "quickblox-react-ui-kit": "0.2.8-beta.16",
+    "quickblox-react-ui-kit": "0.2.8-beta.17",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-phone-number-input": "^3.3.7",
