@@ -1,4 +1,4 @@
-import { type QBUser } from 'quickblox'
+import { type QBUser } from 'quickblox/quickblox'
 import { Avatar, LogoSvg } from '../../assets/img'
 import Select from '../Field/Select'
 import pckg from '../../../package.json'

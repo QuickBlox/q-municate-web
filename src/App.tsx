@@ -1,28 +1,41 @@
-import { Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
 import RootScreen from './screens/RootScreen'
 import SignInScreen from './screens/SignInScreen'
 import { useAuth } from './hooks'
-import Header from './components/Header'
 import LoaderComponent from './components/NewLoader/LoaderComponent'
 
 export default function App() {
   const {
-    data: { isLoad },
+    refs: { screenRef },
+    data: {
+      session,
+      user,
+    },
+    handlers: {
+      init,
+      sendCode,
+      codeVerification,
+      logout,
+    }
   } = useAuth()
 
-  if (isLoad) {
-    return (
-      <>
-        <Header />
-        <LoaderComponent />
-      </>
-    )
+  useEffect(() => {
+    void init()
+  }, [])
+
+  if (user && !session) {
+    return <LoaderComponent />
+  }
+
+  if (session) {
+    return <RootScreen session={session} logout={logout} />
   }
 
   return (
-    <Routes>
-      <Route path={'/sign-in'} element={<SignInScreen />} />
-      <Route path={'*'} element={<RootScreen />} />
-    </Routes>
+    <SignInScreen
+      screenRef={screenRef}
+      sendCode={sendCode}
+      codeVerification={codeVerification}
+    />
   )
 }

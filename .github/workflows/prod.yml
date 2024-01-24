@@ -33,13 +33,12 @@ jobs:
          REACT_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ vars.FIREBASE_MESSAGING_SENDER_ID }}
          REACT_APP_FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
          REACT_APP_FIREBASE_STORAGE_BUCKET: ${{ vars.FIREBASE_STORAGE_BUCKET }}
-         REACT_APP_OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
          REACT_APP_QB_APP_ID: ${{ vars.QB_PROD_APP_ID }}
-         REACT_APP_QB_AUTH_KEY: ${{ vars.QB_PROD_AUTH_KEY }}
-         REACT_APP_QB_AUTH_SECRET: ${{ vars.QB_PROD_AUTH_SECRET }}
          REACT_APP_QB_ACCOUNT_KEY: ${{ vars.QB_PROD_ACCOUNT_KEY }}
          REACT_APP_QB_ENDPOINT_API: ${{ vars.QB_ENDPOINT_API }}
          REACT_APP_QB_ENDPOINT_CHAT: ${{ vars.QB_ENDPOINT_CHAT }}
+         REACT_APP_API_BASE_URL: ${{ vars.API_PROD_BASE_URL }}
+         REACT_APP_API_AUTH_PATH: ${{ vars.API_AUTH_PATH }}
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@main
       with:
