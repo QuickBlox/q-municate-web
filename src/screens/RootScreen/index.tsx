@@ -13,7 +13,7 @@ import LogoutModal from '../../components/modals/LogoutModal'
 import SettingModal from '../../components/modals/SettingModal'
 import { QBGetUserAvatar, QBUserList } from '../../qb-api-calls'
 
-const regex = /^(?=[a-zA-Z])[-a-zA-Z_ ]{3,49}(?<! )$/
+const regex = new RegExp(QBConfig.appConfig.regexUserName)
 
 interface RootScreenProps {
   session: QBSession

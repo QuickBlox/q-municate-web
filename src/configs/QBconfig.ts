@@ -118,6 +118,7 @@ export const QBConfig = {
     debug: true,
     enableForwarding: true,
     enableReplying: true,
+    regexUserName: '^(?=[a-zA-Z])[-a-zA-Z_ ]{3,49}(?<! )$',
     endpoints: {
       api: process.env.REACT_APP_QB_ENDPOINT_API!,
       chat: process.env.REACT_APP_QB_ENDPOINT_CHAT!,
