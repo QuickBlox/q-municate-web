@@ -6,7 +6,7 @@ import './styles.scss'
 interface LogoutModalProps {
   selectedValue: string | number
   setSelectedValue: (value: string) => void
-  handleLogout: () => Promise<void>
+  handleLogout: VoidFunction
 }
 
 export default function LogoutModal(props: LogoutModalProps) {
@@ -18,7 +18,7 @@ export default function LogoutModal(props: LogoutModalProps) {
     <div className="wrapper">
       <div className={cn('content', 'logout')}>
         <div className="close">
-          <span>{'Log out'}</span>
+          <span>Log out</span>
           <Close
             className="close-icon"
             onClick={() => {
@@ -34,10 +34,10 @@ export default function LogoutModal(props: LogoutModalProps) {
             className="cancel-btn"
             size="sm"
           >
-            {'Cancel'}
+            Cancel
           </Button>
           <Button onClick={handleLogout} className="logout-btn" size="sm">
-            {'Log out'}
+            Log out
           </Button>
         </div>
       </div>
