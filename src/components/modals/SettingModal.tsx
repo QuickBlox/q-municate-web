@@ -5,7 +5,11 @@ import { type QBUser } from 'quickblox/quickblox'
 import { AvatarBig, Close, Remove } from '../../assets/img'
 import Button from '../Button'
 import Input from '../Field/Input'
-import { QBCreateContent, QBUserUpdate } from '../../qb-api-calls'
+import {
+  QBCreateContent,
+  QBDeleteUserAvatar,
+  QBUserUpdate,
+} from '../../qb-api-calls'
 
 interface SettingModalProps {
   user?: QBUser | null
@@ -42,6 +46,7 @@ export default function SettingModal(props: SettingModalProps) {
   }
 
   const handleOnCancelClick = () => {
+    if (!name || !regex.test(name)) return
     setSelectedValue('')
     setAvatarFile(null)
     setName(user!.full_name)
@@ -71,10 +76,10 @@ export default function SettingModal(props: SettingModalProps) {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    if (user?.blob_id && avatarUrl && !avatarFile) {
+    if (user?.blob_id && !avatarUrl) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      QBDeleteUserAvatar(user.blob_id).catch(() => null)
+      await QBDeleteUserAvatar(user.blob_id).catch(() => null)
     }
 
     if (Object.keys(updates).length > 0) {
@@ -97,9 +102,7 @@ export default function SettingModal(props: SettingModalProps) {
 
   return (
     <div className="wrapper">
-      <form
-        onSubmit={handleUpdateUser}
-      >
+      <form onSubmit={handleUpdateUser}>
         <div className={cn('content', 'setting')}>
           <div className="close">
             <span>
@@ -155,7 +158,8 @@ export default function SettingModal(props: SettingModalProps) {
                 }}
               />
               <span className="hint-info">
-                Start with a letter, use only a-z, A-Z, hyphens, underscores, and spaces. Length: 3-50 characters.
+                Start with a letter, use only a-z, A-Z, hyphens, underscores,
+                and spaces. Length: 3-50 characters.
               </span>
             </div>
             <div className={cn('buttons', 'buttons-setting')}>
