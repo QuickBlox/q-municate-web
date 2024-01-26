@@ -29,7 +29,6 @@ const RootScreen = (props: RootScreenProps) => {
   } = useModal()
 
   const [user, setUser] = useState<QBUser | null>(null)
-  // const [userName, setUserName] = useState<string>('')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
   const findUserById = async (userId: QBUser['id']) => {
@@ -54,18 +53,19 @@ const RootScreen = (props: RootScreenProps) => {
       if ((user && !user?.full_name) || (user && !regex.test(user.full_name))) {
         setSelectedValue('settings')
       }
-      // else {
-      //   setUserName(user.full_name)
-      // }
+    }
+  }
 
+  const handleUserAvatar = async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    if (user?.blob_id) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      if (user?.blob_id) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        const userAvatarUrl = await QBGetUserAvatar(user.blob_id)
-        setAvatarUrl(userAvatarUrl)
-      }
+      const userAvatarUrl = await QBGetUserAvatar(user.blob_id)
+      setAvatarUrl(userAvatarUrl)
+    } else {
+      setAvatarUrl('')
     }
   }
 
@@ -73,7 +73,13 @@ const RootScreen = (props: RootScreenProps) => {
     if (session?.user_id) {
       void handleReceiveUser()
     }
-  }, [session?.user_id])
+  }, [session.user_id])
+
+  useEffect(() => {
+    void handleUserAvatar()
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+  }, [user?.blob_id])
 
   if (!user) {
     return <LoaderComponent />
