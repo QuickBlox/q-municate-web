@@ -27,6 +27,11 @@ REACT_APP_API_BASE_URL=
 REACT_APP_API_AUTH_PATH=
 ```
 
+## Q-Municate Server
+
+For the application to work correctly, you must use [Q-Municate Server](https://github.com/QuickBlox/q-municate-server).
+With its help, user authentication and the operation of all AI features take place.
+
 ## Available Scripts
 
 In the project directory, you can run:
